@@ -11,7 +11,7 @@ import { ResponsiveBar } from "@nivo/bar";
 import { useEffect, useReducer, useRef } from "react";
 
 import { COLORS_SWATCHES } from "../../../constants";
-import { addCommaSeparator, returnThemeColors } from "../../../utils";
+import { addCommaSeparator } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";

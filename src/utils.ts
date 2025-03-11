@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
+import { ThemeObject } from "./types";
+import { ColorsSwatches } from "./constants";
 
 type CaptureScreenshotInput = {
     chartRef: any;
@@ -301,6 +303,7 @@ export {
     removeUndefinedAndNull,
     replaceLastCommaWithAnd,
     replaceLastCommaWithOr,
+    returnThemeColors,
     returnTimeToRead,
     splitCamelCase,
     toFixedFloat,
