@@ -30,7 +30,6 @@ type ChartMarginProps = {
   parentChartDispatch: React.Dispatch<ChartMarginDispatch>;
   sectionHeadersBgColor: string;
   textColor: string;
-  width: number;
 };
 
 function ChartMargin(props: ChartMarginProps) {
@@ -44,7 +43,6 @@ function ChartMargin(props: ChartMarginProps) {
     parentChartDispatch,
     sectionHeadersBgColor,
     textColor,
-    width,
   } = props;
 
   const marginTopSliderInput = (
