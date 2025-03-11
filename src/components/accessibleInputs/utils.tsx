@@ -3,12 +3,7 @@ import { TbCheck, TbInfoCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
 import type { ThemeObject } from "../../context/globalProvider/types";
-import type { Validation, ValidationFunctionsTable } from "../../types";
-import {
-    capitalizeJoinWithAnd,
-    returnThemeColors,
-    splitCamelCase,
-} from "../../utils";
+import { capitalizeJoinWithAnd, returnThemeColors } from "../../utils";
 import {
     AccessibleButton,
     type AccessibleButtonAttributes,

@@ -323,6 +323,17 @@ function returnSliderMarks({
     });
 }
 
+/**
+ * @description replaces hyphens & underscores with spaces and capitalizes the first letter of each word
+ */
+function splitWordIntoUpperCasedSentence(sentence: string): string {
+    return sentence
+        .replace(/[-_]/g, " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
 export {
     addCommaSeparator,
     capitalizeAll,
@@ -336,5 +347,6 @@ export {
     returnThemeColors,
     returnTimeToRead,
     splitCamelCase,
+    splitWordIntoUpperCasedSentence,
     toFixedFloat,
 };
