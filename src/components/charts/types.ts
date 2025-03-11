@@ -1,8 +1,3 @@
-type CheckboxRadioSelectData<Payload extends string = string> = Array<{
-    label: string;
-    value: Payload;
-}>;
-
 type NivoColorScheme =
     | "nivo"
     | "category10"
@@ -161,7 +156,6 @@ type NivoChartTitlePosition = "left" | "center" | "right";
 type NivoChartUnitKind = "currency" | "percent" | "number";
 
 export type {
-    CheckboxRadioSelectData,
     NivoArcLabel,
     NivoAxisLegendPosition,
     NivoBarGroupMode,

@@ -1,9 +1,5 @@
-import {
-    CheckboxRadioSelectData,
-    NivoBarGroupMode,
-    NivoBarLayout,
-    NivoBarValueScale,
-} from "../types";
+import { CheckboxRadioSelectData } from "../../../types";
+import { NivoBarGroupMode, NivoBarLayout, NivoBarValueScale } from "../types";
 
 const BAR_CHART_GROUP_MODE_SELECT_DATA: CheckboxRadioSelectData<
     NivoBarGroupMode
