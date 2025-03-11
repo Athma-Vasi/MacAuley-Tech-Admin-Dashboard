@@ -69,7 +69,7 @@ type ChartOptionsDispatch =
   };
 
 type ChartOptionsProps = {
-  chartRef: React.MutableRefObject<null>;
+  chartRef: React.RefObject<null>;
   chartTitle: string;
   chartTitleColor: string; // default: #ffffff
   chartTitlePosition: NivoChartTitlePosition; // default: center

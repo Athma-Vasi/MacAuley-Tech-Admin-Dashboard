@@ -11,12 +11,11 @@ import { ResponsiveBar } from "@nivo/bar";
 import { useEffect, useReducer, useRef } from "react";
 
 import { COLORS_SWATCHES } from "../../../constants";
-import { addCommaSeparator } from "../../../utils";
+import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAndControlsDisplay } from "../chartAndControlsDisplay/ChartAndControlsDisplay";
 import { ChartAxisBottom } from "../chartControls/ChartAxisBottom";
 import { ChartAxisLeft } from "../chartControls/ChartAxisLeft";
 import { ChartAxisRight } from "../chartControls/ChartAxisRight";
@@ -42,6 +41,11 @@ import { responsiveBarChartReducer } from "./reducers";
 import { initialResponsiveBarChartState } from "./state";
 import type { ResponsiveBarChartProps, ResponsiveBarChartState } from "./types";
 import { createBarFillPatterns } from "./utils";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import {
+    ChartAndControlsDisplay,
+    ChartsAndGraphsControlsStacker,
+} from "../utils";
 
 function ResponsiveBarChart({
     barChartData,
@@ -54,7 +58,7 @@ function ResponsiveBarChart({
     unitKind = "currency",
 }: ResponsiveBarChartProps) {
     const {
-        globalState: { isPrefersReducedMotion, width, themeObject },
+        globalState: { isPrefersReducedMotion, themeObject },
     } = useGlobalState();
 
     const {
@@ -772,7 +776,6 @@ function ResponsiveBarChart({
             parentChartDispatch={responsiveBarChartDispatch}
             sectionHeadersBgColor={sectionHeadersBgColor}
             textColor={textColor}
-            width={width}
         />
     );
 
@@ -858,9 +861,7 @@ function ResponsiveBarChart({
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
             sectionHeadersBgColor={sectionHeadersBgColor}
-            stepperPages={returnChartAxisTopStepperPages()}
             textColor={textColor}
-            width={width}
         />
     );
 
@@ -878,9 +879,7 @@ function ResponsiveBarChart({
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
             sectionHeadersBgColor={sectionHeadersBgColor}
-            stepperPages={returnChartAxisRightStepperPages()}
             textColor={textColor}
-            width={width}
         />
     );
 
@@ -898,9 +897,7 @@ function ResponsiveBarChart({
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
             sectionHeadersBgColor={sectionHeadersBgColor}
-            stepperPages={returnChartAxisBottomStepperPages()}
             textColor={textColor}
-            width={width}
         />
     );
 
@@ -918,9 +915,7 @@ function ResponsiveBarChart({
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
             sectionHeadersBgColor={sectionHeadersBgColor}
-            stepperPages={returnChartAxisLeftStepperPages()}
             textColor={textColor}
-            width={width}
         />
     );
 
@@ -1023,7 +1018,6 @@ function ResponsiveBarChart({
         <Group
             bg={sectionHeadersBgColor}
             style={STICKY_STYLE}
-            w={width < 1192 ? "100%" : "95%"}
         >
             <Title order={5} color={textColor}>
                 Motion
@@ -1082,7 +1076,6 @@ function ResponsiveBarChart({
             textColor={textColor}
             legendSymbolBorderWidth={legendSymbolBorderWidth}
             legendSymbolSpacing={legendSymbolSpacing}
-            width={width}
         />
     );
 
@@ -1100,9 +1093,7 @@ function ResponsiveBarChart({
             screenshotImageQuality={screenshotImageQuality}
             screenshotImageType={screenshotImageType}
             sectionHeadersBgColor={sectionHeadersBgColor}
-            stepperPages={returnChartOptionsStepperPages()}
             textColor={textColor}
-            width={width}
         />
     );
 
@@ -1152,7 +1143,6 @@ function ResponsiveBarChart({
             chartTitleSize={chartTitleSize}
             responsiveChart={displayResponsiveBar}
             scrollBarStyle={scrollBarStyle}
-            width={width}
         />
     );
 

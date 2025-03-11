@@ -1,4 +1,14 @@
-import { Group, Stack, Text } from "@mantine/core";
+import {
+  Divider,
+  Grid,
+  Group,
+  ScrollArea,
+  Space,
+  Stack,
+  Text,
+  Title,
+  TitleOrder,
+} from "@mantine/core";
 
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -7,6 +17,7 @@ import {
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
 } from "../../utils";
+import { NivoChartTitlePosition } from "./types";
 
 type ChartsAndGraphsControlsStackerProps = {
   initialChartState?: Record<string, any>;
@@ -98,4 +109,95 @@ function ChartsAndGraphsControlsStacker({
   );
 }
 
-export { ChartsAndGraphsControlsStacker };
+type ChartAndControlsDisplayProps = {
+  chartControlsStack: React.JSX.Element;
+  chartRef: React.RefObject<null>;
+  chartTitle: string;
+  chartTitleColor: string;
+  chartTitlePosition: NivoChartTitlePosition;
+  chartTitleSize: TitleOrder;
+  height?: number;
+  responsiveChart: React.JSX.Element;
+  scrollBarStyle: Record<string, any>;
+};
+
+function ChartAndControlsDisplay(
+  props: ChartAndControlsDisplayProps,
+): React.JSX.Element {
+  const {
+    chartControlsStack,
+    chartRef,
+    chartTitle,
+    chartTitleColor,
+    chartTitlePosition,
+    chartTitleSize,
+    responsiveChart,
+    scrollBarStyle,
+  } = props;
+
+  // const displayChartControls = (
+  //   <ScrollArea styles={() => scrollBarStyle} offsetScrollbars>
+  //     <Grid columns={1} >
+  //       <Grid.Col span={1}>{chartControlsStack}</Grid.Col>
+  //     </Grid>
+  //   </ScrollArea>
+  // );
+
+  // const displayChartTitle = (
+  //   <Group w="100%" position={chartTitlePosition}>
+  //     <Title order={chartTitleSize} color={chartTitleColor}>
+  //       {chartTitle}
+  //     </Title>
+  //   </Group>
+  // );
+
+  // const displayChartAndControls = (
+  //   <Grid columns={width < 1192 ? 1 : 15} w="100%" h="70vh">
+  //     <Grid.Col span={width < 1192 ? 1 : 5} h={width < 1192 ? "38vh" : "70vh"}>
+  //       {displayChartControls}
+  //     </Grid.Col>
+
+  //     <Grid.Col span={1}>
+  //       {width < 1192 ? <Space h="md" /> : <Space w="md" />}
+  //       <Divider
+  //         orientation={width < 1192 ? "horizontal" : "vertical"}
+  //         size="sm"
+  //         w="100%"
+  //         h="100%"
+  //       />
+  //     </Grid.Col>
+
+  //     <Grid.Col span={width < 1192 ? 1 : 9} h="70vh" ref={chartRef} p="xl">
+  //       {displayChartTitle}
+  //       {responsiveChart}
+  //     </Grid.Col>
+  //   </Grid>
+  // );
+
+  // return displayChartAndControls;
+
+  return (
+    <Stack
+      style={{
+        border: "1px solid",
+        borderColor: "#ccc",
+        borderRadius: 4,
+        padding: "1rem",
+      }}
+    >
+      <Group w="100%" position={chartTitlePosition} ref={chartRef}>
+        <Title order={chartTitleSize} color={chartTitleColor}>
+          {chartTitle}
+        </Title>
+      </Group>
+      <ScrollArea styles={() => scrollBarStyle} offsetScrollbars>
+        <Grid columns={1}>
+          <Grid.Col span={1}>{chartControlsStack}</Grid.Col>
+        </Grid>
+      </ScrollArea>
+      {responsiveChart}
+    </Stack>
+  );
+}
+
+export { ChartAndControlsDisplay, ChartsAndGraphsControlsStacker };
