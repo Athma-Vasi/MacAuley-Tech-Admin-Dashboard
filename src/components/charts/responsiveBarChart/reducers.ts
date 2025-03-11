@@ -1133,8 +1133,8 @@ function responsiveBarChartReducer_setScreenshotImageType(
 }
 
 function responsiveBarChartReducer_resetChartToDefault(
-    state: ResponsiveBarChartState,
-    dispatch: ResponsiveBarChartDispatch,
+    _state: ResponsiveBarChartState,
+    _dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
     return initialResponsiveBarChartState;
 }
