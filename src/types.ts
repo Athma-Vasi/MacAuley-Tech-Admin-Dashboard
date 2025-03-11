@@ -12,6 +12,11 @@ type CheckboxRadioSelectData<Payload extends string = string> = Array<{
     value: Payload;
 }>;
 
+type SliderMarksData = Array<{
+    label: string;
+    value: number;
+}>;
+
 type ScreenshotImageType = "image/png" | "image/jpeg" | "image/webp";
 
 type SetPageInErrorPayload = {
@@ -91,6 +96,7 @@ export type {
     ScreenshotImageType,
     SetPageInErrorPayload,
     Shade,
+    SliderMarksData,
     ThemeComponent,
     ThemeObject,
     Validation,

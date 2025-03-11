@@ -294,6 +294,35 @@ function returnThemeColors({
     };
 }
 
+/**
+ * @description creates marks for slider wrapper component
+ */
+function returnSliderMarks({
+    max,
+    min,
+    precision = 0,
+    steps = 2,
+    symbol = "",
+}: {
+    max: number;
+    min: number;
+    steps?: number;
+    precision?: number;
+    symbol?: string;
+}): { value: number; label: string }[] {
+    const step = (max - min) / steps;
+
+    return Array.from({ length: steps + 1 }, (_, i) => {
+        const value = min + step * i;
+        const valueFormatted = value.toFixed(precision);
+
+        return {
+            value: Number.parseInt(valueFormatted),
+            label: `${valueFormatted}${symbol}`,
+        };
+    });
+}
+
 export {
     addCommaSeparator,
     capitalizeAll,
@@ -303,6 +332,7 @@ export {
     removeUndefinedAndNull,
     replaceLastCommaWithAnd,
     replaceLastCommaWithOr,
+    returnSliderMarks,
     returnThemeColors,
     returnTimeToRead,
     splitCamelCase,
