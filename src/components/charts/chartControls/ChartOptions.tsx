@@ -9,11 +9,10 @@ import {
 } from "@mantine/core";
 import type { ChangeEvent } from "react";
 
-import { SCREENSHOT_IMAGE_TYPE_DATA } from "../../../constants/data";
+import { SCREENSHOT_IMAGE_TYPE_DATA } from "../../../constants";
 import type {
   ScreenshotImageType,
   SetPageInErrorPayload,
-  StepperPage,
 } from "../../../types";
 import { captureScreenshot } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
@@ -82,9 +81,7 @@ type ChartOptionsProps = {
   screenshotImageQuality: number; // 0 - 1 default: 1 step: 0.05
   screenshotImageType: ScreenshotImageType;
   sectionHeadersBgColor: string;
-  stepperPages: StepperPage[];
   textColor: string;
-  width: number;
 };
 
 function ChartOptions(props: ChartOptionsProps) {
@@ -101,9 +98,7 @@ function ChartOptions(props: ChartOptionsProps) {
     screenshotImageQuality,
     screenshotImageType,
     sectionHeadersBgColor,
-    stepperPages,
     textColor,
-    width,
   } = props;
 
   const chartTitleTextInput = (
@@ -112,7 +107,6 @@ function ChartOptions(props: ChartOptionsProps) {
         invalidValueAction: parentChartAction.setPageInError,
         name: "chartTitle",
         parentDispatch: parentChartDispatch,
-        stepperPages,
         validValueAction: parentChartAction.setChartTitle,
         value: chartTitle,
       }}
@@ -179,7 +173,6 @@ function ChartOptions(props: ChartOptionsProps) {
         invalidValueAction: parentChartAction.setPageInError,
         name: "screenshotFilename",
         parentDispatch: parentChartDispatch,
-        stepperPages,
         validValueAction: parentChartAction.setScreenshotFilename,
         value: screenshotFilename,
       }}
