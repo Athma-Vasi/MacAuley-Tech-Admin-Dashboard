@@ -193,47 +193,6 @@ function createAccessibleCheckboxSelectionsTextElements({
     return { selectedTextElement, deselectedTextElement };
 }
 
-type CreateAccessibleRadioSelectionTextElements = {
-    name: string;
-    theme?: "muted" | "default";
-    themeObject: ThemeObject;
-    value: string;
-};
-
-function createAccessibleRadioScreenreaderTextElements({
-    name,
-    themeObject,
-    value,
-    theme = "default",
-}: CreateAccessibleRadioSelectionTextElements): {
-    screenreaderTextElement: React.JSX.Element;
-} {
-    const {
-        generalColors: { greenColorShade, textColor },
-    } = returnThemeColors({
-        themeObject,
-        colorsSwatches: COLORS_SWATCHES,
-    });
-
-    const icon = theme === "default"
-        ? <TbCheck color={greenColorShade} />
-        : null;
-
-    const screenreaderTextElement = (
-        <Text
-            id={`${name}-selected`}
-            color={theme === "muted" ? textColor : greenColorShade}
-            w="100%"
-            aria-live="polite"
-        >
-            {icon}
-            {`For ${name}, ${value} selected.`}
-        </Text>
-    );
-
-    return { screenreaderTextElement };
-}
-
 type CreateAccessibleButtonScreenreaderTextElements = {
     disabledScreenreaderText?: string;
     enabledScreenreaderText?: string;
@@ -529,7 +488,6 @@ export {
     createAccessibleButtons,
     createAccessibleButtonScreenreaderTextElements,
     createAccessibleCheckboxSelectionsTextElements,
-    createAccessibleRadioScreenreaderTextElements,
     createAccessibleSelectInputs,
     createAccessibleSliderScreenreaderTextElements,
     createAccessibleSwitchInputs,
