@@ -38,6 +38,8 @@ export default tseslint.config(
           ignoreRestArgs: true,
         },
       ],
+
+      "prefer-const": "off",
     },
   },
 );

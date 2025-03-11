@@ -28,15 +28,10 @@ import {
     NIVO_CHART_PATTERN_DEFS,
     NIVO_COLOR_SCHEME_DATA,
     NIVO_MOTION_CONFIG_DATA,
-    returnChartAxisBottomStepperPages,
-    returnChartAxisLeftStepperPages,
-    returnChartAxisRightStepperPages,
-    returnChartAxisTopStepperPages,
-    returnChartOptionsStepperPages,
     SLIDER_TOOLTIP_COLOR,
     STICKY_STYLE,
 } from "../constants";
-import { ChartsAndGraphsControlsStacker } from "../utils";
+// import { ChartsAndGraphsControlsStacker } from "../utils";
 import { responsiveBarChartAction } from "./actions";
 import {
     BAR_CHART_GROUP_MODE_SELECT_DATA,
