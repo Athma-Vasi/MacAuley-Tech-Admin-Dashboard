@@ -5,6 +5,7 @@ import {
     MantineTheme,
     MantineThemeOverride,
 } from "@mantine/core";
+import { ValidationKey } from "./validations";
 
 type CheckboxRadioSelectData<Payload extends string = string> = Array<{
     label: string;
@@ -79,6 +80,11 @@ interface ThemeObject extends MantineThemeOverride {
     };
 }
 
+type ValidationFunctionsTable = Record<ValidationKey, Validation>;
+
+/** input popover error messages are determined by partials tests */
+type Validation = [RegExp | ((value: string) => boolean), string][];
+
 export type {
     CheckboxRadioSelectData,
     ColorScheme,
@@ -87,4 +93,6 @@ export type {
     Shade,
     ThemeComponent,
     ThemeObject,
+    Validation,
+    ValidationFunctionsTable,
 };
