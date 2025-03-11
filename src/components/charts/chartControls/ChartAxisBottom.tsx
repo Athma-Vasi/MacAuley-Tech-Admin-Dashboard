@@ -1,6 +1,6 @@
 import { Group, Stack, Text, Title } from "@mantine/core";
 import type { ChangeEvent } from "react";
-import type { SetPageInErrorPayload, StepperPage } from "../../../types";
+import type { SetPageInErrorPayload } from "../../../types";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
@@ -60,9 +60,7 @@ type ChartAxisBottomProps = {
   parentChartAction: ChartAxisAction;
   parentChartDispatch: React.Dispatch<ChartAxisDispatch>;
   sectionHeadersBgColor: string;
-  stepperPages: StepperPage[];
   textColor: string;
-  width: number;
 };
 
 function ChartAxisBottom(props: ChartAxisBottomProps) {
@@ -79,9 +77,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
     parentChartAction,
     parentChartDispatch,
     sectionHeadersBgColor,
-    stepperPages,
     textColor,
-    width,
   } = props;
 
   const enableAxisBottomSwitchInput = (
@@ -159,7 +155,6 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
         invalidValueAction: parentChartAction.setPageInError,
         name: "axisBottomLegend",
         parentDispatch: parentChartDispatch,
-        stepperPages,
         validValueAction: parentChartAction.setAxisBottomLegend,
         value: axisBottomLegend,
       }}
