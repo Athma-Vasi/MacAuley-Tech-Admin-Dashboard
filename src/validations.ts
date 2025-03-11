@@ -1,4 +1,4 @@
-import type { ValidationFunctionsTable } from "../../types";
+import type { ValidationFunctionsTable } from "./types";
 
 type ValidationKey =
     | "objectKey"
