@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { useGlobalState } from "../../../../hooks";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -31,8 +31,6 @@ import { initialRUSState } from "./state";
 type RUSProps = {
   borderColor: string;
   calendarView: DashboardCalendarView;
-  chartHeight: number;
-  chartWidth: number;
   day: string;
   subMetric: ProductSubMetric;
   metricsView: DashboardMetricsView;
@@ -40,7 +38,6 @@ type RUSProps = {
   productMetricsCards: ProductMetricsCards;
   productMetricsCharts: ProductMetricsCharts;
   storeLocation: BusinessMetricStoreLocation;
-  width: number;
   year: Year;
 };
 
@@ -48,8 +45,6 @@ type RUSProps = {
 function RUS({
   borderColor,
   calendarView,
-  chartHeight,
-  chartWidth,
   productMetricsCards,
   productMetricsCharts,
   day,
@@ -57,7 +52,6 @@ function RUS({
   metricsView,
   month,
   storeLocation,
-  width,
   year,
 }: RUSProps) {
   const { globalDispatch } = useGlobalState();
@@ -128,8 +122,6 @@ function RUS({
 
   const overviewPieChart = (
     <ResponsivePieChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       pieChartData={pieCharts}
       hideControls
       unitKind="number"
@@ -176,8 +168,6 @@ function RUS({
 
   const overviewBarChart = (
     <ResponsiveBarChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       barChartData={barCharts[barChartYAxisVariable]}
       hideControls
       indexBy={calendarView === "Daily"
@@ -230,8 +220,6 @@ function RUS({
 
   const overviewLineChart = (
     <ResponsiveLineChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       lineChartData={lineCharts[lineChartYAxisVariable]}
       hideControls
       xFormat={(x) =>
@@ -273,7 +261,6 @@ function RUS({
       pieChartHeading={pieChartHeading}
       sectionHeading={`${storeLocation} ${calendarView} Overview Products`}
       statisticsMap={statistics}
-      width={width}
     />
   );
 
