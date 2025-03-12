@@ -17,7 +17,6 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAndControlsDisplay } from "../chartAndControlsDisplay/ChartAndControlsDisplay";
 import { ChartArcLabel } from "../chartControls/ChartArcLabel";
 import { ChartMargin } from "../chartControls/ChartMargin";
 import { ChartOptions } from "../chartControls/ChartOptions";
@@ -36,6 +35,10 @@ import type {
   ResponsiveSunburstChartProps,
   ResponsiveSunburstChartState,
 } from "./types";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 
 function ResponsiveSunburstChart({
   chartHeight = 350,
@@ -47,9 +50,7 @@ function ResponsiveSunburstChart({
   const {
     globalState: {
       isPrefersReducedMotion,
-      width,
       themeObject,
-      height,
     },
   } = useGlobalState();
 
@@ -378,7 +379,6 @@ function ResponsiveSunburstChart({
       parentChartDispatch={responsiveSunburstChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -460,7 +460,6 @@ function ResponsiveSunburstChart({
       parentChartDispatch={responsiveSunburstChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -527,9 +526,7 @@ function ResponsiveSunburstChart({
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartOptionsStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -572,7 +569,6 @@ function ResponsiveSunburstChart({
       chartTitleSize={chartTitleSize}
       responsiveChart={displayResponsiveSunburst}
       scrollBarStyle={scrollBarStyle}
-      width={width}
     />
   );
 
