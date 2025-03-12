@@ -25,8 +25,6 @@ type PieChartData = {
 };
 
 type ResponsivePieChartProps = {
-  chartHeight?: number;
-  chartWidth?: number;
   dashboardChartTitle?: string;
   hideControls?: boolean;
   pieChartData: PieChartData[];

@@ -41,8 +41,6 @@ import {
 } from "../utils";
 
 function ResponsivePieChart({
-  chartHeight = 500,
-  chartWidth = 350,
   dashboardChartTitle,
   hideControls = false,
   pieChartData,
@@ -240,11 +238,7 @@ function ResponsivePieChart({
 
   if (hideControls) {
     return (
-      <Group
-        w={chartWidth}
-        h={chartHeight}
-        style={{ outline: "1px solid teal" }}
-      >
+      <Group>
         {displayResponsivePie}
       </Group>
     );
