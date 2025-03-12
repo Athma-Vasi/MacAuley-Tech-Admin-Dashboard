@@ -2,9 +2,9 @@ import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES } from "../../../constants/data";
-import { useGlobalState } from "../../../hooks";
-import { logState, returnThemeColors } from "../../../utils";
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { MONTHS } from "../constants";
 import type {
