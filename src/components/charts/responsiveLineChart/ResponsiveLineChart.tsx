@@ -18,7 +18,6 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAndControlsDisplay } from "../chartAndControlsDisplay/ChartAndControlsDisplay";
 import { ChartAxisBottom } from "../chartControls/ChartAxisBottom";
 import { ChartAxisLeft } from "../chartControls/ChartAxisLeft";
 import { ChartAxisRight } from "../chartControls/ChartAxisRight";
@@ -30,15 +29,10 @@ import {
   NIVO_CHART_PATTERN_DEFS,
   NIVO_COLOR_SCHEME_DATA,
   NIVO_MOTION_CONFIG_DATA,
-  returnChartAxisBottomStepperPages,
-  returnChartAxisLeftStepperPages,
-  returnChartAxisRightStepperPages,
-  returnChartAxisTopStepperPages,
-  returnChartOptionsStepperPages,
   SLIDER_TOOLTIP_COLOR,
   STICKY_STYLE,
 } from "../constants";
-import { ChartsAndGraphsControlsStacker } from "../utils";
+
 import { responsiveLineChartAction } from "./actions";
 import {
   NIVO_LINE_AREA_BLEND_MODE_DATA,
@@ -53,6 +47,10 @@ import type {
   ResponsiveLineChartProps,
   ResponsiveLineChartState,
 } from "./types";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 
 function ResponsiveLineChart({
   lineChartData,
@@ -67,7 +65,7 @@ function ResponsiveLineChart({
   unitKind = "currency",
 }: ResponsiveLineChartProps) {
   const {
-    globalState: { isPrefersReducedMotion, width, themeObject },
+    globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
 
   const {
@@ -801,7 +799,6 @@ function ResponsiveLineChart({
       parentChartDispatch={responsiveLineChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1023,9 +1020,7 @@ function ResponsiveLineChart({
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartAxisTopStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1043,9 +1038,7 @@ function ResponsiveLineChart({
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartAxisRightStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1063,9 +1056,7 @@ function ResponsiveLineChart({
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartAxisBottomStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1083,9 +1074,7 @@ function ResponsiveLineChart({
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartAxisLeftStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1154,7 +1143,6 @@ function ResponsiveLineChart({
       parentChartDispatch={responsiveLineChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1210,9 +1198,7 @@ function ResponsiveLineChart({
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartOptionsStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1262,7 +1248,6 @@ function ResponsiveLineChart({
       chartTitleSize={chartTitleSize}
       responsiveChart={displayResponsiveLine}
       scrollBarStyle={scrollBarStyle}
-      width={width}
     />
   );
 
