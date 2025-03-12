@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { useGlobalState } from "../../../../hooks";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -50,7 +50,6 @@ type NewReturningProps = {
   metricsView: DashboardMetricsView;
   month: string;
   storeLocation: BusinessMetricStoreLocation;
-  width: number;
   year: Year;
 };
 
@@ -66,7 +65,6 @@ function NewReturning({
   metricsView,
   month,
   storeLocation,
-  width,
   year,
 }: NewReturningProps) {
   const { globalDispatch } = useGlobalState();
@@ -96,12 +94,6 @@ function NewReturning({
   const statistics = returnStatistics<CustomerMetricsNewReturningChartsKey>(
     barCharts,
   );
-
-  console.group("NewReturning");
-  console.log("newReturningState", newReturningState);
-  console.log("charts", charts);
-  console.log("statistics", statistics);
-  console.groupEnd();
 
   const {
     barChartHeading,
@@ -309,7 +301,6 @@ function NewReturning({
       pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
       sectionHeading={`${storeLocation} ${calendarView} Overview Customers`}
       statisticsMap={statistics}
-      width={width}
     />
   );
 

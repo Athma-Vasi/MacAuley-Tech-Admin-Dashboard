@@ -140,11 +140,6 @@ function CustomerMetrics({
     return null;
   }
 
-  logState({
-    state: customerMetricsState,
-    groupLabel: "CustomerMetrics",
-  });
-
   const categorySegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
@@ -170,7 +165,6 @@ function CustomerMetrics({
       metricCategory={category}
       metricsView="Customers"
       storeLocation={storeLocationView}
-      width={width}
       year={selectedYear}
     />
   );
@@ -188,7 +182,6 @@ function CustomerMetrics({
       metricCategory={category}
       metricsView="Customers"
       storeLocation={storeLocationView}
-      width={width}
       year={selectedYear}
     />
   );

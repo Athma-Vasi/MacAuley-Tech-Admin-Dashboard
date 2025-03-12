@@ -36,7 +36,6 @@ type DashboardMetricsLayoutProps<MetricObjKey extends string = string> = {
   sectionHeading: string;
   semanticLabel?: string;
   statisticsMap?: Map<MetricObjKey, StatisticsObject>;
-  width: number;
 };
 
 function DashboardMetricsLayout({
@@ -62,7 +61,6 @@ function DashboardMetricsLayout({
   sectionHeading,
   semanticLabel = "customers",
   statisticsMap,
-  width,
 }: DashboardMetricsLayoutProps) {
   const cardWidth = 350;
 

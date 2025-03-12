@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { useGlobalState } from "../../../../hooks";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -50,7 +50,6 @@ type ChurnRetentionProps = {
   metricsView: DashboardMetricsView;
   month: string;
   storeLocation: BusinessMetricStoreLocation;
-  width: number;
   year: Year;
 };
 
@@ -66,7 +65,6 @@ function ChurnRetention({
   metricsView,
   month,
   storeLocation,
-  width,
   year,
 }: ChurnRetentionProps) {
   const { globalDispatch } = useGlobalState();
@@ -286,7 +284,6 @@ function ChurnRetention({
       pieChartHeading={pieChartHeading}
       sectionHeading={`${storeLocation} ${calendarView} Overview Customers`}
       statisticsMap={statistics}
-      width={width}
     />
   );
 
