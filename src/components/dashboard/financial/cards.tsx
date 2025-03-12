@@ -104,7 +104,6 @@ function createFinancialMetricsCards({
         prevYear,
         redColorShade,
         selectedValue: 1,
-        width,
       };
 
       // daily
