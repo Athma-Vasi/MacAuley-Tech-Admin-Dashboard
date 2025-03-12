@@ -1,5 +1,3 @@
-import type { MantineNumberSize } from "@mantine/core";
-
 import {
   createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
@@ -88,7 +86,6 @@ function returnProductMetricsCards({
           prevYear,
           redColorShade,
           selectedValue: 1,
-          width,
         };
 
       // daily
