@@ -4,6 +4,7 @@ import { COLORS_SWATCHES } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
+import Settings from "./settings";
 
 function Header() {
     const { globalState: { themeObject }, globalDispatch } = useGlobalState();
@@ -37,6 +38,7 @@ function Header() {
         <div className="header">
             <h2>MacAuley Tech</h2>
             {themeSwitch}
+            <Settings />
         </div>
     );
 }

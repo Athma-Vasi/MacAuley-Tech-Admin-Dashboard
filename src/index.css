@@ -12,6 +12,11 @@
 
   .header {
     grid-area: header;
+    display: flex;
+    width: 100vi;
+    outline: 1px solid goldenrod;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .sidebar {
@@ -25,4 +30,13 @@
     /* color:#daa520 */
     /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
   }
+}
+
+.settings {
+  cursor: pointer;
+  background-color: goldenrod;
+  min-block-size: 50px;
+  min-inline-size: 50px;
+  max-block-size: 75px;
+  max-inline-size: 75px;
 }
