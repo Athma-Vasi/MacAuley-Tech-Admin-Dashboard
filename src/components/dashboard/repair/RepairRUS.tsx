@@ -1,9 +1,8 @@
-import type { MantineNumberSize } from "@mantine/core";
 import type React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../context/globalProvider/actions";
-import { useGlobalState } from "../../../hooks";
+import { useGlobalState } from "../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { ResponsiveBarChart, ResponsiveLineChart } from "../../charts";
@@ -24,8 +23,6 @@ import type { RepairSubMetric } from "./types";
 type RepairRUSProps = {
   borderColor: string;
   calendarView: DashboardCalendarView;
-  chartHeight: number;
-  chartWidth: number;
   day: string;
   subMetric: RepairSubMetric;
   metricsView: DashboardMetricsView;
@@ -33,7 +30,6 @@ type RepairRUSProps = {
   repairMetricsCards: RepairMetricsCards;
   repairMetricsCharts: RepairMetricsCharts;
   storeLocation: BusinessMetricStoreLocation;
-  width: number;
   year: Year;
 };
 
@@ -41,8 +37,6 @@ type RepairRUSProps = {
 function RepairRUS({
   borderColor,
   calendarView,
-  chartHeight,
-  chartWidth,
   repairMetricsCards,
   repairMetricsCharts,
   day,
@@ -50,7 +44,6 @@ function RepairRUS({
   metricsView,
   month,
   storeLocation,
-  width,
   year,
 }: RepairRUSProps) {
   const { globalDispatch } = useGlobalState();
@@ -111,8 +104,6 @@ function RepairRUS({
 
   const overviewBarChart = (
     <ResponsiveBarChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       barChartData={barCharts[subMetric]}
       hideControls
       indexBy={calendarView === "Daily"
@@ -153,8 +144,6 @@ function RepairRUS({
 
   const overviewLineChart = (
     <ResponsiveLineChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       lineChartData={lineCharts[subMetric]}
       hideControls
       xFormat={(x) =>
@@ -188,7 +177,6 @@ function RepairRUS({
       overviewCards={cards}
       sectionHeading={`${storeLocation} ${calendarView} Overview Repairs`}
       statisticsMap={statistics}
-      width={width}
     />
   );
 

@@ -9,7 +9,6 @@ type ReturnRepairMetricsCardsInput = {
   greenColorShade: string;
   redColorShade: string;
   selectedDateRepairMetrics: SelectedDateRepairMetrics;
-  width: number;
 };
 
 type RepairMetricsCards = {
@@ -22,7 +21,6 @@ function returnRepairMetricsCards({
   greenColorShade,
   redColorShade,
   selectedDateRepairMetrics,
-  width,
 }: ReturnRepairMetricsCardsInput): Promise<RepairMetricsCards> {
   const {
     dayRepairMetrics: { prevDayMetrics, selectedDayMetrics },
@@ -67,7 +65,6 @@ function returnRepairMetricsCards({
         prevYear,
         redColorShade,
         selectedValue: 1,
-        width,
       };
 
       const dayRevenueCardInfo = createDashboardMetricsCards({
