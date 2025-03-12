@@ -41,8 +41,6 @@ import type {
 
 function ResponsiveCalendarChart({
   calendarChartData,
-  chartHeight = 350,
-  chartWidth = 350,
   dashboardChartTitle,
   from,
   to,
@@ -175,7 +173,7 @@ function ResponsiveCalendarChart({
 
   if (hideControls) {
     return (
-      <Group w={chartWidth} h={chartHeight}>
+      <Group>
         {displayCalendarChart}
       </Group>
     );
