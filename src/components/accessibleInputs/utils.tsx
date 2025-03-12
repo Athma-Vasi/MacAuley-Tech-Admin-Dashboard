@@ -102,6 +102,42 @@ function createAccessibleValueValidationTextElements({
     return { invalidValueTextElement };
 }
 
+type CreateAccessibleNavLinkTextElements = {
+    active: boolean;
+    description: string;
+    name: string;
+    themeObject: ThemeObject;
+};
+
+function createAccessibleNavLinkTextElement({
+    active,
+    description,
+    name,
+    themeObject,
+}: CreateAccessibleNavLinkTextElements): {
+    screenreaderTextElement: React.JSX.Element;
+} {
+    const {
+        generalColors: { greenColorShade, textColor },
+    } = returnThemeColors({
+        themeObject,
+        colorsSwatches: COLORS_SWATCHES,
+    });
+
+    const screenreaderTextElement = (
+        <Text
+            id={`${name}-selected`}
+            color={active ? textColor : greenColorShade}
+            w="100%"
+            aria-live="polite"
+        >
+            {description}
+        </Text>
+    );
+
+    return { screenreaderTextElement };
+}
+
 type CreateAccessibleCheckboxSelectionsTextElements = {
     checked: boolean;
     deselectedDescription?: string;
@@ -483,6 +519,7 @@ export {
     createAccessibleButtons,
     createAccessibleButtonScreenreaderTextElements,
     createAccessibleCheckboxSelectionsTextElements,
+    createAccessibleNavLinkTextElement,
     createAccessibleSelectInputs,
     createAccessibleSliderScreenreaderTextElements,
     createAccessibleSwitchInputs,
