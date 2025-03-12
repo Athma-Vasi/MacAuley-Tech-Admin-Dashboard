@@ -17,7 +17,10 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAndControlsDisplay } from "../chartAndControlsDisplay/ChartAndControlsDisplay";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 import { ChartMargin } from "../chartControls/ChartMargin";
 import { ChartOptions } from "../chartControls/ChartOptions";
 import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
@@ -534,7 +537,6 @@ function ResponsiveCalendarChart({
       parentChartDispatch={responsiveCalendarChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -763,9 +765,7 @@ function ResponsiveCalendarChart({
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartOptionsStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -810,7 +810,6 @@ function ResponsiveCalendarChart({
       chartTitleSize={chartTitleSize}
       responsiveChart={displayCalendarChart}
       scrollBarStyle={scrollBarStyle}
-      width={width}
     />
   );
 
