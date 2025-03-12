@@ -22,8 +22,6 @@ type SunburstChartData = {
 };
 
 type ResponsiveSunburstChartProps = {
-  chartHeight?: number;
-  chartWidth?: number;
   hideControls?: boolean;
   sunburstChartData: SunburstChartData;
   valueFormat?: ValueFormat<number> | undefined;

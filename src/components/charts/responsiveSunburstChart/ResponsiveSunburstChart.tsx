@@ -41,8 +41,6 @@ import {
 } from "../utils";
 
 function ResponsiveSunburstChart({
-  chartHeight = 350,
-  chartWidth = 350,
   hideControls = false,
   sunburstChartData,
   valueFormat,
@@ -177,7 +175,7 @@ function ResponsiveSunburstChart({
 
   if (hideControls) {
     return (
-      <Group w={chartWidth} h={chartHeight}>
+      <Group>
         {displayResponsiveSunburst}
       </Group>
     );
