@@ -157,16 +157,22 @@ function returnThemeColors({
     colorsSwatches: ColorsSwatches;
 }) {
     const { colorScheme, primaryColor, primaryShade } = themeObject;
-    const { dark, gray, red, green, cyan, yellow, blue, orange } =
-        colorsSwatches;
-
-    const lightSchemeGray = gray[8];
-    const darkSchemeGray = gray[5];
-    const textColor = colorScheme === "light"
-        ? lightSchemeGray
-        : darkSchemeGray;
-    const iconGray = textColor;
-    const chartTextColor = colorScheme === "light" ? gray[8] : dark[7];
+    const {
+        blues,
+        cyans,
+        darks,
+        grapes,
+        grays,
+        greens,
+        indigos,
+        limes,
+        oranges,
+        pinks,
+        reds,
+        teals,
+        violets,
+        yellows,
+    } = colorsSwatches;
 
     const colorShade = colorScheme === "light"
         ? primaryShade.light
@@ -176,98 +182,127 @@ function returnThemeColors({
     )?.[1];
     const themeColorShade = themeColorShades
         ? themeColorShades[colorShade]
-        : gray[5];
+        : grays[5];
+
     // all color shades
-    const grayColorShade = gray[colorShade];
-    const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
-    const redColorShade = red[colorShade];
-    const greenColorShade = green[colorShade];
-    const cyanColorShade = cyan[colorShade];
-    const yellowColorShade = yellow[colorShade];
-    const orangeColorShade = orange[colorShade];
-    const blueColorShade = blue[colorShade];
-    const sliderLabelColor = gray[3];
-    const navLinkHoverShade = colorScheme === "light" ? gray[2] : gray[8];
-    const navLinkActiveShade = themeColorShades
-        ? colorScheme === "light" ? themeColorShades[1] : ""
-        : gray[5];
+    const grayColorShade = grays[colorShade];
+    const grayBorderShade = colorScheme === "light" ? grays[2] : grays[8];
+    const redColorShade = reds[colorShade];
+    const greenColorShade = greens[colorShade];
+    const cyanColorShade = cyans[colorShade];
+    const yellowColorShade = yellows[colorShade];
+    const orangeColorShade = oranges[colorShade];
+    const blueColorShade = blues[colorShade];
+    const pinkColorShade = pinks[colorShade];
+    const violetColorShade = violets[colorShade];
+    const indigoColorShade = indigos[colorShade];
+    const limeColorShade = limes[colorShade];
+    const darkColorShade = darks[colorShade];
+    const tealColorShade = teals[colorShade];
+    const grapeColorShade = grapes[colorShade];
 
-    const generalColors = {
-        blueColorShade,
-        chartTextColor,
-        cyanColorShade,
-        darkSchemeGray,
-        grayBorderShade,
-        grayColorShade,
-        greenColorShade,
-        iconGray,
-        lightSchemeGray,
-        navLinkActiveShade,
-        navLinkHoverShade,
-        orangeColorShade,
-        redColorShade,
-        sliderLabelColor,
-        textColor,
-        themeColorShade,
-        themeColorShades,
-        yellowColorShade,
-    };
+    const textColor = colorScheme === "light" ? grays[8] : grays[5];
+    const backgroundColor = colorScheme === "light" ? "#f5f5f5" : darks[6];
 
-    // app colors
-    const borderColor = colorScheme === "light"
-        ? `1px solid ${gray[3]}`
-        : `1px solid ${gray[8]}`;
-    const backgroundColor = colorScheme === "light"
-        // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
-        ? "#f5f5f5"
-        : dark[6];
-    const redBorderColor = `1px solid ${redColorShade}`;
-    const appThemeColors = {
-        borderColor,
-        backgroundColor,
-        redBorderColor,
-    };
+    // const lightSchemeGray = gray[8];
+    // const darkSchemeGray = gray[5];
+    // const textColor = colorScheme === "light"
+    //     ? lightSchemeGray
+    //     : darkSchemeGray;
+    // const iconGray = textColor;
+    // const chartTextColor = colorScheme === "light" ? gray[8] : dark[7];
 
-    // for table display
-    const tableHeadersBgColor = colorScheme === "light" ? gray[4] : gray[8];
-    const headersIconColor = colorScheme === "light" ? gray[5] : gray[7];
-    const headerBorderColor = colorScheme === "light"
-        ? `2px solid ${gray[2]}`
-        : `2px solid ${gray[7]}`;
-    const rowsBorderColor = colorScheme === "light"
-        ? `1px solid ${gray[2]}`
-        : `1px solid ${gray[8]}`;
-    const textHighlightColor = colorScheme === "light" ? gray[3] : gray[6];
-    const tablesThemeColors = {
-        tableHeadersBgColor,
-        headerBorderColor,
-        headersIconColor,
-        rowsBorderColor,
-        textHighlightColor,
-    };
+    // // all color shades
+    // const grayColorShade = gray[colorShade];
+    // const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
+    // const redColorShade = red[colorShade];
+    // const greenColorShade = green[colorShade];
+    // const cyanColorShade = cyan[colorShade];
+    // const yellowColorShade = yellow[colorShade];
+    // const orangeColorShade = orange[colorShade];
+    // const blueColorShade = blue[colorShade];
+    // const sliderLabelColor = gray[3];
+    // const navLinkHoverShade = colorScheme === "light" ? gray[2] : gray[8];
+    // const navLinkActiveShade = themeColorShades
+    //     ? colorScheme === "light" ? themeColorShades[1] : ""
+    //     : gray[5];
 
-    // directory graph colors
-    const edgeStrokeColor = colorScheme === "light" ? dark[5] : gray[8];
-    const nodeBackgroundColor = colorScheme === "light"
-        // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
-        ? "#f5f5f5"
-        : dark[6];
-    const nodeBorderColor = colorScheme === "light"
-        ? `1px solid ${dark[1]}`
-        : `1px solid ${gray[8]}`;
-    const nodeTextColor = colorScheme === "light" ? gray[8] : gray[5];
-    const directoryGraphThemeColors = {
-        edgeStrokeColor,
-        nodeBackgroundColor,
-        nodeBorderColor,
-        nodeTextColor,
-    };
+    // const generalColors = {
+    //     blueColorShade,
+    //     chartTextColor,
+    //     cyanColorShade,
+    //     darkSchemeGray,
+    //     grayBorderShade,
+    //     grayColorShade,
+    //     greenColorShade,
+    //     iconGray,
+    //     lightSchemeGray,
+    //     navLinkActiveShade,
+    //     navLinkHoverShade,
+    //     orangeColorShade,
+    //     redColorShade,
+    //     sliderLabelColor,
+    //     textColor,
+    //     themeColorShade,
+    //     themeColorShades,
+    //     yellowColorShade,
+    // };
+
+    // // app colors
+    // const borderColor = colorScheme === "light"
+    //     ? `1px solid ${gray[3]}`
+    //     : `1px solid ${gray[8]}`;
+    // const backgroundColor = colorScheme === "light"
+    //     // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
+    //     ? "#f5f5f5"
+    //     : dark[6];
+    // const redBorderColor = `1px solid ${redColorShade}`;
+    // const appThemeColors = {
+    //     borderColor,
+    //     backgroundColor,
+    //     redBorderColor,
+    // };
+
+    // // for table display
+    // const tableHeadersBgColor = colorScheme === "light" ? gray[4] : gray[8];
+    // const headersIconColor = colorScheme === "light" ? gray[5] : gray[7];
+    // const headerBorderColor = colorScheme === "light"
+    //     ? `2px solid ${gray[2]}`
+    //     : `2px solid ${gray[7]}`;
+    // const rowsBorderColor = colorScheme === "light"
+    //     ? `1px solid ${gray[2]}`
+    //     : `1px solid ${gray[8]}`;
+    // const textHighlightColor = colorScheme === "light" ? gray[3] : gray[6];
+    // const tablesThemeColors = {
+    //     tableHeadersBgColor,
+    //     headerBorderColor,
+    //     headersIconColor,
+    //     rowsBorderColor,
+    //     textHighlightColor,
+    // };
+
+    // // directory graph colors
+    // const edgeStrokeColor = colorScheme === "light" ? dark[5] : gray[8];
+    // const nodeBackgroundColor = colorScheme === "light"
+    //     // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
+    //     ? "#f5f5f5"
+    //     : dark[6];
+    // const nodeBorderColor = colorScheme === "light"
+    //     ? `1px solid ${dark[1]}`
+    //     : `1px solid ${gray[8]}`;
+    // const nodeTextColor = colorScheme === "light" ? gray[8] : gray[5];
+    // const directoryGraphThemeColors = {
+    //     edgeStrokeColor,
+    //     nodeBackgroundColor,
+    //     nodeBorderColor,
+    //     nodeTextColor,
+    // };
 
     // for ScrollArea styles
     const scrollBarStyle = {
         scrollbar: {
             "&, &:hover": {
-                background: colorScheme === "dark" ? dark[6] : gray[0],
+                background: colorScheme === "dark" ? darks[6] : grays[0],
             },
 
             '&[data-orientation="vertical"] .mantine-ScrollArea-thumb': {
@@ -281,16 +316,31 @@ function returnThemeColors({
 
         corner: {
             opacity: 1,
-            background: colorScheme === "dark" ? dark[6] : gray[0],
+            background: colorScheme === "dark" ? darks[6] : grays[0],
         },
     };
 
     return {
-        appThemeColors,
-        directoryGraphThemeColors,
-        generalColors,
+        backgroundColor,
+        blueColorShade,
+        cyanColorShade,
+        darkColorShade,
+        grapeColorShade,
+        grayBorderShade,
+        grayColorShade,
+        greenColorShade,
+        indigoColorShade,
+        limeColorShade,
+        orangeColorShade,
+        pinkColorShade,
+        redColorShade,
         scrollBarStyle,
-        tablesThemeColors,
+        tealColorShade,
+        textColor,
+        themeColorShade,
+        themeColorShades,
+        violetColorShade,
+        yellowColorShade,
     };
 }
 

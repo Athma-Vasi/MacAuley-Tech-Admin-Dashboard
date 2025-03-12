@@ -1,20 +1,20 @@
 import { CheckboxRadioSelectData, StoreLocation } from "./types";
 
 type ColorsSwatches = {
-    dark: string[];
-    gray: string[];
-    red: string[];
-    pink: string[];
-    grape: string[];
-    violet: string[];
-    indigo: string[];
-    blue: string[];
-    cyan: string[];
-    teal: string[];
-    green: string[];
-    lime: string[];
-    yellow: string[];
-    orange: string[];
+    darks: string[];
+    grays: string[];
+    reds: string[];
+    pinks: string[];
+    grapes: string[];
+    violets: string[];
+    indigos: string[];
+    blues: string[];
+    cyans: string[];
+    teals: string[];
+    greens: string[];
+    limes: string[];
+    yellows: string[];
+    oranges: string[];
 };
 /**
  * Mantine uses open-color in default theme with some additions (dark).
@@ -23,7 +23,7 @@ type ColorsSwatches = {
  * @see https://yeun.github.io/open-color/
  */
 const COLORS_SWATCHES: ColorsSwatches = {
-    dark: [
+    darks: [
         "#C1C2C5",
         "#A6A7AB",
         "#909296",
@@ -35,7 +35,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#141517",
         "#101113",
     ],
-    gray: [
+    grays: [
         "#f8f9fa",
         "#f1f3f5",
         "#e9ecef",
@@ -47,7 +47,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#343a40",
         "#212529",
     ],
-    red: [
+    reds: [
         "#fff5f5",
         "#ffe3e3",
         "#ffc9c9",
@@ -59,7 +59,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#e03131",
         "#c92a2a",
     ],
-    pink: [
+    pinks: [
         "#fff0f6",
         "#ffdeeb",
         "#fcc2d7",
@@ -71,7 +71,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#c2255c",
         "#a61e4d",
     ],
-    grape: [
+    grapes: [
         "#f8f0fc",
         "#f3d9fa",
         "#eebefa",
@@ -83,7 +83,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#9c36b5",
         "#862e9c",
     ],
-    violet: [
+    violets: [
         "#f3f0ff",
         "#e5dbff",
         "#d0bfff",
@@ -95,7 +95,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#6741d9",
         "#5f3dc4",
     ],
-    indigo: [
+    indigos: [
         "#edf2ff",
         "#dbe4ff",
         "#bac8ff",
@@ -107,7 +107,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#3b5bdb",
         "#364fc7",
     ],
-    blue: [
+    blues: [
         "#e7f5ff",
         "#d0ebff",
         "#a5d8ff",
@@ -119,7 +119,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#1971c2",
         "#1864ab",
     ],
-    cyan: [
+    cyans: [
         "#e3fafc",
         "#c5f6fa",
         "#99e9f2",
@@ -131,7 +131,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#0c8599",
         "#0b7285",
     ],
-    teal: [
+    teals: [
         "#e6fcf5",
         "#c3fae8",
         "#96f2d7",
@@ -143,7 +143,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#099268",
         "#087f5b",
     ],
-    green: [
+    greens: [
         "#ebfbee",
         "#d3f9d8",
         "#b2f2bb",
@@ -155,7 +155,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#2f9e44",
         "#2b8a3e",
     ],
-    lime: [
+    limes: [
         "#f4fce3",
         "#e9fac8",
         "#d8f5a2",
@@ -167,7 +167,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#66a80f",
         "#5c940d",
     ],
-    yellow: [
+    yellows: [
         "#fff9db",
         "#fff3bf",
         "#ffec99",
@@ -179,7 +179,7 @@ const COLORS_SWATCHES: ColorsSwatches = {
         "#f08c00",
         "#e67700",
     ],
-    orange: [
+    oranges: [
         "#fff4e6",
         "#ffe8cc",
         "#ffd8a8",

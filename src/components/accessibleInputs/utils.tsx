@@ -40,7 +40,7 @@ function createAccessibleValueValidationTextElements({
     invalidValueTextElement: React.JSX.Element;
 } {
     const {
-        generalColors: { redColorShade },
+        redColorShade,
     } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
     const invalidValueTextElement = (
@@ -118,7 +118,8 @@ function createAccessibleNavLinkTextElement({
     screenreaderTextElement: React.JSX.Element;
 } {
     const {
-        generalColors: { greenColorShade, textColor },
+        greenColorShade,
+        textColor,
     } = returnThemeColors({
         themeObject,
         colorsSwatches: COLORS_SWATCHES,
@@ -165,12 +166,10 @@ function createAccessibleCheckboxSelectionsTextElements({
     deselectedTextElement: React.JSX.Element;
 } {
     const {
-        generalColors: {
-            greenColorShade,
-            grayColorShade,
-            redColorShade,
-            darkSchemeGray,
-        },
+        greenColorShade,
+        grayColorShade,
+        redColorShade,
+        textColor,
     } = returnThemeColors({
         themeObject,
         colorsSwatches: COLORS_SWATCHES,
@@ -194,7 +193,7 @@ function createAccessibleCheckboxSelectionsTextElements({
     const selectedTextElement = (
         <Text
             aria-live="polite"
-            color={darkSchemeGray}
+            color={textColor}
             id={`${name}-selected`}
             style={{ display: checked ? "block" : "none" }}
         >
@@ -213,7 +212,7 @@ function createAccessibleCheckboxSelectionsTextElements({
     const deselectedTextElement = (
         <Text
             aria-live="polite"
-            color={theme === "default" ? darkSchemeGray : grayColorShade}
+            color={theme === "default" ? textColor : grayColorShade}
             id={`${name}-deselected`}
             style={{ display: !checked ? "block" : "none" }}
         >
@@ -247,12 +246,10 @@ function createAccessibleButtonScreenreaderTextElements({
     disabledTextElement: React.JSX.Element;
 } {
     const {
-        generalColors: {
-            greenColorShade,
-            textColor,
-            grayColorShade,
-            redColorShade,
-        },
+        greenColorShade,
+        textColor,
+        grayColorShade,
+        redColorShade,
     } = returnThemeColors({
         themeObject,
         colorsSwatches: COLORS_SWATCHES,
@@ -319,7 +316,8 @@ function createAccessibleSliderScreenreaderTextElements({
     screenreaderTextElement: React.JSX.Element;
 } {
     const {
-        generalColors: { greenColorShade, textColor },
+        greenColorShade,
+        textColor,
     } = returnThemeColors({
         themeObject,
         colorsSwatches: COLORS_SWATCHES,
@@ -365,7 +363,8 @@ function createAccessibleSwitchOnOffTextElements({
     switchOffTextElement: React.JSX.Element;
 } {
     const {
-        generalColors: { grayColorShade, redColorShade, greenColorShade },
+        grayColorShade,
+        redColorShade,
     } = returnThemeColors({
         themeObject,
         colorsSwatches: COLORS_SWATCHES,

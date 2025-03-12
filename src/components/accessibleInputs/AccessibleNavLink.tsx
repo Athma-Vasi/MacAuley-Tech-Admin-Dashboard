@@ -7,8 +7,9 @@ import {
 } from "@mantine/core";
 import type { ReactNode } from "react";
 import { TbChevronDownRight } from "react-icons/tb";
+import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { splitCamelCase } from "../../utils";
+import { returnThemeColors, splitCamelCase } from "../../utils";
 import { createAccessibleNavLinkTextElement } from "./utils";
 
 type AccessibleNavLinkAttributes = {
@@ -40,6 +41,11 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
     const {
         globalState: { themeObject },
     } = useGlobalState();
+
+    const { textColor } = returnThemeColors({
+        colorsSwatches: COLORS_SWATCHES,
+        themeObject,
+    });
 
     const {
         active = false,
@@ -86,6 +92,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
             onClick={onClick}
             opened={opened}
             rightSection={rightSection}
+            style={{ color: textColor }}
             variant={variant}
         >
             {children}
