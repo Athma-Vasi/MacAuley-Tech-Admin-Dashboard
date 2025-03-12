@@ -41,8 +41,6 @@ import { initialNewReturningState } from "./state";
 type NewReturningProps = {
   borderColor: string;
   calendarView: DashboardCalendarView;
-  chartHeight: number;
-  chartWidth: number;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
   day: string;
@@ -56,8 +54,6 @@ type NewReturningProps = {
 function NewReturning({
   borderColor,
   calendarView,
-  chartHeight,
-  chartWidth,
   customerMetricsCards,
   customerMetricsCharts,
   day,

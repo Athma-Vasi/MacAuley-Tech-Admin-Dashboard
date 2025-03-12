@@ -156,8 +156,6 @@ function CustomerMetrics({
     <NewReturning
       borderColor={borderColor}
       calendarView={calendarView}
-      chartHeight={382}
-      chartWidth={612}
       customerMetricsCards={cards}
       customerMetricsCharts={charts}
       day={selectedDate}
@@ -173,8 +171,6 @@ function CustomerMetrics({
     <ChurnRetention
       borderColor={borderColor}
       calendarView={calendarView}
-      chartHeight={382}
-      chartWidth={612}
       customerMetricsCards={cards}
       customerMetricsCharts={charts}
       day={selectedDate}
