@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { useGlobalState } from "../../../../hooks";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -167,8 +167,6 @@ function PERT({
 
   const overviewPieChart = (
     <ResponsivePieChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       pieChartData={pieCharts[pieChartYAxisVariable]}
       hideControls
       unitKind="number"
@@ -215,8 +213,6 @@ function PERT({
 
   const overviewBarChart = (
     <ResponsiveBarChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       barChartData={barCharts[barChartYAxisVariable]}
       hideControls
       indexBy={calendarView === "Daily"
@@ -269,8 +265,6 @@ function PERT({
 
   const overviewLineChart = (
     <ResponsiveLineChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       lineChartData={lineCharts[lineChartYAxisVariable]}
       hideControls
       xFormat={(x) =>
@@ -313,7 +307,6 @@ function PERT({
       sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
       semanticLabel={metricCategory}
       statisticsMap={statistics}
-      width={width}
     />
   );
 
