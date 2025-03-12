@@ -41,8 +41,6 @@ import { initialChurnRetentionState } from "./state";
 type ChurnRetentionProps = {
   borderColor: string;
   calendarView: DashboardCalendarView;
-  chartHeight: number;
-  chartWidth: number;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
   day: string;
@@ -56,8 +54,6 @@ type ChurnRetentionProps = {
 function ChurnRetention({
   borderColor,
   calendarView,
-  chartHeight,
-  chartWidth,
   customerMetricsCards,
   customerMetricsCharts,
   day,
