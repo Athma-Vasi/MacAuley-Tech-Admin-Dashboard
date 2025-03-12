@@ -80,15 +80,11 @@ function DisplayResponsiveChart() {
         dashboardChartTitle={chartTitle}
         from={`${year}-${month}-01`}
         to={`${year}-${month}-${day}`}
-        chartHeight={chartHeight}
-        chartWidth={chartWidth}
       />
     )
     : chartKind === "line"
     ? (
       <ResponsiveLineChart
-        chartHeight={chartHeight}
-        chartWidth={chartWidth}
         dashboardChartTitle={chartTitle}
         lineChartData={chartData}
         xFormat={xFormatLineChart}
@@ -99,8 +95,6 @@ function DisplayResponsiveChart() {
     : chartKind === "pie"
     ? (
       <ResponsivePieChart
-        chartHeight={chartHeight}
-        chartWidth={chartWidth}
         dashboardChartTitle={chartTitle}
         pieChartData={chartData}
         unitKind={chartUnitKind}
