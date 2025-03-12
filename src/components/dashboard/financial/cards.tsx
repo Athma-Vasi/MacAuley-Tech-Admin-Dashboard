@@ -10,7 +10,6 @@ type CreateFinancialMetricsCardsInput = {
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
   greenColorShade: string;
   redColorShade: string;
-  width: number;
 };
 
 type FinancialMetricsCards = {
@@ -41,7 +40,6 @@ function createFinancialMetricsCards({
   selectedDateFinancialMetrics,
   greenColorShade,
   redColorShade,
-  width,
 }: CreateFinancialMetricsCardsInput): Promise<FinancialMetricsCards> {
   const {
     dayFinancialMetrics: { prevDayMetrics, selectedDayMetrics },

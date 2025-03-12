@@ -2,9 +2,9 @@ import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES } from "../../../constants/data";
-import { useGlobalState } from "../../../hooks";
-import { logState, returnThemeColors } from "../../../utils";
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { MONTHS } from "../constants";
 import type {
@@ -52,7 +52,7 @@ function FinancialMetrics({
   const { cards, category, charts, isGenerating } = financialMetricsState;
 
   const {
-    globalState: { themeObject, width },
+    globalState: { themeObject },
   } = useGlobalState();
 
   const { showBoundary } = useErrorBoundary();
@@ -104,7 +104,6 @@ function FinancialMetrics({
           greenColorShade,
           redColorShade,
           selectedDateFinancialMetrics,
-          width,
         });
 
         if (!isMounted) {
@@ -148,11 +147,6 @@ function FinancialMetrics({
     return null;
   }
 
-  logState({
-    state: financialMetricsState,
-    groupLabel: "FinancialMetrics",
-  });
-
   const categorySegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
@@ -170,8 +164,6 @@ function FinancialMetrics({
       <PERT
         borderColor={borderColor}
         calendarView={calendarView}
-        chartHeight={382}
-        chartWidth={612}
         financialMetricsCards={cards}
         financialMetricsCharts={charts}
         day={selectedDate}
@@ -179,7 +171,6 @@ function FinancialMetrics({
         metricCategory={category}
         metricsView="Financials"
         storeLocation={storeLocationView}
-        width={width}
         year={selectedYear}
       />
     )
@@ -187,8 +178,6 @@ function FinancialMetrics({
       <OtherMetrics
         borderColor={borderColor}
         calendarView={calendarView}
-        chartHeight={382}
-        chartWidth={612}
         financialMetricsCards={cards}
         financialMetricsCharts={charts}
         day={selectedDate}
@@ -196,7 +185,6 @@ function FinancialMetrics({
         metricCategory={category}
         metricsView="Financials"
         storeLocation={storeLocationView}
-        width={width}
         year={selectedYear}
       />
     );

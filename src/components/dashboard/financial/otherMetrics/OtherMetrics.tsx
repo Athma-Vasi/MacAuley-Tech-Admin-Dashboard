@@ -34,7 +34,6 @@ type OtherMetricsProps = {
   metricsView: DashboardMetricsView;
   month: string;
   storeLocation: BusinessMetricStoreLocation;
-  width: number;
   year: Year;
 };
 
@@ -48,7 +47,6 @@ function OtherMetrics({
   metricsView,
   month,
   storeLocation,
-  width,
   year,
 }: OtherMetricsProps) {
   const { globalDispatch } = useGlobalState();

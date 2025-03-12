@@ -41,8 +41,6 @@ import { initialPERTState } from "./state";
 type PERTProps = {
   borderColor: string;
   calendarView: DashboardCalendarView;
-  chartHeight: number;
-  chartWidth: number;
   financialMetricsCards: FinancialMetricsCards;
   financialMetricsCharts: FinancialMetricsCharts;
   day: string;
@@ -50,15 +48,12 @@ type PERTProps = {
   metricsView: DashboardMetricsView;
   month: string;
   storeLocation: BusinessMetricStoreLocation;
-  width: number;
   year: Year;
 };
 /** PERT = Profit | Expenses | Revenue | Transactions */
 function PERT({
   borderColor,
   calendarView,
-  chartHeight,
-  chartWidth,
   financialMetricsCards,
   financialMetricsCharts,
   day,
@@ -66,7 +61,6 @@ function PERT({
   metricsView,
   month,
   storeLocation,
-  width,
   year,
 }: PERTProps) {
   const { globalDispatch } = useGlobalState();
