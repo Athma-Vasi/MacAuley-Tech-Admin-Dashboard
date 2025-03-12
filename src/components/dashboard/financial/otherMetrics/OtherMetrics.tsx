@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { useGlobalState } from "../../../../hooks";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -27,8 +27,6 @@ import { initialOtherMetricsState } from "./state";
 type OtherMetricsProps = {
   borderColor: string;
   calendarView: DashboardCalendarView;
-  chartHeight: number;
-  chartWidth: number;
   financialMetricsCards: FinancialMetricsCards;
   financialMetricsCharts: FinancialMetricsCharts;
   day: string;
@@ -43,8 +41,6 @@ type OtherMetricsProps = {
 function OtherMetrics({
   borderColor,
   calendarView,
-  chartHeight,
-  chartWidth,
   financialMetricsCards,
   financialMetricsCharts,
   day,
@@ -135,8 +131,6 @@ function OtherMetrics({
 
   const overviewBarChart = (
     <ResponsiveBarChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       barChartData={barCharts[barChartYAxisVariable]}
       hideControls
       indexBy={calendarView === "Daily"
@@ -189,8 +183,6 @@ function OtherMetrics({
 
   const overviewLineChart = (
     <ResponsiveLineChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       lineChartData={lineCharts[lineChartYAxisVariable]}
       hideControls
       xFormat={(x) =>
@@ -228,7 +220,6 @@ function OtherMetrics({
       pieChartHeading={pieChartHeading}
       sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
       statisticsMap={statistics}
-      width={width}
     />
   );
 
