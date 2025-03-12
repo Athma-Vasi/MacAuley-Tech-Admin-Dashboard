@@ -90,6 +90,8 @@ type ValidationFunctionsTable = Record<ValidationKey, Validation>;
 /** input popover error messages are determined by partials tests */
 type Validation = [RegExp | ((value: string) => boolean), string][];
 
+type StoreLocation = "Calgary" | "Edmonton" | "Vancouver";
+
 export type {
     CheckboxRadioSelectData,
     ColorScheme,
@@ -97,6 +99,7 @@ export type {
     SetPageInErrorPayload,
     Shade,
     SliderMarksData,
+    StoreLocation,
     ThemeComponent,
     ThemeObject,
     Validation,

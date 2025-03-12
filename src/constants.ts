@@ -1,3 +1,5 @@
+import { CheckboxRadioSelectData, StoreLocation } from "./types";
+
 type ColorsSwatches = {
     dark: string[];
     gray: string[];
@@ -191,11 +193,17 @@ const COLORS_SWATCHES: ColorsSwatches = {
     ],
 };
 
+const STORE_LOCATION_DATA: CheckboxRadioSelectData<StoreLocation> = [
+    { value: "Edmonton", label: "Edmonton" },
+    { value: "Calgary", label: "Calgary" },
+    { value: "Vancouver", label: "Vancouver" },
+];
+
 const SCREENSHOT_IMAGE_TYPE_DATA = [
     { value: "image/png", label: "Image/png" },
     { value: "image/jpeg", label: "Image/jpeg" },
     { value: "image/webp", label: "Image/webp" },
 ];
 
-export { COLORS_SWATCHES, SCREENSHOT_IMAGE_TYPE_DATA };
+export { COLORS_SWATCHES, SCREENSHOT_IMAGE_TYPE_DATA, STORE_LOCATION_DATA };
 export type { ColorsSwatches };

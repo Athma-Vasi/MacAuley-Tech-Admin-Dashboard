@@ -11,11 +11,10 @@ import {
 import localforage from "localforage";
 import React, { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
-import { useNavigate } from "react-router-dom";
 
-import { COLORS_SWATCHES, STORE_LOCATION_DATA } from "../../constants/data";
+import { COLORS_SWATCHES, STORE_LOCATION_DATA } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
-import { useGlobalState } from "../../hooks";
+import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
@@ -61,8 +60,6 @@ function Dashboard() {
     globalState: { themeObject },
     globalDispatch,
   } = useGlobalState();
-
-  const navigate = useNavigate();
 
   const { showBoundary } = useErrorBoundary();
 

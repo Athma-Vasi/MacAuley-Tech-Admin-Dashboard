@@ -257,7 +257,7 @@ async function createRandomBusinessMetrics({
 
     return completeBusinessMetrics;
   } catch (error: any) {
-    throw new Error(error, { cause: "createRandomBusinessMetrics" });
+    throw new Error("createRandomBusinessMetrics");
   }
 }
 
@@ -3549,9 +3549,11 @@ function returnStatistics<
                 return;
               }
 
-              filteredBarObjAcc.has(key)
-                ? filteredBarObjAcc.get(key).push(value)
-                : filteredBarObjAcc.set(key, [value]);
+              if (filteredBarObjAcc.has(key)) {
+                filteredBarObjAcc.get(key).push(value);
+              } else {
+                filteredBarObjAcc.set(key, [value]);
+              }
             });
 
             return filteredBarObjAcc;
@@ -3658,7 +3660,7 @@ function returnIsTabDisabled(
   storeLocationView: BusinessMetricStoreLocation,
   selectedYear: Year,
 ) {
-  const yearNumber = Number(selectedYear) ?? 0;
+  const yearNumber = isNaN(Number(selectedYear)) ? 0 : Number(selectedYear);
 
   switch (storeLocationView) {
     case "Calgary": {
