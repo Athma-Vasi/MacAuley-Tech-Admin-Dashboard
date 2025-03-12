@@ -52,7 +52,7 @@ function CustomerMetrics({
   const { cards, category, charts, isGenerating } = customerMetricsState;
 
   const {
-    globalState: { themeObject, width },
+    globalState: { themeObject },
   } = useGlobalState();
 
   const { showBoundary } = useErrorBoundary();
@@ -86,8 +86,6 @@ function CustomerMetrics({
           year: selectedYear,
         });
 
-        console.log("selectedDateCustomerMetrics", selectedDateCustomerMetrics);
-
         const customerMetricsCharts = await createCustomerMetricsCharts({
           businessMetrics,
           months: MONTHS,
@@ -99,7 +97,6 @@ function CustomerMetrics({
           greenColorShade,
           redColorShade,
           selectedDateCustomerMetrics,
-          width,
         });
 
         if (!isMounted) {

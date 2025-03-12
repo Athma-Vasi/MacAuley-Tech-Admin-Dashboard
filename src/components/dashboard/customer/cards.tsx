@@ -10,7 +10,6 @@ type CreateCustomerMetricsCardsInput = {
   greenColorShade: string;
   redColorShade: string;
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics;
-  width: number;
 };
 
 type CustomerMetricsCards = {
@@ -41,7 +40,6 @@ function createCustomerMetricsCards({
   greenColorShade,
   redColorShade,
   selectedDateCustomerMetrics,
-  width,
 }: CreateCustomerMetricsCardsInput): Promise<CustomerMetricsCards> {
   const {
     dayCustomerMetrics: { prevDayMetrics, selectedDayMetrics },
@@ -105,7 +103,6 @@ function createCustomerMetricsCards({
           prevYear,
           redColorShade,
           selectedValue: 1,
-          width,
         };
 
       // daily
