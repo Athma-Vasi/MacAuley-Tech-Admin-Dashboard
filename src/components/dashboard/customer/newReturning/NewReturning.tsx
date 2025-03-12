@@ -156,8 +156,6 @@ function NewReturning({
 
   const overviewPieChart = (
     <ResponsivePieChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       pieChartData={pieCharts[newReturningPieChartYAxisVariable]}
       hideControls
       unitKind="number"
@@ -205,8 +203,6 @@ function NewReturning({
 
   const overviewBarChart = (
     <ResponsiveBarChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       barChartData={barCharts[newReturningBarChartYAxisVariable]}
       hideControls
       indexBy={calendarView === "Daily"
@@ -260,8 +256,6 @@ function NewReturning({
 
   const overviewLineChart = (
     <ResponsiveLineChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       lineChartData={lineCharts[newReturningLineChartYAxisVariable]}
       hideControls
       xFormat={(x) =>
