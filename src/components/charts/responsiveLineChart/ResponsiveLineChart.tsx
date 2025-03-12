@@ -54,8 +54,6 @@ import {
 
 function ResponsiveLineChart({
   lineChartData,
-  chartHeight = 350,
-  chartWidth = 350,
   dashboardChartTitle,
   hideControls = false,
   xFormat,
@@ -352,7 +350,7 @@ function ResponsiveLineChart({
 
   if (hideControls) {
     return (
-      <Group w={chartWidth} h={chartHeight}>
+      <Group>
         {displayResponsiveLine}
       </Group>
     );
