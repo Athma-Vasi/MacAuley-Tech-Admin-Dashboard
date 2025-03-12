@@ -64,7 +64,7 @@ function Dashboard() {
   const { showBoundary } = useErrorBoundary();
 
   const {
-    appThemeColors: { backgroundColor },
+    backgroundColor,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,

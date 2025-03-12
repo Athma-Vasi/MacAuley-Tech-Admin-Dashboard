@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { ThemeObject } from "./types";
 import { ColorsSwatches } from "./constants";
+import { ThemeObject } from "./types";
 
 type CaptureScreenshotInput = {
     chartRef: any;

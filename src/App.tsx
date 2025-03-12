@@ -1,4 +1,5 @@
 import "./App.css";
+import Header from "./components/header";
 import Sidebar from "./components/sidebar";
 import { COLORS_SWATCHES } from "./constants";
 import { useGlobalState } from "./hooks/useGlobalState";
@@ -9,7 +10,7 @@ function App() {
     globalState: { themeObject },
   } = useGlobalState();
 
-  const { backgroundColor, textColor, tealColorShade } = returnThemeColors({
+  const { backgroundColor, textColor } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -17,8 +18,14 @@ function App() {
   console.log("App component rendered with themeObject:", themeObject);
 
   return (
-    <div style={{ backgroundColor, color: tealColorShade }}>
-      <Sidebar />
+    <div className="app" style={{ backgroundColor, color: textColor }}>
+      <Header />
+      <div className="sidebar">
+        <Sidebar />
+      </div>
+      <div className="main">
+        <h2>Main content</h2>
+      </div>
     </div>
   );
 }
