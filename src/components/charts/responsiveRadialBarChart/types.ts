@@ -25,8 +25,6 @@ type RadialBarChartData = {
 };
 
 type ResponsiveRadialBarChartProps = {
-  chartHeight?: number;
-  chartWidth?: number;
   hideControls?: boolean;
   radialBarChartData: RadialBarChartData[];
 };

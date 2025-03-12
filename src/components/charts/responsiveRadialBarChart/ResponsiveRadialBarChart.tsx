@@ -42,8 +42,6 @@ import {
 
 function ResponsiveRadialBarChart({
   radialBarChartData,
-  chartHeight = 350,
-  chartWidth = 350,
   hideControls = false,
 }: ResponsiveRadialBarChartProps) {
   const {
@@ -292,7 +290,7 @@ function ResponsiveRadialBarChart({
 
   if (hideControls) {
     return (
-      <Group w={chartWidth} h={chartHeight}>
+      <Group>
         {displayResponsiveRadialBar}
       </Group>
     );
