@@ -55,7 +55,6 @@ type ChartArcLabelProps = {
   parentChartDispatch: React.Dispatch<ChartArcLabelDispatch>;
   sectionHeadersBgColor: string;
   textColor: string;
-  width: number;
 };
 
 function ChartArcLabel(props: ChartArcLabelProps) {
@@ -71,7 +70,6 @@ function ChartArcLabel(props: ChartArcLabelProps) {
     parentChartDispatch,
     sectionHeadersBgColor,
     textColor,
-    width,
   } = props;
 
   const enableArcLabelsSwitchInput = (
@@ -150,7 +148,6 @@ function ChartArcLabel(props: ChartArcLabelProps) {
         });
       }}
       value={arcLabelsTextColor}
-      w={width}
     />
   );
 

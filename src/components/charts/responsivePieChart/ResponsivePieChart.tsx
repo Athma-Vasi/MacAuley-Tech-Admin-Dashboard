@@ -17,7 +17,6 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAndControlsDisplay } from "../chartAndControlsDisplay/ChartAndControlsDisplay";
 import { ChartArcLabel } from "../chartControls/ChartArcLabel";
 import { ChartLegend } from "../chartControls/ChartLegend";
 import { ChartMargin } from "../chartControls/ChartMargin";
@@ -36,6 +35,10 @@ import { responsivePieChartReducer } from "./reducers";
 import { initialResponsivePieChartState } from "./state";
 import type { ResponsivePieChartProps } from "./types";
 import { createPieFillPatterns } from "./utils";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 
 function ResponsivePieChart({
   chartHeight = 500,
@@ -46,7 +49,7 @@ function ResponsivePieChart({
   unitKind = "currency",
 }: ResponsivePieChartProps) {
   const {
-    globalState: { width, themeObject, isPrefersReducedMotion },
+    globalState: { themeObject, isPrefersReducedMotion },
   } = useGlobalState();
 
   const {
@@ -849,7 +852,6 @@ function ResponsivePieChart({
       parentChartDispatch={responsivePieChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1063,7 +1065,6 @@ function ResponsivePieChart({
       parentChartDispatch={responsivePieChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1095,7 +1096,6 @@ function ResponsivePieChart({
       parentChartDispatch={responsivePieChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1114,9 +1114,7 @@ function ResponsivePieChart({
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartOptionsStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1162,7 +1160,6 @@ function ResponsivePieChart({
       chartTitleSize={chartTitleSize}
       responsiveChart={displayResponsivePie}
       scrollBarStyle={scrollBarStyle}
-      width={width}
     />
   );
 
