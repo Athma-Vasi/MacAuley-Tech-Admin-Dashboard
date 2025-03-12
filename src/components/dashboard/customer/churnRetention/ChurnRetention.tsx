@@ -140,8 +140,6 @@ function ChurnRetention({
 
   const overviewPieChart = (
     <ResponsivePieChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       pieChartData={pieCharts}
       hideControls
       unitKind="number"
@@ -189,8 +187,6 @@ function ChurnRetention({
 
   const overviewBarChart = (
     <ResponsiveBarChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       barChartData={barCharts[churnRetentionBarChartYAxisVariable]}
       hideControls
       indexBy={calendarView === "Daily"
@@ -244,8 +240,6 @@ function ChurnRetention({
 
   const overviewLineChart = (
     <ResponsiveLineChart
-      chartHeight={chartHeight}
-      chartWidth={chartWidth}
       lineChartData={lineCharts[churnRetentionLineChartYAxisVariable]}
       hideControls
       xFormat={(x) =>
