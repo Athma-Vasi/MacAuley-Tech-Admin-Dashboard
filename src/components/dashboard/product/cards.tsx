@@ -9,7 +9,6 @@ type ReturnProductMetricsCardsInput = {
   greenColorShade: string;
   redColorShade: string;
   selectedDateProductMetrics: SelectedDateProductMetrics;
-  width: number;
 };
 
 type ProductMetricsCards = {
@@ -31,7 +30,6 @@ function returnProductMetricsCards({
   greenColorShade,
   redColorShade,
   selectedDateProductMetrics,
-  width,
 }: ReturnProductMetricsCardsInput): Promise<ProductMetricsCards> {
   const {
     dayProductMetrics: { prevDayMetrics, selectedDayMetrics },

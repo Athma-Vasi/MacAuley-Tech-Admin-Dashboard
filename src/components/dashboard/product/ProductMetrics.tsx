@@ -2,9 +2,9 @@ import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES } from "../../../constants/data";
-import { useGlobalState } from "../../../hooks";
-import { logState, returnThemeColors } from "../../../utils";
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { MONTHS } from "../constants";
@@ -56,7 +56,7 @@ function ProductMetrics({
     productMetricsState;
 
   const {
-    globalState: { themeObject, width },
+    globalState: { themeObject },
   } = useGlobalState();
 
   const { showBoundary } = useErrorBoundary();
@@ -103,7 +103,6 @@ function ProductMetrics({
           greenColorShade,
           redColorShade,
           selectedDateProductMetrics,
-          width,
         });
 
         if (!isMounted) {
@@ -147,11 +146,6 @@ function ProductMetrics({
     return null;
   }
 
-  logState({
-    state: productMetricsState,
-    groupLabel: "ProductMetrics",
-  });
-
   const subMetricSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
@@ -180,8 +174,6 @@ function ProductMetrics({
     <RUS
       borderColor={borderColor}
       calendarView={calendarView}
-      chartHeight={382}
-      chartWidth={612}
       productMetricsCards={cards}
       productMetricsCharts={charts}
       day={selectedDate}
@@ -189,7 +181,6 @@ function ProductMetrics({
       subMetric={subMetric}
       metricsView="Products"
       storeLocation={storeLocationView}
-      width={width}
       year={selectedYear}
     />
   );
@@ -219,11 +210,6 @@ function ProductMetrics({
       {revenueUnitsSold}
     </Stack>
   );
-
-  logState({
-    state: productMetricsState,
-    groupLabel: "ProductMetrics",
-  });
 
   return productMetrics;
 }
