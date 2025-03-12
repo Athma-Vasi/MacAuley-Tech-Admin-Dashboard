@@ -49,8 +49,6 @@ import {
 
 function ResponsiveBarChart({
     barChartData,
-    chartHeight = 350,
-    chartWidth = 350,
     dashboardChartTitle,
     hideControls = false,
     indexBy,
@@ -356,7 +354,7 @@ function ResponsiveBarChart({
 
     if (hideControls) {
         return (
-            <Group w={chartWidth} h={chartHeight}>
+            <Group>
                 {displayResponsiveBar}
             </Group>
         );

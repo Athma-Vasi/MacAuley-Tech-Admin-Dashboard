@@ -31,8 +31,6 @@ type BarChartData<
 
 type ResponsiveBarChartProps = {
     barChartData: BarChartData[];
-    chartHeight?: number;
-    chartWidth?: number;
     dashboardChartTitle?: string;
     hideControls?: boolean;
     indexBy: string;
