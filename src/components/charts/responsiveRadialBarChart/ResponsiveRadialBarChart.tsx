@@ -17,7 +17,6 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAndControlsDisplay } from "../chartAndControlsDisplay/ChartAndControlsDisplay";
 import { ChartLegend } from "../chartControls/ChartLegend";
 import { ChartMargin } from "../chartControls/ChartMargin";
 import { ChartOptions } from "../chartControls/ChartOptions";
@@ -36,6 +35,10 @@ import type {
   ResponsiveRadialBarChartProps,
   ResponsiveRadialBarChartState,
 } from "./types";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 
 function ResponsiveRadialBarChart({
   radialBarChartData,
@@ -44,7 +47,7 @@ function ResponsiveRadialBarChart({
   hideControls = false,
 }: ResponsiveRadialBarChartProps) {
   const {
-    globalState: { isPrefersReducedMotion, themeObject, width },
+    globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
 
   const {
@@ -1045,7 +1048,6 @@ function ResponsiveRadialBarChart({
       parentChartDispatch={responsiveRadialBarChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1509,7 +1511,6 @@ function ResponsiveRadialBarChart({
       parentChartDispatch={responsiveRadialBarChartDispatch}
       sectionHeadersBgColor={sectionHeadersBgColor}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1576,9 +1577,7 @@ function ResponsiveRadialBarChart({
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
       sectionHeadersBgColor={sectionHeadersBgColor}
-      stepperPages={returnChartOptionsStepperPages()}
       textColor={textColor}
-      width={width}
     />
   );
 
@@ -1628,7 +1627,6 @@ function ResponsiveRadialBarChart({
       chartTitleSize={chartTitleSize}
       responsiveChart={displayResponsiveRadialBar}
       scrollBarStyle={scrollBarStyle}
-      width={width}
     />
   );
 
