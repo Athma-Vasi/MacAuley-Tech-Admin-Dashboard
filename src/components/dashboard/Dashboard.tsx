@@ -61,6 +61,8 @@ function Dashboard() {
     globalDispatch,
   } = useGlobalState();
 
+  const { primaryColor } = themeObject;
+
   const { showBoundary } = useErrorBoundary();
 
   const {
@@ -188,6 +190,7 @@ function Dashboard() {
 
   const createdMetricsTabs = (
     <Tabs
+      color={primaryColor}
       value={metricsView}
       onTabChange={(value) => {
         dashboardDispatch({
@@ -212,6 +215,7 @@ function Dashboard() {
 
   const createdCalendarTabs = (
     <Tabs
+      color={primaryColor}
       value={calendarView}
       onTabChange={(value) => {
         dashboardDispatch({
@@ -343,6 +347,7 @@ function Dashboard() {
           <Group position="apart">
             <Stack w={500}>
               <Tabs
+                color={primaryColor}
                 value={storeLocationView}
                 onTabChange={(value) => {
                   dashboardDispatch({
