@@ -7,37 +7,10 @@ import { returnThemeColors } from "../../utils";
 import Settings from "./settings";
 
 function Header() {
-    const { globalState: { themeObject }, globalDispatch } = useGlobalState();
-    const { colorScheme, primaryColor } = themeObject;
-
-    const { themeColorShade } = returnThemeColors({
-        colorsSwatches: COLORS_SWATCHES,
-        themeObject,
-    });
-
-    console.log({ themeColorShade });
-
-    const themeSwitch = (
-        <Switch
-            color={primaryColor}
-            checked={colorScheme === "light"}
-            onLabel={<TbSun size={18} />}
-            offLabel={<TbMoon size={18} />}
-            onChange={() => {
-                globalDispatch({
-                    action: globalAction.setColorScheme,
-                    payload: colorScheme === "dark" ? "light" : "dark",
-                });
-            }}
-            size="md"
-            value={colorScheme}
-        />
-    );
-
     return (
         <div className="header">
             <h2>MacAuley Tech</h2>
-            {themeSwitch}
+
             <Settings />
         </div>
     );

@@ -11,6 +11,7 @@ type AccessibleSwitchInputAttributes<
   InvalidValueAction extends string = string,
 > = {
   checked: boolean;
+  color?: string;
   disabled?: boolean;
   invalidValueAction: InvalidValueAction;
   label?: ReactNode;
@@ -66,6 +67,7 @@ function AccessibleSwitchInput<
 ) {
   const {
     checked,
+    color,
     disabled = false,
     invalidValueAction,
     labelPosition = "right",
@@ -116,6 +118,7 @@ function AccessibleSwitchInput<
           // id of switchOffTextElement
           : `${name}-off`}
         checked={checked}
+        color={color}
         description={preventErrorStateWhenOff
           ? ""
           : checked

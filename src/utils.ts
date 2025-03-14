@@ -202,6 +202,7 @@ function returnThemeColors({
     const grapeColorShade = grape[colorShade];
 
     const textColor = colorScheme === "light" ? gray[8] : gray[5];
+    const textColorSliderLabel = gray[3];
     const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[6];
 
     // const lightSchemeGray = gray[8];
@@ -337,6 +338,7 @@ function returnThemeColors({
         scrollBarStyle,
         tealColorShade,
         textColor,
+        textColorSliderLabel,
         themeColorShade,
         themeColorShades,
         violetColorShade,
