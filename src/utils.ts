@@ -158,20 +158,20 @@ function returnThemeColors({
 }) {
     const { colorScheme, primaryColor, primaryShade } = themeObject;
     const {
-        blues,
-        cyans,
-        darks,
-        grapes,
-        grays,
-        greens,
-        indigos,
-        limes,
-        oranges,
-        pinks,
-        reds,
-        teals,
-        violets,
-        yellows,
+        blue,
+        cyan,
+        dark,
+        grape,
+        gray,
+        green,
+        indigo,
+        lime,
+        orange,
+        pink,
+        red,
+        teal,
+        violet,
+        yellow,
     } = colorsSwatches;
 
     const colorShade = colorScheme === "light"
@@ -182,27 +182,27 @@ function returnThemeColors({
     )?.[1];
     const themeColorShade = themeColorShades
         ? themeColorShades[colorShade]
-        : grays[5];
+        : gray[5];
 
     // all color shades
-    const grayColorShade = grays[colorShade];
-    const grayBorderShade = colorScheme === "light" ? grays[2] : grays[8];
-    const redColorShade = reds[colorShade];
-    const greenColorShade = greens[colorShade];
-    const cyanColorShade = cyans[colorShade];
-    const yellowColorShade = yellows[colorShade];
-    const orangeColorShade = oranges[colorShade];
-    const blueColorShade = blues[colorShade];
-    const pinkColorShade = pinks[colorShade];
-    const violetColorShade = violets[colorShade];
-    const indigoColorShade = indigos[colorShade];
-    const limeColorShade = limes[colorShade];
-    const darkColorShade = darks[colorShade];
-    const tealColorShade = teals[colorShade];
-    const grapeColorShade = grapes[colorShade];
+    const grayColorShade = gray[colorShade];
+    const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
+    const redColorShade = red[colorShade];
+    const greenColorShade = green[colorShade];
+    const cyanColorShade = cyan[colorShade];
+    const yellowColorShade = yellow[colorShade];
+    const orangeColorShade = orange[colorShade];
+    const blueColorShade = blue[colorShade];
+    const pinkColorShade = pink[colorShade];
+    const violetColorShade = violet[colorShade];
+    const indigoColorShade = indigo[colorShade];
+    const limeColorShade = lime[colorShade];
+    const darkColorShade = dark[colorShade];
+    const tealColorShade = teal[colorShade];
+    const grapeColorShade = grape[colorShade];
 
-    const textColor = colorScheme === "light" ? grays[8] : grays[5];
-    const backgroundColor = colorScheme === "light" ? "#f5f5f5" : darks[6];
+    const textColor = colorScheme === "light" ? gray[8] : gray[5];
+    const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[6];
 
     // const lightSchemeGray = gray[8];
     // const darkSchemeGray = gray[5];
@@ -302,7 +302,7 @@ function returnThemeColors({
     const scrollBarStyle = {
         scrollbar: {
             "&, &:hover": {
-                background: colorScheme === "dark" ? darks[6] : grays[0],
+                background: colorScheme === "dark" ? dark[6] : gray[0],
             },
 
             '&[data-orientation="vertical"] .mantine-ScrollArea-thumb': {
@@ -316,7 +316,7 @@ function returnThemeColors({
 
         corner: {
             opacity: 1,
-            background: colorScheme === "dark" ? darks[6] : grays[0],
+            background: colorScheme === "dark" ? dark[6] : gray[0],
         },
     };
 
