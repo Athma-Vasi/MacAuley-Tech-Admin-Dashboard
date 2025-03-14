@@ -54,13 +54,10 @@ type ChartAxisBottomProps = {
   axisBottomTickPadding: number; // 0px - 20px default: 5 step: 1
   axisBottomTickRotation: number; // -90° - 90° default: 0 step: 1
   axisBottomTickSize: number; // 0px - 20px default: 5 step: 1
-  borderColor: string;
   enableAxisBottom: boolean; // default: false ? null
   initialChartState: Record<string, any>;
   parentChartAction: ChartAxisAction;
   parentChartDispatch: React.Dispatch<ChartAxisDispatch>;
-  sectionHeadersBgColor: string;
-  textColor: string;
 };
 
 function ChartAxisBottom(props: ChartAxisBottomProps) {
@@ -71,13 +68,10 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
     axisBottomTickPadding,
     axisBottomTickRotation,
     axisBottomTickSize,
-    borderColor,
     enableAxisBottom,
     initialChartState,
     parentChartAction,
     parentChartDispatch,
-    sectionHeadersBgColor,
-    textColor,
   } = props;
 
   const enableAxisBottomSwitchInput = (
@@ -200,18 +194,17 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
 
   const displayAxisBottomHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
-      <Title order={5} color={textColor}>
+      <Title order={5}>
         Axis Bottom
       </Title>
     </Group>
   );
 
   const displayToggleAxisBottomSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableAxisBottomSwitchInput}
     </Group>
   );

@@ -94,10 +94,8 @@ type ChartLegendDispatch =
   };
 
 type ChartLegendProps = {
-  borderColor: string;
   enableLegend: boolean; // default: false
   enableLegendJustify: boolean; // default: false
-  grayColorShade: string;
   initialChartState: Record<string, any>;
   legendAnchor: NivoLegendAnchor; // default: bottom-right
   legendDirection: NivoLegendDirection; // default: column
@@ -117,16 +115,12 @@ type ChartLegendProps = {
   legendTranslateY: number; // -200px - 200px default: 0 step: 1
   parentChartAction: ChartLegendAction;
   parentChartDispatch: React.Dispatch<ChartLegendDispatch>;
-  sectionHeadersBgColor: string;
-  textColor: string;
 };
 
 function ChartLegend(props: ChartLegendProps) {
   const {
-    borderColor,
     enableLegend,
     enableLegendJustify,
-    grayColorShade,
     initialChartState,
     legendAnchor,
     legendDirection,
@@ -146,8 +140,6 @@ function ChartLegend(props: ChartLegendProps) {
     legendTranslateY,
     parentChartAction,
     parentChartDispatch,
-    sectionHeadersBgColor,
-    textColor,
   } = props;
 
   const enableLegendSwitchInput = (
@@ -454,18 +446,17 @@ function ChartLegend(props: ChartLegendProps) {
 
   const displayLegendHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
-      <Title order={5} color={textColor}>
+      <Title order={5}>
         Legend
       </Title>
     </Group>
   );
 
   const displayToggleLegendSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableLegendSwitchInput}
     </Group>
   );
@@ -493,7 +484,7 @@ function ChartLegend(props: ChartLegendProps) {
   );
 
   const displayToggleLegendJustifySwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableLegendJustifySwitchInput}
     </Group>
   );

@@ -17,7 +17,6 @@ type DashboardMetricsLayoutProps<MetricObjKey extends string = string> = {
   barChart: React.JSX.Element;
   barChartHeading: string;
   barChartYAxisSelectInput?: React.JSX.Element;
-  borderColor: string;
   calendarChart?: React.JSX.Element;
   calendarChartHeading?: string;
   calendarChartYAxisSelectInput?: React.JSX.Element;
@@ -42,7 +41,6 @@ function DashboardMetricsLayout({
   barChart,
   barChartHeading,
   barChartYAxisSelectInput,
-  borderColor,
   calendarChart,
   calendarChartHeading,
   calendarChartYAxisSelectInput,
@@ -81,7 +79,7 @@ function DashboardMetricsLayout({
   ));
 
   const displayCards = (
-    <Stack style={{ borderBottom: borderColor }}>
+    <Stack>
       <Title order={4}>Summary</Title>
       <Group w="100%">
         {createdCards}
@@ -98,7 +96,7 @@ function DashboardMetricsLayout({
   );
 
   const barChartSection = (
-    <Stack style={{ borderBottom: borderColor }} align="center">
+    <Stack align="center">
       <Title order={4}>Bar Chart</Title>
       <Group w="100%" position="center" align="flex-end">
         {barChartYAxisSelectInput
@@ -127,7 +125,7 @@ function DashboardMetricsLayout({
 
   const calendarChartSection = calendarChart
     ? (
-      <Stack style={{ borderBottom: borderColor }} align="center">
+      <Stack align="center">
         <Title order={4}>Calendar Chart</Title>
         <Group w="100%" position="center" align="flex-end">
           <Group w={200}>{calendarChartYAxisSelectInput}</Group>
@@ -154,7 +152,7 @@ function DashboardMetricsLayout({
   );
 
   const lineChartSection = (
-    <Stack style={{ borderBottom: borderColor }} align="center">
+    <Stack align="center">
       <Title order={4}>Line Chart</Title>
       <Group w="100%" position="center" align="flex-end">
         {lineChartYAxisSelectInput
@@ -208,7 +206,7 @@ function DashboardMetricsLayout({
 
   const displayPieChartSection = pieChart
     ? (
-      <Stack style={{ borderBottom: borderColor }} align="center">
+      <Stack align="center">
         <Title order={4}>Pie Chart</Title>
         {pieChartHeadingSection}
         <Group position="center">{pieChart}</Group>
@@ -319,7 +317,7 @@ function DashboardMetricsLayout({
     : null;
 
   const displayStatisticsSection = (
-    <Stack w="100%" style={{ borderBottom: borderColor }}>
+    <Stack w="100%">
       <Group w="100%">
         <Title order={4}>Statistics</Title>
       </Group>

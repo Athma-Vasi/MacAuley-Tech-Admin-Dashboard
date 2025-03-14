@@ -1,8 +1,7 @@
 import { Group, Stack, Text } from "@mantine/core";
 
-import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
-import { addCommaSeparator, returnThemeColors } from "../../../utils";
+import { addCommaSeparator } from "../../../utils";
 import {
   ResponsiveBarChart,
   ResponsiveCalendarChart,
@@ -20,13 +19,6 @@ function DisplayResponsiveChart() {
   const {
     globalState: { customizeChartsPageData, themeObject },
   } = useGlobalState();
-
-  const {
-    appThemeColors: { borderColor },
-  } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
 
   if (!customizeChartsPageData) {
     return null;
@@ -107,7 +99,7 @@ function DisplayResponsiveChart() {
       <Text size="lg" weight={500}>
         {chartTitle}
       </Text>
-      <Group w="100%" style={{ borderTop: borderColor }}>
+      <Group w="100%">
         {displayResponsiveChart}
       </Group>
     </Stack>

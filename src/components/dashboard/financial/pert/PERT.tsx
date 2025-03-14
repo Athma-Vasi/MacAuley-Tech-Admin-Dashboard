@@ -39,7 +39,6 @@ import { pertReducer } from "./reducers";
 import { initialPERTState } from "./state";
 
 type PERTProps = {
-  borderColor: string;
   calendarView: DashboardCalendarView;
   financialMetricsCards: FinancialMetricsCards;
   financialMetricsCharts: FinancialMetricsCharts;
@@ -52,7 +51,6 @@ type PERTProps = {
 };
 /** PERT = Profit | Expenses | Revenue | Transactions */
 function PERT({
-  borderColor,
   calendarView,
   financialMetricsCards,
   financialMetricsCharts,
@@ -90,14 +88,6 @@ function PERT({
       "expenses"
     ]) // cast to avoid TS error
     : charts.profit;
-
-  console.group("PERT");
-  console.log({ pertState });
-  console.log({ charts });
-  console.log({ barCharts });
-  console.log({ lineCharts });
-  console.log({ pieCharts });
-  console.groupEnd();
 
   const statistics = returnStatistics(barCharts);
 
@@ -287,7 +277,6 @@ function PERT({
       barChart={overviewBarChart}
       barChartHeading={barChartHeading}
       barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      borderColor={borderColor}
       expandBarChartButton={expandBarChartButton}
       expandLineChartButton={expandLineChartButton}
       expandPieChartButton={expandPieChartButton}

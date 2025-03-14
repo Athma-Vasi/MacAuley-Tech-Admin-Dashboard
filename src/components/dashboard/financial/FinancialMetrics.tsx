@@ -58,8 +58,8 @@ function FinancialMetrics({
   const { showBoundary } = useErrorBoundary();
 
   const {
-    generalColors: { redColorShade, greenColorShade },
-    appThemeColors: { borderColor },
+    redColorShade,
+    greenColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -162,7 +162,6 @@ function FinancialMetrics({
   const subCategoryPage = PERT_SET.has(category)
     ? (
       <PERT
-        borderColor={borderColor}
         calendarView={calendarView}
         financialMetricsCards={cards}
         financialMetricsCharts={charts}
@@ -176,7 +175,6 @@ function FinancialMetrics({
     )
     : (
       <OtherMetrics
-        borderColor={borderColor}
         calendarView={calendarView}
         financialMetricsCards={cards}
         financialMetricsCharts={charts}

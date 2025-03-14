@@ -54,13 +54,10 @@ type ChartAxisTopProps = {
   axisTopTickPadding: number; // 0px - 20px default: 5 step: 1
   axisTopTickRotation: number; // -90° - 90° default: 0 step: 1
   axisTopTickSize: number; // 0px - 20px default: 5 step: 1
-  borderColor: string;
   enableAxisTop: boolean; // default: false ? null
   initialChartState: Record<string, any>;
   parentChartAction: ChartAxisAction;
   parentChartDispatch: React.Dispatch<ChartAxisDispatch>;
-  sectionHeadersBgColor: string;
-  textColor: string;
 };
 
 function ChartAxisTop(props: ChartAxisTopProps) {
@@ -71,13 +68,10 @@ function ChartAxisTop(props: ChartAxisTopProps) {
     axisTopTickPadding,
     axisTopTickRotation,
     axisTopTickSize,
-    borderColor,
     enableAxisTop,
     initialChartState,
     parentChartAction,
     parentChartDispatch,
-    sectionHeadersBgColor,
-    textColor,
   } = props;
 
   const enableAxisTopSwitchInput = (
@@ -200,18 +194,17 @@ function ChartAxisTop(props: ChartAxisTopProps) {
 
   const displayAxisTopHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
-      <Title order={5} color={textColor}>
+      <Title order={5}>
         Axis Top
       </Title>
     </Group>
   );
 
   const displayToggleAxisTopSwitchInput = (
-    <Group w="100%" style={{ borderTop: borderColor }}>
+    <Group w="100%">
       {enableAxisTopSwitchInput}
     </Group>
   );

@@ -28,6 +28,10 @@ import {
   STICKY_STYLE,
 } from "../constants";
 // import { ChartsAndGraphsControlsStacker } from "../utils";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 import { responsiveSunburstChartAction } from "./actions";
 import { responsiveSunburstChartReducer } from "./reducers";
 import { initialResponsiveSunburstChartState } from "./state";
@@ -35,10 +39,6 @@ import type {
   ResponsiveSunburstChartProps,
   ResponsiveSunburstChartState,
 } from "./types";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
 
 function ResponsiveSunburstChart({
   hideControls = false,
@@ -53,9 +53,8 @@ function ResponsiveSunburstChart({
   } = useGlobalState();
 
   const {
-    tablesThemeColors: { tableHeadersBgColor: sectionHeadersBgColor },
-    generalColors: { chartTextColor, grayColorShade, textColor },
-    appThemeColors: { borderColor },
+    grayColorShade,
+    textColor,
     scrollBarStyle,
   } = returnThemeColors({
     themeObject,
@@ -66,8 +65,8 @@ function ResponsiveSunburstChart({
   const modifiedResponsiveSunburstChartState: ResponsiveSunburstChartState = {
     ...initialResponsiveSunburstChartState,
     chartBorderColor: grayColorShade,
-    arcLabelsTextColor: chartTextColor,
-    chartTitleColor: chartTextColor,
+    arcLabelsTextColor: textColor,
+    chartTitleColor: textColor,
   };
 
   const [responsiveSunburstChartState, responsiveSunburstChartDispatch] =
@@ -338,7 +337,6 @@ function ResponsiveSunburstChart({
   // base
   const displayBaseHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -375,15 +373,12 @@ function ResponsiveSunburstChart({
       marginTop={marginTop}
       parentChartAction={responsiveSunburstChartAction}
       parentChartDispatch={responsiveSunburstChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // style
   const displayStyleHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -403,7 +398,7 @@ function ResponsiveSunburstChart({
   );
 
   const displayInheritColorFromParentSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {inheritColorFromParentSwitchInput}
     </Group>
   );
@@ -428,7 +423,7 @@ function ResponsiveSunburstChart({
   );
 
   const displayEnableFillPatternsSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableFillPatternsSwitchInput}
     </Group>
   );
@@ -451,20 +446,16 @@ function ResponsiveSunburstChart({
       arcLabelsRadiusOffset={arcLabelsRadiusOffset}
       arcLabelsSkipAngle={arcLabelsSkipAngle}
       arcLabelsTextColor={arcLabelsTextColor}
-      borderColor={borderColor}
       enableArcLabels={enableArcLabels}
       initialChartState={modifiedResponsiveSunburstChartState}
       parentChartAction={responsiveSunburstChartAction}
       parentChartDispatch={responsiveSunburstChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // motion
   const displayMotionHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -475,7 +466,7 @@ function ResponsiveSunburstChart({
   );
 
   const displayEnableAnimateSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableAnimateSwitchInput}
     </Group>
   );
@@ -523,8 +514,6 @@ function ResponsiveSunburstChart({
       screenshotFilename={screenshotFilename}
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 

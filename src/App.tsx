@@ -1,4 +1,5 @@
 import "./App.css";
+import DashboardWrapper from "./components/dashboard";
 import Header from "./components/header";
 import Sidebar from "./components/sidebar";
 import { COLORS_SWATCHES } from "./constants";
@@ -25,6 +26,7 @@ function App() {
       </div>
       <div className="main">
         <h2>Main content</h2>
+        <DashboardWrapper />
       </div>
     </div>
   );

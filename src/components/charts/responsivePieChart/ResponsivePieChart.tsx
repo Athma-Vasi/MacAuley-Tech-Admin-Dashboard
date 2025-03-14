@@ -30,15 +30,15 @@ import {
   STICKY_STYLE,
 } from "../constants";
 // import { ChartsAndGraphsControlsStacker } from "../utils";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 import { responsivePieChartAction } from "./actions";
 import { responsivePieChartReducer } from "./reducers";
 import { initialResponsivePieChartState } from "./state";
 import type { ResponsivePieChartProps } from "./types";
 import { createPieFillPatterns } from "./utils";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
 
 function ResponsivePieChart({
   dashboardChartTitle,
@@ -51,9 +51,8 @@ function ResponsivePieChart({
   } = useGlobalState();
 
   const {
-    appThemeColors: { borderColor },
-    tablesThemeColors: { tableHeadersBgColor: sectionHeadersBgColor },
-    generalColors: { chartTextColor, textColor, grayColorShade },
+    textColor,
+    grayColorShade,
     scrollBarStyle,
   } = returnThemeColors({
     themeObject,
@@ -64,9 +63,9 @@ function ResponsivePieChart({
   const modifiedInitialResponsivePieChartState = {
     ...initialResponsivePieChartState,
     chartTitle: dashboardChartTitle ?? "Pie Chart",
-    arcLabelsTextColor: chartTextColor,
+    arcLabelsTextColor: textColor,
     arcLinkLabelsTextColor: textColor,
-    chartTitleColor: chartTextColor,
+    chartTitleColor: textColor,
   };
 
   const [responsivePieChartState, responsivePieChartDispatch] = useReducer(
@@ -695,7 +694,6 @@ function ResponsivePieChart({
 
   const displayBaseHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -778,7 +776,6 @@ function ResponsivePieChart({
     <Group
       w="100%"
       style={STICKY_STYLE}
-      bg={sectionHeadersBgColor}
     >
       <Title order={5} color={textColor}>
         Style
@@ -839,20 +836,16 @@ function ResponsivePieChart({
       arcLabelsRadiusOffset={arcLabelsRadiusOffset}
       arcLabelsSkipAngle={arcLabelsSkipAngle}
       arcLabelsTextColor={arcLabelsTextColor}
-      borderColor={borderColor}
       enableArcLabels={enableArcLabels}
       initialChartState={modifiedInitialResponsivePieChartState}
       parentChartAction={responsivePieChartAction}
       parentChartDispatch={responsivePieChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   /** arc link labels */
   const displayArcLinkLabelsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -962,7 +955,6 @@ function ResponsivePieChart({
   const displayInteractivityHeading = (
     <Group
       w="100%"
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
     >
       <Title order={5} color={textColor}>
@@ -1002,7 +994,6 @@ function ResponsivePieChart({
   /** motion */
   const displayMotionHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1057,18 +1048,14 @@ function ResponsivePieChart({
       marginTop={marginTop}
       parentChartAction={responsivePieChartAction}
       parentChartDispatch={responsivePieChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   /** legend */
   const displayChartLegend = (
     <ChartLegend
-      borderColor={borderColor}
       enableLegend={enableLegend}
       enableLegendJustify={enableLegendJustify}
-      grayColorShade={grayColorShade}
       initialChartState={modifiedInitialResponsivePieChartState}
       legendAnchor={legendAnchor}
       legendDirection={legendDirection}
@@ -1088,8 +1075,6 @@ function ResponsivePieChart({
       legendTranslateY={legendTranslateY}
       parentChartAction={responsivePieChartAction}
       parentChartDispatch={responsivePieChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
@@ -1107,8 +1092,6 @@ function ResponsivePieChart({
       screenshotFilename={screenshotFilename}
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 

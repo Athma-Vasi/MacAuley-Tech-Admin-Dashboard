@@ -28,8 +28,6 @@ type ChartMarginProps = {
   marginTop: number; // 0px - 200px default: 60 step: 1
   parentChartAction: ChartMarginAction;
   parentChartDispatch: React.Dispatch<ChartMarginDispatch>;
-  sectionHeadersBgColor: string;
-  textColor: string;
 };
 
 function ChartMargin(props: ChartMarginProps) {
@@ -41,8 +39,6 @@ function ChartMargin(props: ChartMarginProps) {
     marginTop,
     parentChartAction,
     parentChartDispatch,
-    sectionHeadersBgColor,
-    textColor,
   } = props;
 
   const marginTopSliderInput = (
@@ -119,11 +115,10 @@ function ChartMargin(props: ChartMarginProps) {
 
   const displayMarginHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
-      <Title order={5} color={textColor}>
+      <Title order={5}>
         Margin
       </Title>
     </Group>

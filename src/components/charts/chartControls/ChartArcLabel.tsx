@@ -48,13 +48,10 @@ type ChartArcLabelProps = {
   arcLabelsRadiusOffset: number; // 0 - 2 default: 0.5 step: 0.05
   arcLabelsSkipAngle: number; // 0 - 45 default: 0 step: 1
   arcLabelsTextColor: string; // default: 'gray'
-  borderColor: string;
   enableArcLabels: boolean; // default: false
   initialChartState: Record<string, any>;
   parentChartAction: ChartArcLabelAction;
   parentChartDispatch: React.Dispatch<ChartArcLabelDispatch>;
-  sectionHeadersBgColor: string;
-  textColor: string;
 };
 
 function ChartArcLabel(props: ChartArcLabelProps) {
@@ -63,13 +60,10 @@ function ChartArcLabel(props: ChartArcLabelProps) {
     arcLabelsRadiusOffset,
     arcLabelsSkipAngle,
     arcLabelsTextColor,
-    borderColor,
     enableArcLabels,
     initialChartState,
     parentChartAction,
     parentChartDispatch,
-    sectionHeadersBgColor,
-    textColor,
   } = props;
 
   const enableArcLabelsSwitchInput = (
@@ -153,18 +147,17 @@ function ChartArcLabel(props: ChartArcLabelProps) {
 
   const displayArcLabelsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
-      <Title order={5} color={textColor}>
+      <Title order={5}>
         Arc Labels
       </Title>
     </Group>
   );
 
   const displayEnableArcLabelsSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableArcLabelsSwitchInput}
     </Group>
   );

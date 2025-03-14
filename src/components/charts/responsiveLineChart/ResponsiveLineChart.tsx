@@ -33,6 +33,10 @@ import {
   STICKY_STYLE,
 } from "../constants";
 
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 import { responsiveLineChartAction } from "./actions";
 import {
   NIVO_LINE_AREA_BLEND_MODE_DATA,
@@ -47,10 +51,6 @@ import type {
   ResponsiveLineChartProps,
   ResponsiveLineChartState,
 } from "./types";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
 
 function ResponsiveLineChart({
   lineChartData,
@@ -66,12 +66,7 @@ function ResponsiveLineChart({
     globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
 
-  const {
-    tablesThemeColors: { tableHeadersBgColor: sectionHeadersBgColor },
-    generalColors: { chartTextColor, grayColorShade, textColor },
-    appThemeColors: { borderColor },
-    scrollBarStyle,
-  } = returnThemeColors({
+  const { grayColorShade, textColor, scrollBarStyle } = returnThemeColors({
     themeObject,
     colorsSwatches: COLORS_SWATCHES,
   });
@@ -81,7 +76,7 @@ function ResponsiveLineChart({
     ...initialResponsiveLineChartState,
     chartTitle: dashboardChartTitle ?? "Line Chart",
     pointColor: "rgba(0, 0, 0, 0)",
-    chartTitleColor: chartTextColor,
+    chartTitleColor: textColor,
   };
 
   const [responsiveLineChartState, responsiveLineChartDispatch] = useReducer(
@@ -735,7 +730,6 @@ function ResponsiveLineChart({
   // base
   const displayBaseHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -764,13 +758,13 @@ function ResponsiveLineChart({
   );
 
   const displayEnableYScaleStackedSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableYScaleStackedSwitchInput}
     </Group>
   );
 
   const displayReverseScaleSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {reverseScaleSwitchInput}
     </Group>
   );
@@ -795,15 +789,12 @@ function ResponsiveLineChart({
       marginTop={marginTop}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // style
   const displayStyleHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -842,7 +833,7 @@ function ResponsiveLineChart({
   );
 
   const displayEnableAreaSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableAreaSwitchInput}
     </Group>
   );
@@ -882,7 +873,6 @@ function ResponsiveLineChart({
   // points
   const displayPointsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -893,7 +883,7 @@ function ResponsiveLineChart({
   );
 
   const displayEnablePointsSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enablePointsSwitchInput}
     </Group>
   );
@@ -931,7 +921,7 @@ function ResponsiveLineChart({
   );
 
   const displayEnablePointLabelSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enablePointLabelSwitchInput}
     </Group>
   );
@@ -973,7 +963,6 @@ function ResponsiveLineChart({
   // grids
   const displayGridsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -984,13 +973,13 @@ function ResponsiveLineChart({
   );
 
   const displayEnableGridXSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableGridXSwitchInput}
     </Group>
   );
 
   const displayEnableGridYSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableGridYSwitchInput}
     </Group>
   );
@@ -1012,13 +1001,10 @@ function ResponsiveLineChart({
       axisTopTickPadding={axisTopTickPadding}
       axisTopTickRotation={axisTopTickRotation}
       axisTopTickSize={axisTopTickSize}
-      borderColor={borderColor}
       enableAxisTop={enableAxisTop}
       initialChartState={modifiedResponsiveLineChartState}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
@@ -1030,13 +1016,10 @@ function ResponsiveLineChart({
       axisRightTickPadding={axisRightTickPadding}
       axisRightTickRotation={axisRightTickRotation}
       axisRightTickSize={axisRightTickSize}
-      borderColor={borderColor}
       enableAxisRight={enableAxisRight}
       initialChartState={modifiedResponsiveLineChartState}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
@@ -1048,13 +1031,10 @@ function ResponsiveLineChart({
       axisBottomTickPadding={axisBottomTickPadding}
       axisBottomTickRotation={axisBottomTickRotation}
       axisBottomTickSize={axisBottomTickSize}
-      borderColor={borderColor}
       enableAxisBottom={enableAxisBottom}
       initialChartState={modifiedResponsiveLineChartState}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
@@ -1066,20 +1046,16 @@ function ResponsiveLineChart({
       axisLeftTickPadding={axisLeftTickPadding}
       axisLeftTickRotation={axisLeftTickRotation}
       axisLeftTickSize={axisLeftTickSize}
-      borderColor={borderColor}
       enableAxisLeft={enableAxisLeft}
       initialChartState={modifiedResponsiveLineChartState}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // interactivity
   const displayInteractivityHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1090,7 +1066,7 @@ function ResponsiveLineChart({
   );
 
   const displayEnableCrosshairSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableCrosshairSwitchInput}
     </Group>
   );
@@ -1116,10 +1092,8 @@ function ResponsiveLineChart({
   // legends
   const displayChartLegend = (
     <ChartLegend
-      borderColor={borderColor}
       enableLegend={enableLegend}
       enableLegendJustify={enableLegendJustify}
-      grayColorShade={grayColorShade}
       initialChartState={modifiedResponsiveLineChartState}
       legendAnchor={legendAnchor}
       legendDirection={legendDirection}
@@ -1139,15 +1113,12 @@ function ResponsiveLineChart({
       legendTranslateY={legendTranslateY}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // motion
   const displayMotionHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1158,7 +1129,7 @@ function ResponsiveLineChart({
   );
 
   const displayEnableAnimateSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableAnimateSwitchInput}
     </Group>
   );
@@ -1195,8 +1166,6 @@ function ResponsiveLineChart({
       screenshotFilename={screenshotFilename}
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 

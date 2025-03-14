@@ -80,8 +80,6 @@ type ChartOptionsProps = {
   screenshotFilename: string;
   screenshotImageQuality: number; // 0 - 1 default: 1 step: 0.05
   screenshotImageType: ScreenshotImageType;
-  sectionHeadersBgColor: string;
-  textColor: string;
 };
 
 function ChartOptions(props: ChartOptionsProps) {
@@ -97,8 +95,6 @@ function ChartOptions(props: ChartOptionsProps) {
     screenshotFilename,
     screenshotImageQuality,
     screenshotImageType,
-    sectionHeadersBgColor,
-    textColor,
   } = props;
 
   const chartTitleTextInput = (
@@ -234,11 +230,10 @@ function ChartOptions(props: ChartOptionsProps) {
 
   const displayOptionsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
-      <Title order={5} color={textColor}>
+      <Title order={5}>
         Options
       </Title>
     </Group>

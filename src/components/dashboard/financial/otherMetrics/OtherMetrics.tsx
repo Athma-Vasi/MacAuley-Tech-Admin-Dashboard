@@ -25,7 +25,6 @@ import { otherMetricsReducer } from "./reducers";
 import { initialOtherMetricsState } from "./state";
 
 type OtherMetricsProps = {
-  borderColor: string;
   calendarView: DashboardCalendarView;
   financialMetricsCards: FinancialMetricsCards;
   financialMetricsCharts: FinancialMetricsCharts;
@@ -38,7 +37,6 @@ type OtherMetricsProps = {
 };
 
 function OtherMetrics({
-  borderColor,
   calendarView,
   financialMetricsCards,
   financialMetricsCharts,
@@ -208,7 +206,6 @@ function OtherMetrics({
       barChart={overviewBarChart}
       barChartHeading={barChartHeading}
       barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      borderColor={borderColor}
       expandBarChartButton={expandBarChartButton}
       expandLineChartButton={expandLineChartButton}
       lineChart={overviewLineChart}

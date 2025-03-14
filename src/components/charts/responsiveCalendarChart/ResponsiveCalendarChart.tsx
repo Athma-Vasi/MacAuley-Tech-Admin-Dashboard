@@ -50,12 +50,7 @@ function ResponsiveCalendarChart({
     globalState: { themeObject },
   } = useGlobalState();
 
-  const {
-    tablesThemeColors: { tableHeadersBgColor: sectionHeadersBgColor },
-    generalColors: { chartTextColor, grayColorShade, textColor },
-    appThemeColors: { borderColor },
-    scrollBarStyle,
-  } = returnThemeColors({
+  const { grayColorShade, textColor, scrollBarStyle } = returnThemeColors({
     themeObject,
     colorsSwatches: COLORS_SWATCHES,
   });
@@ -66,7 +61,7 @@ function ResponsiveCalendarChart({
     chartTitle: dashboardChartTitle ?? "Calendar Chart",
     emptyColor: grayColorShade,
     monthBorderColor: textColor,
-    chartTitleColor: chartTextColor,
+    chartTitleColor: textColor,
     dayBorderColor: textColor,
   };
 
@@ -178,54 +173,6 @@ function ResponsiveCalendarChart({
       </Group>
     );
   }
-
-  /**
-   * const enableArcLabelsSwitchInput = (
-    <AccessibleSwitchInput
-      attributes={{
-        checked: enableArcLabels,
-        invalidValueAction: parentChartAction.setPageInError,
-        name: "enableArcLabels",
-        offLabel: "Off",
-        onLabel: "On",
-        parentDispatch: parentChartDispatch,
-        validValueAction: parentChartAction.setEnableArcLabels,
-        value: enableArcLabels,
-      }}
-    />
-  );
-
-  const arcLabelSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: NIVO_SUNBURST_ARC_LABEL_DATA,
-        description: "Define arc label",
-        name: "arcLabel",
-        parentDispatch: parentChartDispatch,
-        validValueAction: parentChartAction.setArcLabel,
-        value: arcLabel,
-      }}
-    />
-  );
-
-  const arcLabelsRadiusOffsetSliderInput = (
-    <AccessibleSliderInput
-      attributes={{
-        label: (value) => (
-          <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value}</Text>
-        ),
-        max: 2,
-        min: 0,
-        name: "arcLabelsRadiusOffset",
-        parentDispatch: parentChartDispatch,
-        sliderDefaultValue: 0.5,
-        step: 0.05,
-        validValueAction: parentChartAction.setArcLabelsRadiusOffset,
-        value: arcLabelsRadiusOffset,
-      }}
-    />
-  );
-   */
 
   // base
   const calendarDirectionSelectInput = (
@@ -487,7 +434,6 @@ function ResponsiveCalendarChart({
   // base
   const displayBaseHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -516,7 +462,7 @@ function ResponsiveCalendarChart({
   );
 
   const displayBaseSection = (
-    <Stack w="100%" style={{ borderTop: borderColor }}>
+    <Stack w="100%">
       {displayBaseHeading}
       {displayCalendarDirectionSelectInput}
       {displayCalendarAlignSelectInput}
@@ -533,15 +479,12 @@ function ResponsiveCalendarChart({
       marginTop={marginTop}
       parentChartAction={responsiveCalendarChartAction}
       parentChartDispatch={responsiveCalendarChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // style
   const displayStyleHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -561,7 +504,7 @@ function ResponsiveCalendarChart({
   );
 
   const displayEnableDefaultColorsSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableDefaultColorsSwitchInput}
     </Group>
   );
@@ -577,7 +520,6 @@ function ResponsiveCalendarChart({
   // years
   const displayYearsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -628,7 +570,6 @@ function ResponsiveCalendarChart({
   // months
   const displayMonthsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -700,7 +641,6 @@ function ResponsiveCalendarChart({
   // days
   const displayDaysHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -762,8 +702,6 @@ function ResponsiveCalendarChart({
       screenshotFilename={screenshotFilename}
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 

@@ -54,13 +54,10 @@ type ChartAxisLeftProps = {
   axisLeftTickPadding: number; // 0px - 20px default: 5 step: 1
   axisLeftTickRotation: number; // -90° - 90° default: 0 step: 1
   axisLeftTickSize: number; // 0px - 20px default: 5 step: 1
-  borderColor: string;
   enableAxisLeft: boolean; // default: false ? null
   initialChartState: Record<string, any>;
   parentChartAction: ChartAxisAction;
   parentChartDispatch: React.Dispatch<ChartAxisDispatch>;
-  sectionHeadersBgColor: string;
-  textColor: string;
 };
 
 function ChartAxisLeft(props: ChartAxisLeftProps) {
@@ -71,13 +68,10 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
     axisLeftTickPadding,
     axisLeftTickRotation,
     axisLeftTickSize,
-    borderColor,
     enableAxisLeft,
     initialChartState,
     parentChartAction,
     parentChartDispatch,
-    sectionHeadersBgColor,
-    textColor,
   } = props;
 
   const enableAxisLeftSwitchInput = (
@@ -200,18 +194,17 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
 
   const displayAxisLeftHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
-      <Title order={5} color={textColor}>
+      <Title order={5}>
         Axis Left
       </Title>
     </Group>
   );
 
   const displayToggleAxisLeftSwitchInput = (
-    <Group w="100%" style={{ borderLeft: borderColor }}>
+    <Group w="100%">
       {enableAxisLeftSwitchInput}
     </Group>
   );

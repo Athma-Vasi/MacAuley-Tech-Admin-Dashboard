@@ -60,10 +60,9 @@ function ResponsiveBarChart({
     } = useGlobalState();
 
     const {
-        tablesThemeColors: { tableHeadersBgColor: sectionHeadersBgColor },
-        generalColors: { chartTextColor, grayColorShade, textColor },
-        appThemeColors: { borderColor },
+        textColor,
         scrollBarStyle,
+        grayColorShade,
     } = returnThemeColors({
         themeObject,
         colorsSwatches: COLORS_SWATCHES,
@@ -72,10 +71,10 @@ function ResponsiveBarChart({
     // sets initial colors based on app theme
     const modifiedInitialResponsiveBarChartState: ResponsiveBarChartState = {
         ...initialResponsiveBarChartState,
-        chartBorderColor: chartTextColor,
+        chartBorderColor: textColor,
         chartTitle: dashboardChartTitle ?? "Bar Chart",
-        labelTextColor: chartTextColor,
-        chartTitleColor: chartTextColor,
+        labelTextColor: textColor,
+        chartTitleColor: textColor,
     };
 
     const [responsiveBarChartState, responsiveBarChartDispatch] = useReducer(
@@ -688,7 +687,6 @@ function ResponsiveBarChart({
 
     const displayBaseHeading = (
         <Group
-            bg={sectionHeadersBgColor}
             style={STICKY_STYLE}
             w="100%"
         >
@@ -726,7 +724,7 @@ function ResponsiveBarChart({
     );
 
     const displayReverseSwitchInput = (
-        <Group w="100%" style={{ borderBottom: borderColor }}>
+        <Group w="100%">
             {reverseSwitchInput}
         </Group>
     );
@@ -772,15 +770,12 @@ function ResponsiveBarChart({
             marginTop={marginTop}
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
-            sectionHeadersBgColor={sectionHeadersBgColor}
-            textColor={textColor}
         />
     );
 
     // display style
     const displayStyleHeading = (
         <Group
-            bg={sectionHeadersBgColor}
             style={STICKY_STYLE}
             w="100%"
         >
@@ -829,7 +824,7 @@ function ResponsiveBarChart({
     );
 
     const displayToggleFillPatternsSwitchInput = (
-        <Group w="100%" style={{ borderBottom: borderColor }}>
+        <Group w="100%">
             {enableFillPatternsSwitchInput}
         </Group>
     );
@@ -853,13 +848,10 @@ function ResponsiveBarChart({
             axisTopTickPadding={axisTopTickPadding}
             axisTopTickRotation={axisTopTickRotation}
             axisTopTickSize={axisTopTickSize}
-            borderColor={borderColor}
             enableAxisTop={enableAxisTop}
             initialChartState={modifiedInitialResponsiveBarChartState}
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
-            sectionHeadersBgColor={sectionHeadersBgColor}
-            textColor={textColor}
         />
     );
 
@@ -871,13 +863,10 @@ function ResponsiveBarChart({
             axisRightTickPadding={axisRightTickPadding}
             axisRightTickRotation={axisRightTickRotation}
             axisRightTickSize={axisRightTickSize}
-            borderColor={borderColor}
             enableAxisRight={enableAxisRight}
             initialChartState={modifiedInitialResponsiveBarChartState}
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
-            sectionHeadersBgColor={sectionHeadersBgColor}
-            textColor={textColor}
         />
     );
 
@@ -889,13 +878,10 @@ function ResponsiveBarChart({
             axisBottomTickPadding={axisBottomTickPadding}
             axisBottomTickRotation={axisBottomTickRotation}
             axisBottomTickSize={axisBottomTickSize}
-            borderColor={borderColor}
             enableAxisBottom={enableAxisBottom}
             initialChartState={modifiedInitialResponsiveBarChartState}
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
-            sectionHeadersBgColor={sectionHeadersBgColor}
-            textColor={textColor}
         />
     );
 
@@ -907,20 +893,16 @@ function ResponsiveBarChart({
             axisLeftTickPadding={axisLeftTickPadding}
             axisLeftTickRotation={axisLeftTickRotation}
             axisLeftTickSize={axisLeftTickSize}
-            borderColor={borderColor}
             enableAxisLeft={enableAxisLeft}
             initialChartState={modifiedInitialResponsiveBarChartState}
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
-            sectionHeadersBgColor={sectionHeadersBgColor}
-            textColor={textColor}
         />
     );
 
     // display labels
     const displayLabelsHeading = (
         <Group
-            bg={sectionHeadersBgColor}
             style={STICKY_STYLE}
             w="100%"
         >
@@ -931,7 +913,7 @@ function ResponsiveBarChart({
     );
 
     const displayToggleLabelsSwitchInput = (
-        <Group w="100%" style={{ borderBottom: borderColor }}>
+        <Group w="100%">
             {enableLabelsSwitchInput}
         </Group>
     );
@@ -981,7 +963,6 @@ function ResponsiveBarChart({
     // display grid
     const displayGridHeading = (
         <Group
-            bg={sectionHeadersBgColor}
             style={STICKY_STYLE}
             w="100%"
         >
@@ -992,13 +973,13 @@ function ResponsiveBarChart({
     );
 
     const displayToggleGridXSwitchInput = (
-        <Group w="100%" style={{ borderBottom: borderColor }}>
+        <Group w="100%">
             {enableGridXSwitchInput}
         </Group>
     );
 
     const displayToggleGridYSwitchInput = (
-        <Group w="100%" style={{ borderBottom: borderColor }}>
+        <Group w="100%">
             {enableGridYSwitchInput}
         </Group>
     );
@@ -1014,7 +995,6 @@ function ResponsiveBarChart({
     // display motion
     const displayMotionHeading = (
         <Group
-            bg={sectionHeadersBgColor}
             style={STICKY_STYLE}
         >
             <Title order={5} color={textColor}>
@@ -1024,7 +1004,7 @@ function ResponsiveBarChart({
     );
 
     const displayToggleAnimateSwitchInput = (
-        <Group w="100%" style={{ borderBottom: borderColor }}>
+        <Group w="100%">
             {enableAnimateSwitchInput}
         </Group>
     );
@@ -1049,10 +1029,8 @@ function ResponsiveBarChart({
 
     const displayChartLegend = (
         <ChartLegend
-            borderColor={borderColor}
             enableLegend={enableLegend}
             enableLegendJustify={enableLegendJustify}
-            grayColorShade={grayColorShade}
             initialChartState={modifiedInitialResponsiveBarChartState}
             legendAnchor={legendAnchor}
             legendDirection={legendDirection}
@@ -1070,8 +1048,6 @@ function ResponsiveBarChart({
             legendTranslateY={legendTranslateY}
             parentChartAction={responsiveBarChartAction}
             parentChartDispatch={responsiveBarChartDispatch}
-            sectionHeadersBgColor={sectionHeadersBgColor}
-            textColor={textColor}
             legendSymbolBorderWidth={legendSymbolBorderWidth}
             legendSymbolSpacing={legendSymbolSpacing}
         />
@@ -1090,8 +1066,6 @@ function ResponsiveBarChart({
             screenshotFilename={screenshotFilename}
             screenshotImageQuality={screenshotImageQuality}
             screenshotImageType={screenshotImageType}
-            sectionHeadersBgColor={sectionHeadersBgColor}
-            textColor={textColor}
         />
     );
 

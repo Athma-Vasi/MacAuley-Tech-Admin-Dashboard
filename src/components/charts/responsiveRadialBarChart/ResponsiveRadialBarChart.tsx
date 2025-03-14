@@ -28,6 +28,10 @@ import {
   STICKY_STYLE,
 } from "../constants";
 // import { ChartsAndGraphsControlsStacker } from "../utils";
+import {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+} from "../utils";
 import { responsiveRadialBarChartAction } from "./actions";
 import { responsiveRadialBarChartReducer } from "./reducers";
 import { initialResponsiveRadialBarChartState } from "./state";
@@ -35,10 +39,6 @@ import type {
   ResponsiveRadialBarChartProps,
   ResponsiveRadialBarChartState,
 } from "./types";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
 
 function ResponsiveRadialBarChart({
   radialBarChartData,
@@ -49,9 +49,8 @@ function ResponsiveRadialBarChart({
   } = useGlobalState();
 
   const {
-    tablesThemeColors: { tableHeadersBgColor: sectionHeadersBgColor },
-    generalColors: { chartTextColor, grayColorShade, textColor },
-    appThemeColors: { borderColor },
+    grayColorShade,
+    textColor,
     scrollBarStyle,
   } = returnThemeColors({
     themeObject,
@@ -61,10 +60,10 @@ function ResponsiveRadialBarChart({
   // sets initial colors based on color scheme
   const modifiedResponsiveRadialBarChartState: ResponsiveRadialBarChartState = {
     ...initialResponsiveRadialBarChartState,
-    ringBorderColor: chartTextColor,
+    ringBorderColor: textColor,
     tracksColor: grayColorShade,
-    labelsTextColor: chartTextColor,
-    chartTitleColor: chartTextColor,
+    labelsTextColor: textColor,
+    chartTitleColor: textColor,
   };
 
   const [responsiveRadialBarChartState, responsiveRadialBarChartDispatch] =
@@ -954,7 +953,6 @@ function ResponsiveRadialBarChart({
 
   const displayBaseHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1044,15 +1042,12 @@ function ResponsiveRadialBarChart({
       marginTop={marginTop}
       parentChartAction={responsiveRadialBarChartAction}
       parentChartDispatch={responsiveRadialBarChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // style
   const displayStyleHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1105,7 +1100,6 @@ function ResponsiveRadialBarChart({
   // tracks
   const displayTracksHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1116,7 +1110,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableTracksSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableTracksSwitchInput}
     </Group>
   );
@@ -1142,7 +1136,6 @@ function ResponsiveRadialBarChart({
   // grids
   const displayGridsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1153,13 +1146,13 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableRadialGridSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableRadialGridSwitchInput}
     </Group>
   );
 
   const displayEnableCircularGridSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableCircularGridSwitchInput}
     </Group>
   );
@@ -1176,7 +1169,6 @@ function ResponsiveRadialBarChart({
   // radial axis start
   const displayRadialAxisStartHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1187,7 +1179,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableRadialAxisStartSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableRadialAxisStartSwitchInput}
     </Group>
   );
@@ -1238,7 +1230,6 @@ function ResponsiveRadialBarChart({
   // radial axis end
   const displayRadialAxisEndHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1249,7 +1240,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableRadialAxisEndSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableRadialAxisEndSwitchInput}
     </Group>
   );
@@ -1300,7 +1291,6 @@ function ResponsiveRadialBarChart({
   // circular axis inner
   const displayCircularAxisInnerHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1311,7 +1301,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableCircularAxisInnerSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableCircularAxisInnerSwitchInput}
     </Group>
   );
@@ -1362,7 +1352,6 @@ function ResponsiveRadialBarChart({
   // circular axis outer
   const displayCircularAxisOuterHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1373,7 +1362,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableCircularAxisOuterSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableCircularAxisOuterSwitchInput}
     </Group>
   );
@@ -1424,7 +1413,6 @@ function ResponsiveRadialBarChart({
   // labels
   const displayLabelsHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1435,7 +1423,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableLabelsSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableLabelsSwitchInput}
     </Group>
   );
@@ -1484,10 +1472,8 @@ function ResponsiveRadialBarChart({
 
   const displayChartLegend = (
     <ChartLegend
-      borderColor={borderColor}
       enableLegend={enableLegend}
       enableLegendJustify={enableLegendJustify}
-      grayColorShade={grayColorShade}
       initialChartState={modifiedResponsiveRadialBarChartState}
       legendAnchor={legendAnchor}
       legendDirection={legendDirection}
@@ -1507,15 +1493,12 @@ function ResponsiveRadialBarChart({
       legendTranslateY={legendTranslateY}
       parentChartAction={responsiveRadialBarChartAction}
       parentChartDispatch={responsiveRadialBarChartDispatch}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
   // motion
   const displayMotionHeading = (
     <Group
-      bg={sectionHeadersBgColor}
       style={STICKY_STYLE}
       w="100%"
     >
@@ -1526,7 +1509,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayEnableAnimateSwitchInput = (
-    <Group w="100%" style={{ borderBottom: borderColor }}>
+    <Group w="100%">
       {enableAnimateSwitchInput}
     </Group>
   );
@@ -1574,8 +1557,6 @@ function ResponsiveRadialBarChart({
       screenshotFilename={screenshotFilename}
       screenshotImageQuality={screenshotImageQuality}
       screenshotImageType={screenshotImageType}
-      sectionHeadersBgColor={sectionHeadersBgColor}
-      textColor={textColor}
     />
   );
 
