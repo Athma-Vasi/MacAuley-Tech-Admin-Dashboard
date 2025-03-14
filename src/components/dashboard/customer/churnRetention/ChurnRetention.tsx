@@ -39,7 +39,6 @@ import { churnRetentionReducer } from "./reducers";
 import { initialChurnRetentionState } from "./state";
 
 type ChurnRetentionProps = {
-  borderColor: string;
   calendarView: DashboardCalendarView;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
@@ -52,7 +51,6 @@ type ChurnRetentionProps = {
 };
 
 function ChurnRetention({
-  borderColor,
   calendarView,
   customerMetricsCards,
   customerMetricsCharts,
@@ -262,7 +260,6 @@ function ChurnRetention({
       barChart={overviewBarChart}
       barChartHeading={barChartHeading}
       barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      borderColor={borderColor}
       expandBarChartButton={expandBarChartButton}
       expandLineChartButton={expandLineChartButton}
       expandPieChartButton={expandPieChartButton}

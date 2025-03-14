@@ -62,8 +62,8 @@ function ProductMetrics({
   const { showBoundary } = useErrorBoundary();
 
   const {
-    generalColors: { redColorShade, greenColorShade },
-    appThemeColors: { borderColor },
+    redColorShade,
+    greenColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -172,7 +172,6 @@ function ProductMetrics({
 
   const revenueUnitsSold = (
     <RUS
-      borderColor={borderColor}
       calendarView={calendarView}
       productMetricsCards={cards}
       productMetricsCharts={charts}

@@ -39,7 +39,6 @@ import { newReturningReducer } from "./reducers";
 import { initialNewReturningState } from "./state";
 
 type NewReturningProps = {
-  borderColor: string;
   calendarView: DashboardCalendarView;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
@@ -52,7 +51,6 @@ type NewReturningProps = {
 };
 
 function NewReturning({
-  borderColor,
   calendarView,
   customerMetricsCards,
   customerMetricsCharts,
@@ -278,7 +276,6 @@ function NewReturning({
       barChart={overviewBarChart}
       barChartHeading={barChartHeading}
       barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      borderColor={borderColor}
       expandBarChartButton={expandBarChartButton}
       expandLineChartButton={expandLineChartButton}
       expandPieChartButton={expandPieChartButton}

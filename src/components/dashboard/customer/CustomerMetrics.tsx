@@ -58,8 +58,8 @@ function CustomerMetrics({
   const { showBoundary } = useErrorBoundary();
 
   const {
-    generalColors: { redColorShade, greenColorShade },
-    appThemeColors: { borderColor },
+    redColorShade,
+    greenColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -154,7 +154,6 @@ function CustomerMetrics({
 
   const newReturning = (
     <NewReturning
-      borderColor={borderColor}
       calendarView={calendarView}
       customerMetricsCards={cards}
       customerMetricsCharts={charts}
@@ -169,7 +168,6 @@ function CustomerMetrics({
 
   const churnRetention = (
     <ChurnRetention
-      borderColor={borderColor}
       calendarView={calendarView}
       customerMetricsCards={cards}
       customerMetricsCharts={charts}

@@ -62,8 +62,8 @@ function RepairMetrics({
   const { showBoundary } = useErrorBoundary();
 
   const {
-    generalColors: { redColorShade, greenColorShade },
-    appThemeColors: { borderColor },
+    redColorShade,
+    greenColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -172,7 +172,6 @@ function RepairMetrics({
 
   const revenueUnitsSold = (
     <RepairRUS
-      borderColor={borderColor}
       calendarView={calendarView}
       repairMetricsCards={cards}
       repairMetricsCharts={charts}

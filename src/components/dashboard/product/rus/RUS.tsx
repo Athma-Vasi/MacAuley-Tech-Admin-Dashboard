@@ -29,7 +29,6 @@ import { rusReducer } from "./reducers";
 import { initialRUSState } from "./state";
 
 type RUSProps = {
-  borderColor: string;
   calendarView: DashboardCalendarView;
   day: string;
   subMetric: ProductSubMetric;
@@ -43,7 +42,6 @@ type RUSProps = {
 
 /** RUS: Revenue | Units Sold */
 function RUS({
-  borderColor,
   calendarView,
   productMetricsCards,
   productMetricsCharts,
@@ -249,7 +247,6 @@ function RUS({
       barChart={overviewBarChart}
       barChartHeading={barChartHeading}
       barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      borderColor={borderColor}
       expandBarChartButton={expandBarChartButton}
       expandLineChartButton={expandLineChartButton}
       expandPieChartButton={expandPieChartButton}

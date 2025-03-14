@@ -21,7 +21,6 @@ import { REPAIR_METRICS_SUB_CATEGORY_DATA } from "./constants";
 import type { RepairSubMetric } from "./types";
 
 type RepairRUSProps = {
-  borderColor: string;
   calendarView: DashboardCalendarView;
   day: string;
   subMetric: RepairSubMetric;
@@ -35,7 +34,6 @@ type RepairRUSProps = {
 
 /** RUS: Revenue | Units Sold */
 function RepairRUS({
-  borderColor,
   calendarView,
   repairMetricsCards,
   repairMetricsCharts,
@@ -169,7 +167,6 @@ function RepairRUS({
     <DashboardMetricsLayout
       barChart={overviewBarChart}
       barChartHeading={barChartHeading}
-      borderColor={borderColor}
       expandBarChartButton={expandBarChartButton}
       expandLineChartButton={expandLineChartButton}
       lineChart={overviewLineChart}
