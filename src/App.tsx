@@ -16,8 +16,6 @@ function App() {
     themeObject,
   });
 
-  console.log("App component rendered with themeObject:", themeObject);
-
   return (
     <div className="app" style={{ backgroundColor, color: textColor }}>
       <Header />

@@ -1,6 +1,9 @@
 import type { DashboardState, Year } from "./types";
 
-const initialSelectedDate = new Date().getDate().toString().padStart(2, "0");
+const initialSelectedDate = (new Date().getDate() - 1).toString().padStart(
+  2,
+  "0",
+);
 const initialSelectedMonth = (new Date().getMonth() + 1).toString().padStart(
   2,
   "0",

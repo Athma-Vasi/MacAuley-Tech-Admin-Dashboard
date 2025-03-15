@@ -68,10 +68,6 @@ function ResponsiveBarChart({
         colorsSwatches: COLORS_SWATCHES,
     });
 
-    console.group("ResponsiveBarChart");
-    console.log("barChartData", barChartData);
-    console.groupEnd();
-
     // sets initial colors based on app theme
     const modifiedInitialResponsiveBarChartState: ResponsiveBarChartState = {
         ...initialResponsiveBarChartState,

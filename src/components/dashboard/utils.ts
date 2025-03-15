@@ -337,6 +337,7 @@ async function createRandomProductMetrics({
       "2022": [0.65, 0.75],
       "2023": [0.6, 0.7],
       "2024": [0.55, 0.65],
+      "2025": [0.5, 0.6],
     },
     Calgary: {
       "2017": [0.35, 0.4],
@@ -347,6 +348,7 @@ async function createRandomProductMetrics({
       "2022": [0.65, 0.75],
       "2023": [0.6, 0.7],
       "2024": [0.55, 0.65],
+      "2025": [0.5, 0.6],
     },
     Vancouver: {
       "2019": [0.45, 0.5],
@@ -355,6 +357,7 @@ async function createRandomProductMetrics({
       "2022": [0.65, 0.75],
       "2023": [0.6, 0.7],
       "2024": [0.55, 0.65],
+      "2025": [0.5, 0.6],
     },
   };
 
@@ -375,6 +378,7 @@ async function createRandomProductMetrics({
       "2022": [17, 19],
       "2023": [13, 15],
       "2024": [12, 14],
+      "2025": [10, 12],
     },
     Calgary: {
       "2017": [1, 2],
@@ -385,6 +389,7 @@ async function createRandomProductMetrics({
       "2022": [9, 11],
       "2023": [5, 7],
       "2024": [4, 6],
+      "2025": [3, 5],
     },
     Vancouver: {
       "2019": [1, 2],
@@ -393,6 +398,7 @@ async function createRandomProductMetrics({
       "2022": [5, 9],
       "2023": [2, 4],
       "2024": [1, 3],
+      "2025": [1, 2],
     },
   };
 
@@ -950,6 +956,7 @@ async function createRandomRepairMetrics({
       "2022": [7, 11],
       "2023": [10, 13],
       "2024": [9, 12],
+      "2025": [8, 11],
     },
     Calgary: {
       "2017": [2, 4],
@@ -960,6 +967,7 @@ async function createRandomRepairMetrics({
       "2022": [6, 9],
       "2023": [8, 11],
       "2024": [7, 10],
+      "2025": [6, 9],
     },
     Vancouver: {
       "2019": [3, 5],
@@ -968,6 +976,7 @@ async function createRandomRepairMetrics({
       "2022": [6, 9],
       "2023": [9, 11],
       "2024": [8, 10],
+      "2025": [7, 9],
     },
   };
 
@@ -1425,6 +1434,7 @@ async function createRandomCustomerMetrics({
       "2022": [0.09, 0.11],
       "2023": [0.1, 0.12],
       "2024": [0.1, 0.12],
+      "2025": [0.1, 0.12],
     },
     Calgary: {
       "2017": [0.18, 0.22],
@@ -1435,6 +1445,7 @@ async function createRandomCustomerMetrics({
       "2022": [0.09, 0.11],
       "2023": [0.1, 0.12],
       "2024": [0.1, 0.12],
+      "2025": [0.1, 0.12],
     },
     Vancouver: {
       "2019": [0.13, 0.16],
@@ -1443,6 +1454,7 @@ async function createRandomCustomerMetrics({
       "2022": [0.09, 0.11],
       "2023": [0.1, 0.12],
       "2024": [0.1, 0.12],
+      "2025": [0.1, 0.12],
     },
   };
 
@@ -1463,6 +1475,7 @@ async function createRandomCustomerMetrics({
       "2022": [540, 740],
       "2023": [460, 660],
       "2024": [420, 620],
+      "2025": [400, 600],
     },
     Calgary: {
       "2017": [60, 260],
@@ -1473,6 +1486,7 @@ async function createRandomCustomerMetrics({
       "2022": [260, 460],
       "2023": [300, 500],
       "2024": [260, 460],
+      "2025": [240, 440],
     },
     Vancouver: {
       "2019": [80, 280],
@@ -1481,6 +1495,7 @@ async function createRandomCustomerMetrics({
       "2022": [460, 540],
       "2023": [300, 460],
       "2024": [260, 420],
+      "2025": [240, 400],
     },
   };
 
@@ -1501,6 +1516,7 @@ async function createRandomCustomerMetrics({
       "2022": [0.2, 0.35],
       "2023": [0.15, 0.3],
       "2024": [0.1, 0.25],
+      "2025": [0.1, 0.25],
     },
     Calgary: {
       "2017": [0.6, 0.7],
@@ -1511,6 +1527,7 @@ async function createRandomCustomerMetrics({
       "2022": [0.25, 0.45],
       "2023": [0.25, 0.4],
       "2024": [0.2, 0.35],
+      "2025": [0.2, 0.35],
     },
     Vancouver: {
       "2019": [0.6, 0.7],
@@ -1519,6 +1536,7 @@ async function createRandomCustomerMetrics({
       "2022": [0.35, 0.55],
       "2023": [0.3, 0.5],
       "2024": [0.25, 0.45],
+      "2025": [0.25, 0.4],
     },
   };
 
@@ -2203,6 +2221,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.27, 0.37],
       "2023": [0.23, 0.33],
       "2024": [0.21, 0.31],
+      "2025": [0.2, 0.3],
     },
     Calgary: {
       "2017": [0.07, 0.17],
@@ -2213,6 +2232,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.17, 0.27],
       "2023": [0.13, 0.23],
       "2024": [0.12, 0.22],
+      "2025": [0.11, 0.21],
     },
     Vancouver: {
       "2019": [0.09, 0.19],
@@ -2221,6 +2241,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.17, 0.27],
       "2023": [0.15, 0.25],
       "2024": [0.14, 0.24],
+      "2025": [0.13, 0.23],
     },
   };
 
@@ -2241,6 +2262,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.085, 0.09],
       "2023": [0.075, 0.08],
       "2024": [0.07, 0.075],
+      "2025": [0.065, 0.07],
     },
     Calgary: {
       "2017": [0.02, 0.025],
@@ -2251,6 +2273,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.055, 0.06],
       "2023": [0.045, 0.05],
       "2024": [0.04, 0.045],
+      "2025": [0.035, 0.04],
     },
     Vancouver: {
       "2019": [0.03, 0.035],
@@ -2259,6 +2282,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.055, 0.06],
       "2023": [0.05, 0.055],
       "2024": [0.045, 0.05],
+      "2025": [0.04, 0.045],
     },
   };
 
@@ -2279,6 +2303,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.7, 0.75],
       "2023": [0.65, 0.7],
       "2024": [0.6, 0.65],
+      "2025": [0.55, 0.6],
     },
     Calgary: {
       "2017": [0.4, 0.45],
@@ -2289,6 +2314,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.6, 0.65],
       "2023": [0.55, 0.6],
       "2024": [0.5, 0.55],
+      "2025": [0.45, 0.5],
     },
     Vancouver: {
       "2019": [0.45, 0.5],
@@ -2297,6 +2323,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.6, 0.65],
       "2023": [0.55, 0.6],
       "2024": [0.5, 0.55],
+      "2025": [0.45, 0.5],
     },
   };
 
@@ -2317,6 +2344,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.09, 0.1],
       "2023": [0.1, 0.11],
       "2024": [0.1, 0.11],
+      "2025": [0.1, 0.10],
     },
     Calgary: {
       "2017": [0.15, 0.17],
@@ -2327,6 +2355,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.09, 0.1],
       "2023": [0.1, 0.11],
       "2024": [0.1, 0.11],
+      "2025": [0.1, 0.11],
     },
     Vancouver: {
       "2019": [0.11, 0.13],
@@ -2335,6 +2364,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.09, 0.1],
       "2023": [0.1, 0.11],
       "2024": [0.1, 0.11],
+      "2025": [0.1, 0.11],
     },
   };
 
@@ -2355,6 +2385,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.04, 0.06],
       "2023": [0.05, 0.07],
       "2024": [0.05, 0.07],
+      "2025": [0.05, 0.07],
     },
     Calgary: {
       "2017": [0.14, 0.16],
@@ -2365,6 +2396,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.06, 0.08],
       "2023": [0.05, 0.07],
       "2024": [0.05, 0.07],
+      "2025": [0.05, 0.07],
     },
     Vancouver: {
       "2019": [0.1, 0.12],
@@ -2373,6 +2405,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.06, 0.08],
       "2023": [0.05, 0.07],
       "2024": [0.05, 0.07],
+      "2025": [0.05, 0.07],
     },
   };
 
@@ -2394,6 +2427,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.04, 0.045],
       "2023": [0.035, 0.04],
       "2024": [0.03, 0.035],
+      "2025": [0.025, 0.03],
     },
     Calgary: {
       "2017": [0.02, 0.025],
@@ -2404,6 +2438,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.04, 0.045],
       "2023": [0.035, 0.04],
       "2024": [0.03, 0.035],
+      "2025": [0.025, 0.03],
     },
     Vancouver: {
       "2019": [0.03, 0.035],
@@ -2412,6 +2447,7 @@ async function createRandomFinancialMetrics({
       "2022": [0.04, 0.045],
       "2023": [0.035, 0.04],
       "2024": [0.03, 0.035],
+      "2025": [0.025, 0.03],
     },
   };
 
@@ -3676,6 +3712,13 @@ function returnIsTabDisabled(
   }
 }
 
+function excludeTodayFromCalendarView() {
+  const isoString = new Date().toISOString();
+  const currentDate = isoString.split("T")[0];
+  const [currentYear, currentMonth, currentDay] = currentDate.split("-");
+  return `${currentYear}-${currentMonth}-${Number(currentDay) - 1}`;
+}
+
 export {
   createAggregatedProductMetrics,
   createAggregatedRepairMetrics,
@@ -3691,6 +3734,7 @@ export {
   createRandomProductMetrics,
   createRandomRepairMetrics,
   createRepairCategoryUnitsRepairedRevenueTuple,
+  excludeTodayFromCalendarView,
   returnChartTitleNavigateLinks,
   returnDaysInMonthsInYears,
   returnIsTabDisabled,

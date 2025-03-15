@@ -88,11 +88,6 @@ function FinancialMetrics({
           },
         );
 
-        console.log(
-          "selectedDateFinancialMetrics",
-          selectedDateFinancialMetrics,
-        );
-
         const financialMetricsCharts = await createFinancialMetricsCharts({
           businessMetrics,
           months: MONTHS,

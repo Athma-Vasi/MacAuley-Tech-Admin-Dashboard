@@ -46,6 +46,7 @@ import type {
 } from "./types";
 import {
   createRandomBusinessMetrics,
+  excludeTodayFromCalendarView,
   returnIsTabDisabled,
   splitSelectedCalendarDate,
 } from "./utils";
@@ -238,12 +239,14 @@ function Dashboard() {
     </Tabs>
   );
 
+  console.log(new Date().toISOString().split("T")[0]);
+
   const createdYYYYMMDDInput = (
     <TextInput
       aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'
       description="View metrics for selected calendar date."
       label="Calendar Date"
-      max={new Date().toISOString().split("T")[0]}
+      max={excludeTodayFromCalendarView()}
       min={storeLocationView === "Vancouver"
         ? new Date(2019, 0, 1).toISOString().split("T")[0]
         : storeLocationView === "Calgary"
