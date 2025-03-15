@@ -114,7 +114,7 @@ function PERT({
   const pieChartYAxisVariableSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: FINANCIAL_PERT_PIE_Y_AXIS_DATA as any,
+        data: FINANCIAL_PERT_PIE_Y_AXIS_DATA,
         name: "Y-Axis Pie",
         parentDispatch: pertDispatch,
         validValueAction: pertAction.setPieChartYAxisVariable,
@@ -186,7 +186,7 @@ function PERT({
   const barChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA as any,
+        data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: pertDispatch,
         validValueAction: pertAction.setBarChartYAxisVariable,
@@ -238,7 +238,7 @@ function PERT({
   const lineChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA as any,
+        data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
         name: "Y-Axis Line",
         parentDispatch: pertDispatch,
         validValueAction: pertAction.setLineChartYAxisVariable,

@@ -116,7 +116,7 @@ function OtherMetrics({
   const barChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: FINANCIAL_OTHERS_Y_AXIS_DATA as any,
+        data: FINANCIAL_OTHERS_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: otherMetricsDispatch,
         validValueAction: otherMetricsAction.setBarChartYAxisVariable,
@@ -168,7 +168,7 @@ function OtherMetrics({
   const lineChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: FINANCIAL_OTHERS_Y_AXIS_DATA as any,
+        data: FINANCIAL_OTHERS_Y_AXIS_DATA,
         name: "Y-Axis Line",
         parentDispatch: otherMetricsDispatch,
         validValueAction: otherMetricsAction.setLineChartYAxisVariable,

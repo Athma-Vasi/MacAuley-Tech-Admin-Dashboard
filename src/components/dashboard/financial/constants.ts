@@ -1,12 +1,22 @@
+import { CheckboxRadioSelectData } from "../../../types";
+import {
+  FinancialMetricsBarLineChartsKey,
+  FinancialMetricsOtherMetricsChartsKey,
+  FinancialMetricsPieChartsKey,
+} from "./chartsData";
 import { FinancialMetricCategory } from "./types";
 
-const FINANCIAL_PERT_PIE_Y_AXIS_DATA = [
+const FINANCIAL_PERT_PIE_Y_AXIS_DATA: CheckboxRadioSelectData<
+  FinancialMetricsPieChartsKey
+> = [
   { label: "Overview", value: "overview" },
   { label: "All", value: "all" },
   { label: "Sales", value: "sales" },
 ];
 
-const FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA = [
+const FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA: CheckboxRadioSelectData<
+  FinancialMetricsBarLineChartsKey
+> = [
   { label: "Total", value: "total" },
   { label: "All", value: "all" },
   { label: "Overview", value: "overview" },
@@ -16,7 +26,9 @@ const FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA = [
   { label: "Online", value: "online" },
 ];
 
-const FINANCIAL_OTHERS_Y_AXIS_DATA = [
+const FINANCIAL_OTHERS_Y_AXIS_DATA: CheckboxRadioSelectData<
+  FinancialMetricsOtherMetricsChartsKey
+> = [
   { label: "Net Profit Margin", value: "netProfitMargin" },
   { label: "Average Order Value", value: "averageOrderValue" },
   { label: "Conversion Rate", value: "conversionRate" },
