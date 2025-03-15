@@ -7,6 +7,7 @@ import {
   SegmentedControl,
   Text,
 } from "@mantine/core";
+import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { splitCamelCase } from "../../utils";
 
@@ -48,8 +49,10 @@ function AccessibleSegmentedControl<
   ValidValueAction extends string = string,
   Payload extends string = string,
 >({ attributes }: AccessibleSegmentedControlProps<ValidValueAction, Payload>) {
+  const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
+
   const {
-    color,
+    color = primaryColor,
     data,
     defaultValue,
     disabled = false,

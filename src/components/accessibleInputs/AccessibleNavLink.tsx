@@ -41,6 +41,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
     const {
         globalState: { themeObject },
     } = useGlobalState();
+    const { primaryColor } = themeObject;
 
     const { textColor } = returnThemeColors({
         colorsSwatches: COLORS_SWATCHES,
@@ -51,7 +52,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
         active = false,
         children = null,
         childrenOffset = 0,
-        color,
+        color = primaryColor,
         defaultOpened = false,
         description,
         disableRightSectionRotation = false,

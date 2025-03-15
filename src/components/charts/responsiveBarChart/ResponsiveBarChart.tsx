@@ -31,6 +31,11 @@ import {
     STICKY_STYLE,
 } from "../constants";
 // import { ChartsAndGraphsControlsStacker } from "../utils";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import {
+    ChartAndControlsDisplay,
+    ChartsAndGraphsControlsStacker,
+} from "../utils";
 import { responsiveBarChartAction } from "./actions";
 import {
     BAR_CHART_GROUP_MODE_SELECT_DATA,
@@ -41,11 +46,6 @@ import { responsiveBarChartReducer } from "./reducers";
 import { initialResponsiveBarChartState } from "./state";
 import type { ResponsiveBarChartProps, ResponsiveBarChartState } from "./types";
 import { createBarFillPatterns } from "./utils";
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import {
-    ChartAndControlsDisplay,
-    ChartsAndGraphsControlsStacker,
-} from "../utils";
 
 function ResponsiveBarChart({
     barChartData,
@@ -67,6 +67,10 @@ function ResponsiveBarChart({
         themeObject,
         colorsSwatches: COLORS_SWATCHES,
     });
+
+    console.group("ResponsiveBarChart");
+    console.log("barChartData", barChartData);
+    console.groupEnd();
 
     // sets initial colors based on app theme
     const modifiedInitialResponsiveBarChartState: ResponsiveBarChartState = {

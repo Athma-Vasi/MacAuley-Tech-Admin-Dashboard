@@ -116,9 +116,10 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
   const {
     globalState: { themeObject },
   } = useGlobalState();
-  const { defaultGradient, colorScheme } = themeObject;
+  const { defaultGradient, colorScheme, primaryColor } = themeObject;
 
   const {
+    color = primaryColor,
     compact = false,
     disabled = false,
     disabledScreenreaderText,
@@ -197,6 +198,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
         // id of enabledTextElement
         : `${name}-enabled`}
       aria-label={name}
+      color={color}
       compact={compact}
       disabled={disabled}
       gradient={variant === "gradient" ? defaultGradient : void 0}

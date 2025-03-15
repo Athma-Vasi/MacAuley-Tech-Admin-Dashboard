@@ -1,5 +1,11 @@
-import { Container, type MantineSize, NativeSelect } from "@mantine/core";
+import {
+  Container,
+  MantineColor,
+  type MantineSize,
+  NativeSelect,
+} from "@mantine/core";
 
+import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { splitCamelCase } from "../../utils";
 
@@ -7,6 +13,7 @@ type AccessibleSelectInputAttributes<
   ValidValueAction extends string = string,
   Payload extends string = string,
 > = {
+  color?: MantineColor;
   data: CheckboxRadioSelectData<Payload>;
   describedBy?: string;
   description?: string;
@@ -44,7 +51,10 @@ function AccessibleSelectInput<
     Payload
   >,
 ) {
+  const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
+
   const {
+    color = primaryColor,
     data,
     describedBy = "",
     description,
@@ -71,6 +81,7 @@ function AccessibleSelectInput<
         aria-describedby={describedBy}
         aria-label={`${description}. Currently selected ${value}`}
         aria-required={required}
+        color={color}
         data={data}
         disabled={disabled}
         label={label}

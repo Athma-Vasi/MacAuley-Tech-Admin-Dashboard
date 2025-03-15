@@ -65,9 +65,11 @@ function AccessibleSwitchInput<
     InvalidValueAction
   >,
 ) {
+  const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
+
   const {
     checked,
-    color,
+    color = primaryColor,
     disabled = false,
     invalidValueAction,
     labelPosition = "right",

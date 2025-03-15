@@ -67,8 +67,10 @@ function AccessibleSliderInput<
   attributes,
   uniqueId,
 }: AccessibleSliderInputProps<ValidValueAction, Payload>) {
+  const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
+
   const {
-    color,
+    color = primaryColor,
     disabled = false,
     label = null,
     labelTransition = "skew-down",

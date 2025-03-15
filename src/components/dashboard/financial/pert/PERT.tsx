@@ -61,7 +61,8 @@ function PERT({
   storeLocation,
   year,
 }: PERTProps) {
-  const { globalDispatch } = useGlobalState();
+  const { globalState: { themeObject: { primaryColor } }, globalDispatch } =
+    useGlobalState();
   const navigate = useNavigate();
 
   const [pertState, pertDispatch] = React.useReducer(
