@@ -353,7 +353,7 @@ function ResponsiveBarChart({
 
     if (hideControls) {
         return (
-            <Group>
+            <Group h={382} w={618}>
                 {displayResponsiveBar}
             </Group>
         );

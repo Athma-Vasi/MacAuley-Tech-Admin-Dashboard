@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
@@ -11,8 +12,8 @@ import {
   ResponsiveLineChart,
   ResponsivePieChart,
 } from "../../../charts";
-import DashboardMetricsLayout from "../../DashboardMetricsLayout";
 import { MONTHS } from "../../constants";
+import DashboardMetricsLayout from "../../DashboardMetricsLayout";
 import type {
   BusinessMetricStoreLocation,
   DashboardCalendarView,
@@ -20,10 +21,8 @@ import type {
   Year,
 } from "../../types";
 import { returnChartTitleNavigateLinks, returnStatistics } from "../../utils";
-import {
-  type FinancialMetricsCards,
-  returnCalendarViewFinancialCards,
-} from "../cards";
+import { DashboardCardInfo } from "../../utilsTSX";
+import { type FinancialMetricsCards } from "../cards";
 import {
   type FinancialMetricsCharts,
   returnCalendarViewFinancialCharts,
@@ -265,13 +264,43 @@ function PERT({
     />
   );
 
-  const cards = returnCalendarViewFinancialCards(
-    calendarView,
-    financialMetricsCards,
-  );
-  const overviewCards = PERT_SET.has(metricCategory)
+  const cards = calendarView === "Daily"
+    ? financialMetricsCards.dailyCards
+    : calendarView === "Monthly"
+    ? financialMetricsCards.monthlyCards
+    : financialMetricsCards.yearlyCards;
+
+  const overviewCardsArr = PERT_SET.has(metricCategory)
     ? cards[metricCategory]
     : cards.profit;
+
+  const overviewCards = overviewCardsArr.reduce((acc, card) => {
+    const { heading = "" } = card;
+
+    Object.defineProperty(acc, heading.toLowerCase(), {
+      value: card,
+    });
+
+    return acc;
+  }, {} as {
+    Total: DashboardCardInfo;
+    Repair: DashboardCardInfo;
+    "Sales Total": DashboardCardInfo;
+    "Sales Online": DashboardCardInfo;
+    "Sales In-Store": DashboardCardInfo;
+  });
+
+  const totalCard = overviewCards.Total;
+  const repairCard = overviewCards.Repair;
+  const salesCard = overviewCards["Sales Total"];
+  const onlineSalesCard = overviewCards["Sales Online"];
+  const inStoreSalesCard = overviewCards["Sales In-Store"];
+
+  console.log({ statistics });
+  console.log(
+    "financialMetricsCharts.dailyCharts.expenses.bar",
+    financialMetricsCharts.dailyCharts.expenses.bar,
+  );
 
   const financialMetricsOverview = (
     <DashboardMetricsLayout
@@ -284,7 +313,7 @@ function PERT({
       lineChart={overviewLineChart}
       lineChartHeading={lineChartHeading}
       lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-      overviewCards={overviewCards}
+      overviewCards={overviewCardsArr}
       pieChart={overviewPieChart}
       pieChartHeading={pieChartHeading}
       pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
@@ -294,7 +323,17 @@ function PERT({
     />
   );
 
-  return financialMetricsOverview;
+  // const createdCards = overviewCards.map((overviewCard, idx) => (
+  //   <Group key={`${idx}-${overviewCard.value}`} w={320}>
+  //     {returnDashboardCardElement(overviewCard)}
+  //   </Group>
+  // ));
+
+  return (
+    <Stack>
+      {financialMetricsOverview}
+    </Stack>
+  );
 }
 
 export default PERT;

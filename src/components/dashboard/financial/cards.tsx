@@ -1,4 +1,4 @@
-import type { DashboardCalendarView } from "../types";
+import type { DashboardCalendarView, FinancialMetricCategory } from "../types";
 import {
   createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
@@ -875,16 +875,5 @@ function createFinancialMetricsCards({
   });
 }
 
-function returnCalendarViewFinancialCards(
-  calendarView: DashboardCalendarView,
-  financialMetricsCards: FinancialMetricsCards,
-) {
-  return calendarView === "Daily"
-    ? financialMetricsCards.dailyCards
-    : calendarView === "Monthly"
-    ? financialMetricsCards.monthlyCards
-    : financialMetricsCards.yearlyCards;
-}
-
-export { createFinancialMetricsCards, returnCalendarViewFinancialCards };
+export { createFinancialMetricsCards };
 export type { FinancialMetricsCards };

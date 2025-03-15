@@ -176,7 +176,7 @@ type FinancialMetricsBarCharts = Record<
 type FinancialMetricLineCharts = {
   total: { id: "Total"; data: { x: string; y: number }[] }[];
   all: {
-    id: "Repair" | "In Store" | "Online";
+    id: "Repair" | "In-Store" | "Online";
     data: { x: string; y: number }[];
   }[];
   overview: {
@@ -185,10 +185,10 @@ type FinancialMetricLineCharts = {
   }[];
   repair: { id: "Repair"; data: { x: string; y: number }[] }[];
   sales: {
-    id: "In Store" | "Online";
+    id: "In-Store" | "Online";
     data: { x: string; y: number }[];
   }[];
-  inStore: { id: "In Store"; data: { x: string; y: number }[] }[];
+  inStore: { id: "In-Store"; data: { x: string; y: number }[] }[];
   online: { id: "Online"; data: { x: string; y: number }[] }[];
 }; // y-axis variables: total, repair, in-store, online
 
@@ -338,7 +338,7 @@ async function createFinancialMetricsCharts({
     total: [{ id: "Total", data: [] }],
     all: [
       { id: "Repair", data: [] },
-      { id: "In Store", data: [] },
+      { id: "In-Store", data: [] },
       { id: "Online", data: [] },
     ],
     overview: [
@@ -347,10 +347,10 @@ async function createFinancialMetricsCharts({
     ],
     repair: [{ id: "Repair", data: [] }],
     sales: [
-      { id: "In Store", data: [] },
+      { id: "In-Store", data: [] },
       { id: "Online", data: [] },
     ],
-    inStore: [{ id: "In Store", data: [] }],
+    inStore: [{ id: "In-Store", data: [] }],
     online: [{ id: "Online", data: [] }],
   };
 
@@ -526,7 +526,7 @@ async function createDailyFinancialCharts({
           const dailyProfitAllBarChart: BarChartData = {
             Days: day,
             Repair: repairProfit,
-            "In Store": salesProfit.inStore,
+            "In-Store": salesProfit.inStore,
             Online: salesProfit.online,
           };
           dailyProfitBarChartsAcc.all.push(dailyProfitAllBarChart);
@@ -546,14 +546,14 @@ async function createDailyFinancialCharts({
 
           const dailyProfitSalesBarChart: BarChartData = {
             Days: day,
-            "In Store": salesProfit.inStore,
+            "In-Store": salesProfit.inStore,
             Online: salesProfit.online,
           };
           dailyProfitBarChartsAcc.sales.push(dailyProfitSalesBarChart);
 
           const dailyProfitInStoreBarChart: BarChartData = {
             Days: day,
-            "In Store": salesProfit.inStore,
+            "In-Store": salesProfit.inStore,
           };
           dailyProfitBarChartsAcc.inStore.push(dailyProfitInStoreBarChart);
 
@@ -591,7 +591,7 @@ async function createDailyFinancialCharts({
           };
           dailyProfitLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyProfitAllInStoreLineChart);
 
@@ -641,7 +641,7 @@ async function createDailyFinancialCharts({
           };
           dailyProfitLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyProfitSalesInStoreLineChart);
 
@@ -661,7 +661,7 @@ async function createDailyFinancialCharts({
           };
           dailyProfitLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyProfitInStoreLineChart);
 
@@ -695,7 +695,7 @@ async function createDailyFinancialCharts({
           const dailyExpensesAllBarChart: BarChartData = {
             Days: day,
             Repair: repairExpenses,
-            "In Store": salesExpenses.inStore,
+            "In-Store": salesExpenses.inStore,
             Online: salesExpenses.online,
           };
           dailyExpensesBarChartsAcc.all?.push(dailyExpensesAllBarChart);
@@ -717,14 +717,14 @@ async function createDailyFinancialCharts({
 
           const dailyExpensesSalesBarChart: BarChartData = {
             Days: day,
-            "In Store": salesExpenses.inStore,
+            "In-Store": salesExpenses.inStore,
             Online: salesExpenses.online,
           };
           dailyExpensesBarChartsAcc.sales.push(dailyExpensesSalesBarChart);
 
           const dailyExpensesInStoreBarChart: BarChartData = {
             Days: day,
-            "In Store": salesExpenses.inStore,
+            "In-Store": salesExpenses.inStore,
           };
           dailyExpensesBarChartsAcc.inStore.push(dailyExpensesInStoreBarChart);
 
@@ -762,7 +762,7 @@ async function createDailyFinancialCharts({
           };
           dailyExpensesLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyExpensesAllInStoreLineChart);
 
@@ -812,7 +812,7 @@ async function createDailyFinancialCharts({
           };
           dailyExpensesLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyExpensesSalesInStoreLineChart);
 
@@ -832,7 +832,7 @@ async function createDailyFinancialCharts({
           };
           dailyExpensesLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyExpensesInStoreLineChart);
 
@@ -866,7 +866,7 @@ async function createDailyFinancialCharts({
           const dailyRevenueAllBarChart: BarChartData = {
             Days: day,
             Repair: repairRevenue,
-            "In Store": salesRevenue.inStore,
+            "In-Store": salesRevenue.inStore,
             Online: salesRevenue.online,
           };
           dailyRevenueBarChartsAcc.all.push(dailyRevenueAllBarChart);
@@ -886,14 +886,14 @@ async function createDailyFinancialCharts({
 
           const dailyRevenueSalesBarChart: BarChartData = {
             Days: day,
-            "In Store": salesRevenue.inStore,
+            "In-Store": salesRevenue.inStore,
             Online: salesRevenue.online,
           };
           dailyRevenueBarChartsAcc.sales.push(dailyRevenueSalesBarChart);
 
           const dailyRevenueInStoreBarChart: BarChartData = {
             Days: day,
-            "In Store": salesRevenue.inStore,
+            "In-Store": salesRevenue.inStore,
           };
           dailyRevenueBarChartsAcc.inStore.push(dailyRevenueInStoreBarChart);
 
@@ -931,7 +931,7 @@ async function createDailyFinancialCharts({
           };
           dailyRevenueLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyRevenueAllInStoreLineChart);
 
@@ -981,7 +981,7 @@ async function createDailyFinancialCharts({
           };
           dailyRevenueLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyRevenueSalesInStoreLineChart);
 
@@ -1001,7 +1001,7 @@ async function createDailyFinancialCharts({
           };
           dailyRevenueLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyRevenueInStoreLineChart);
 
@@ -1037,7 +1037,7 @@ async function createDailyFinancialCharts({
           const dailyTransactionsAllBarChart: BarChartData = {
             Days: day,
             Repair: repairTransactions,
-            "In Store": salesTransactions.inStore,
+            "In-Store": salesTransactions.inStore,
             Online: salesTransactions.online,
           };
           dailyTransactionsBarChartsAcc.all?.push(dailyTransactionsAllBarChart);
@@ -1061,7 +1061,7 @@ async function createDailyFinancialCharts({
 
           const dailyTransactionsSalesBarChart: BarChartData = {
             Days: day,
-            "In Store": salesTransactions.inStore,
+            "In-Store": salesTransactions.inStore,
             Online: salesTransactions.online,
           };
           dailyTransactionsBarChartsAcc.sales.push(
@@ -1070,7 +1070,7 @@ async function createDailyFinancialCharts({
 
           const dailyTransactionsInStoreBarChart: BarChartData = {
             Days: day,
-            "In Store": salesTransactions.inStore,
+            "In-Store": salesTransactions.inStore,
           };
           dailyTransactionsBarChartsAcc.inStore.push(
             dailyTransactionsInStoreBarChart,
@@ -1112,7 +1112,7 @@ async function createDailyFinancialCharts({
           };
           dailyTransactionsLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyTransactionsAllInStoreLineChart);
 
@@ -1162,7 +1162,7 @@ async function createDailyFinancialCharts({
           };
           dailyTransactionsLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyTransactionsSalesInStoreLineChart);
 
@@ -1182,7 +1182,7 @@ async function createDailyFinancialCharts({
           };
           dailyTransactionsLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(dailyTransactionsInStoreLineChart);
 
@@ -1293,8 +1293,8 @@ async function createDailyFinancialCharts({
         value: selectedDayMetrics.profit.sales.total,
       };
       const dailyProfitSalesInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedDayMetrics.profit.sales.inStore,
       };
       const dailyProfitSalesOnlinePieChart = {
@@ -1328,8 +1328,8 @@ async function createDailyFinancialCharts({
         value: selectedDayMetrics.expenses.sales.total,
       };
       const dailyExpensesSalesInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedDayMetrics.expenses.sales.inStore,
       };
       const dailyExpensesSalesOnlinePieChart = {
@@ -1363,8 +1363,8 @@ async function createDailyFinancialCharts({
         value: selectedDayMetrics.revenue.sales.total,
       };
       const dailyRevenueSalesInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedDayMetrics.revenue.sales.inStore,
       };
       const dailyRevenueSalesOnlinePieChart = {
@@ -1398,8 +1398,8 @@ async function createDailyFinancialCharts({
         value: selectedDayMetrics.transactions.sales.total,
       };
       const dailyTransactionsSalesInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedDayMetrics.transactions.sales.inStore,
       };
       const dailyTransactionsSalesOnlinePieChart = {
@@ -1580,7 +1580,7 @@ async function createMonthlyFinancialCharts({
           const monthlyProfitAllBarChart: BarChartData = {
             Months: month,
             Repair: monthlyRepairProfit,
-            "In Store": monthlySalesProfit.inStore,
+            "In-Store": monthlySalesProfit.inStore,
             Online: monthlySalesProfit.online,
           };
           monthlyProfitBarChartsAcc.all?.push(monthlyProfitAllBarChart);
@@ -1602,14 +1602,14 @@ async function createMonthlyFinancialCharts({
 
           const monthlyProfitSalesBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesProfit.inStore,
+            "In-Store": monthlySalesProfit.inStore,
             Online: monthlySalesProfit.online,
           };
           monthlyProfitBarChartsAcc.sales.push(monthlyProfitSalesBarChart);
 
           const monthlyProfitInStoreBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesProfit.inStore,
+            "In-Store": monthlySalesProfit.inStore,
           };
           monthlyProfitBarChartsAcc.inStore.push(monthlyProfitInStoreBarChart);
 
@@ -1647,7 +1647,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyProfitLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyProfitAllInStoreLineChart);
 
@@ -1697,7 +1697,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyProfitLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyProfitSalesInStoreLineChart);
 
@@ -1717,7 +1717,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyProfitLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyProfitInStoreLineChart);
 
@@ -1752,7 +1752,7 @@ async function createMonthlyFinancialCharts({
           const monthlyExpensesAllBarChart: BarChartData = {
             Months: month,
             Repair: monthlyRepairExpenses,
-            "In Store": monthlySalesExpenses.inStore,
+            "In-Store": monthlySalesExpenses.inStore,
             Online: monthlySalesExpenses.online,
           };
           monthlyExpensesBarChartsAcc.all?.push(monthlyExpensesAllBarChart);
@@ -1776,14 +1776,14 @@ async function createMonthlyFinancialCharts({
 
           const monthlyExpensesSalesBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesExpenses.inStore,
+            "In-Store": monthlySalesExpenses.inStore,
             Online: monthlySalesExpenses.online,
           };
           monthlyExpensesBarChartsAcc.sales.push(monthlyExpensesSalesBarChart);
 
           const monthlyExpensesInStoreBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesExpenses.inStore,
+            "In-Store": monthlySalesExpenses.inStore,
           };
           monthlyExpensesBarChartsAcc.inStore.push(
             monthlyExpensesInStoreBarChart,
@@ -1825,7 +1825,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyExpensesLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyExpensesAllInStoreLineChart);
 
@@ -1875,7 +1875,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyExpensesLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyExpensesSalesInStoreLineChart);
 
@@ -1895,7 +1895,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyExpensesLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyExpensesInStoreLineChart);
 
@@ -1930,7 +1930,7 @@ async function createMonthlyFinancialCharts({
           const monthlyRevenueAllBarChart: BarChartData = {
             Months: month,
             Repair: monthlyRepairRevenue,
-            "In Store": monthlySalesRevenue.inStore,
+            "In-Store": monthlySalesRevenue.inStore,
             Online: monthlySalesRevenue.online,
           };
           monthlyRevenueBarChartsAcc.all?.push(monthlyRevenueAllBarChart);
@@ -1952,14 +1952,14 @@ async function createMonthlyFinancialCharts({
 
           const monthlyRevenueSalesBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesRevenue.inStore,
+            "In-Store": monthlySalesRevenue.inStore,
             Online: monthlySalesRevenue.online,
           };
           monthlyRevenueBarChartsAcc.sales.push(monthlyRevenueSalesBarChart);
 
           const monthlyRevenueInStoreBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesRevenue.inStore,
+            "In-Store": monthlySalesRevenue.inStore,
           };
           monthlyRevenueBarChartsAcc.inStore.push(
             monthlyRevenueInStoreBarChart,
@@ -1999,7 +1999,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyRevenueLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyRevenueAllInStoreLineChart);
 
@@ -2049,7 +2049,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyRevenueLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyRevenueSalesInStoreLineChart);
 
@@ -2069,7 +2069,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyRevenueLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyRevenueInStoreLineChart);
 
@@ -2106,7 +2106,7 @@ async function createMonthlyFinancialCharts({
           const monthlyTransactionsAllBarChart: BarChartData = {
             Months: month,
             Repair: monthlyRepairTransactions,
-            "In Store": monthlySalesTransactions.inStore,
+            "In-Store": monthlySalesTransactions.inStore,
             Online: monthlySalesTransactions.online,
           };
           monthlyTransactionsBarChartsAcc.all?.push(
@@ -2132,7 +2132,7 @@ async function createMonthlyFinancialCharts({
 
           const monthlyTransactionsSalesBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesTransactions.inStore,
+            "In-Store": monthlySalesTransactions.inStore,
             Online: monthlySalesTransactions.online,
           };
           monthlyTransactionsBarChartsAcc.sales.push(
@@ -2141,7 +2141,7 @@ async function createMonthlyFinancialCharts({
 
           const monthlyTransactionsInStoreBarChart: BarChartData = {
             Months: month,
-            "In Store": monthlySalesTransactions.inStore,
+            "In-Store": monthlySalesTransactions.inStore,
           };
           monthlyTransactionsBarChartsAcc.inStore.push(
             monthlyTransactionsInStoreBarChart,
@@ -2183,7 +2183,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyTransactionsLineChartsAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyTransactionsAllInStoreLineChart);
 
@@ -2233,7 +2233,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyTransactionsLineChartsAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyTransactionsSalesInStoreLineChart);
 
@@ -2253,7 +2253,7 @@ async function createMonthlyFinancialCharts({
           };
           monthlyTransactionsLineChartsAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(monthlyTransactionsInStoreLineChart);
 
@@ -2368,8 +2368,8 @@ async function createMonthlyFinancialCharts({
         value: selectedMonthMetrics.profit.sales.total,
       };
       const monthlyProfitInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedMonthMetrics.profit.sales.inStore,
       };
       const monthlyProfitOnlinePieChart = {
@@ -2400,8 +2400,8 @@ async function createMonthlyFinancialCharts({
         value: selectedMonthMetrics.expenses.sales.total,
       };
       const monthlyExpensesInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedMonthMetrics.expenses.sales.inStore,
       };
       const monthlyExpensesOnlinePieChart = {
@@ -2431,8 +2431,8 @@ async function createMonthlyFinancialCharts({
         value: selectedMonthMetrics.revenue.sales.total,
       };
       const monthlyRevenueInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedMonthMetrics.revenue.sales.inStore,
       };
       const monthlyRevenueOnlinePieChart = {
@@ -2463,8 +2463,8 @@ async function createMonthlyFinancialCharts({
         value: selectedMonthMetrics.transactions.sales.total,
       };
       const monthlyTransactionsInStorePieChart = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedMonthMetrics.transactions.sales.inStore,
       };
       const monthlyTransactionsOnlinePieChart = {
@@ -2634,7 +2634,7 @@ async function createYearlyFinancialCharts({
           const yearlyProfitAllBarChart: BarChartData = {
             Years: year,
             Repair: yearlyRepairProfit,
-            "In Store": yearlySalesProfit.inStore,
+            "In-Store": yearlySalesProfit.inStore,
             Online: yearlySalesProfit.online,
           };
           yearlyProfitBarChartsObjAcc.all.push(yearlyProfitAllBarChart);
@@ -2656,14 +2656,14 @@ async function createYearlyFinancialCharts({
 
           const yearlyProfitSalesBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesProfit.inStore,
+            "In-Store": yearlySalesProfit.inStore,
             Online: yearlySalesProfit.online,
           };
           yearlyProfitBarChartsObjAcc.sales.push(yearlyProfitSalesBarChart);
 
           const yearlyProfitInStoreBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesProfit.inStore,
+            "In-Store": yearlySalesProfit.inStore,
           };
           yearlyProfitBarChartsObjAcc.inStore.push(yearlyProfitInStoreBarChart);
 
@@ -2701,7 +2701,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyProfitLineChartsObjAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyProfitAllInStoreLineChart);
 
@@ -2751,7 +2751,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyProfitLineChartsObjAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyProfitSalesInStoreLineChart);
 
@@ -2771,7 +2771,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyProfitLineChartsObjAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyProfitInStoreLineChart);
 
@@ -2806,7 +2806,7 @@ async function createYearlyFinancialCharts({
           const yearlyExpensesAllBarChart: BarChartData = {
             Years: year,
             Repair: yearlyRepairExpenses,
-            "In Store": yearlySalesExpenses.inStore,
+            "In-Store": yearlySalesExpenses.inStore,
             Online: yearlySalesExpenses.online,
           };
           yearlyExpensesBarChartsObjAcc.all?.push(yearlyExpensesAllBarChart);
@@ -2830,14 +2830,14 @@ async function createYearlyFinancialCharts({
 
           const yearlyExpensesSalesBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesExpenses.inStore,
+            "In-Store": yearlySalesExpenses.inStore,
             Online: yearlySalesExpenses.online,
           };
           yearlyExpensesBarChartsObjAcc.sales.push(yearlyExpensesSalesBarChart);
 
           const yearlyExpensesInStoreBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesExpenses.inStore,
+            "In-Store": yearlySalesExpenses.inStore,
           };
           yearlyExpensesBarChartsObjAcc.inStore.push(
             yearlyExpensesInStoreBarChart,
@@ -2879,7 +2879,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyExpensesLineChartsObjAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyExpensesAllInStoreLineChart);
 
@@ -2929,7 +2929,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyExpensesLineChartsObjAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyExpensesSalesInStoreLineChart);
 
@@ -2949,7 +2949,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyExpensesLineChartsObjAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyExpensesInStoreLineChart);
 
@@ -2984,7 +2984,7 @@ async function createYearlyFinancialCharts({
           const yearlyRevenueAllBarChart: BarChartData = {
             Years: year,
             Repair: yearlyRepairRevenue,
-            "In Store": yearlySalesRevenue.inStore,
+            "In-Store": yearlySalesRevenue.inStore,
             Online: yearlySalesRevenue.online,
           };
           yearlyRevenueBarChartsObjAcc.all?.push(yearlyRevenueAllBarChart);
@@ -3006,14 +3006,14 @@ async function createYearlyFinancialCharts({
 
           const yearlyRevenueSalesBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesRevenue.inStore,
+            "In-Store": yearlySalesRevenue.inStore,
             Online: yearlySalesRevenue.online,
           };
           yearlyRevenueBarChartsObjAcc.sales.push(yearlyRevenueSalesBarChart);
 
           const yearlyRevenueInStoreBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesRevenue.inStore,
+            "In-Store": yearlySalesRevenue.inStore,
           };
           yearlyRevenueBarChartsObjAcc.inStore.push(
             yearlyRevenueInStoreBarChart,
@@ -3053,7 +3053,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyRevenueLineChartsObjAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyRevenueAllInStoreLineChart);
 
@@ -3103,7 +3103,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyRevenueLineChartsObjAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyRevenueSalesInStoreLineChart);
 
@@ -3123,7 +3123,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyRevenueLineChartsObjAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyRevenueInStoreLineChart);
 
@@ -3160,7 +3160,7 @@ async function createYearlyFinancialCharts({
           const yearlyTransactionsAllBarChart: BarChartData = {
             Years: year,
             Repair: yearlyRepairTransactions,
-            "In Store": yearlySalesTransactions.inStore,
+            "In-Store": yearlySalesTransactions.inStore,
             Online: yearlySalesTransactions.online,
           };
           yearlyTransactionsBarChartsObjAcc.all?.push(
@@ -3186,7 +3186,7 @@ async function createYearlyFinancialCharts({
 
           const yearlyTransactionsSalesBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesTransactions.inStore,
+            "In-Store": yearlySalesTransactions.inStore,
             Online: yearlySalesTransactions.online,
           };
           yearlyTransactionsBarChartsObjAcc.sales.push(
@@ -3195,7 +3195,7 @@ async function createYearlyFinancialCharts({
 
           const yearlyTransactionsInStoreBarChart: BarChartData = {
             Years: year,
-            "In Store": yearlySalesTransactions.inStore,
+            "In-Store": yearlySalesTransactions.inStore,
           };
           yearlyTransactionsBarChartsObjAcc.inStore.push(
             yearlyTransactionsInStoreBarChart,
@@ -3237,7 +3237,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyTransactionsLineChartsObjAcc.all
             ?.find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyTransactionsAllInStoreLineChart);
 
@@ -3287,7 +3287,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyTransactionsLineChartsObjAcc.sales
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyTransactionsSalesInStoreLineChart);
 
@@ -3307,7 +3307,7 @@ async function createYearlyFinancialCharts({
           };
           yearlyTransactionsLineChartsObjAcc.inStore
             .find((lineChartData: LineChartData) =>
-              lineChartData.id === "In Store"
+              lineChartData.id === "In-Store"
             )
             ?.data.push(yearlyTransactionsInStoreLineChart);
 
@@ -3422,8 +3422,8 @@ async function createYearlyFinancialCharts({
         value: selectedYearMetrics.profit.sales.total,
       };
       const yearlyProfitSalesInStorePieChart: PieChartData = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedYearMetrics.profit.sales.inStore,
       };
       const yearlyProfitSalesOnlinePieChart: PieChartData = {
@@ -3457,8 +3457,8 @@ async function createYearlyFinancialCharts({
         value: selectedYearMetrics.expenses.sales.total,
       };
       const yearlyExpensesSalesInStorePieChart: PieChartData = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedYearMetrics.expenses.sales.inStore,
       };
       const yearlyExpensesSalesOnlinePieChart: PieChartData = {
@@ -3492,8 +3492,8 @@ async function createYearlyFinancialCharts({
         value: selectedYearMetrics.revenue.sales.total,
       };
       const yearlyRevenueSalesInStorePieChart: PieChartData = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedYearMetrics.revenue.sales.inStore,
       };
       const yearlyRevenueSalesOnlinePieChart: PieChartData = {
@@ -3527,8 +3527,8 @@ async function createYearlyFinancialCharts({
         value: selectedYearMetrics.transactions.sales.total,
       };
       const yearlyTransactionsSalesInStorePieChart: PieChartData = {
-        id: "In Store",
-        label: "In Store",
+        id: "In-Store",
+        label: "In-Store",
         value: selectedYearMetrics.transactions.sales.inStore,
       };
       const yearlyTransactionsSalesOnlinePieChart: PieChartData = {

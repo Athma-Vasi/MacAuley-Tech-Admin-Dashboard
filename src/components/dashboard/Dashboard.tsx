@@ -239,8 +239,6 @@ function Dashboard() {
     </Tabs>
   );
 
-  console.log(new Date().toISOString().split("T")[0]);
-
   const createdYYYYMMDDInput = (
     <TextInput
       aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'

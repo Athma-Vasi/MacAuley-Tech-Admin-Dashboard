@@ -237,7 +237,7 @@ function ResponsivePieChart({
 
   if (hideControls) {
     return (
-      <Group>
+      <Group h={382} w={618}>
         {displayResponsivePie}
       </Group>
     );
