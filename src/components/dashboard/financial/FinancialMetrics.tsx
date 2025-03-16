@@ -6,7 +6,7 @@ import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
-import { MONTHS } from "../constants";
+import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -18,7 +18,6 @@ import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
   createFinancialMetricsCharts,
-  returnCalendarViewFinancialCharts,
   returnSelectedDateFinancialMetrics,
 } from "./chartsData";
 import { FINANCIAL_METRICS_CATEGORY_DATA, PERT_SET } from "./constants";
@@ -157,30 +156,34 @@ function FinancialMetrics({
 
   const subCategoryPage = PERT_SET.has(category)
     ? (
-      <PERT
-        calendarView={calendarView}
-        financialMetricsCards={cards}
-        financialMetricsCharts={charts}
-        day={selectedDate}
-        month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={category}
-        metricsView="Financials"
-        storeLocation={storeLocationView}
-        year={selectedYear}
-      />
+      CALENDAR_VIEW_TABS_DATA.map((calendarView) => (
+        <PERT
+          calendarView={calendarView}
+          financialMetricsCards={cards}
+          financialMetricsCharts={charts}
+          day={selectedDate}
+          month={selectedYYYYMMDD.split("-")[1]}
+          metricCategory={category}
+          metricsView="Financials"
+          storeLocation={storeLocationView}
+          year={selectedYear}
+        />
+      ))
     )
     : (
-      <OtherMetrics
-        calendarView={calendarView}
-        financialMetricsCards={cards}
-        financialMetricsCharts={charts}
-        day={selectedDate}
-        month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={category}
-        metricsView="Financials"
-        storeLocation={storeLocationView}
-        year={selectedYear}
-      />
+      CALENDAR_VIEW_TABS_DATA.map((calendarView) => (
+        <OtherMetrics
+          calendarView={calendarView}
+          financialMetricsCards={cards}
+          financialMetricsCharts={charts}
+          day={selectedDate}
+          month={selectedYYYYMMDD.split("-")[1]}
+          metricCategory={category}
+          metricsView="Financials"
+          storeLocation={storeLocationView}
+          year={selectedYear}
+        />
+      ))
     );
 
   const loadingOverlay = (

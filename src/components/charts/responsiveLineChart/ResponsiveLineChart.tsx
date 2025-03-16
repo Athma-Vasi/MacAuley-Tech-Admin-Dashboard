@@ -345,7 +345,7 @@ function ResponsiveLineChart({
 
   if (hideControls) {
     return (
-      <Group>
+      <Group w={618} h={382}>
         {displayResponsiveLine}
       </Group>
     );

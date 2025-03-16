@@ -1,4 +1,4 @@
-import { Group, Stack } from "@mantine/core";
+import { Flex, Group, Stack } from "@mantine/core";
 import React from "react";
 import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmentedControl";
 import { CHART_KIND_DATA } from "./constants";
@@ -71,7 +71,7 @@ function DashboardBarLineLayout(
             </Group>
 
             <Group w="100%" position="apart">
-                {consolidatedCards}
+                <Flex wrap="wrap">{consolidatedCards}</Flex>
                 {chart}
             </Group>
         </Stack>

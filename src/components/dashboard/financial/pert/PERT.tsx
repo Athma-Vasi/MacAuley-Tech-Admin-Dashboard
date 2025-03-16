@@ -353,7 +353,7 @@ function PERT({
         sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
         semanticLabel={metricCategory}
       />
-      {financialMetricsOverview}
+      {/* {financialMetricsOverview} */}
     </Stack>
   );
 }
