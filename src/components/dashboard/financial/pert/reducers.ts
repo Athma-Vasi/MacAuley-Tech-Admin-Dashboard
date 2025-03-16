@@ -15,13 +15,14 @@ const pertReducers = new Map<
   (state: PERTState, dispatch: PERTDispatch) => PERTState
 >([
   [pertAction.setBarChartYAxisVariable, pertReducer_setBarChartYAxisVariable],
+  [pertAction.setChartKind, pertReducer_setChartKind],
   [pertAction.setLineChartYAxisVariable, pertReducer_setLineChartYAxisVariable],
   [pertAction.setPieChartYAxisVariable, pertReducer_setPieChartYAxisVariable],
 ]);
 
 function pertReducer_setBarChartYAxisVariable(
   state: PERTState,
-  dispatch: PERTDispatch
+  dispatch: PERTDispatch,
 ): PERTState {
   return {
     ...state,
@@ -29,19 +30,30 @@ function pertReducer_setBarChartYAxisVariable(
   };
 }
 
-function pertReducer_setLineChartYAxisVariable(
+function pertReducer_setChartKind(
   state: PERTState,
-  dispatch: PERTDispatch
+  dispatch: PERTDispatch,
 ): PERTState {
   return {
     ...state,
-    lineChartYAxisVariable: dispatch.payload as FinancialMetricsBarLineChartsKey,
+    chartKind: dispatch.payload as "bar" | "line",
+  };
+}
+
+function pertReducer_setLineChartYAxisVariable(
+  state: PERTState,
+  dispatch: PERTDispatch,
+): PERTState {
+  return {
+    ...state,
+    lineChartYAxisVariable: dispatch
+      .payload as FinancialMetricsBarLineChartsKey,
   };
 }
 
 function pertReducer_setPieChartYAxisVariable(
   state: PERTState,
-  dispatch: PERTDispatch
+  dispatch: PERTDispatch,
 ): PERTState {
   return {
     ...state,

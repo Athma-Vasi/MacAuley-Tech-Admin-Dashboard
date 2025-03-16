@@ -78,6 +78,7 @@ function PERT({
 
   const {
     barChartYAxisVariable,
+    chartKind,
     lineChartYAxisVariable,
     pieChartYAxisVariable,
   } = pertState;
@@ -283,9 +284,6 @@ function PERT({
   const overviewCards = overviewCardsArr.reduce((acc, card) => {
     const { heading = "Total" } = card;
 
-    // Object.defineProperty(acc, heading, {
-    //   value: card,
-    // });
     acc.set(heading as FinancialCardsAndStatisticsKey, card);
 
     return acc;
@@ -304,10 +302,12 @@ function PERT({
 
   console.log({ statisticsElementsMap });
 
-  const consolidatedCard = consolidateFinancialCardsAndStatistics(
+  const consolidatedCards = consolidateFinancialCardsAndStatistics(
     overviewCards,
     statisticsElementsMap,
   );
+
+  console.log({ consolidatedCards });
 
   const financialMetricsOverview = (
     <DashboardMetricsLayout
@@ -338,7 +338,7 @@ function PERT({
 
   return (
     <Stack>
-      {Array.from(consolidatedCard).map(
+      {Array.from(consolidatedCards).map(
         ([key, card]) => card,
       )}
       {financialMetricsOverview}
