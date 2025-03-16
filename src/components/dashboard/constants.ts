@@ -148,9 +148,15 @@ const PERCENTAGE_METRICS_SET = new Set([
 
 const UNITLESS_METRICS_SET = new Set(["Units Sold", "Units Repaired"]);
 
+const CHART_KIND_DATA: CheckboxRadioSelectData<"bar" | "line"> = [
+  { label: "Bar", value: "bar" },
+  { label: "Line", value: "line" },
+];
+
 export {
   BUSINESS_METRIC_STORE_LOCATIONS,
   CALENDAR_VIEW_TABS_DATA,
+  CHART_KIND_DATA,
   CUSTOMER_METRICS_DATA,
   DAYS_PER_MONTH,
   FINANCIALS_METRICS_DATA,

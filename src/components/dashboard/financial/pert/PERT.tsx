@@ -13,6 +13,7 @@ import {
   ResponsivePieChart,
 } from "../../../charts";
 import { MONTHS } from "../../constants";
+import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import DashboardMetricsLayout from "../../DashboardMetricsLayout";
 import type {
   BusinessMetricStoreLocation,
@@ -338,9 +339,20 @@ function PERT({
 
   return (
     <Stack>
-      {Array.from(consolidatedCards).map(
-        ([key, card]) => card,
-      )}
+      <DashboardBarLineLayout
+        barChart={overviewBarChart}
+        barChartHeading={barChartHeading}
+        barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
+        chartKind="bar"
+        consolidatedCards={consolidatedCards}
+        expandBarChartButton={expandBarChartButton}
+        expandLineChartButton={expandLineChartButton}
+        lineChart={overviewLineChart}
+        lineChartHeading={lineChartHeading}
+        lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
+        sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
+        semanticLabel={metricCategory}
+      />
       {financialMetricsOverview}
     </Stack>
   );
