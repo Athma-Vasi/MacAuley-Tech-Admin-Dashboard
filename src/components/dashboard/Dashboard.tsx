@@ -8,7 +8,6 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import localforage from "localforage";
 import React, { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -39,7 +38,6 @@ import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
 import type {
-  BusinessMetric,
   BusinessMetricStoreLocation,
   DashboardCalendarView,
   DashboardMetricsView,
@@ -103,22 +101,22 @@ function Dashboard() {
           payload: true,
         });
 
-        const existingMetrics = await localforage.getItem<BusinessMetric[]>(
-          "businessMetrics",
-        );
-        if (existingMetrics && isMounted) {
-          dashboardDispatch({
-            action: dashboardAction.setBusinessMetrics,
-            payload: existingMetrics,
-          });
+        // const existingMetrics = await localforage.getItem<BusinessMetric[]>(
+        //   "businessMetrics",
+        // );
+        // if (existingMetrics && isMounted) {
+        //   dashboardDispatch({
+        //     action: dashboardAction.setBusinessMetrics,
+        //     payload: existingMetrics,
+        //   });
 
-          dashboardDispatch({
-            action: dashboardAction.setIsLoading,
-            payload: false,
-          });
+        //   dashboardDispatch({
+        //     action: dashboardAction.setIsLoading,
+        //     payload: false,
+        //   });
 
-          return;
-        }
+        //   return;
+        // }
 
         console.time("createRandomBusinessMetrics");
 
@@ -141,10 +139,10 @@ function Dashboard() {
           payload: createdBusinessMetrics,
         });
 
-        localforage.setItem<BusinessMetric[]>(
-          "businessMetrics",
-          createdBusinessMetrics,
-        );
+        // localforage.setItem<BusinessMetric[]>(
+        //   "businessMetrics",
+        //   createdBusinessMetrics,
+        // );
 
         dashboardDispatch({
           action: dashboardAction.setIsLoading,

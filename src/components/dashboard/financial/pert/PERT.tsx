@@ -79,6 +79,7 @@ function PERT({
     calendarView,
     financialMetricsCharts,
   );
+
   const {
     bar: barCharts,
     line: lineCharts,
@@ -86,10 +87,8 @@ function PERT({
   } = PERT_SET.has(metricCategory)
     ? (charts[metricCategory] as FinancialMetricsCharts["dailyCharts"][
       "expenses"
-    ]) // cast to avoid TS error
+    ])
     : charts.profit;
-
-  const statistics = returnStatistics(barCharts);
 
   const {
     barChartHeading,
@@ -277,7 +276,7 @@ function PERT({
   const overviewCards = overviewCardsArr.reduce((acc, card) => {
     const { heading = "" } = card;
 
-    Object.defineProperty(acc, heading.toLowerCase(), {
+    Object.defineProperty(acc, heading, {
       value: card,
     });
 
@@ -296,11 +295,18 @@ function PERT({
   const onlineSalesCard = overviewCards["Sales Online"];
   const inStoreSalesCard = overviewCards["Sales In-Store"];
 
-  console.log({ statistics });
-  console.log(
-    "financialMetricsCharts.dailyCharts.expenses.bar",
-    financialMetricsCharts.dailyCharts.expenses.bar,
-  );
+  const statistics = returnStatistics(barCharts);
+
+  const cardsKeyToStatisticsKeyMap = new Map<
+    "Total" | "Repair" | "Sales Total" | "Sales Online" | "Sales In-Store",
+    "Total" | "Repair" | "In-Store" | "Online" | "Sales"
+  >([
+    ["Total", "Total"],
+    ["Repair", "Repair"],
+    ["Sales Total", "Sales"],
+    ["Sales Online", "Online"],
+    ["Sales In-Store", "In-Store"],
+  ]);
 
   const financialMetricsOverview = (
     <DashboardMetricsLayout
