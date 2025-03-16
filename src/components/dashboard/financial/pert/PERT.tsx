@@ -21,7 +21,11 @@ import type {
   Year,
 } from "../../types";
 import { returnChartTitleNavigateLinks, returnStatistics } from "../../utils";
-import { DashboardCardInfo } from "../../utilsTSX";
+import {
+  consolidateFinancialCardsAndStatistics,
+  createFinancialStatisticsElements,
+  DashboardCardInfo,
+} from "../../utilsTSX";
 import { type FinancialMetricsCards } from "../cards";
 import {
   type FinancialMetricsCharts,
@@ -32,7 +36,10 @@ import {
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
   PERT_SET,
 } from "../constants";
-import type { FinancialMetricCategory } from "../types";
+import {
+  FinancialCardsAndStatisticsKey,
+  type FinancialMetricCategory,
+} from "../types";
 import { pertAction } from "./actions";
 import { pertReducer } from "./reducers";
 import { initialPERTState } from "./state";
@@ -274,39 +281,33 @@ function PERT({
     : cards.profit;
 
   const overviewCards = overviewCardsArr.reduce((acc, card) => {
-    const { heading = "" } = card;
+    const { heading = "Total" } = card;
 
-    Object.defineProperty(acc, heading, {
-      value: card,
-    });
+    // Object.defineProperty(acc, heading, {
+    //   value: card,
+    // });
+    acc.set(heading as FinancialCardsAndStatisticsKey, card);
 
     return acc;
-  }, {} as {
-    Total: DashboardCardInfo;
-    Repair: DashboardCardInfo;
-    "Sales Total": DashboardCardInfo;
-    "Sales Online": DashboardCardInfo;
-    "Sales In-Store": DashboardCardInfo;
-  });
+  }, new Map<FinancialCardsAndStatisticsKey, DashboardCardInfo>());
 
-  const totalCard = overviewCards.Total;
-  const repairCard = overviewCards.Repair;
-  const salesCard = overviewCards["Sales Total"];
-  const onlineSalesCard = overviewCards["Sales Online"];
-  const inStoreSalesCard = overviewCards["Sales In-Store"];
+  const statisticsMap = returnStatistics(barCharts);
 
-  const statistics = returnStatistics(barCharts);
+  console.log({ statisticsMap });
+  console.log({ overviewCards });
 
-  const cardsKeyToStatisticsKeyMap = new Map<
-    "Total" | "Repair" | "Sales Total" | "Sales Online" | "Sales In-Store",
-    "Total" | "Repair" | "In-Store" | "Online" | "Sales"
-  >([
-    ["Total", "Total"],
-    ["Repair", "Repair"],
-    ["Sales Total", "Sales"],
-    ["Sales Online", "Online"],
-    ["Sales In-Store", "In-Store"],
-  ]);
+  const statisticsElementsMap = createFinancialStatisticsElements(
+    true,
+    calendarView,
+    statisticsMap,
+  );
+
+  console.log({ statisticsElementsMap });
+
+  const consolidatedCard = consolidateFinancialCardsAndStatistics(
+    overviewCards,
+    statisticsElementsMap,
+  );
 
   const financialMetricsOverview = (
     <DashboardMetricsLayout
@@ -325,7 +326,7 @@ function PERT({
       pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
       sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
       semanticLabel={metricCategory}
-      statisticsMap={statistics}
+      statisticsMap={statisticsMap}
     />
   );
 
@@ -337,6 +338,9 @@ function PERT({
 
   return (
     <Stack>
+      {Array.from(consolidatedCard).map(
+        ([key, card]) => card,
+      )}
       {financialMetricsOverview}
     </Stack>
   );

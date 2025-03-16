@@ -18,6 +18,7 @@ import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
   createFinancialMetricsCharts,
+  returnCalendarViewFinancialCharts,
   returnSelectedDateFinancialMetrics,
 } from "./chartsData";
 import { FINANCIAL_METRICS_CATEGORY_DATA, PERT_SET } from "./constants";

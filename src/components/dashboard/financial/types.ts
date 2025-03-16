@@ -18,20 +18,32 @@ type FinancialMetricsState = {
 
 type FinancialMetricsDispatch =
   | {
-      action: FinancialMetricsAction["setCards"];
-      payload: FinancialMetricsCards;
-    }
+    action: FinancialMetricsAction["setCards"];
+    payload: FinancialMetricsCards;
+  }
   | {
-      action: FinancialMetricsAction["setCategory"];
-      payload: FinancialMetricCategory;
-    }
+    action: FinancialMetricsAction["setCategory"];
+    payload: FinancialMetricCategory;
+  }
   | {
-      action: FinancialMetricsAction["setCharts"];
-      payload: FinancialMetricsCharts;
-    }
+    action: FinancialMetricsAction["setCharts"];
+    payload: FinancialMetricsCharts;
+  }
   | {
-      action: FinancialMetricsAction["setIsGenerating"];
-      payload: boolean;
-    };
+    action: FinancialMetricsAction["setIsGenerating"];
+    payload: boolean;
+  };
 
-export type { FinancialMetricCategory, FinancialMetricsDispatch, FinancialMetricsState };
+type FinancialCardsAndStatisticsKey =
+  | "Total"
+  | "Sales In-Store"
+  | "Sales Online"
+  | "Sales Total"
+  | "Repair";
+
+export type {
+  FinancialCardsAndStatisticsKey,
+  FinancialMetricCategory,
+  FinancialMetricsDispatch,
+  FinancialMetricsState,
+};

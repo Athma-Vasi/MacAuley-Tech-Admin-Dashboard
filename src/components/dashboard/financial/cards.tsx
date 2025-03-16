@@ -1,15 +1,17 @@
-import type { DashboardCalendarView, FinancialMetricCategory } from "../types";
 import {
   createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";
-import type { SelectedDateFinancialMetrics } from "./chartsData";
+import type {
+  FinancialMetricsCharts,
+  SelectedDateFinancialMetrics,
+} from "./chartsData";
 
 type CreateFinancialMetricsCardsInput = {
-  selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
   greenColorShade: string;
   redColorShade: string;
+  selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
 };
 
 type FinancialMetricsCards = {
@@ -37,9 +39,9 @@ type FinancialMetricsCards = {
 };
 
 function createFinancialMetricsCards({
-  selectedDateFinancialMetrics,
   greenColorShade,
   redColorShade,
+  selectedDateFinancialMetrics,
 }: CreateFinancialMetricsCardsInput): Promise<FinancialMetricsCards> {
   const {
     dayFinancialMetrics: { prevDayMetrics, selectedDayMetrics },

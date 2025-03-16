@@ -1,5 +1,6 @@
 import {
   Accordion,
+  Center,
   Divider,
   Flex,
   Group,
