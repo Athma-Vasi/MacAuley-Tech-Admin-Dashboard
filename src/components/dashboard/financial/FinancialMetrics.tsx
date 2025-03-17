@@ -2,6 +2,7 @@ import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
+import React from "react";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
@@ -156,33 +157,37 @@ function FinancialMetrics({
 
   const subCategoryPage = PERT_SET.has(category)
     ? (
-      CALENDAR_VIEW_TABS_DATA.map((calendarView) => (
-        <PERT
-          calendarView={calendarView}
-          financialMetricsCards={cards}
-          financialMetricsCharts={charts}
-          day={selectedDate}
-          month={selectedYYYYMMDD.split("-")[1]}
-          metricCategory={category}
-          metricsView="Financials"
-          storeLocation={storeLocationView}
-          year={selectedYear}
-        />
+      CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+        <React.Fragment key={idx}>
+          <PERT
+            calendarView={calendarView}
+            financialMetricsCards={cards}
+            financialMetricsCharts={charts}
+            day={selectedDate}
+            month={selectedYYYYMMDD.split("-")[1]}
+            metricCategory={category}
+            metricsView="Financials"
+            storeLocation={storeLocationView}
+            year={selectedYear}
+          />
+        </React.Fragment>
       ))
     )
     : (
-      CALENDAR_VIEW_TABS_DATA.map((calendarView) => (
-        <OtherMetrics
-          calendarView={calendarView}
-          financialMetricsCards={cards}
-          financialMetricsCharts={charts}
-          day={selectedDate}
-          month={selectedYYYYMMDD.split("-")[1]}
-          metricCategory={category}
-          metricsView="Financials"
-          storeLocation={storeLocationView}
-          year={selectedYear}
-        />
+      CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+        <React.Fragment key={idx}>
+          <OtherMetrics
+            calendarView={calendarView}
+            financialMetricsCards={cards}
+            financialMetricsCharts={charts}
+            day={selectedDate}
+            month={selectedYYYYMMDD.split("-")[1]}
+            metricCategory={category}
+            metricsView="Financials"
+            storeLocation={storeLocationView}
+            year={selectedYear}
+          />
+        </React.Fragment>
       ))
     );
 

@@ -14,7 +14,6 @@ import {
 } from "../../../charts";
 import { MONTHS } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
-import DashboardMetricsLayout from "../../DashboardMetricsLayout";
 import type {
   BusinessMetricStoreLocation,
   DashboardCalendarView,
@@ -38,7 +37,7 @@ import {
   PERT_SET,
 } from "../constants";
 import {
-  FinancialCardsAndStatisticsKey,
+  FinancialCardsAndStatisticsKeyPERT,
   type FinancialMetricCategory,
 } from "../types";
 import { pertAction } from "./actions";
@@ -284,57 +283,25 @@ function PERT({
   const overviewCards = overviewCardsArr.reduce((acc, card) => {
     const { heading = "Total" } = card;
 
-    acc.set(heading as FinancialCardsAndStatisticsKey, card);
+    acc.set(heading as FinancialCardsAndStatisticsKeyPERT, card);
 
     return acc;
-  }, new Map<FinancialCardsAndStatisticsKey, DashboardCardInfo>());
+  }, new Map<FinancialCardsAndStatisticsKeyPERT, DashboardCardInfo>());
 
   const statisticsMap = returnStatistics(barCharts);
 
-  console.log({ statisticsMap });
-  console.log({ overviewCards });
-
   const statisticsElementsMap = createFinancialStatisticsElements(
-    true,
     calendarView,
+    metricCategory,
+    "pert",
     statisticsMap,
+    storeLocation,
   );
-
-  console.log({ statisticsElementsMap });
 
   const consolidatedCards = consolidateFinancialCardsAndStatistics(
     overviewCards,
     statisticsElementsMap,
   );
-
-  console.log({ consolidatedCards });
-
-  const financialMetricsOverview = (
-    <DashboardMetricsLayout
-      barChart={overviewBarChart}
-      barChartHeading={barChartHeading}
-      barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      expandBarChartButton={expandBarChartButton}
-      expandLineChartButton={expandLineChartButton}
-      expandPieChartButton={expandPieChartButton}
-      lineChart={overviewLineChart}
-      lineChartHeading={lineChartHeading}
-      lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-      overviewCards={overviewCardsArr}
-      pieChart={overviewPieChart}
-      pieChartHeading={pieChartHeading}
-      pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
-      sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
-      semanticLabel={metricCategory}
-      statisticsMap={statisticsMap}
-    />
-  );
-
-  // const createdCards = overviewCards.map((overviewCard, idx) => (
-  //   <Group key={`${idx}-${overviewCard.value}`} w={320}>
-  //     {returnDashboardCardElement(overviewCard)}
-  //   </Group>
-  // ));
 
   return (
     <Stack>

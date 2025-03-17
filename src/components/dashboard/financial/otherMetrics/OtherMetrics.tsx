@@ -1,14 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import { ResponsiveBarChart, ResponsiveLineChart } from "../../../charts";
-import DashboardMetricsLayout from "../../DashboardMetricsLayout";
 import { MONTHS } from "../../constants";
+import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
   BusinessMetricStoreLocation,
   DashboardCalendarView,
@@ -16,10 +17,18 @@ import type {
   Year,
 } from "../../types";
 import { returnChartTitleNavigateLinks, returnStatistics } from "../../utils";
+import {
+  consolidateFinancialCardsAndStatistics,
+  createFinancialStatisticsElements,
+  DashboardCardInfo,
+} from "../../utilsTSX";
 import type { FinancialMetricsCards } from "../cards";
 import type { FinancialMetricsCharts } from "../chartsData";
 import { FINANCIAL_OTHERS_Y_AXIS_DATA } from "../constants";
-import type { FinancialMetricCategory } from "../types";
+import type {
+  FinancialCardsAndStatisticsKeyOtherMetrics,
+  FinancialMetricCategory,
+} from "../types";
 import { otherMetricsAction } from "./actions";
 import { otherMetricsReducer } from "./reducers";
 import { initialOtherMetricsState } from "./state";
@@ -65,8 +74,6 @@ function OtherMetrics({
   const {
     otherMetrics: { bar: barCharts, line: lineCharts },
   } = charts;
-
-  const statistics = returnStatistics(barCharts);
 
   const {
     barChartHeading,
@@ -199,26 +206,73 @@ function OtherMetrics({
     : calendarView === "Monthly"
     ? financialMetricsCards.monthlyCards
     : financialMetricsCards.yearlyCards;
-  const overviewCards = cards.otherMetrics;
+  const overviewCardsArr = cards.otherMetrics;
 
-  const financialMetricsOverview = (
-    <DashboardMetricsLayout
+  const overviewCards = overviewCardsArr.reduce((acc, card) => {
+    const { heading = "Total" } = card;
+
+    acc.set(heading as FinancialCardsAndStatisticsKeyOtherMetrics, card);
+
+    return acc;
+  }, new Map<FinancialCardsAndStatisticsKeyOtherMetrics, DashboardCardInfo>());
+
+  const statisticsMap = returnStatistics(barCharts);
+
+  const statisticsElementsMap = createFinancialStatisticsElements(
+    calendarView,
+    metricCategory,
+    "otherMetrics",
+    statisticsMap,
+    storeLocation,
+  );
+
+  const consolidatedCards = consolidateFinancialCardsAndStatistics(
+    overviewCards,
+    statisticsElementsMap,
+  );
+
+  console.log("overviewCardsArr", overviewCardsArr);
+  console.log("statisticsMap", statisticsMap);
+
+  const otherMetrics = (
+    <DashboardBarLineLayout
       barChart={overviewBarChart}
       barChartHeading={barChartHeading}
       barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
+      chartKind="bar"
+      consolidatedCards={consolidatedCards}
       expandBarChartButton={expandBarChartButton}
       expandLineChartButton={expandLineChartButton}
       lineChart={overviewLineChart}
       lineChartHeading={lineChartHeading}
       lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-      overviewCards={overviewCards}
-      pieChartHeading={pieChartHeading}
       sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
-      statisticsMap={statistics}
+      semanticLabel={metricCategory}
     />
   );
 
-  return financialMetricsOverview;
+  // const financialMetricsOverview = (
+  //   <DashboardMetricsLayout
+  //     barChart={overviewBarChart}
+  //     barChartHeading={barChartHeading}
+  //     barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
+  //     expandBarChartButton={expandBarChartButton}
+  //     expandLineChartButton={expandLineChartButton}
+  //     lineChart={overviewLineChart}
+  //     lineChartHeading={lineChartHeading}
+  //     lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
+  //     overviewCards={overviewCards}
+  //     pieChartHeading={pieChartHeading}
+  //     sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
+  //     statisticsMap={statistics}
+  //   />
+  // );
+
+  return (
+    <Stack>
+      {otherMetrics}
+    </Stack>
+  );
 }
 
 export default OtherMetrics;

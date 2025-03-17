@@ -34,15 +34,21 @@ type FinancialMetricsDispatch =
     payload: boolean;
   };
 
-type FinancialCardsAndStatisticsKey =
+type FinancialCardsAndStatisticsKeyPERT =
   | "Total"
   | "Sales In-Store"
   | "Sales Online"
   | "Sales Total"
   | "Repair";
 
+type FinancialCardsAndStatisticsKeyOtherMetrics =
+  | "Average Order Value"
+  | "Conversion Rate"
+  | "Net Profit Margin";
+
 export type {
-  FinancialCardsAndStatisticsKey,
+  FinancialCardsAndStatisticsKeyOtherMetrics,
+  FinancialCardsAndStatisticsKeyPERT,
   FinancialMetricCategory,
   FinancialMetricsDispatch,
   FinancialMetricsState,
