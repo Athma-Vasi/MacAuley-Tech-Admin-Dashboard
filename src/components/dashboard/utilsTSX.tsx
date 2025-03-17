@@ -245,10 +245,7 @@ function createFinancialStatisticsElements(
       );
 
       if (cardsKey) {
-        acc.set(
-          cardsKey,
-          statisticsElement,
-        );
+        acc.set(cardsKey, statisticsElement);
       }
 
       return acc;

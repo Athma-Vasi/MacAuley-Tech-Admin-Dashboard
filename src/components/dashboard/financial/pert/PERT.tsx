@@ -79,7 +79,6 @@ function PERT({
 
   const {
     barChartYAxisVariable,
-    chartKind,
     lineChartYAxisVariable,
     pieChartYAxisVariable,
   } = pertState;

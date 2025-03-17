@@ -71,7 +71,11 @@ function DashboardBarLineLayout(
             </Group>
 
             <Group w="100%" position="apart">
-                <Flex wrap="wrap">{consolidatedCards}</Flex>
+                <Flex wrap="wrap">
+                    {Array.from(consolidatedCards).map(([key, card], idx) => (
+                        <Group key={`${idx}-${key}`}>{card}</Group>
+                    ))}
+                </Flex>
                 {chart}
             </Group>
         </Stack>
