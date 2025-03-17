@@ -49,10 +49,38 @@ const PERT_SET = new Set<Omit<FinancialMetricCategory, "otherMetrics">>([
   "transactions",
 ]);
 
+const YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
+  | FinancialMetricsBarLineChartsKey
+  | FinancialMetricsOtherMetricsChartsKey
+  | FinancialMetricsPieChartsKey,
+  Set<string>
+>([
+  ["overview", new Set(["Total", "Sales Total", "Repair"])],
+  [
+    "all",
+    new Set([
+      "Total",
+      "Sales Total",
+      "Repair",
+      "Sales In-Store",
+      "Sales Online",
+    ]),
+  ],
+  ["sales", new Set(["Sales Total", "Sales In-Store", "Sales Online"])],
+  ["inStore", new Set(["Sales In-Store"])],
+  ["online", new Set(["Sales Online"])],
+  ["repair", new Set(["Repair"])],
+  ["total", new Set(["Total"])],
+  ["netProfitMargin", new Set(["Net Profit Margin"])],
+  ["averageOrderValue", new Set(["Average Order Value"])],
+  ["conversionRate", new Set(["Conversion Rate"])],
+]);
+
 export {
   FINANCIAL_METRICS_CATEGORY_DATA,
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
   PERT_SET,
+  YAXIS_KEY_TO_CARDS_KEY_MAP,
 };

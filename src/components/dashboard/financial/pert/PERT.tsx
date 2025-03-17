@@ -309,13 +309,14 @@ function PERT({
         barChart={overviewBarChart}
         barChartHeading={barChartHeading}
         barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-        chartKind="bar"
+        barChartYAxisVariable={barChartYAxisVariable}
         consolidatedCards={consolidatedCards}
         expandBarChartButton={expandBarChartButton}
         expandLineChartButton={expandLineChartButton}
         lineChart={overviewLineChart}
         lineChartHeading={lineChartHeading}
         lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
+        lineChartYAxisVariable={lineChartYAxisVariable}
         sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
         semanticLabel={metricCategory}
       />

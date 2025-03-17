@@ -2,19 +2,31 @@ import { Flex, Group, Stack } from "@mantine/core";
 import React from "react";
 import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmentedControl";
 import { CHART_KIND_DATA } from "./constants";
-import { FinancialMetricsBarLineChartsKey } from "./financial/chartsData";
+import {
+    FinancialMetricsBarLineChartsKey,
+    FinancialMetricsOtherMetricsChartsKey,
+    FinancialMetricsPieChartsKey,
+} from "./financial/chartsData";
+import { YAXIS_KEY_TO_CARDS_KEY_MAP } from "./financial/constants";
 
 type DashboardBarLineLayoutProps = {
     barChart: React.JSX.Element;
     barChartHeading: string;
     barChartYAxisSelectInput: React.JSX.Element;
-    chartKind: "bar" | "line";
+    barChartYAxisVariable:
+        | FinancialMetricsBarLineChartsKey
+        | FinancialMetricsOtherMetricsChartsKey
+        | FinancialMetricsPieChartsKey;
     consolidatedCards: Map<FinancialMetricsBarLineChartsKey, React.JSX.Element>;
     expandBarChartButton: React.JSX.Element;
     expandLineChartButton: React.JSX.Element;
     lineChart: React.JSX.Element;
     lineChartHeading: string;
     lineChartYAxisSelectInput: React.JSX.Element;
+    lineChartYAxisVariable:
+        | FinancialMetricsBarLineChartsKey
+        | FinancialMetricsOtherMetricsChartsKey
+        | FinancialMetricsPieChartsKey;
     sectionHeading: string;
     semanticLabel?: string;
 };
@@ -24,12 +36,14 @@ function DashboardBarLineLayout(
         barChart,
         barChartHeading,
         barChartYAxisSelectInput,
+        barChartYAxisVariable,
         consolidatedCards,
         expandBarChartButton,
         expandLineChartButton,
         lineChart,
         lineChartHeading,
         lineChartYAxisSelectInput,
+        lineChartYAxisVariable,
         sectionHeading,
         semanticLabel,
     }: DashboardBarLineLayoutProps,
@@ -62,6 +76,21 @@ function DashboardBarLineLayout(
 
     const chart = chartKind === "bar" ? barChart : lineChart;
 
+    const cards = Array.from(consolidatedCards).map(([key, card], idx) => {
+        const yAxisVariable = chartKind === "bar"
+            ? barChartYAxisVariable
+            : lineChartYAxisVariable;
+        const cardsSet = YAXIS_KEY_TO_CARDS_KEY_MAP.get(yAxisVariable);
+
+        return cardsSet?.has(key)
+            ? (
+                <Group key={`${idx}-${key}`}>
+                    {card}
+                </Group>
+            )
+            : null;
+    });
+
     const dashboardBarLineLayout = (
         <Stack>
             <Group w="100%" position="apart">
@@ -72,9 +101,7 @@ function DashboardBarLineLayout(
 
             <Group w="100%" position="apart">
                 <Flex wrap="wrap">
-                    {Array.from(consolidatedCards).map(([key, card], idx) => (
-                        <Group key={`${idx}-${key}`}>{card}</Group>
-                    ))}
+                    {cards}
                 </Flex>
                 {chart}
             </Group>
