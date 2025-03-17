@@ -34,6 +34,7 @@ import {
 import {
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
+  MONEY_SYMBOL_CATEGORIES,
   PERT_SET,
 } from "../constants";
 import {
@@ -265,7 +266,10 @@ function PERT({
             ? "Month"
             : "Year"
         } - ${x}`}
-      yFormat={(y) => `${addCommaSeparator(y)} Financials`}
+      yFormat={(y) =>
+        `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
+          addCommaSeparator(y)
+        }`}
       unitKind="number"
     />
   );

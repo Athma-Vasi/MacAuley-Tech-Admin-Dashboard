@@ -206,6 +206,13 @@ function ResponsiveLineChart({
     });
   }, [isPrefersReducedMotion]);
 
+  const yAxisValue = (value: string) =>
+    unitKind === "currency"
+      ? "$" + addCommaSeparator(value)
+      : unitKind === "percent"
+      ? value + "%"
+      : value;
+
   const displayResponsiveLine = (
     <ResponsiveLine
       data={lineChartData}
@@ -266,12 +273,7 @@ function ResponsiveLineChart({
           legend: axisRightLegend,
           legendOffset: axisRightLegendOffset,
           legendPosition: axisRightLegendPosition,
-          format: (value) =>
-            `${unitKind === "currency" ? "$" : ""}${
-              addCommaSeparator(
-                value,
-              )
-            }${unitKind === "percent" ? "%" : ""}`,
+          format: (value) => addCommaSeparator(value),
         }
         : null}
       axisBottom={enableAxisBottom
@@ -292,12 +294,7 @@ function ResponsiveLineChart({
           legend: axisLeftLegend,
           legendOffset: axisLeftLegendOffset,
           legendPosition: axisLeftLegendPosition,
-          format: (value) =>
-            `${unitKind === "currency" ? "$" : ""}${
-              addCommaSeparator(
-                value,
-              )
-            }${unitKind === "percent" ? "%" : ""}`,
+          format: (value) => addCommaSeparator(value),
         }
         : null}
       // interactivity

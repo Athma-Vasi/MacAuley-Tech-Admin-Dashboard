@@ -196,7 +196,7 @@ function OtherMetrics({
             ? "Month"
             : "Year"
         } - ${x}`}
-      yFormat={(y) => `${addCommaSeparator(y)} Financials`}
+      yFormat={(y) => addCommaSeparator(y)}
       unitKind="number"
     />
   );
@@ -226,13 +226,12 @@ function OtherMetrics({
     storeLocation,
   );
 
+  console.log({ metricCategory });
+
   const consolidatedCards = consolidateFinancialCardsAndStatistics(
     overviewCards,
     statisticsElementsMap,
   );
-
-  console.log("overviewCardsArr", overviewCardsArr);
-  console.log("statisticsMap", statisticsMap);
 
   const otherMetrics = (
     <DashboardBarLineLayout

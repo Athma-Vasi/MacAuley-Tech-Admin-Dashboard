@@ -73,10 +73,10 @@ const initialResponsiveLineChartState: ResponsiveLineChartState = {
   crosshairType: "bottom-left",
 
   // legends
-  enableLegend: false,
+  enableLegend: true,
   enableLegendJustify: false,
   legendAnchor: "bottom",
-  legendDirection: "column",
+  legendDirection: "row",
   legendItemBackground: "rgba(255, 255, 255, 0)",
   legendItemDirection: "left-to-right",
   legendItemHeight: 20,

@@ -20,6 +20,10 @@ import {
 } from "./financial/types";
 import { BusinessMetricStoreLocation, DashboardCalendarView } from "./types";
 import { StatisticsObject } from "./utils";
+import {
+  MONEY_SYMBOL_CATEGORIES,
+  PERCENTAGE_SYMBOL_CATEGORIES,
+} from "./financial/constants";
 
 type DashboardCardInfo = {
   date?: string;
@@ -192,17 +196,6 @@ function createFinancialStatisticsElements(
     ["Sales", "Sales Total"],
   ]);
 
-  const moneySymbolCategories = new Set([
-    "profit",
-    "revenue",
-    "average order value",
-    "expenses",
-  ]);
-  const percentageSymbolCategories = new Set([
-    "conversion rate",
-    "net profit margin",
-  ]);
-
   return statisticsMap
     ? Array.from(statisticsMap).reduce((acc, [key, statisticsObj], idx) => {
       const cardsKey = metricsKind === "pert"
@@ -218,9 +211,9 @@ function createFinancialStatisticsElements(
         standardDeviation,
       } = statisticsObj;
 
-      const unitSymbol = moneySymbolCategories.has(cardsKey.toLowerCase())
+      const unitSymbol = MONEY_SYMBOL_CATEGORIES.has(cardsKey.toLowerCase())
         ? "$"
-        : percentageSymbolCategories.has(cardsKey.toLowerCase())
+        : PERCENTAGE_SYMBOL_CATEGORIES.has(cardsKey.toLowerCase())
         ? "%"
         : "";
 
