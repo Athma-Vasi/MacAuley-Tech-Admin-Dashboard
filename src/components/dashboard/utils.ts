@@ -3738,6 +3738,36 @@ function createExpandChartNavigateLinks(
   };
 }
 
+function returnChartTitles(
+  {
+    barLineChartYAxisVariable,
+    calendarChartYAxisVariable,
+    calendarView,
+    metricCategory,
+    pieChartYAxisVariable,
+    storeLocation,
+  }: {
+    barLineChartYAxisVariable: string;
+    calendarChartYAxisVariable?: string;
+    calendarView: DashboardCalendarView;
+    metricCategory: string;
+    pieChartYAxisVariable?: string;
+    storeLocation: BusinessMetricStoreLocation;
+  },
+) {
+  return {
+    barLineChartHeading: `${calendarView} ${
+      splitCamelCase(barLineChartYAxisVariable)
+    } ${splitCamelCase(metricCategory)} for ${storeLocation}`,
+    calendarChartHeading: `${calendarView} ${
+      splitCamelCase(calendarChartYAxisVariable ?? "")
+    } ${splitCamelCase(metricCategory)} for ${storeLocation}`,
+    pieChartHeading: `${calendarView} ${
+      splitCamelCase(pieChartYAxisVariable ?? "")
+    } ${splitCamelCase(metricCategory)} for ${storeLocation}`,
+  };
+}
+
 export {
   createAggregatedProductMetrics,
   createAggregatedRepairMetrics,
@@ -3756,6 +3786,7 @@ export {
   createRepairCategoryUnitsRepairedRevenueTuple,
   excludeTodayFromCalendarView,
   returnChartTitleNavigateLinks,
+  returnChartTitles,
   returnDaysInMonthsInYears,
   returnIsTabDisabled,
   returnStatistics,

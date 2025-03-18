@@ -1,4 +1,4 @@
-import { Flex, Group, Stack } from "@mantine/core";
+import { Flex, Group, Stack, Text } from "@mantine/core";
 import React from "react";
 import {
     FinancialMetricsBarLineChartsKey,
@@ -65,13 +65,16 @@ function DashboardBarLineLayout(
 
     const dashboardBarLineLayout = (
         <Stack>
+            <Text>{sectionHeading}</Text>
             <Stack>
+                <Text>{pieChartHeading}</Text>
                 {pieChartYAxisSelectInput}
                 {expandPieChartButton}
                 {pieChart}
             </Stack>
 
             <Group w="100%" position="apart">
+                <Text>{barLineChartHeading}</Text>
                 {barLineChartYAxisSelectInput}
                 {barLineChartKindSegmentedControl}
                 {expandBarLineChartButton}
@@ -85,6 +88,7 @@ function DashboardBarLineLayout(
             </Group>
 
             <Stack>
+                <Text>{calendarChartHeading}</Text>
                 {calendarChartYAxisSelectInput}
                 {expandCalendarChartButton}
                 {calendarChart}

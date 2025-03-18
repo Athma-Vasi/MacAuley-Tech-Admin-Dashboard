@@ -98,11 +98,6 @@ function FinancialMetrics({
           selectedDateFinancialMetrics,
         );
 
-        console.log({
-          currentYear,
-          previousYear,
-        });
-
         const financialMetricsCharts = await createFinancialMetricsCharts({
           businessMetrics,
           months: MONTHS,

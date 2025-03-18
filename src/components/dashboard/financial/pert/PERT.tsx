@@ -5,7 +5,7 @@ import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator } from "../../../../utils";
+import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -23,7 +23,11 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import { createExpandChartNavigateLinks, returnStatistics } from "../../utils";
+import {
+  createExpandChartNavigateLinks,
+  returnChartTitles,
+  returnStatistics,
+} from "../../utils";
 import {
   consolidateFinancialCardsAndStatistics,
   createFinancialStatisticsElements,
@@ -306,14 +310,6 @@ function PERT({
     statisticsElementsMap,
   );
 
-  console.group("PERT");
-  console.log({ metricCategory });
-  console.log({ metricsView });
-  console.log({ calendarView });
-  console.log({ barLineChartYAxisVariable });
-  console.log({ calendarChartsData });
-  console.groupEnd();
-
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
     calendarChartYAxisVariable,
@@ -373,25 +369,41 @@ function PERT({
     )
     : null;
 
+  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+    returnChartTitles({
+      barLineChartYAxisVariable,
+      calendarView,
+      metricCategory,
+      storeLocation,
+      calendarChartYAxisVariable,
+      pieChartYAxisVariable,
+    });
+
+  console.group("PERT");
+  console.log("barLineChartHeading", barLineChartHeading);
+  console.log("calendarChartHeading", calendarChartHeading);
+  console.log("pieChartHeading", pieChartHeading);
+  console.groupEnd();
+
   return (
     <Stack>
       <DashboardBarLineLayout
         barLineChart={barLineChart}
-        barLineChartHeading={"TODO"}
+        barLineChartHeading={barLineChartHeading}
         barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
-        calendarChartHeading="TODO"
+        calendarChartHeading={calendarChartHeading}
         expandPieChartButton={expandPieChartButton}
         pieChart={pieChart}
-        pieChartHeading="TODO"
+        pieChartHeading={pieChartHeading}
         pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
         expandCalendarChartButton={expandCalendarChartButton}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
         consolidatedCards={consolidatedCards}
         expandBarLineChartButton={expandBarLineChartButton}
-        sectionHeading="TODO"
+        sectionHeading={splitCamelCase(metricsView)}
         semanticLabel="TODO"
       />
       {/* {financialMetricsOverview} */}
