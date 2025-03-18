@@ -98,18 +98,6 @@ function PERT({
     pieChartYAxisVariable,
   } = pertState;
 
-  // const [barLineYAxisVariable, setBarLineYAxisVariable] = React.useState<
-  //   FinancialMetricsBarLineChartsKey
-  // >(
-  //   "total",
-  // );
-  // const [pieChartYAxisVariable, setPieChartYAxisVariable] = React.useState<
-  //   FinancialMetricsPieChartsKey
-  // >("overview");
-  // const [chartKind, setChartKind] = React.useState<"bar" | "line">(
-  //   "bar",
-  // );
-
   const charts = returnCalendarViewFinancialCharts(
     calendarView,
     financialMetricsCharts,
@@ -124,26 +112,6 @@ function PERT({
       "expenses"
     ])
     : charts.profit;
-
-  // const {
-  //   barChartHeading,
-  //   expandBarChartNavigateLink,
-  //   expandLineChartNavigateLink,
-  //   expandPieChartNavigateLink,
-  //   lineChartHeading,
-  //   pieChartHeading,
-  // } = returnChartTitleNavigateLinks({
-  //   calendarView,
-  //   metricCategory,
-  //   metricsView,
-  //   storeLocation,
-  //   yAxisBarChartVariable: barLineChartYAxisVariable,
-  //   yAxisLineChartVariable: lineChartYAxisVariable,
-  //   year,
-  //   day,
-  //   month,
-  //   months: MONTHS,
-  // });
 
   const {
     expandBarChartNavigateLink,
@@ -378,12 +346,6 @@ function PERT({
       calendarChartYAxisVariable,
       pieChartYAxisVariable,
     });
-
-  console.group("PERT");
-  console.log("barLineChartHeading", barLineChartHeading);
-  console.log("calendarChartHeading", calendarChartHeading);
-  console.log("pieChartHeading", pieChartHeading);
-  console.groupEnd();
 
   return (
     <Stack>
