@@ -1,14 +1,19 @@
 import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
 
 type ChurnRetentionState = {
-  churnRetentionBarChartYAxisVariable: CustomerMetricsChurnRetentionChartsKey;
-  churnRetentionLineChartYAxisVariable: CustomerMetricsChurnRetentionChartsKey;
+  barLineChartYAxisVariable: CustomerMetricsChurnRetentionChartsKey;
+  barLineChartKind: "bar" | "line";
+  calendarChartYAxisVariable: CustomerMetricsChurnRetentionChartsKey;
 };
 
 type ChurnRetentionDispatch = {
-  action:
-    | "setChurnRetentionBarChartYAxisVariable"
-    | "setChurnRetentionLineChartYAxisVariable";
+  action: "setBarLineChartYAxisVariable";
+  payload: CustomerMetricsChurnRetentionChartsKey;
+} | {
+  action: "setBarLineChartKind";
+  payload: "bar" | "line";
+} | {
+  action: "setCalendarChartYAxisVariable";
   payload: CustomerMetricsChurnRetentionChartsKey;
 };
 

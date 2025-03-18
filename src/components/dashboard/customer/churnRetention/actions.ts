@@ -1,11 +1,13 @@
 type ChurnRetentionAction = {
-  setChurnRetentionBarChartYAxisVariable: "setChurnRetentionBarChartYAxisVariable";
-  setChurnRetentionLineChartYAxisVariable: "setChurnRetentionLineChartYAxisVariable";
+  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable";
+  setBarLineChartKind: "setBarLineChartKind";
+  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable";
 };
 
 const churnRetentionAction: ChurnRetentionAction = {
-  setChurnRetentionBarChartYAxisVariable: "setChurnRetentionBarChartYAxisVariable",
-  setChurnRetentionLineChartYAxisVariable: "setChurnRetentionLineChartYAxisVariable",
+  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable",
+  setBarLineChartKind: "setBarLineChartKind",
+  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable",
 };
 
 export { churnRetentionAction };

@@ -1,8 +1,9 @@
 import { ChurnRetentionState } from "./types";
 
 const initialChurnRetentionState: ChurnRetentionState = {
-  churnRetentionBarChartYAxisVariable: "churnRate",
-  churnRetentionLineChartYAxisVariable: "retentionRate",
+  barLineChartKind: "bar",
+  barLineChartYAxisVariable: "overview",
+  calendarChartYAxisVariable: "overview",
 };
 
 export { initialChurnRetentionState };

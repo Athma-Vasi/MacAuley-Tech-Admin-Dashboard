@@ -1,9 +1,10 @@
+import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
 import { ChurnRetentionAction, churnRetentionAction } from "./actions";
 import { ChurnRetentionDispatch, ChurnRetentionState } from "./types";
 
 function churnRetentionReducer(
   state: ChurnRetentionState,
-  dispatch: ChurnRetentionDispatch
+  dispatch: ChurnRetentionDispatch,
 ): ChurnRetentionState {
   const reducer = churnRetentionReducers.get(dispatch.action);
   return reducer ? reducer(state, dispatch) : state;
@@ -11,35 +12,51 @@ function churnRetentionReducer(
 
 const churnRetentionReducers = new Map<
   ChurnRetentionAction[keyof ChurnRetentionAction],
-  (state: ChurnRetentionState, dispatch: ChurnRetentionDispatch) => ChurnRetentionState
+  (
+    state: ChurnRetentionState,
+    dispatch: ChurnRetentionDispatch,
+  ) => ChurnRetentionState
 >([
   [
-    churnRetentionAction.setChurnRetentionBarChartYAxisVariable,
+    churnRetentionAction.setBarLineChartKind,
+    churnRetentionReducer_setBarLineChartKind,
+  ],
+  [
+    churnRetentionAction.setBarLineChartYAxisVariable,
     churnRetentionReducer_setChurnRetentionBarChartYAxisVariable,
   ],
   [
-    churnRetentionAction.setChurnRetentionLineChartYAxisVariable,
+    churnRetentionAction.setCalendarChartYAxisVariable,
     churnRetentionReducer_setChurnRetentionLineChartYAxisVariable,
   ],
 ]);
 
+function churnRetentionReducer_setBarLineChartKind(
+  state: ChurnRetentionState,
+  dispatch: ChurnRetentionDispatch,
+): ChurnRetentionState {
+  return { ...state, barLineChartKind: dispatch.payload as "bar" | "line" };
+}
+
 function churnRetentionReducer_setChurnRetentionBarChartYAxisVariable(
   state: ChurnRetentionState,
-  dispatch: ChurnRetentionDispatch
+  dispatch: ChurnRetentionDispatch,
 ): ChurnRetentionState {
   return {
     ...state,
-    churnRetentionBarChartYAxisVariable: dispatch.payload,
+    barLineChartYAxisVariable: dispatch
+      .payload as CustomerMetricsChurnRetentionChartsKey,
   };
 }
 
 function churnRetentionReducer_setChurnRetentionLineChartYAxisVariable(
   state: ChurnRetentionState,
-  dispatch: ChurnRetentionDispatch
+  dispatch: ChurnRetentionDispatch,
 ): ChurnRetentionState {
   return {
     ...state,
-    churnRetentionLineChartYAxisVariable: dispatch.payload,
+    calendarChartYAxisVariable: dispatch
+      .payload as CustomerMetricsChurnRetentionChartsKey,
   };
 }
 
