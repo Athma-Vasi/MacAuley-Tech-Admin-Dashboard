@@ -2,6 +2,7 @@ import { toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
+import { MONTHS } from "../constants";
 import {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -314,7 +315,7 @@ async function createFinancialMetricsCharts({
   const {
     yearFinancialMetrics: { selectedYearMetrics },
   } = selectedDateFinancialMetrics;
-  const selectedYear = selectedYearMetrics?.year ?? "2023";
+  const selectedYear = selectedYearMetrics?.year ?? "2025";
 
   const {
     monthFinancialMetrics: { selectedMonthMetrics },
@@ -3594,7 +3595,234 @@ function returnCalendarViewFinancialCharts(
     : financialMetricsCharts.yearlyCharts;
 }
 
+type CalendarChartsData = {
+  value: number;
+  date: string;
+}[];
+type CalendarChartsPERT = {
+  total: CalendarChartsData;
+  repair: CalendarChartsData;
+  sales: {
+    total: CalendarChartsData;
+    inStore: CalendarChartsData;
+    online: CalendarChartsData;
+  };
+};
+type FinancialMetricsCalendarCharts = {
+  profit: CalendarChartsPERT;
+  expenses: CalendarChartsPERT;
+  revenue: CalendarChartsPERT;
+  transactions: CalendarChartsPERT;
+  otherMetrics: {
+    averageOrderValue: CalendarChartsData;
+    conversionRate: CalendarChartsData;
+    netProfitMargin: CalendarChartsData;
+  };
+};
+
+async function createFinancialMetricsCalendarCharts(
+  selectedDateFinancialMetrics: SelectedDateFinancialMetrics,
+) {
+  const {
+    yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
+  } = selectedDateFinancialMetrics;
+
+  const calendarChartsTemplatePERT: CalendarChartsPERT = {
+    total: [],
+    repair: [],
+    sales: {
+      total: [],
+      inStore: [],
+      online: [],
+    },
+  };
+  const calendarChartsTemplate: FinancialMetricsCalendarCharts = {
+    profit: structuredClone(calendarChartsTemplatePERT),
+    expenses: structuredClone(calendarChartsTemplatePERT),
+    revenue: structuredClone(calendarChartsTemplatePERT),
+    transactions: structuredClone(calendarChartsTemplatePERT),
+    otherMetrics: {
+      averageOrderValue: [],
+      conversionRate: [],
+      netProfitMargin: [],
+    },
+  };
+
+  const [currentYearCalendarCharts, previousYearCalendarCharts] = await Promise
+    .all([
+      createDailyFinancialCalendarCharts(
+        selectedYearMetrics,
+        structuredClone(calendarChartsTemplate),
+      ),
+      createDailyFinancialCalendarCharts(
+        prevYearMetrics,
+        structuredClone(calendarChartsTemplate),
+      ),
+    ]);
+
+  async function createDailyFinancialCalendarCharts(
+    yearlyMetrics: YearlyFinancialMetric | undefined,
+    calendarChartsTemplate: FinancialMetricsCalendarCharts,
+  ): Promise<FinancialMetricsCalendarCharts> {
+    if (!yearlyMetrics) {
+      return new Promise((resolve) => resolve(calendarChartsTemplate));
+    }
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const dailyFinancialCalendarCharts = yearlyMetrics.monthlyMetrics
+          .reduce((resultAcc, monthlyMetric) => {
+            const { month, dailyMetrics } = monthlyMetric;
+            const monthNumber = MONTHS.indexOf(month) + 1;
+
+            dailyMetrics.forEach((dailyMetric) => {
+              const { expenses, profit, revenue, transactions } = dailyMetric;
+              const date = `${yearlyMetrics.year}-${
+                monthNumber.toString().padStart(2, "0")
+              }-${dailyMetric.day}`;
+
+              // expenses
+
+              resultAcc.expenses.total.push({
+                value: expenses.total,
+                date,
+              });
+
+              resultAcc.expenses.repair.push({
+                value: expenses.repair,
+                date,
+              });
+
+              resultAcc.expenses.sales.total.push({
+                value: expenses.sales.total,
+                date,
+              });
+
+              resultAcc.expenses.sales.inStore.push({
+                value: expenses.sales.inStore,
+                date,
+              });
+
+              resultAcc.expenses.sales.online.push({
+                value: expenses.sales.online,
+                date,
+              });
+
+              // profit
+
+              resultAcc.profit.total.push({
+                value: profit.total,
+                date,
+              });
+
+              resultAcc.profit.repair.push({
+                value: profit.repair,
+                date,
+              });
+
+              resultAcc.profit.sales.total.push({
+                value: profit.sales.total,
+                date,
+              });
+
+              resultAcc.profit.sales.inStore.push({
+                value: profit.sales.inStore,
+                date,
+              });
+
+              resultAcc.profit.sales.online.push({
+                value: profit.sales.online,
+                date,
+              });
+
+              // revenue
+
+              resultAcc.revenue.total.push({
+                value: revenue.total,
+                date,
+              });
+
+              resultAcc.revenue.repair.push({
+                value: revenue.repair,
+                date,
+              });
+
+              resultAcc.revenue.sales.total.push({
+                value: revenue.sales.total,
+                date,
+              });
+
+              resultAcc.revenue.sales.inStore.push({
+                value: revenue.sales.inStore,
+                date,
+              });
+
+              resultAcc.revenue.sales.online.push({
+                value: revenue.sales.online,
+                date,
+              });
+
+              // transactions
+
+              resultAcc.transactions.total.push({
+                value: transactions.total,
+                date,
+              });
+
+              resultAcc.transactions.repair.push({
+                value: transactions.repair,
+                date,
+              });
+
+              resultAcc.transactions.sales.total.push({
+                value: transactions.sales.total,
+                date,
+              });
+
+              resultAcc.transactions.sales.inStore.push({
+                value: transactions.sales.inStore,
+                date,
+              });
+
+              resultAcc.transactions.sales.online.push({
+                value: transactions.sales.online,
+                date,
+              });
+
+              // other metrics
+
+              resultAcc.otherMetrics.averageOrderValue.push({
+                value: dailyMetric.averageOrderValue,
+                date,
+              });
+
+              resultAcc.otherMetrics.conversionRate.push({
+                value: dailyMetric.conversionRate,
+                date,
+              });
+
+              resultAcc.otherMetrics.netProfitMargin.push({
+                value: dailyMetric.netProfitMargin,
+                date,
+              });
+            });
+
+            return resultAcc;
+          }, calendarChartsTemplate);
+
+        resolve(dailyFinancialCalendarCharts);
+      }, 0);
+    });
+  }
+
+  return {
+    currentYearCalendarCharts,
+    previousYearCalendarCharts,
+  };
+}
+
 export {
+  createFinancialMetricsCalendarCharts,
   createFinancialMetricsCharts,
   createYearlyFinancialCharts,
   returnCalendarViewFinancialCharts,

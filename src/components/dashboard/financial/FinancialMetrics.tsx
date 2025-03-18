@@ -18,6 +18,7 @@ import type {
 import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
+  createFinancialMetricsCalendarCharts,
   createFinancialMetricsCharts,
   returnSelectedDateFinancialMetrics,
 } from "./chartsData";
@@ -88,6 +89,13 @@ function FinancialMetrics({
             year: selectedYear,
           },
         );
+
+        const { currentYearCalendarCharts, previousYearCalendarCharts } =
+          await createFinancialMetricsCalendarCharts(
+            selectedDateFinancialMetrics,
+          );
+
+        console.log({ currentYearCalendarCharts, previousYearCalendarCharts });
 
         const financialMetricsCharts = await createFinancialMetricsCharts({
           businessMetrics,

@@ -102,7 +102,9 @@ type Year =
   | "2020"
   | "2021"
   | "2022"
-  | "2023";
+  | "2023"
+  | "2024"
+  | "2025";
 
 type DaysInMonthsInYears = Map<Year, Map<Month, string[]>>;
 
