@@ -3832,7 +3832,7 @@ async function createFinancialMetricsCalendarCharts(
   };
 }
 
-function returnCalendarCharts(
+function returnSelectedCalendarCharts(
   calendarChartsData: {
     currentYear: FinancialMetricsCalendarCharts | null;
     previousYear: FinancialMetricsCalendarCharts | null;
@@ -3870,8 +3870,8 @@ export {
   createFinancialMetricsCalendarCharts,
   createFinancialMetricsCharts,
   createYearlyFinancialCharts,
-  returnCalendarCharts,
   returnCalendarViewFinancialCharts,
+  returnSelectedCalendarCharts,
   returnSelectedDateFinancialMetrics,
 };
 export type {

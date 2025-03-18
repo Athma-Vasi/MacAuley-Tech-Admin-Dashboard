@@ -23,18 +23,20 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import { returnStatistics } from "../../utils";
+import { createExpandChartNavigateLinks, returnStatistics } from "../../utils";
 import {
   consolidateFinancialCardsAndStatistics,
   createFinancialStatisticsElements,
-  DashboardCardInfo,
 } from "../../utilsTSX";
-import { type FinancialMetricsCards } from "../cards";
+import {
+  type FinancialMetricsCards,
+  returnFinancialMetricsCards,
+} from "../cards";
 import {
   FinancialMetricsCalendarCharts,
   type FinancialMetricsCharts,
-  returnCalendarCharts,
   returnCalendarViewFinancialCharts,
+  returnSelectedCalendarCharts,
 } from "../chartsData";
 import {
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
@@ -43,10 +45,7 @@ import {
   MONEY_SYMBOL_CATEGORIES,
   PERT_SET,
 } from "../constants";
-import {
-  FinancialCardsAndStatisticsKeyPERT,
-  type FinancialMetricCategory,
-} from "../types";
+import { type FinancialMetricCategory } from "../types";
 import { pertAction } from "./actions";
 import { pertReducer } from "./reducers";
 import { initialPERTState } from "./state";
@@ -142,6 +141,13 @@ function PERT({
   //   months: MONTHS,
   // });
 
+  const {
+    expandBarChartNavigateLink,
+    expandCalendarChartNavigateLink,
+    expandLineChartNavigateLink,
+    expandPieChartNavigateLink,
+  } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
+
   const pieChartYAxisVariableSelectInput = (
     <AccessibleSelectInput
       attributes={{
@@ -174,7 +180,7 @@ function PERT({
             },
           });
 
-          // navigate(expandPieChartNavigateLink);
+          navigate(expandPieChartNavigateLink);
         },
       }}
     />
@@ -215,13 +221,19 @@ function PERT({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
               chartKind: barLineChartKind,
-              chartData: barCharts[barLineChartYAxisVariable],
+              chartData: barLineChartKind === "bar"
+                ? barCharts[barLineChartYAxisVariable]
+                : lineCharts[barLineChartYAxisVariable],
               chartTitle: "TODO",
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
-          // navigate(expandBarChartNavigateLink);
+          navigate(
+            barLineChartKind === "bar"
+              ? expandBarChartNavigateLink
+              : expandLineChartNavigateLink,
+          );
         },
       }}
     />
@@ -273,23 +285,11 @@ function PERT({
       />
     );
 
-  const cards = calendarView === "Daily"
-    ? financialMetricsCards.dailyCards
-    : calendarView === "Monthly"
-    ? financialMetricsCards.monthlyCards
-    : financialMetricsCards.yearlyCards;
-
-  const overviewCardsArr = PERT_SET.has(metricCategory)
-    ? cards[metricCategory]
-    : cards.profit;
-
-  const overviewCards = overviewCardsArr.reduce((acc, card) => {
-    const { heading = "Total" } = card;
-
-    acc.set(heading as FinancialCardsAndStatisticsKeyPERT, card);
-
-    return acc;
-  }, new Map<FinancialCardsAndStatisticsKeyPERT, DashboardCardInfo>());
+  const selectedCards = returnFinancialMetricsCards(
+    financialMetricsCards,
+    calendarView,
+    metricCategory,
+  );
 
   const statisticsMap = returnStatistics(barCharts);
 
@@ -302,7 +302,7 @@ function PERT({
   );
 
   const consolidatedCards = consolidateFinancialCardsAndStatistics(
-    overviewCards,
+    selectedCards,
     statisticsElementsMap,
   );
 
@@ -314,11 +314,39 @@ function PERT({
   console.log({ calendarChartsData });
   console.groupEnd();
 
-  const calendarChartData = returnCalendarCharts(
+  const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
     calendarChartYAxisVariable,
     metricCategory,
   );
+
+  const expandCalendarChartButton = calendarView === "Yearly"
+    ? (
+      <AccessibleButton
+        attributes={{
+          enabledScreenreaderText: "Expand and customize chart",
+          kind: "expand",
+          onClick: (
+            _event:
+              | React.MouseEvent<HTMLButtonElement>
+              | React.PointerEvent<HTMLButtonElement>,
+          ) => {
+            globalDispatch({
+              action: globalAction.setCustomizeChartsPageData,
+              payload: {
+                chartKind: "calendar",
+                chartData: calendarChartData,
+                chartTitle: "TODO",
+                chartUnitKind: "number",
+              } as CustomizeChartsPageData,
+            });
+
+            navigate(expandCalendarChartNavigateLink);
+          },
+        }}
+      />
+    )
+    : null;
 
   const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
     ? (
@@ -354,6 +382,12 @@ function PERT({
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
+        calendarChartHeading="TODO"
+        expandPieChartButton={expandPieChartButton}
+        pieChart={pieChart}
+        pieChartHeading="TODO"
+        pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
+        expandCalendarChartButton={expandCalendarChartButton}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
         consolidatedCards={consolidatedCards}
         expandBarLineChartButton={expandBarLineChartButton}

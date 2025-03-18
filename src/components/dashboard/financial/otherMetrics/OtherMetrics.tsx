@@ -22,26 +22,25 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import { returnStatistics } from "../../utils";
+import { createExpandChartNavigateLinks, returnStatistics } from "../../utils";
 import {
   consolidateFinancialCardsAndStatistics,
   createFinancialStatisticsElements,
-  DashboardCardInfo,
 } from "../../utilsTSX";
-import type { FinancialMetricsCards } from "../cards";
+import {
+  type FinancialMetricsCards,
+  returnFinancialMetricsCards,
+} from "../cards";
 import {
   type FinancialMetricsCalendarCharts,
   type FinancialMetricsCharts,
-  returnCalendarCharts,
+  returnSelectedCalendarCharts,
 } from "../chartsData";
 import {
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   MONEY_SYMBOL_CATEGORIES,
 } from "../constants";
-import type {
-  FinancialCardsAndStatisticsKeyOtherMetrics,
-  FinancialMetricCategory,
-} from "../types";
+import type { FinancialMetricCategory } from "../types";
 import { otherMetricsAction } from "./actions";
 import { otherMetricsReducer } from "./reducers";
 import { initialOtherMetricsState } from "./state";
@@ -110,24 +109,11 @@ function OtherMetrics({
     />
   );
 
-  // const {
-  //   barChartHeading,
-  //   expandBarChartNavigateLink,
-  //   expandLineChartNavigateLink,
-  //   lineChartHeading,
-  //   pieChartHeading,
-  // } = returnChartTitleNavigateLinks({
-  //   calendarView,
-  //   metricCategory,
-  //   metricsView,
-  //   storeLocation,
-  //   yAxisBarChartVariable: barLineChartYAxisVariable,
-  //   yAxisLineChartVariable: lineChartYAxisVariable,
-  //   year,
-  //   day,
-  //   month,
-  //   months: MONTHS,
-  // });
+  const {
+    expandBarChartNavigateLink,
+    expandCalendarChartNavigateLink,
+    expandLineChartNavigateLink,
+  } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
 
   const expandBarLineChartButton = (
     <AccessibleButton
@@ -143,13 +129,19 @@ function OtherMetrics({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
               chartKind: barLineChartKind,
-              chartData: barCharts[barLineChartYAxisVariable],
+              chartData: barLineChartKind === "bar"
+                ? barCharts[barLineChartYAxisVariable]
+                : lineCharts[barLineChartYAxisVariable],
               chartTitle: "TODO",
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
-          // navigate(expandBarChartNavigateLink);
+          navigate(
+            barLineChartKind === "bar"
+              ? expandBarChartNavigateLink
+              : expandLineChartNavigateLink,
+          );
         },
       }}
     />
@@ -201,20 +193,11 @@ function OtherMetrics({
       />
     );
 
-  const cards = calendarView === "Daily"
-    ? financialMetricsCards.dailyCards
-    : calendarView === "Monthly"
-    ? financialMetricsCards.monthlyCards
-    : financialMetricsCards.yearlyCards;
-  const overviewCardsArr = cards.otherMetrics;
-
-  const overviewCards = overviewCardsArr.reduce((acc, card) => {
-    const { heading = "Total" } = card;
-
-    acc.set(heading as FinancialCardsAndStatisticsKeyOtherMetrics, card);
-
-    return acc;
-  }, new Map<FinancialCardsAndStatisticsKeyOtherMetrics, DashboardCardInfo>());
+  const selectedCards = returnFinancialMetricsCards(
+    financialMetricsCards,
+    calendarView,
+    metricCategory,
+  );
 
   const statisticsMap = returnStatistics(barCharts);
 
@@ -227,15 +210,43 @@ function OtherMetrics({
   );
 
   const consolidatedCards = consolidateFinancialCardsAndStatistics(
-    overviewCards,
+    selectedCards,
     statisticsElementsMap,
   );
 
-  const calendarChartData = returnCalendarCharts(
+  const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
     calendarChartYAxisVariable,
     metricCategory,
   );
+
+  const expandCalendarChartButton = calendarView === "Yearly"
+    ? (
+      <AccessibleButton
+        attributes={{
+          enabledScreenreaderText: "Expand and customize chart",
+          kind: "expand",
+          onClick: (
+            _event:
+              | React.MouseEvent<HTMLButtonElement>
+              | React.PointerEvent<HTMLButtonElement>,
+          ) => {
+            globalDispatch({
+              action: globalAction.setCustomizeChartsPageData,
+              payload: {
+                chartKind: "calendar",
+                chartData: calendarChartData,
+                chartTitle: "TODO",
+                chartUnitKind: "number",
+              } as CustomizeChartsPageData,
+            });
+
+            navigate(expandCalendarChartNavigateLink);
+          },
+        }}
+      />
+    )
+    : null;
 
   const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
     ? (
@@ -270,6 +281,8 @@ function OtherMetrics({
       barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
       barLineChartYAxisVariable={barLineChartYAxisVariable}
       calendarChart={calendarChart}
+      calendarChartHeading="TODO"
+      expandCalendarChartButton={expandCalendarChartButton}
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
       consolidatedCards={consolidatedCards}
       expandBarLineChartButton={expandBarLineChartButton}
@@ -277,23 +290,6 @@ function OtherMetrics({
       semanticLabel="TODO"
     />
   );
-
-  // const financialMetricsOverview = (
-  //   <DashboardMetricsLayout
-  //     barChart={overviewBarChart}
-  //     barChartHeading={barChartHeading}
-  //     barChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-  //     expandBarChartButton={expandBarChartButton}
-  //     expandLineChartButton={expandLineChartButton}
-  //     lineChart={overviewLineChart}
-  //     lineChartHeading={lineChartHeading}
-  //     lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-  //     overviewCards={overviewCards}
-  //     pieChartHeading={pieChartHeading}
-  //     sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
-  //     statisticsMap={statistics}
-  //   />
-  // );
 
   return (
     <Stack>

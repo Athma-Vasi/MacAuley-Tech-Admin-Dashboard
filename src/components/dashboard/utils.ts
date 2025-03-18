@@ -3719,6 +3719,25 @@ function excludeTodayFromCalendarView() {
   return `${currentYear}-${currentMonth}-${Number(currentDay) - 1}`;
 }
 
+function createExpandChartNavigateLinks(
+  metricsView: DashboardMetricsView,
+  calendarView: DashboardCalendarView,
+  metricCategory: string,
+) {
+  const genericLink = `/home/dashboard/${metricsView}-${calendarView}-${
+    splitCamelCase(metricCategory)
+      .split(" ")
+      .join("-")
+  }`;
+
+  return {
+    expandBarChartNavigateLink: `${genericLink}-bar-chart`,
+    expandCalendarChartNavigateLink: `${genericLink}-calendar-chart`,
+    expandLineChartNavigateLink: `${genericLink}-line-chart`,
+    expandPieChartNavigateLink: `${genericLink}-pie-chart`,
+  };
+}
+
 export {
   createAggregatedProductMetrics,
   createAggregatedRepairMetrics,
@@ -3726,6 +3745,7 @@ export {
   createAllLocationsAggregatedFinancialMetrics,
   createAllLocationsAggregatedProductMetrics,
   createAllLocationsAggregatedRepairMetrics,
+  createExpandChartNavigateLinks,
   createProductCategoryUnitsRevenueTuple,
   createRandomBusinessMetrics,
   createRandomCustomerMetrics,

@@ -10,14 +10,20 @@ type DashboardBarLineLayoutProps = {
     barLineChart: React.JSX.Element;
     barLineChartHeading: string;
     barLineChartYAxisSelectInput: React.JSX.Element;
+    barLineChartKindSegmentedControl: React.JSX.Element;
     barLineChartYAxisVariable:
         | FinancialMetricsBarLineChartsKey
         | FinancialMetricsOtherMetricsChartsKey;
     calendarChart: React.JSX.Element | null;
+    calendarChartHeading: string;
     calendarChartYAxisSelectInput: React.JSX.Element | null;
-    barLineChartKindSegmentedControl: React.JSX.Element;
     consolidatedCards: Map<FinancialMetricsBarLineChartsKey, React.JSX.Element>;
     expandBarLineChartButton: React.JSX.Element;
+    expandCalendarChartButton: React.JSX.Element | null;
+    expandPieChartButton?: React.JSX.Element;
+    pieChart?: React.JSX.Element;
+    pieChartHeading?: string;
+    pieChartYAxisSelectInput?: React.JSX.Element;
     sectionHeading: string;
     semanticLabel?: string;
 };
@@ -26,13 +32,19 @@ function DashboardBarLineLayout(
     {
         barLineChart,
         barLineChartHeading,
+        barLineChartKindSegmentedControl,
         barLineChartYAxisSelectInput,
         barLineChartYAxisVariable,
-        barLineChartKindSegmentedControl,
         calendarChart,
+        calendarChartHeading,
         calendarChartYAxisSelectInput,
         consolidatedCards,
         expandBarLineChartButton,
+        expandCalendarChartButton,
+        expandPieChartButton,
+        pieChart,
+        pieChartHeading,
+        pieChartYAxisSelectInput,
         sectionHeading,
         semanticLabel,
     }: DashboardBarLineLayoutProps,
@@ -53,6 +65,12 @@ function DashboardBarLineLayout(
 
     const dashboardBarLineLayout = (
         <Stack>
+            <Stack>
+                {pieChartYAxisSelectInput}
+                {expandPieChartButton}
+                {pieChart}
+            </Stack>
+
             <Group w="100%" position="apart">
                 {barLineChartYAxisSelectInput}
                 {barLineChartKindSegmentedControl}
@@ -66,7 +84,11 @@ function DashboardBarLineLayout(
                 {barLineChart}
             </Group>
 
-            <Stack>{calendarChartYAxisSelectInput}{calendarChart}</Stack>
+            <Stack>
+                {calendarChartYAxisSelectInput}
+                {expandCalendarChartButton}
+                {calendarChart}
+            </Stack>
         </Stack>
     );
 

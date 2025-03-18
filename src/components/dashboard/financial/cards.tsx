@@ -1,12 +1,16 @@
+import { DashboardCalendarView } from "../types";
 import {
   createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";
-import type {
-  FinancialMetricsCharts,
-  SelectedDateFinancialMetrics,
-} from "./chartsData";
+import type { SelectedDateFinancialMetrics } from "./chartsData";
+import { PERT_SET } from "./constants";
+import {
+  FinancialCardsAndStatisticsKeyOtherMetrics,
+  FinancialCardsAndStatisticsKeyPERT,
+  FinancialMetricCategory,
+} from "./types";
 
 type CreateFinancialMetricsCardsInput = {
   greenColorShade: string;
@@ -877,5 +881,43 @@ function createFinancialMetricsCards({
   });
 }
 
-export { createFinancialMetricsCards };
+function returnFinancialMetricsCards(
+  financialMetricsCards: FinancialMetricsCards,
+  calendarView: DashboardCalendarView,
+  metricCategory: FinancialMetricCategory,
+): Map<
+  | FinancialCardsAndStatisticsKeyPERT
+  | FinancialCardsAndStatisticsKeyOtherMetrics,
+  DashboardCardInfo
+> {
+  const cards = calendarView === "Daily"
+    ? financialMetricsCards.dailyCards
+    : calendarView === "Monthly"
+    ? financialMetricsCards.monthlyCards
+    : financialMetricsCards.yearlyCards;
+
+  const cardsArr = metricCategory === "otherMetrics"
+    ? cards.otherMetrics
+    : PERT_SET.has(metricCategory)
+    ? cards[metricCategory]
+    : cards.profit;
+
+  return cardsArr.reduce(
+    (acc, card) => {
+      const { heading = "All" } = card;
+
+      acc.set(
+        heading as
+          | FinancialCardsAndStatisticsKeyPERT
+          | FinancialCardsAndStatisticsKeyOtherMetrics,
+        card,
+      );
+
+      return acc;
+    },
+    new Map(),
+  );
+}
+
+export { createFinancialMetricsCards, returnFinancialMetricsCards };
 export type { FinancialMetricsCards };
