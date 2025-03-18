@@ -9,7 +9,11 @@ import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
-import { ResponsiveBarChart, ResponsiveLineChart } from "../../../charts";
+import {
+  ResponsiveBarChart,
+  ResponsiveCalendarChart,
+  ResponsiveLineChart,
+} from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
@@ -25,15 +29,15 @@ import {
   DashboardCardInfo,
 } from "../../utilsTSX";
 import type { FinancialMetricsCards } from "../cards";
-import type {
-  FinancialMetricsCalendarCharts,
-  FinancialMetricsCharts,
+import {
+  type FinancialMetricsCalendarCharts,
+  type FinancialMetricsCharts,
+  returnCalendarCharts,
 } from "../chartsData";
 import {
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   MONEY_SYMBOL_CATEGORIES,
 } from "../constants";
-import { pertAction } from "../pert/actions";
 import type {
   FinancialCardsAndStatisticsKeyOtherMetrics,
   FinancialMetricCategory,
@@ -78,7 +82,11 @@ function OtherMetrics({
     initialOtherMetricsState,
   );
 
-  const { barLineChartYAxisVariable, barLineChartKind } = otherMetricsState;
+  const {
+    barLineChartYAxisVariable,
+    barLineChartKind,
+    calendarChartYAxisVariable,
+  } = otherMetricsState;
 
   const charts = calendarView === "Daily"
     ? financialMetricsCharts.dailyCharts
@@ -95,7 +103,7 @@ function OtherMetrics({
         data: CHART_KIND_DATA,
         name: "chartKind",
         parentDispatch: otherMetricsDispatch,
-        validValueAction: pertAction.setBarLineChartKind,
+        validValueAction: otherMetricsAction.setBarLineChartKind,
         value: barLineChartKind,
         defaultValue: "bar",
       }}
@@ -218,12 +226,41 @@ function OtherMetrics({
     storeLocation,
   );
 
-  console.log({ metricCategory });
-
   const consolidatedCards = consolidateFinancialCardsAndStatistics(
     overviewCards,
     statisticsElementsMap,
   );
+
+  const calendarChartData = returnCalendarCharts(
+    calendarChartsData,
+    calendarChartYAxisVariable,
+    metricCategory,
+  );
+
+  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+    ? (
+      <AccessibleSelectInput
+        attributes={{
+          data: FINANCIAL_OTHERS_Y_AXIS_DATA,
+          name: "Y-Axis Pie",
+          parentDispatch: otherMetricsDispatch,
+          validValueAction: otherMetricsAction.setCalendarChartYAxisVariable,
+          value: calendarChartYAxisVariable,
+        }}
+      />
+    )
+    : null;
+
+  const calendarChart = calendarView === "Yearly"
+    ? (
+      <ResponsiveCalendarChart
+        calendarChartData={calendarChartData}
+        hideControls
+        from={`${year}-01-01`}
+        to={`${year}-12-31`}
+      />
+    )
+    : null;
 
   const otherMetrics = (
     <DashboardBarLineLayout
@@ -232,7 +269,8 @@ function OtherMetrics({
       barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
       barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
       barLineChartYAxisVariable={barLineChartYAxisVariable}
-      calendarChartsData={calendarChartsData}
+      calendarChart={calendarChart}
+      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
       consolidatedCards={consolidatedCards}
       expandBarLineChartButton={expandBarLineChartButton}
       sectionHeading="TODO"

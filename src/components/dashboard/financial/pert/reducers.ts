@@ -1,5 +1,6 @@
 import {
   FinancialMetricsBarLineChartsKey,
+  FinancialMetricsCalendarChartsKeyPERT,
   FinancialMetricsPieChartsKey,
 } from "../chartsData";
 import { PERTAction, pertAction } from "./actions";
@@ -19,6 +20,10 @@ const pertReducers = new Map<
     pertReducer_setBarLineChartYAxisVariable,
   ],
   [pertAction.setBarLineChartKind, pertReducer_setBarLineChartKind],
+  [
+    pertAction.setCalendarChartYAxisVariable,
+    pertReducer_setCalendarChartYAxisVariable,
+  ],
   [pertAction.setPieChartYAxisVariable, pertReducer_setPieChartYAxisVariable],
 ]);
 
@@ -40,6 +45,17 @@ function pertReducer_setBarLineChartKind(
   return {
     ...state,
     barLineChartKind: dispatch.payload as "bar" | "line",
+  };
+}
+
+function pertReducer_setCalendarChartYAxisVariable(
+  state: PERTState,
+  dispatch: PERTDispatch,
+): PERTState {
+  return {
+    ...state,
+    calendarChartYAxisVariable: dispatch
+      .payload as FinancialMetricsCalendarChartsKeyPERT,
   };
 }
 

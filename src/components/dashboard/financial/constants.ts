@@ -1,6 +1,7 @@
 import { CheckboxRadioSelectData } from "../../../types";
 import {
   FinancialMetricsBarLineChartsKey,
+  FinancialMetricsCalendarChartsKeyPERT,
   FinancialMetricsOtherMetricsChartsKey,
   FinancialMetricsPieChartsKey,
 } from "./chartsData";
@@ -20,6 +21,16 @@ const FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA: CheckboxRadioSelectData<
   { label: "Total", value: "total" },
   { label: "All", value: "all" },
   { label: "Overview", value: "overview" },
+  { label: "Repair", value: "repair" },
+  { label: "Sales", value: "sales" },
+  { label: "In-Store", value: "inStore" },
+  { label: "Online", value: "online" },
+];
+
+const FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA: CheckboxRadioSelectData<
+  FinancialMetricsCalendarChartsKeyPERT
+> = [
+  { label: "Total", value: "total" },
   { label: "Repair", value: "repair" },
   { label: "Sales", value: "sales" },
   { label: "In-Store", value: "inStore" },
@@ -91,6 +102,7 @@ export {
   FINANCIAL_METRICS_CATEGORY_DATA,
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
+  FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
   MONEY_SYMBOL_CATEGORIES,
   PERCENTAGE_SYMBOL_CATEGORIES,

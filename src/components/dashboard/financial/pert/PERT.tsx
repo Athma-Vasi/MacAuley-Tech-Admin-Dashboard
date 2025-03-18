@@ -33,10 +33,12 @@ import { type FinancialMetricsCards } from "../cards";
 import {
   FinancialMetricsCalendarCharts,
   type FinancialMetricsCharts,
+  returnCalendarCharts,
   returnCalendarViewFinancialCharts,
 } from "../chartsData";
 import {
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
+  FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
   MONEY_SYMBOL_CATEGORIES,
   PERT_SET,
@@ -44,7 +46,6 @@ import {
 import {
   FinancialCardsAndStatisticsKeyPERT,
   type FinancialMetricCategory,
-  FinancialYAxisVariables,
 } from "../types";
 import { pertAction } from "./actions";
 import { pertReducer } from "./reducers";
@@ -90,6 +91,7 @@ function PERT({
   const {
     barLineChartYAxisVariable,
     barLineChartKind,
+    calendarChartYAxisVariable,
     pieChartYAxisVariable,
   } = pertState;
 
@@ -178,7 +180,7 @@ function PERT({
     />
   );
 
-  const overviewPieChart = (
+  const pieChart = (
     <ResponsivePieChart
       pieChartData={pieCharts[pieChartYAxisVariable]}
       hideControls
@@ -271,44 +273,6 @@ function PERT({
       />
     );
 
-  // const expandLineChartButton = (
-  //   <AccessibleButton
-  //     attributes={{
-  //       enabledScreenreaderText: `Expand and customize ${lineChartHeading}`,
-  //       kind: "expand",
-  //       onClick: (
-  //         _event:
-  //           | React.MouseEvent<HTMLButtonElement>
-  //           | React.PointerEvent<HTMLButtonElement>,
-  //       ) => {
-  //         globalDispatch({
-  //           action: globalAction.setCustomizeChartsPageData,
-  //           payload: {
-  //             chartKind: "line",
-  //             chartData: lineCharts[lineChartYAxisVariable],
-  //             chartTitle: lineChartHeading,
-  //             chartUnitKind: "number",
-  //           },
-  //         });
-
-  //         navigate(expandLineChartNavigateLink);
-  //       },
-  //     }}
-  //   />
-  // );
-
-  // const lineChartYAxisVariablesSelectInput = (
-  //   <AccessibleSelectInput
-  //     attributes={{
-  //       data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
-  //       name: "Y-Axis Line",
-  //       parentDispatch: pertDispatch,
-  //       validValueAction: pertAction.setLineChartYAxisVariable,
-  //       value: lineChartYAxisVariable,
-  //     }}
-  //   />
-  // );
-
   const cards = calendarView === "Daily"
     ? financialMetricsCards.dailyCards
     : calendarView === "Monthly"
@@ -346,64 +310,40 @@ function PERT({
   console.log({ metricCategory });
   console.log({ metricsView });
   console.log({ calendarView });
+  console.log({ barLineChartYAxisVariable });
   console.log({ calendarChartsData });
   console.groupEnd();
 
-  function returnCalendarCharts(
-    calendarChartsData: {
-      currentYear: FinancialMetricsCalendarCharts | null;
-      previousYear: FinancialMetricsCalendarCharts | null;
-    },
-    barLineYAxisVariable: FinancialYAxisVariables,
-    metricCategory: FinancialMetricCategory,
-  ): Array<{ day: string; value: number }> {
-    const defaultValue = [{
-      day: "",
-      value: 0,
-    }];
-
-    const { currentYear, previousYear } = calendarChartsData;
-    if (
-      currentYear === null || previousYear === null
-    ) {
-      return defaultValue;
-    }
-
-    const currentYearMetric = currentYear[metricCategory];
-    const previousYearMetric = previousYear[metricCategory];
-
-    console.log("currentYearMetric", currentYearMetric);
-    console.log("previousYearMetric", previousYearMetric);
-
-    return (Object.entries(currentYearMetric).find(([key]) =>
-      key === barLineYAxisVariable
-    )?.[1] ?? defaultValue).concat(
-      Object.entries(previousYearMetric).find(([key]) =>
-        key === barLineYAxisVariable
-      )?.[1] ?? defaultValue,
-    );
-  }
-
   const calendarChartData = returnCalendarCharts(
     calendarChartsData,
-    barLineChartYAxisVariable,
+    calendarChartYAxisVariable,
     metricCategory,
   );
 
-  console.log("year", year);
-  console.log("calendarChartData", calendarChartData);
+  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+    ? (
+      <AccessibleSelectInput
+        attributes={{
+          data: FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
+          name: "Y-Axis Pie",
+          parentDispatch: pertDispatch,
+          validValueAction: pertAction.setCalendarChartYAxisVariable,
+          value: calendarChartYAxisVariable,
+        }}
+      />
+    )
+    : null;
 
-  const calendarCharts =
-    new Set(["all", "overview"]).has(barLineChartYAxisVariable) ? null : (
-      <Stack>
-        <ResponsiveCalendarChart
-          calendarChartData={calendarChartData}
-          hideControls
-          from={`${year}-01-01`}
-          to={`${year}-12-31`}
-        />
-      </Stack>
-    );
+  const calendarChart = calendarView === "Yearly"
+    ? (
+      <ResponsiveCalendarChart
+        calendarChartData={calendarChartData}
+        hideControls
+        from={`${year}-01-01`}
+        to={`${year}-12-31`}
+      />
+    )
+    : null;
 
   return (
     <Stack>
@@ -413,7 +353,8 @@ function PERT({
         barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
-        calendarCharts={calendarCharts}
+        calendarChart={calendarChart}
+        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
         consolidatedCards={consolidatedCards}
         expandBarLineChartButton={expandBarLineChartButton}
         sectionHeading="TODO"

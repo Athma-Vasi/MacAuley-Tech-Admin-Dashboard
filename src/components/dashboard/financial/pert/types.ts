@@ -1,5 +1,6 @@
 import {
   FinancialMetricsBarLineChartsKey,
+  FinancialMetricsCalendarChartsKeyPERT,
   FinancialMetricsPieChartsKey,
 } from "../chartsData";
 import { PERTAction } from "./actions";
@@ -7,6 +8,7 @@ import { PERTAction } from "./actions";
 type PERTState = {
   barLineChartYAxisVariable: FinancialMetricsBarLineChartsKey;
   barLineChartKind: "bar" | "line";
+  calendarChartYAxisVariable: FinancialMetricsCalendarChartsKeyPERT;
   pieChartYAxisVariable: FinancialMetricsPieChartsKey;
 };
 
@@ -18,6 +20,10 @@ type PERTDispatch =
   | {
     action: PERTAction["setBarLineChartKind"];
     payload: "bar" | "line";
+  }
+  | {
+    action: PERTAction["setCalendarChartYAxisVariable"];
+    payload: FinancialMetricsCalendarChartsKeyPERT;
   }
   | {
     action: PERTAction["setPieChartYAxisVariable"];

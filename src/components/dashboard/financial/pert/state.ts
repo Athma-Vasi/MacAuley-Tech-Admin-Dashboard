@@ -1,8 +1,9 @@
 import { PERTState } from "./types";
 
 const initialPERTState: PERTState = {
-  barLineChartYAxisVariable: "all",
+  barLineChartYAxisVariable: "total",
   barLineChartKind: "bar",
+  calendarChartYAxisVariable: "total",
   pieChartYAxisVariable: "overview",
 };
 

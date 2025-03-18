@@ -13,7 +13,8 @@ type DashboardBarLineLayoutProps = {
     barLineChartYAxisVariable:
         | FinancialMetricsBarLineChartsKey
         | FinancialMetricsOtherMetricsChartsKey;
-    calendarCharts: React.JSX.Element | null;
+    calendarChart: React.JSX.Element | null;
+    calendarChartYAxisSelectInput: React.JSX.Element | null;
     barLineChartKindSegmentedControl: React.JSX.Element;
     consolidatedCards: Map<FinancialMetricsBarLineChartsKey, React.JSX.Element>;
     expandBarLineChartButton: React.JSX.Element;
@@ -28,7 +29,8 @@ function DashboardBarLineLayout(
         barLineChartYAxisSelectInput,
         barLineChartYAxisVariable,
         barLineChartKindSegmentedControl,
-        calendarCharts,
+        calendarChart,
+        calendarChartYAxisSelectInput,
         consolidatedCards,
         expandBarLineChartButton,
         sectionHeading,
@@ -64,7 +66,7 @@ function DashboardBarLineLayout(
                 {barLineChart}
             </Group>
 
-            {calendarCharts}
+            <Stack>{calendarChartYAxisSelectInput}{calendarChart}</Stack>
         </Stack>
     );
 

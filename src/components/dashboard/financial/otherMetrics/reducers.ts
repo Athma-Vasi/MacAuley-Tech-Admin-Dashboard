@@ -1,4 +1,7 @@
-import { FinancialMetricsOtherMetricsChartsKey } from "../chartsData";
+import {
+  FinancialMetricsCalendarChartsKeyOtherMetrics,
+  FinancialMetricsOtherMetricsChartsKey,
+} from "../chartsData";
 import { OtherMetricsAction, otherMetricsAction } from "./actions";
 import { OtherMetricsDispatch, OtherMetricsState } from "./types";
 
@@ -25,6 +28,10 @@ const otherMetricsReducers = new Map<
     otherMetricsAction.setBarLineChartKind,
     otherMetricsReducer_setBarLineChartKind,
   ],
+  [
+    otherMetricsAction.setCalendarChartYAxisVariable,
+    otherMetricsReducer_setCalendarChartYAxisVariable,
+  ],
 ]);
 
 function otherMetricsReducer_setBarLineChartYAxisVariable(
@@ -45,6 +52,17 @@ function otherMetricsReducer_setBarLineChartKind(
   return {
     ...state,
     barLineChartKind: dispatch.payload as "bar" | "line",
+  };
+}
+
+function otherMetricsReducer_setCalendarChartYAxisVariable(
+  state: OtherMetricsState,
+  dispatch: OtherMetricsDispatch,
+): OtherMetricsState {
+  return {
+    ...state,
+    calendarChartYAxisVariable: dispatch
+      .payload as FinancialMetricsCalendarChartsKeyOtherMetrics,
   };
 }
 

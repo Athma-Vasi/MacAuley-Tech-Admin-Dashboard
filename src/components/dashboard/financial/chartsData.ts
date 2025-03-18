@@ -13,6 +13,7 @@ import {
   Year,
   YearlyFinancialMetric,
 } from "../types";
+import { FinancialMetricCategory } from "./types";
 
 type SelectedDateFinancialMetrics = {
   dayFinancialMetrics: {
@@ -3595,6 +3596,16 @@ function returnCalendarViewFinancialCharts(
     : financialMetricsCharts.yearlyCharts;
 }
 
+type FinancialMetricsCalendarChartsKeyPERT =
+  | "total"
+  | "repair"
+  | "sales"
+  | "inStore"
+  | "online";
+type FinancialMetricsCalendarChartsKeyOtherMetrics =
+  | "averageOrderValue"
+  | "conversionRate"
+  | "netProfitMargin";
 type CalendarChartsData = {
   day: string;
   value: number;
@@ -3821,10 +3832,45 @@ async function createFinancialMetricsCalendarCharts(
   };
 }
 
+function returnCalendarCharts(
+  calendarChartsData: {
+    currentYear: FinancialMetricsCalendarCharts | null;
+    previousYear: FinancialMetricsCalendarCharts | null;
+  },
+  calendarChartYAxisVariable:
+    | FinancialMetricsCalendarChartsKeyPERT
+    | FinancialMetricsCalendarChartsKeyOtherMetrics,
+  metricCategory: FinancialMetricCategory,
+): Array<{ day: string; value: number }> {
+  const defaultValue = [{
+    day: "",
+    value: 0,
+  }];
+
+  const { currentYear, previousYear } = calendarChartsData;
+  if (
+    currentYear === null || previousYear === null
+  ) {
+    return defaultValue;
+  }
+
+  const currentYearMetric = currentYear[metricCategory];
+  const previousYearMetric = previousYear[metricCategory];
+
+  return (Object.entries(currentYearMetric).find(([key]) =>
+    key === calendarChartYAxisVariable
+  )?.[1] ?? defaultValue).concat(
+    Object.entries(previousYearMetric).find(([key]) =>
+      key === calendarChartYAxisVariable
+    )?.[1] ?? defaultValue,
+  );
+}
+
 export {
   createFinancialMetricsCalendarCharts,
   createFinancialMetricsCharts,
   createYearlyFinancialCharts,
+  returnCalendarCharts,
   returnCalendarViewFinancialCharts,
   returnSelectedDateFinancialMetrics,
 };
@@ -3832,6 +3878,8 @@ export type {
   FinancialMetricsBarCharts,
   FinancialMetricsBarLineChartsKey,
   FinancialMetricsCalendarCharts,
+  FinancialMetricsCalendarChartsKeyOtherMetrics,
+  FinancialMetricsCalendarChartsKeyPERT,
   FinancialMetricsCharts,
   FinancialMetricsOtherMetricsChartsKey,
   FinancialMetricsPieCharts,
