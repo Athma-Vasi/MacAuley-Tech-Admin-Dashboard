@@ -2,18 +2,18 @@ import { FinancialMetricsOtherMetricsChartsKey } from "../chartsData";
 import { OtherMetricsAction } from "./actions";
 
 type OtherMetricsState = {
-  barChartYAxisVariable: FinancialMetricsOtherMetricsChartsKey;
-  lineChartYAxisVariable: FinancialMetricsOtherMetricsChartsKey;
+  barLineChartYAxisVariable: FinancialMetricsOtherMetricsChartsKey;
+  barLineChartKind: "bar" | "line";
 };
 
 type OtherMetricsDispatch =
   | {
-      action: OtherMetricsAction["setBarChartYAxisVariable"];
-      payload: FinancialMetricsOtherMetricsChartsKey;
-    }
+    action: OtherMetricsAction["setBarLineChartYAxisVariable"];
+    payload: FinancialMetricsOtherMetricsChartsKey;
+  }
   | {
-      action: OtherMetricsAction["setLineChartYAxisVariable"];
-      payload: FinancialMetricsOtherMetricsChartsKey;
-    };
+    action: OtherMetricsAction["setBarLineChartKind"];
+    payload: "bar" | "line";
+  };
 
 export type { OtherMetricsDispatch, OtherMetricsState };

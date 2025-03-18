@@ -1,6 +1,9 @@
 import { FinancialMetricsAction } from "./actions";
 import { FinancialMetricsCards } from "./cards";
-import { FinancialMetricsCharts } from "./chartsData";
+import {
+  FinancialMetricsCalendarCharts,
+  FinancialMetricsCharts,
+} from "./chartsData";
 
 type FinancialMetricCategory =
   | "profit"
@@ -10,6 +13,10 @@ type FinancialMetricCategory =
   | "otherMetrics";
 
 type FinancialMetricsState = {
+  calendarChartsData: {
+    currentYear: FinancialMetricsCalendarCharts | null;
+    previousYear: FinancialMetricsCalendarCharts | null;
+  };
   cards: FinancialMetricsCards | null;
   category: FinancialMetricCategory;
   charts: FinancialMetricsCharts | null;
@@ -17,6 +24,13 @@ type FinancialMetricsState = {
 };
 
 type FinancialMetricsDispatch =
+  | {
+    action: FinancialMetricsAction["setCalendarChartsData"];
+    payload: {
+      currentYear: FinancialMetricsCalendarCharts;
+      previousYear: FinancialMetricsCalendarCharts;
+    };
+  }
   | {
     action: FinancialMetricsAction["setCards"];
     payload: FinancialMetricsCards;
@@ -46,10 +60,23 @@ type FinancialCardsAndStatisticsKeyOtherMetrics =
   | "Conversion Rate"
   | "Net Profit Margin";
 
+type FinancialYAxisVariables =
+  | "total"
+  | "all"
+  | "overview"
+  | "repair"
+  | "sales"
+  | "inStore"
+  | "online"
+  | "averageOrderValue"
+  | "conversionRate"
+  | "netProfitMargin";
+
 export type {
   FinancialCardsAndStatisticsKeyOtherMetrics,
   FinancialCardsAndStatisticsKeyPERT,
   FinancialMetricCategory,
   FinancialMetricsDispatch,
   FinancialMetricsState,
+  FinancialYAxisVariables,
 };

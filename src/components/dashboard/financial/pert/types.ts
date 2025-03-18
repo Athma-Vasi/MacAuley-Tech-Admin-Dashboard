@@ -5,19 +5,19 @@ import {
 import { PERTAction } from "./actions";
 
 type PERTState = {
-  barChartYAxisVariable: FinancialMetricsBarLineChartsKey;
-  lineChartYAxisVariable: FinancialMetricsBarLineChartsKey;
+  barLineChartYAxisVariable: FinancialMetricsBarLineChartsKey;
+  barLineChartKind: "bar" | "line";
   pieChartYAxisVariable: FinancialMetricsPieChartsKey;
 };
 
 type PERTDispatch =
   | {
-    action: PERTAction["setBarChartYAxisVariable"];
+    action: PERTAction["setBarLineChartYAxisVariable"];
     payload: FinancialMetricsBarLineChartsKey;
   }
   | {
-    action: PERTAction["setLineChartYAxisVariable"];
-    payload: FinancialMetricsBarLineChartsKey;
+    action: PERTAction["setBarLineChartKind"];
+    payload: "bar" | "line";
   }
   | {
     action: PERTAction["setPieChartYAxisVariable"];

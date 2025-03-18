@@ -1,11 +1,11 @@
 type OtherMetricsAction = {
-  setBarChartYAxisVariable: "setBarChartYAxisVariable";
-  setLineChartYAxisVariable: "setLineChartYAxisVariable";
+  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable";
+  setBarLineChartKind: "setBarLineChartKind";
 };
 
 const otherMetricsAction: OtherMetricsAction = {
-  setBarChartYAxisVariable: "setBarChartYAxisVariable",
-  setLineChartYAxisVariable: "setLineChartYAxisVariable",
+  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable",
+  setBarLineChartKind: "setBarLineChartKind",
 };
 
 export { otherMetricsAction };

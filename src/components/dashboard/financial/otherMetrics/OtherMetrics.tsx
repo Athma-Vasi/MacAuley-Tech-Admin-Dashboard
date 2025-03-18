@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
+import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
+import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import { ResponsiveBarChart, ResponsiveLineChart } from "../../../charts";
-import { MONTHS } from "../../constants";
+import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
   BusinessMetricStoreLocation,
@@ -16,15 +18,22 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import { returnChartTitleNavigateLinks, returnStatistics } from "../../utils";
+import { returnStatistics } from "../../utils";
 import {
   consolidateFinancialCardsAndStatistics,
   createFinancialStatisticsElements,
   DashboardCardInfo,
 } from "../../utilsTSX";
 import type { FinancialMetricsCards } from "../cards";
-import type { FinancialMetricsCharts } from "../chartsData";
-import { FINANCIAL_OTHERS_Y_AXIS_DATA } from "../constants";
+import type {
+  FinancialMetricsCalendarCharts,
+  FinancialMetricsCharts,
+} from "../chartsData";
+import {
+  FINANCIAL_OTHERS_Y_AXIS_DATA,
+  MONEY_SYMBOL_CATEGORIES,
+} from "../constants";
+import { pertAction } from "../pert/actions";
 import type {
   FinancialCardsAndStatisticsKeyOtherMetrics,
   FinancialMetricCategory,
@@ -34,6 +43,10 @@ import { otherMetricsReducer } from "./reducers";
 import { initialOtherMetricsState } from "./state";
 
 type OtherMetricsProps = {
+  calendarChartsData: {
+    currentYear: FinancialMetricsCalendarCharts | null;
+    previousYear: FinancialMetricsCalendarCharts | null;
+  };
   calendarView: DashboardCalendarView;
   financialMetricsCards: FinancialMetricsCards;
   financialMetricsCharts: FinancialMetricsCharts;
@@ -46,6 +59,7 @@ type OtherMetricsProps = {
 };
 
 function OtherMetrics({
+  calendarChartsData,
   calendarView,
   financialMetricsCards,
   financialMetricsCharts,
@@ -64,7 +78,7 @@ function OtherMetrics({
     initialOtherMetricsState,
   );
 
-  const { barChartYAxisVariable, lineChartYAxisVariable } = otherMetricsState;
+  const { barLineChartYAxisVariable, barLineChartKind } = otherMetricsState;
 
   const charts = calendarView === "Daily"
     ? financialMetricsCharts.dailyCharts
@@ -75,29 +89,42 @@ function OtherMetrics({
     otherMetrics: { bar: barCharts, line: lineCharts },
   } = charts;
 
-  const {
-    barChartHeading,
-    expandBarChartNavigateLink,
-    expandLineChartNavigateLink,
-    lineChartHeading,
-    pieChartHeading,
-  } = returnChartTitleNavigateLinks({
-    calendarView,
-    metricCategory,
-    metricsView,
-    storeLocation,
-    yAxisBarChartVariable: barChartYAxisVariable,
-    yAxisLineChartVariable: lineChartYAxisVariable,
-    year,
-    day,
-    month,
-    months: MONTHS,
-  });
+  const barLineChartKindSegmentedControl = (
+    <AccessibleSegmentedControl
+      attributes={{
+        data: CHART_KIND_DATA,
+        name: "chartKind",
+        parentDispatch: otherMetricsDispatch,
+        validValueAction: pertAction.setBarLineChartKind,
+        value: barLineChartKind,
+        defaultValue: "bar",
+      }}
+    />
+  );
 
-  const expandBarChartButton = (
+  // const {
+  //   barChartHeading,
+  //   expandBarChartNavigateLink,
+  //   expandLineChartNavigateLink,
+  //   lineChartHeading,
+  //   pieChartHeading,
+  // } = returnChartTitleNavigateLinks({
+  //   calendarView,
+  //   metricCategory,
+  //   metricsView,
+  //   storeLocation,
+  //   yAxisBarChartVariable: barLineChartYAxisVariable,
+  //   yAxisLineChartVariable: lineChartYAxisVariable,
+  //   year,
+  //   day,
+  //   month,
+  //   months: MONTHS,
+  // });
+
+  const expandBarLineChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: `Expand and customize ${barChartHeading}`,
+        enabledScreenreaderText: "Expand and customize chart",
         kind: "expand",
         onClick: (
           _event:
@@ -107,99 +134,64 @@ function OtherMetrics({
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: "bar",
-              chartData: barCharts[barChartYAxisVariable],
-              chartTitle: barChartHeading,
+              chartKind: barLineChartKind,
+              chartData: barCharts[barLineChartYAxisVariable],
+              chartTitle: "TODO",
               chartUnitKind: "number",
-            },
+            } as CustomizeChartsPageData,
           });
 
-          navigate(expandBarChartNavigateLink);
+          // navigate(expandBarChartNavigateLink);
         },
       }}
     />
   );
 
-  const barChartYAxisVariablesSelectInput = (
+  const barLineChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_OTHERS_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: otherMetricsDispatch,
-        validValueAction: otherMetricsAction.setBarChartYAxisVariable,
-        value: barChartYAxisVariable,
+        validValueAction: otherMetricsAction.setBarLineChartYAxisVariable,
+        value: barLineChartYAxisVariable,
       }}
     />
   );
 
-  const overviewBarChart = (
-    <ResponsiveBarChart
-      barChartData={barCharts[barChartYAxisVariable]}
-      hideControls
-      indexBy={calendarView === "Daily"
-        ? "Days"
-        : calendarView === "Monthly"
-        ? "Months"
-        : "Years"}
-      keys={FINANCIAL_OTHERS_Y_AXIS_DATA.map((obj) => obj.label)}
-      unitKind="number"
-    />
-  );
-
-  const expandLineChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText: `Expand and customize ${lineChartHeading}`,
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: "line",
-              chartData: lineCharts[lineChartYAxisVariable],
-              chartTitle: lineChartHeading,
-              chartUnitKind: "number",
-            },
-          });
-
-          navigate(expandLineChartNavigateLink);
-        },
-      }}
-    />
-  );
-
-  const lineChartYAxisVariablesSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIAL_OTHERS_Y_AXIS_DATA,
-        name: "Y-Axis Line",
-        parentDispatch: otherMetricsDispatch,
-        validValueAction: otherMetricsAction.setLineChartYAxisVariable,
-        value: lineChartYAxisVariable,
-      }}
-    />
-  );
-
-  const overviewLineChart = (
-    <ResponsiveLineChart
-      lineChartData={lineCharts[lineChartYAxisVariable]}
-      hideControls
-      xFormat={(x) =>
-        `${
-          calendarView === "Daily"
-            ? "Day"
-            : calendarView === "Monthly"
-            ? "Month"
-            : "Year"
-        } - ${x}`}
-      yFormat={(y) => addCommaSeparator(y)}
-      unitKind="number"
-    />
-  );
+  const barLineChart = barLineChartKind === "bar"
+    ? (
+      <ResponsiveBarChart
+        barChartData={barCharts[barLineChartYAxisVariable]}
+        hideControls
+        indexBy={calendarView === "Daily"
+          ? "Days"
+          : calendarView === "Monthly"
+          ? "Months"
+          : "Years"}
+        keys={FINANCIAL_OTHERS_Y_AXIS_DATA.map((obj) => obj.label)}
+        unitKind="number"
+      />
+    )
+    : (
+      <ResponsiveLineChart
+        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        hideControls
+        xFormat={(x) =>
+          `${
+            calendarView === "Daily"
+              ? "Day"
+              : calendarView === "Monthly"
+              ? "Month"
+              : "Year"
+          } - ${x}`}
+        yFormat={(y) =>
+          `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
+            addCommaSeparator(y)
+          }`}
+        unitKind="number"
+      />
+    );
 
   const cards = calendarView === "Daily"
     ? financialMetricsCards.dailyCards
@@ -235,19 +227,16 @@ function OtherMetrics({
 
   const otherMetrics = (
     <DashboardBarLineLayout
-      barChart={overviewBarChart}
-      barChartHeading={barChartHeading}
-      barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      barChartYAxisVariable={barChartYAxisVariable}
+      barLineChart={barLineChart}
+      barLineChartHeading={"TODO"}
+      barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
+      barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
+      barLineChartYAxisVariable={barLineChartYAxisVariable}
+      calendarChartsData={calendarChartsData}
       consolidatedCards={consolidatedCards}
-      expandBarChartButton={expandBarChartButton}
-      expandLineChartButton={expandLineChartButton}
-      lineChart={overviewLineChart}
-      lineChartHeading={lineChartHeading}
-      lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-      lineChartYAxisVariable={lineChartYAxisVariable}
-      sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
-      semanticLabel={metricCategory}
+      expandBarLineChartButton={expandBarLineChartButton}
+      sectionHeading="TODO"
+      semanticLabel="TODO"
     />
   );
 
@@ -255,7 +244,7 @@ function OtherMetrics({
   //   <DashboardMetricsLayout
   //     barChart={overviewBarChart}
   //     barChartHeading={barChartHeading}
-  //     barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
+  //     barChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
   //     expandBarChartButton={expandBarChartButton}
   //     expandLineChartButton={expandLineChartButton}
   //     lineChart={overviewLineChart}

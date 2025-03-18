@@ -3,16 +3,18 @@ import { useNavigate } from "react-router-dom";
 
 import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
+import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
+import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
 } from "../../../charts";
-import { MONTHS } from "../../constants";
+import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
   BusinessMetricStoreLocation,
@@ -20,7 +22,7 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import { returnChartTitleNavigateLinks, returnStatistics } from "../../utils";
+import { returnStatistics } from "../../utils";
 import {
   consolidateFinancialCardsAndStatistics,
   createFinancialStatisticsElements,
@@ -28,6 +30,7 @@ import {
 } from "../../utilsTSX";
 import { type FinancialMetricsCards } from "../cards";
 import {
+  FinancialMetricsCalendarCharts,
   type FinancialMetricsCharts,
   returnCalendarViewFinancialCharts,
 } from "../chartsData";
@@ -46,6 +49,10 @@ import { pertReducer } from "./reducers";
 import { initialPERTState } from "./state";
 
 type PERTProps = {
+  calendarChartsData: {
+    currentYear: FinancialMetricsCalendarCharts | null;
+    previousYear: FinancialMetricsCalendarCharts | null;
+  };
   calendarView: DashboardCalendarView;
   financialMetricsCards: FinancialMetricsCards;
   financialMetricsCharts: FinancialMetricsCharts;
@@ -58,6 +65,7 @@ type PERTProps = {
 };
 /** PERT = Profit | Expenses | Revenue | Transactions */
 function PERT({
+  calendarChartsData,
   calendarView,
   financialMetricsCards,
   financialMetricsCharts,
@@ -78,10 +86,22 @@ function PERT({
   );
 
   const {
-    barChartYAxisVariable,
-    lineChartYAxisVariable,
+    barLineChartYAxisVariable,
+    barLineChartKind,
     pieChartYAxisVariable,
   } = pertState;
+
+  // const [barLineYAxisVariable, setBarLineYAxisVariable] = React.useState<
+  //   FinancialMetricsBarLineChartsKey
+  // >(
+  //   "total",
+  // );
+  // const [pieChartYAxisVariable, setPieChartYAxisVariable] = React.useState<
+  //   FinancialMetricsPieChartsKey
+  // >("overview");
+  // const [chartKind, setChartKind] = React.useState<"bar" | "line">(
+  //   "bar",
+  // );
 
   const charts = returnCalendarViewFinancialCharts(
     calendarView,
@@ -98,25 +118,25 @@ function PERT({
     ])
     : charts.profit;
 
-  const {
-    barChartHeading,
-    expandBarChartNavigateLink,
-    expandLineChartNavigateLink,
-    expandPieChartNavigateLink,
-    lineChartHeading,
-    pieChartHeading,
-  } = returnChartTitleNavigateLinks({
-    calendarView,
-    metricCategory,
-    metricsView,
-    storeLocation,
-    yAxisBarChartVariable: barChartYAxisVariable,
-    yAxisLineChartVariable: lineChartYAxisVariable,
-    year,
-    day,
-    month,
-    months: MONTHS,
-  });
+  // const {
+  //   barChartHeading,
+  //   expandBarChartNavigateLink,
+  //   expandLineChartNavigateLink,
+  //   expandPieChartNavigateLink,
+  //   lineChartHeading,
+  //   pieChartHeading,
+  // } = returnChartTitleNavigateLinks({
+  //   calendarView,
+  //   metricCategory,
+  //   metricsView,
+  //   storeLocation,
+  //   yAxisBarChartVariable: barLineChartYAxisVariable,
+  //   yAxisLineChartVariable: lineChartYAxisVariable,
+  //   year,
+  //   day,
+  //   month,
+  //   months: MONTHS,
+  // });
 
   const pieChartYAxisVariableSelectInput = (
     <AccessibleSelectInput
@@ -133,7 +153,7 @@ function PERT({
   const expandPieChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: `Expand and customize ${pieChartHeading}`,
+        enabledScreenreaderText: "Expand and customize chart",
         kind: "expand",
         onClick: (
           _event:
@@ -145,12 +165,12 @@ function PERT({
             payload: {
               chartKind: "pie",
               chartData: pieCharts[pieChartYAxisVariable],
-              chartTitle: pieChartHeading,
+              chartTitle: "Pie Chart",
               chartUnitKind: "number",
             },
           });
 
-          navigate(expandPieChartNavigateLink);
+          // navigate(expandPieChartNavigateLink);
         },
       }}
     />
@@ -164,10 +184,23 @@ function PERT({
     />
   );
 
-  const expandBarChartButton = (
+  const barLineChartKindSegmentedControl = (
+    <AccessibleSegmentedControl
+      attributes={{
+        data: CHART_KIND_DATA,
+        name: "chartKind",
+        parentDispatch: pertDispatch,
+        validValueAction: pertAction.setBarLineChartKind,
+        value: barLineChartKind,
+        defaultValue: "bar",
+      }}
+    />
+  );
+
+  const expandBarLineChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: `Expand and customize ${barChartHeading}`,
+        enabledScreenreaderText: "Expand and customize chart",
         kind: "expand",
         onClick: (
           _event:
@@ -177,102 +210,102 @@ function PERT({
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: "bar",
-              chartData: barCharts[barChartYAxisVariable],
-              chartTitle: barChartHeading,
+              chartKind: barLineChartKind,
+              chartData: barCharts[barLineChartYAxisVariable],
+              chartTitle: "TODO",
               chartUnitKind: "number",
-            },
+            } as CustomizeChartsPageData,
           });
 
-          navigate(expandBarChartNavigateLink);
+          // navigate(expandBarChartNavigateLink);
         },
       }}
     />
   );
 
-  const barChartYAxisVariablesSelectInput = (
+  const barLineChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: pertDispatch,
-        validValueAction: pertAction.setBarChartYAxisVariable,
-        value: barChartYAxisVariable,
+        validValueAction: pertAction.setBarLineChartYAxisVariable,
+        value: barLineChartYAxisVariable,
       }}
     />
   );
 
-  const overviewBarChart = (
-    <ResponsiveBarChart
-      barChartData={barCharts[barChartYAxisVariable]}
-      hideControls
-      indexBy={calendarView === "Daily"
-        ? "Days"
-        : calendarView === "Monthly"
-        ? "Months"
-        : "Years"}
-      keys={FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
-      unitKind="number"
-    />
-  );
+  const barLineChart = barLineChartKind === "bar"
+    ? (
+      <ResponsiveBarChart
+        barChartData={barCharts[barLineChartYAxisVariable]}
+        hideControls
+        indexBy={calendarView === "Daily"
+          ? "Days"
+          : calendarView === "Monthly"
+          ? "Months"
+          : "Years"}
+        keys={FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
+        unitKind="number"
+      />
+    )
+    : (
+      <ResponsiveLineChart
+        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        hideControls
+        xFormat={(x) =>
+          `${
+            calendarView === "Daily"
+              ? "Day"
+              : calendarView === "Monthly"
+              ? "Month"
+              : "Year"
+          } - ${x}`}
+        yFormat={(y) =>
+          `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
+            addCommaSeparator(y)
+          }`}
+        unitKind="number"
+      />
+    );
 
-  const expandLineChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText: `Expand and customize ${lineChartHeading}`,
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: "line",
-              chartData: lineCharts[lineChartYAxisVariable],
-              chartTitle: lineChartHeading,
-              chartUnitKind: "number",
-            },
-          });
+  // const expandLineChartButton = (
+  //   <AccessibleButton
+  //     attributes={{
+  //       enabledScreenreaderText: `Expand and customize ${lineChartHeading}`,
+  //       kind: "expand",
+  //       onClick: (
+  //         _event:
+  //           | React.MouseEvent<HTMLButtonElement>
+  //           | React.PointerEvent<HTMLButtonElement>,
+  //       ) => {
+  //         globalDispatch({
+  //           action: globalAction.setCustomizeChartsPageData,
+  //           payload: {
+  //             chartKind: "line",
+  //             chartData: lineCharts[lineChartYAxisVariable],
+  //             chartTitle: lineChartHeading,
+  //             chartUnitKind: "number",
+  //           },
+  //         });
 
-          navigate(expandLineChartNavigateLink);
-        },
-      }}
-    />
-  );
+  //         navigate(expandLineChartNavigateLink);
+  //       },
+  //     }}
+  //   />
+  // );
 
-  const lineChartYAxisVariablesSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
-        name: "Y-Axis Line",
-        parentDispatch: pertDispatch,
-        validValueAction: pertAction.setLineChartYAxisVariable,
-        value: lineChartYAxisVariable,
-      }}
-    />
-  );
-
-  const overviewLineChart = (
-    <ResponsiveLineChart
-      lineChartData={lineCharts[lineChartYAxisVariable]}
-      hideControls
-      xFormat={(x) =>
-        `${
-          calendarView === "Daily"
-            ? "Day"
-            : calendarView === "Monthly"
-            ? "Month"
-            : "Year"
-        } - ${x}`}
-      yFormat={(y) =>
-        `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
-          addCommaSeparator(y)
-        }`}
-      unitKind="number"
-    />
-  );
+  // const lineChartYAxisVariablesSelectInput = (
+  //   <AccessibleSelectInput
+  //     attributes={{
+  //       data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
+  //       name: "Y-Axis Line",
+  //       parentDispatch: pertDispatch,
+  //       validValueAction: pertAction.setLineChartYAxisVariable,
+  //       value: lineChartYAxisVariable,
+  //     }}
+  //   />
+  // );
 
   const cards = calendarView === "Daily"
     ? financialMetricsCards.dailyCards
@@ -307,22 +340,25 @@ function PERT({
     statisticsElementsMap,
   );
 
+  console.group("PERT");
+  console.log({ metricCategory });
+  console.log({ metricsView });
+  console.log({ calendarView });
+  console.groupEnd();
+
   return (
     <Stack>
       <DashboardBarLineLayout
-        barChart={overviewBarChart}
-        barChartHeading={barChartHeading}
-        barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-        barChartYAxisVariable={barChartYAxisVariable}
+        barLineChart={barLineChart}
+        barLineChartHeading={"TODO"}
+        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
+        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
+        barLineChartYAxisVariable={barLineChartYAxisVariable}
+        calendarChartsData={calendarChartsData}
         consolidatedCards={consolidatedCards}
-        expandBarChartButton={expandBarChartButton}
-        expandLineChartButton={expandLineChartButton}
-        lineChart={overviewLineChart}
-        lineChartHeading={lineChartHeading}
-        lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-        lineChartYAxisVariable={lineChartYAxisVariable}
-        sectionHeading={`${storeLocation} ${calendarView} Overview Financials`}
-        semanticLabel={metricCategory}
+        expandBarLineChartButton={expandBarLineChartButton}
+        sectionHeading="TODO"
+        semanticLabel="TODO"
       />
       {/* {financialMetricsOverview} */}
     </Stack>

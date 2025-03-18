@@ -51,7 +51,8 @@ function FinancialMetrics({
     financialMetricsReducer,
     initialFinancialMetricsState,
   );
-  const { cards, category, charts, isGenerating } = financialMetricsState;
+  const { cards, category, charts, calendarChartsData, isGenerating } =
+    financialMetricsState;
 
   const {
     globalState: { themeObject },
@@ -90,12 +91,17 @@ function FinancialMetrics({
           },
         );
 
-        const { currentYearCalendarCharts, previousYearCalendarCharts } =
-          await createFinancialMetricsCalendarCharts(
-            selectedDateFinancialMetrics,
-          );
+        const {
+          currentYear,
+          previousYear,
+        } = await createFinancialMetricsCalendarCharts(
+          selectedDateFinancialMetrics,
+        );
 
-        console.log({ currentYearCalendarCharts, previousYearCalendarCharts });
+        console.log({
+          currentYear,
+          previousYear,
+        });
 
         const financialMetricsCharts = await createFinancialMetricsCharts({
           businessMetrics,
@@ -113,6 +119,14 @@ function FinancialMetrics({
         if (!isMounted) {
           return;
         }
+
+        financialMetricsDispatch({
+          action: financialMetricsAction.setCalendarChartsData,
+          payload: {
+            currentYear,
+            previousYear,
+          },
+        });
 
         financialMetricsDispatch({
           action: financialMetricsAction.setCards,
@@ -168,6 +182,7 @@ function FinancialMetrics({
       CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
         <React.Fragment key={idx}>
           <PERT
+            calendarChartsData={calendarChartsData}
             calendarView={calendarView}
             financialMetricsCards={cards}
             financialMetricsCharts={charts}
@@ -185,6 +200,7 @@ function FinancialMetrics({
       CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
         <React.Fragment key={idx}>
           <OtherMetrics
+            calendarChartsData={calendarChartsData}
             calendarView={calendarView}
             financialMetricsCards={cards}
             financialMetricsCharts={charts}

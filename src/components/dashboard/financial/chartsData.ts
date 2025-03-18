@@ -3622,7 +3622,10 @@ type FinancialMetricsCalendarCharts = {
 
 async function createFinancialMetricsCalendarCharts(
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics,
-) {
+): Promise<{
+  currentYear: FinancialMetricsCalendarCharts;
+  previousYear: FinancialMetricsCalendarCharts;
+}> {
   const {
     yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
   } = selectedDateFinancialMetrics;
@@ -3648,7 +3651,7 @@ async function createFinancialMetricsCalendarCharts(
     },
   };
 
-  const [currentYearCalendarCharts, previousYearCalendarCharts] = await Promise
+  const [currentYear, previousYear] = await Promise
     .all([
       createDailyFinancialCalendarCharts(
         selectedYearMetrics,
@@ -3816,8 +3819,8 @@ async function createFinancialMetricsCalendarCharts(
   }
 
   return {
-    currentYearCalendarCharts,
-    previousYearCalendarCharts,
+    currentYear,
+    previousYear,
   };
 }
 
@@ -3831,6 +3834,7 @@ export {
 export type {
   FinancialMetricsBarCharts,
   FinancialMetricsBarLineChartsKey,
+  FinancialMetricsCalendarCharts,
   FinancialMetricsCharts,
   FinancialMetricsOtherMetricsChartsKey,
   FinancialMetricsPieCharts,

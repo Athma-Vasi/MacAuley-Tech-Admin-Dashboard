@@ -4,83 +4,52 @@ import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmen
 import { CHART_KIND_DATA } from "./constants";
 import {
     FinancialMetricsBarLineChartsKey,
+    FinancialMetricsCalendarCharts,
     FinancialMetricsOtherMetricsChartsKey,
-    FinancialMetricsPieChartsKey,
 } from "./financial/chartsData";
 import { YAXIS_KEY_TO_CARDS_KEY_MAP } from "./financial/constants";
+import {
+    FinancialMetricCategory,
+    FinancialYAxisVariables,
+} from "./financial/types";
 
 type DashboardBarLineLayoutProps = {
-    barChart: React.JSX.Element;
-    barChartHeading: string;
-    barChartYAxisSelectInput: React.JSX.Element;
-    barChartYAxisVariable:
+    barLineChart: React.JSX.Element;
+    barLineChartHeading: string;
+    barLineChartYAxisSelectInput: React.JSX.Element;
+    barLineChartYAxisVariable:
         | FinancialMetricsBarLineChartsKey
-        | FinancialMetricsOtherMetricsChartsKey
-        | FinancialMetricsPieChartsKey;
+        | FinancialMetricsOtherMetricsChartsKey;
+
+    calendarChartsData: {
+        currentYear: FinancialMetricsCalendarCharts | null;
+        previousYear: FinancialMetricsCalendarCharts | null;
+    };
+    barLineChartKindSegmentedControl: React.JSX.Element;
     consolidatedCards: Map<FinancialMetricsBarLineChartsKey, React.JSX.Element>;
-    expandBarChartButton: React.JSX.Element;
-    expandLineChartButton: React.JSX.Element;
-    lineChart: React.JSX.Element;
-    lineChartHeading: string;
-    lineChartYAxisSelectInput: React.JSX.Element;
-    lineChartYAxisVariable:
-        | FinancialMetricsBarLineChartsKey
-        | FinancialMetricsOtherMetricsChartsKey
-        | FinancialMetricsPieChartsKey;
+    expandBarLineChartButton: React.JSX.Element;
     sectionHeading: string;
     semanticLabel?: string;
 };
 
 function DashboardBarLineLayout(
     {
-        barChart,
-        barChartHeading,
-        barChartYAxisSelectInput,
-        barChartYAxisVariable,
+        barLineChart,
+        barLineChartHeading,
+        barLineChartYAxisSelectInput,
+        barLineChartYAxisVariable,
+        barLineChartKindSegmentedControl,
+        calendarChartsData,
         consolidatedCards,
-        expandBarChartButton,
-        expandLineChartButton,
-        lineChart,
-        lineChartHeading,
-        lineChartYAxisSelectInput,
-        lineChartYAxisVariable,
+        expandBarLineChartButton,
         sectionHeading,
         semanticLabel,
     }: DashboardBarLineLayoutProps,
 ) {
-    const [chartKind, setChartKind] = React.useState("bar");
-
-    const chartKindSegmentedControl = (
-        <AccessibleSegmentedControl
-            attributes={{
-                data: CHART_KIND_DATA,
-                name: "chartKind",
-                parentDispatch: setChartKind as any,
-                validValueAction: "setChartKind",
-                value: chartKind,
-                defaultValue: "bar",
-                onChange: (value) => {
-                    setChartKind(value);
-                },
-            }}
-        />
-    );
-
-    const yAxisSelectInput = chartKind === "bar"
-        ? barChartYAxisSelectInput
-        : lineChartYAxisSelectInput;
-
-    const expandChartButton = chartKind === "bar"
-        ? expandBarChartButton
-        : expandLineChartButton;
-
-    const chart = chartKind === "bar" ? barChart : lineChart;
-
     const cards = Array.from(consolidatedCards).map(([key, card], idx) => {
-        const yAxisVariable = chartKind === "bar"
-            ? barChartYAxisVariable
-            : lineChartYAxisVariable;
-        const cardsSet = YAXIS_KEY_TO_CARDS_KEY_MAP.get(yAxisVariable);
+        const cardsSet = YAXIS_KEY_TO_CARDS_KEY_MAP.get(
+            barLineChartYAxisVariable,
+        );
 
         return cardsSet?.has(key)
             ? (
@@ -91,19 +60,43 @@ function DashboardBarLineLayout(
             : null;
     });
 
+    console.log({ calendarChartsData });
+
+    function returnCalendarCharts(
+        calendarChartsData: {
+            currentYear: FinancialMetricsCalendarCharts | null;
+            previousYear: FinancialMetricsCalendarCharts | null;
+        },
+        yAxisVariable: FinancialYAxisVariables,
+        metricCategory: FinancialMetricCategory,
+    ) {
+        const { currentYear, previousYear } = calendarChartsData;
+        if (
+            currentYear === null || previousYear === null
+        ) {
+            return {
+                date: "",
+                value: 0,
+            };
+        }
+
+        const currentYearMetric = currentYear[metricCategory];
+        const previousYearMetric = previousYear[metricCategory];
+    }
+
     const dashboardBarLineLayout = (
         <Stack>
             <Group w="100%" position="apart">
-                {yAxisSelectInput}
-                {chartKindSegmentedControl}
-                {expandChartButton}
+                {barLineChartYAxisSelectInput}
+                {barLineChartKindSegmentedControl}
+                {expandBarLineChartButton}
             </Group>
 
             <Group w="100%" position="apart">
                 <Flex wrap="wrap">
                     {cards}
                 </Flex>
-                {chart}
+                {barLineChart}
             </Group>
         </Stack>
     );

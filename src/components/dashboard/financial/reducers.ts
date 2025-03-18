@@ -1,6 +1,9 @@
 import { FinancialMetricsAction, financialMetricsAction } from "./actions";
 import { FinancialMetricsCards } from "./cards";
-import { FinancialMetricsCharts } from "./chartsData";
+import {
+  FinancialMetricsCalendarCharts,
+  FinancialMetricsCharts,
+} from "./chartsData";
 import {
   FinancialMetricCategory,
   FinancialMetricsDispatch,
@@ -9,7 +12,7 @@ import {
 
 function financialMetricsReducer(
   state: FinancialMetricsState,
-  dispatch: FinancialMetricsDispatch
+  dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
   const reducer = financialMetricsReducers.get(dispatch.action);
   return reducer ? reducer(state, dispatch) : state;
@@ -19,18 +22,38 @@ const financialMetricsReducers = new Map<
   FinancialMetricsAction[keyof FinancialMetricsAction],
   (
     state: FinancialMetricsState,
-    dispatch: FinancialMetricsDispatch
+    dispatch: FinancialMetricsDispatch,
   ) => FinancialMetricsState
 >([
+  [
+    financialMetricsAction.setCalendarChartsData,
+    financialMetricsReducer_setCalendarCharts,
+  ],
   [financialMetricsAction.setCards, financialMetricsReducer_setCards],
   [financialMetricsAction.setCategory, financialMetricsReducer_setCategory],
   [financialMetricsAction.setCharts, financialMetricsReducer_setCharts],
-  [financialMetricsAction.setIsGenerating, financialMetricsReducer_setIsGenerating],
+  [
+    financialMetricsAction.setIsGenerating,
+    financialMetricsReducer_setIsGenerating,
+  ],
 ]);
+
+function financialMetricsReducer_setCalendarCharts(
+  state: FinancialMetricsState,
+  dispatch: FinancialMetricsDispatch,
+): FinancialMetricsState {
+  return {
+    ...state,
+    calendarChartsData: dispatch.payload as {
+      currentYear: FinancialMetricsCalendarCharts;
+      previousYear: FinancialMetricsCalendarCharts;
+    },
+  };
+}
 
 function financialMetricsReducer_setCards(
   state: FinancialMetricsState,
-  dispatch: FinancialMetricsDispatch
+  dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
   return {
     ...state,
@@ -40,7 +63,7 @@ function financialMetricsReducer_setCards(
 
 function financialMetricsReducer_setCategory(
   state: FinancialMetricsState,
-  dispatch: FinancialMetricsDispatch
+  dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
   return {
     ...state,
@@ -50,7 +73,7 @@ function financialMetricsReducer_setCategory(
 
 function financialMetricsReducer_setCharts(
   state: FinancialMetricsState,
-  dispatch: FinancialMetricsDispatch
+  dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
   return {
     ...state,
@@ -60,7 +83,7 @@ function financialMetricsReducer_setCharts(
 
 function financialMetricsReducer_setIsGenerating(
   state: FinancialMetricsState,
-  dispatch: FinancialMetricsDispatch
+  dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
   return {
     ...state,

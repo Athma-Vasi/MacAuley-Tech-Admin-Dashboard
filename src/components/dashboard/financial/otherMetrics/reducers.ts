@@ -1,9 +1,10 @@
+import { FinancialMetricsOtherMetricsChartsKey } from "../chartsData";
 import { OtherMetricsAction, otherMetricsAction } from "./actions";
 import { OtherMetricsDispatch, OtherMetricsState } from "./types";
 
 function otherMetricsReducer(
   state: OtherMetricsState,
-  dispatch: OtherMetricsDispatch
+  dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
   const reducer = otherMetricsReducers.get(dispatch.action);
   return reducer ? reducer(state, dispatch) : state;
@@ -11,35 +12,39 @@ function otherMetricsReducer(
 
 const otherMetricsReducers = new Map<
   OtherMetricsAction[keyof OtherMetricsAction],
-  (state: OtherMetricsState, dispatch: OtherMetricsDispatch) => OtherMetricsState
+  (
+    state: OtherMetricsState,
+    dispatch: OtherMetricsDispatch,
+  ) => OtherMetricsState
 >([
   [
-    otherMetricsAction.setBarChartYAxisVariable,
-    otherMetricsReducer_setBarChartYAxisVariable,
+    otherMetricsAction.setBarLineChartYAxisVariable,
+    otherMetricsReducer_setBarLineChartYAxisVariable,
   ],
   [
-    otherMetricsAction.setLineChartYAxisVariable,
-    otherMetricsReducer_setLineChartYAxisVariable,
+    otherMetricsAction.setBarLineChartKind,
+    otherMetricsReducer_setBarLineChartKind,
   ],
 ]);
 
-function otherMetricsReducer_setBarChartYAxisVariable(
+function otherMetricsReducer_setBarLineChartYAxisVariable(
   state: OtherMetricsState,
-  dispatch: OtherMetricsDispatch
+  dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
   return {
     ...state,
-    barChartYAxisVariable: dispatch.payload,
+    barLineChartYAxisVariable: dispatch
+      .payload as FinancialMetricsOtherMetricsChartsKey,
   };
 }
 
-function otherMetricsReducer_setLineChartYAxisVariable(
+function otherMetricsReducer_setBarLineChartKind(
   state: OtherMetricsState,
-  dispatch: OtherMetricsDispatch
+  dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
   return {
     ...state,
-    lineChartYAxisVariable: dispatch.payload,
+    barLineChartKind: dispatch.payload as "bar" | "line",
   };
 }
 

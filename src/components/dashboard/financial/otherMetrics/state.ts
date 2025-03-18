@@ -1,8 +1,8 @@
 import { OtherMetricsState } from "./types";
 
 const initialOtherMetricsState: OtherMetricsState = {
-  barChartYAxisVariable: "netProfitMargin",
-  lineChartYAxisVariable: "netProfitMargin",
+  barLineChartYAxisVariable: "netProfitMargin",
+  barLineChartKind: "bar",
 };
 
 export { initialOtherMetricsState };

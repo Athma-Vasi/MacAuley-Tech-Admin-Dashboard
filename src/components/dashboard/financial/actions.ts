@@ -1,4 +1,5 @@
 type FinancialMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData";
   setCards: "setCards";
   setCategory: "setCategory";
   setCharts: "setCharts";
@@ -6,6 +7,7 @@ type FinancialMetricsAction = {
 };
 
 const financialMetricsAction: FinancialMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData",
   setCards: "setCards",
   setCategory: "setCategory",
   setCharts: "setCharts",
