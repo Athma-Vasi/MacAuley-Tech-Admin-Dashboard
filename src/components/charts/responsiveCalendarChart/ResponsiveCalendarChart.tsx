@@ -17,13 +17,13 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
+import { ChartMargin } from "../chartControls/ChartMargin";
+import { ChartOptions } from "../chartControls/ChartOptions";
+import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
 import {
   ChartAndControlsDisplay,
   ChartsAndGraphsControlsStacker,
 } from "../utils";
-import { ChartMargin } from "../chartControls/ChartMargin";
-import { ChartOptions } from "../chartControls/ChartOptions";
-import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
 // import { ChartsAndGraphsControlsStacker } from "../utils";
 import { responsiveCalendarChartAction } from "./actions";
 import {
@@ -168,7 +168,7 @@ function ResponsiveCalendarChart({
 
   if (hideControls) {
     return (
-      <Group>
+      <Group w={618} h={382}>
         {displayCalendarChart}
       </Group>
     );

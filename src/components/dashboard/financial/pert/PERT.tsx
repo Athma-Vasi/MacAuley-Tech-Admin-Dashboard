@@ -11,6 +11,7 @@ import { AccessibleSegmentedControl } from "../../../accessibleInputs/Accessible
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
+  ResponsiveCalendarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
 } from "../../../charts";
@@ -43,6 +44,7 @@ import {
 import {
   FinancialCardsAndStatisticsKeyPERT,
   type FinancialMetricCategory,
+  FinancialYAxisVariables,
 } from "../types";
 import { pertAction } from "./actions";
 import { pertReducer } from "./reducers";
@@ -344,7 +346,64 @@ function PERT({
   console.log({ metricCategory });
   console.log({ metricsView });
   console.log({ calendarView });
+  console.log({ calendarChartsData });
   console.groupEnd();
+
+  function returnCalendarCharts(
+    calendarChartsData: {
+      currentYear: FinancialMetricsCalendarCharts | null;
+      previousYear: FinancialMetricsCalendarCharts | null;
+    },
+    barLineYAxisVariable: FinancialYAxisVariables,
+    metricCategory: FinancialMetricCategory,
+  ): Array<{ day: string; value: number }> {
+    const defaultValue = [{
+      day: "",
+      value: 0,
+    }];
+
+    const { currentYear, previousYear } = calendarChartsData;
+    if (
+      currentYear === null || previousYear === null
+    ) {
+      return defaultValue;
+    }
+
+    const currentYearMetric = currentYear[metricCategory];
+    const previousYearMetric = previousYear[metricCategory];
+
+    console.log("currentYearMetric", currentYearMetric);
+    console.log("previousYearMetric", previousYearMetric);
+
+    return (Object.entries(currentYearMetric).find(([key]) =>
+      key === barLineYAxisVariable
+    )?.[1] ?? defaultValue).concat(
+      Object.entries(previousYearMetric).find(([key]) =>
+        key === barLineYAxisVariable
+      )?.[1] ?? defaultValue,
+    );
+  }
+
+  const calendarChartData = returnCalendarCharts(
+    calendarChartsData,
+    barLineChartYAxisVariable,
+    metricCategory,
+  );
+
+  console.log("year", year);
+  console.log("calendarChartData", calendarChartData);
+
+  const calendarCharts =
+    new Set(["all", "overview"]).has(barLineChartYAxisVariable) ? null : (
+      <Stack>
+        <ResponsiveCalendarChart
+          calendarChartData={calendarChartData}
+          hideControls
+          from={`${year}-01-01`}
+          to={`${year}-12-31`}
+        />
+      </Stack>
+    );
 
   return (
     <Stack>
@@ -354,7 +413,7 @@ function PERT({
         barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
-        calendarChartsData={calendarChartsData}
+        calendarCharts={calendarCharts}
         consolidatedCards={consolidatedCards}
         expandBarLineChartButton={expandBarLineChartButton}
         sectionHeading="TODO"

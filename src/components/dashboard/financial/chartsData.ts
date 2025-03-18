@@ -3596,17 +3596,15 @@ function returnCalendarViewFinancialCharts(
 }
 
 type CalendarChartsData = {
+  day: string;
   value: number;
-  date: string;
 }[];
 type CalendarChartsPERT = {
   total: CalendarChartsData;
   repair: CalendarChartsData;
-  sales: {
-    total: CalendarChartsData;
-    inStore: CalendarChartsData;
-    online: CalendarChartsData;
-  };
+  sales: CalendarChartsData;
+  inStore: CalendarChartsData;
+  online: CalendarChartsData;
 };
 type FinancialMetricsCalendarCharts = {
   profit: CalendarChartsPERT;
@@ -3633,12 +3631,11 @@ async function createFinancialMetricsCalendarCharts(
   const calendarChartsTemplatePERT: CalendarChartsPERT = {
     total: [],
     repair: [],
-    sales: {
-      total: [],
-      inStore: [],
-      online: [],
-    },
+    sales: [],
+    inStore: [],
+    online: [],
   };
+
   const calendarChartsTemplate: FinancialMetricsCalendarCharts = {
     profit: structuredClone(calendarChartsTemplatePERT),
     expenses: structuredClone(calendarChartsTemplatePERT),
@@ -3680,7 +3677,7 @@ async function createFinancialMetricsCalendarCharts(
 
             dailyMetrics.forEach((dailyMetric) => {
               const { expenses, profit, revenue, transactions } = dailyMetric;
-              const date = `${yearlyMetrics.year}-${
+              const day = `${yearlyMetrics.year}-${
                 monthNumber.toString().padStart(2, "0")
               }-${dailyMetric.day}`;
 
@@ -3688,125 +3685,125 @@ async function createFinancialMetricsCalendarCharts(
 
               resultAcc.expenses.total.push({
                 value: expenses.total,
-                date,
+                day,
               });
 
               resultAcc.expenses.repair.push({
                 value: expenses.repair,
-                date,
+                day,
               });
 
-              resultAcc.expenses.sales.total.push({
+              resultAcc.expenses.sales.push({
                 value: expenses.sales.total,
-                date,
+                day,
               });
 
-              resultAcc.expenses.sales.inStore.push({
+              resultAcc.expenses.inStore.push({
                 value: expenses.sales.inStore,
-                date,
+                day,
               });
 
-              resultAcc.expenses.sales.online.push({
+              resultAcc.expenses.online.push({
                 value: expenses.sales.online,
-                date,
+                day,
               });
 
               // profit
 
               resultAcc.profit.total.push({
                 value: profit.total,
-                date,
+                day,
               });
 
               resultAcc.profit.repair.push({
                 value: profit.repair,
-                date,
+                day,
               });
 
-              resultAcc.profit.sales.total.push({
+              resultAcc.profit.sales.push({
                 value: profit.sales.total,
-                date,
+                day,
               });
 
-              resultAcc.profit.sales.inStore.push({
+              resultAcc.profit.inStore.push({
                 value: profit.sales.inStore,
-                date,
+                day,
               });
 
-              resultAcc.profit.sales.online.push({
+              resultAcc.profit.online.push({
                 value: profit.sales.online,
-                date,
+                day,
               });
 
               // revenue
 
               resultAcc.revenue.total.push({
                 value: revenue.total,
-                date,
+                day,
               });
 
               resultAcc.revenue.repair.push({
                 value: revenue.repair,
-                date,
+                day,
               });
 
-              resultAcc.revenue.sales.total.push({
+              resultAcc.revenue.sales.push({
                 value: revenue.sales.total,
-                date,
+                day,
               });
 
-              resultAcc.revenue.sales.inStore.push({
+              resultAcc.revenue.inStore.push({
                 value: revenue.sales.inStore,
-                date,
+                day,
               });
 
-              resultAcc.revenue.sales.online.push({
+              resultAcc.revenue.online.push({
                 value: revenue.sales.online,
-                date,
+                day,
               });
 
               // transactions
 
               resultAcc.transactions.total.push({
                 value: transactions.total,
-                date,
+                day,
               });
 
               resultAcc.transactions.repair.push({
                 value: transactions.repair,
-                date,
+                day,
               });
 
-              resultAcc.transactions.sales.total.push({
+              resultAcc.transactions.sales.push({
                 value: transactions.sales.total,
-                date,
+                day,
               });
 
-              resultAcc.transactions.sales.inStore.push({
+              resultAcc.transactions.inStore.push({
                 value: transactions.sales.inStore,
-                date,
+                day,
               });
 
-              resultAcc.transactions.sales.online.push({
+              resultAcc.transactions.online.push({
                 value: transactions.sales.online,
-                date,
+                day,
               });
 
               // other metrics
 
               resultAcc.otherMetrics.averageOrderValue.push({
                 value: dailyMetric.averageOrderValue,
-                date,
+                day,
               });
 
               resultAcc.otherMetrics.conversionRate.push({
                 value: dailyMetric.conversionRate,
-                date,
+                day,
               });
 
               resultAcc.otherMetrics.netProfitMargin.push({
                 value: dailyMetric.netProfitMargin,
-                date,
+                day,
               });
             });
 
