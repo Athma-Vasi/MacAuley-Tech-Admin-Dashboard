@@ -5,7 +5,7 @@ import { Group, Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator } from "../../../../utils";
+import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -22,7 +22,11 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import { createExpandChartNavigateLinks, returnStatistics } from "../../utils";
+import {
+  createExpandChartNavigateLinks,
+  returnChartTitles,
+  returnStatistics,
+} from "../../utils";
 import {
   consolidateCardsAndStatistics,
   createFinancialStatisticsElements,
@@ -292,20 +296,28 @@ function OtherMetrics({
     )
     : null;
 
+  const { barLineChartHeading, calendarChartHeading } = returnChartTitles({
+    barLineChartYAxisVariable,
+    calendarView,
+    metricCategory,
+    storeLocation,
+    calendarChartYAxisVariable,
+  });
+
   const otherMetrics = (
     <DashboardBarLineLayout
       barLineChart={barLineChart}
-      barLineChartHeading={"TODO"}
+      barLineChartHeading={barLineChartHeading}
       barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
       barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
       barLineChartYAxisVariable={barLineChartYAxisVariable}
       calendarChart={calendarChart}
-      calendarChartHeading="TODO"
+      calendarChartHeading={calendarChartHeading}
       expandCalendarChartButton={expandCalendarChartButton}
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
       cardsWithStatistics={cardsWithStatistics}
       expandBarLineChartButton={expandBarLineChartButton}
-      sectionHeading="TODO"
+      sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
     />
   );
