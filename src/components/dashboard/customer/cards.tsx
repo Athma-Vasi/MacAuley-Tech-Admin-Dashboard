@@ -5,6 +5,7 @@ import {
   type DashboardCardInfo,
 } from "../utilsTSX";
 import type { SelectedDateCustomerMetrics } from "./chartsData";
+import { CustomerMetricsCategory } from "./types";
 
 type CreateCustomerMetricsCardsInput = {
   greenColorShade: string;
@@ -570,5 +571,29 @@ function returnCalendarViewCustomerCards(
     : customerMetricsCards.yearlyCards;
 }
 
-export { createCustomerMetricsCards, returnCalendarViewCustomerCards };
+function returnCustomerMetricsCards(
+  customerMetricsCards: CustomerMetricsCards,
+  calendarView: DashboardCalendarView,
+  metricCategory: CustomerMetricsCategory,
+) {
+  const cards = calendarView === "Daily"
+    ? customerMetricsCards.dailyCards
+    : calendarView === "Monthly"
+    ? customerMetricsCards.monthlyCards
+    : customerMetricsCards.yearlyCards;
+
+  return Object.entries(cards).reduce((acc, [key, cards]) => {
+    cards.forEach((card) => {
+      acc.set(card.heading ?? "Total", card);
+    });
+
+    return acc;
+  }, new Map());
+}
+
+export {
+  createCustomerMetricsCards,
+  returnCalendarViewCustomerCards,
+  returnCustomerMetricsCards,
+};
 export type { CustomerMetricsCards };

@@ -14,16 +14,15 @@ import { RiCalendarLine } from "react-icons/ri";
 import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
 import { FinancialMetricsBarLineChartsKey } from "./financial/chartsData";
 import {
-  FinancialCardsAndStatisticsKeyOtherMetrics,
+  MONEY_SYMBOL_CATEGORIES,
+  PERCENTAGE_SYMBOL_CATEGORIES,
+} from "./financial/constants";
+import {
   FinancialCardsAndStatisticsKeyPERT,
   FinancialMetricCategory,
 } from "./financial/types";
 import { BusinessMetricStoreLocation, DashboardCalendarView } from "./types";
 import { StatisticsObject } from "./utils";
-import {
-  MONEY_SYMBOL_CATEGORIES,
-  PERCENTAGE_SYMBOL_CATEGORIES,
-} from "./financial/constants";
 
 type DashboardCardInfo = {
   date?: string;
@@ -178,6 +177,95 @@ function createDashboardMetricsCards({
   };
 }
 
+function createStatisticsElements(
+  calendarView: DashboardCalendarView,
+  metricCategory: string,
+  statisticsMap: Map<string, StatisticsObject>,
+  storeLocation: BusinessMetricStoreLocation,
+) {
+  return statisticsMap
+    ? Array.from(statisticsMap).reduce((acc, [key, statisticsObj], idx) => {
+      const {
+        mean,
+        interquartileRange,
+        max,
+        median,
+        min,
+        mode,
+        standardDeviation,
+      } = statisticsObj;
+
+      const unitSymbol = MONEY_SYMBOL_CATEGORIES.has(key.toLowerCase())
+        ? "$"
+        : PERCENTAGE_SYMBOL_CATEGORIES.has(key.toLowerCase())
+        ? "%"
+        : "";
+
+      const statisticsElement = (
+        <Stack
+          key={`${idx}-${key}`}
+        >
+          <Center>
+            <Text weight={500} size="md">
+              {`${calendarView} ${key} ${
+                splitCamelCase(metricCategory)
+              } for ${storeLocation}`}
+            </Text>
+          </Center>
+
+          <Text>
+            {`Min: ${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(min.value.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+          <Text>{`Occurred: ${min.occurred}`}</Text>
+
+          <Text>
+            {`Max: ${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(max.value.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+          <Text>{`Occurred: ${max.occurred}`}</Text>
+
+          <Text>
+            {`Median: ${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(median.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+
+          <Text>
+            {`Mode: ${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(mode.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+
+          <Text>
+            {`Arithmetic Mean: ${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(mean.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+
+          <Text>
+            {`Interquartile Range: ${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(interquartileRange.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+
+          <Text>
+            {`Standard Deviation: ${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(standardDeviation.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+        </Stack>
+      );
+
+      acc.set(key, statisticsElement);
+
+      return acc;
+    }, new Map())
+    : new Map();
+}
+
 function createFinancialStatisticsElements(
   calendarView: DashboardCalendarView,
   metricCategory: FinancialMetricCategory,
@@ -284,23 +372,11 @@ function createFinancialStatisticsElements(
     : new Map();
 }
 
-function consolidateFinancialCardsAndStatistics(
-  overviewCards: Map<
-    | FinancialCardsAndStatisticsKeyPERT
-    | FinancialCardsAndStatisticsKeyOtherMetrics,
-    DashboardCardInfo
-  >,
-  statisticsElements: Map<
-    | FinancialCardsAndStatisticsKeyPERT
-    | FinancialCardsAndStatisticsKeyOtherMetrics,
-    React.JSX.Element
-  >,
-): Map<FinancialMetricsBarLineChartsKey, React.JSX.Element> {
-  return Array.from(overviewCards).reduce((acc, [key, card]: [
-    | FinancialCardsAndStatisticsKeyPERT
-    | FinancialCardsAndStatisticsKeyOtherMetrics,
-    DashboardCardInfo,
-  ]) => {
+function consolidateCardsAndStatistics(
+  cards: Map<string, DashboardCardInfo>,
+  statisticsElements: Map<string, React.JSX.Element>,
+): Map<string, React.JSX.Element> {
+  return Array.from(cards).reduce((acc, [key, card]) => {
     const statisticElement = statisticsElements.get(key) ?? <></>;
     const statisticsAccordion = (
       <Accordion>
@@ -330,9 +406,10 @@ function consolidateFinancialCardsAndStatistics(
 }
 
 export {
-  consolidateFinancialCardsAndStatistics,
+  consolidateCardsAndStatistics,
   createDashboardMetricsCards,
   createFinancialStatisticsElements,
+  createStatisticsElements,
   returnDashboardCardElement,
 };
 export type { CreateDashboardMetricsCardsInput, DashboardCardInfo };

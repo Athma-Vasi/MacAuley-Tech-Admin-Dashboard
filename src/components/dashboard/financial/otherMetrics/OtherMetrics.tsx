@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Stack } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
@@ -24,7 +24,7 @@ import type {
 } from "../../types";
 import { createExpandChartNavigateLinks, returnStatistics } from "../../utils";
 import {
-  consolidateFinancialCardsAndStatistics,
+  consolidateCardsAndStatistics,
   createFinancialStatisticsElements,
 } from "../../utilsTSX";
 import {
@@ -39,6 +39,7 @@ import {
 import {
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   MONEY_SYMBOL_CATEGORIES,
+  YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
 import type { FinancialMetricCategory } from "../types";
 import { otherMetricsAction } from "./actions";
@@ -209,7 +210,7 @@ function OtherMetrics({
     storeLocation,
   );
 
-  const consolidatedCards = consolidateFinancialCardsAndStatistics(
+  const consolidatedCards = consolidateCardsAndStatistics(
     selectedCards,
     statisticsElementsMap,
   );
@@ -218,6 +219,24 @@ function OtherMetrics({
     calendarChartsData,
     calendarChartYAxisVariable,
     metricCategory,
+  );
+
+  const cardsWithStatistics = (
+    <>
+      {Array.from(consolidatedCards).map(([key, card], idx) => {
+        const cardsSet = YAXIS_KEY_TO_CARDS_KEY_MAP.get(
+          barLineChartYAxisVariable,
+        );
+
+        return cardsSet?.has(key)
+          ? (
+            <Group key={`${idx}-${key}`}>
+              {card}
+            </Group>
+          )
+          : null;
+      })}
+    </>
   );
 
   const expandCalendarChartButton = calendarView === "Yearly"
@@ -284,7 +303,7 @@ function OtherMetrics({
       calendarChartHeading="TODO"
       expandCalendarChartButton={expandCalendarChartButton}
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-      consolidatedCards={consolidatedCards}
+      cardsWithStatistics={cardsWithStatistics}
       expandBarLineChartButton={expandBarLineChartButton}
       sectionHeading="TODO"
       semanticLabel="TODO"

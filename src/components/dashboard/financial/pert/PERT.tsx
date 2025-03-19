@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Stack } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
@@ -29,7 +29,7 @@ import {
   returnStatistics,
 } from "../../utils";
 import {
-  consolidateFinancialCardsAndStatistics,
+  consolidateCardsAndStatistics,
   createFinancialStatisticsElements,
 } from "../../utilsTSX";
 import {
@@ -48,6 +48,7 @@ import {
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
   MONEY_SYMBOL_CATEGORIES,
   PERT_SET,
+  YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
 import { type FinancialMetricCategory } from "../types";
 import { pertAction } from "./actions";
@@ -273,7 +274,7 @@ function PERT({
     storeLocation,
   );
 
-  const consolidatedCards = consolidateFinancialCardsAndStatistics(
+  const consolidatedCards = consolidateCardsAndStatistics(
     selectedCards,
     statisticsElementsMap,
   );
@@ -283,6 +284,32 @@ function PERT({
     calendarChartYAxisVariable,
     metricCategory,
   );
+
+  const cardsWithStatistics = (
+    <>
+      {Array.from(consolidatedCards).map(([key, card], idx) => {
+        const cardsSet = YAXIS_KEY_TO_CARDS_KEY_MAP.get(
+          barLineChartYAxisVariable,
+        );
+
+        return cardsSet?.has(key)
+          ? (
+            <Group key={`${idx}-${key}`}>
+              {card}
+            </Group>
+          )
+          : null;
+      })}
+    </>
+  );
+
+  console.group("PERT");
+  console.log("selectedCards", selectedCards);
+  console.log("statisticsMap", statisticsMap);
+  console.log("statisticsElementsMap", statisticsElementsMap);
+  console.log("consolidatedCards", consolidatedCards);
+  console.log("calendarChartData", calendarChartData);
+  console.groupEnd();
 
   const expandCalendarChartButton = calendarView === "Yearly"
     ? (
@@ -363,7 +390,7 @@ function PERT({
         pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
         expandCalendarChartButton={expandCalendarChartButton}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-        consolidatedCards={consolidatedCards}
+        cardsWithStatistics={cardsWithStatistics}
         expandBarLineChartButton={expandBarLineChartButton}
         sectionHeading={splitCamelCase(metricsView)}
         semanticLabel="TODO"

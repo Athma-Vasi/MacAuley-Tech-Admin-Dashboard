@@ -1,4 +1,7 @@
-import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
+import {
+  CustomerChurnRetentionCalendarChartsKey,
+  CustomerMetricsChurnRetentionChartsKey,
+} from "../chartsData";
 import { ChurnRetentionAction, churnRetentionAction } from "./actions";
 import { ChurnRetentionDispatch, ChurnRetentionState } from "./types";
 
@@ -56,7 +59,7 @@ function churnRetentionReducer_setChurnRetentionLineChartYAxisVariable(
   return {
     ...state,
     calendarChartYAxisVariable: dispatch
-      .payload as CustomerMetricsChurnRetentionChartsKey,
+      .payload as CustomerChurnRetentionCalendarChartsKey,
   };
 }
 

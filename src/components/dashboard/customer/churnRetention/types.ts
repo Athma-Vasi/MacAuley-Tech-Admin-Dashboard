@@ -1,9 +1,12 @@
-import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
+import {
+  CustomerChurnRetentionCalendarChartsKey,
+  CustomerMetricsChurnRetentionChartsKey,
+} from "../chartsData";
 
 type ChurnRetentionState = {
   barLineChartYAxisVariable: CustomerMetricsChurnRetentionChartsKey;
   barLineChartKind: "bar" | "line";
-  calendarChartYAxisVariable: CustomerMetricsChurnRetentionChartsKey;
+  calendarChartYAxisVariable: CustomerChurnRetentionCalendarChartsKey;
 };
 
 type ChurnRetentionDispatch = {
@@ -14,7 +17,7 @@ type ChurnRetentionDispatch = {
   payload: "bar" | "line";
 } | {
   action: "setCalendarChartYAxisVariable";
-  payload: CustomerMetricsChurnRetentionChartsKey;
+  payload: CustomerChurnRetentionCalendarChartsKey;
 };
 
 export type { ChurnRetentionDispatch, ChurnRetentionState };

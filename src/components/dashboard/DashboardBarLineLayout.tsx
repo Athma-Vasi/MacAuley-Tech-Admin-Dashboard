@@ -11,13 +11,11 @@ type DashboardBarLineLayoutProps = {
     barLineChartHeading: string;
     barLineChartYAxisSelectInput: React.JSX.Element;
     barLineChartKindSegmentedControl: React.JSX.Element;
-    barLineChartYAxisVariable:
-        | FinancialMetricsBarLineChartsKey
-        | FinancialMetricsOtherMetricsChartsKey;
+    barLineChartYAxisVariable: string;
     calendarChart: React.JSX.Element | null;
     calendarChartHeading: string;
     calendarChartYAxisSelectInput: React.JSX.Element | null;
-    consolidatedCards: Map<FinancialMetricsBarLineChartsKey, React.JSX.Element>;
+    cardsWithStatistics: React.JSX.Element;
     expandBarLineChartButton: React.JSX.Element;
     expandCalendarChartButton: React.JSX.Element | null;
     expandPieChartButton?: React.JSX.Element;
@@ -38,7 +36,7 @@ function DashboardBarLineLayout(
         calendarChart,
         calendarChartHeading,
         calendarChartYAxisSelectInput,
-        consolidatedCards,
+        cardsWithStatistics,
         expandBarLineChartButton,
         expandCalendarChartButton,
         expandPieChartButton,
@@ -49,20 +47,6 @@ function DashboardBarLineLayout(
         semanticLabel,
     }: DashboardBarLineLayoutProps,
 ) {
-    const cards = Array.from(consolidatedCards).map(([key, card], idx) => {
-        const cardsSet = YAXIS_KEY_TO_CARDS_KEY_MAP.get(
-            barLineChartYAxisVariable,
-        );
-
-        return cardsSet?.has(key)
-            ? (
-                <Group key={`${idx}-${key}`}>
-                    {card}
-                </Group>
-            )
-            : null;
-    });
-
     const dashboardBarLineLayout = (
         <Stack>
             <Text>{sectionHeading}</Text>
@@ -82,7 +66,7 @@ function DashboardBarLineLayout(
 
             <Group w="100%" position="apart">
                 <Flex wrap="wrap">
-                    {cards}
+                    {cardsWithStatistics}
                 </Flex>
                 {barLineChart}
             </Group>
