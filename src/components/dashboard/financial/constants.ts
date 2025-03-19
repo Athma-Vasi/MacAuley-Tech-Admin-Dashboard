@@ -71,7 +71,7 @@ const PERCENTAGE_SYMBOL_CATEGORIES = new Set([
   "net profit margin",
 ]);
 
-const YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
+const FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
   | FinancialMetricsBarLineChartsKey
   | FinancialMetricsOtherMetricsChartsKey
   | FinancialMetricsPieChartsKey,
@@ -104,8 +104,8 @@ export {
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
   FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
+  FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   MONEY_SYMBOL_CATEGORIES,
   PERCENTAGE_SYMBOL_CATEGORIES,
   PERT_SET,
-  YAXIS_KEY_TO_CARDS_KEY_MAP,
 };

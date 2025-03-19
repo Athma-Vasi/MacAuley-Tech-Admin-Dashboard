@@ -1,10 +1,5 @@
 import { Flex, Group, Stack, Text } from "@mantine/core";
 import React from "react";
-import {
-    FinancialMetricsBarLineChartsKey,
-    FinancialMetricsOtherMetricsChartsKey,
-} from "./financial/chartsData";
-import { YAXIS_KEY_TO_CARDS_KEY_MAP } from "./financial/constants";
 
 type DashboardBarLineLayoutProps = {
     barLineChart: React.JSX.Element;
@@ -15,7 +10,7 @@ type DashboardBarLineLayoutProps = {
     calendarChart: React.JSX.Element | null;
     calendarChartHeading: string;
     calendarChartYAxisSelectInput: React.JSX.Element | null;
-    cardsWithStatistics: React.JSX.Element;
+    cardsWithStatisticsElements: React.JSX.Element;
     expandBarLineChartButton: React.JSX.Element;
     expandCalendarChartButton: React.JSX.Element | null;
     expandPieChartButton?: React.JSX.Element;
@@ -36,7 +31,7 @@ function DashboardBarLineLayout(
         calendarChart,
         calendarChartHeading,
         calendarChartYAxisSelectInput,
-        cardsWithStatistics,
+        cardsWithStatisticsElements,
         expandBarLineChartButton,
         expandCalendarChartButton,
         expandPieChartButton,
@@ -66,7 +61,7 @@ function DashboardBarLineLayout(
 
             <Group w="100%" position="apart">
                 <Flex wrap="wrap">
-                    {cardsWithStatistics}
+                    {cardsWithStatisticsElements}
                 </Flex>
                 {barLineChart}
             </Group>

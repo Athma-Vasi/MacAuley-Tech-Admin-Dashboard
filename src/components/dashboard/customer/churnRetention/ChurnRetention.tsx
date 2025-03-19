@@ -5,7 +5,7 @@ import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator } from "../../../../utils";
+import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -34,7 +34,7 @@ import {
 } from "../../utilsTSX";
 import {
   type CustomerMetricsCards,
-  returnCustomerMetricsCards,
+  returnCustomerMetricsCardsMap,
 } from "../cards";
 import {
   type CustomerMetricsCharts,
@@ -244,62 +244,6 @@ function ChurnRetention({
       />
     );
 
-  // const expandLineChartButton = (
-  //   <AccessibleButton
-  //     attributes={{
-  //       enabledScreenreaderText: `Expand and customize ${lineChartHeading}`,
-  //       kind: "expand",
-  //       onClick: (
-  //         _event:
-  //           | React.MouseEvent<HTMLButtonElement>
-  //           | React.PointerEvent<HTMLButtonElement>,
-  //       ) => {
-  //         globalDispatch({
-  //           action: globalAction.setCustomizeChartsPageData,
-  //           payload: {
-  //             chartKind: "line",
-  //             chartData: lineCharts[churnRetentionLineChartYAxisVariable],
-  //             chartTitle: lineChartHeading,
-  //             chartUnitKind: "number",
-  //           },
-  //         });
-
-  //         navigate(expandLineChartNavigateLink);
-  //       },
-  //     }}
-  //   />
-  // );
-
-  // const lineChartYAxisVariablesSelectInput = (
-  //   <AccessibleSelectInput
-  //     attributes={{
-  //       data: CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA as any,
-  //       name: "Y-Axis Line",
-  //       parentDispatch: churnRetentionDispatch,
-  //       validValueAction:
-  //         churnRetentionAction.setChurnRetentionLineChartYAxisVariable,
-  //       value: churnRetentionLineChartYAxisVariable,
-  //     }}
-  //   />
-  // );
-
-  // const overviewLineChart = (
-  //   <ResponsiveLineChart
-  //     lineChartData={lineCharts[churnRetentionLineChartYAxisVariable]}
-  //     hideControls
-  //     xFormat={(x) =>
-  //       `${
-  //         calendarView === "Daily"
-  //           ? "Day"
-  //           : calendarView === "Monthly"
-  //           ? "Month"
-  //           : "Year"
-  //       } - ${x}`}
-  //     yFormat={(y) => `${addCommaSeparator(y)} Customers`}
-  //     unitKind="number"
-  //   />
-  // );
-
   const expandCalendarChartButton = calendarView === "Yearly"
     ? (
       <AccessibleButton
@@ -364,10 +308,9 @@ function ChurnRetention({
   //   customerMetricsCards,
   // );
   // const overviewCards = metricCategory === "new" ? cards.new : cards.returning;
-  const cards = returnCustomerMetricsCards(
+  const cardsMap = returnCustomerMetricsCardsMap(
     customerMetricsCards,
     calendarView,
-    metricCategory,
   );
 
   const statisticsElementsMap = createStatisticsElements(
@@ -378,7 +321,7 @@ function ChurnRetention({
   );
 
   const consolidatedCards = consolidateCardsAndStatistics(
-    cards,
+    cardsMap.get(metricCategory) ?? new Map(),
     statisticsElementsMap,
   );
 
@@ -391,47 +334,28 @@ function ChurnRetention({
       calendarChartYAxisVariable,
     });
 
-  console.group("ChurnRetention");
-  console.log("customerMetricsCards", customerMetricsCards);
-  console.log("metricCategory", metricCategory);
-  console.log("cards", cards);
-  console.log("statisticsMap", statisticsMap);
-  console.log("statisticsElementsMap", statisticsElementsMap);
-  console.log("consolidatedCards", consolidatedCards);
-  console.log("barLineChartKind", barLineChartKind);
-  console.log("barLineChartYAxisVariable", barLineChartYAxisVariable);
-  console.log("calendarChartYAxisVariable", calendarChartYAxisVariable);
-  console.log("calendarView", calendarView);
-  console.log("metricsView", metricsView);
-  console.log("storeLocation", storeLocation);
-  console.log("year", year);
-  console.log("month", month);
-  console.log("day", day);
-  console.log("barCharts", barCharts);
-  console.log("barChartData", barCharts[barLineChartYAxisVariable]);
-  console.log("lineChartData", lineCharts[barLineChartYAxisVariable]);
-  console.log("lineCharts", lineCharts);
-  console.log("pieCharts", pieCharts);
-  console.groupEnd();
-
-  // const customerMetricsOverview = (
-  //   <DashboardMetricsLayout
-  //     barChart={overviewBarChart}
-  //     barChartHeading={barChartHeading}
-  //     barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-  //     expandBarChartButton={expandBarChartButton}
-  //     expandLineChartButton={expandLineChartButton}
-  //     expandPieChartButton={expandPieChartButton}
-  //     lineChart={overviewLineChart}
-  //     lineChartHeading={lineChartHeading}
-  //     lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-  //     overviewCards={overviewCards}
-  //     pieChart={overviewPieChart}
-  //     pieChartHeading={pieChartHeading}
-  //     sectionHeading={`${storeLocation} ${calendarView} Overview Customers`}
-  //     statisticsMap={statistics}
-  //   />
-  // );
+  // console.group("ChurnRetention");
+  // console.log("customerMetricsCards", customerMetricsCards);
+  // console.log("metricCategory", metricCategory);
+  console.log("cardsMap", cardsMap);
+  // console.log("statisticsMap", statisticsMap);
+  // console.log("statisticsElementsMap", statisticsElementsMap);
+  // console.log("consolidatedCards", consolidatedCards);
+  // console.log("barLineChartKind", barLineChartKind);
+  // console.log("barLineChartYAxisVariable", barLineChartYAxisVariable);
+  // console.log("calendarChartYAxisVariable", calendarChartYAxisVariable);
+  // console.log("calendarView", calendarView);
+  // console.log("metricsView", metricsView);
+  // console.log("storeLocation", storeLocation);
+  // console.log("year", year);
+  // console.log("month", month);
+  // console.log("day", day);
+  // console.log("barCharts", barCharts);
+  // console.log("barChartData", barCharts[barLineChartYAxisVariable]);
+  // console.log("lineChartData", lineCharts[barLineChartYAxisVariable]);
+  // console.log("lineCharts", lineCharts);
+  // console.log("pieCharts", pieCharts);
+  // console.groupEnd();
 
   return (
     <Stack>
@@ -444,7 +368,9 @@ function ChurnRetention({
         calendarChart={calendarChart}
         calendarChartHeading={calendarChartHeading}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-        cardsWithStatistics={consolidatedCards.get(barLineChartYAxisVariable) ??
+        cardsWithStatisticsElements={consolidatedCards.get(
+          splitCamelCase(barLineChartYAxisVariable),
+        ) ??
           <></>}
         expandBarLineChartButton={expandBarLineChartButton}
         expandCalendarChartButton={expandCalendarChartButton}

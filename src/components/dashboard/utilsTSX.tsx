@@ -12,7 +12,6 @@ import { MdCalendarMonth, MdDateRange } from "react-icons/md";
 import { RiCalendarLine } from "react-icons/ri";
 
 import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
-import { FinancialMetricsBarLineChartsKey } from "./financial/chartsData";
 import {
   MONEY_SYMBOL_CATEGORIES,
   PERCENTAGE_SYMBOL_CATEGORIES,
@@ -372,6 +371,50 @@ function createFinancialStatisticsElements(
     : new Map();
 }
 
+function consolidateCustomerCardsAndStatistics(
+  cards: Map<string, DashboardCardInfo[]>,
+  statisticsElements: Map<string, React.JSX.Element>,
+): Map<string, React.JSX.Element> {
+  console.group("consolidateCustomerCardsAndStatistics");
+  console.log("cards", cards);
+  console.log("statisticsElements", statisticsElements);
+  console.groupEnd();
+
+  return Array.from(cards).reduce((acc, [key, cards]) => {
+    const statisticElement = statisticsElements.get(key) ?? <></>;
+    const statisticsAccordion = (
+      <Accordion>
+        <Accordion.Item value={key}>
+          <Accordion.Control>
+            <Text size="sm" weight={500}>
+              Statistics
+            </Text>
+          </Accordion.Control>
+
+          <Accordion.Panel>
+            <Stack spacing="xs">
+              {statisticElement}
+            </Stack>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    );
+
+    cards.forEach((card) => {
+      card.icon = statisticsAccordion;
+      const cardElement = returnDashboardCardElement(card);
+      acc.set(key, cardElement);
+    });
+
+    // card.icon = statisticsAccordion;
+    // const cardElement = returnDashboardCardElement(card);
+
+    // acc.set(key, cardElement);
+
+    return acc;
+  }, new Map());
+}
+
 function consolidateCardsAndStatistics(
   cards: Map<string, DashboardCardInfo>,
   statisticsElements: Map<string, React.JSX.Element>,
@@ -405,11 +448,37 @@ function consolidateCardsAndStatistics(
   }, new Map());
 }
 
+function returnCardElementsForYAxisVariable(
+  consolidatedCards: Map<string, React.JSX.Element>,
+  yAxisVariable: string,
+  yAxisKeyMap: Map<string, Set<string>>,
+) {
+  return (
+    <>
+      {Array.from(consolidatedCards).map(([key, card], idx) => {
+        const cardsSet = yAxisKeyMap.get(
+          yAxisVariable,
+        );
+
+        return cardsSet?.has(key)
+          ? (
+            <Group key={`${idx}-${key}`}>
+              {card}
+            </Group>
+          )
+          : null;
+      })}
+    </>
+  );
+}
+
 export {
   consolidateCardsAndStatistics,
+  consolidateCustomerCardsAndStatistics,
   createDashboardMetricsCards,
   createFinancialStatisticsElements,
   createStatisticsElements,
+  returnCardElementsForYAxisVariable,
   returnDashboardCardElement,
 };
 export type { CreateDashboardMetricsCardsInput, DashboardCardInfo };

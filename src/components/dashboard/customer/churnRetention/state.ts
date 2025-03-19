@@ -2,7 +2,7 @@ import { ChurnRetentionState } from "./types";
 
 const initialChurnRetentionState: ChurnRetentionState = {
   barLineChartKind: "bar",
-  barLineChartYAxisVariable: "overview",
+  barLineChartYAxisVariable: "churnRate",
   calendarChartYAxisVariable: "churnRate",
 };
 

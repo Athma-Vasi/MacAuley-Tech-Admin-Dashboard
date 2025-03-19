@@ -5,7 +5,6 @@ import {
   type DashboardCardInfo,
 } from "../utilsTSX";
 import type { SelectedDateCustomerMetrics } from "./chartsData";
-import { CustomerMetricsCategory } from "./types";
 
 type CreateCustomerMetricsCardsInput = {
   greenColorShade: string;
@@ -571,10 +570,9 @@ function returnCalendarViewCustomerCards(
     : customerMetricsCards.yearlyCards;
 }
 
-function returnCustomerMetricsCards(
+function returnCustomerMetricsCardsMap(
   customerMetricsCards: CustomerMetricsCards,
   calendarView: DashboardCalendarView,
-  metricCategory: CustomerMetricsCategory,
 ) {
   const cards = calendarView === "Daily"
     ? customerMetricsCards.dailyCards
@@ -582,18 +580,42 @@ function returnCustomerMetricsCards(
     ? customerMetricsCards.monthlyCards
     : customerMetricsCards.yearlyCards;
 
-  return Object.entries(cards).reduce((acc, [key, cards]) => {
-    cards.forEach((card) => {
-      acc.set(card.heading ?? "Total", card);
-    });
+  return Object.entries(cards).reduce(
+    (acc, [key, cards]) => {
+      if (key === "churnRate" || key === "retentionRate") {
+        const churnRetentionMap = acc.get("churn") ?? new Map();
 
-    return acc;
-  }, new Map());
+        cards.forEach((card) => {
+          const heading = card.heading ?? "Churn Rate";
+          churnRetentionMap.set(heading, card);
+        });
+      } else if (key === "new") {
+        const newMap = acc.get("new") ?? new Map();
+        cards.forEach((card) => {
+          const heading = card.heading ?? "Total New";
+          newMap.set(heading, card);
+        });
+      } else if (key === "returning") {
+        const returningMap = acc.get("returning") ?? new Map();
+        cards.forEach((card) => {
+          const heading = card.heading ?? "Total Returning";
+          returningMap.set(heading, card);
+        });
+      }
+
+      return acc;
+    },
+    new Map<string, Map<string, DashboardCardInfo[]>>([
+      ["churn", new Map()],
+      ["new", new Map()],
+      ["returning", new Map()],
+    ]),
+  );
 }
 
 export {
   createCustomerMetricsCards,
   returnCalendarViewCustomerCards,
-  returnCustomerMetricsCards,
+  returnCustomerMetricsCardsMap,
 };
 export type { CustomerMetricsCards };

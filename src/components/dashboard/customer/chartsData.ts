@@ -105,14 +105,6 @@ function returnSelectedDateCustomerMetrics({
   };
 }
 
-// calendar
-type CustomerChurnRetentionCalendarChartsKey = "churnRate" | "retentionRate";
-type CustomerNewReturningCalendarChartsKey =
-  | "total" // y-axis variables: total
-  | "sales" // y-axis variables: sales, in-store, repair
-  | "online" // y-axis variables: online
-  | "inStore" // y-axis variables: in-store
-  | "repair"; // y-axis variables: repair
 // new & returning
 
 type CustomerMetricsNewReturningChartsKey =
@@ -2175,6 +2167,15 @@ async function createYearlyCustomerCharts({
     }, 0);
   });
 }
+
+// calendar
+type CustomerChurnRetentionCalendarChartsKey = "churnRate" | "retentionRate";
+type CustomerNewReturningCalendarChartsKey =
+  | "total" // y-axis variables: total
+  | "sales" // y-axis variables: sales, in-store, repair
+  | "online" // y-axis variables: online
+  | "inStore" // y-axis variables: in-store
+  | "repair"; // y-axis variables: repair
 
 function returnCalendarViewCustomerCharts(
   calendarView: DashboardCalendarView,

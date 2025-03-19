@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Group, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
@@ -30,6 +30,7 @@ import {
 import {
   consolidateCardsAndStatistics,
   createFinancialStatisticsElements,
+  returnCardElementsForYAxisVariable,
 } from "../../utilsTSX";
 import {
   type FinancialMetricsCards,
@@ -42,8 +43,8 @@ import {
 } from "../chartsData";
 import {
   FINANCIAL_OTHERS_Y_AXIS_DATA,
+  FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   MONEY_SYMBOL_CATEGORIES,
-  YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
 import type { FinancialMetricCategory } from "../types";
 import { otherMetricsAction } from "./actions";
@@ -225,22 +226,10 @@ function OtherMetrics({
     metricCategory,
   );
 
-  const cardsWithStatistics = (
-    <>
-      {Array.from(consolidatedCards).map(([key, card], idx) => {
-        const cardsSet = YAXIS_KEY_TO_CARDS_KEY_MAP.get(
-          barLineChartYAxisVariable,
-        );
-
-        return cardsSet?.has(key)
-          ? (
-            <Group key={`${idx}-${key}`}>
-              {card}
-            </Group>
-          )
-          : null;
-      })}
-    </>
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    barLineChartYAxisVariable,
+    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
   const expandCalendarChartButton = calendarView === "Yearly"
@@ -315,7 +304,7 @@ function OtherMetrics({
       calendarChartHeading={calendarChartHeading}
       expandCalendarChartButton={expandCalendarChartButton}
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-      cardsWithStatistics={cardsWithStatistics}
+      cardsWithStatisticsElements={cardsWithStatisticsElements}
       expandBarLineChartButton={expandBarLineChartButton}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
