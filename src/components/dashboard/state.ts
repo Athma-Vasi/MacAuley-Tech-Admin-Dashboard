@@ -1,6 +1,6 @@
 import type { DashboardState, Year } from "./types";
 
-const initialSelectedDate = (new Date().getDate() - 1).toString().padStart(
+const initialSelectedDate = (new Date().getDate()).toString().padStart(
   2,
   "0",
 );
