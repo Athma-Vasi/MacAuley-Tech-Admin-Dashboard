@@ -13,7 +13,7 @@ import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
 import { FinancialMetricCategory } from "./financial/types";
-import { ProductMetricCategory } from "./product/types";
+import { ProductMetricCategory, ProductSubMetric } from "./product/types";
 import { RepairMetricCategory } from "./repair/types";
 import type {
   BusinessMetric,
@@ -3783,7 +3783,7 @@ function returnSelectedCalendarCharts<
   MetricCategory extends
     | FinancialMetricCategory
     | CustomerMetricsCategory
-    | ProductMetricCategory
+    | ProductSubMetric
     | RepairMetricCategory,
   MetricsCalendarCharts extends Record<MetricCategory, any> = Record<
     MetricCategory,

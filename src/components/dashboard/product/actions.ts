@@ -1,4 +1,5 @@
 type ProductMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData";
   setCards: "setCards";
   setCharts: "setCharts";
   setIsGenerating: "setIsGenerating";
@@ -7,6 +8,7 @@ type ProductMetricsAction = {
 };
 
 const productMetricsAction: ProductMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData",
   setCards: "setCards",
   setCharts: "setCharts",
   setIsGenerating: "setIsGenerating",

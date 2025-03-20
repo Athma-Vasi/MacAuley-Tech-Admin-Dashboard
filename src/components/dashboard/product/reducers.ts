@@ -1,6 +1,9 @@
 import { ProductMetricsAction, productMetricsAction } from "./actions";
 import { ProductMetricsCards } from "./cards";
-import { ProductMetricsCharts } from "./chartsData";
+import {
+  ProductMetricsCalendarCharts,
+  ProductMetricsCharts,
+} from "./chartsData";
 import {
   ProductMetricCategory,
   ProductMetricsDispatch,
@@ -23,6 +26,10 @@ const productMetricsReducers = new Map<
     dispatch: ProductMetricsDispatch,
   ) => ProductMetricsState
 >([
+  [
+    productMetricsAction.setCalendarChartsData,
+    productMetricsReducer_setCalendarChartsData,
+  ],
   [productMetricsAction.setCards, productMetricsReducer_setCards],
   [productMetricsAction.setCharts, productMetricsReducer_setCharts],
   [productMetricsAction.setIsGenerating, productMetricsReducer_setIsGenerating],
@@ -32,6 +39,19 @@ const productMetricsReducers = new Map<
   ],
   [productMetricsAction.setSubMetric, productMetricsReducer_setSubMetric],
 ]);
+
+function productMetricsReducer_setCalendarChartsData(
+  state: ProductMetricsState,
+  dispatch: ProductMetricsDispatch,
+): ProductMetricsState {
+  return {
+    ...state,
+    calendarChartsData: dispatch.payload as {
+      currentYear: ProductMetricsCalendarCharts;
+      previousYear: ProductMetricsCalendarCharts;
+    },
+  };
+}
 
 function productMetricsReducer_setCards(
   state: ProductMetricsState,

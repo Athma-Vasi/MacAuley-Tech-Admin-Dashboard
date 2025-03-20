@@ -1,6 +1,8 @@
 import { BarChartData } from "../../charts/responsiveBarChart/types";
+import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
+import { MONTHS } from "../constants";
 import {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -1100,10 +1102,132 @@ function createYearlyProductCharts({
 }
 
 type ProductMetricsCalendarChartsKey = "total" | "online" | "inStore";
+type ProductMetricsCalendarCharts = {
+  revenue: {
+    total: CalendarChartData[];
+    online: CalendarChartData[];
+    inStore: CalendarChartData[];
+  };
+  unitsSold: {
+    total: CalendarChartData[];
+    online: CalendarChartData[];
+    inStore: CalendarChartData[];
+  };
+};
 
-export { createProductMetricsCharts, returnSelectedDateProductMetrics };
+async function createProductMetricsCalendarCharts(
+  selectedDateProductMetrics: SelectedDateProductMetrics,
+): Promise<{
+  currentYear: ProductMetricsCalendarCharts;
+  previousYear: ProductMetricsCalendarCharts;
+}> {
+  const { yearProductMetrics: { selectedYearMetrics, prevYearMetrics } } =
+    selectedDateProductMetrics;
+
+  const productMetricsCalendarChartsTemplate: ProductMetricsCalendarCharts = {
+    revenue: {
+      total: [],
+      online: [],
+      inStore: [],
+    },
+    unitsSold: {
+      total: [],
+      online: [],
+      inStore: [],
+    },
+  };
+
+  const [currentYear, previousYear] = await Promise.all([
+    createDailyProductMetricsCalendarCharts(
+      selectedYearMetrics,
+      structuredClone(productMetricsCalendarChartsTemplate),
+    ),
+    createDailyProductMetricsCalendarCharts(
+      prevYearMetrics,
+      structuredClone(productMetricsCalendarChartsTemplate),
+    ),
+  ]);
+
+  async function createDailyProductMetricsCalendarCharts(
+    yearlyMetrics: ProductYearlyMetric | undefined,
+    calendarChartsTemplate: ProductMetricsCalendarCharts,
+  ): Promise<ProductMetricsCalendarCharts> {
+    if (!yearlyMetrics) {
+      return new Promise((resolve) => {
+        resolve(calendarChartsTemplate);
+      });
+    }
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const dailyProductMetricsCalendarCharts = yearlyMetrics.monthlyMetrics
+          .reduce((resultAcc, monthlyMetric) => {
+            const { month, dailyMetrics } = monthlyMetric;
+            const monthNumber = MONTHS.indexOf(month) + 1;
+
+            dailyMetrics.forEach((dailyMetric) => {
+              const { revenue, unitsSold } = dailyMetric;
+              const day = `${yearlyMetrics.year}-${
+                monthNumber.toString().padStart(2, "0")
+              }-${dailyMetric.day}`;
+
+              // revenue
+
+              resultAcc.revenue.total.push({
+                day,
+                value: revenue.total,
+              });
+
+              resultAcc.revenue.online.push({
+                day,
+                value: revenue.online,
+              });
+
+              resultAcc.revenue.inStore.push({
+                day,
+                value: revenue.inStore,
+              });
+
+              // unitsSold
+
+              resultAcc.unitsSold.total.push({
+                day,
+                value: unitsSold.total,
+              });
+
+              resultAcc.unitsSold.online.push({
+                day,
+                value: unitsSold.online,
+              });
+
+              resultAcc.unitsSold.inStore.push({
+                day,
+                value: unitsSold.inStore,
+              });
+            });
+
+            return resultAcc;
+          }, calendarChartsTemplate);
+
+        resolve(dailyProductMetricsCalendarCharts);
+      }, 0);
+    });
+  }
+
+  return {
+    currentYear,
+    previousYear,
+  };
+}
+
+export {
+  createProductMetricsCalendarCharts,
+  createProductMetricsCharts,
+  returnSelectedDateProductMetrics,
+};
 export type {
   ProductMetricsBarCharts,
+  ProductMetricsCalendarCharts,
   ProductMetricsCalendarChartsKey,
   ProductMetricsChartKey,
   ProductMetricsCharts,

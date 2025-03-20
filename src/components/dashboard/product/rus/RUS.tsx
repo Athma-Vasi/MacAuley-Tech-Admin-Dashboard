@@ -21,7 +21,10 @@ import {
   type ProductMetricsCards,
   returnProductMetricsCards,
 } from "../../product/cards";
-import type { ProductMetricsCharts } from "../../product/chartsData";
+import type {
+  ProductMetricsCalendarCharts,
+  ProductMetricsCharts,
+} from "../../product/chartsData";
 import type {
   BusinessMetricStoreLocation,
   DashboardCalendarView,
@@ -31,6 +34,7 @@ import type {
 import {
   createExpandChartNavigateLinks,
   returnChartTitles,
+  returnSelectedCalendarCharts,
   returnStatistics,
 } from "../../utils";
 import {
@@ -49,6 +53,10 @@ import { rusReducer } from "./reducers";
 import { initialRUSState } from "./state";
 
 type RUSProps = {
+  calendarChartsData: {
+    currentYear: ProductMetricsCalendarCharts | null;
+    previousYear: ProductMetricsCalendarCharts | null;
+  };
   calendarView: DashboardCalendarView;
   day: string;
   subMetric: ProductSubMetric;
@@ -61,17 +69,20 @@ type RUSProps = {
 };
 
 /** RUS: Revenue | Units Sold */
-function RUS({
-  calendarView,
-  productMetricsCards,
-  productMetricsCharts,
-  day,
-  subMetric,
-  metricsView,
-  month,
-  storeLocation,
-  year,
-}: RUSProps) {
+function RUS(
+  {
+    calendarChartsData,
+    calendarView,
+    productMetricsCards,
+    productMetricsCharts,
+    day,
+    subMetric,
+    metricsView,
+    month,
+    storeLocation,
+    year,
+  }: RUSProps,
+) {
   const { globalDispatch } = useGlobalState();
   const navigate = useNavigate();
 
@@ -94,26 +105,6 @@ function RUS({
     line: lineCharts,
     pie: pieCharts,
   } = subMetric === "revenue" ? charts.revenue : charts.unitsSold;
-
-  // const {
-  //   barChartHeading,
-  //   expandBarChartNavigateLink,
-  //   expandLineChartNavigateLink,
-  //   expandPieChartNavigateLink,
-  //   lineChartHeading,
-  //   pieChartHeading,
-  // } = returnChartTitleNavigateLinks({
-  //   calendarView,
-  //   metricCategory: subMetric,
-  //   metricsView,
-  //   storeLocation,
-  //   yAxisBarChartVariable: barChartYAxisVariable,
-  //   yAxisLineChartVariable: lineChartYAxisVariable,
-  //   year,
-  //   day,
-  //   month,
-  //   months: MONTHS,
-  // });
 
   const {
     expandBarChartNavigateLink,
@@ -248,16 +239,19 @@ function RUS({
               ? "Month"
               : "Year"
           } - ${x}`}
-        yFormat={(y) => `${addCommaSeparator(y)} Products`}
+        yFormat={(y) =>
+          `${addCommaSeparator(y)} ${
+            subMetric === "revenue" ? "CAD" : "Units"
+          }`}
         unitKind="number"
       />
     );
 
-  // const calendarChartData = returnSelectedCalendarCharts(
-  //   calendarChartsData,
-  //   calendarChartYAxisVariable,
-  //   metricCategory,
-  // );
+  const calendarChartData = returnSelectedCalendarCharts(
+    calendarChartsData,
+    calendarChartYAxisVariable,
+    subMetric,
+  );
 
   const expandCalendarChartButton = calendarView === "Yearly"
     ? (
@@ -274,7 +268,7 @@ function RUS({
               action: globalAction.setCustomizeChartsPageData,
               payload: {
                 chartKind: "calendar",
-                chartData: [], // TODO
+                chartData: calendarChartData,
                 chartTitle: calendarChartHeading,
                 chartUnitKind: "number",
               } as CustomizeChartsPageData,
@@ -304,7 +298,7 @@ function RUS({
   const calendarChart = calendarView === "Yearly"
     ? (
       <ResponsiveCalendarChart
-        calendarChartData={[]} // TODO
+        calendarChartData={calendarChartData}
         hideControls
         from={`${year}-01-01`}
         to={`${year}-12-31`}
@@ -317,9 +311,6 @@ function RUS({
     calendarView,
     subMetric,
   );
-  // const overviewCards = subMetric === "revenue"
-  //   ? selectedCards.revenue
-  //   : selectedCards.unitsSold;
 
   const statisticsMap = returnStatistics(barCharts);
 
@@ -340,18 +331,6 @@ function RUS({
     barLineChartYAxisVariable,
     PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
-
-  console.group(
-    `RUS: ${calendarView} ${subMetric} ${storeLocation}`,
-  );
-  console.log("barCharts", barCharts);
-  console.log("lineCharts", lineCharts);
-  console.log("pieCharts", pieCharts);
-  console.log("selectedCards", selectedCards);
-  console.log("statisticsMap", statisticsMap);
-  console.log("statisticsElements", statisticsElements);
-  console.log("consolidatedCards", consolidatedCards);
-  console.groupEnd();
 
   return (
     <Stack>

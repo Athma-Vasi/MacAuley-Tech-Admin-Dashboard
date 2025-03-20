@@ -1,5 +1,5 @@
 import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
-import { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
@@ -7,7 +7,7 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { MONTHS } from "../constants";
+import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -18,6 +18,7 @@ import type {
 import { productMetricsAction } from "./actions";
 import { createProductMetricsCards } from "./cards";
 import {
+  createProductMetricsCalendarCharts,
   createProductMetricsCharts,
   returnSelectedDateProductMetrics,
 } from "./chartsData";
@@ -52,8 +53,14 @@ function ProductMetrics({
     productMetricsReducer,
     initialProductMetricsState,
   );
-  const { cards, charts, isGenerating, productCategory, subMetric } =
-    productMetricsState;
+  const {
+    calendarChartsData,
+    cards,
+    charts,
+    isGenerating,
+    productCategory,
+    subMetric,
+  } = productMetricsState;
 
   const {
     globalState: { themeObject },
@@ -91,6 +98,11 @@ function ProductMetrics({
           year: selectedYear,
         });
 
+        const { currentYear, previousYear } =
+          await createProductMetricsCalendarCharts(
+            selectedDateProductMetrics,
+          );
+
         const productMetricsCharts = await createProductMetricsCharts({
           businessMetrics,
           months: MONTHS,
@@ -108,6 +120,14 @@ function ProductMetrics({
         if (!isMounted) {
           return;
         }
+
+        productMetricsDispatch({
+          action: productMetricsAction.setCalendarChartsData,
+          payload: {
+            currentYear,
+            previousYear,
+          },
+        });
 
         productMetricsDispatch({
           action: productMetricsAction.setCards,
@@ -170,19 +190,22 @@ function ProductMetrics({
     />
   );
 
-  const revenueUnitsSold = (
-    <RUS
-      calendarView={calendarView}
-      productMetricsCards={cards}
-      productMetricsCharts={charts}
-      day={selectedDate}
-      month={selectedYYYYMMDD.split("-")[1]}
-      subMetric={subMetric}
-      metricsView="Products"
-      storeLocation={storeLocationView}
-      year={selectedYear}
-    />
-  );
+  const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+    <React.Fragment key={idx}>
+      <RUS
+        calendarChartsData={calendarChartsData}
+        calendarView={calendarView}
+        productMetricsCards={cards}
+        productMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        subMetric={subMetric}
+        metricsView="Products"
+        storeLocation={storeLocationView}
+        year={selectedYear}
+      />
+    </React.Fragment>
+  ));
 
   const loadingOverlay = (
     <LoadingOverlay
