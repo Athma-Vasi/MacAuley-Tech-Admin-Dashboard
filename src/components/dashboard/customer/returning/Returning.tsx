@@ -197,7 +197,7 @@ function Returning(
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: "bar",
+              chartKind: barLineChartKind,
               chartData: barLineChartKind === "bar"
                 ? barCharts[barLineChartYAxisVariable]
                 : lineCharts[barLineChartYAxisVariable],
