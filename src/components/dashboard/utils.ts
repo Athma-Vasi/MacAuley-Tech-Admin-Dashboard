@@ -1720,11 +1720,13 @@ async function createRandomCustomerMetrics({
               );
 
               monthlyCustomersMetrics.customers.churnRate = toFixedFloat(
-                monthlyCustomersMetrics.customers.churnRate / 12,
+                monthlyCustomersMetrics.customers.churnRate /
+                  dailyCustomersMetrics.length,
               );
 
               monthlyCustomersMetrics.customers.retentionRate = toFixedFloat(
-                monthlyCustomersMetrics.customers.retentionRate / 12,
+                monthlyCustomersMetrics.customers.retentionRate /
+                  dailyCustomersMetrics.length,
               );
 
               return monthlyCustomersMetrics;
@@ -1797,11 +1799,13 @@ async function createRandomCustomerMetrics({
           );
 
           yearlyCustomersMetrics.customers.churnRate = toFixedFloat(
-            yearlyCustomersMetrics.customers.churnRate / 12,
+            yearlyCustomersMetrics.customers.churnRate /
+              monthlyCustomersMetrics.length,
           );
 
           yearlyCustomersMetrics.customers.retentionRate = toFixedFloat(
-            yearlyCustomersMetrics.customers.retentionRate / 12,
+            yearlyCustomersMetrics.customers.retentionRate /
+              monthlyCustomersMetrics.length,
           );
 
           resolve(yearlyCustomersMetrics);

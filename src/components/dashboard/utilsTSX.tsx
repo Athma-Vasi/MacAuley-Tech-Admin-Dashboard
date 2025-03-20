@@ -151,12 +151,9 @@ function createDashboardMetricsCards({
     }`
     : `Since ${prevYear}`;
 
-  const valueStr = addCommaSeparator(
-    toFixedFloat(
-      selectedValue < 1 ? selectedValue * 100 : selectedValue,
-      selectedValue < 1 ? 4 : 2,
-    ),
-  );
+  const valueStr = selectedValue < 1
+    ? toFixedFloat(selectedValue * 100, 2)
+    : toFixedFloat(selectedValue, 2);
 
   const displayValue = isDisplayValueAsPercentage
     ? `${valueStr} %`

@@ -1,12 +1,12 @@
 import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
-import { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
-import { MONTHS } from "../constants";
+import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -166,19 +166,21 @@ function CustomerMetrics({
     />
   );
 
-  const churnRetention = (
-    <ChurnRetention
-      calendarView={calendarView}
-      customerMetricsCards={cards}
-      customerMetricsCharts={charts}
-      day={selectedDate}
-      month={selectedYYYYMMDD.split("-")[1]}
-      metricCategory={category}
-      metricsView="Customers"
-      storeLocation={storeLocationView}
-      year={selectedYear}
-    />
-  );
+  const churnRetention = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+    <React.Fragment key={idx}>
+      <ChurnRetention
+        calendarView={calendarView}
+        customerMetricsCards={cards}
+        customerMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory={category}
+        metricsView="Customers"
+        storeLocation={storeLocationView}
+        year={selectedYear}
+      />
+    </React.Fragment>
+  ));
 
   const loadingOverlay = (
     <LoadingOverlay
