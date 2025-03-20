@@ -26,6 +26,7 @@ import type {
 import {
   createExpandChartNavigateLinks,
   returnChartTitles,
+  returnSelectedCalendarCharts,
   returnStatistics,
 } from "../../utils";
 import {
@@ -41,7 +42,6 @@ import {
   FinancialMetricsCalendarCharts,
   type FinancialMetricsCharts,
   returnCalendarViewFinancialCharts,
-  returnSelectedCalendarCharts,
 } from "../chartsData";
 import {
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,

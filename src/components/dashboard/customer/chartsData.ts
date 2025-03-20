@@ -2366,60 +2366,10 @@ async function createCustomerMetricsCalendarCharts(
   };
 }
 
-function returnSelectedCalendarCharts<
-  MetricCategory extends
-    | FinancialMetricCategory
-    | CustomerMetricsCategory
-    | ProductMetricCategory
-    | RepairMetricCategory,
-  MetricsCalendarCharts extends Record<MetricCategory, any> = Record<
-    MetricCategory,
-    any
-  >,
-  YAxisVariable extends string = string,
->(
-  calendarChartsData: {
-    currentYear: MetricsCalendarCharts | null;
-    previousYear: MetricsCalendarCharts | null;
-  },
-  calendarChartYAxisVariable: YAxisVariable,
-  metricCategory: MetricCategory,
-): Array<{ day: string; value: number }> {
-  const defaultValue = [{
-    day: "",
-    value: 0,
-  }];
-
-  const { currentYear, previousYear } = calendarChartsData;
-  if (
-    currentYear === null || previousYear === null
-  ) {
-    return defaultValue;
-  }
-
-  const currentYearMetric = currentYear[metricCategory];
-  const previousYearMetric = previousYear[metricCategory];
-
-  const currentYearData =
-    Object.entries(currentYearMetric).find(([key]) =>
-      key === calendarChartYAxisVariable
-    )?.[1] ?? defaultValue as CalendarChartData[];
-
-  const previousYearData =
-    Object.entries(previousYearMetric).find(([key]) =>
-      key === calendarChartYAxisVariable
-    )?.[1] ?? defaultValue as CalendarChartData[];
-
-  return Array.isArray(currentYearData)
-    ? currentYearData.concat(previousYearData)
-    : defaultValue;
-}
-
 export {
   createCustomerMetricsCalendarCharts,
   createCustomerMetricsCharts,
   returnCalendarViewCustomerCharts,
-  returnSelectedCalendarCharts,
   returnSelectedDateCustomerMetrics,
 };
 export type {

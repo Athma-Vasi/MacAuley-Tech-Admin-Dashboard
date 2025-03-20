@@ -3832,46 +3832,11 @@ async function createFinancialMetricsCalendarCharts(
   };
 }
 
-function returnSelectedCalendarCharts(
-  calendarChartsData: {
-    currentYear: FinancialMetricsCalendarCharts | null;
-    previousYear: FinancialMetricsCalendarCharts | null;
-  },
-  calendarChartYAxisVariable:
-    | FinancialMetricsCalendarChartsKeyPERT
-    | FinancialMetricsCalendarChartsKeyOtherMetrics,
-  metricCategory: FinancialMetricCategory,
-): Array<{ day: string; value: number }> {
-  const defaultValue = [{
-    day: "",
-    value: 0,
-  }];
-
-  const { currentYear, previousYear } = calendarChartsData;
-  if (
-    currentYear === null || previousYear === null
-  ) {
-    return defaultValue;
-  }
-
-  const currentYearMetric = currentYear[metricCategory];
-  const previousYearMetric = previousYear[metricCategory];
-
-  return (Object.entries(currentYearMetric).find(([key]) =>
-    key === calendarChartYAxisVariable
-  )?.[1] ?? defaultValue).concat(
-    Object.entries(previousYearMetric).find(([key]) =>
-      key === calendarChartYAxisVariable
-    )?.[1] ?? defaultValue,
-  );
-}
-
 export {
   createFinancialMetricsCalendarCharts,
   createFinancialMetricsCharts,
   createYearlyFinancialCharts,
   returnCalendarViewFinancialCharts,
-  returnSelectedCalendarCharts,
   returnSelectedDateFinancialMetrics,
 };
 export type {

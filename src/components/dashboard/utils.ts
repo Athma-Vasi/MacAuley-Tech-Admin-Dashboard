@@ -9,7 +9,12 @@ import {
 import type { StoreLocation } from "../../types";
 import { splitCamelCase, toFixedFloat } from "../../utils";
 import type { BarChartData } from "../charts/responsiveBarChart/types";
+import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
+import { CustomerMetricsCategory } from "./customer/types";
+import { FinancialMetricCategory } from "./financial/types";
+import { ProductMetricCategory } from "./product/types";
+import { RepairMetricCategory } from "./repair/types";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -3774,6 +3779,55 @@ function returnChartTitles(
   };
 }
 
+function returnSelectedCalendarCharts<
+  MetricCategory extends
+    | FinancialMetricCategory
+    | CustomerMetricsCategory
+    | ProductMetricCategory
+    | RepairMetricCategory,
+  MetricsCalendarCharts extends Record<MetricCategory, any> = Record<
+    MetricCategory,
+    any
+  >,
+  YAxisVariable extends string = string,
+>(
+  calendarChartsData: {
+    currentYear: MetricsCalendarCharts | null;
+    previousYear: MetricsCalendarCharts | null;
+  },
+  calendarChartYAxisVariable: YAxisVariable,
+  metricCategory: MetricCategory,
+): Array<{ day: string; value: number }> {
+  const defaultValue = [{
+    day: "",
+    value: 0,
+  }];
+
+  const { currentYear, previousYear } = calendarChartsData;
+  if (
+    currentYear === null || previousYear === null
+  ) {
+    return defaultValue;
+  }
+
+  const currentYearMetric = currentYear[metricCategory];
+  const previousYearMetric = previousYear[metricCategory];
+
+  const currentYearData =
+    Object.entries(currentYearMetric).find(([key]) =>
+      key === calendarChartYAxisVariable
+    )?.[1] ?? defaultValue as CalendarChartData[];
+
+  const previousYearData =
+    Object.entries(previousYearMetric).find(([key]) =>
+      key === calendarChartYAxisVariable
+    )?.[1] ?? defaultValue as CalendarChartData[];
+
+  return Array.isArray(currentYearData)
+    ? currentYearData.concat(previousYearData)
+    : defaultValue;
+}
+
 export {
   createAggregatedProductMetrics,
   createAggregatedRepairMetrics,
@@ -3795,6 +3849,7 @@ export {
   returnChartTitles,
   returnDaysInMonthsInYears,
   returnIsTabDisabled,
+  returnSelectedCalendarCharts,
   returnStatistics,
   splitSelectedCalendarDate,
 };
