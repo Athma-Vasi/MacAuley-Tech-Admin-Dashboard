@@ -410,6 +410,17 @@ async function fetchSafe(input: RequestInfo | URL, init?: RequestInit): Promise<
   }
 }
 
+async function responseToJSONSafe<Data = unknown>(
+  response: Response,
+): Promise<SafeBoxResult<Data>> {
+  try {
+    const data: Data = await response.json();
+    return new Ok({ data, kind: "success" });
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
 export {
   addCommaSeparator,
   capitalizeAll,
