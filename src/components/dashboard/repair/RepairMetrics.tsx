@@ -1,5 +1,5 @@
 import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
-import { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
@@ -7,7 +7,7 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { MONTHS } from "../constants";
+import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -15,10 +15,10 @@ import type {
   Month,
   Year,
 } from "../types";
-import { RepairRUS } from "./RepairRUS";
 import { repairMetricsAction } from "./actions";
-import { returnRepairMetricsCards } from "./cards";
+import { createRepairMetricsCards } from "./cards";
 import {
+  createRepairMetricsCalendarCharts,
   createRepairMetricsCharts,
   returnSelectedDateRepairMetrics,
 } from "./chartsData";
@@ -27,6 +27,7 @@ import {
   REPAIR_METRICS_SUB_CATEGORY_DATA,
 } from "./constants";
 import { repairMetricsReducer } from "./reducers";
+import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
 
 type RepairMetricsProps = {
@@ -52,8 +53,14 @@ function RepairMetrics({
     repairMetricsReducer,
     initialRepairMetricsState,
   );
-  const { cards, charts, isGenerating, repairCategory, subMetric } =
-    repairMetricsState;
+  const {
+    calendarChartsData,
+    cards,
+    charts,
+    isGenerating,
+    repairCategory,
+    subMetric,
+  } = repairMetricsState;
 
   const {
     globalState: { themeObject },
@@ -91,6 +98,9 @@ function RepairMetrics({
           year: selectedYear,
         });
 
+        const { currentYear, previousYear } =
+          await createRepairMetricsCalendarCharts(selectedDateRepairMetrics);
+
         const repairMetricsCharts = await createRepairMetricsCharts({
           businessMetrics,
           months: MONTHS,
@@ -99,7 +109,7 @@ function RepairMetrics({
           storeLocation: storeLocationView,
         });
 
-        const repairMetricsCards = await returnRepairMetricsCards({
+        const repairMetricsCards = await createRepairMetricsCards({
           greenColorShade,
           redColorShade,
           selectedDateRepairMetrics,
@@ -108,6 +118,14 @@ function RepairMetrics({
         if (!isMounted) {
           return;
         }
+
+        repairMetricsDispatch({
+          action: repairMetricsAction.setCalendarChartsData,
+          payload: {
+            currentYear,
+            previousYear,
+          },
+        });
 
         repairMetricsDispatch({
           action: repairMetricsAction.setCards,
@@ -149,7 +167,7 @@ function RepairMetrics({
   const subMetricSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
-        data: REPAIR_METRICS_SUB_CATEGORY_DATA as any,
+        data: REPAIR_METRICS_SUB_CATEGORY_DATA,
         name: "category",
         parentDispatch: repairMetricsDispatch,
         validValueAction: repairMetricsAction.setSubMetric,
@@ -170,19 +188,22 @@ function RepairMetrics({
     />
   );
 
-  const revenueUnitsSold = (
-    <RepairRUS
-      calendarView={calendarView}
-      repairMetricsCards={cards}
-      repairMetricsCharts={charts}
-      day={selectedDate}
-      month={selectedYYYYMMDD.split("-")[1]}
-      subMetric={subMetric}
-      metricsView="Repairs"
-      storeLocation={storeLocationView}
-      year={selectedYear}
-    />
-  );
+  const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+    <React.Fragment key={idx}>
+      <RepairRUS
+        calendarChartsData={calendarChartsData}
+        calendarView={calendarView}
+        repairMetricsCards={cards}
+        repairMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        subMetric={subMetric}
+        metricsView="Repairs"
+        storeLocation={storeLocationView}
+        year={selectedYear}
+      />
+    </React.Fragment>
+  ));
 
   const loadingOverlay = (
     <LoadingOverlay

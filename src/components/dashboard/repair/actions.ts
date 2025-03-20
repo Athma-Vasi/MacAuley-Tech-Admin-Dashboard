@@ -1,4 +1,5 @@
 type RepairMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData";
   setCards: "setCards";
   setCharts: "setCharts";
   setIsGenerating: "setIsGenerating";
@@ -7,6 +8,7 @@ type RepairMetricsAction = {
 };
 
 const repairMetricsAction: RepairMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData",
   setCards: "setCards",
   setCharts: "setCharts",
   setIsGenerating: "setIsGenerating",

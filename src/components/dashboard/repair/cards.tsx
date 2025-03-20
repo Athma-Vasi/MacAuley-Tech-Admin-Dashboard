@@ -1,3 +1,4 @@
+import { DashboardCalendarView } from "../types";
 import {
   createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
@@ -5,7 +6,7 @@ import {
 } from "../utilsTSX";
 import type { SelectedDateRepairMetrics } from "./chartsData";
 
-type ReturnRepairMetricsCardsInput = {
+type createRepairMetricsCardsInput = {
   greenColorShade: string;
   redColorShade: string;
   selectedDateRepairMetrics: SelectedDateRepairMetrics;
@@ -17,11 +18,11 @@ type RepairMetricsCards = {
   yearlyCards: DashboardCardInfo[];
 };
 
-function returnRepairMetricsCards({
+function createRepairMetricsCards({
   greenColorShade,
   redColorShade,
   selectedDateRepairMetrics,
-}: ReturnRepairMetricsCardsInput): Promise<RepairMetricsCards> {
+}: createRepairMetricsCardsInput): Promise<RepairMetricsCards> {
   const {
     dayRepairMetrics: { prevDayMetrics, selectedDayMetrics },
     monthRepairMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -122,5 +123,23 @@ function returnRepairMetricsCards({
   });
 }
 
-export { returnRepairMetricsCards };
+function returnRepairMetricsCards(
+  repairMetricsCards: RepairMetricsCards,
+  calendarView: DashboardCalendarView,
+) {
+  const cards = calendarView === "Daily"
+    ? repairMetricsCards.dailyCards
+    : calendarView === "Monthly"
+    ? repairMetricsCards.monthlyCards
+    : repairMetricsCards.yearlyCards;
+
+  return cards.reduce((acc, card) => {
+    const { heading = "Revenue" } = card;
+    acc.set(heading, card);
+
+    return acc;
+  }, new Map());
+}
+
+export { createRepairMetricsCards, returnRepairMetricsCards };
 export type { RepairMetricsCards };

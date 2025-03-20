@@ -14,7 +14,7 @@ import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
 import { FinancialMetricCategory } from "./financial/types";
 import { ProductMetricCategory, ProductSubMetric } from "./product/types";
-import { RepairMetricCategory } from "./repair/types";
+import { RepairMetricCategory, RepairSubMetric } from "./repair/types";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -3784,7 +3784,7 @@ function returnSelectedCalendarCharts<
     | FinancialMetricCategory
     | CustomerMetricsCategory
     | ProductSubMetric
-    | RepairMetricCategory,
+    | RepairSubMetric,
   MetricsCalendarCharts extends Record<MetricCategory, any> = Record<
     MetricCategory,
     any
@@ -3797,7 +3797,7 @@ function returnSelectedCalendarCharts<
   },
   calendarChartYAxisVariable: YAxisVariable,
   metricCategory: MetricCategory,
-): Array<{ day: string; value: number }> {
+): Array<CalendarChartData> {
   const defaultValue = [{
     day: "",
     value: 0,

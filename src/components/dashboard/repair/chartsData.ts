@@ -1,8 +1,11 @@
 import { BarChartData } from "../../charts/responsiveBarChart/types";
+import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
+import { MONTHS } from "../constants";
 import {
   BusinessMetric,
   BusinessMetricStoreLocation,
+  DashboardCalendarView,
   Month,
   RepairCategory,
   RepairDailyMetric,
@@ -10,6 +13,7 @@ import {
   RepairYearlyMetric,
   Year,
 } from "../types";
+import { RepairSubMetric } from "./types";
 
 type RepairMetricChartsKey = "unitsRepaired" | "revenue";
 type RepairMetricBarCharts = Record<RepairMetricChartsKey, BarChartData[]>;
@@ -505,9 +509,142 @@ async function createYearlyRepairCharts({
   });
 }
 
-export { createRepairMetricsCharts, returnSelectedDateRepairMetrics };
+function returnCalendarViewRepairCharts(
+  calendarView: DashboardCalendarView,
+  repairMetricsCharts: RepairMetricsCharts,
+) {
+  return calendarView === "Daily"
+    ? repairMetricsCharts.dailyCharts
+    : calendarView === "Monthly"
+    ? repairMetricsCharts.monthlyCharts
+    : repairMetricsCharts.yearlyCharts;
+}
+
+type RepairMetricCalendarCharts = {
+  revenue: CalendarChartData[];
+  unitsRepaired: CalendarChartData[];
+};
+
+async function createRepairMetricsCalendarCharts(
+  selectedDateRepairMetrics: SelectedDateRepairMetrics,
+): Promise<
+  {
+    currentYear: RepairMetricCalendarCharts;
+    previousYear: RepairMetricCalendarCharts;
+  }
+> {
+  const { yearRepairMetrics: { selectedYearMetrics, prevYearMetrics } } =
+    selectedDateRepairMetrics;
+
+  const repairCalendarChartTemplate: RepairMetricCalendarCharts = {
+    revenue: [],
+    unitsRepaired: [],
+  };
+
+  const [currentYear, previousYear] = await Promise.all([
+    createDailyRepairCalendarCharts(
+      selectedYearMetrics,
+      structuredClone(repairCalendarChartTemplate),
+    ),
+    createDailyRepairCalendarCharts(
+      prevYearMetrics,
+      structuredClone(repairCalendarChartTemplate),
+    ),
+  ]);
+
+  async function createDailyRepairCalendarCharts(
+    yearlyMetrics: RepairYearlyMetric | undefined,
+    calendarChartTemplate: RepairMetricCalendarCharts,
+  ): Promise<RepairMetricCalendarCharts> {
+    if (!yearlyMetrics) {
+      return new Promise((resolve) => {
+        resolve(calendarChartTemplate);
+      });
+    }
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const dailyRepairCalendarCharts = yearlyMetrics.monthlyMetrics.reduce(
+          (resultAcc, monthlyMetric) => {
+            const { dailyMetrics, month } = monthlyMetric;
+            const monthNumber = MONTHS.indexOf(month) + 1;
+
+            dailyMetrics.forEach((dailyMetric) => {
+              const { revenue, unitsRepaired } = dailyMetric;
+              const day = `${yearlyMetrics.year}-${
+                monthNumber.toString().padStart(2, "0")
+              }-${dailyMetric.day}`;
+
+              // revenue
+
+              resultAcc.revenue.push({
+                day,
+                value: revenue,
+              });
+
+              // units repaired
+
+              resultAcc.unitsRepaired.push({
+                day,
+                value: unitsRepaired,
+              });
+            });
+
+            return resultAcc;
+          },
+          calendarChartTemplate,
+        );
+
+        resolve(dailyRepairCalendarCharts);
+      }, 0);
+    });
+  }
+
+  return {
+    currentYear,
+    previousYear,
+  };
+}
+
+function returnSelectedRepairCalendarCharts(
+  calendarChartsData: {
+    currentYear: RepairMetricCalendarCharts | null;
+    previousYear: RepairMetricCalendarCharts | null;
+  },
+  calendarChartYAxisVariable: RepairSubMetric,
+): Array<CalendarChartData> {
+  const defaultValue = [{
+    day: "",
+    value: 0,
+  }];
+
+  const { currentYear, previousYear } = calendarChartsData;
+  if (
+    currentYear === null || previousYear === null
+  ) {
+    return defaultValue;
+  }
+
+  const currentYearCharts = calendarChartYAxisVariable === "revenue"
+    ? currentYear.revenue
+    : currentYear.unitsRepaired;
+  const previousYearCharts = calendarChartYAxisVariable === "revenue"
+    ? previousYear.revenue
+    : previousYear.unitsRepaired;
+
+  return currentYearCharts.concat(previousYearCharts);
+}
+
+export {
+  createRepairMetricsCalendarCharts,
+  createRepairMetricsCharts,
+  returnCalendarViewRepairCharts,
+  returnSelectedDateRepairMetrics,
+  returnSelectedRepairCalendarCharts,
+};
 export type {
   RepairMetricBarCharts,
+  RepairMetricCalendarCharts,
   RepairMetricChartsKey,
   RepairMetricLineCharts,
   RepairMetricsCharts,

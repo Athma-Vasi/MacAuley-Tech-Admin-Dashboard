@@ -1,6 +1,6 @@
 import { RepairMetricsAction, repairMetricsAction } from "./actions";
 import { RepairMetricsCards } from "./cards";
-import { RepairMetricsCharts } from "./chartsData";
+import { RepairMetricCalendarCharts, RepairMetricsCharts } from "./chartsData";
 import {
   RepairMetricCategory,
   RepairMetricsDispatch,
@@ -23,6 +23,10 @@ const repairMetricsReducers = new Map<
     dispatch: RepairMetricsDispatch,
   ) => RepairMetricsState
 >([
+  [
+    repairMetricsAction.setCalendarChartsData,
+    repairMetricsReducer_setCalendarChartsData,
+  ],
   [repairMetricsAction.setCards, repairMetricsReducer_setCards],
   [repairMetricsAction.setCharts, repairMetricsReducer_setCharts],
   [repairMetricsAction.setIsGenerating, repairMetricsReducer_setIsGenerating],
@@ -32,6 +36,19 @@ const repairMetricsReducers = new Map<
   ],
   [repairMetricsAction.setSubMetric, repairMetricsReducer_setSubMetric],
 ]);
+
+function repairMetricsReducer_setCalendarChartsData(
+  state: RepairMetricsState,
+  dispatch: RepairMetricsDispatch,
+): RepairMetricsState {
+  return {
+    ...state,
+    calendarChartsData: dispatch.payload as {
+      currentYear: RepairMetricCalendarCharts;
+      previousYear: RepairMetricCalendarCharts;
+    },
+  };
+}
 
 function repairMetricsReducer_setCards(
   state: RepairMetricsState,
