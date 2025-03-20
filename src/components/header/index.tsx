@@ -7,13 +7,13 @@ import { returnThemeColors } from "../../utils";
 import Settings from "./settings";
 
 function Header() {
-    return (
-        <div className="header">
-            <h2>MacAuley Tech</h2>
+  return (
+    <div className="header">
+      <h2>MacAuley Tech</h2>
 
-            <Settings />
-        </div>
-    );
+      <Settings />
+    </div>
+  );
 }
 
 export default Header;

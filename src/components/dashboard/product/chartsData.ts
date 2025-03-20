@@ -47,62 +47,61 @@ function returnSelectedDateProductMetrics({
   year,
 }: CreateSelectedDateProductMetricsInput): SelectedDateProductMetrics {
   const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation
+    (businessMetric) => businessMetric.storeLocation === storeLocation,
   );
 
   const selectedDateProductMetrics = currentStoreMetrics?.productMetrics.find(
-    (productMetric) => productMetric.name === selectedProductCategory
+    (productMetric) => productMetric.name === selectedProductCategory,
   );
 
   const selectedYearMetrics = selectedDateProductMetrics?.yearlyMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === year
+    (yearlyMetric) => yearlyMetric.year === year,
   );
   const prevYearMetrics = selectedDateProductMetrics?.yearlyMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString()
+    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
   );
 
   const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
-    (monthlyMetric) => monthlyMetric.month === month
+    (monthlyMetric) => monthlyMetric.month === month,
   );
   const prevPrevYearMetrics = selectedDateProductMetrics?.yearlyMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString()
+    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
   );
-  const prevMonthMetrics =
-    month === "January"
-      ? prevPrevYearMetrics?.monthlyMetrics.find(
-          (monthlyMetric) => monthlyMetric.month === "December"
-        )
-      : selectedYearMetrics?.monthlyMetrics.find(
-          (monthlyMetric) => monthlyMetric.month === months[months.indexOf(month) - 1]
-        );
+  const prevMonthMetrics = month === "January"
+    ? prevPrevYearMetrics?.monthlyMetrics.find(
+      (monthlyMetric) => monthlyMetric.month === "December",
+    )
+    : selectedYearMetrics?.monthlyMetrics.find(
+      (monthlyMetric) =>
+        monthlyMetric.month === months[months.indexOf(month) - 1],
+    );
 
   const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
-    (dailyMetric) => dailyMetric.day === day
+    (dailyMetric) => dailyMetric.day === day,
   );
 
-  const prevDayMetrics =
-    day === "01"
-      ? prevMonthMetrics?.dailyMetrics.reduce<ProductDailyMetric | undefined>(
-          (acc, prevMonthDailyMetric) => {
-            const { day: prevDay } = prevMonthDailyMetric;
+  const prevDayMetrics = day === "01"
+    ? prevMonthMetrics?.dailyMetrics.reduce<ProductDailyMetric | undefined>(
+      (acc, prevMonthDailyMetric) => {
+        const { day: prevDay } = prevMonthDailyMetric;
 
-            if (
-              prevDay === "31" ||
-              prevDay === "30" ||
-              prevDay === "29" ||
-              prevDay === "28"
-            ) {
-              acc = prevMonthDailyMetric;
-            }
+        if (
+          prevDay === "31" ||
+          prevDay === "30" ||
+          prevDay === "29" ||
+          prevDay === "28"
+        ) {
+          acc = prevMonthDailyMetric;
+        }
 
-            return acc;
-          },
-          void 0
-        )
-      : selectedMonthMetrics?.dailyMetrics.find(
-          (dailyMetric) =>
-            dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0")
-        );
+        return acc;
+      },
+      void 0,
+    )
+    : selectedMonthMetrics?.dailyMetrics.find(
+      (dailyMetric) =>
+        dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
+    );
 
   return {
     dayProductMetrics: { prevDayMetrics, selectedDayMetrics },
@@ -221,7 +220,10 @@ async function createProductMetricsCharts({
     monthProductMetrics: { selectedMonthMetrics },
   } = selectedDateProductMetrics;
   const selectedMonth = selectedMonthMetrics?.month ?? "January";
-  const monthIndex = (months.indexOf(selectedMonth) + 1).toString().padStart(2, "0");
+  const monthIndex = (months.indexOf(selectedMonth) + 1).toString().padStart(
+    2,
+    "0",
+  );
 
   const {
     dayProductMetrics: { selectedDayMetrics },
@@ -250,11 +252,11 @@ async function createProductMetricsCharts({
   ];
 
   const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation
+    (businessMetric) => businessMetric.storeLocation === storeLocation,
   );
 
   const productMetrics = currentStoreMetrics?.productMetrics.find(
-    (productMetric) => productMetric.name === selectedProductCategory
+    (productMetric) => productMetric.name === selectedProductCategory,
   );
 
   const [dailyProductCharts, monthlyProductCharts, yearlyProductCharts] =
@@ -310,7 +312,9 @@ async function createDailyProductCharts({
   pieChartsTemplate,
   selectedDayMetrics,
   selectedYear,
-}: CreateDailyProductChartsInput): Promise<ProductMetricsCharts["dailyCharts"]> {
+}: CreateDailyProductChartsInput): Promise<
+  ProductMetricsCharts["dailyCharts"]
+> {
   if (!dailyMetrics || !selectedDayMetrics) {
     return new Promise((resolve) => {
       resolve({
@@ -361,7 +365,9 @@ async function createDailyProductCharts({
             "In Store": unitsSold.inStore,
             Online: unitsSold.online,
           };
-          dailyUnitsSoldBarChartsAcc.overview.push(dailyUnitsSoldOverviewBarChart);
+          dailyUnitsSoldBarChartsAcc.overview.push(
+            dailyUnitsSoldOverviewBarChart,
+          );
 
           const dailyUnitsSoldOnlineBarChart: BarChartData = {
             Days: day,
@@ -373,7 +379,9 @@ async function createDailyProductCharts({
             Days: day,
             "In Store": unitsSold.inStore,
           };
-          dailyUnitsSoldBarChartsAcc.inStore.push(dailyUnitsSoldInStoreBarChart);
+          dailyUnitsSoldBarChartsAcc.inStore.push(
+            dailyUnitsSoldInStoreBarChart,
+          );
 
           // daily.unitsSold.line
 
@@ -398,7 +406,9 @@ async function createDailyProductCharts({
             y: unitsSold.inStore,
           };
           dailyUnitsSoldLineChartsAcc.overview
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(dailyUnitsSoldOverviewInStoreLineChart);
 
           const dailyUnitsSoldOnlineLineChart = {
@@ -414,7 +424,9 @@ async function createDailyProductCharts({
             y: unitsSold.inStore,
           };
           dailyUnitsSoldLineChartsAcc.inStore
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(dailyUnitsSoldInStoreLineChart);
 
           // daily.revenue.bar
@@ -467,7 +479,9 @@ async function createDailyProductCharts({
             y: revenue.inStore,
           };
           dailyRevenueLineChartsAcc.overview
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(dailyRevenueOverviewInStoreLineChart);
 
           const dailyRevenueOnlineLineChart = {
@@ -483,7 +497,9 @@ async function createDailyProductCharts({
             y: revenue.inStore,
           };
           dailyRevenueLineChartsAcc.inStore
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(dailyRevenueInStoreLineChart);
 
           return dailyProductChartsAcc;
@@ -494,7 +510,7 @@ async function createDailyProductCharts({
 
           structuredClone(barChartsTemplate),
           structuredClone(lineChartsTemplate),
-        ]
+        ],
       );
 
       const dailyRevenuePieCharts: PieChartData[] = [
@@ -555,7 +571,9 @@ function createMonthlyProductCharts({
   pieChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyProductChartsInput): Promise<ProductMetricsCharts["monthlyCharts"]> {
+}: CreateMonthlyProductChartsInput): Promise<
+  ProductMetricsCharts["monthlyCharts"]
+> {
   if (!monthlyMetrics || !selectedMonthMetrics) {
     return new Promise((resolve) => {
       resolve({
@@ -596,7 +614,9 @@ function createMonthlyProductCharts({
           // prevents current month of current year from being added to charts
           const currentYear = new Date().getFullYear().toString();
           const isCurrentYear = selectedYear === currentYear;
-          const currentMonth = new Date().toLocaleString("default", { month: "long" });
+          const currentMonth = new Date().toLocaleString("default", {
+            month: "long",
+          });
           const isCurrentMonth = month === currentMonth;
 
           if (isCurrentYear && isCurrentMonth) {
@@ -609,26 +629,34 @@ function createMonthlyProductCharts({
             Months: month,
             Total: unitsSold.total,
           };
-          monthlyUnitsSoldBarChartsAcc.total.push(monthlyUnitsSoldTotalBarChart);
+          monthlyUnitsSoldBarChartsAcc.total.push(
+            monthlyUnitsSoldTotalBarChart,
+          );
 
           const monthlyUnitsSoldOverviewBarChart: BarChartData = {
             Months: month,
             "In Store": unitsSold.inStore,
             Online: unitsSold.online,
           };
-          monthlyUnitsSoldBarChartsAcc.overview.push(monthlyUnitsSoldOverviewBarChart);
+          monthlyUnitsSoldBarChartsAcc.overview.push(
+            monthlyUnitsSoldOverviewBarChart,
+          );
 
           const monthlyUnitsSoldOnlineBarChart: BarChartData = {
             Months: month,
             Online: unitsSold.online,
           };
-          monthlyUnitsSoldBarChartsAcc.online.push(monthlyUnitsSoldOnlineBarChart);
+          monthlyUnitsSoldBarChartsAcc.online.push(
+            monthlyUnitsSoldOnlineBarChart,
+          );
 
           const monthlyUnitsSoldInStoreBarChart: BarChartData = {
             Months: month,
             "In Store": unitsSold.inStore,
           };
-          monthlyUnitsSoldBarChartsAcc.inStore.push(monthlyUnitsSoldInStoreBarChart);
+          monthlyUnitsSoldBarChartsAcc.inStore.push(
+            monthlyUnitsSoldInStoreBarChart,
+          );
 
           // monthly.unitsSold.line
 
@@ -653,7 +681,9 @@ function createMonthlyProductCharts({
             y: unitsSold.inStore,
           };
           monthlyUnitsSoldLineChartsAcc.overview
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(monthlyUnitsSoldOverviewInStoreLineChart);
 
           const monthlyUnitsSoldOnlineLineChart = {
@@ -669,7 +699,9 @@ function createMonthlyProductCharts({
             y: unitsSold.inStore,
           };
           monthlyUnitsSoldLineChartsAcc.inStore
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(monthlyUnitsSoldInStoreLineChart);
 
           // monthly.revenue.bar
@@ -685,7 +717,9 @@ function createMonthlyProductCharts({
             "In Store": revenue.inStore,
             Online: revenue.online,
           };
-          monthlyRevenueBarChartsAcc.overview.push(monthlyRevenueOverviewBarChart);
+          monthlyRevenueBarChartsAcc.overview.push(
+            monthlyRevenueOverviewBarChart,
+          );
 
           const monthlyRevenueOnlineBarChart: BarChartData = {
             Months: month,
@@ -697,7 +731,9 @@ function createMonthlyProductCharts({
             Months: month,
             "In Store": revenue.inStore,
           };
-          monthlyRevenueBarChartsAcc.inStore.push(monthlyRevenueInStoreBarChart);
+          monthlyRevenueBarChartsAcc.inStore.push(
+            monthlyRevenueInStoreBarChart,
+          );
 
           // monthly.revenue.line
 
@@ -722,7 +758,9 @@ function createMonthlyProductCharts({
             y: revenue.inStore,
           };
           monthlyRevenueLineChartsAcc.overview
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(monthlyRevenueOverviewInStoreLineChart);
 
           const monthlyRevenueOnlineLineChart = {
@@ -738,7 +776,9 @@ function createMonthlyProductCharts({
             y: revenue.inStore,
           };
           monthlyRevenueLineChartsAcc.inStore
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(monthlyRevenueInStoreLineChart);
 
           return monthlyProductChartsAcc;
@@ -749,7 +789,7 @@ function createMonthlyProductCharts({
 
           structuredClone(barChartsTemplate),
           structuredClone(lineChartsTemplate),
-        ]
+        ],
       );
 
       const monthlyRevenuePieCharts: PieChartData[] = [
@@ -808,7 +848,9 @@ function createYearlyProductCharts({
   pieChartsTemplate,
   selectedYearMetrics,
   yearlyMetrics,
-}: CreateYearlyProductChartsInput): Promise<ProductMetricsCharts["yearlyCharts"]> {
+}: CreateYearlyProductChartsInput): Promise<
+  ProductMetricsCharts["yearlyCharts"]
+> {
   if (!yearlyMetrics || !selectedYearMetrics) {
     return new Promise((resolve) => {
       resolve({
@@ -863,19 +905,25 @@ function createYearlyProductCharts({
             "In Store": unitsSold.inStore,
             Online: unitsSold.online,
           };
-          yearlyUnitsSoldBarChartsAcc.overview.push(yearlyUnitsSoldOverviewBarChart);
+          yearlyUnitsSoldBarChartsAcc.overview.push(
+            yearlyUnitsSoldOverviewBarChart,
+          );
 
           const yearlyUnitsSoldOnlineBarChart: BarChartData = {
             Years: year,
             Online: unitsSold.online,
           };
-          yearlyUnitsSoldBarChartsAcc.online.push(yearlyUnitsSoldOnlineBarChart);
+          yearlyUnitsSoldBarChartsAcc.online.push(
+            yearlyUnitsSoldOnlineBarChart,
+          );
 
           const yearlyUnitsSoldInStoreBarChart: BarChartData = {
             Years: year,
             "In Store": unitsSold.inStore,
           };
-          yearlyUnitsSoldBarChartsAcc.inStore.push(yearlyUnitsSoldInStoreBarChart);
+          yearlyUnitsSoldBarChartsAcc.inStore.push(
+            yearlyUnitsSoldInStoreBarChart,
+          );
 
           // yearly.unitsSold.line
 
@@ -900,7 +948,9 @@ function createYearlyProductCharts({
             y: unitsSold.inStore,
           };
           yearlyUnitsSoldLineChartsAcc.overview
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(yearlyUnitsSoldOverviewInStoreLineChart);
 
           const yearlyUnitsSoldOnlineLineChart = {
@@ -916,7 +966,9 @@ function createYearlyProductCharts({
             y: unitsSold.inStore,
           };
           yearlyUnitsSoldLineChartsAcc.inStore
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(yearlyUnitsSoldInStoreLineChart);
 
           // yearly.revenue.bar
@@ -932,7 +984,9 @@ function createYearlyProductCharts({
             "In Store": revenue.inStore,
             Online: revenue.online,
           };
-          yearlyRevenueBarChartsAcc.overview.push(yearlyRevenueOverviewBarChart);
+          yearlyRevenueBarChartsAcc.overview.push(
+            yearlyRevenueOverviewBarChart,
+          );
 
           const yearlyRevenueOnlineBarChart: BarChartData = {
             Years: year,
@@ -969,7 +1023,9 @@ function createYearlyProductCharts({
             y: revenue.inStore,
           };
           yearlyRevenueLineChartsAcc.overview
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(yearlyRevenueOverviewInStoreLineChart);
 
           const yearlyRevenueOnlineLineChart = {
@@ -985,7 +1041,9 @@ function createYearlyProductCharts({
             y: revenue.inStore,
           };
           yearlyRevenueLineChartsAcc.inStore
-            .find((lineChartObj: LineChartData) => lineChartObj.id === "In Store")
+            .find((lineChartObj: LineChartData) =>
+              lineChartObj.id === "In Store"
+            )
             ?.data.push(yearlyRevenueInStoreLineChart);
 
           return yearlyProductChartsAcc;
@@ -996,7 +1054,7 @@ function createYearlyProductCharts({
 
           structuredClone(barChartsTemplate),
           structuredClone(lineChartsTemplate),
-        ]
+        ],
       );
 
       const yearlyRevenuePieCharts: PieChartData[] = [

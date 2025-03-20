@@ -16,25 +16,25 @@ type ProductMetricsState = {
 
 type ProductMetricsDispatch =
   | {
-      action: ProductMetricsAction["setCards"];
-      payload: ProductMetricsCards;
-    }
+    action: ProductMetricsAction["setCards"];
+    payload: ProductMetricsCards;
+  }
   | {
-      action: ProductMetricsAction["setSubMetric"];
-      payload: ProductSubMetric;
-    }
+    action: ProductMetricsAction["setSubMetric"];
+    payload: ProductSubMetric;
+  }
   | {
-      action: ProductMetricsAction["setCharts"];
-      payload: ProductMetricsCharts;
-    }
+    action: ProductMetricsAction["setCharts"];
+    payload: ProductMetricsCharts;
+  }
   | {
-      action: ProductMetricsAction["setProductCategory"];
-      payload: ProductMetricCategory;
-    }
+    action: ProductMetricsAction["setProductCategory"];
+    payload: ProductMetricCategory;
+  }
   | {
-      action: ProductMetricsAction["setIsGenerating"];
-      payload: boolean;
-    };
+    action: ProductMetricsAction["setIsGenerating"];
+    payload: boolean;
+  };
 
 export type {
   ProductMetricCategory,

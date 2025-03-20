@@ -10,7 +10,7 @@ import {
 
 function repairMetricsReducer(
   state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch
+  dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
   const reducer = repairMetricsReducers.get(dispatch.action);
   return reducer ? reducer(state, dispatch) : state;
@@ -18,18 +18,24 @@ function repairMetricsReducer(
 
 const repairMetricsReducers = new Map<
   RepairMetricsAction[keyof RepairMetricsAction],
-  (state: RepairMetricsState, dispatch: RepairMetricsDispatch) => RepairMetricsState
+  (
+    state: RepairMetricsState,
+    dispatch: RepairMetricsDispatch,
+  ) => RepairMetricsState
 >([
   [repairMetricsAction.setCards, repairMetricsReducer_setCards],
   [repairMetricsAction.setCharts, repairMetricsReducer_setCharts],
   [repairMetricsAction.setIsGenerating, repairMetricsReducer_setIsGenerating],
-  [repairMetricsAction.setRepairCategory, repairMetricsReducer_setRepairCategory],
+  [
+    repairMetricsAction.setRepairCategory,
+    repairMetricsReducer_setRepairCategory,
+  ],
   [repairMetricsAction.setSubMetric, repairMetricsReducer_setSubMetric],
 ]);
 
 function repairMetricsReducer_setCards(
   state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch
+  dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
   return {
     ...state,
@@ -39,7 +45,7 @@ function repairMetricsReducer_setCards(
 
 function repairMetricsReducer_setSubMetric(
   state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch
+  dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
   return {
     ...state,
@@ -49,7 +55,7 @@ function repairMetricsReducer_setSubMetric(
 
 function repairMetricsReducer_setCharts(
   state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch
+  dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
   return {
     ...state,
@@ -59,7 +65,7 @@ function repairMetricsReducer_setCharts(
 
 function repairMetricsReducer_setRepairCategory(
   state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch
+  dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
   return {
     ...state,
@@ -69,7 +75,7 @@ function repairMetricsReducer_setRepairCategory(
 
 function repairMetricsReducer_setIsGenerating(
   state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch
+  dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
   return {
     ...state,

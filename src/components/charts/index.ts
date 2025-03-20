@@ -6,10 +6,10 @@ import { ResponsiveRadialBarChart } from "./responsiveRadialBarChart/ResponsiveR
 import { ResponsiveSunburstChart } from "./responsiveSunburstChart/ResponsiveSunburstChart";
 
 export {
-    ResponsiveBarChart,
-    ResponsiveCalendarChart,
-    ResponsiveLineChart,
-    ResponsivePieChart,
-    ResponsiveRadialBarChart,
-    ResponsiveSunburstChart,
+  ResponsiveBarChart,
+  ResponsiveCalendarChart,
+  ResponsiveLineChart,
+  ResponsivePieChart,
+  ResponsiveRadialBarChart,
+  ResponsiveSunburstChart,
 };

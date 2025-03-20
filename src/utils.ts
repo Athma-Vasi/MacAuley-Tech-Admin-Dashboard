@@ -3,10 +3,10 @@ import { ColorsSwatches } from "./constants";
 import { ThemeObject } from "./types";
 
 type CaptureScreenshotInput = {
-    chartRef: any;
-    screenshotFilename: string;
-    screenshotImageQuality: number;
-    screenshotImageType: string;
+  chartRef: any;
+  screenshotFilename: string;
+  screenshotImageQuality: number;
+  screenshotImageType: string;
 };
 /**
  * Captures a screenshot of a chart rendered in the browser and triggers a download.
@@ -19,63 +19,63 @@ type CaptureScreenshotInput = {
  * @returns {Promise<void>}
  */
 async function captureScreenshot({
-    chartRef,
-    screenshotFilename,
-    screenshotImageQuality,
-    screenshotImageType,
+  chartRef,
+  screenshotFilename,
+  screenshotImageQuality,
+  screenshotImageType,
 }: CaptureScreenshotInput): Promise<void> {
-    const canvasPromise = html2canvas(chartRef.current, {
-        useCORS: true,
-    });
-    canvasPromise.then((canvas) => {
-        const dataURL = canvas.toDataURL(
-            screenshotImageType,
-            screenshotImageQuality,
-        );
-        // Create an image element from the data URL
-        const img = new Image();
-        img.src = dataURL;
-        // Create a link element
-        const a = document.createElement("a");
-        // Set the href of the link to the data URL of the image
-        a.href = img.src;
+  const canvasPromise = html2canvas(chartRef.current, {
+    useCORS: true,
+  });
+  canvasPromise.then((canvas) => {
+    const dataURL = canvas.toDataURL(
+      screenshotImageType,
+      screenshotImageQuality,
+    );
+    // Create an image element from the data URL
+    const img = new Image();
+    img.src = dataURL;
+    // Create a link element
+    const a = document.createElement("a");
+    // Set the href of the link to the data URL of the image
+    a.href = img.src;
 
-        const filename = screenshotFilename ? screenshotFilename : uuidv4();
-        const extension = screenshotImageType.split("/")[1];
+    const filename = screenshotFilename ? screenshotFilename : uuidv4();
+    const extension = screenshotImageType.split("/")[1];
 
-        // Set the download attribute of the link
-        a.download = `${filename}.${extension}`;
-        // Append the link to the page
-        document.body.appendChild(a);
-        // Click the link to trigger the download
-        a.click();
-        // Remove the link from the page
-        document.body.removeChild(a);
-    });
+    // Set the download attribute of the link
+    a.download = `${filename}.${extension}`;
+    // Append the link to the page
+    document.body.appendChild(a);
+    // Click the link to trigger the download
+    a.click();
+    // Remove the link from the page
+    document.body.removeChild(a);
+  });
 }
 
 function addCommaSeparator(numStr: string | number): string {
-    return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function toFixedFloat(num: number, precision = 4): number {
-    return Number(num.toFixed(precision));
+  return Number(num.toFixed(precision));
 }
 
 function removeUndefinedAndNull<T>(value: T | undefined | null): value is T {
-    return value !== undefined && value !== null;
+  return value !== undefined && value !== null;
 }
 
 function capitalizeAll(str: string): string {
-    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  return str.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function capitalizeJoinWithAnd(strings: string[]): string {
-    const joined = strings
-        // .map((string) => string.charAt(0).toUpperCase() + string.slice(1))
-        .map((string) => splitCamelCase(string))
-        .join(", ");
-    return replaceLastCommaWithAnd(joined);
+  const joined = strings
+    // .map((string) => string.charAt(0).toUpperCase() + string.slice(1))
+    .map((string) => splitCamelCase(string))
+    .join(", ");
+  return replaceLastCommaWithAnd(joined);
 }
 
 /**
@@ -89,10 +89,10 @@ function capitalizeJoinWithAnd(strings: string[]): string {
  * @returns {string} A new string with words separated and the first letter capitalized.
  */
 function splitCamelCase(word: string): string {
-    // Replace lowercase-uppercase pairs with a space in between
-    const splitStr = word.replace(/([a-z])([A-Z])/g, "$1 $2");
-    // Capitalize the first letter of the resulting string
-    return splitStr.charAt(0).toUpperCase() + splitStr.slice(1);
+  // Replace lowercase-uppercase pairs with a space in between
+  const splitStr = word.replace(/([a-z])([A-Z])/g, "$1 $2");
+  // Capitalize the first letter of the resulting string
+  return splitStr.charAt(0).toUpperCase() + splitStr.slice(1);
 }
 
 /**
@@ -105,300 +105,300 @@ function splitCamelCase(word: string): string {
  * @returns {string} A new string with the last comma replaced by ' and ' if applicable.
  */
 function replaceLastCommaWithAnd(str: string): string {
-    // returns an array of matches of all occurrences of a comma
-    const commaCount = str.match(/,/g)?.length ?? 0;
-    // /(?=[^,]*$)/: matches a comma that is followed by zero or more non-comma characters until the end of the string, using a positive lookahead assertion (?=...).
-    const strWithAnd = str.replace(/,(?=[^,]*$)/, commaCount > 0 ? " and" : "");
+  // returns an array of matches of all occurrences of a comma
+  const commaCount = str.match(/,/g)?.length ?? 0;
+  // /(?=[^,]*$)/: matches a comma that is followed by zero or more non-comma characters until the end of the string, using a positive lookahead assertion (?=...).
+  const strWithAnd = str.replace(/,(?=[^,]*$)/, commaCount > 0 ? " and" : "");
 
-    return strWithAnd;
+  return strWithAnd;
 }
 
 function replaceLastCommaWithOr(str: string): string {
-    // returns an array of matches of all occurrences of a comma
-    const commaCount = str.match(/,/g)?.length ?? 0;
-    // /(?=[^,]*$)/: matches a comma that is followed by zero or more non-comma characters until the end of the string, using a positive lookahead assertion (?=...).
-    const strWithOr = str.replace(/,(?=[^,]*$)/, commaCount > 0 ? " or" : "");
+  // returns an array of matches of all occurrences of a comma
+  const commaCount = str.match(/,/g)?.length ?? 0;
+  // /(?=[^,]*$)/: matches a comma that is followed by zero or more non-comma characters until the end of the string, using a positive lookahead assertion (?=...).
+  const strWithOr = str.replace(/,(?=[^,]*$)/, commaCount > 0 ? " or" : "");
 
-    return strWithOr;
+  return strWithOr;
 }
 
 function returnTimeToRead(string: string) {
-    const wordsPerMinute = 200;
-    const textLength = string.split(" ").length;
-    return Math.ceil(textLength / wordsPerMinute);
+  const wordsPerMinute = 200;
+  const textLength = string.split(" ").length;
+  return Math.ceil(textLength / wordsPerMinute);
 }
 
 function formatDate({
-    date,
-    formatOptions = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        timeZoneName: "short",
-    },
-    locale = "en-US",
+  date,
+  formatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    timeZoneName: "short",
+  },
+  locale = "en-US",
 }: {
-    date: string;
-    formatOptions?: Intl.DateTimeFormatOptions;
-    locale?: string;
+  date: string;
+  formatOptions?: Intl.DateTimeFormatOptions;
+  locale?: string;
 }): string {
-    return new Intl.DateTimeFormat(locale, formatOptions).format(
-        new Date(date),
-    );
+  return new Intl.DateTimeFormat(locale, formatOptions).format(
+    new Date(date),
+  );
 }
 
 function returnThemeColors({
-    themeObject,
-    colorsSwatches,
+  themeObject,
+  colorsSwatches,
 }: {
-    themeObject: ThemeObject;
-    colorsSwatches: ColorsSwatches;
+  themeObject: ThemeObject;
+  colorsSwatches: ColorsSwatches;
 }) {
-    const { colorScheme, primaryColor, primaryShade } = themeObject;
-    const {
-        blue,
-        cyan,
-        dark,
-        grape,
-        gray,
-        green,
-        indigo,
-        lime,
-        orange,
-        pink,
-        red,
-        teal,
-        violet,
-        yellow,
-    } = colorsSwatches;
+  const { colorScheme, primaryColor, primaryShade } = themeObject;
+  const {
+    blue,
+    cyan,
+    dark,
+    grape,
+    gray,
+    green,
+    indigo,
+    lime,
+    orange,
+    pink,
+    red,
+    teal,
+    violet,
+    yellow,
+  } = colorsSwatches;
 
-    const colorShade = colorScheme === "light"
-        ? primaryShade.light
-        : primaryShade.dark;
-    const themeColorShades = Object.entries(colorsSwatches).find(
-        ([color, _shades]) => color === primaryColor,
-    )?.[1];
-    const themeColorShade = themeColorShades
-        ? themeColorShades[colorShade]
-        : gray[5];
+  const colorShade = colorScheme === "light"
+    ? primaryShade.light
+    : primaryShade.dark;
+  const themeColorShades = Object.entries(colorsSwatches).find(
+    ([color, _shades]) => color === primaryColor,
+  )?.[1];
+  const themeColorShade = themeColorShades
+    ? themeColorShades[colorShade]
+    : gray[5];
 
-    // all color shades
-    const grayColorShade = gray[colorShade];
-    const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
-    const redColorShade = red[colorShade];
-    const greenColorShade = green[colorShade];
-    const cyanColorShade = cyan[colorShade];
-    const yellowColorShade = yellow[colorShade];
-    const orangeColorShade = orange[colorShade];
-    const blueColorShade = blue[colorShade];
-    const pinkColorShade = pink[colorShade];
-    const violetColorShade = violet[colorShade];
-    const indigoColorShade = indigo[colorShade];
-    const limeColorShade = lime[colorShade];
-    const darkColorShade = dark[colorShade];
-    const tealColorShade = teal[colorShade];
-    const grapeColorShade = grape[colorShade];
+  // all color shades
+  const grayColorShade = gray[colorShade];
+  const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
+  const redColorShade = red[colorShade];
+  const greenColorShade = green[colorShade];
+  const cyanColorShade = cyan[colorShade];
+  const yellowColorShade = yellow[colorShade];
+  const orangeColorShade = orange[colorShade];
+  const blueColorShade = blue[colorShade];
+  const pinkColorShade = pink[colorShade];
+  const violetColorShade = violet[colorShade];
+  const indigoColorShade = indigo[colorShade];
+  const limeColorShade = lime[colorShade];
+  const darkColorShade = dark[colorShade];
+  const tealColorShade = teal[colorShade];
+  const grapeColorShade = grape[colorShade];
 
-    const textColor = colorScheme === "light" ? gray[8] : gray[5];
-    const textColorSliderLabel = gray[3];
-    const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[6];
+  const textColor = colorScheme === "light" ? gray[8] : gray[5];
+  const textColorSliderLabel = gray[3];
+  const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[6];
 
-    // const lightSchemeGray = gray[8];
-    // const darkSchemeGray = gray[5];
-    // const textColor = colorScheme === "light"
-    //     ? lightSchemeGray
-    //     : darkSchemeGray;
-    // const iconGray = textColor;
-    // const chartTextColor = colorScheme === "light" ? gray[8] : dark[7];
+  // const lightSchemeGray = gray[8];
+  // const darkSchemeGray = gray[5];
+  // const textColor = colorScheme === "light"
+  //     ? lightSchemeGray
+  //     : darkSchemeGray;
+  // const iconGray = textColor;
+  // const chartTextColor = colorScheme === "light" ? gray[8] : dark[7];
 
-    // // all color shades
-    // const grayColorShade = gray[colorShade];
-    // const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
-    // const redColorShade = red[colorShade];
-    // const greenColorShade = green[colorShade];
-    // const cyanColorShade = cyan[colorShade];
-    // const yellowColorShade = yellow[colorShade];
-    // const orangeColorShade = orange[colorShade];
-    // const blueColorShade = blue[colorShade];
-    // const sliderLabelColor = gray[3];
-    // const navLinkHoverShade = colorScheme === "light" ? gray[2] : gray[8];
-    // const navLinkActiveShade = themeColorShades
-    //     ? colorScheme === "light" ? themeColorShades[1] : ""
-    //     : gray[5];
+  // // all color shades
+  // const grayColorShade = gray[colorShade];
+  // const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
+  // const redColorShade = red[colorShade];
+  // const greenColorShade = green[colorShade];
+  // const cyanColorShade = cyan[colorShade];
+  // const yellowColorShade = yellow[colorShade];
+  // const orangeColorShade = orange[colorShade];
+  // const blueColorShade = blue[colorShade];
+  // const sliderLabelColor = gray[3];
+  // const navLinkHoverShade = colorScheme === "light" ? gray[2] : gray[8];
+  // const navLinkActiveShade = themeColorShades
+  //     ? colorScheme === "light" ? themeColorShades[1] : ""
+  //     : gray[5];
 
-    // const generalColors = {
-    //     blueColorShade,
-    //     chartTextColor,
-    //     cyanColorShade,
-    //     darkSchemeGray,
-    //     grayBorderShade,
-    //     grayColorShade,
-    //     greenColorShade,
-    //     iconGray,
-    //     lightSchemeGray,
-    //     navLinkActiveShade,
-    //     navLinkHoverShade,
-    //     orangeColorShade,
-    //     redColorShade,
-    //     sliderLabelColor,
-    //     textColor,
-    //     themeColorShade,
-    //     themeColorShades,
-    //     yellowColorShade,
-    // };
+  // const generalColors = {
+  //     blueColorShade,
+  //     chartTextColor,
+  //     cyanColorShade,
+  //     darkSchemeGray,
+  //     grayBorderShade,
+  //     grayColorShade,
+  //     greenColorShade,
+  //     iconGray,
+  //     lightSchemeGray,
+  //     navLinkActiveShade,
+  //     navLinkHoverShade,
+  //     orangeColorShade,
+  //     redColorShade,
+  //     sliderLabelColor,
+  //     textColor,
+  //     themeColorShade,
+  //     themeColorShades,
+  //     yellowColorShade,
+  // };
 
-    // // app colors
-    // const borderColor = colorScheme === "light"
-    //     ? `1px solid ${gray[3]}`
-    //     : `1px solid ${gray[8]}`;
-    // const backgroundColor = colorScheme === "light"
-    //     // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
-    //     ? "#f5f5f5"
-    //     : dark[6];
-    // const redBorderColor = `1px solid ${redColorShade}`;
-    // const appThemeColors = {
-    //     borderColor,
-    //     backgroundColor,
-    //     redBorderColor,
-    // };
+  // // app colors
+  // const borderColor = colorScheme === "light"
+  //     ? `1px solid ${gray[3]}`
+  //     : `1px solid ${gray[8]}`;
+  // const backgroundColor = colorScheme === "light"
+  //     // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
+  //     ? "#f5f5f5"
+  //     : dark[6];
+  // const redBorderColor = `1px solid ${redColorShade}`;
+  // const appThemeColors = {
+  //     borderColor,
+  //     backgroundColor,
+  //     redBorderColor,
+  // };
 
-    // // for table display
-    // const tableHeadersBgColor = colorScheme === "light" ? gray[4] : gray[8];
-    // const headersIconColor = colorScheme === "light" ? gray[5] : gray[7];
-    // const headerBorderColor = colorScheme === "light"
-    //     ? `2px solid ${gray[2]}`
-    //     : `2px solid ${gray[7]}`;
-    // const rowsBorderColor = colorScheme === "light"
-    //     ? `1px solid ${gray[2]}`
-    //     : `1px solid ${gray[8]}`;
-    // const textHighlightColor = colorScheme === "light" ? gray[3] : gray[6];
-    // const tablesThemeColors = {
-    //     tableHeadersBgColor,
-    //     headerBorderColor,
-    //     headersIconColor,
-    //     rowsBorderColor,
-    //     textHighlightColor,
-    // };
+  // // for table display
+  // const tableHeadersBgColor = colorScheme === "light" ? gray[4] : gray[8];
+  // const headersIconColor = colorScheme === "light" ? gray[5] : gray[7];
+  // const headerBorderColor = colorScheme === "light"
+  //     ? `2px solid ${gray[2]}`
+  //     : `2px solid ${gray[7]}`;
+  // const rowsBorderColor = colorScheme === "light"
+  //     ? `1px solid ${gray[2]}`
+  //     : `1px solid ${gray[8]}`;
+  // const textHighlightColor = colorScheme === "light" ? gray[3] : gray[6];
+  // const tablesThemeColors = {
+  //     tableHeadersBgColor,
+  //     headerBorderColor,
+  //     headersIconColor,
+  //     rowsBorderColor,
+  //     textHighlightColor,
+  // };
 
-    // // directory graph colors
-    // const edgeStrokeColor = colorScheme === "light" ? dark[5] : gray[8];
-    // const nodeBackgroundColor = colorScheme === "light"
-    //     // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
-    //     ? "#f5f5f5"
-    //     : dark[6];
-    // const nodeBorderColor = colorScheme === "light"
-    //     ? `1px solid ${dark[1]}`
-    //     : `1px solid ${gray[8]}`;
-    // const nodeTextColor = colorScheme === "light" ? gray[8] : gray[5];
-    // const directoryGraphThemeColors = {
-    //     edgeStrokeColor,
-    //     nodeBackgroundColor,
-    //     nodeBorderColor,
-    //     nodeTextColor,
-    // };
+  // // directory graph colors
+  // const edgeStrokeColor = colorScheme === "light" ? dark[5] : gray[8];
+  // const nodeBackgroundColor = colorScheme === "light"
+  //     // ? 'radial-gradient(circle, #f9f9f9 50%, #f5f5f5 100%)'
+  //     ? "#f5f5f5"
+  //     : dark[6];
+  // const nodeBorderColor = colorScheme === "light"
+  //     ? `1px solid ${dark[1]}`
+  //     : `1px solid ${gray[8]}`;
+  // const nodeTextColor = colorScheme === "light" ? gray[8] : gray[5];
+  // const directoryGraphThemeColors = {
+  //     edgeStrokeColor,
+  //     nodeBackgroundColor,
+  //     nodeBorderColor,
+  //     nodeTextColor,
+  // };
 
-    // for ScrollArea styles
-    const scrollBarStyle = {
-        scrollbar: {
-            "&, &:hover": {
-                background: colorScheme === "dark" ? dark[6] : gray[0],
-            },
+  // for ScrollArea styles
+  const scrollBarStyle = {
+    scrollbar: {
+      "&, &:hover": {
+        background: colorScheme === "dark" ? dark[6] : gray[0],
+      },
 
-            '&[data-orientation="vertical"] .mantine-ScrollArea-thumb': {
-                backgroundColor: themeColorShade,
-            },
+      '&[data-orientation="vertical"] .mantine-ScrollArea-thumb': {
+        backgroundColor: themeColorShade,
+      },
 
-            '&[data-orientation="horizontal"] .mantine-ScrollArea-thumb': {
-                backgroundColor: themeColorShade,
-            },
-        },
+      '&[data-orientation="horizontal"] .mantine-ScrollArea-thumb': {
+        backgroundColor: themeColorShade,
+      },
+    },
 
-        corner: {
-            opacity: 1,
-            background: colorScheme === "dark" ? dark[6] : gray[0],
-        },
-    };
+    corner: {
+      opacity: 1,
+      background: colorScheme === "dark" ? dark[6] : gray[0],
+    },
+  };
 
-    return {
-        backgroundColor,
-        blueColorShade,
-        cyanColorShade,
-        darkColorShade,
-        grapeColorShade,
-        grayBorderShade,
-        grayColorShade,
-        greenColorShade,
-        indigoColorShade,
-        limeColorShade,
-        orangeColorShade,
-        pinkColorShade,
-        redColorShade,
-        scrollBarStyle,
-        tealColorShade,
-        textColor,
-        textColorSliderLabel,
-        themeColorShade,
-        themeColorShades,
-        violetColorShade,
-        yellowColorShade,
-    };
+  return {
+    backgroundColor,
+    blueColorShade,
+    cyanColorShade,
+    darkColorShade,
+    grapeColorShade,
+    grayBorderShade,
+    grayColorShade,
+    greenColorShade,
+    indigoColorShade,
+    limeColorShade,
+    orangeColorShade,
+    pinkColorShade,
+    redColorShade,
+    scrollBarStyle,
+    tealColorShade,
+    textColor,
+    textColorSliderLabel,
+    themeColorShade,
+    themeColorShades,
+    violetColorShade,
+    yellowColorShade,
+  };
 }
 
 /**
  * @description creates marks for slider wrapper component
  */
 function returnSliderMarks({
-    max,
-    min,
-    precision = 0,
-    steps = 2,
-    symbol = "",
+  max,
+  min,
+  precision = 0,
+  steps = 2,
+  symbol = "",
 }: {
-    max: number;
-    min: number;
-    steps?: number;
-    precision?: number;
-    symbol?: string;
+  max: number;
+  min: number;
+  steps?: number;
+  precision?: number;
+  symbol?: string;
 }): { value: number; label: string }[] {
-    const step = (max - min) / steps;
+  const step = (max - min) / steps;
 
-    return Array.from({ length: steps + 1 }, (_, i) => {
-        const value = min + step * i;
-        const valueFormatted = value.toFixed(precision);
+  return Array.from({ length: steps + 1 }, (_, i) => {
+    const value = min + step * i;
+    const valueFormatted = value.toFixed(precision);
 
-        return {
-            value: Number.parseInt(valueFormatted),
-            label: `${valueFormatted}${symbol}`,
-        };
-    });
+    return {
+      value: Number.parseInt(valueFormatted),
+      label: `${valueFormatted}${symbol}`,
+    };
+  });
 }
 
 /**
  * @description replaces hyphens & underscores with spaces and capitalizes the first letter of each word
  */
 function splitWordIntoUpperCasedSentence(sentence: string): string {
-    return sentence
-        .replace(/[-_]/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+  return sentence
+    .replace(/[-_]/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 export {
-    addCommaSeparator,
-    capitalizeAll,
-    capitalizeJoinWithAnd,
-    captureScreenshot,
-    formatDate,
-    removeUndefinedAndNull,
-    replaceLastCommaWithAnd,
-    replaceLastCommaWithOr,
-    returnSliderMarks,
-    returnThemeColors,
-    returnTimeToRead,
-    splitCamelCase,
-    splitWordIntoUpperCasedSentence,
-    toFixedFloat,
+  addCommaSeparator,
+  capitalizeAll,
+  capitalizeJoinWithAnd,
+  captureScreenshot,
+  formatDate,
+  removeUndefinedAndNull,
+  replaceLastCommaWithAnd,
+  replaceLastCommaWithOr,
+  returnSliderMarks,
+  returnThemeColors,
+  returnTimeToRead,
+  splitCamelCase,
+  splitWordIntoUpperCasedSentence,
+  toFixedFloat,
 };

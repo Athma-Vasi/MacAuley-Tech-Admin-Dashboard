@@ -112,7 +112,7 @@ function NewReturning({
   const pieChartYAxisVariableSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA as any,
+        data: CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
         name: "Y-Axis Pie",
         parentDispatch: newReturningDispatch,
         validValueAction:

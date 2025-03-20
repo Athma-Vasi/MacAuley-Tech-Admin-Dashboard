@@ -8,12 +8,12 @@ type RUSState = {
 
 type RUSDispatch =
   | {
-      action: RUSAction["setBarChartYAxisVariable"];
-      payload: ProductMetricsChartKey;
-    }
+    action: RUSAction["setBarChartYAxisVariable"];
+    payload: ProductMetricsChartKey;
+  }
   | {
-      action: RUSAction["setLineChartYAxisVariable"];
-      payload: ProductMetricsChartKey;
-    };
+    action: RUSAction["setLineChartYAxisVariable"];
+    payload: ProductMetricsChartKey;
+  };
 
 export type { RUSDispatch, RUSState };

@@ -16,25 +16,25 @@ type RepairMetricsState = {
 
 type RepairMetricsDispatch =
   | {
-      action: RepairMetricsAction["setCards"];
-      payload: RepairMetricsCards;
-    }
+    action: RepairMetricsAction["setCards"];
+    payload: RepairMetricsCards;
+  }
   | {
-      action: RepairMetricsAction["setSubMetric"];
-      payload: RepairSubMetric;
-    }
+    action: RepairMetricsAction["setSubMetric"];
+    payload: RepairSubMetric;
+  }
   | {
-      action: RepairMetricsAction["setCharts"];
-      payload: RepairMetricsCharts;
-    }
+    action: RepairMetricsAction["setCharts"];
+    payload: RepairMetricsCharts;
+  }
   | {
-      action: RepairMetricsAction["setRepairCategory"];
-      payload: RepairMetricCategory;
-    }
+    action: RepairMetricsAction["setRepairCategory"];
+    payload: RepairMetricCategory;
+  }
   | {
-      action: RepairMetricsAction["setIsGenerating"];
-      payload: boolean;
-    };
+    action: RepairMetricsAction["setIsGenerating"];
+    payload: boolean;
+  };
 
 export type {
   RepairMetricCategory,

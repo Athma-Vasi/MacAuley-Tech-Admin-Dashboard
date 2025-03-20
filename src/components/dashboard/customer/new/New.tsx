@@ -1,11 +1,10 @@
+import { Stack } from "@mantine/core";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator, splitCamelCase } from "../../../../utils";
+import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -17,7 +16,7 @@ import {
 } from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
-import type {
+import {
   BusinessMetricStoreLocation,
   DashboardCalendarView,
   DashboardMetricsView,
@@ -33,26 +32,24 @@ import {
   createStatisticsElements,
   returnCardElementsForYAxisVariable,
 } from "../../utilsTSX";
+import { CustomerMetricsCards, returnCustomerMetricsCardsMap } from "../cards";
 import {
-  type CustomerMetricsCards,
-  returnCustomerMetricsCardsMap,
-} from "../cards";
-import {
-  type CustomerMetricsCharts,
-  type CustomerMetricsChurnRetentionChartsKey,
+  CustomerMetricsCharts,
+  CustomerMetricsNewReturningChartsKey,
   returnCalendarViewCustomerCharts,
 } from "../chartsData";
 import {
-  CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
-  CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
-  CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
+  CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
+  CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
+  CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
-import type { CustomerMetricsCategory } from "../types";
-import { churnRetentionAction } from "./actions";
-import { churnRetentionReducer } from "./reducers";
-import { initialChurnRetentionState } from "./state";
+import { CustomerMetricsCategory } from "../types";
+import { newAction } from "./actions";
+import { newReducer } from "./reducers";
+import { initialNewState } from "./state";
 
-type ChurnRetentionProps = {
+type NewProps = {
   calendarView: DashboardCalendarView;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
@@ -64,37 +61,41 @@ type ChurnRetentionProps = {
   year: Year;
 };
 
-function ChurnRetention({
-  calendarView,
-  customerMetricsCards,
-  customerMetricsCharts,
-  day,
-  metricCategory,
-  metricsView,
-  month,
-  storeLocation,
-  year,
-}: ChurnRetentionProps) {
+function New(
+  {
+    calendarView,
+    customerMetricsCards,
+    customerMetricsCharts,
+    day,
+    metricCategory,
+    metricsView,
+    month,
+    storeLocation,
+    year,
+  }: NewProps,
+) {
   const { globalDispatch } = useGlobalState();
   const navigate = useNavigate();
 
-  const [churnRetentionState, churnRetentionDispatch] = React.useReducer(
-    churnRetentionReducer,
-    initialChurnRetentionState,
+  const [newState, newDispatch] = React.useReducer(
+    newReducer,
+    initialNewState,
   );
 
   const {
     barLineChartKind,
     barLineChartYAxisVariable,
     calendarChartYAxisVariable,
-  } = churnRetentionState;
+    pieChartYAxisVariable,
+  } = newState;
 
   const charts = returnCalendarViewCustomerCharts(
     calendarView,
     customerMetricsCharts,
   );
+
   const {
-    churnRetention: { bar: barCharts, line: lineCharts, pie: pieCharts },
+    new: { bar: barCharts, line: lineCharts, pie: pieCharts },
   } = charts;
 
   const {
@@ -102,7 +103,11 @@ function ChurnRetention({
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
-  } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
+  } = createExpandChartNavigateLinks(
+    metricsView,
+    calendarView,
+    metricCategory,
+  );
 
   const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({
@@ -127,7 +132,7 @@ function ChurnRetention({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
               chartKind: "pie",
-              chartData: pieCharts,
+              chartData: pieCharts[pieChartYAxisVariable],
               chartTitle: pieChartHeading,
               chartUnitKind: "number",
             },
@@ -139,9 +144,21 @@ function ChurnRetention({
     />
   );
 
+  const pieChartYAxisVariableSelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
+        name: "Y-Axis Pie",
+        parentDispatch: newDispatch,
+        validValueAction: newAction.setPieChartYAxisVariable,
+        value: pieChartYAxisVariable,
+      }}
+    />
+  );
+
   const pieChart = (
     <ResponsivePieChart
-      pieChartData={pieCharts}
+      pieChartData={pieCharts[pieChartYAxisVariable]}
       hideControls
       unitKind="number"
     />
@@ -152,8 +169,8 @@ function ChurnRetention({
       attributes={{
         data: CHART_KIND_DATA,
         name: "chartKind",
-        parentDispatch: churnRetentionDispatch,
-        validValueAction: churnRetentionAction.setBarLineChartKind,
+        parentDispatch: newDispatch,
+        validValueAction: newAction.setBarLineChartKind,
         value: barLineChartKind,
         defaultValue: "bar",
       }}
@@ -195,10 +212,10 @@ function ChurnRetention({
   const barLineChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
+        data: CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
         name: "Y-Axis Bar",
-        parentDispatch: churnRetentionDispatch,
-        validValueAction: churnRetentionAction.setBarLineChartYAxisVariable,
+        parentDispatch: newDispatch,
+        validValueAction: newAction.setBarLineChartYAxisVariable,
         value: barLineChartYAxisVariable,
       }}
     />
@@ -214,7 +231,9 @@ function ChurnRetention({
           : calendarView === "Monthly"
           ? "Months"
           : "Years"}
-        keys={CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA.map((obj) => obj.label)}
+        keys={CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA.map((obj) =>
+          obj.label
+        )}
         unitKind="number"
       />
     )
@@ -267,10 +286,10 @@ function ChurnRetention({
     ? (
       <AccessibleSelectInput
         attributes={{
-          data: CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
+          data: CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
           name: "Y-Axis Pie",
-          parentDispatch: churnRetentionDispatch,
-          validValueAction: churnRetentionAction.setCalendarChartYAxisVariable,
+          parentDispatch: newDispatch,
+          validValueAction: newAction.setCalendarChartYAxisVariable,
           value: calendarChartYAxisVariable,
         }}
       />
@@ -289,7 +308,7 @@ function ChurnRetention({
     : null;
 
   const statisticsMap = returnStatistics<
-    CustomerMetricsChurnRetentionChartsKey
+    CustomerMetricsNewReturningChartsKey
   >(
     barCharts,
   );
@@ -314,31 +333,15 @@ function ChurnRetention({
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
     barLineChartYAxisVariable,
-    CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
+    CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  // console.group("ChurnRetention");
-  // console.log("customerMetricsCards", customerMetricsCards);
-  // console.log("metricCategory", metricCategory);
+  console.group("NEW");
+  console.log("statisticsMap", statisticsMap);
   console.log("cardsMap", cardsMap);
-  // console.log("statisticsMap", statisticsMap);
-  // console.log("statisticsElementsMap", statisticsElementsMap);
-  // console.log("consolidatedCards", consolidatedCards);
-  // console.log("barLineChartKind", barLineChartKind);
-  // console.log("barLineChartYAxisVariable", barLineChartYAxisVariable);
-  // console.log("calendarChartYAxisVariable", calendarChartYAxisVariable);
-  // console.log("calendarView", calendarView);
-  // console.log("metricsView", metricsView);
-  // console.log("storeLocation", storeLocation);
-  // console.log("year", year);
-  // console.log("month", month);
-  // console.log("day", day);
-  // console.log("barCharts", barCharts);
-  // console.log("barChartData", barCharts[barLineChartYAxisVariable]);
-  // console.log("lineChartData", lineCharts[barLineChartYAxisVariable]);
-  // console.log("lineCharts", lineCharts);
-  // console.log("pieCharts", pieCharts);
-  // console.groupEnd();
+  console.log("statisticsElementsMap", statisticsElementsMap);
+  console.log("consolidatedCards", consolidatedCards);
+  console.groupEnd();
 
   return (
     <Stack>
@@ -356,12 +359,13 @@ function ChurnRetention({
         expandCalendarChartButton={expandCalendarChartButton}
         pieChart={pieChart}
         expandPieChartButton={expandPieChartButton}
+        pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
         pieChartHeading={pieChartHeading}
-        sectionHeading="Churn Retention"
+        sectionHeading="Customer New"
         semanticLabel="Churn Retention"
       />
     </Stack>
   );
 }
 
-export { ChurnRetention };
+export default New;

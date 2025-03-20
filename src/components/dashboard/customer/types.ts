@@ -13,20 +13,24 @@ type CustomerMetricsState = {
 
 type CustomerMetricsDispatch =
   | {
-      action: CustomerMetricsAction["setCards"];
-      payload: CustomerMetricsCards;
-    }
+    action: CustomerMetricsAction["setCards"];
+    payload: CustomerMetricsCards;
+  }
   | {
-      action: CustomerMetricsAction["setCategory"];
-      payload: CustomerMetricsCategory;
-    }
+    action: CustomerMetricsAction["setCategory"];
+    payload: CustomerMetricsCategory;
+  }
   | {
-      action: CustomerMetricsAction["setCharts"];
-      payload: CustomerMetricsCharts;
-    }
+    action: CustomerMetricsAction["setCharts"];
+    payload: CustomerMetricsCharts;
+  }
   | {
-      action: CustomerMetricsAction["setIsGenerating"];
-      payload: boolean;
-    };
+    action: CustomerMetricsAction["setIsGenerating"];
+    payload: boolean;
+  };
 
-export type { CustomerMetricsCategory, CustomerMetricsDispatch, CustomerMetricsState };
+export type {
+  CustomerMetricsCategory,
+  CustomerMetricsDispatch,
+  CustomerMetricsState,
+};

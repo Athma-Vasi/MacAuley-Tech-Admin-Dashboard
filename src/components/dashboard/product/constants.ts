@@ -13,13 +13,21 @@ const PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA: CheckboxRadioSelectData = [
   { label: "In Store", value: "inStore" },
 ];
 
-const PRODUCT_METRIC_CATEGORY_DATA: CheckboxRadioSelectData<ProductMetricCategory> = [
+const PRODUCT_METRIC_CATEGORY_DATA: CheckboxRadioSelectData<
+  ProductMetricCategory
+> = [
   { label: "All Products", value: "All Products" },
   { label: "Accessory", value: "Accessory" },
-  { label: "Central Processing Unit (CPU)", value: "Central Processing Unit (CPU)" },
+  {
+    label: "Central Processing Unit (CPU)",
+    value: "Central Processing Unit (CPU)",
+  },
   { label: "Computer Case", value: "Computer Case" },
   { label: "Display", value: "Display" },
-  { label: "Graphics Processing Unit (GPU)", value: "Graphics Processing Unit (GPU)" },
+  {
+    label: "Graphics Processing Unit (GPU)",
+    value: "Graphics Processing Unit (GPU)",
+  },
   { label: "Headphone", value: "Headphone" },
   { label: "Keyboard", value: "Keyboard" },
   { label: "Memory (RAM)", value: "Memory (RAM)" },

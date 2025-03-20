@@ -22,6 +22,7 @@ import {
 } from "./chartsData";
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
 import { CUSTOMER_METRICS_CATEGORY_DATA } from "./constants";
+import New from "./new/New";
 import NewReturning from "./newReturning/NewReturning";
 import { customerMetricsReducer } from "./reducers";
 import { initialCustomerMetricsState } from "./state";
@@ -166,6 +167,22 @@ function CustomerMetrics({
     />
   );
 
+  const newCustomers = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+    <React.Fragment key={idx}>
+      <New
+        calendarView={calendarView}
+        customerMetricsCards={cards}
+        customerMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory="new"
+        metricsView="Customers"
+        storeLocation={storeLocationView}
+        year={selectedYear}
+      />
+    </React.Fragment>
+  ));
+
   const churnRetention = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
       <ChurnRetention
@@ -203,7 +220,9 @@ function CustomerMetrics({
     <Stack>
       {loadingOverlay}
       {categorySegmentedControl}
-      {category === "new" || category === "returning"
+      {category === "new"
+        ? newCustomers
+        : category === "returning"
         ? newReturning
         : churnRetention}
     </Stack>

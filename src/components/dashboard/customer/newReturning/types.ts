@@ -12,14 +12,14 @@ type NewReturningState = {
 
 type NewReturningDispatch =
   | {
-      action:
-        | NewReturningAction["setNewReturningBarChartYAxisVariable"]
-        | NewReturningAction["setNewReturningLineChartYAxisVariable"];
-      payload: CustomerMetricsNewReturningChartsKey;
-    }
+    action:
+      | NewReturningAction["setNewReturningBarChartYAxisVariable"]
+      | NewReturningAction["setNewReturningLineChartYAxisVariable"];
+    payload: CustomerMetricsNewReturningChartsKey;
+  }
   | {
-      action: NewReturningAction["setNewReturningPieChartYAxisVariable"];
-      payload: CustomerMetricsNewReturningPieChartsKey;
-    };
+    action: NewReturningAction["setNewReturningPieChartYAxisVariable"];
+    payload: CustomerMetricsNewReturningPieChartsKey;
+  };
 
 export type { NewReturningDispatch, NewReturningState };

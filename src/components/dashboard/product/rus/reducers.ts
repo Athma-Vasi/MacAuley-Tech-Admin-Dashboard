@@ -16,14 +16,14 @@ const rusReducers = new Map<
 
 function rusReducer_setBarChartYAxisVariable(
   state: RUSState,
-  dispatch: RUSDispatch
+  dispatch: RUSDispatch,
 ): RUSState {
   return { ...state, barChartYAxisVariable: dispatch.payload };
 }
 
 function rusReducer_setLineChartYAxisVariable(
   state: RUSState,
-  dispatch: RUSDispatch
+  dispatch: RUSDispatch,
 ): RUSState {
   return { ...state, lineChartYAxisVariable: dispatch.payload };
 }

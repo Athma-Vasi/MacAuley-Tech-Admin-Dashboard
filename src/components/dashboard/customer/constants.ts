@@ -72,18 +72,48 @@ const CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
   CustomerMetricsNewReturningChartsKey,
   Set<string>
 >([
-  ["total", new Set(["Total", ""])],
-  ["sales", new Set(["Sales"])],
-  ["online", new Set(["Online"])],
-  ["inStore", new Set(["In Store"])],
+  ["overview", new Set(["Total New", "Sales", "Repair"])],
+  [
+    "all",
+    new Set(["Total New", "Sales", "Sales Online", "Sales In-Store", "Repair"]),
+  ],
+  ["total", new Set(["Total New"])],
+  ["sales", new Set(["Sales", "Sales Online", "Sales In-Store"])],
+  ["online", new Set(["Sales Online"])],
+  ["inStore", new Set(["Sales In-Store"])],
+  ["repair", new Set(["Repair"])],
+]);
+
+const CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
+  CustomerMetricsNewReturningChartsKey,
+  Set<string>
+>([
+  ["overview", new Set(["Total Returning", "Sales", "Repair"])],
+  [
+    "all",
+    new Set([
+      "Total Returning",
+      "Sales",
+      "Sales Online",
+      "Sales In-Store",
+      "Repair",
+    ]),
+  ],
+  ["total", new Set(["Total Returning"])],
+  ["sales", new Set(["Sales", "Sales Online", "Sales In-Store"])],
+  ["online", new Set(["Sales Online"])],
+  ["inStore", new Set(["Sales In-Store"])],
   ["repair", new Set(["Repair"])],
 ]);
 
 export {
   CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
   CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
+  CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
   CUSTOMER_METRICS_CATEGORY_DATA,
   CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
+  CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
 };

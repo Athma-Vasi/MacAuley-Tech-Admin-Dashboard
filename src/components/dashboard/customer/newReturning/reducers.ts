@@ -7,7 +7,7 @@ import { NewReturningDispatch, NewReturningState } from "./types";
 
 function newReturningReducer(
   state: NewReturningState,
-  dispatch: NewReturningDispatch
+  dispatch: NewReturningDispatch,
 ): NewReturningState {
   const reducer = newReturningReducers.get(dispatch.action);
   return reducer ? reducer(state, dispatch) : state;
@@ -15,7 +15,10 @@ function newReturningReducer(
 
 const newReturningReducers = new Map<
   NewReturningAction[keyof NewReturningAction],
-  (state: NewReturningState, dispatch: NewReturningDispatch) => NewReturningState
+  (
+    state: NewReturningState,
+    dispatch: NewReturningDispatch,
+  ) => NewReturningState
 >([
   [
     newReturningAction.setNewReturningBarChartYAxisVariable,
@@ -33,34 +36,34 @@ const newReturningReducers = new Map<
 
 function newReturningReducer_setNewReturningBarChartYAxisVariable(
   state: NewReturningState,
-  dispatch: NewReturningDispatch
+  dispatch: NewReturningDispatch,
 ): NewReturningState {
   return {
     ...state,
-    newReturningBarChartYAxisVariable:
-      dispatch.payload as CustomerMetricsNewReturningChartsKey,
+    newReturningBarChartYAxisVariable: dispatch
+      .payload as CustomerMetricsNewReturningChartsKey,
   };
 }
 
 function newReturningReducer_setNewReturningLineChartYAxisVariable(
   state: NewReturningState,
-  dispatch: NewReturningDispatch
+  dispatch: NewReturningDispatch,
 ): NewReturningState {
   return {
     ...state,
-    newReturningLineChartYAxisVariable:
-      dispatch.payload as CustomerMetricsNewReturningChartsKey,
+    newReturningLineChartYAxisVariable: dispatch
+      .payload as CustomerMetricsNewReturningChartsKey,
   };
 }
 
 function newReturningReducer_setNewReturningPieChartYAxisVariable(
   state: NewReturningState,
-  dispatch: NewReturningDispatch
+  dispatch: NewReturningDispatch,
 ): NewReturningState {
   return {
     ...state,
-    newReturningPieChartYAxisVariable:
-      dispatch.payload as CustomerMetricsNewReturningPieChartsKey,
+    newReturningPieChartYAxisVariable: dispatch
+      .payload as CustomerMetricsNewReturningPieChartsKey,
   };
 }
 

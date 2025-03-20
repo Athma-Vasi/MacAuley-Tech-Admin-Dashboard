@@ -9,7 +9,7 @@ import {
 
 function customerMetricsReducer(
   state: CustomerMetricsState,
-  dispatch: CustomerMetricsDispatch
+  dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
   const reducer = customerMetricsReducers.get(dispatch.action);
   return reducer ? reducer(state, dispatch) : state;
@@ -17,17 +17,23 @@ function customerMetricsReducer(
 
 const customerMetricsReducers = new Map<
   CustomerMetricsAction[keyof CustomerMetricsAction],
-  (state: CustomerMetricsState, dispatch: CustomerMetricsDispatch) => CustomerMetricsState
+  (
+    state: CustomerMetricsState,
+    dispatch: CustomerMetricsDispatch,
+  ) => CustomerMetricsState
 >([
   [customerMetricsAction.setCards, customerMetricsReducer_setCards],
   [customerMetricsAction.setCategory, customerMetricsReducer_setCategory],
   [customerMetricsAction.setCharts, customerMetricsReducer_setCharts],
-  [customerMetricsAction.setIsGenerating, customerMetricsReducer_setIsGenerating],
+  [
+    customerMetricsAction.setIsGenerating,
+    customerMetricsReducer_setIsGenerating,
+  ],
 ]);
 
 function customerMetricsReducer_setCards(
   state: CustomerMetricsState,
-  dispatch: CustomerMetricsDispatch
+  dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
   return {
     ...state,
@@ -37,7 +43,7 @@ function customerMetricsReducer_setCards(
 
 function customerMetricsReducer_setCategory(
   state: CustomerMetricsState,
-  dispatch: CustomerMetricsDispatch
+  dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
   return {
     ...state,
@@ -47,7 +53,7 @@ function customerMetricsReducer_setCategory(
 
 function customerMetricsReducer_setCharts(
   state: CustomerMetricsState,
-  dispatch: CustomerMetricsDispatch
+  dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
   return {
     ...state,
@@ -57,7 +63,7 @@ function customerMetricsReducer_setCharts(
 
 function customerMetricsReducer_setIsGenerating(
   state: CustomerMetricsState,
-  dispatch: CustomerMetricsDispatch
+  dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
   return {
     ...state,
