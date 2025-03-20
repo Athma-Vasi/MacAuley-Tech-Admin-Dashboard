@@ -122,6 +122,16 @@ function PERT({
     expandPieChartNavigateLink,
   } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
 
+  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+    returnChartTitles({
+      barLineChartYAxisVariable,
+      calendarView,
+      metricCategory,
+      storeLocation,
+      calendarChartYAxisVariable,
+      pieChartYAxisVariable,
+    });
+
   const pieChartYAxisVariableSelectInput = (
     <AccessibleSelectInput
       attributes={{
@@ -149,7 +159,7 @@ function PERT({
             payload: {
               chartKind: "pie",
               chartData: pieCharts[pieChartYAxisVariable],
-              chartTitle: "Pie Chart",
+              chartTitle: pieChartHeading,
               chartUnitKind: "number",
             },
           });
@@ -198,7 +208,7 @@ function PERT({
               chartData: barLineChartKind === "bar"
                 ? barCharts[barLineChartYAxisVariable]
                 : lineCharts[barLineChartYAxisVariable],
-              chartTitle: "TODO",
+              chartTitle: barLineChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
@@ -259,46 +269,11 @@ function PERT({
       />
     );
 
-  const selectedCards = returnFinancialMetricsCards(
-    financialMetricsCards,
-    calendarView,
-    metricCategory,
-  );
-
-  const statisticsMap = returnStatistics(barCharts);
-
-  const statisticsElementsMap = createFinancialStatisticsElements(
-    calendarView,
-    metricCategory,
-    "pert",
-    statisticsMap,
-    storeLocation,
-  );
-
-  const consolidatedCards = consolidateCardsAndStatistics(
-    selectedCards,
-    statisticsElementsMap,
-  );
-
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
     calendarChartYAxisVariable,
     metricCategory,
   );
-
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    barLineChartYAxisVariable,
-    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
-
-  console.group("PERT");
-  console.log("selectedCards", selectedCards);
-  console.log("statisticsMap", statisticsMap);
-  console.log("statisticsElementsMap", statisticsElementsMap);
-  console.log("consolidatedCards", consolidatedCards);
-  console.log("calendarChartData", calendarChartData);
-  console.groupEnd();
 
   const expandCalendarChartButton = calendarView === "Yearly"
     ? (
@@ -316,7 +291,7 @@ function PERT({
               payload: {
                 chartKind: "calendar",
                 chartData: calendarChartData,
-                chartTitle: "TODO",
+                chartTitle: calendarChartHeading,
                 chartUnitKind: "number",
               } as CustomizeChartsPageData,
             });
@@ -353,15 +328,32 @@ function PERT({
     )
     : null;
 
-  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
-    returnChartTitles({
-      barLineChartYAxisVariable,
-      calendarView,
-      metricCategory,
-      storeLocation,
-      calendarChartYAxisVariable,
-      pieChartYAxisVariable,
-    });
+  const selectedCards = returnFinancialMetricsCards(
+    financialMetricsCards,
+    calendarView,
+    metricCategory,
+  );
+
+  const statisticsMap = returnStatistics(barCharts);
+
+  const statisticsElementsMap = createFinancialStatisticsElements(
+    calendarView,
+    metricCategory,
+    "pert",
+    statisticsMap,
+    storeLocation,
+  );
+
+  const consolidatedCards = consolidateCardsAndStatistics(
+    selectedCards,
+    statisticsElementsMap,
+  );
+
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    barLineChartYAxisVariable,
+    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  );
 
   return (
     <Stack>
