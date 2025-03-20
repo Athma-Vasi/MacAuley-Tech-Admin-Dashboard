@@ -139,7 +139,7 @@ type LocationYearSpread = Record<
   Record<string, [number, number]>
 >;
 
-type FinancialMetricCategory = {
+type FinancialMetricCategories = {
   total: number;
   repair: number;
   sales: {
@@ -155,10 +155,10 @@ type YearlyFinancialMetric = {
   conversionRate: number;
   netProfitMargin: number;
 
-  expenses: FinancialMetricCategory;
-  profit: FinancialMetricCategory;
-  revenue: FinancialMetricCategory;
-  transactions: FinancialMetricCategory;
+  expenses: FinancialMetricCategories;
+  profit: FinancialMetricCategories;
+  revenue: FinancialMetricCategories;
+  transactions: FinancialMetricCategories;
 
   monthlyMetrics: MonthlyFinancialMetric[];
 };
@@ -169,10 +169,10 @@ type MonthlyFinancialMetric = {
   conversionRate: number;
   netProfitMargin: number;
 
-  expenses: FinancialMetricCategory;
-  profit: FinancialMetricCategory;
-  revenue: FinancialMetricCategory;
-  transactions: FinancialMetricCategory;
+  expenses: FinancialMetricCategories;
+  profit: FinancialMetricCategories;
+  revenue: FinancialMetricCategories;
+  transactions: FinancialMetricCategories;
 
   dailyMetrics: DailyFinancialMetric[];
 };
@@ -183,10 +183,10 @@ type DailyFinancialMetric = {
   conversionRate: number;
   netProfitMargin: number;
 
-  expenses: FinancialMetricCategory;
-  profit: FinancialMetricCategory;
-  revenue: FinancialMetricCategory;
-  transactions: FinancialMetricCategory;
+  expenses: FinancialMetricCategories;
+  profit: FinancialMetricCategories;
+  revenue: FinancialMetricCategories;
+  transactions: FinancialMetricCategories;
 };
 
 type CustomerMetrics = {
@@ -329,7 +329,7 @@ export type {
   DashboardRepairMetric,
   DashboardState,
   DaysInMonthsInYears,
-  FinancialMetricCategory,
+  FinancialMetricCategories,
   LocationYearSpread,
   Month,
   MonthlyFinancialMetric,

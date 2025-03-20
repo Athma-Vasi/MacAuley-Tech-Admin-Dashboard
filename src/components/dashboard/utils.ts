@@ -21,7 +21,7 @@ import type {
   DashboardCalendarView,
   DashboardMetricsView,
   DaysInMonthsInYears,
-  FinancialMetricCategory,
+  FinancialMetricCategories,
   LocationYearSpread,
   Month,
   MonthlyFinancialMetric,
@@ -2688,18 +2688,20 @@ async function createRandomFinancialMetrics({
                               return DAILY_FINANCIAL_METRICS_TEMPLATE;
                             }
 
-                            const dailyTransactions: FinancialMetricCategory = {
-                              total: dailyProductMetrics.unitsSold.total +
-                                dailyRepairMetrics.unitsRepaired,
-                              repair: dailyRepairMetrics.unitsRepaired,
-                              sales: {
-                                total: dailyProductMetrics.unitsSold.total,
-                                inStore: dailyProductMetrics.unitsSold.inStore,
-                                online: dailyProductMetrics.unitsSold.online,
-                              },
-                            };
+                            const dailyTransactions: FinancialMetricCategories =
+                              {
+                                total: dailyProductMetrics.unitsSold.total +
+                                  dailyRepairMetrics.unitsRepaired,
+                                repair: dailyRepairMetrics.unitsRepaired,
+                                sales: {
+                                  total: dailyProductMetrics.unitsSold.total,
+                                  inStore:
+                                    dailyProductMetrics.unitsSold.inStore,
+                                  online: dailyProductMetrics.unitsSold.online,
+                                },
+                              };
 
-                            const dailyRevenues: FinancialMetricCategory = {
+                            const dailyRevenues: FinancialMetricCategories = {
                               total: dailyProductMetrics.revenue.total +
                                 dailyRepairMetrics.revenue,
                               repair: dailyRepairMetrics.revenue,
@@ -2777,7 +2779,7 @@ async function createRandomFinancialMetrics({
                             const dailyInStoreProfit = dailySalesProfit -
                               dailyOnlineProfit;
 
-                            const dailyProfits: FinancialMetricCategory = {
+                            const dailyProfits: FinancialMetricCategories = {
                               total: dailyProfit,
                               repair: dailyRepairProfit,
                               sales: {
@@ -2823,7 +2825,7 @@ async function createRandomFinancialMetrics({
                             const dailyInStoreExpense = dailySalesExpense -
                               dailyOnlineExpense;
 
-                            const dailyExpenses: FinancialMetricCategory = {
+                            const dailyExpenses: FinancialMetricCategories = {
                               total: dailyExpense,
                               repair: dailyRepairExpense,
                               sales: {

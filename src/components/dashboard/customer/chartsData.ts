@@ -2403,11 +2403,12 @@ function returnSelectedCalendarCharts<
   const currentYearData =
     Object.entries(currentYearMetric).find(([key]) =>
       key === calendarChartYAxisVariable
-    )?.[1] ?? defaultValue as Array<{ day: string; value: number }>;
+    )?.[1] ?? defaultValue as CalendarChartData[];
+
   const previousYearData =
     Object.entries(previousYearMetric).find(([key]) =>
       key === calendarChartYAxisVariable
-    )?.[1] ?? defaultValue as Array<{ day: string; value: number }>;
+    )?.[1] ?? defaultValue as CalendarChartData[];
 
   return Array.isArray(currentYearData)
     ? currentYearData.concat(previousYearData)
