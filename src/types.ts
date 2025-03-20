@@ -373,6 +373,7 @@ export type {
   ColorScheme,
   Country,
   CustomerService,
+  DecodedToken,
   Department,
   ExecutiveManagement,
   FieldServiceTechnicians,

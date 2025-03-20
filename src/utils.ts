@@ -1,6 +1,8 @@
+import jwtDecode from "jwt-decode";
+import { Err, Ok } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
 import { ColorsSwatches } from "./constants";
-import { ThemeObject } from "./types";
+import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -384,6 +386,17 @@ function splitWordIntoUpperCasedSentence(sentence: string): string {
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
+  token: string,
+): Promise<SafeBoxResult<Decoded>> {
+  try {
+    const decoded: Decoded = jwtDecode(token);
+    return new Ok({ data: decoded, kind: "success" });
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
 }
 
 export {
