@@ -5,6 +5,7 @@ import {
   MantineTheme,
   MantineThemeOverride,
 } from "@mantine/core";
+import type { Result } from "ts-results";
 import { ValidationKey } from "./validations";
 
 type CheckboxRadioSelectData<Payload extends string = string> = Array<{
@@ -346,6 +347,25 @@ type JobPosition =
   | Accounting
   | Maintenance;
 
+type HttpServerResponse<Data = unknown> = {
+  accessToken: string;
+  data: Array<Data>;
+  kind: "error" | "success";
+  message: string;
+  pages: number;
+  status: number;
+  totalDocuments: number;
+  triggerLogout: boolean;
+};
+
+type SafeBox<Data = unknown> = {
+  data?: Data;
+  kind: "error" | "notFound" | "success";
+  message?: string;
+};
+
+type SafeBoxResult<Data = unknown> = Result<SafeBox<Data>, SafeBox>;
+
 export type {
   Accounting,
   CanadianPostalCode,
@@ -356,6 +376,7 @@ export type {
   Department,
   ExecutiveManagement,
   FieldServiceTechnicians,
+  HttpServerResponse,
   HumanResources,
   InformationTechnology,
   JobPosition,
@@ -368,6 +389,8 @@ export type {
   PreferredPronouns,
   Province,
   RepairTechnicians,
+  SafeBox,
+  SafeBoxResult,
   Sales,
   ScreenshotImageType,
   SetPageInErrorPayload,
