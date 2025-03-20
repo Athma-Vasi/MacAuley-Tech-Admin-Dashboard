@@ -15,7 +15,7 @@ const initialDashboardState: DashboardState = {
   calendarView: "Daily",
   customerMetric: "Overview",
   financialMetric: "Profit",
-  metricsView: "Customers",
+  metricsView: "Products",
   productMetric: "All Products",
   repairMetric: "All Repairs",
   storeLocationView: "All Locations",

@@ -1,19 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
+import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator } from "../../../../utils";
+import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
+import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
+  ResponsiveCalendarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
 } from "../../../charts";
-import DashboardMetricsLayout from "../../DashboardMetricsLayout";
-import { MONTHS } from "../../constants";
-import type { ProductMetricsCards } from "../../product/cards";
+import { CHART_KIND_DATA } from "../../constants";
+import DashboardBarLineLayout from "../../DashboardBarLineLayout";
+import {
+  type ProductMetricsCards,
+  returnProductMetricsCards,
+} from "../../product/cards";
 import type { ProductMetricsCharts } from "../../product/chartsData";
 import type {
   BusinessMetricStoreLocation,
@@ -21,8 +28,21 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import { returnChartTitleNavigateLinks, returnStatistics } from "../../utils";
-import { PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA } from "../constants";
+import {
+  createExpandChartNavigateLinks,
+  returnChartTitles,
+  returnStatistics,
+} from "../../utils";
+import {
+  consolidateCardsAndStatistics,
+  createStatisticsElements,
+  returnCardElementsForYAxisVariable,
+} from "../../utilsTSX";
+import {
+  PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA,
+  PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,
+} from "../constants";
 import type { ProductSubMetric } from "../types";
 import { rusAction } from "./actions";
 import { rusReducer } from "./reducers";
@@ -57,45 +77,64 @@ function RUS({
 
   const [rusState, rusDispatch] = React.useReducer(rusReducer, initialRUSState);
 
-  const { barChartYAxisVariable, lineChartYAxisVariable } = rusState;
+  const {
+    barLineChartKind,
+    barLineChartYAxisVariable,
+    calendarChartYAxisVariable,
+  } = rusState;
 
   const charts = calendarView === "Daily"
     ? productMetricsCharts.dailyCharts
     : calendarView === "Monthly"
     ? productMetricsCharts.monthlyCharts
     : productMetricsCharts.yearlyCharts;
+
   const {
     bar: barCharts,
     line: lineCharts,
     pie: pieCharts,
   } = subMetric === "revenue" ? charts.revenue : charts.unitsSold;
 
-  const statistics = returnStatistics(barCharts);
+  // const {
+  //   barChartHeading,
+  //   expandBarChartNavigateLink,
+  //   expandLineChartNavigateLink,
+  //   expandPieChartNavigateLink,
+  //   lineChartHeading,
+  //   pieChartHeading,
+  // } = returnChartTitleNavigateLinks({
+  //   calendarView,
+  //   metricCategory: subMetric,
+  //   metricsView,
+  //   storeLocation,
+  //   yAxisBarChartVariable: barChartYAxisVariable,
+  //   yAxisLineChartVariable: lineChartYAxisVariable,
+  //   year,
+  //   day,
+  //   month,
+  //   months: MONTHS,
+  // });
 
   const {
-    barChartHeading,
     expandBarChartNavigateLink,
+    expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
-    lineChartHeading,
-    pieChartHeading,
-  } = returnChartTitleNavigateLinks({
-    calendarView,
-    metricCategory: subMetric,
-    metricsView,
-    storeLocation,
-    yAxisBarChartVariable: barChartYAxisVariable,
-    yAxisLineChartVariable: lineChartYAxisVariable,
-    year,
-    day,
-    month,
-    months: MONTHS,
-  });
+  } = createExpandChartNavigateLinks(metricsView, calendarView, subMetric);
+
+  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+    returnChartTitles({
+      barLineChartYAxisVariable,
+      calendarView,
+      metricCategory: subMetric,
+      storeLocation,
+      calendarChartYAxisVariable,
+    });
 
   const expandPieChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: `Expand and customize ${pieChartHeading}`,
+        enabledScreenreaderText: "Expand and customize chart",
         kind: "expand",
         onClick: (
           _event:
@@ -118,7 +157,7 @@ function RUS({
     />
   );
 
-  const overviewPieChart = (
+  const pieChart = (
     <ResponsivePieChart
       pieChartData={pieCharts}
       hideControls
@@ -126,10 +165,23 @@ function RUS({
     />
   );
 
-  const expandBarChartButton = (
+  const barLineChartKindSegmentedControl = (
+    <AccessibleSegmentedControl
+      attributes={{
+        data: CHART_KIND_DATA,
+        name: "chartKind",
+        parentDispatch: rusDispatch,
+        validValueAction: rusAction.setBarLineChartKind,
+        value: barLineChartKind,
+        defaultValue: "bar",
+      }}
+    />
+  );
+
+  const expandBarLineChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: `Expand and customize ${barChartHeading}`,
+        enabledScreenreaderText: "Expand and customize chart",
         kind: "expand",
         onClick: (
           _event:
@@ -140,128 +192,189 @@ function RUS({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
               chartKind: "bar",
-              chartData: barCharts[barChartYAxisVariable],
-              chartTitle: barChartHeading,
+              chartData: barLineChartKind === "bar"
+                ? barCharts[barLineChartYAxisVariable]
+                : lineCharts[barLineChartYAxisVariable],
+              chartTitle: barLineChartHeading,
               chartUnitKind: "number",
-            },
+            } as CustomizeChartsPageData,
           });
 
-          navigate(expandBarChartNavigateLink);
+          navigate(
+            barLineChartKind === "bar"
+              ? expandBarChartNavigateLink
+              : expandLineChartNavigateLink,
+          );
         },
       }}
     />
   );
 
-  const barChartYAxisVariablesSelectInput = (
+  const barLineChartYAxisVariablesSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA as any,
+        data: PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: rusDispatch,
-        validValueAction: rusAction.setBarChartYAxisVariable,
-        value: barChartYAxisVariable,
+        validValueAction: rusAction.setBarLineChartYAxisVariable,
+        value: barLineChartYAxisVariable,
       }}
     />
   );
 
-  const overviewBarChart = (
-    <ResponsiveBarChart
-      barChartData={barCharts[barChartYAxisVariable]}
-      hideControls
-      indexBy={calendarView === "Daily"
-        ? "Days"
-        : calendarView === "Monthly"
-        ? "Months"
-        : "Years"}
-      keys={PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
-      unitKind="number"
-    />
+  const barLineChart = barLineChartKind === "bar"
+    ? (
+      <ResponsiveBarChart
+        barChartData={barCharts[barLineChartYAxisVariable]}
+        hideControls
+        indexBy={calendarView === "Daily"
+          ? "Days"
+          : calendarView === "Monthly"
+          ? "Months"
+          : "Years"}
+        keys={PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
+        unitKind="number"
+      />
+    )
+    : (
+      <ResponsiveLineChart
+        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        hideControls
+        xFormat={(x) =>
+          `${
+            calendarView === "Daily"
+              ? "Day"
+              : calendarView === "Monthly"
+              ? "Month"
+              : "Year"
+          } - ${x}`}
+        yFormat={(y) => `${addCommaSeparator(y)} Products`}
+        unitKind="number"
+      />
+    );
+
+  // const calendarChartData = returnSelectedCalendarCharts(
+  //   calendarChartsData,
+  //   calendarChartYAxisVariable,
+  //   metricCategory,
+  // );
+
+  const expandCalendarChartButton = calendarView === "Yearly"
+    ? (
+      <AccessibleButton
+        attributes={{
+          enabledScreenreaderText: "Expand and customize chart",
+          kind: "expand",
+          onClick: (
+            _event:
+              | React.MouseEvent<HTMLButtonElement>
+              | React.PointerEvent<HTMLButtonElement>,
+          ) => {
+            globalDispatch({
+              action: globalAction.setCustomizeChartsPageData,
+              payload: {
+                chartKind: "calendar",
+                chartData: [], // TODO
+                chartTitle: calendarChartHeading,
+                chartUnitKind: "number",
+              } as CustomizeChartsPageData,
+            });
+
+            navigate(expandCalendarChartNavigateLink);
+          },
+        }}
+      />
+    )
+    : null;
+
+  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+    ? (
+      <AccessibleSelectInput
+        attributes={{
+          data: PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,
+          name: "Y-Axis Pie",
+          parentDispatch: rusDispatch,
+          validValueAction: rusAction.setCalendarChartYAxisVariable,
+          value: calendarChartYAxisVariable,
+        }}
+      />
+    )
+    : null;
+
+  const calendarChart = calendarView === "Yearly"
+    ? (
+      <ResponsiveCalendarChart
+        calendarChartData={[]} // TODO
+        hideControls
+        from={`${year}-01-01`}
+        to={`${year}-12-31`}
+      />
+    )
+    : null;
+
+  const selectedCards = returnProductMetricsCards(
+    productMetricsCards,
+    calendarView,
+    subMetric,
+  );
+  // const overviewCards = subMetric === "revenue"
+  //   ? selectedCards.revenue
+  //   : selectedCards.unitsSold;
+
+  const statisticsMap = returnStatistics(barCharts);
+
+  const statisticsElements = createStatisticsElements(
+    calendarView,
+    subMetric,
+    statisticsMap,
+    storeLocation,
   );
 
-  const expandLineChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText: `Expand and customize ${lineChartHeading}`,
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: "line",
-              chartData: lineCharts[lineChartYAxisVariable],
-              chartTitle: lineChartHeading,
-              chartUnitKind: "number",
-            },
-          });
-
-          navigate(expandLineChartNavigateLink);
-        },
-      }}
-    />
+  const consolidatedCards = consolidateCardsAndStatistics(
+    selectedCards,
+    statisticsElements,
   );
 
-  const lineChartYAxisVariablesSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA as any,
-        name: "Y-Axis Line",
-        parentDispatch: rusDispatch,
-        validValueAction: rusAction.setLineChartYAxisVariable,
-        value: lineChartYAxisVariable,
-      }}
-    />
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    barLineChartYAxisVariable,
+    PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  const overviewLineChart = (
-    <ResponsiveLineChart
-      lineChartData={lineCharts[lineChartYAxisVariable]}
-      hideControls
-      xFormat={(x) =>
-        `${
-          calendarView === "Daily"
-            ? "Day"
-            : calendarView === "Monthly"
-            ? "Month"
-            : "Year"
-        } - ${x}`}
-      yFormat={(y) => `${addCommaSeparator(y)} Products`}
-      unitKind="number"
-    />
+  console.group(
+    `RUS: ${calendarView} ${subMetric} ${storeLocation}`,
   );
+  console.log("barCharts", barCharts);
+  console.log("lineCharts", lineCharts);
+  console.log("pieCharts", pieCharts);
+  console.log("selectedCards", selectedCards);
+  console.log("statisticsMap", statisticsMap);
+  console.log("statisticsElements", statisticsElements);
+  console.log("consolidatedCards", consolidatedCards);
+  console.groupEnd();
 
-  const cards = calendarView === "Daily"
-    ? productMetricsCards.dailyCards
-    : calendarView === "Monthly"
-    ? productMetricsCards.monthlyCards
-    : productMetricsCards.yearlyCards;
-  const overviewCards = subMetric === "revenue"
-    ? cards.revenue
-    : cards.unitsSold;
-
-  const productMetricsOverview = (
-    <DashboardMetricsLayout
-      barChart={overviewBarChart}
-      barChartHeading={barChartHeading}
-      barChartYAxisSelectInput={barChartYAxisVariablesSelectInput}
-      expandBarChartButton={expandBarChartButton}
-      expandLineChartButton={expandLineChartButton}
-      expandPieChartButton={expandPieChartButton}
-      lineChart={overviewLineChart}
-      lineChartHeading={lineChartHeading}
-      lineChartYAxisSelectInput={lineChartYAxisVariablesSelectInput}
-      overviewCards={overviewCards}
-      pieChart={overviewPieChart}
-      pieChartHeading={pieChartHeading}
-      sectionHeading={`${storeLocation} ${calendarView} Overview Products`}
-      statisticsMap={statistics}
-    />
+  return (
+    <Stack>
+      <DashboardBarLineLayout
+        barLineChart={barLineChart}
+        barLineChartHeading={barLineChartHeading}
+        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
+        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
+        barLineChartYAxisVariable={barLineChartYAxisVariable}
+        calendarChart={calendarChart}
+        calendarChartHeading={calendarChartHeading}
+        expandPieChartButton={expandPieChartButton}
+        pieChart={pieChart}
+        pieChartHeading={pieChartHeading}
+        expandCalendarChartButton={expandCalendarChartButton}
+        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        cardsWithStatisticsElements={cardsWithStatisticsElements}
+        expandBarLineChartButton={expandBarLineChartButton}
+        sectionHeading={splitCamelCase(metricsView)}
+        semanticLabel="TODO"
+      />
+    </Stack>
   );
-
-  return productMetricsOverview;
 }
 
 export { RUS };

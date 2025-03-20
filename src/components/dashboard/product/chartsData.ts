@@ -129,11 +129,11 @@ type ProductMetricsBarCharts = Record<ProductMetricsChartKey, BarChartData[]>; /
 type ProductMetricsLineCharts = {
   total: { id: "Total"; data: { x: string; y: number }[] }[];
   overview: {
-    id: "Online" | "In Store";
+    id: "Online" | "In-Store";
     data: { x: string; y: number }[];
   }[];
   online: { id: "Online"; data: { x: string; y: number }[] }[];
-  inStore: { id: "In Store"; data: { x: string; y: number }[] }[];
+  inStore: { id: "In-Store"; data: { x: string; y: number }[] }[];
 };
 
 /**
@@ -240,14 +240,14 @@ async function createProductMetricsCharts({
     total: [{ id: "Total", data: [] }],
     overview: [
       { id: "Online", data: [] },
-      { id: "In Store", data: [] },
+      { id: "In-Store", data: [] },
     ],
     online: [{ id: "Online", data: [] }],
-    inStore: [{ id: "In Store", data: [] }],
+    inStore: [{ id: "In-Store", data: [] }],
   };
 
   const PIE_CHART_OBJ_TEMPLATE: PieChartData[] = [
-    { id: "In Store", label: "In Store", value: 0 },
+    { id: "In-Store", label: "In-Store", value: 0 },
     { id: "Online", label: "Online", value: 0 },
   ];
 
@@ -362,7 +362,7 @@ async function createDailyProductCharts({
 
           const dailyUnitsSoldOverviewBarChart: BarChartData = {
             Days: day,
-            "In Store": unitsSold.inStore,
+            "In-Store": unitsSold.inStore,
             Online: unitsSold.online,
           };
           dailyUnitsSoldBarChartsAcc.overview.push(
@@ -377,7 +377,7 @@ async function createDailyProductCharts({
 
           const dailyUnitsSoldInStoreBarChart: BarChartData = {
             Days: day,
-            "In Store": unitsSold.inStore,
+            "In-Store": unitsSold.inStore,
           };
           dailyUnitsSoldBarChartsAcc.inStore.push(
             dailyUnitsSoldInStoreBarChart,
@@ -407,7 +407,7 @@ async function createDailyProductCharts({
           };
           dailyUnitsSoldLineChartsAcc.overview
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(dailyUnitsSoldOverviewInStoreLineChart);
 
@@ -425,7 +425,7 @@ async function createDailyProductCharts({
           };
           dailyUnitsSoldLineChartsAcc.inStore
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(dailyUnitsSoldInStoreLineChart);
 
@@ -439,7 +439,7 @@ async function createDailyProductCharts({
 
           const dailyRevenueOverviewBarChart: BarChartData = {
             Days: day,
-            "In Store": revenue.inStore,
+            "In-Store": revenue.inStore,
             Online: revenue.online,
           };
           dailyRevenueBarChartsAcc.overview.push(dailyRevenueOverviewBarChart);
@@ -452,7 +452,7 @@ async function createDailyProductCharts({
 
           const dailyRevenueInStoreBarChart: BarChartData = {
             Days: day,
-            "In Store": revenue.inStore,
+            "In-Store": revenue.inStore,
           };
           dailyRevenueBarChartsAcc.inStore.push(dailyRevenueInStoreBarChart);
 
@@ -480,7 +480,7 @@ async function createDailyProductCharts({
           };
           dailyRevenueLineChartsAcc.overview
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(dailyRevenueOverviewInStoreLineChart);
 
@@ -498,7 +498,7 @@ async function createDailyProductCharts({
           };
           dailyRevenueLineChartsAcc.inStore
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(dailyRevenueInStoreLineChart);
 
@@ -515,8 +515,8 @@ async function createDailyProductCharts({
 
       const dailyRevenuePieCharts: PieChartData[] = [
         {
-          id: "In Store",
-          label: "In Store",
+          id: "In-Store",
+          label: "In-Store",
           value: selectedDayMetrics.revenue.inStore,
         },
         {
@@ -528,8 +528,8 @@ async function createDailyProductCharts({
 
       const dailyUnitsSoldPieCharts: PieChartData[] = [
         {
-          id: "In Store",
-          label: "In Store",
+          id: "In-Store",
+          label: "In-Store",
           value: selectedDayMetrics.unitsSold.inStore,
         },
         {
@@ -635,7 +635,7 @@ function createMonthlyProductCharts({
 
           const monthlyUnitsSoldOverviewBarChart: BarChartData = {
             Months: month,
-            "In Store": unitsSold.inStore,
+            "In-Store": unitsSold.inStore,
             Online: unitsSold.online,
           };
           monthlyUnitsSoldBarChartsAcc.overview.push(
@@ -652,7 +652,7 @@ function createMonthlyProductCharts({
 
           const monthlyUnitsSoldInStoreBarChart: BarChartData = {
             Months: month,
-            "In Store": unitsSold.inStore,
+            "In-Store": unitsSold.inStore,
           };
           monthlyUnitsSoldBarChartsAcc.inStore.push(
             monthlyUnitsSoldInStoreBarChart,
@@ -682,7 +682,7 @@ function createMonthlyProductCharts({
           };
           monthlyUnitsSoldLineChartsAcc.overview
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(monthlyUnitsSoldOverviewInStoreLineChart);
 
@@ -700,7 +700,7 @@ function createMonthlyProductCharts({
           };
           monthlyUnitsSoldLineChartsAcc.inStore
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(monthlyUnitsSoldInStoreLineChart);
 
@@ -714,7 +714,7 @@ function createMonthlyProductCharts({
 
           const monthlyRevenueOverviewBarChart: BarChartData = {
             Months: month,
-            "In Store": revenue.inStore,
+            "In-Store": revenue.inStore,
             Online: revenue.online,
           };
           monthlyRevenueBarChartsAcc.overview.push(
@@ -729,7 +729,7 @@ function createMonthlyProductCharts({
 
           const monthlyRevenueInStoreBarChart: BarChartData = {
             Months: month,
-            "In Store": revenue.inStore,
+            "In-Store": revenue.inStore,
           };
           monthlyRevenueBarChartsAcc.inStore.push(
             monthlyRevenueInStoreBarChart,
@@ -759,7 +759,7 @@ function createMonthlyProductCharts({
           };
           monthlyRevenueLineChartsAcc.overview
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(monthlyRevenueOverviewInStoreLineChart);
 
@@ -777,7 +777,7 @@ function createMonthlyProductCharts({
           };
           monthlyRevenueLineChartsAcc.inStore
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(monthlyRevenueInStoreLineChart);
 
@@ -794,8 +794,8 @@ function createMonthlyProductCharts({
 
       const monthlyRevenuePieCharts: PieChartData[] = [
         {
-          id: "In Store",
-          label: "In Store",
+          id: "In-Store",
+          label: "In-Store",
           value: selectedMonthMetrics.revenue.inStore,
         },
         {
@@ -807,8 +807,8 @@ function createMonthlyProductCharts({
 
       const monthlyUnitsSoldPieCharts: PieChartData[] = [
         {
-          id: "In Store",
-          label: "In Store",
+          id: "In-Store",
+          label: "In-Store",
           value: selectedMonthMetrics.unitsSold.inStore,
         },
         {
@@ -902,7 +902,7 @@ function createYearlyProductCharts({
 
           const yearlyUnitsSoldOverviewBarChart: BarChartData = {
             Years: year,
-            "In Store": unitsSold.inStore,
+            "In-Store": unitsSold.inStore,
             Online: unitsSold.online,
           };
           yearlyUnitsSoldBarChartsAcc.overview.push(
@@ -919,7 +919,7 @@ function createYearlyProductCharts({
 
           const yearlyUnitsSoldInStoreBarChart: BarChartData = {
             Years: year,
-            "In Store": unitsSold.inStore,
+            "In-Store": unitsSold.inStore,
           };
           yearlyUnitsSoldBarChartsAcc.inStore.push(
             yearlyUnitsSoldInStoreBarChart,
@@ -949,7 +949,7 @@ function createYearlyProductCharts({
           };
           yearlyUnitsSoldLineChartsAcc.overview
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(yearlyUnitsSoldOverviewInStoreLineChart);
 
@@ -967,7 +967,7 @@ function createYearlyProductCharts({
           };
           yearlyUnitsSoldLineChartsAcc.inStore
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(yearlyUnitsSoldInStoreLineChart);
 
@@ -981,7 +981,7 @@ function createYearlyProductCharts({
 
           const yearlyRevenueOverviewBarChart: BarChartData = {
             Years: year,
-            "In Store": revenue.inStore,
+            "In-Store": revenue.inStore,
             Online: revenue.online,
           };
           yearlyRevenueBarChartsAcc.overview.push(
@@ -996,7 +996,7 @@ function createYearlyProductCharts({
 
           const yearlyRevenueInStoreBarChart: BarChartData = {
             Years: year,
-            "In Store": revenue.inStore,
+            "In-Store": revenue.inStore,
           };
           yearlyRevenueBarChartsAcc.inStore.push(yearlyRevenueInStoreBarChart);
 
@@ -1024,7 +1024,7 @@ function createYearlyProductCharts({
           };
           yearlyRevenueLineChartsAcc.overview
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(yearlyRevenueOverviewInStoreLineChart);
 
@@ -1042,7 +1042,7 @@ function createYearlyProductCharts({
           };
           yearlyRevenueLineChartsAcc.inStore
             .find((lineChartObj: LineChartData) =>
-              lineChartObj.id === "In Store"
+              lineChartObj.id === "In-Store"
             )
             ?.data.push(yearlyRevenueInStoreLineChart);
 
@@ -1059,8 +1059,8 @@ function createYearlyProductCharts({
 
       const yearlyRevenuePieCharts: PieChartData[] = [
         {
-          id: "In Store",
-          label: "In Store",
+          id: "In-Store",
+          label: "In-Store",
           value: selectedYearMetrics.revenue.inStore,
         },
         {
@@ -1072,8 +1072,8 @@ function createYearlyProductCharts({
 
       const yearlyUnitsSoldPieCharts: PieChartData[] = [
         {
-          id: "In Store",
-          label: "In Store",
+          id: "In-Store",
+          label: "In-Store",
           value: selectedYearMetrics.unitsSold.inStore,
         },
         {
@@ -1099,9 +1099,12 @@ function createYearlyProductCharts({
   });
 }
 
+type ProductMetricsCalendarChartsKey = "total" | "online" | "inStore";
+
 export { createProductMetricsCharts, returnSelectedDateProductMetrics };
 export type {
   ProductMetricsBarCharts,
+  ProductMetricsCalendarChartsKey,
   ProductMetricsChartKey,
   ProductMetricsCharts,
   ProductMetricsLineCharts,

@@ -1,11 +1,13 @@
+import { DashboardCalendarView } from "../types";
 import {
   createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";
 import type { SelectedDateProductMetrics } from "./chartsData";
+import { ProductSubMetric } from "./types";
 
-type ReturnProductMetricsCardsInput = {
+type createProductMetricsCardsInput = {
   greenColorShade: string;
   redColorShade: string;
   selectedDateProductMetrics: SelectedDateProductMetrics;
@@ -26,11 +28,11 @@ type ProductMetricsCards = {
   };
 };
 
-function returnProductMetricsCards({
+function createProductMetricsCards({
   greenColorShade,
   redColorShade,
   selectedDateProductMetrics,
-}: ReturnProductMetricsCardsInput): Promise<ProductMetricsCards> {
+}: createProductMetricsCardsInput): Promise<ProductMetricsCards> {
   const {
     dayProductMetrics: { prevDayMetrics, selectedDayMetrics },
     monthProductMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -278,5 +280,25 @@ function returnProductMetricsCards({
   });
 }
 
-export { returnProductMetricsCards };
+function returnProductMetricsCards(
+  productMetricsCards: ProductMetricsCards,
+  calendarView: DashboardCalendarView,
+  subMetric: ProductSubMetric,
+) {
+  const cards = calendarView === "Daily"
+    ? productMetricsCards.dailyCards[subMetric]
+    : calendarView === "Monthly"
+    ? productMetricsCards.monthlyCards[subMetric]
+    : productMetricsCards.yearlyCards[subMetric];
+
+  return cards.reduce((acc, card) => {
+    const { heading = "Total" } = card;
+
+    acc.set(heading, card);
+
+    return acc;
+  }, new Map());
+}
+
+export { createProductMetricsCards, returnProductMetricsCards };
 export type { ProductMetricsCards };

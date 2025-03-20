@@ -1,19 +1,27 @@
-import { ProductMetricsChartKey } from "../chartsData";
+import {
+  ProductMetricsCalendarChartsKey,
+  ProductMetricsChartKey,
+} from "../chartsData";
 import { RUSAction } from "./actions";
 
 type RUSState = {
-  barChartYAxisVariable: ProductMetricsChartKey;
-  lineChartYAxisVariable: ProductMetricsChartKey;
+  barLineChartYAxisVariable: ProductMetricsChartKey;
+  barLineChartKind: "bar" | "line";
+  calendarChartYAxisVariable: ProductMetricsCalendarChartsKey;
 };
 
 type RUSDispatch =
   | {
-    action: RUSAction["setBarChartYAxisVariable"];
+    action: RUSAction["setBarLineChartKind"];
+    payload: "bar" | "line";
+  }
+  | {
+    action: RUSAction["setBarLineChartYAxisVariable"];
     payload: ProductMetricsChartKey;
   }
   | {
-    action: RUSAction["setLineChartYAxisVariable"];
-    payload: ProductMetricsChartKey;
+    action: RUSAction["setCalendarChartYAxisVariable"];
+    payload: ProductMetricsCalendarChartsKey;
   };
 
 export type { RUSDispatch, RUSState };

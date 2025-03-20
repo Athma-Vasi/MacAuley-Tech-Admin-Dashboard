@@ -16,7 +16,7 @@ import type {
   Year,
 } from "../types";
 import { productMetricsAction } from "./actions";
-import { returnProductMetricsCards } from "./cards";
+import { createProductMetricsCards } from "./cards";
 import {
   createProductMetricsCharts,
   returnSelectedDateProductMetrics,
@@ -99,7 +99,7 @@ function ProductMetrics({
           storeLocation: storeLocationView,
         });
 
-        const productMetricsCards = await returnProductMetricsCards({
+        const productMetricsCards = await createProductMetricsCards({
           greenColorShade,
           redColorShade,
           selectedDateProductMetrics,
@@ -149,7 +149,7 @@ function ProductMetrics({
   const subMetricSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
-        data: PRODUCT_METRICS_SUB_CATEGORY_DATA as any,
+        data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
         name: "category",
         parentDispatch: productMetricsDispatch,
         validValueAction: productMetricsAction.setSubMetric,

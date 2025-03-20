@@ -1,8 +1,9 @@
 import { RUSState } from "./types";
 
 const initialRUSState: RUSState = {
-  barChartYAxisVariable: "overview",
-  lineChartYAxisVariable: "overview",
+  barLineChartKind: "bar",
+  barLineChartYAxisVariable: "overview",
+  calendarChartYAxisVariable: "total",
 };
 
 export { initialRUSState };
