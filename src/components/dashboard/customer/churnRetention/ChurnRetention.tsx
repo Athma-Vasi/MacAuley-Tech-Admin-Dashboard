@@ -95,32 +95,21 @@ function ChurnRetention({
     churnRetention: { bar: barCharts, line: lineCharts, pie: pieCharts },
   } = charts;
 
-  // const {
-  //   barChartHeading,
-  //   expandBarChartNavigateLink,
-  //   expandLineChartNavigateLink,
-  //   expandPieChartNavigateLink,
-  //   lineChartHeading,
-  //   pieChartHeading,
-  // } = returnChartTitleNavigateLinks({
-  //   calendarView,
-  //   metricCategory,
-  //   metricsView,
-  //   storeLocation,
-  //   yAxisBarChartVariable: churnRetentionBarChartYAxisVariable,
-  //   yAxisLineChartVariable: churnRetentionLineChartYAxisVariable,
-  //   year,
-  //   day,
-  //   month,
-  //   months: MONTHS,
-  // });
-
   const {
     expandBarChartNavigateLink,
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
   } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
+
+  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+    returnChartTitles({
+      barLineChartYAxisVariable,
+      calendarView,
+      metricCategory,
+      storeLocation,
+      calendarChartYAxisVariable,
+    });
 
   const expandPieChartButton = (
     <AccessibleButton
@@ -137,7 +126,7 @@ function ChurnRetention({
             payload: {
               chartKind: "pie",
               chartData: pieCharts,
-              chartTitle: "Pie Chart",
+              chartTitle: pieChartHeading,
               chartUnitKind: "number",
             },
           });
@@ -186,7 +175,7 @@ function ChurnRetention({
               chartData: barLineChartKind === "bar"
                 ? barCharts[barLineChartYAxisVariable]
                 : lineCharts[barLineChartYAxisVariable],
-              chartTitle: "TODO",
+              chartTitle: barLineChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
@@ -260,7 +249,7 @@ function ChurnRetention({
               payload: {
                 chartKind: "calendar",
                 chartData: [], // TODO
-                chartTitle: "TODO",
+                chartTitle: calendarChartHeading,
                 chartUnitKind: "number",
               } as CustomizeChartsPageData,
             });
@@ -303,11 +292,6 @@ function ChurnRetention({
     barCharts,
   );
 
-  // const cards = returnCalendarViewCustomerCards(
-  //   calendarView,
-  //   customerMetricsCards,
-  // );
-  // const overviewCards = metricCategory === "new" ? cards.new : cards.returning;
   const cardsMap = returnCustomerMetricsCardsMap(
     customerMetricsCards,
     calendarView,
@@ -324,15 +308,6 @@ function ChurnRetention({
     cardsMap.get(metricCategory) ?? new Map(),
     statisticsElementsMap,
   );
-
-  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
-    returnChartTitles({
-      barLineChartYAxisVariable,
-      calendarView,
-      metricCategory,
-      storeLocation,
-      calendarChartYAxisVariable,
-    });
 
   // console.group("ChurnRetention");
   // console.log("customerMetricsCards", customerMetricsCards);
