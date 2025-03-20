@@ -205,5 +205,12 @@ const SCREENSHOT_IMAGE_TYPE_DATA = [
   { value: "image/webp", label: "Image/webp" },
 ];
 
-export { COLORS_SWATCHES, SCREENSHOT_IMAGE_TYPE_DATA, STORE_LOCATION_DATA };
+const FETCH_REQUEST_TIMEOUT = 5000;
+
+export {
+  COLORS_SWATCHES,
+  FETCH_REQUEST_TIMEOUT,
+  SCREENSHOT_IMAGE_TYPE_DATA,
+  STORE_LOCATION_DATA,
+};
 export type { ColorsSwatches };
