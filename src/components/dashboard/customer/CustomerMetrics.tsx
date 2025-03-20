@@ -23,8 +23,8 @@ import {
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
 import { CUSTOMER_METRICS_CATEGORY_DATA } from "./constants";
 import New from "./new/New";
-import NewReturning from "./newReturning/NewReturning";
 import { customerMetricsReducer } from "./reducers";
+import Returning from "./returning/Returning";
 import { initialCustomerMetricsState } from "./state";
 
 type CustomerMetricsProps = {
@@ -153,19 +153,7 @@ function CustomerMetrics({
     />
   );
 
-  const newReturning = (
-    <NewReturning
-      calendarView={calendarView}
-      customerMetricsCards={cards}
-      customerMetricsCharts={charts}
-      day={selectedDate}
-      month={selectedYYYYMMDD.split("-")[1]}
-      metricCategory={category}
-      metricsView="Customers"
-      storeLocation={storeLocationView}
-      year={selectedYear}
-    />
-  );
+  
 
   const newCustomers = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
@@ -175,7 +163,23 @@ function CustomerMetrics({
         customerMetricsCharts={charts}
         day={selectedDate}
         month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory="new"
+        metricCategory={category}
+        metricsView="Customers"
+        storeLocation={storeLocationView}
+        year={selectedYear}
+      />
+    </React.Fragment>
+  ));
+
+  const returningCustomers = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+    <React.Fragment key={idx}>
+      <Returning
+        calendarView={calendarView}
+        customerMetricsCards={cards}
+        customerMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory={category}
         metricsView="Customers"
         storeLocation={storeLocationView}
         year={selectedYear}
@@ -223,7 +227,7 @@ function CustomerMetrics({
       {category === "new"
         ? newCustomers
         : category === "returning"
-        ? newReturning
+        ? returningCustomers
         : churnRetention}
     </Stack>
   );
