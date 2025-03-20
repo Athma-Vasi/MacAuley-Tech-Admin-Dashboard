@@ -26,6 +26,7 @@ import type {
 import {
   createExpandChartNavigateLinks,
   returnChartTitles,
+  returnSelectedCalendarCharts,
   returnStatistics,
 } from "../../utils";
 import {
@@ -42,7 +43,6 @@ import {
   type CustomerMetricsCharts,
   type CustomerMetricsChurnRetentionChartsKey,
   returnCalendarViewCustomerCharts,
-  returnSelectedCalendarCharts,
 } from "../chartsData";
 import {
   CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,

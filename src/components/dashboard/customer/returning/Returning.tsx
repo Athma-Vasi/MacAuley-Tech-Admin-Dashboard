@@ -25,6 +25,7 @@ import {
 import {
   createExpandChartNavigateLinks,
   returnChartTitles,
+  returnSelectedCalendarCharts,
   returnStatistics,
 } from "../../utils";
 import {
@@ -38,7 +39,6 @@ import {
   CustomerMetricsCharts,
   CustomerMetricsNewReturningChartsKey,
   returnCalendarViewCustomerCharts,
-  returnSelectedCalendarCharts,
 } from "../chartsData";
 import {
   CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
