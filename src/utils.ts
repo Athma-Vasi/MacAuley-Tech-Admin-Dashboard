@@ -399,6 +399,17 @@ async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
   }
 }
 
+async function fetchSafe(input: RequestInfo | URL, init?: RequestInit): Promise<
+  SafeBoxResult<Response>
+> {
+  try {
+    const response: Response = await fetch(input, init);
+    return new Ok({ data: response, kind: "success" });
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
 export {
   addCommaSeparator,
   capitalizeAll,
