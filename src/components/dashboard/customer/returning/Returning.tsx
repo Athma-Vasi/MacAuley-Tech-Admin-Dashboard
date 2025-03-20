@@ -349,13 +349,6 @@ function Returning(
     CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  console.group("RETURNING");
-  console.log("statisticsMap", statisticsMap);
-  console.log("cardsMap", cardsMap);
-  console.log("statisticsElementsMap", statisticsElementsMap);
-  console.log("consolidatedCards", consolidatedCards);
-  console.groupEnd();
-
   return (
     <Stack>
       <DashboardBarLineLayout

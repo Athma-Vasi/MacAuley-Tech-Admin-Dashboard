@@ -332,29 +332,6 @@ function ChurnRetention(
     CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  // console.group("ChurnRetention");
-  // console.log("customerMetricsCards", customerMetricsCards);
-  // console.log("metricCategory", metricCategory);
-  console.log("cardsMap", cardsMap);
-  // console.log("statisticsMap", statisticsMap);
-  // console.log("statisticsElementsMap", statisticsElementsMap);
-  // console.log("consolidatedCards", consolidatedCards);
-  // console.log("barLineChartKind", barLineChartKind);
-  // console.log("barLineChartYAxisVariable", barLineChartYAxisVariable);
-  // console.log("calendarChartYAxisVariable", calendarChartYAxisVariable);
-  // console.log("calendarView", calendarView);
-  // console.log("metricsView", metricsView);
-  // console.log("storeLocation", storeLocation);
-  // console.log("year", year);
-  // console.log("month", month);
-  // console.log("day", day);
-  // console.log("barCharts", barCharts);
-  // console.log("barChartData", barCharts[barLineChartYAxisVariable]);
-  // console.log("lineChartData", lineCharts[barLineChartYAxisVariable]);
-  // console.log("lineCharts", lineCharts);
-  // console.log("pieCharts", pieCharts);
-  // console.groupEnd();
-
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -373,7 +350,7 @@ function ChurnRetention(
         expandPieChartButton={expandPieChartButton}
         pieChartHeading={pieChartHeading}
         sectionHeading="Churn Retention"
-        semanticLabel="Churn Retention"
+        semanticLabel="TODO"
       />
     </Stack>
   );
