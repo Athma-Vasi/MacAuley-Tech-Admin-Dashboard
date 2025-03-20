@@ -389,6 +389,25 @@ function splitWordIntoUpperCasedSentence(sentence: string): string {
     .join(" ");
 }
 
+type UrlBuilderInput = {
+  protocol?: string;
+  host?: string;
+  port?: string;
+  path?: string;
+  query?: string;
+  hash?: string;
+};
+function urlBuilder({
+  hash = "",
+  host = "localhost",
+  path = "",
+  port = "5500",
+  protocol = "http",
+  query = "",
+}: UrlBuilderInput): URL {
+  return new URL(`${protocol}://${host}:${port}/api/v1/${path}${query}${hash}`);
+}
+
 async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
   token: string,
 ): Promise<SafeBoxResult<Decoded>> {
@@ -448,17 +467,22 @@ function addTokenDetailsToBody(
 
 export {
   addCommaSeparator,
+  addTokenDetailsToBody,
   capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
+  decodeJWTSafe,
+  fetchSafe,
   formatDate,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,
+  responseToJSONSafe,
   returnSliderMarks,
   returnThemeColors,
   returnTimeToRead,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
   toFixedFloat,
+  urlBuilder,
 };
