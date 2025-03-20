@@ -7,15 +7,14 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { Link, useNavigate } from "react-router-dom";
 
 import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { authAction } from "../../context/authProvider";
-import { useGlobalState } from "../../hooks/useGlobalState";
 import { useAuth } from "../../hooks/useAuth";
+import { useGlobalState } from "../../hooks/useGlobalState";
 import type { HttpServerResponse, UserDocument } from "../../types";
 import {
   decodeJWTSafe,
@@ -24,8 +23,6 @@ import {
   returnThemeColors,
 } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { NotificationModal } from "../notificationModal";
-import { useStyles } from "../styles";
 import { loginAction } from "./actions";
 import { LOGIN_URL } from "./constants";
 import { loginReducer } from "./reducers";
@@ -52,27 +49,18 @@ function Login() {
   const navigate = useNavigate();
   const { showBoundary } = useErrorBoundary();
 
-  const [
-    openedSubmitFormModal,
-    {
-      open: openSubmitFormModal,
-      close: closeSubmitFormModal,
-    },
-  ] = useDisclosure(false);
-
-  const { classes } = useStyles({});
+  // const [
+  //   openedSubmitFormModal,
+  //   {
+  //     open: openSubmitFormModal,
+  //     close: closeSubmitFormModal,
+  //   },
+  // ] = useDisclosure(false);
 
   const usernameRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     usernameRef.current?.focus();
   }, []);
-
-  useEffect(() => {
-    logState({
-      state: loginState,
-      groupLabel: "loginState",
-    });
-  }, [loginState]);
 
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
   const isComponentMountedRef = useRef(false);
@@ -255,7 +243,7 @@ function Login() {
   );
 
   const {
-    generalColors: { themeColorShade },
+    themeColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -307,29 +295,27 @@ function Login() {
     </Flex>
   );
 
-  const displaySubmitSuccessNotificationModal = (
-    <NotificationModal
-      onCloseCallbacks={[closeSubmitFormModal]}
-      opened={openedSubmitFormModal}
-      notificationProps={{
-        isLoading: isSubmitting,
-        text: "Login successful!",
-      }}
-      title={<Title order={4}>Submitting ...</Title>}
-      withCloseButton={false}
-    />
-  );
+  // const displaySubmitSuccessNotificationModal = (
+  //   <NotificationModal
+  //     onCloseCallbacks={[closeSubmitFormModal]}
+  //     opened={openedSubmitFormModal}
+  //     notificationProps={{
+  //       isLoading: isSubmitting,
+  //       text: "Login successful!",
+  //     }}
+  //     title={<Title order={4}>Submitting ...</Title>}
+  //     withCloseButton={false}
+  //   />
+  // );
 
   const login = (
-    <div className={classes.wrapper}>
-      <Stack>
-        {displaySubmitSuccessNotificationModal}
-        {displayTitle}
-        {displayInputs}
-        {displayLoginButton}
-        {displayLinkToRegister}
-      </Stack>
-    </div>
+    <Stack>
+      {/* {displaySubmitSuccessNotificationModal} */}
+      {displayTitle}
+      {displayInputs}
+      {displayLoginButton}
+      {displayLinkToRegister}
+    </Stack>
   );
 
   return login;
