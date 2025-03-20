@@ -1,4 +1,5 @@
 type CustomerMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData";
   setCards: "setCards";
   setCategory: "setCategory";
   setCharts: "setCharts";
@@ -6,6 +7,7 @@ type CustomerMetricsAction = {
 };
 
 const customerMetricsAction: CustomerMetricsAction = {
+  setCalendarChartsData: "setCalendarChartsData",
   setCards: "setCards",
   setCategory: "setCategory",
   setCharts: "setCharts",

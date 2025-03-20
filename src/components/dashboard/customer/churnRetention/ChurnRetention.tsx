@@ -5,7 +5,7 @@ import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator, splitCamelCase } from "../../../../utils";
+import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -38,9 +38,11 @@ import {
   returnCustomerMetricsCardsMap,
 } from "../cards";
 import {
+  CustomerMetricsCalendarCharts,
   type CustomerMetricsCharts,
   type CustomerMetricsChurnRetentionChartsKey,
   returnCalendarViewCustomerCharts,
+  returnSelectedCalendarCharts,
 } from "../chartsData";
 import {
   CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
@@ -53,6 +55,10 @@ import { churnRetentionReducer } from "./reducers";
 import { initialChurnRetentionState } from "./state";
 
 type ChurnRetentionProps = {
+  calendarChartsData: {
+    currentYear: CustomerMetricsCalendarCharts | null;
+    previousYear: CustomerMetricsCalendarCharts | null;
+  };
   calendarView: DashboardCalendarView;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
@@ -64,17 +70,20 @@ type ChurnRetentionProps = {
   year: Year;
 };
 
-function ChurnRetention({
-  calendarView,
-  customerMetricsCards,
-  customerMetricsCharts,
-  day,
-  metricCategory,
-  metricsView,
-  month,
-  storeLocation,
-  year,
-}: ChurnRetentionProps) {
+function ChurnRetention(
+  {
+    calendarChartsData,
+    calendarView,
+    customerMetricsCards,
+    customerMetricsCharts,
+    day,
+    metricCategory,
+    metricsView,
+    month,
+    storeLocation,
+    year,
+  }: ChurnRetentionProps,
+) {
   const { globalDispatch } = useGlobalState();
   const navigate = useNavigate();
 
@@ -235,6 +244,12 @@ function ChurnRetention({
       />
     );
 
+  const calendarChartData = returnSelectedCalendarCharts(
+    calendarChartsData,
+    calendarChartYAxisVariable,
+    metricCategory,
+  );
+
   const expandCalendarChartButton = calendarView === "Yearly"
     ? (
       <AccessibleButton
@@ -250,7 +265,7 @@ function ChurnRetention({
               action: globalAction.setCustomizeChartsPageData,
               payload: {
                 chartKind: "calendar",
-                chartData: [], // TODO
+                chartData: calendarChartData,
                 chartTitle: calendarChartHeading,
                 chartUnitKind: "number",
               } as CustomizeChartsPageData,
@@ -280,7 +295,7 @@ function ChurnRetention({
   const calendarChart = calendarView === "Yearly"
     ? (
       <ResponsiveCalendarChart
-        calendarChartData={[]} // TODO
+        calendarChartData={calendarChartData}
         hideControls
         from={`${year}-01-01`}
         to={`${year}-12-31`}

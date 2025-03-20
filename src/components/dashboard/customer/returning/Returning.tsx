@@ -34,15 +34,17 @@ import {
 } from "../../utilsTSX";
 import { CustomerMetricsCards, returnCustomerMetricsCardsMap } from "../cards";
 import {
+  CustomerMetricsCalendarCharts,
   CustomerMetricsCharts,
   CustomerMetricsNewReturningChartsKey,
-  returnCalendarViewCustomerCharts
+  returnCalendarViewCustomerCharts,
+  returnSelectedCalendarCharts,
 } from "../chartsData";
 import {
   CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
-  CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP
+  CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
 import { CustomerMetricsCategory } from "../types";
 import { returningAction } from "./actions";
@@ -50,6 +52,10 @@ import { returningReducer } from "./reducers";
 import { initialReturningState } from "./state";
 
 type ReturningProps = {
+  calendarChartsData: {
+    currentYear: CustomerMetricsCalendarCharts | null;
+    previousYear: CustomerMetricsCalendarCharts | null;
+  };
   calendarView: DashboardCalendarView;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
@@ -63,6 +69,7 @@ type ReturningProps = {
 
 function Returning(
   {
+    calendarChartsData,
     calendarView,
     customerMetricsCards,
     customerMetricsCharts,
@@ -254,6 +261,12 @@ function Returning(
       />
     );
 
+  const calendarChartData = returnSelectedCalendarCharts(
+    calendarChartsData,
+    calendarChartYAxisVariable,
+    metricCategory,
+  );
+
   const expandCalendarChartButton = calendarView === "Yearly"
     ? (
       <AccessibleButton
@@ -269,7 +282,7 @@ function Returning(
               action: globalAction.setCustomizeChartsPageData,
               payload: {
                 chartKind: "calendar",
-                chartData: [], // TODO
+                chartData: calendarChartData,
                 chartTitle: calendarChartHeading,
                 chartUnitKind: "number",
               } as CustomizeChartsPageData,
@@ -299,7 +312,7 @@ function Returning(
   const calendarChart = calendarView === "Yearly"
     ? (
       <ResponsiveCalendarChart
-        calendarChartData={[]} // TODO
+        calendarChartData={calendarChartData}
         hideControls
         from={`${year}-01-01`}
         to={`${year}-12-31`}

@@ -1,10 +1,17 @@
 import { CustomerMetricsAction } from "./actions";
 import { CustomerMetricsCards } from "./cards";
-import { CustomerMetricsCharts } from "./chartsData";
+import {
+  CustomerMetricsCalendarCharts,
+  CustomerMetricsCharts,
+} from "./chartsData";
 
 type CustomerMetricsCategory = "new" | "returning" | "churn";
 
 type CustomerMetricsState = {
+  calendarChartsData: {
+    currentYear: CustomerMetricsCalendarCharts | null;
+    previousYear: CustomerMetricsCalendarCharts | null;
+  };
   cards: CustomerMetricsCards | null;
   category: CustomerMetricsCategory;
   charts: CustomerMetricsCharts | null;
@@ -12,6 +19,13 @@ type CustomerMetricsState = {
 };
 
 type CustomerMetricsDispatch =
+  | {
+    action: CustomerMetricsAction["setCalendarChartsData"];
+    payload: {
+      currentYear: CustomerMetricsCalendarCharts;
+      previousYear: CustomerMetricsCalendarCharts;
+    };
+  }
   | {
     action: CustomerMetricsAction["setCards"];
     payload: CustomerMetricsCards;

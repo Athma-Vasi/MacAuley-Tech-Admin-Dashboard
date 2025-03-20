@@ -17,6 +17,7 @@ import type {
 import { customerMetricsAction } from "./actions";
 import { createCustomerMetricsCards } from "./cards";
 import {
+  createCustomerMetricsCalendarCharts,
   createCustomerMetricsCharts,
   returnSelectedDateCustomerMetrics,
 } from "./chartsData";
@@ -50,7 +51,8 @@ function CustomerMetrics({
     customerMetricsReducer,
     initialCustomerMetricsState,
   );
-  const { cards, category, charts, isGenerating } = customerMetricsState;
+  const { calendarChartsData, cards, category, charts, isGenerating } =
+    customerMetricsState;
 
   const {
     globalState: { themeObject },
@@ -87,6 +89,11 @@ function CustomerMetrics({
           year: selectedYear,
         });
 
+        const { currentYear, previousYear } =
+          await createCustomerMetricsCalendarCharts(
+            selectedDateCustomerMetrics,
+          );
+
         const customerMetricsCharts = await createCustomerMetricsCharts({
           businessMetrics,
           months: MONTHS,
@@ -103,6 +110,14 @@ function CustomerMetrics({
         if (!isMounted) {
           return;
         }
+
+        customerMetricsDispatch({
+          action: customerMetricsAction.setCalendarChartsData,
+          payload: {
+            currentYear,
+            previousYear,
+          },
+        });
 
         customerMetricsDispatch({
           action: customerMetricsAction.setCards,
@@ -144,7 +159,7 @@ function CustomerMetrics({
   const categorySegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
-        data: CUSTOMER_METRICS_CATEGORY_DATA as any,
+        data: CUSTOMER_METRICS_CATEGORY_DATA,
         name: "category",
         parentDispatch: customerMetricsDispatch,
         validValueAction: customerMetricsAction.setCategory,
@@ -153,11 +168,10 @@ function CustomerMetrics({
     />
   );
 
-  
-
   const newCustomers = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
       <New
+        calendarChartsData={calendarChartsData}
         calendarView={calendarView}
         customerMetricsCards={cards}
         customerMetricsCharts={charts}
@@ -171,9 +185,13 @@ function CustomerMetrics({
     </React.Fragment>
   ));
 
-  const returningCustomers = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
+  const returningCustomers = CALENDAR_VIEW_TABS_DATA.map((
+    calendarView,
+    idx,
+  ) => (
     <React.Fragment key={idx}>
       <Returning
+        calendarChartsData={calendarChartsData}
         calendarView={calendarView}
         customerMetricsCards={cards}
         customerMetricsCharts={charts}
@@ -190,6 +208,7 @@ function CustomerMetrics({
   const churnRetention = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
       <ChurnRetention
+        calendarChartsData={calendarChartsData}
         calendarView={calendarView}
         customerMetricsCards={cards}
         customerMetricsCharts={charts}

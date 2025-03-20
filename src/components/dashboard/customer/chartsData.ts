@@ -1,7 +1,12 @@
 import { toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
+import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
+import { MONTHS } from "../constants";
+import { FinancialMetricCategory } from "../financial/types";
+import { ProductMetricCategory } from "../product/types";
+import { RepairMetricCategory } from "../repair/types";
 import {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -12,6 +17,7 @@ import {
   Month,
   Year,
 } from "../types";
+import { CustomerMetricsCategory } from "./types";
 
 type SelectedDateCustomerMetrics = {
   dayCustomerMetrics: {
@@ -2169,13 +2175,14 @@ async function createYearlyCustomerCharts({
 }
 
 // calendar
+
 type CustomerChurnRetentionCalendarChartsKey = "churnRate" | "retentionRate";
 type CustomerNewReturningCalendarChartsKey =
-  | "total" // y-axis variables: total
-  | "sales" // y-axis variables: sales, in-store, repair
-  | "online" // y-axis variables: online
-  | "inStore" // y-axis variables: in-store
-  | "repair"; // y-axis variables: repair
+  | "total"
+  | "sales"
+  | "online"
+  | "inStore"
+  | "repair";
 
 function returnCalendarViewCustomerCharts(
   calendarView: DashboardCalendarView,
@@ -2188,13 +2195,235 @@ function returnCalendarViewCustomerCharts(
     : customerMetricsCharts.yearlyCharts;
 }
 
+type CalendarChartsNewReturning = {
+  total: Array<CalendarChartData>;
+  repair: Array<CalendarChartData>;
+  sales: Array<CalendarChartData>;
+  inStore: Array<CalendarChartData>;
+  online: Array<CalendarChartData>;
+};
+
+type CustomerMetricsCalendarCharts = {
+  new: CalendarChartsNewReturning;
+  returning: CalendarChartsNewReturning;
+  churn: {
+    churnRate: Array<CalendarChartData>;
+    retentionRate: Array<CalendarChartData>;
+  };
+};
+
+async function createCustomerMetricsCalendarCharts(
+  selectedDateCustomerMetrics: SelectedDateCustomerMetrics,
+): Promise<
+  {
+    currentYear: CustomerMetricsCalendarCharts;
+    previousYear: CustomerMetricsCalendarCharts;
+  }
+> {
+  const { yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics } } =
+    selectedDateCustomerMetrics;
+
+  const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
+    total: [],
+    repair: [],
+    sales: [],
+    inStore: [],
+    online: [],
+  };
+
+  const calendarChartsTemplateChurnRetention = {
+    churnRate: [],
+    retentionRate: [],
+  };
+
+  const calendarChartsTemplate: CustomerMetricsCalendarCharts = {
+    new: structuredClone(calendarChartsTemplateNewReturning),
+    returning: structuredClone(calendarChartsTemplateNewReturning),
+    churn: structuredClone(calendarChartsTemplateChurnRetention),
+  };
+
+  const [currentYear, previousYear] = await Promise.all([
+    createDailyCustomerCalendarCharts(
+      selectedYearMetrics,
+      structuredClone(calendarChartsTemplate),
+    ),
+    createDailyCustomerCalendarCharts(
+      prevYearMetrics,
+      structuredClone(calendarChartsTemplate),
+    ),
+  ]);
+
+  async function createDailyCustomerCalendarCharts(
+    yearlyMetrics: CustomerYearlyMetric | undefined,
+    calendarChartsTemplate: CustomerMetricsCalendarCharts,
+  ): Promise<CustomerMetricsCalendarCharts> {
+    if (!yearlyMetrics) {
+      return new Promise((resolve) => {
+        resolve(calendarChartsTemplate);
+      });
+    }
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const dailyCustomerCalendarCharts = yearlyMetrics.monthlyMetrics.reduce(
+          (resultAcc, monthlyMetric) => {
+            const { month, dailyMetrics } = monthlyMetric;
+            const monthNumber = MONTHS.indexOf(month) + 1;
+
+            dailyMetrics.forEach((dailyMetric) => {
+              const {
+                customers: {
+                  churnRate,
+                  new: newCustomers,
+                  retentionRate,
+                  returning,
+                },
+              } = dailyMetric;
+              const day = `${yearlyMetrics.year}-${
+                monthNumber.toString().padStart(2, "0")
+              }-${dailyMetric.day}`;
+
+              // new customers
+
+              resultAcc.new.total.push({
+                value: newCustomers.total,
+                day,
+              });
+
+              resultAcc.new.repair.push({
+                value: newCustomers.repair,
+                day,
+              });
+
+              resultAcc.new.sales.push({
+                value: newCustomers.sales.total,
+                day,
+              });
+
+              resultAcc.new.inStore.push({
+                value: newCustomers.sales.inStore,
+                day,
+              });
+
+              resultAcc.new.online.push({
+                value: newCustomers.sales.online,
+                day,
+              });
+
+              // returning customers
+
+              resultAcc.returning.total.push({
+                value: returning.total,
+                day,
+              });
+
+              resultAcc.returning.repair.push({
+                value: returning.repair,
+                day,
+              });
+
+              resultAcc.returning.sales.push({
+                value: returning.sales.total,
+                day,
+              });
+
+              resultAcc.returning.inStore.push({
+                value: returning.sales.inStore,
+                day,
+              });
+
+              resultAcc.returning.online.push({
+                value: returning.sales.online,
+                day,
+              });
+
+              // churn & retention rate
+
+              resultAcc.churn.churnRate.push({
+                value: toFixedFloat(churnRate * 100, 2),
+                day,
+              });
+
+              resultAcc.churn.retentionRate.push({
+                value: toFixedFloat(retentionRate * 100, 2),
+                day,
+              });
+            });
+
+            return resultAcc;
+          },
+          calendarChartsTemplate,
+        );
+
+        resolve(dailyCustomerCalendarCharts);
+      }, 0);
+    });
+  }
+
+  return {
+    currentYear,
+    previousYear,
+  };
+}
+
+function returnSelectedCalendarCharts<
+  MetricCategory extends
+    | FinancialMetricCategory
+    | CustomerMetricsCategory
+    | ProductMetricCategory
+    | RepairMetricCategory,
+  MetricsCalendarCharts extends Record<MetricCategory, any> = Record<
+    MetricCategory,
+    any
+  >,
+  YAxisVariable extends string = string,
+>(
+  calendarChartsData: {
+    currentYear: MetricsCalendarCharts | null;
+    previousYear: MetricsCalendarCharts | null;
+  },
+  calendarChartYAxisVariable: YAxisVariable,
+  metricCategory: MetricCategory,
+): Array<{ day: string; value: number }> {
+  const defaultValue = [{
+    day: "",
+    value: 0,
+  }];
+
+  const { currentYear, previousYear } = calendarChartsData;
+  if (
+    currentYear === null || previousYear === null
+  ) {
+    return defaultValue;
+  }
+
+  const currentYearMetric = currentYear[metricCategory];
+  const previousYearMetric = previousYear[metricCategory];
+
+  const currentYearData =
+    Object.entries(currentYearMetric).find(([key]) =>
+      key === calendarChartYAxisVariable
+    )?.[1] ?? defaultValue as Array<{ day: string; value: number }>;
+  const previousYearData =
+    Object.entries(previousYearMetric).find(([key]) =>
+      key === calendarChartYAxisVariable
+    )?.[1] ?? defaultValue as Array<{ day: string; value: number }>;
+
+  return Array.isArray(currentYearData)
+    ? currentYearData.concat(previousYearData)
+    : defaultValue;
+}
+
 export {
+  createCustomerMetricsCalendarCharts,
   createCustomerMetricsCharts,
   returnCalendarViewCustomerCharts,
+  returnSelectedCalendarCharts,
   returnSelectedDateCustomerMetrics,
 };
 export type {
   CustomerChurnRetentionCalendarChartsKey,
+  CustomerMetricsCalendarCharts,
   CustomerMetricsCharts,
   CustomerMetricsChurnRetentionChartsKey,
   CustomerMetricsNewReturningChartsKey,
