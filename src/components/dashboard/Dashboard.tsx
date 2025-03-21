@@ -15,11 +15,11 @@ import { COLORS_SWATCHES, STORE_LOCATION_DATA } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
+import { useParams } from "react-router-dom";
 import { returnThemeColors } from "../../utils";
 import { dashboardAction } from "./actions";
 import {
   DAYS_PER_MONTH,
-  METRICS_VIEW_TABS_DATA,
   MONTHS,
   PRODUCT_CATEGORIES,
   REPAIR_CATEGORIES,
@@ -31,14 +31,10 @@ import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
-import type {
-  BusinessMetricStoreLocation,
-  DashboardMetricsView,
-} from "./types";
+import type { BusinessMetricStoreLocation } from "./types";
 import {
   createRandomBusinessMetrics,
   excludeTodayFromCalendarView,
-  returnIsTabDisabled,
   splitSelectedCalendarDate,
 } from "./utils";
 
@@ -53,10 +49,11 @@ function Dashboard() {
     globalDispatch,
   } = useGlobalState();
 
-  const { primaryColor } = themeObject;
+  const { metricsView } = useParams();
 
   const { showBoundary } = useErrorBoundary();
 
+  const { primaryColor } = themeObject;
   const {
     backgroundColor,
   } = returnThemeColors({
@@ -66,7 +63,6 @@ function Dashboard() {
 
   const {
     businessMetrics,
-    metricsView,
     storeLocationView,
     selectedYYYYMMDD,
     isLoading,
@@ -173,33 +169,6 @@ function Dashboard() {
       months: MONTHS,
     });
 
-  const isTabDisabled = returnIsTabDisabled(storeLocationView, selectedYear);
-
-  const createdMetricsTabs = (
-    <Tabs
-      color={primaryColor}
-      value={metricsView}
-      onTabChange={(value) => {
-        dashboardDispatch({
-          action: dashboardAction.setMetricsView,
-          payload: value as DashboardMetricsView,
-        });
-      }}
-    >
-      <Tabs.List>
-        {METRICS_VIEW_TABS_DATA.map((metricsView, idx) => (
-          <Tabs.Tab
-            key={`${idx}-${metricsView}`}
-            value={metricsView}
-            disabled={isTabDisabled}
-          >
-            {metricsView}
-          </Tabs.Tab>
-        ))}
-      </Tabs.List>
-    </Tabs>
-  );
-
   const createdYYYYMMDDInput = (
     <TextInput
       aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'
@@ -282,8 +251,6 @@ function Dashboard() {
                   )}
                 </Tabs.List>
               </Tabs>
-
-              {createdMetricsTabs}
             </Stack>
             <Group w={400} align="flex-end">
               {displayYYYYMMDDInput}
@@ -294,7 +261,7 @@ function Dashboard() {
     </Accordion>
   );
 
-  const displayMetricsView = metricsView === "Financials"
+  const displayMetricsView = metricsView === "financials"
     ? (
       <FinancialMetrics
         businessMetrics={businessMetrics}
@@ -305,7 +272,7 @@ function Dashboard() {
         selectedYear={selectedYear}
       />
     )
-    : metricsView === "Customers"
+    : metricsView === "customers"
     ? (
       <CustomerMetrics
         businessMetrics={businessMetrics}
@@ -316,7 +283,7 @@ function Dashboard() {
         selectedYear={selectedYear}
       />
     )
-    : metricsView === "Products"
+    : metricsView === "products"
     ? (
       <ProductMetrics
         businessMetrics={businessMetrics}

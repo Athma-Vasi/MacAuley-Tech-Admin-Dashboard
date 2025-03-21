@@ -1,6 +1,5 @@
 type DashboardAction = {
   setBusinessMetrics: "setBusinessMetrics";
-  setMetricsView: "setMetricsView";
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
   setStoreLocationView: "setStoreLocationView";
   setIsLoading: "setIsLoading";
@@ -9,7 +8,6 @@ type DashboardAction = {
 
 const dashboardAction: DashboardAction = {
   setBusinessMetrics: "setBusinessMetrics",
-  setMetricsView: "setMetricsView",
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
   setStoreLocationView: "setStoreLocationView",
   setIsLoading: "setIsLoading",

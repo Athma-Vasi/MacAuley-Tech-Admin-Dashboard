@@ -7,15 +7,18 @@ import {
   TbUser,
 } from "react-icons/tb";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
+import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
+  const navigate = useNavigate();
+
   const homeNavlink = (
     <AccessibleNavLink
       attributes={{
         description: "Home",
         icon: <TbHome2 />,
         name: "Home",
-        onClick: () => console.log("Home clicked"),
+        onClick: () => navigate("/"),
       }}
     />
   );
@@ -26,7 +29,7 @@ function Sidebar() {
         description: "Products",
         icon: <TbAffiliate />,
         name: "Products",
-        onClick: () => console.log("Products clicked"),
+        onClick: () => navigate("/products"),
       }}
     />
   );
@@ -37,7 +40,7 @@ function Sidebar() {
         description: "Financials",
         icon: <TbReportMoney />,
         name: "Financials",
-        onClick: () => console.log("Financials clicked"),
+        onClick: () => navigate("/financials"),
       }}
     />
   );
@@ -48,7 +51,7 @@ function Sidebar() {
         description: "Customers",
         icon: <TbUser />,
         name: "Customers",
-        onClick: () => console.log("Customers clicked"),
+        onClick: () => navigate("/customers"),
       }}
     />
   );
@@ -59,7 +62,7 @@ function Sidebar() {
         description: "Repairs",
         icon: <TbTools />,
         name: "Repairs",
-        onClick: () => console.log("Repairs clicked"),
+        onClick: () => navigate("/repairs"),
       }}
     />
   );
