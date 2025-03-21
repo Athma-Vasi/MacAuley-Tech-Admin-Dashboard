@@ -16,19 +16,13 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { returnThemeColors } from "../../utils";
-import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
-  CALENDAR_VIEW_TABS_DATA,
-  CUSTOMER_METRICS_DATA,
   DAYS_PER_MONTH,
-  FINANCIALS_METRICS_DATA,
   METRICS_VIEW_TABS_DATA,
   MONTHS,
   PRODUCT_CATEGORIES,
-  PRODUCT_METRICS_DATA,
   REPAIR_CATEGORIES,
-  REPAIR_METRICS_DATA,
   STORE_LOCATION_VIEW_TABS_DATA,
 } from "./constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
@@ -39,7 +33,6 @@ import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
 import type {
   BusinessMetricStoreLocation,
-  DashboardCalendarView,
   DashboardMetricsView,
 } from "./types";
 import {
@@ -73,7 +66,6 @@ function Dashboard() {
 
   const {
     businessMetrics,
-    calendarView,
     metricsView,
     storeLocationView,
     selectedYYYYMMDD,

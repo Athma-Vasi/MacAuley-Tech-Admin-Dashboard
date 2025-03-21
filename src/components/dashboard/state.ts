@@ -12,7 +12,6 @@ const initialSelectedYear = new Date().getFullYear().toString() as Year;
 
 const initialDashboardState: DashboardState = {
   businessMetrics: [],
-  calendarView: "Daily",
   metricsView: "Repairs",
   storeLocationView: "All Locations",
   selectedYYYYMMDD:

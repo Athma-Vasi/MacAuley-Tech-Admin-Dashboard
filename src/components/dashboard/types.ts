@@ -19,7 +19,6 @@ type DashboardRepairMetric = RepairCategory | "All Repairs";
 
 type DashboardState = {
   businessMetrics: BusinessMetric[];
-  calendarView: DashboardCalendarView;
   metricsView: DashboardMetricsView;
   selectedYYYYMMDD: string;
   storeLocationView: BusinessMetricStoreLocation;
@@ -31,10 +30,6 @@ type DashboardDispatch =
   | {
     action: DashboardAction["setBusinessMetrics"];
     payload: BusinessMetric[];
-  }
-  | {
-    action: DashboardAction["setCalendarView"];
-    payload: DashboardCalendarView;
   }
   | {
     action: DashboardAction["setMetricsView"];

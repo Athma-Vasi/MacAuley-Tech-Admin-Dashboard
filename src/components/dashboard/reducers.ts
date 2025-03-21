@@ -3,13 +3,8 @@ import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
   DashboardAction,
-  DashboardCalendarView,
-  DashboardCustomerMetric,
   DashboardDispatch,
-  DashboardFinancialMetric,
   DashboardMetricsView,
-  DashboardProductMetric,
-  DashboardRepairMetric,
   DashboardState,
 } from "./types";
 
@@ -26,7 +21,6 @@ const dashboardReducersMap = new Map<
   (state: DashboardState, dispatch: DashboardDispatch) => DashboardState
 >([
   [dashboardAction.setBusinessMetrics, dashboardReducer_setBusinessMetrics],
-  [dashboardAction.setCalendarView, dashboardReducer_setCalendarView],
   [dashboardAction.setMetricsView, dashboardReducer_setMetricsView],
   [dashboardAction.setSelectedYYYYMMDD, dashboardReducer_setSelectedYYYYMMDD],
   [
@@ -44,16 +38,6 @@ function dashboardReducer_setBusinessMetrics(
   return {
     ...state,
     businessMetrics: dispatch.payload as BusinessMetric[],
-  };
-}
-
-function dashboardReducer_setCalendarView(
-  state: DashboardState,
-  dispatch: DashboardDispatch,
-): DashboardState {
-  return {
-    ...state,
-    calendarView: dispatch.payload as DashboardCalendarView,
   };
 }
 
