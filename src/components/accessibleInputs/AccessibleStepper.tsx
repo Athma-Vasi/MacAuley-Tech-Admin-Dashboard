@@ -15,8 +15,8 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import type { SetPageInErrorPayload, StepperPage } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { FormReviewStep } from "../formReview/FormReview";
-import { useStyles } from "../styles";
 import { createAccessibleButtons } from "./utils";
+import React from "react";
 
 type AccessibleStepperAttributes<InvalidValueAction extends string = string> = {
   allowNextStepsSelect?: boolean;
@@ -34,7 +34,7 @@ type AccessibleStepperAttributes<InvalidValueAction extends string = string> = {
   stepsInError?: Set<number>;
   size?: MantineSize;
   stepperPages: StepperPage[];
-  submitButton?: JSX.Element;
+  submitButton?: React.JSX.Element;
   title?: ReactNode;
 };
 
@@ -65,8 +65,6 @@ function AccessibleStepper<InvalidValueAction extends string = string>({
   const {
     globalState: { themeObject },
   } = useGlobalState();
-
-  const { classes } = useStyles({});
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -124,12 +122,10 @@ function AccessibleStepper<InvalidValueAction extends string = string>({
   }`;
 
   const {
-    generalColors: {
-      grayColorShade,
-      redColorShade,
-      textColor,
-      greenColorShade,
-    },
+    grayColorShade,
+    redColorShade,
+    textColor,
+    greenColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -214,16 +210,14 @@ function AccessibleStepper<InvalidValueAction extends string = string>({
   );
 
   return (
-    <div className={classes.container}>
-      <Stack>
-        {title ? <Title order={4}>{title}</Title> : null}
-        {stepper}
-        <Group w="100%" position="apart">
-          {backButton}
-          {nextButton}
-        </Group>
-      </Stack>
-    </div>
+    <Stack>
+      {title ? <Title order={4}>{title}</Title> : null}
+      {stepper}
+      <Group w="100%" position="apart">
+        {backButton}
+        {nextButton}
+      </Group>
+    </Stack>
   );
 }
 

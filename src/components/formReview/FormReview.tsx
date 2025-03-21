@@ -1,20 +1,15 @@
 import { Grid, Group, Spoiler, Stack, Text, Title } from "@mantine/core";
 import type { ReactNode } from "react";
 
-import {
-  COLORS_SWATCHES,
-  INPUT_MAX_WIDTH,
-  INPUT_MIN_WIDTH,
-  PROPERTY_DESCRIPTOR,
-} from "../../constants/data";
-import { VALIDATION_FUNCTIONS_TABLE } from "../../constants/validations";
-import { useGlobalState } from "../../hooks";
+import { COLORS_SWATCHES } from "../../constants";
+import { useGlobalState } from "../../hooks/useGlobalState";
 import type { StepperPage } from "../../types";
 import {
   capitalizeJoinWithAnd,
   returnThemeColors,
   splitCamelCase,
 } from "../../utils";
+import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
 import { createAccessibleButtons } from "../accessibleInputs/utils";
 
 type FormReview = {
@@ -42,8 +37,7 @@ function FormReviewStep(
   } = useGlobalState();
 
   const {
-    appThemeColors: { borderColor },
-    generalColors: { redColorShade },
+    redColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -112,7 +106,6 @@ function FormReviewStep(
           <Grid
             columns={10}
             key={`form-review-${index.toString()}-section`}
-            style={{ borderBottom: borderColor }}
             w="100%"
           >
             <Grid.Col span={4} style={{ background: rowBackgroundColor }}>
@@ -147,10 +140,7 @@ function FormReviewStep(
     : null;
 
   const displayFormReview = (
-    <Stack
-      style={{ minWidth: INPUT_MIN_WIDTH, maxWidth: INPUT_MAX_WIDTH }}
-      // style={{ border: borderColor, borderRadius: 4 }}
-    >
+    <Stack>
       {displayTitle}
       {displayFormReviewStack}
     </Stack>
@@ -207,8 +197,8 @@ function returnFormReviews<
     });
 
     Object.defineProperty(formReviewsAcc, description, {
+      enumerable: true,
       value: formReviews,
-      ...PROPERTY_DESCRIPTOR,
     });
 
     return formReviewsAcc;
