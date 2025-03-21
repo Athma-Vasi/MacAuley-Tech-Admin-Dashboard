@@ -268,6 +268,8 @@ type PhoneNumber = string;
 
 type Country = "Canada" | "United States";
 
+type Urgency = "low" | "medium" | "high";
+
 type Department =
   | "Executive Management"
   | "Store Administration"
@@ -441,6 +443,7 @@ export type {
   StoreLocation,
   ThemeComponent,
   ThemeObject,
+  Urgency,
   UserDocument,
   UserRoles,
   UserSchema,
