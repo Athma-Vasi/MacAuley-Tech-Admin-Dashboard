@@ -4,8 +4,13 @@ import {
   DEPARTMENT_DATA,
   JOB_POSITION_DATA,
   STORE_LOCATION_DATA,
-} from "../../constants/data";
-import { JobPosition, PhoneNumber, StepperPage, StoreLocation } from "../../types";
+} from "../../constants";
+import {
+  JobPosition,
+  PhoneNumber,
+  StepperPage,
+  StoreLocation,
+} from "../../types";
 import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
