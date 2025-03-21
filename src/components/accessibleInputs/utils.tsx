@@ -1,4 +1,4 @@
-import { Flex, Highlight, Space, Text } from "@mantine/core";
+import { Space, Text } from "@mantine/core";
 import { TbCheck, TbInfoCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
@@ -26,6 +26,7 @@ import {
 type CreateAccessibleValueValidationTextElements = {
   isPopoverOpened: boolean;
   isValueBufferValid: boolean;
+  arePasswordsDifferent?: boolean;
   name: string;
   themeObject: ThemeObject;
   valueBuffer: string;
@@ -38,6 +39,7 @@ type CreateAccessibleValueValidationTextElements = {
 function createAccessibleValueValidationTextElements({
   isPopoverOpened,
   isValueBufferValid,
+  arePasswordsDifferent,
   name,
   themeObject,
   valueBuffer,
@@ -74,7 +76,10 @@ function createAccessibleValueValidationTextElements({
         </Grid.Col>
       </Grid> */
       }
-      <Text color={redColorShade}>{valueInvalidText}</Text>
+      <Text color={redColorShade}>
+        {valueInvalidText}
+        {arePasswordsDifferent ? "Passwords do not match" : ""}
+      </Text>
     </Text>
   );
 

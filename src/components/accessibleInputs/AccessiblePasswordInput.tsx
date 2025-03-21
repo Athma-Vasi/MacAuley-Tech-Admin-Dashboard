@@ -17,17 +17,12 @@ import {
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
-import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import type {
-  SetPageInErrorPayload,
-  StepperPage,
-  ValidationFunctionsTable,
-} from "../../types";
+import type { ValidationFunctionsTable } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
+import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import {
   createAccessibleValueValidationTextElements,
-  returnPartialValidations,
   returnValidationTexts,
 } from "./utils";
 
@@ -56,7 +51,8 @@ type AccessiblePasswordInputAttributes<
       payload: boolean;
     }
   >;
-  passwordValue?: string;
+  // to match passwords
+  passwordValue: string;
   placeholder?: string;
   ref?: RefObject<HTMLInputElement>;
   required?: boolean;
@@ -129,12 +125,15 @@ function AccessiblePasswordInput<
   } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
   const regexesArray = validationFunctionsTable[name];
-  const isValueBufferValid = regexesArray.every(
+  let isValueBufferValid = regexesArray.every(
     ([regexOrFunc, _validationText]: [any, any]) =>
       typeof regexOrFunc === "function"
         ? regexOrFunc(valueBuffer)
         : regexOrFunc.test(valueBuffer),
   );
+  isValueBufferValid = passwordValue
+    ? valueBuffer === passwordValue
+    : isValueBufferValid;
 
   const leftIcon = icon ??
     (isValueBufferValid
@@ -153,6 +152,7 @@ function AccessiblePasswordInput<
     createAccessibleValueValidationTextElements({
       isPopoverOpened,
       isValueBufferValid,
+      arePasswordsDifferent: valueBuffer !== passwordValue,
       name,
       themeObject,
       validationTexts,
@@ -186,16 +186,6 @@ function AccessiblePasswordInput<
             minLength={minLength}
             name={name}
             onBlur={() => {
-              // const kind = passwordValue
-              //   ? passwordValue === valueBuffer || !isValueBufferValid
-              //     ? "add"
-              //     : "delete"
-              //   : isValueBufferValid
-              //   ? "delete"
-              //   : "add";
-
-              // console.log("kind", kind);
-
               parentDispatch({
                 action: invalidValueAction,
                 payload: isValueBufferValid,
