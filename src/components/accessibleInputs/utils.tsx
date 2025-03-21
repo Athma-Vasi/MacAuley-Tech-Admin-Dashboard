@@ -4,7 +4,11 @@ import { TbCheck, TbInfoCircle } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
 import type { ThemeObject } from "../../context/globalProvider/types";
 import { StepperPage, Validation, ValidationFunctionsTable } from "../../types";
-import { capitalizeJoinWithAnd, returnThemeColors } from "../../utils";
+import {
+  capitalizeJoinWithAnd,
+  returnThemeColors,
+  splitCamelCase,
+} from "../../utils";
 import {
   AccessibleButton,
   type AccessibleButtonAttributes,
@@ -443,6 +447,61 @@ type ValidationTexts = {
   valueInvalidText: string;
 };
 
+function returnValidationTexts({
+  name,
+  stepperPages,
+  validationFunctionsTable,
+  valueBuffer,
+}: {
+  name: string;
+  stepperPages: StepperPage[];
+  validationFunctionsTable: ValidationFunctionsTable;
+  valueBuffer: string;
+}): ValidationTexts {
+  const initialValidationTexts = {
+    valueInvalidText: "",
+    valueValidText: "",
+  };
+
+  return stepperPages.reduce<ValidationTexts>((validationTextsAcc, page) => {
+    const { kind, children } = page;
+
+    if (kind && kind === "review") {
+      return validationTextsAcc;
+    }
+
+    children.forEach((child) => {
+      const { name: inputName, validationKey } = child;
+      if (inputName !== name) {
+        return;
+      }
+
+      const partials = validationFunctionsTable[validationKey ?? "allowAll"];
+
+      const partialInvalidText = partials.length
+        ? partials
+          .map(([regexOrFunc, errorMessage]) => {
+            if (typeof regexOrFunc === "function") {
+              return regexOrFunc(valueBuffer) ? "" : errorMessage;
+            }
+
+            return regexOrFunc.test(valueBuffer) ? "" : errorMessage;
+          })
+          .join(" ")
+        : "";
+
+      validationTextsAcc.valueInvalidText = `${
+        splitCamelCase(
+          name,
+        )
+      } is invalid. ${partialInvalidText}`;
+      validationTextsAcc.valueValidText = `${splitCamelCase(name)} is valid.`;
+    });
+
+    return validationTextsAcc;
+  }, initialValidationTexts);
+}
+
 function returnHighlightedText({
   fieldValue,
   queryValuesArray,
@@ -560,4 +619,5 @@ export {
   createAccessibleValueValidationTextElements,
   returnHighlightedText,
   returnPartialValidations,
+  returnValidationTexts,
 };
