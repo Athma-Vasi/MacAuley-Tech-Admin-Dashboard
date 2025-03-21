@@ -1,5 +1,4 @@
 import {
-  Accordion,
   Group,
   LoadingOverlay,
   Stack,
@@ -199,66 +198,67 @@ function Dashboard() {
   const displayYYYYMMDDInput = <Group w={330}>{createdYYYYMMDDInput}</Group>;
 
   const createdStoreLocationTabs = (
-    <Accordion
-      w="100%"
-      bg={backgroundColor}
-      style={{
-        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
-        position: "sticky",
-        top: 0,
-        zIndex: 4,
-      }}
-    >
-      <Accordion.Item value="Refine Metrics View">
-        <Accordion.Control>
-          <Title order={5}>Refine Metrics View</Title>
-        </Accordion.Control>
+    // <Accordion
+    //   w="100%"
+    //   bg={backgroundColor}
+    //   style={{
+    //     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
+    //     position: "sticky",
+    //     top: 0,
+    //     zIndex: 4,
+    //   }}
+    // >
+    //   <Accordion.Item value="Refine Metrics View">
+    //     <Accordion.Control>
+    //       <Title order={5}>Refine Metrics View</Title>
+    //     </Accordion.Control>
 
-        <Accordion.Panel>
-          <Group position="apart">
-            <Stack w={500}>
-              <Tabs
-                color={primaryColor}
-                value={storeLocationView}
-                onTabChange={(value) => {
-                  dashboardDispatch({
-                    action: dashboardAction.setStoreLocationView,
-                    payload: value as BusinessMetricStoreLocation,
-                  });
-                }}
-              >
-                <Tabs.List>
-                  {STORE_LOCATION_VIEW_TABS_DATA.map(
-                    (storeLocationView, idx) => {
-                      const isStoreLocationTabDisabled =
-                        (storeLocationView === "Vancouver" &&
-                          Number(selectedYear) < 2019) ||
-                        (storeLocationView === "Calgary" &&
-                          Number(selectedYear) < 2017) ||
-                        (storeLocationView === "Edmonton" &&
-                          Number(selectedYear) < 2013);
+    //     <Accordion.Panel>
 
-                      return (
-                        <Tabs.Tab
-                          key={`${idx}-${storeLocationView}`}
-                          value={storeLocationView}
-                          disabled={isStoreLocationTabDisabled}
-                        >
-                          {storeLocationView}
-                        </Tabs.Tab>
-                      );
-                    },
-                  )}
-                </Tabs.List>
-              </Tabs>
-            </Stack>
-            <Group w={400} align="flex-end">
-              {displayYYYYMMDDInput}
-            </Group>
-          </Group>
-        </Accordion.Panel>
-      </Accordion.Item>
-    </Accordion>
+    //     </Accordion.Panel>
+    //   </Accordion.Item>
+    // </Accordion>
+    <Group position="apart">
+      <Stack w={500}>
+        <Tabs
+          color={primaryColor}
+          value={storeLocationView}
+          onTabChange={(value) => {
+            dashboardDispatch({
+              action: dashboardAction.setStoreLocationView,
+              payload: value as BusinessMetricStoreLocation,
+            });
+          }}
+        >
+          <Tabs.List>
+            {STORE_LOCATION_VIEW_TABS_DATA.map(
+              (storeLocationView, idx) => {
+                const isStoreLocationTabDisabled =
+                  (storeLocationView === "Vancouver" &&
+                    Number(selectedYear) < 2019) ||
+                  (storeLocationView === "Calgary" &&
+                    Number(selectedYear) < 2017) ||
+                  (storeLocationView === "Edmonton" &&
+                    Number(selectedYear) < 2013);
+
+                return (
+                  <Tabs.Tab
+                    key={`${idx}-${storeLocationView}`}
+                    value={storeLocationView}
+                    disabled={isStoreLocationTabDisabled}
+                  >
+                    {storeLocationView}
+                  </Tabs.Tab>
+                );
+              },
+            )}
+          </Tabs.List>
+        </Tabs>
+      </Stack>
+      <Group w={400} align="flex-end">
+        {displayYYYYMMDDInput}
+      </Group>
+    </Group>
   );
 
   const displayMetricsView = metricsView === "financials"
