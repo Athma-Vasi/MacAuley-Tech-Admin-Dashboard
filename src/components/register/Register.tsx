@@ -4,14 +4,15 @@ import { useErrorBoundary } from "react-error-boundary";
 
 import { useDisclosure } from "@mantine/hooks";
 import { Link, useNavigate } from "react-router-dom";
-import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants/data";
+import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { authAction } from "../../context/authProvider";
-import { useAuth, useGlobalState } from "../../hooks";
+import { useGlobalState } from "../../hooks/useGlobalState";
+import { useAuth } from "../../hooks/useAuth";
 import type { UserSchema } from "../../types";
-import { fetchRequestPOSTSafe, logState, returnThemeColors } from "../../utils";
+import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleStepper } from "../accessibleInputs/AccessibleStepper";
-import { NotificationModal } from "../notificationModal";
+// import { NotificationModal } from "../notificationModal";
 import { RegisterAdditional } from "./RegisterAdditional";
 import { RegisterAddress } from "./RegisterAddress";
 import { RegisterAuthentication } from "./RegisterAuthentication";
@@ -61,7 +62,7 @@ function Register() {
   } = registerState;
 
   const {
-    globalState: { width, themeObject },
+    globalState: { themeObject },
   } = useGlobalState();
 
   const {

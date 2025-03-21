@@ -10,7 +10,6 @@ import type {
   CheckboxRadioSelectData,
   Country,
   PreferredPronouns,
-  RoleResourceRoutePaths,
   StepperChild,
   StepperPage,
 } from "../../types";
@@ -218,7 +217,7 @@ function returnRegisterperPages(country: Country): StepperPage[] {
   ];
 }
 
-const REGISTER_ROLE_ROUTE_PATHS: RoleResourceRoutePaths = {
+const REGISTER_ROLE_ROUTE_PATHS = {
   admin: "/user",
   manager: "/user",
   employee: "/user",

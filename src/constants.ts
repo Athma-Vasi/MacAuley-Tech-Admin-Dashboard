@@ -1,5 +1,6 @@
 import {
   CheckboxRadioSelectData,
+  Country,
   Department,
   JobPosition,
   Province,
@@ -200,6 +201,11 @@ const COLORS_SWATCHES: ColorsSwatches = {
     "#d9480f",
   ],
 };
+
+const COUNTRIES_DATA: CheckboxRadioSelectData<Country> = [
+  { value: "Canada", label: "Canada" },
+  { value: "United States", label: "United States" },
+];
 
 const STORE_LOCATION_DATA: CheckboxRadioSelectData<StoreLocation> = [
   { value: "Edmonton", label: "Edmonton" },
@@ -553,8 +559,15 @@ const DEPARTMENT_JOB_POSITION_MAP = new Map<Department, string[]>([
 
 export {
   COLORS_SWATCHES,
+  COUNTRIES_DATA,
+  DEPARTMENT_DATA,
+  DEPARTMENT_JOB_POSITION_MAP,
   FETCH_REQUEST_TIMEOUT,
+  JOB_POSITION_DATA,
+  PROVINCES,
   SCREENSHOT_IMAGE_TYPE_DATA,
+  STATES_US,
   STORE_LOCATION_DATA,
+  URGENCY_DATA,
 };
 export type { ColorsSwatches };

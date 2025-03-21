@@ -195,7 +195,11 @@ function registerReducer_setPageInError(
 ): RegisterState {
   const { kind, page } = dispatch.payload as SetPageInErrorPayload;
   const pagesInError = new Set(state.pagesInError);
-  kind === "add" ? pagesInError.add(page) : pagesInError.delete(page);
+  if (kind === "add") {
+    pagesInError.add(page);
+  } else {
+    pagesInError.delete(page);
+  }
 
   return { ...state, pagesInError };
 }
