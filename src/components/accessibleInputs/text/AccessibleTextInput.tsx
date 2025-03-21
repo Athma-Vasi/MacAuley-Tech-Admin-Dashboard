@@ -15,42 +15,38 @@ import {
   type KeyboardEvent,
   type ReactNode,
   type RefObject,
-  useEffect,
   useState,
 } from "react";
 import { TbCheck, TbRefresh, TbX } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
-import type {
-  SetPageInErrorPayload,
-  StepperPage,
-  ValidationFunctionsTable,
-} from "../../../types";
+import type { ValidationFunctionsTable } from "../../../types";
 import { returnThemeColors, splitCamelCase } from "../../../utils";
-import { VALIDATION_FUNCTIONS_TABLE } from "../../../validations";
+import {
+  VALIDATION_FUNCTIONS_TABLE,
+  ValidationKey,
+} from "../../../validations";
 import {
   createAccessibleValueValidationTextElements,
-  returnPartialValidations,
   returnValidationTexts,
 } from "../utils";
 
 type AccessibleTextInputAttributes<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+  InvalidValueAction extends boolean = boolean,
 > = {
   ariaAutoComplete?: "both" | "list" | "none" | "inline";
   autoComplete?: "on" | "off";
   disabled?: boolean;
   icon?: ReactNode;
-  /** [pageIndex, pagePositionIndex, ...] */
-  dynamicIndexes?: number[];
   initialInputValue?: string;
   invalidValueAction: InvalidValueAction;
   label?: ReactNode;
   maxLength?: number;
   minLength?: number;
-  name: string;
+  // must correspond to name in validationFunctionsTable
+  name: ValidationKey;
   onBlur?: () => void;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
@@ -62,26 +58,9 @@ type AccessibleTextInputAttributes<
     }
     | {
       action: InvalidValueAction;
-      payload: SetPageInErrorPayload;
+      payload: boolean;
     }
   >;
-  /** for inputs created by user */
-  parentDynamicDispatch?: Dispatch<
-    | {
-      action: ValidValueAction;
-      payload: {
-        dynamicIndexes: number[];
-        value: string;
-      };
-    }
-    | {
-      action: InvalidValueAction;
-      payload: SetPageInErrorPayload;
-    }
-  >;
-
-  /** stepper page location of input. default 0 = first page = step 0 */
-  page?: number;
   placeholder?: string;
   ref?: RefObject<HTMLInputElement> | null;
   required?: boolean;
@@ -89,7 +68,6 @@ type AccessibleTextInputAttributes<
   rightSectionIcon?: ReactNode;
   rightSectionOnClick?: () => void;
   size?: MantineSize;
-  stepperPages: StepperPage[];
   validationFunctionsTable?: ValidationFunctionsTable;
   validValueAction: ValidValueAction;
   value: string;
@@ -98,7 +76,7 @@ type AccessibleTextInputAttributes<
 
 type AccessibleTextInputProps<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+  InvalidValueAction extends boolean = boolean,
 > = {
   attributes: AccessibleTextInputAttributes<
     ValidValueAction,
@@ -109,7 +87,7 @@ type AccessibleTextInputProps<
 
 function AccessibleTextInput<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+  InvalidValueAction extends boolean = boolean,
 >(
   { attributes, uniqueId }: AccessibleTextInputProps<
     ValidValueAction,
@@ -121,7 +99,6 @@ function AccessibleTextInput<
     autoComplete = "off",
     disabled = false,
     icon = null,
-    dynamicIndexes,
     initialInputValue = "",
     invalidValueAction,
     maxLength = 75,
@@ -131,9 +108,7 @@ function AccessibleTextInput<
     onChange,
     onFocus,
     onKeyDown,
-    page = 0,
     parentDispatch,
-    parentDynamicDispatch,
     placeholder = "",
     ref = null,
     required = false,
@@ -141,7 +116,6 @@ function AccessibleTextInput<
     rightSectionIcon = null,
     rightSectionOnClick = () => {},
     size = "sm",
-    stepperPages,
     validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
     validValueAction,
     value,
@@ -159,9 +133,9 @@ function AccessibleTextInput<
     useDisclosure(false);
 
   // prevents stale value as input placeholder in dynamically created inputs
-  useEffect(() => {
-    setValueBuffer(value);
-  }, [value]);
+  // useEffect(() => {
+  //   setValueBuffer(value);
+  // }, [value]);
 
   const {
     globalState: { themeObject },
@@ -192,18 +166,26 @@ function AccessibleTextInput<
     )
     : null;
 
-  const { partials } = returnPartialValidations({
-    name,
-    stepperPages,
-    validationFunctionsTable,
-  });
+  // const { partials } = returnPartialValidations({
+  //   name,
+  //   stepperPages,
+  //   validationFunctionsTable,
+  // });
 
-  const isValueBufferValid = partials.every((
-    [regexOrFunc, _validationText]: [any, any],
-  ) =>
-    typeof regexOrFunc === "function"
-      ? regexOrFunc(valueBuffer)
-      : regexOrFunc.test(valueBuffer)
+  // const isValueBufferValid = partials.every((
+  //   [regexOrFunc, _validationText]: [any, any],
+  // ) =>
+  //   typeof regexOrFunc === "function"
+  //     ? regexOrFunc(valueBuffer)
+  //     : regexOrFunc.test(valueBuffer)
+  // );
+
+  const regexesArray = validationFunctionsTable[name];
+  const isValueBufferValid = regexesArray.every(
+    ([regexOrFunc, _validationText]: [any, any]) =>
+      typeof regexOrFunc === "function"
+        ? regexOrFunc(valueBuffer)
+        : regexOrFunc.test(valueBuffer),
   );
 
   const leftIcon = icon ??

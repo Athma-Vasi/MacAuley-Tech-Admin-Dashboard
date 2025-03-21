@@ -9,6 +9,7 @@ import {
   returnThemeColors,
   splitCamelCase,
 } from "../../utils";
+import { ValidationKey } from "../../validations";
 import {
   AccessibleButton,
   type AccessibleButtonAttributes,
@@ -447,128 +448,91 @@ type ValidationTexts = {
   valueInvalidText: string;
 };
 
-function returnValidationTexts({
-  name,
-  stepperPages,
-  validationFunctionsTable,
-  valueBuffer,
-}: {
-  name: string;
-  stepperPages: StepperPage[];
-  validationFunctionsTable: ValidationFunctionsTable;
-  valueBuffer: string;
-}): ValidationTexts {
+function returnValidationTexts(
+  { name, validationFunctionsTable, valueBuffer }: {
+    name: ValidationKey;
+    validationFunctionsTable: ValidationFunctionsTable;
+    valueBuffer: string;
+  },
+): ValidationTexts {
   const initialValidationTexts = {
     valueInvalidText: "",
     valueValidText: "",
   };
-
-  return stepperPages.reduce<ValidationTexts>((validationTextsAcc, page) => {
-    const { kind, children } = page;
-
-    if (kind && kind === "review") {
-      return validationTextsAcc;
+  const regexesArray = validationFunctionsTable[name];
+  const regexes = regexesArray.map(([regexOrFunc, errorMessage]) => {
+    if (typeof regexOrFunc === "function") {
+      return regexOrFunc(valueBuffer) ? "" : errorMessage;
     }
+    return regexOrFunc.test(valueBuffer) ? "" : errorMessage;
+  });
+  const partialInvalidText = regexes.join(" ");
+  const valueInvalidText = `${
+    splitCamelCase(name)
+  } is invalid. ${partialInvalidText}`;
+  const valueValidText = `${splitCamelCase(name)} is valid.`;
 
-    children.forEach((child) => {
-      const { name: inputName, validationKey } = child;
-      if (inputName !== name) {
-        return;
-      }
-
-      const partials = validationFunctionsTable[validationKey ?? "allowAll"];
-
-      const partialInvalidText = partials.length
-        ? partials
-          .map(([regexOrFunc, errorMessage]) => {
-            if (typeof regexOrFunc === "function") {
-              return regexOrFunc(valueBuffer) ? "" : errorMessage;
-            }
-
-            return regexOrFunc.test(valueBuffer) ? "" : errorMessage;
-          })
-          .join(" ")
-        : "";
-
-      validationTextsAcc.valueInvalidText = `${
-        splitCamelCase(
-          name,
-        )
-      } is invalid. ${partialInvalidText}`;
-      validationTextsAcc.valueValidText = `${splitCamelCase(name)} is valid.`;
-    });
-
-    return validationTextsAcc;
-  }, initialValidationTexts);
+  return {
+    ...initialValidationTexts,
+    valueInvalidText,
+    valueValidText,
+  };
 }
 
-function returnHighlightedText({
-  fieldValue,
-  queryValuesArray,
-  textHighlightColor,
-}: {
-  fieldValue: string | boolean | number | string[] | boolean[] | number[];
-  queryValuesArray: string[];
-  textHighlightColor: string;
-}) {
-  // regex to determine if formattedValue has any terms in queryValuesArray
-  const regex = queryValuesArray.length
-    ? new RegExp(
-      queryValuesArray
-        .filter((value) => value !== "")
-        .flatMap((value) => value.split(" "))
-        .join("|"),
-      "gi",
-    )
-    : null;
+// function returnValidationTexts({
+//   name,
+//   stepperPages,
+//   validationFunctionsTable,
+//   valueBuffer,
+// }: {
+//   name: string;
+//   stepperPages: StepperPage[];
+//   validationFunctionsTable: ValidationFunctionsTable;
+//   valueBuffer: string;
+// }): ValidationTexts {
+//   const initialValidationTexts = {
+//     valueInvalidText: "",
+//     valueValidText: "",
+//   };
 
-  let returnedText: React.JSX.Element | React.JSX.Element[] | null = null;
-  if (regex?.test(fieldValue?.toString() ?? "")) {
-    returnedText = fieldValue
-      .toString()
-      .split(" ")
-      .map((text, index) => {
-        // word that has below symbol is also highlighted
-        const wordWithoutPunctuation = text
-          .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, " ")
-          .toLowerCase()
-          .split(" ");
+//   return stepperPages.reduce<ValidationTexts>((validationTextsAcc, page) => {
+//     const { kind, children } = page;
 
-        const flattenedQueryValuesArray = queryValuesArray
-          .filter((value) => value !== "")
-          .flatMap((value) => value.toLowerCase().split(" "));
+//     if (kind && kind === "review") {
+//       return validationTextsAcc;
+//     }
 
-        const isQueryArrayIncludesWord = flattenedQueryValuesArray.some(
-          (queryValue) => {
-            const regex = new RegExp(queryValue, "gi");
-            return regex.test(wordWithoutPunctuation.join(" "));
-          },
-        );
+//     children.forEach((child) => {
+//       const { name: inputName, validationKey } = child;
+//       if (inputName !== name) {
+//         return;
+//       }
 
-        if (isQueryArrayIncludesWord) {
-          return (
-            <Flex>
-              <Highlight
-                key={`${text}-${index.toString()}`}
-                highlightStyles={{
-                  backgroundColor: textHighlightColor,
-                }}
-                highlight={text}
-              >
-                {text}
-              </Highlight>
-            </Flex>
-          );
-        }
+//       const partials = validationFunctionsTable[validationKey ?? "allowAll"];
 
-        return <Text key={`${text}-${index.toString()}`}>{text}</Text>;
-      });
-  } else {
-    returnedText = <Text>{fieldValue?.toString() ?? ""}</Text>;
-  }
+//       const partialInvalidText = partials.length
+//         ? partials
+//           .map(([regexOrFunc, errorMessage]) => {
+//             if (typeof regexOrFunc === "function") {
+//               return regexOrFunc(valueBuffer) ? "" : errorMessage;
+//             }
 
-  return returnedText;
-}
+//             return regexOrFunc.test(valueBuffer) ? "" : errorMessage;
+//           })
+//           .join(" ")
+//         : "";
+
+//       validationTextsAcc.valueInvalidText = `${
+//         splitCamelCase(
+//           name,
+//         )
+//       } is invalid. ${partialInvalidText}`;
+//       validationTextsAcc.valueValidText = `${splitCamelCase(name)} is valid.`;
+//     });
+
+//     return validationTextsAcc;
+//   }, initialValidationTexts);
+// }
 
 function returnPartialValidations({
   name,
@@ -617,7 +581,6 @@ export {
   createAccessibleSwitchInputs,
   createAccessibleSwitchOnOffTextElements,
   createAccessibleValueValidationTextElements,
-  returnHighlightedText,
   returnPartialValidations,
   returnValidationTexts,
 };
