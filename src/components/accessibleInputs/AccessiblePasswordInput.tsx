@@ -17,7 +17,7 @@ import {
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
-import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
+import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type {
   SetPageInErrorPayload,
@@ -33,7 +33,7 @@ import {
 
 type AccessiblePasswordInputAttributes<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+  InvalidValueAction extends boolean = boolean,
 > = {
   disabled?: boolean;
   icon?: ReactNode;
@@ -42,12 +42,10 @@ type AccessiblePasswordInputAttributes<
   label?: ReactNode;
   maxLength?: number;
   minLength?: number;
-  name: string;
+  name: ValidationKey;
   onBlur?: () => void;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
-  /** stepper page location of input. default 0 = first page = step 0 */
-  page?: number;
   parentDispatch: Dispatch<
     | {
       action: ValidValueAction;
@@ -55,7 +53,7 @@ type AccessiblePasswordInputAttributes<
     }
     | {
       action: InvalidValueAction;
-      payload: SetPageInErrorPayload;
+      payload: boolean;
     }
   >;
   passwordValue?: string;
@@ -63,7 +61,6 @@ type AccessiblePasswordInputAttributes<
   ref?: RefObject<HTMLInputElement>;
   required?: boolean;
   size?: MantineSize;
-  stepperPages: StepperPage[];
   validationFunctionsTable?: ValidationFunctionsTable;
   validValueAction: ValidValueAction;
   value: string;
@@ -72,7 +69,7 @@ type AccessiblePasswordInputAttributes<
 
 type AccessiblePasswordInputProps<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+  InvalidValueAction extends boolean = boolean,
 > = {
   attributes: AccessiblePasswordInputAttributes<
     ValidValueAction,
@@ -82,7 +79,7 @@ type AccessiblePasswordInputProps<
 
 function AccessiblePasswordInput<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+  InvalidValueAction extends boolean = boolean,
 >(
   { attributes }: AccessiblePasswordInputProps<
     ValidValueAction,
@@ -100,14 +97,12 @@ function AccessiblePasswordInput<
     onBlur,
     onChange,
     onFocus,
-    page = 0,
     parentDispatch,
     passwordValue,
     placeholder,
     ref = null,
     required = false,
     size = "sm",
-    stepperPages,
     validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
     validValueAction,
     value,
@@ -133,16 +128,12 @@ function AccessiblePasswordInput<
     redColorShade,
   } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
-  const { partials } = returnPartialValidations({
-    name,
-    stepperPages,
-    validationFunctionsTable,
-  });
-
-  const isValueBufferValid = partials.every(([regexOrFunc, _validationText]) =>
-    typeof regexOrFunc === "function"
-      ? regexOrFunc(valueBuffer)
-      : regexOrFunc.test(valueBuffer)
+  const regexesArray = validationFunctionsTable[name];
+  const isValueBufferValid = regexesArray.every(
+    ([regexOrFunc, _validationText]: [any, any]) =>
+      typeof regexOrFunc === "function"
+        ? regexOrFunc(valueBuffer)
+        : regexOrFunc.test(valueBuffer),
   );
 
   const leftIcon = icon ??
@@ -154,7 +145,6 @@ function AccessiblePasswordInput<
 
   const validationTexts = returnValidationTexts({
     name,
-    stepperPages,
     validationFunctionsTable,
     valueBuffer,
   });
@@ -196,19 +186,19 @@ function AccessiblePasswordInput<
             minLength={minLength}
             name={name}
             onBlur={() => {
-              const kind = passwordValue
-                ? passwordValue === valueBuffer || !isValueBufferValid
-                  ? "add"
-                  : "delete"
-                : isValueBufferValid
-                ? "delete"
-                : "add";
+              // const kind = passwordValue
+              //   ? passwordValue === valueBuffer || !isValueBufferValid
+              //     ? "add"
+              //     : "delete"
+              //   : isValueBufferValid
+              //   ? "delete"
+              //   : "add";
 
-              console.log("kind", kind);
+              // console.log("kind", kind);
 
               parentDispatch({
                 action: invalidValueAction,
-                payload: { kind, page },
+                payload: isValueBufferValid,
               });
 
               parentDispatch({
