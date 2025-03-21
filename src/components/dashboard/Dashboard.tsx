@@ -2,7 +2,6 @@ import {
   Group,
   LoadingOverlay,
   Stack,
-  Tabs,
   Text,
   TextInput,
   Title,
@@ -16,13 +15,14 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { useParams } from "react-router-dom";
 import { returnThemeColors } from "../../utils";
+import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmentedControl";
 import { dashboardAction } from "./actions";
 import {
   DAYS_PER_MONTH,
   MONTHS,
   PRODUCT_CATEGORIES,
   REPAIR_CATEGORIES,
-  STORE_LOCATION_VIEW_TABS_DATA,
+  STORE_LOCATION_VIEW_DATA,
 } from "./constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
@@ -30,7 +30,6 @@ import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
-import type { BusinessMetricStoreLocation } from "./types";
 import {
   createRandomBusinessMetrics,
   excludeTodayFromCalendarView,
@@ -53,9 +52,7 @@ function Dashboard() {
   const { showBoundary } = useErrorBoundary();
 
   const { primaryColor } = themeObject;
-  const {
-    backgroundColor,
-  } = returnThemeColors({
+  const { backgroundColor } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -195,70 +192,24 @@ function Dashboard() {
       value={selectedYYYYMMDD}
     />
   );
-  const displayYYYYMMDDInput = <Group w={330}>{createdYYYYMMDDInput}</Group>;
+  const displayYYYYMMDDInput = <Group>{createdYYYYMMDDInput}</Group>;
 
-  const createdStoreLocationTabs = (
-    // <Accordion
-    //   w="100%"
-    //   bg={backgroundColor}
-    //   style={{
-    //     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
-    //     position: "sticky",
-    //     top: 0,
-    //     zIndex: 4,
-    //   }}
-    // >
-    //   <Accordion.Item value="Refine Metrics View">
-    //     <Accordion.Control>
-    //       <Title order={5}>Refine Metrics View</Title>
-    //     </Accordion.Control>
+  const isStoreLocationSegmentDisabled = (storeLocationView === "Vancouver" &&
+    Number(selectedYear) < 2019) ||
+    (storeLocationView === "Calgary" && Number(selectedYear) < 2017) ||
+    (storeLocationView === "Edmonton" && Number(selectedYear) < 2013);
 
-    //     <Accordion.Panel>
-
-    //     </Accordion.Panel>
-    //   </Accordion.Item>
-    // </Accordion>
-    <Group position="apart">
-      <Stack w={500}>
-        <Tabs
-          color={primaryColor}
-          value={storeLocationView}
-          onTabChange={(value) => {
-            dashboardDispatch({
-              action: dashboardAction.setStoreLocationView,
-              payload: value as BusinessMetricStoreLocation,
-            });
-          }}
-        >
-          <Tabs.List>
-            {STORE_LOCATION_VIEW_TABS_DATA.map(
-              (storeLocationView, idx) => {
-                const isStoreLocationTabDisabled =
-                  (storeLocationView === "Vancouver" &&
-                    Number(selectedYear) < 2019) ||
-                  (storeLocationView === "Calgary" &&
-                    Number(selectedYear) < 2017) ||
-                  (storeLocationView === "Edmonton" &&
-                    Number(selectedYear) < 2013);
-
-                return (
-                  <Tabs.Tab
-                    key={`${idx}-${storeLocationView}`}
-                    value={storeLocationView}
-                    disabled={isStoreLocationTabDisabled}
-                  >
-                    {storeLocationView}
-                  </Tabs.Tab>
-                );
-              },
-            )}
-          </Tabs.List>
-        </Tabs>
-      </Stack>
-      <Group w={400} align="flex-end">
-        {displayYYYYMMDDInput}
-      </Group>
-    </Group>
+  const storeLocationSegmentedControl = (
+    <AccessibleSegmentedControl
+      attributes={{
+        data: STORE_LOCATION_VIEW_DATA,
+        disabled: isStoreLocationSegmentDisabled,
+        name: "storeLocation",
+        parentDispatch: dashboardDispatch,
+        validValueAction: dashboardAction.setStoreLocationView,
+        value: storeLocationView,
+      }}
+    />
   );
 
   const displayMetricsView = metricsView === "financials"
@@ -307,10 +258,21 @@ function Dashboard() {
 
   const dashboard = (
     <Stack w="100%">
-      <Title order={2}>Dashboard</Title>
-      <Text size="sm">Welcome to your dashboard</Text>
-      {displayLoadingOverlay}
-      {createdStoreLocationTabs}
+      <Stack align="flex-start" spacing={2}>
+        <Title order={1}>DASHBOARD</Title>
+        <Text size="sm">Welcome to your dashboard</Text>
+      </Stack>
+      <Group
+        position="apart"
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 3,
+          backgroundColor: backgroundColor,
+        }}
+      >
+        {storeLocationSegmentedControl} {displayYYYYMMDDInput}
+      </Group>
       {displayMetricsView}
     </Stack>
   );

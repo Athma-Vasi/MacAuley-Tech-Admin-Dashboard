@@ -1,4 +1,4 @@
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 640px) {
   .app {
     display: grid;
     grid-template-areas:
@@ -6,14 +6,21 @@
       "sidebar main";
     grid-template-columns: 1fr 4fr;
     grid-template-rows: auto 1fr;
-    height: 100vb;
-    width: 100vi;
+    /* height: 100vb;
+    width: 100vi; */
+    max-inline-size: 1920px;
+    max-block-size: 100vh;
+    min-inline-size: 600px;
+    outline: 1px solid teal;
+    /* max-width: 1920px;
+    max-height: 100vh;
+    min-width: 600px; */
   }
 
   .header {
     grid-area: header;
     display: flex;
-    width: 100vi;
+    width: 100%;
     outline: 1px solid goldenrod;
     justify-content: space-between;
     align-items: center;
@@ -30,13 +37,4 @@
     /* color:#daa520 */
     /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
   }
-}
-
-.settings {
-  cursor: pointer;
-  background-color: goldenrod;
-  min-block-size: 50px;
-  min-inline-size: 50px;
-  max-block-size: 75px;
-  max-inline-size: 75px;
 }

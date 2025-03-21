@@ -1,4 +1,4 @@
-import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -11,7 +11,6 @@ import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
-  DashboardCalendarView,
   Month,
   Year,
 } from "../types";
@@ -61,6 +60,7 @@ function FinancialMetrics({
   const {
     redColorShade,
     greenColorShade,
+    backgroundColor,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -228,7 +228,11 @@ function FinancialMetrics({
   const financialMetrics = (
     <Stack>
       {loadingOverlay}
-      {categorySegmentedControl}
+      <Group
+        style={{ position: "sticky", top: 80, zIndex: 3, backgroundColor }}
+      >
+        {categorySegmentedControl}
+      </Group>
       {subCategoryPage}
     </Stack>
   );

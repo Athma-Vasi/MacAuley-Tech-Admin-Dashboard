@@ -22,7 +22,6 @@ function Home() {
                 <Sidebar />
             </div>
             <div className="main">
-                <h2>Main content</h2>
                 <DashboardWrapper />
             </div>
         </div>

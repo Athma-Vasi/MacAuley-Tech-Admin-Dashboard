@@ -1,8 +1,8 @@
+import { lazy } from "react";
 import ErrorSuspenseHOC from "../error/ErrorSuspenseHOC";
-import Dashboard from "./Dashboard";
 
 function DashboardWrapper() {
-  return ErrorSuspenseHOC(Dashboard)({});
+  return ErrorSuspenseHOC(lazy(() => import("./Dashboard")))({});
 }
 
 export default DashboardWrapper;

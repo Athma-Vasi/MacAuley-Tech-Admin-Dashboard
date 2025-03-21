@@ -111,11 +111,13 @@ const METRICS_VIEW_TABS_DATA: DashboardMetricsView[] = [
   "Repairs",
 ];
 
-const STORE_LOCATION_VIEW_TABS_DATA: BusinessMetricStoreLocation[] = [
-  "All Locations",
-  "Edmonton",
-  "Calgary",
-  "Vancouver",
+const STORE_LOCATION_VIEW_DATA: CheckboxRadioSelectData<
+  BusinessMetricStoreLocation
+> = [
+  { label: "All Locations", value: "All Locations" },
+  { label: "Edmonton", value: "Edmonton" },
+  { label: "Calgary", value: "Calgary" },
+  { label: "Vancouver", value: "Vancouver" },
 ];
 
 const BUSINESS_METRIC_STORE_LOCATIONS: BusinessMetricStoreLocation[] = [
@@ -168,7 +170,7 @@ export {
   PRODUCT_METRICS_DATA,
   REPAIR_CATEGORIES,
   REPAIR_METRICS_DATA,
-  STORE_LOCATION_VIEW_TABS_DATA,
+  STORE_LOCATION_VIEW_DATA,
   UNITLESS_METRICS_SET,
   YEARS_SET,
 };
