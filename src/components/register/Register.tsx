@@ -20,6 +20,8 @@ import { registerAction } from "./actions";
 import { returnRegisterperPages } from "./constants";
 import { registerReducer } from "./reducers";
 import { initialRegisterState } from "./state";
+import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordInput";
+import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
 
 function Register() {
   const [registerState, registerDispatch] = useReducer(
@@ -28,34 +30,13 @@ function Register() {
   );
 
   const {
-    addressLine,
-    city,
     confirmPassword,
-    contactNumber,
-    country,
-    dateOfBirth,
-    department,
     email,
-    emergencyContactName,
-    emergencyContactNumber,
     errorMessage,
-    firstName,
     isError,
     isSubmitting,
     isSuccessful,
-    jobPosition,
-    lastName,
-    middleName,
-    pagesInError,
     password,
-    postalCode,
-    preferredName,
-    preferredPronouns,
-    profilePictureUrl,
-    province,
-    startDate,
-    state,
-    storeLocation,
     triggerFormSubmit,
     username,
   } = registerState;
@@ -107,46 +88,46 @@ function Register() {
         sessionId,
       } = decodedToken;
 
-      const userSchema: UserSchema = {
-        active: true,
-        address: country === "Canada"
-          ? {
-            addressLine,
-            city,
-            country,
-            postalCode,
-            province,
-          }
-          : {
-            addressLine,
-            city,
-            country,
-            postalCode,
-            state,
-          },
-        completedSurveys: [],
-        contactNumber,
-        dateOfBirth,
-        department,
-        email,
-        emergencyContact: {
-          contactNumber: emergencyContactNumber,
-          fullName: emergencyContactName,
-        },
-        firstName,
-        isPrefersReducedMotion: false,
-        jobPosition,
-        lastName,
-        middleName,
-        password,
-        preferredName,
-        preferredPronouns,
-        profilePictureUrl,
-        roles: ["Employee"],
-        startDate,
-        storeLocation,
-        username,
-      };
+      // const userSchema: UserSchema = {
+      //   active: true,
+      //   address: country === "Canada"
+      //     ? {
+      //       addressLine,
+      //       city,
+      //       country,
+      //       postalCode,
+      //       province,
+      //     }
+      //     : {
+      //       addressLine,
+      //       city,
+      //       country,
+      //       postalCode,
+      //       state,
+      //     },
+      //   completedSurveys: [],
+      //   contactNumber,
+      //   dateOfBirth,
+      //   department,
+      //   email,
+      //   emergencyContact: {
+      //     contactNumber: emergencyContactNumber,
+      //     fullName: emergencyContactName,
+      //   },
+      //   firstName,
+      //   isPrefersReducedMotion: false,
+      //   jobPosition,
+      //   lastName,
+      //   middleName,
+      //   password,
+      //   preferredName,
+      //   preferredPronouns,
+      //   profilePictureUrl,
+      //   roles: ["Employee"],
+      //   startDate,
+      //   storeLocation,
+      //   username,
+      // };
 
       try {
         // const registerResult = await fetchRequestPOSTSafe({
@@ -225,61 +206,60 @@ function Register() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerFormSubmit]);
 
-  const registerStepperPages = returnRegisterperPages(country);
-
-  const authenticationPage = (
-    <RegisterAuthentication
-      confirmPassword={confirmPassword}
-      email={email}
-      parentAction={registerAction}
-      parentDispatch={registerDispatch}
-      password={password}
-      stepperPages={registerStepperPages}
-      username={username}
+  const confirmPasswordTextInput = (
+    <AccessiblePasswordInput
+      attributes={{
+        stepperPages,
+        invalidValueAction: registerAction.setPageInError,
+        name: "confirmPassword",
+        page: 0,
+        parentDispatch: registerDispatch,
+        passwordValue: password,
+        validValueAction: registerAction.setConfirmPassword,
+        value: confirmPassword,
+      }}
     />
   );
 
-  const personalPage = (
-    <RegisterPersonal
-      dateOfBirth={dateOfBirth}
-      firstName={firstName}
-      middleName={middleName}
-      lastName={lastName}
-      parentAction={registerAction}
-      parentDispatch={registerDispatch}
-      preferredName={preferredName}
-      preferredPronouns={preferredPronouns}
-      profilePictureUrl={profilePictureUrl}
-      stepperPages={registerStepperPages}
+  const emailTextInput = (
+    <AccessibleTextInput
+      attributes={{
+        stepperPages,
+        invalidValueAction: registerAction.setPageInError,
+        name: "email",
+        page: 0,
+        parentDispatch: registerDispatch,
+        validValueAction: registerAction.setEmail,
+        value: email,
+      }}
     />
   );
 
-  const addressPage = (
-    <RegisterAddress
-      addressLine={addressLine}
-      city={city}
-      contactNumber={contactNumber}
-      country={country}
-      parentAction={registerAction}
-      parentDispatch={registerDispatch}
-      postalCode={postalCode}
-      province={province}
-      state={state}
-      stepperPages={registerStepperPages}
+  const passwordTextInput = (
+    <AccessiblePasswordInput
+      attributes={{
+        stepperPages,
+        invalidValueAction: registerAction.setPageInError,
+        name: "password",
+        page: 0,
+        parentDispatch: registerDispatch,
+        validValueAction: registerAction.setPassword,
+        value: password,
+      }}
     />
   );
 
-  const additionalPage = (
-    <RegisterAdditional
-      department={department}
-      emergencyContactName={emergencyContactName}
-      emergencyContactNumber={emergencyContactNumber}
-      jobPosition={jobPosition}
-      parentAction={registerAction}
-      parentDispatch={registerDispatch}
-      startDate={startDate}
-      stepperPages={registerStepperPages}
-      storeLocation={storeLocation}
+  const usernameTextInput = (
+    <AccessibleTextInput
+      attributes={{
+        stepperPages,
+        invalidValueAction: registerAction.setPageInError,
+        name: "username",
+        page: 0,
+        parentDispatch: registerDispatch,
+        validValueAction: registerAction.setUsername,
+        value: username,
+      }}
     />
   );
 
@@ -297,25 +277,6 @@ function Register() {
             payload: true,
           });
         },
-      }}
-    />
-  );
-
-  const stepper = (
-    <AccessibleStepper
-      attributes={{
-        componentState: registerState,
-        invalidValueAction: registerAction.setPageInError,
-        pageElements: [
-          authenticationPage,
-          personalPage,
-          addressPage,
-          additionalPage,
-        ],
-        parentDispatch: registerDispatch,
-        stepperPages: registerStepperPages,
-        stepsInError: pagesInError,
-        submitButton,
       }}
     />
   );
@@ -357,7 +318,6 @@ function Register() {
 
   return (
     <Stack>
-      {stepper}
       {linkToLogin}
     </Stack>
   );

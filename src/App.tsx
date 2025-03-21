@@ -1,32 +1,26 @@
+import { MantineProvider } from "@mantine/core";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import DashboardWrapper from "./components/dashboard";
-import Header from "./components/header";
-import Sidebar from "./components/sidebar";
-import { COLORS_SWATCHES } from "./constants";
+import CustomFonts from "./components/customFonts";
+import HomeWrapper from "./components/home";
+import LoginWrapper from "./components/login";
+import RegisterWrapper from "./components/register";
 import { useGlobalState } from "./hooks/useGlobalState";
-import { returnThemeColors } from "./utils";
 
 function App() {
   const {
     globalState: { themeObject },
   } = useGlobalState();
 
-  const { backgroundColor, textColor } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
-
   return (
-    <div className="app" style={{ backgroundColor, color: textColor }}>
-      <Header />
-      <div className="sidebar">
-        <Sidebar />
-      </div>
-      <div className="main">
-        <h2>Main content</h2>
-        <DashboardWrapper />
-      </div>
-    </div>
+    <MantineProvider withGlobalStyles withNormalizeCSS theme={themeObject}>
+      <CustomFonts />
+      <Routes>
+        <Route path="/" element={<HomeWrapper />} />
+        <Route path="/login" element={<LoginWrapper />} />
+        <Route path="/register" element={<RegisterWrapper />} />
+      </Routes>
+    </MantineProvider>
   );
 }
 
