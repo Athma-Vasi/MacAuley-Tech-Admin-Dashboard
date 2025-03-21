@@ -20,6 +20,41 @@ type SliderMarksData = Array<{
 
 type ScreenshotImageType = "image/png" | "image/jpeg" | "image/webp";
 
+type InputType =
+  | "boolean"
+  | "checkbox"
+  | "date"
+  | "file"
+  | "number"
+  | "select"
+  | "slider"
+  | "switch"
+  | "text"
+  | "time";
+
+type SliderInputData = {
+  marks?: SliderMarksData;
+  max: number;
+  min: number;
+};
+
+type StepperChild = {
+  inputType: InputType;
+  isRequired?: boolean;
+  name: string;
+  validationKey?: ValidationKey;
+  selectInputData?: CheckboxRadioSelectData;
+  checkboxInputData?: CheckboxRadioSelectData;
+  sliderInputData?: SliderInputData;
+};
+
+type StepperPage = {
+  kind?: "form" | "review";
+  preventErrorStateDisplay?: boolean;
+  description: string;
+  children: Array<StepperChild>;
+};
+
 type SetPageInErrorPayload = {
   kind: "add" | "delete";
   page: number;
@@ -380,6 +415,7 @@ export type {
   HttpServerResponse,
   HumanResources,
   InformationTechnology,
+  InputType,
   JobPosition,
   LogisticsAndInventory,
   Maintenance,
@@ -396,8 +432,11 @@ export type {
   ScreenshotImageType,
   SetPageInErrorPayload,
   Shade,
+  SliderInputData,
   SliderMarksData,
   StatesUS,
+  StepperChild,
+  StepperPage,
   StoreAdministration,
   StoreLocation,
   ThemeComponent,

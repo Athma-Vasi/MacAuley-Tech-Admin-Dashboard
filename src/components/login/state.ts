@@ -5,9 +5,9 @@ const initialLoginState: LoginState = {
   isSubmitting: false,
   isSuccessful: false,
   pagesInError: new Set(),
-  password: "",
+  password: "password123Q!",
   triggerFormSubmit: false,
-  username: "",
+  username: "manager",
 };
 
 export { initialLoginState };
