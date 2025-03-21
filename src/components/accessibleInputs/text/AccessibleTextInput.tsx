@@ -21,13 +21,19 @@ import {
 import { TbCheck, TbRefresh, TbX } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../../constants";
+import { VALIDATION_FUNCTIONS_TABLE } from "../../../validations";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import type {
   SetPageInErrorPayload,
+  StepperPage,
   ValidationFunctionsTable,
 } from "../../../types";
 import { returnThemeColors, splitCamelCase } from "../../../utils";
-import { createAccessibleValueValidationTextElements } from "../utils";
+import {
+  createAccessibleValueValidationTextElements,
+  returnPartialValidations,
+  returnValidationTexts,
+} from "../utils";
 
 type AccessibleTextInputAttributes<
   ValidValueAction extends string = string,
@@ -37,6 +43,8 @@ type AccessibleTextInputAttributes<
   autoComplete?: "on" | "off";
   disabled?: boolean;
   icon?: ReactNode;
+  /** [pageIndex, pagePositionIndex, ...] */
+  dynamicIndexes?: number[];
   initialInputValue?: string;
   invalidValueAction: InvalidValueAction;
   label?: ReactNode;
@@ -57,6 +65,25 @@ type AccessibleTextInputAttributes<
       payload: SetPageInErrorPayload;
     }
   >;
+  /** for inputs created by user */
+  parentDynamicDispatch?: Dispatch<
+    | {
+      action: ValidValueAction;
+      payload: {
+        dynamicIndexes: number[];
+        value: string;
+      };
+    }
+    | {
+      action: InvalidValueAction;
+      payload: SetPageInErrorPayload;
+    }
+  >;
+  setFilterInputValuesDispatchData?: SetFilterInputValuesDispatchData<
+    ValidValueAction,
+    InvalidValueAction
+  >;
+  /** stepper page location of input. default 0 = first page = step 0 */
   page?: number;
   placeholder?: string;
   ref?: RefObject<HTMLInputElement> | null;
@@ -65,6 +92,7 @@ type AccessibleTextInputAttributes<
   rightSectionIcon?: ReactNode;
   rightSectionOnClick?: () => void;
   size?: MantineSize;
+  stepperPages: StepperPage[];
   validationFunctionsTable?: ValidationFunctionsTable;
   validValueAction: ValidValueAction;
   value: string;
@@ -96,6 +124,7 @@ function AccessibleTextInput<
     autoComplete = "off",
     disabled = false,
     icon = null,
+    dynamicIndexes,
     initialInputValue = "",
     invalidValueAction,
     maxLength = 75,
@@ -107,13 +136,17 @@ function AccessibleTextInput<
     onKeyDown,
     page = 0,
     parentDispatch,
+    parentDynamicDispatch,
     placeholder = "",
+    setFilterInputValuesDispatchData,
     ref = null,
     required = false,
     rightSection = false,
     rightSectionIcon = null,
     rightSectionOnClick = () => {},
     size = "sm",
+    stepperPages,
+    validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
     validValueAction,
     value,
     withAsterisk = required,
@@ -139,7 +172,9 @@ function AccessibleTextInput<
   } = useGlobalState();
 
   const {
-    generalColors: { greenColorShade, grayColorShade, redColorShade },
+    greenColorShade,
+    grayColorShade,
+    redColorShade,
   } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
   const rightIcon = rightSection
@@ -161,46 +196,19 @@ function AccessibleTextInput<
     )
     : null;
 
-  function returnValidationTexts(
-    valueBuffer: string,
-  ) {
-    const initialAcc = {
-      isValids: [] as boolean[],
-      validationTexts: {
-        valueInvalidText: "",
-        valueValidText: "",
-      },
-    };
+  const { partials } = returnPartialValidations({
+    name,
+    stepperPages,
+    validationFunctionsTable,
+  });
 
-    const validations: Array<[RegExp, string]> = [
-      [
-        /^(?=.*[A-Za-z0-9])/,
-        "Must contain at least one alphanumeric character.",
-      ],
-      [
-        /^[A-Za-z0-9\s.,#-]+$/,
-        "Must contain only letters, numbers, spaces, and special characters: . , # -",
-      ],
-      [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
-    ];
-
-    return valueBuffer.length > 0
-      ? validations.reduce((acc, tuple) => {
-        const [regex, text] = tuple;
-        const { isValids, validationTexts } = acc;
-
-        const isValid = regex.test(valueBuffer);
-        const validationText = isValid ? "" : text;
-        isValids.push(isValid);
-        validationTexts.valueInvalidText += validationText;
-
-        return acc;
-      }, initialAcc)
-      : initialAcc;
-  }
-
-  const { isValids, validationTexts } = returnValidationTexts(valueBuffer);
-  const isValueBufferValid = isValids.every((isValid) => isValid);
+  const isValueBufferValid = partials.every((
+    [regexOrFunc, _validationText]: [any, any],
+  ) =>
+    typeof regexOrFunc === "function"
+      ? regexOrFunc(valueBuffer)
+      : regexOrFunc.test(valueBuffer)
+  );
 
   const leftIcon = icon ??
     (isValueBufferValid
@@ -209,12 +217,12 @@ function AccessibleTextInput<
       ? null
       : <TbX color={redColorShade} size={18} />);
 
-  // const validationTexts = returnValidationTexts({
-  //   name,
-  //   stepperPages,
-  //   validationFunctionsTable,
-  //   valueBuffer,
-  // });
+  const validationTexts = returnValidationTexts({
+    name,
+    stepperPages,
+    validationFunctionsTable,
+    valueBuffer,
+  });
 
   const { invalidValueTextElement } =
     createAccessibleValueValidationTextElements({
@@ -239,6 +247,7 @@ function AccessibleTextInput<
   return (
     <Container
       key={`${name}-${value}-${uniqueId ?? ""}`}
+      style={{ minWidth: INPUT_MIN_WIDTH, maxWidth: INPUT_MAX_WIDTH }}
       w="100%"
     >
       <Popover
@@ -270,9 +279,53 @@ function AccessibleTextInput<
             minLength={minLength}
             name={name}
             onBlur={() => {
-              // standard dispatch
-              if (parentDispatch) {
-                parentDispatch({
+              // if this input is not created dynamically by user
+              if (dynamicIndexes === undefined) {
+                // standard dispatch
+                if (parentDispatch) {
+                  parentDispatch({
+                    action: invalidValueAction,
+                    payload: {
+                      kind: isValueBufferValid ? "delete" : "add",
+                      page,
+                    },
+                  });
+
+                  parentDispatch({
+                    action: validValueAction,
+                    payload: valueBuffer,
+                  });
+                }
+
+                // dispatch for query filter
+                if (setFilterInputValuesDispatchData) {
+                  const {
+                    fieldNamesOperatorsTypesMap,
+                    searchFieldSelectInputData,
+                    setFilterInputValuesDispatch,
+                    selectInputsDataMap,
+                  } = setFilterInputValuesDispatchData;
+
+                  setFilterInputValuesDispatch({
+                    action: validValueAction,
+                    payload: {
+                      fieldNamesOperatorsTypesMap,
+                      searchFieldSelectInputData,
+                      value: valueBuffer,
+                      selectInputsDataMap,
+                    },
+                  });
+
+                  setFilterInputValuesDispatch({
+                    action: invalidValueAction,
+                    payload: {
+                      kind: isValueBufferValid ? "delete" : "add",
+                      page,
+                    },
+                  });
+                }
+              } else {
+                parentDynamicDispatch?.({
                   action: invalidValueAction,
                   payload: {
                     kind: isValueBufferValid ? "delete" : "add",
@@ -280,9 +333,9 @@ function AccessibleTextInput<
                   },
                 });
 
-                parentDispatch({
+                parentDynamicDispatch?.({
                   action: validValueAction,
-                  payload: valueBuffer,
+                  payload: { dynamicIndexes, value: valueBuffer },
                 });
               }
 
