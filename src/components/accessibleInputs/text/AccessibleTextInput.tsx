@@ -21,7 +21,6 @@ import {
 import { TbCheck, TbRefresh, TbX } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../../constants";
-import { VALIDATION_FUNCTIONS_TABLE } from "../../../validations";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import type {
   SetPageInErrorPayload,
@@ -29,6 +28,7 @@ import type {
   ValidationFunctionsTable,
 } from "../../../types";
 import { returnThemeColors, splitCamelCase } from "../../../utils";
+import { VALIDATION_FUNCTIONS_TABLE } from "../../../validations";
 import {
   createAccessibleValueValidationTextElements,
   returnPartialValidations,
@@ -79,10 +79,7 @@ type AccessibleTextInputAttributes<
       payload: SetPageInErrorPayload;
     }
   >;
-  setFilterInputValuesDispatchData?: SetFilterInputValuesDispatchData<
-    ValidValueAction,
-    InvalidValueAction
-  >;
+
   /** stepper page location of input. default 0 = first page = step 0 */
   page?: number;
   placeholder?: string;
@@ -138,7 +135,6 @@ function AccessibleTextInput<
     parentDispatch,
     parentDynamicDispatch,
     placeholder = "",
-    setFilterInputValuesDispatchData,
     ref = null,
     required = false,
     rightSection = false,
@@ -247,7 +243,6 @@ function AccessibleTextInput<
   return (
     <Container
       key={`${name}-${value}-${uniqueId ?? ""}`}
-      style={{ minWidth: INPUT_MIN_WIDTH, maxWidth: INPUT_MAX_WIDTH }}
       w="100%"
     >
       <Popover
@@ -294,34 +289,6 @@ function AccessibleTextInput<
                   parentDispatch({
                     action: validValueAction,
                     payload: valueBuffer,
-                  });
-                }
-
-                // dispatch for query filter
-                if (setFilterInputValuesDispatchData) {
-                  const {
-                    fieldNamesOperatorsTypesMap,
-                    searchFieldSelectInputData,
-                    setFilterInputValuesDispatch,
-                    selectInputsDataMap,
-                  } = setFilterInputValuesDispatchData;
-
-                  setFilterInputValuesDispatch({
-                    action: validValueAction,
-                    payload: {
-                      fieldNamesOperatorsTypesMap,
-                      searchFieldSelectInputData,
-                      value: valueBuffer,
-                      selectInputsDataMap,
-                    },
-                  });
-
-                  setFilterInputValuesDispatch({
-                    action: invalidValueAction,
-                    payload: {
-                      kind: isValueBufferValid ? "delete" : "add",
-                      page,
-                    },
                   });
                 }
               } else {
