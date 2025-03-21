@@ -1,10 +1,10 @@
 import {
   Container,
   type MantineSize,
+  PasswordInput,
   Popover,
   Stack,
   Text,
-  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -12,10 +12,9 @@ import {
   type Dispatch,
   type ReactNode,
   type RefObject,
-  useEffect,
   useState,
 } from "react";
-import { TbCheck, TbX } from "react-icons/tb";
+import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
 import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
@@ -32,22 +31,16 @@ import {
   returnValidationTexts,
 } from "./utils";
 
-type AccessibleDateTimeInputAttributes<
+type AccessiblePasswordInputAttributes<
   ValidValueAction extends string = string,
   InvalidValueAction extends string = string,
 > = {
-  ariaAutoComplete?: "both" | "list" | "none" | "inline";
-  autoComplete?: "on" | "off";
-  dateKind?: "date near future" | "date near past" | "full date";
   disabled?: boolean;
   icon?: ReactNode;
   initialInputValue?: string;
-  inputKind: "date" | "time";
   invalidValueAction: InvalidValueAction;
   label?: ReactNode;
-  max?: string;
   maxLength?: number;
-  min?: string;
   minLength?: number;
   name: string;
   onBlur?: () => void;
@@ -55,7 +48,7 @@ type AccessibleDateTimeInputAttributes<
   onFocus?: () => void;
   /** stepper page location of input. default 0 = first page = step 0 */
   page?: number;
-  parentDispatch?: Dispatch<
+  parentDispatch: Dispatch<
     | {
       action: ValidValueAction;
       payload: string;
@@ -65,56 +58,52 @@ type AccessibleDateTimeInputAttributes<
       payload: SetPageInErrorPayload;
     }
   >;
+  passwordValue?: string;
   placeholder?: string;
   ref?: RefObject<HTMLInputElement>;
   required?: boolean;
   size?: MantineSize;
   stepperPages: StepperPage[];
-  validValueAction: ValidValueAction;
   validationFunctionsTable?: ValidationFunctionsTable;
+  validValueAction: ValidValueAction;
   value: string;
   withAsterisk?: boolean;
 };
 
-type AccessibleDateTimeInputProps<
+type AccessiblePasswordInputProps<
   ValidValueAction extends string = string,
   InvalidValueAction extends string = string,
 > = {
-  attributes: AccessibleDateTimeInputAttributes<
+  attributes: AccessiblePasswordInputAttributes<
     ValidValueAction,
     InvalidValueAction
   >;
 };
 
-function AccessibleDateTimeInput<
+function AccessiblePasswordInput<
   ValidValueAction extends string = string,
   InvalidValueAction extends string = string,
 >(
-  { attributes }: AccessibleDateTimeInputProps<
+  { attributes }: AccessiblePasswordInputProps<
     ValidValueAction,
     InvalidValueAction
   >,
 ) {
   const {
-    ariaAutoComplete = "none",
-    autoComplete = "off",
-    dateKind = "full date",
     disabled = false,
     icon = null,
     initialInputValue = "",
-    inputKind,
     invalidValueAction,
-    max = new Date(2024, 11, 31).toISOString().split("T")[0], // 31.12.2024
-    maxLength = inputKind === "date" ? 10 : 5,
-    min = new Date().toISOString().split("T")[0], // current date
-    minLength = inputKind === "date" ? 10 : 5,
+    maxLength = 32,
+    minLength = 8,
     name,
     onBlur,
     onChange,
     onFocus,
     page = 0,
     parentDispatch,
-    placeholder = "",
+    passwordValue,
+    placeholder,
     ref = null,
     required = false,
     size = "sm",
@@ -122,7 +111,7 @@ function AccessibleDateTimeInput<
     validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
     validValueAction,
     value,
-    withAsterisk = required,
+    withAsterisk = false,
   } = attributes;
 
   const label = (
@@ -135,11 +124,6 @@ function AccessibleDateTimeInput<
   const [isPopoverOpened, { open: openPopover, close: closePopover }] =
     useDisclosure(false);
 
-  // prevents stale values when inputs are dynamically created
-  useEffect(() => {
-    setValueBuffer(value);
-  }, [value]);
-
   const {
     globalState: { themeObject },
   } = useGlobalState();
@@ -147,7 +131,7 @@ function AccessibleDateTimeInput<
   const {
     greenColorShade,
     redColorShade,
-  } = returnThemeColors({ colorsSwatches: COLORS_SWATCHES, themeObject });
+  } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
   const { partials } = returnPartialValidations({
     name,
@@ -166,7 +150,7 @@ function AccessibleDateTimeInput<
       ? <TbCheck color={greenColorShade} size={18} />
       : valueBuffer.length === 0
       ? null
-      : <TbX color={redColorShade} size={18} />);
+      : <TbExclamationCircle color={redColorShade} size={18} />);
 
   const validationTexts = returnValidationTexts({
     name,
@@ -175,54 +159,18 @@ function AccessibleDateTimeInput<
     valueBuffer,
   });
 
-  // console.group("AccessibleDateTimeInput");
-  // console.log("name:", name);
-  // console.log("valueBuffer:", valueBuffer);
-  // console.log("partials:", partials);
-  // console.log("stepperPages", stepperPages);
-  // console.log("validationTexts:", validationTexts);
-  // console.groupEnd();
-
   const { invalidValueTextElement } =
     createAccessibleValueValidationTextElements({
       isPopoverOpened,
       isValueBufferValid,
       name,
       themeObject,
-      valueBuffer,
       validationTexts,
+      valueBuffer,
     });
 
-  const ariaLabel = `Please enter ${name} in format "${
-    inputKind === "date"
-      ? "on Chromium browsers: date-date-month-month-year-year-year-year, or in other browsers year-year-year-year-month-month-date-date"
-      : "hour-hour-minute-minute"
-  } ${
-    dateKind === "date near future"
-      ? " from today to 2026"
-      : dateKind === "date near past"
-      ? " from 2020 to today"
-      : " from 1900 to 2024"
-  }`;
-
-  const min_ = dateKind === "full date"
-    ? new Date(1900, 0, 1).toISOString().split("T")[0]
-    : dateKind === "date near past"
-    ? new Date(2020, 0, 1).toISOString().split("T")[0]
-    : dateKind === "date near future"
-    ? new Date().toISOString().split("T")[0]
-    : min;
-
-  const max_ = dateKind === "full date"
-    ? new Date(2024, 11, 31).toISOString().split("T")[0]
-    : dateKind === "date near past"
-    ? new Date().toISOString().split("T")[0]
-    : dateKind === "date near future"
-    ? new Date(2026, 11, 31).toISOString().split("T")[0]
-    : max;
-
   return (
-    <Container w={350}>
+    <Container>
       <Popover
         opened={isPopoverOpened}
         position="bottom"
@@ -232,44 +180,38 @@ function AccessibleDateTimeInput<
         withArrow
       >
         <Popover.Target>
-          <TextInput
-            aria-autocomplete={ariaAutoComplete}
+          <PasswordInput
             aria-describedby={isValueBufferValid
               // id of validValueTextElement
               ? `${name}-valid`
               // id of invalidValueTextElement
               : `${name}-invalid`}
             aria-invalid={!isValueBufferValid}
-            aria-label={ariaLabel}
+            aria-label={name}
             aria-required={required}
-            autoComplete={autoComplete}
-            color="dark"
-            error={!isValueBufferValid && valueBuffer !== initialInputValue}
+            error={!isValueBufferValid && value !== initialInputValue}
             icon={leftIcon}
             label={label}
-            max={max_}
-            maxLength={inputKind === "date"
-              ? 10
-              : inputKind === "time"
-              ? 5
-              : maxLength}
-            min={min_}
-            minLength={inputKind === "date"
-              ? 10
-              : inputKind === "time"
-              ? 5
-              : minLength}
+            maxLength={maxLength}
+            minLength={minLength}
             name={name}
             onBlur={() => {
-              parentDispatch?.({
+              const kind = passwordValue
+                ? passwordValue === valueBuffer || !isValueBufferValid
+                  ? "add"
+                  : "delete"
+                : isValueBufferValid
+                ? "delete"
+                : "add";
+
+              console.log("kind", kind);
+
+              parentDispatch({
                 action: invalidValueAction,
-                payload: {
-                  kind: isValueBufferValid ? "delete" : "add",
-                  page,
-                },
+                payload: { kind, page },
               });
 
-              parentDispatch?.({
+              parentDispatch({
                 action: validValueAction,
                 payload: valueBuffer,
               });
@@ -289,7 +231,6 @@ function AccessibleDateTimeInput<
             ref={ref}
             required={required}
             size={size}
-            type={inputKind}
             value={valueBuffer}
             withAsterisk={withAsterisk}
           />
@@ -309,6 +250,6 @@ function AccessibleDateTimeInput<
   );
 }
 
-export { AccessibleDateTimeInput };
+export { AccessiblePasswordInput };
 
-export type { AccessibleDateTimeInputAttributes };
+export type { AccessiblePasswordInputAttributes };
