@@ -673,6 +673,7 @@ export {
   capitalizeJoinWithAnd,
   captureScreenshot,
   decodeJWTSafe,
+  fetchRequestPOSTSafe,
   fetchSafe,
   formatDate,
   removeUndefinedAndNull,

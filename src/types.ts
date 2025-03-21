@@ -128,8 +128,6 @@ type Validation = [RegExp | ((value: string) => boolean), string][];
 
 type StoreLocation = "Calgary" | "Edmonton" | "Vancouver";
 
-type Country = "Canada" | "United States";
-
 type DecodedToken = {
   userInfo: {
     userId: string;
@@ -410,7 +408,6 @@ export type {
   CanadianPostalCode,
   CheckboxRadioSelectData,
   ColorScheme,
-  Country,
   Country,
   CustomerService,
   DecodedToken,

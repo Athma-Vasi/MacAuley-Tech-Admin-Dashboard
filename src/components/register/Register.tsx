@@ -5,9 +5,8 @@ import { useErrorBoundary } from "react-error-boundary";
 import { useDisclosure } from "@mantine/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
-import { authAction } from "../../context/authProvider";
-import { useGlobalState } from "../../hooks/useGlobalState";
 import { useAuth } from "../../hooks/useAuth";
+import { useGlobalState } from "../../hooks/useGlobalState";
 import type { UserSchema } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
@@ -77,13 +76,13 @@ function Register() {
 
   const { showBoundary } = useErrorBoundary();
 
-  const [
-    openedSubmitFormModal,
-    { open: openSubmitFormModal, close: closeSubmitFormModal },
-  ] = useDisclosure(false);
+  // const [
+  //   openedSubmitFormModal,
+  //   { open: openSubmitFormModal, close: closeSubmitFormModal },
+  // ] = useDisclosure(false);
 
-  const [openedErrorModal, { open: openErrorModal, close: closeErrorModal }] =
-    useDisclosure(false);
+  // const [openedErrorModal, { open: openErrorModal, close: closeErrorModal }] =
+  //   useDisclosure(false);
 
   const navigateFn = useNavigate();
 
@@ -104,7 +103,7 @@ function Register() {
       }
 
       const {
-        userInfo: { userId, username: authUsername, roles },
+        // userInfo: { userId, username: authUsername, roles },
         sessionId,
       } = decodedToken;
 
@@ -150,58 +149,58 @@ function Register() {
       };
 
       try {
-        const registerResult = await fetchRequestPOSTSafe({
-          accessToken,
-          authAction,
-          authDispatch,
-          closeSubmitFormModal,
-          dispatch: registerDispatch,
-          fetchAbortController,
-          isComponentMounted,
-          isSubmittingAction: registerAction.setIsSubmitting,
-          isSuccessfulAction: registerAction.setIsSuccessful,
-          navigateFn,
-          openSubmitFormModal,
-          requestBody: JSON.stringify({ schema: userSchema }),
-          roles: ["Employee"],
-          triggerFormSubmitAction: registerAction.setTriggerFormSubmit,
-        });
+        // const registerResult = await fetchRequestPOSTSafe({
+        //   accessToken,
+        //   authAction,
+        //   authDispatch,
+        //   closeSubmitFormModal,
+        //   dispatch: registerDispatch,
+        //   fetchAbortController,
+        //   isComponentMounted,
+        //   isSubmittingAction: registerAction.setIsSubmitting,
+        //   isSuccessfulAction: registerAction.setIsSuccessful,
+        //   navigateFn,
+        //   openSubmitFormModal,
+        //   requestBody: JSON.stringify({ schema: userSchema }),
+        //   roles: ["Employee"],
+        //   triggerFormSubmitAction: registerAction.setTriggerFormSubmit,
+        // });
 
-        if (registerResult.err) {
-          showBoundary(registerResult.val.data);
-          return;
-        }
+        // if (registerResult.err) {
+        //   showBoundary(registerResult.val.data);
+        //   return;
+        // }
 
-        const unwrappedResult = registerResult.safeUnwrap();
+        // const unwrappedResult = registerResult.safeUnwrap();
 
-        if (unwrappedResult.kind === "error") {
-          registerDispatch({
-            action: registerAction.setIsError,
-            payload: true,
-          });
-          registerDispatch({
-            action: registerAction.setErrorMessage,
-            payload: unwrappedResult.message ?? "Unknown error occurred",
-          });
+        // if (unwrappedResult.kind === "error") {
+        //   registerDispatch({
+        //     action: registerAction.setIsError,
+        //     payload: true,
+        //   });
+        //   registerDispatch({
+        //     action: registerAction.setErrorMessage,
+        //     payload: unwrappedResult.message ?? "Unknown error occurred",
+        //   });
 
-          openErrorModal();
-          return;
-        }
+        //   openErrorModal();
+        //   return;
+        // }
 
-        const serverResponse = unwrappedResult.data;
-        if (serverResponse === undefined) {
-          registerDispatch({
-            action: registerAction.setIsError,
-            payload: true,
-          });
-          registerDispatch({
-            action: registerAction.setErrorMessage,
-            payload: "Network error",
-          });
+        // const serverResponse = unwrappedResult.data;
+        // if (serverResponse === undefined) {
+        //   registerDispatch({
+        //     action: registerAction.setIsError,
+        //     payload: true,
+        //   });
+        //   registerDispatch({
+        //     action: registerAction.setErrorMessage,
+        //     payload: "Network error",
+        //   });
 
-          openErrorModal();
-          return;
-        }
+        //   openErrorModal();
+        //   return;
+        // }
       } catch (error: unknown) {
         if (!isComponentMounted || fetchAbortController.signal.aborted) {
           return;
@@ -321,34 +320,29 @@ function Register() {
     />
   );
 
-  logState({
-    state: registerState,
-    groupLabel: "Register State",
-  });
-
   const {
-    generalColors: { themeColorShade },
+    themeColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
 
-  const submitSuccessModal = (
-    <NotificationModal
-      onCloseCallbacks={[closeSubmitFormModal]}
-      opened={openedSubmitFormModal}
-      notificationProps={{ isLoading: isSubmitting }}
-      withCloseButton={false}
-    />
-  );
+  // const submitSuccessModal = (
+  //   <NotificationModal
+  //     onCloseCallbacks={[closeSubmitFormModal]}
+  //     opened={openedSubmitFormModal}
+  //     notificationProps={{ isLoading: isSubmitting }}
+  //     withCloseButton={false}
+  //   />
+  // );
 
-  const errorNotificationModal = (
-    <NotificationModal
-      onCloseCallbacks={[closeErrorModal]}
-      opened={openedErrorModal}
-      notificationProps={{ isLoading: isError, text: errorMessage }}
-    />
-  );
+  // const errorNotificationModal = (
+  //   <NotificationModal
+  //     onCloseCallbacks={[closeErrorModal]}
+  //     opened={openedErrorModal}
+  //     notificationProps={{ isLoading: isError, text: errorMessage }}
+  //   />
+  // );
 
   const linkToLogin = (
     <Flex align="center" justify="center" columnGap="sm">
@@ -365,8 +359,6 @@ function Register() {
     <Stack>
       {stepper}
       {linkToLogin}
-      {submitSuccessModal}
-      {errorNotificationModal}
     </Stack>
   );
 }
