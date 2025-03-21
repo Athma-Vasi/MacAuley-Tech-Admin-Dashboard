@@ -51,7 +51,7 @@ type AccessibleTextInputAttributes<
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
-  parentDispatch?: Dispatch<
+  parentDispatch: Dispatch<
     | {
       action: ValidValueAction;
       payload: string;
@@ -197,7 +197,6 @@ function AccessibleTextInput<
 
   const validationTexts = returnValidationTexts({
     name,
-    stepperPages,
     validationFunctionsTable,
     valueBuffer,
   });
@@ -214,9 +213,6 @@ function AccessibleTextInput<
 
   console.group(`AccessibleTextInput: ${name}`);
   console.log("name:", name);
-  console.log("stepperPages:", stepperPages);
-  // console.log("validationFunctionsTable:", validationFunctionsTable);
-  console.log("partials:", partials);
   console.log("valueBuffer:", valueBuffer);
   console.log("isValueBufferValid:", isValueBufferValid);
   console.log("validationTexts:", validationTexts);
@@ -256,37 +252,15 @@ function AccessibleTextInput<
             minLength={minLength}
             name={name}
             onBlur={() => {
-              // if this input is not created dynamically by user
-              if (dynamicIndexes === undefined) {
-                // standard dispatch
-                if (parentDispatch) {
-                  parentDispatch({
-                    action: invalidValueAction,
-                    payload: {
-                      kind: isValueBufferValid ? "delete" : "add",
-                      page,
-                    },
-                  });
+              parentDispatch({
+                action: invalidValueAction,
+                payload: isValueBufferValid,
+              });
 
-                  parentDispatch({
-                    action: validValueAction,
-                    payload: valueBuffer,
-                  });
-                }
-              } else {
-                parentDynamicDispatch?.({
-                  action: invalidValueAction,
-                  payload: {
-                    kind: isValueBufferValid ? "delete" : "add",
-                    page,
-                  },
-                });
-
-                parentDynamicDispatch?.({
-                  action: validValueAction,
-                  payload: { dynamicIndexes, value: valueBuffer },
-                });
-              }
+              parentDispatch({
+                action: validValueAction,
+                payload: valueBuffer,
+              });
 
               onBlur?.();
               closePopover();
