@@ -20,11 +20,7 @@ type DashboardRepairMetric = RepairCategory | "All Repairs";
 type DashboardState = {
   businessMetrics: BusinessMetric[];
   calendarView: DashboardCalendarView;
-  customerMetric: DashboardCustomerMetric;
-  financialMetric: DashboardFinancialMetric;
   metricsView: DashboardMetricsView;
-  productMetric: DashboardProductMetric;
-  repairMetric: DashboardRepairMetric;
   selectedYYYYMMDD: string;
   storeLocationView: BusinessMetricStoreLocation;
   isLoading: boolean;
@@ -41,24 +37,8 @@ type DashboardDispatch =
     payload: DashboardCalendarView;
   }
   | {
-    action: DashboardAction["setCustomerMetric"];
-    payload: DashboardCustomerMetric;
-  }
-  | {
-    action: DashboardAction["setFinancialMetric"];
-    payload: DashboardFinancialMetric;
-  }
-  | {
     action: DashboardAction["setMetricsView"];
     payload: DashboardMetricsView;
-  }
-  | {
-    action: DashboardAction["setProductMetric"];
-    payload: DashboardProductMetric;
-  }
-  | {
-    action: DashboardAction["setRepairMetric"];
-    payload: DashboardRepairMetric;
   }
   | {
     action: DashboardAction["setStoreLocationView"];

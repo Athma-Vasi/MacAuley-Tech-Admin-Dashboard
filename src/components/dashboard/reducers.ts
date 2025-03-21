@@ -27,11 +27,7 @@ const dashboardReducersMap = new Map<
 >([
   [dashboardAction.setBusinessMetrics, dashboardReducer_setBusinessMetrics],
   [dashboardAction.setCalendarView, dashboardReducer_setCalendarView],
-  [dashboardAction.setCustomerMetric, dashboardReducer_setCustomerMetric],
-  [dashboardAction.setFinancialMetric, dashboardReducer_setFinancialMetric],
   [dashboardAction.setMetricsView, dashboardReducer_setMetricsView],
-  [dashboardAction.setProductMetric, dashboardReducer_setProductMetric],
-  [dashboardAction.setRepairMetric, dashboardReducer_setRepairMetric],
   [dashboardAction.setSelectedYYYYMMDD, dashboardReducer_setSelectedYYYYMMDD],
   [
     dashboardAction.setStoreLocationView,
@@ -61,26 +57,6 @@ function dashboardReducer_setCalendarView(
   };
 }
 
-function dashboardReducer_setCustomerMetric(
-  state: DashboardState,
-  dispatch: DashboardDispatch,
-): DashboardState {
-  return {
-    ...state,
-    customerMetric: dispatch.payload as DashboardCustomerMetric,
-  };
-}
-
-function dashboardReducer_setFinancialMetric(
-  state: DashboardState,
-  dispatch: DashboardDispatch,
-): DashboardState {
-  return {
-    ...state,
-    financialMetric: dispatch.payload as DashboardFinancialMetric,
-  };
-}
-
 function dashboardReducer_setMetricsView(
   state: DashboardState,
   dispatch: DashboardDispatch,
@@ -88,26 +64,6 @@ function dashboardReducer_setMetricsView(
   return {
     ...state,
     metricsView: dispatch.payload as DashboardMetricsView,
-  };
-}
-
-function dashboardReducer_setProductMetric(
-  state: DashboardState,
-  dispatch: DashboardDispatch,
-): DashboardState {
-  return {
-    ...state,
-    productMetric: dispatch.payload as DashboardProductMetric,
-  };
-}
-
-function dashboardReducer_setRepairMetric(
-  state: DashboardState,
-  dispatch: DashboardDispatch,
-): DashboardState {
-  return {
-    ...state,
-    repairMetric: dispatch.payload as DashboardRepairMetric,
   };
 }
 

@@ -1,13 +1,4 @@
-import {
-  CheckboxRadioSelectData,
-  Country,
-  Department,
-  JobPosition,
-  Province,
-  StatesUS,
-  StoreLocation,
-  Urgency,
-} from "./types";
+import { CheckboxRadioSelectData, StoreLocation } from "./types";
 
 type ColorsSwatches = {
   dark: string[];
@@ -25,6 +16,7 @@ type ColorsSwatches = {
   yellow: string[];
   orange: string[];
 };
+
 /**
  * Mantine uses open-color in default theme with some additions (dark).
  * Each color has an array of 10 shades. shades[0] is the lightest shade and
@@ -210,5 +202,16 @@ const SCREENSHOT_IMAGE_TYPE_DATA = [
 
 const FETCH_REQUEST_TIMEOUT = 5000;
 
-export { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT, SCREENSHOT_IMAGE_TYPE_DATA };
+const STORE_LOCATION_DATA: CheckboxRadioSelectData<StoreLocation> = [
+  { label: "Edmonton", value: "Edmonton" },
+  { label: "Calgary", value: "Calgary" },
+  { label: "Vancouver", value: "Vancouver" },
+];
+
+export {
+  COLORS_SWATCHES,
+  FETCH_REQUEST_TIMEOUT,
+  SCREENSHOT_IMAGE_TYPE_DATA,
+  STORE_LOCATION_DATA,
+};
 export type { ColorsSwatches };

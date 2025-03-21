@@ -74,11 +74,7 @@ function Dashboard() {
   const {
     businessMetrics,
     calendarView,
-    customerMetric,
-    financialMetric,
     metricsView,
-    productMetric,
-    repairMetric,
     storeLocationView,
     selectedYYYYMMDD,
     isLoading,
@@ -212,31 +208,6 @@ function Dashboard() {
     </Tabs>
   );
 
-  const createdCalendarTabs = (
-    <Tabs
-      color={primaryColor}
-      value={calendarView}
-      onTabChange={(value) => {
-        dashboardDispatch({
-          action: dashboardAction.setCalendarView,
-          payload: value as DashboardCalendarView,
-        });
-      }}
-    >
-      <Tabs.List>
-        {CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-          <Tabs.Tab
-            key={`${idx}-${calendarView}`}
-            value={calendarView}
-            disabled={isTabDisabled}
-          >
-            {calendarView}
-          </Tabs.Tab>
-        ))}
-      </Tabs.List>
-    </Tabs>
-  );
-
   const createdYYYYMMDDInput = (
     <TextInput
       aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'
@@ -265,66 +236,6 @@ function Dashboard() {
     />
   );
   const displayYYYYMMDDInput = <Group w={330}>{createdYYYYMMDDInput}</Group>;
-
-  const financialMetricCategorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIALS_METRICS_DATA,
-        name: "category",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setFinancialMetric,
-        value: financialMetric,
-      }}
-    />
-  );
-
-  const filteredCustomerMetricsSelectInputData = CUSTOMER_METRICS_DATA.filter(
-    (data) => calendarView === "Daily" ? data.value !== "Other Metrics" : true,
-  );
-
-  const customerMetricCategorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: filteredCustomerMetricsSelectInputData,
-        name: "category",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setCustomerMetric,
-        value: customerMetric,
-      }}
-    />
-  );
-
-  const productMetricCategorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: PRODUCT_METRICS_DATA,
-        name: "category",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setProductMetric,
-        value: productMetric,
-      }}
-    />
-  );
-
-  const repairMetricCategorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: REPAIR_METRICS_DATA,
-        name: "category",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setRepairMetric,
-        value: repairMetric,
-      }}
-    />
-  );
-
-  const metricCategorySelectInput = metricsView === "Financials"
-    ? financialMetricCategorySelectInput
-    : metricsView === "Customers"
-    ? customerMetricCategorySelectInput
-    : metricsView === "Products"
-    ? productMetricCategorySelectInput
-    : repairMetricCategorySelectInput;
 
   const createdStoreLocationTabs = (
     <Accordion
@@ -381,11 +292,8 @@ function Dashboard() {
               </Tabs>
 
               {createdMetricsTabs}
-
-              {createdCalendarTabs}
             </Stack>
             <Group w={400} align="flex-end">
-              {metricCategorySelectInput}
               {displayYYYYMMDDInput}
             </Group>
           </Group>
