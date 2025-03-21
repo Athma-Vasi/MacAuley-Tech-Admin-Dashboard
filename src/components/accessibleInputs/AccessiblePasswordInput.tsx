@@ -33,7 +33,7 @@ import {
 
 type AccessiblePasswordInputAttributes<
   ValidValueAction extends string = string,
-  InvalidValueAction extends boolean = boolean,
+  InvalidValueAction extends string = string,
 > = {
   disabled?: boolean;
   icon?: ReactNode;
@@ -69,7 +69,7 @@ type AccessiblePasswordInputAttributes<
 
 type AccessiblePasswordInputProps<
   ValidValueAction extends string = string,
-  InvalidValueAction extends boolean = boolean,
+  InvalidValueAction extends string = string,
 > = {
   attributes: AccessiblePasswordInputAttributes<
     ValidValueAction,
@@ -79,7 +79,7 @@ type AccessiblePasswordInputProps<
 
 function AccessiblePasswordInput<
   ValidValueAction extends string = string,
-  InvalidValueAction extends boolean = boolean,
+  InvalidValueAction extends string = string,
 >(
   { attributes }: AccessiblePasswordInputProps<
     ValidValueAction,

@@ -9,6 +9,7 @@ type ValidationKey =
   | "brand"
   | "city"
   | "colorVariant"
+  | "confirmPassword"
   | "cpuFrequency"
   | "cpuSocket" // | "gpuChipset" | "motherboardSocket" | "motherboardChipset"
   | "date"
@@ -98,6 +99,15 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
       "Must be in hexadecimal string notation (e.g. #ff000044) or a valid color name (e.g. violet).",
     ],
     [/^.{2,9}$/, "Must be between 2 and 9 characters length."],
+  ],
+
+  confirmPassword: [
+    [/^.{8,32}$/i, "Must be between 8 and 32 characters."],
+    [/^(?=.*[A-Z])/, "Must contain at least one uppercase letter."],
+    [/^(?=.*[a-z])/, "Must contain at least one lowercase letter."],
+    [/^(?=.*[0-9])/, "Must contain at least one number."],
+    [/^(?=.*[!@#$%^&*])/, "Must contain at least one special character."],
+    [/^(?!.*\s)/, "Cannot contain spaces."],
   ],
 
   cpuFrequency: [

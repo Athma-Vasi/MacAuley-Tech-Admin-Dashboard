@@ -34,7 +34,7 @@ import {
 
 type AccessibleTextInputAttributes<
   ValidValueAction extends string = string,
-  InvalidValueAction extends boolean = boolean,
+  InvalidValueAction extends string = string,
 > = {
   ariaAutoComplete?: "both" | "list" | "none" | "inline";
   autoComplete?: "on" | "off";
@@ -76,7 +76,7 @@ type AccessibleTextInputAttributes<
 
 type AccessibleTextInputProps<
   ValidValueAction extends string = string,
-  InvalidValueAction extends boolean = boolean,
+  InvalidValueAction extends string = string,
 > = {
   attributes: AccessibleTextInputAttributes<
     ValidValueAction,
@@ -87,7 +87,7 @@ type AccessibleTextInputProps<
 
 function AccessibleTextInput<
   ValidValueAction extends string = string,
-  InvalidValueAction extends boolean = boolean,
+  InvalidValueAction extends string = string,
 >(
   { attributes, uniqueId }: AccessibleTextInputProps<
     ValidValueAction,

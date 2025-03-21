@@ -10,14 +10,7 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import type { UserSchema } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { AccessibleStepper } from "../accessibleInputs/AccessibleStepper";
-// import { NotificationModal } from "../notificationModal";
-import { RegisterAdditional } from "./RegisterAdditional";
-import { RegisterAddress } from "./RegisterAddress";
-import { RegisterAuthentication } from "./RegisterAuthentication";
-import { RegisterPersonal } from "./RegisterPersonal";
 import { registerAction } from "./actions";
-import { returnRegisterperPages } from "./constants";
 import { registerReducer } from "./reducers";
 import { initialRegisterState } from "./state";
 import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordInput";
@@ -209,10 +202,8 @@ function Register() {
   const confirmPasswordTextInput = (
     <AccessiblePasswordInput
       attributes={{
-        stepperPages,
-        invalidValueAction: registerAction.setPageInError,
+        invalidValueAction: registerAction.setIsError,
         name: "confirmPassword",
-        page: 0,
         parentDispatch: registerDispatch,
         passwordValue: password,
         validValueAction: registerAction.setConfirmPassword,
@@ -224,10 +215,8 @@ function Register() {
   const emailTextInput = (
     <AccessibleTextInput
       attributes={{
-        stepperPages,
-        invalidValueAction: registerAction.setPageInError,
+        invalidValueAction: registerAction.setIsError,
         name: "email",
-        page: 0,
         parentDispatch: registerDispatch,
         validValueAction: registerAction.setEmail,
         value: email,
@@ -238,10 +227,8 @@ function Register() {
   const passwordTextInput = (
     <AccessiblePasswordInput
       attributes={{
-        stepperPages,
-        invalidValueAction: registerAction.setPageInError,
+        invalidValueAction: registerAction.setIsError,
         name: "password",
-        page: 0,
         parentDispatch: registerDispatch,
         validValueAction: registerAction.setPassword,
         value: password,
@@ -252,10 +239,8 @@ function Register() {
   const usernameTextInput = (
     <AccessibleTextInput
       attributes={{
-        stepperPages,
-        invalidValueAction: registerAction.setPageInError,
+        invalidValueAction: registerAction.setIsError,
         name: "username",
-        page: 0,
         parentDispatch: registerDispatch,
         validValueAction: registerAction.setUsername,
         value: username,
@@ -268,7 +253,7 @@ function Register() {
       attributes={{
         enabledScreenreaderText: "All inputs are valid. Click to Register.",
         disabledScreenreaderText: "Please fix errors before registering.",
-        disabled: pagesInError.size > 0 || triggerFormSubmit,
+        disabled: isError || triggerFormSubmit,
         kind: "submit",
         name: "submit",
         onClick: (_event: React.MouseEvent<HTMLButtonElement>) => {
