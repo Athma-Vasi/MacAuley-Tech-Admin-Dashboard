@@ -3,6 +3,7 @@ import { TbCheck, TbInfoCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
 import type { ThemeObject } from "../../context/globalProvider/types";
+import { StepperPage, Validation, ValidationFunctionsTable } from "../../types";
 import { capitalizeJoinWithAnd, returnThemeColors } from "../../utils";
 import {
   AccessibleButton,
@@ -510,6 +511,43 @@ function returnHighlightedText({
   return returnedText;
 }
 
+function returnPartialValidations({
+  name,
+  stepperPages,
+  validationFunctionsTable,
+}: {
+  name: string;
+  stepperPages: StepperPage[];
+  validationFunctionsTable: ValidationFunctionsTable;
+}): { partials: Validation } {
+  const initial = { partials: [] };
+
+  return stepperPages.reduce<{ partials: Validation }>(
+    (regexAcc, page) => {
+      const { children, kind } = page;
+
+      if (kind && kind === "review") {
+        return regexAcc;
+      }
+
+      children.forEach((child) => {
+        const { name: inputName, validationKey } = child;
+
+        if (inputName !== name) {
+          return;
+        }
+
+        const partials = validationFunctionsTable[validationKey ?? "allowAll"];
+
+        regexAcc.partials = partials;
+      });
+
+      return regexAcc;
+    },
+    initial,
+  );
+}
+
 export {
   createAccessibleButtons,
   createAccessibleButtonScreenreaderTextElements,
@@ -521,4 +559,5 @@ export {
   createAccessibleSwitchOnOffTextElements,
   createAccessibleValueValidationTextElements,
   returnHighlightedText,
+  returnPartialValidations,
 };
