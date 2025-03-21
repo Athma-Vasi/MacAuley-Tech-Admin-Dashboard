@@ -32,7 +32,6 @@ import { initialProductMetricsState } from "./state";
 
 type ProductMetricsProps = {
   businessMetrics: BusinessMetric[];
-  calendarView: DashboardCalendarView;
   selectedDate: string;
   selectedMonth: Month;
   storeLocationView: BusinessMetricStoreLocation;
@@ -42,7 +41,6 @@ type ProductMetricsProps = {
 
 function ProductMetrics({
   businessMetrics,
-  calendarView,
   selectedDate,
   selectedMonth,
   selectedYYYYMMDD,

@@ -32,7 +32,6 @@ import { initialRepairMetricsState } from "./state";
 
 type RepairMetricsProps = {
   businessMetrics: BusinessMetric[];
-  calendarView: DashboardCalendarView;
   selectedDate: string;
   selectedMonth: Month;
   storeLocationView: BusinessMetricStoreLocation;
@@ -42,7 +41,6 @@ type RepairMetricsProps = {
 
 function RepairMetrics({
   businessMetrics,
-  calendarView,
   selectedDate,
   selectedMonth,
   selectedYYYYMMDD,

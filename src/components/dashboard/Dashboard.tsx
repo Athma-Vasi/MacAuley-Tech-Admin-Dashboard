@@ -306,7 +306,6 @@ function Dashboard() {
     ? (
       <FinancialMetrics
         businessMetrics={businessMetrics}
-        calendarView={calendarView}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         storeLocationView={storeLocationView}
@@ -318,7 +317,6 @@ function Dashboard() {
     ? (
       <CustomerMetrics
         businessMetrics={businessMetrics}
-        calendarView={calendarView}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         storeLocationView={storeLocationView}
@@ -330,7 +328,6 @@ function Dashboard() {
     ? (
       <ProductMetrics
         businessMetrics={businessMetrics}
-        calendarView={calendarView}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         selectedYYYYMMDD={selectedYYYYMMDD}
@@ -341,7 +338,6 @@ function Dashboard() {
     : (
       <RepairMetrics
         businessMetrics={businessMetrics}
-        calendarView={calendarView}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         selectedYYYYMMDD={selectedYYYYMMDD}
