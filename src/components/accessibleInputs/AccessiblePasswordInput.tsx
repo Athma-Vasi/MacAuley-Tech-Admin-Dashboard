@@ -16,7 +16,7 @@ import {
 } from "react";
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 
-import { COLORS_SWATCHES } from "../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { ValidationFunctionsTable } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
@@ -160,7 +160,9 @@ function AccessiblePasswordInput<
     });
 
   return (
-    <Container>
+    <Container
+      w={INPUT_WIDTH}
+    >
       <Popover
         opened={isPopoverOpened}
         position="bottom"

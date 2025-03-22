@@ -1,4 +1,4 @@
-import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -10,7 +10,6 @@ import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
-  DashboardCalendarView,
   Month,
   Year,
 } from "../types";
@@ -61,6 +60,7 @@ function CustomerMetrics({
   const {
     redColorShade,
     greenColorShade,
+    backgroundColor,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -240,7 +240,20 @@ function CustomerMetrics({
   const customerMetrics = (
     <Stack>
       {loadingOverlay}
-      {categorySegmentedControl}
+      <Group
+        opacity={0.97}
+        py="sm"
+        position="apart"
+        style={{
+          position: "sticky",
+          top: 100,
+          zIndex: 3,
+          backgroundColor,
+          boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {categorySegmentedControl}
+      </Group>
       {category === "new"
         ? newCustomers
         : category === "returning"

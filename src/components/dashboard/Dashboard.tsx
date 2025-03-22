@@ -192,7 +192,12 @@ function Dashboard() {
       value={selectedYYYYMMDD}
     />
   );
-  const displayYYYYMMDDInput = <Group>{createdYYYYMMDDInput}</Group>;
+
+  const displayYYYYMMDDInput = (
+    <Group pr="md">
+      {createdYYYYMMDDInput}
+    </Group>
+  );
 
   const isStoreLocationSegmentDisabled = (storeLocationView === "Vancouver" &&
     Number(selectedYear) < 2019) ||
@@ -257,19 +262,23 @@ function Dashboard() {
     );
 
   const dashboard = (
-    <Stack w="100%">
+    <Stack w="100%" py="sm">
       <Stack align="flex-start" spacing={2}>
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>
       </Stack>
       <Group
+        h={100}
+        py="sm"
         position="apart"
         style={{
+          backgroundColor: backgroundColor,
           position: "sticky",
           top: 0,
           zIndex: 3,
-          backgroundColor: backgroundColor,
         }}
+        opacity={0.97}
+        w="100%"
       >
         {storeLocationSegmentedControl} {displayYYYYMMDDInput}
       </Group>

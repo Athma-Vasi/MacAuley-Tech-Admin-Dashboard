@@ -1,7 +1,7 @@
+import { Outlet } from "react-router-dom";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
-import DashboardWrapper from "../dashboard";
 import Header from "../header";
 import Sidebar from "../sidebar";
 
@@ -22,7 +22,7 @@ function Home() {
                 <Sidebar />
             </div>
             <div className="main">
-                <DashboardWrapper />
+                <Outlet />
             </div>
         </div>
     );

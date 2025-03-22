@@ -253,58 +253,52 @@ function RUS(
     subMetric,
   );
 
-  const expandCalendarChartButton = calendarView === "Yearly"
-    ? (
-      <AccessibleButton
-        attributes={{
-          enabledScreenreaderText: "Expand and customize chart",
-          kind: "expand",
-          onClick: (
-            _event:
-              | React.MouseEvent<HTMLButtonElement>
-              | React.PointerEvent<HTMLButtonElement>,
-          ) => {
-            globalDispatch({
-              action: globalAction.setCustomizeChartsPageData,
-              payload: {
-                chartKind: "calendar",
-                chartData: calendarChartData,
-                chartTitle: calendarChartHeading,
-                chartUnitKind: "number",
-              } as CustomizeChartsPageData,
-            });
+  const expandCalendarChartButton = (
+    <AccessibleButton
+      attributes={{
+        enabledScreenreaderText: "Expand and customize chart",
+        kind: "expand",
+        onClick: (
+          _event:
+            | React.MouseEvent<HTMLButtonElement>
+            | React.PointerEvent<HTMLButtonElement>,
+        ) => {
+          globalDispatch({
+            action: globalAction.setCustomizeChartsPageData,
+            payload: {
+              chartKind: "calendar",
+              chartData: calendarChartData,
+              chartTitle: calendarChartHeading,
+              chartUnitKind: "number",
+            } as CustomizeChartsPageData,
+          });
 
-            navigate(expandCalendarChartNavigateLink);
-          },
-        }}
-      />
-    )
-    : null;
+          navigate(expandCalendarChartNavigateLink);
+        },
+      }}
+    />
+  );
 
-  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
-    ? (
-      <AccessibleSelectInput
-        attributes={{
-          data: PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,
-          name: "Y-Axis Pie",
-          parentDispatch: rusDispatch,
-          validValueAction: rusAction.setCalendarChartYAxisVariable,
-          value: calendarChartYAxisVariable,
-        }}
-      />
-    )
-    : null;
+  const calendarChartYAxisVariableSelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,
+        name: "Y-Axis Pie",
+        parentDispatch: rusDispatch,
+        validValueAction: rusAction.setCalendarChartYAxisVariable,
+        value: calendarChartYAxisVariable,
+      }}
+    />
+  );
 
-  const calendarChart = calendarView === "Yearly"
-    ? (
-      <ResponsiveCalendarChart
-        calendarChartData={calendarChartData}
-        hideControls
-        from={`${year}-01-01`}
-        to={`${year}-12-31`}
-      />
-    )
-    : null;
+  const calendarChart = (
+    <ResponsiveCalendarChart
+      calendarChartData={calendarChartData}
+      hideControls
+      from={`${year}-01-01`}
+      to={`${year}-12-31`}
+    />
+  );
 
   const selectedCards = returnProductMetricsCards(
     productMetricsCards,
@@ -341,6 +335,7 @@ function RUS(
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
+        calendarView={calendarView}
         calendarChartHeading={calendarChartHeading}
         expandPieChartButton={expandPieChartButton}
         pieChart={pieChart}

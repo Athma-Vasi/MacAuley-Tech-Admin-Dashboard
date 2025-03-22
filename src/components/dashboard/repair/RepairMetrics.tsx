@@ -1,4 +1,4 @@
-import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -11,7 +11,6 @@ import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
-  DashboardCalendarView,
   Month,
   Year,
 } from "../types";
@@ -69,6 +68,7 @@ function RepairMetrics({
   const {
     redColorShade,
     greenColorShade,
+    backgroundColor,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -175,15 +175,17 @@ function RepairMetrics({
   );
 
   const repairCategorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: REPAIR_METRICS_DATA,
-        name: "category",
-        parentDispatch: repairMetricsDispatch,
-        validValueAction: repairMetricsAction.setRepairCategory,
-        value: repairCategory,
-      }}
-    />
+    <Group w={300}>
+      <AccessibleSelectInput
+        attributes={{
+          data: REPAIR_METRICS_DATA,
+          name: "category",
+          parentDispatch: repairMetricsDispatch,
+          validValueAction: repairMetricsAction.setRepairCategory,
+          value: repairCategory,
+        }}
+      />
+    </Group>
   );
 
   const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
@@ -223,8 +225,21 @@ function RepairMetrics({
   const repairMetrics = (
     <Stack>
       {loadingOverlay}
-      {subMetricSegmentedControl}
-      {repairCategorySelectInput}
+      <Group
+        opacity={0.97}
+        py="sm"
+        position="apart"
+        style={{
+          position: "sticky",
+          top: 100,
+          zIndex: 3,
+          backgroundColor,
+          boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {subMetricSegmentedControl}
+        {repairCategorySelectInput}
+      </Group>
       {revenueUnitsSold}
     </Stack>
   );

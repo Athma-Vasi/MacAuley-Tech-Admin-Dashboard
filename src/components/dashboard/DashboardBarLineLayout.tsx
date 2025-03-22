@@ -1,5 +1,9 @@
-import { Flex, Group, Stack, Text } from "@mantine/core";
+import { Group, Stack, Text, Title } from "@mantine/core";
 import React from "react";
+import { COLORS_SWATCHES } from "../../constants";
+import { useGlobalState } from "../../hooks/useGlobalState";
+import { returnThemeColors } from "../../utils";
+import { DashboardCalendarView } from "./types";
 
 type DashboardBarLineLayoutProps = {
   barLineChart: React.JSX.Element;
@@ -7,12 +11,13 @@ type DashboardBarLineLayoutProps = {
   barLineChartYAxisSelectInput: React.JSX.Element;
   barLineChartKindSegmentedControl: React.JSX.Element;
   barLineChartYAxisVariable: string;
-  calendarChart: React.JSX.Element | null;
-  calendarChartHeading: string;
-  calendarChartYAxisSelectInput: React.JSX.Element | null;
+  calendarChart?: React.JSX.Element | null;
+  calendarView: DashboardCalendarView;
+  calendarChartHeading?: string;
+  calendarChartYAxisSelectInput?: React.JSX.Element | null;
   cardsWithStatisticsElements: React.JSX.Element;
   expandBarLineChartButton: React.JSX.Element;
-  expandCalendarChartButton: React.JSX.Element | null;
+  expandCalendarChartButton?: React.JSX.Element | null;
   expandPieChartButton?: React.JSX.Element;
   pieChart?: React.JSX.Element;
   pieChartHeading?: string;
@@ -29,6 +34,7 @@ function DashboardBarLineLayout(
     barLineChartYAxisSelectInput,
     barLineChartYAxisVariable,
     calendarChart,
+    calendarView,
     calendarChartHeading,
     calendarChartYAxisSelectInput,
     cardsWithStatisticsElements,
@@ -42,36 +48,109 @@ function DashboardBarLineLayout(
     semanticLabel,
   }: DashboardBarLineLayoutProps,
 ) {
-  const dashboardBarLineLayout = (
-    <Stack>
-      <Text>{sectionHeading}</Text>
-      <Stack>
-        <Text>{pieChartHeading}</Text>
-        {pieChartYAxisSelectInput}
-        {expandPieChartButton}
-        {pieChart}
-      </Stack>
+  const { globalState: { themeObject } } = useGlobalState();
 
-      <Group w="100%" position="apart">
-        <Text>{barLineChartHeading}</Text>
+  const { backgroundColor, grayBorderShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
+  const barLineSection = (
+    <Stack
+      w="100%"
+      p="md"
+      style={{ borderBottom: `3px solid ${grayBorderShade}` }}
+    >
+      <Text size="md" weight={500}>{barLineChartHeading}</Text>
+
+      <Group
+        w="100%"
+        position="center"
+      >
         {barLineChartYAxisSelectInput}
         {barLineChartKindSegmentedControl}
         {expandBarLineChartButton}
       </Group>
 
-      <Group w="100%" position="apart">
-        <Flex wrap="wrap">
-          {cardsWithStatisticsElements}
-        </Flex>
+      <Group
+        w="100%"
+        position="apart"
+        align="center"
+      >
+        <Stack>{cardsWithStatisticsElements}</Stack>
         {barLineChart}
       </Group>
+    </Stack>
+  );
 
-      <Stack>
-        <Text>{calendarChartHeading}</Text>
-        {calendarChartYAxisSelectInput}
-        {expandCalendarChartButton}
-        {calendarChart}
+  const pieSection = pieChart && pieChartHeading &&
+      expandPieChartButton
+    ? (
+      <Stack
+        w="100%"
+        px="md"
+        style={{ borderBottom: `3px solid ${grayBorderShade}` }}
+      >
+        <Text size="md" weight={500}>{pieChartHeading}</Text>
+        <Group
+          w="100%"
+          position={pieChartYAxisSelectInput ? "center" : "right"}
+        >
+          {pieChartYAxisSelectInput}
+          {expandPieChartButton}
+        </Group>
+        <Group w="100%" position="center" align="center">
+          {pieChart}
+        </Group>
       </Stack>
+    )
+    : null;
+
+  const calendarSection =
+    calendarView === "Yearly" && calendarChart && calendarChartHeading
+      ? (
+        <Stack
+          w="100%"
+          px="md"
+          style={{ borderBottom: `3px solid ${grayBorderShade}` }}
+        >
+          <Text size="md" weight={500}>{calendarChartHeading}</Text>
+          <Group
+            w="100%"
+            position={calendarChartYAxisSelectInput ? "center" : "right"}
+          >
+            {calendarChartYAxisSelectInput}
+            {expandCalendarChartButton}
+          </Group>
+          <Group w="100%" position="center" align="center">
+            {calendarChart}
+          </Group>
+        </Stack>
+      )
+      : null;
+
+  const dashboardBarLineLayout = (
+    <Stack align="flex-start" w="100%">
+      <Group
+        w="100%"
+        style={{
+          position: "sticky",
+          top: 185,
+          backgroundColor,
+          zIndex: 2,
+          boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Title order={3}>
+          {calendarView}{"  "}{sectionHeading}
+        </Title>
+      </Group>
+
+      {pieSection}
+
+      {barLineSection}
+
+      {calendarSection}
     </Stack>
   );
 

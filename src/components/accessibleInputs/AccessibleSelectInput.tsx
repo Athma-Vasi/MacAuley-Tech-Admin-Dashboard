@@ -8,6 +8,7 @@ import {
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { splitCamelCase } from "../../utils";
+import { INPUT_WIDTH } from "../../constants";
 
 type AccessibleSelectInputAttributes<
   ValidValueAction extends string = string,
@@ -75,7 +76,7 @@ function AccessibleSelectInput<
   return (
     <Container
       key={`container-${name}-${uniqueId}`}
-      w="100%"
+      w={INPUT_WIDTH}
     >
       <NativeSelect
         aria-describedby={describedBy}

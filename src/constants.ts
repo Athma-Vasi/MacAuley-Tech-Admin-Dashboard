@@ -208,9 +208,12 @@ const STORE_LOCATION_DATA: CheckboxRadioSelectData<StoreLocation> = [
   { label: "Vancouver", value: "Vancouver" },
 ];
 
+const INPUT_WIDTH = 300;
+
 export {
   COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
+  INPUT_WIDTH,
   SCREENSHOT_IMAGE_TYPE_DATA,
   STORE_LOCATION_DATA,
 };

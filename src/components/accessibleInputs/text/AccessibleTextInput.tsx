@@ -19,7 +19,7 @@ import {
 } from "react";
 import { TbCheck, TbRefresh, TbX } from "react-icons/tb";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import type { ValidationFunctionsTable } from "../../../types";
 import { returnThemeColors, splitCamelCase } from "../../../utils";
@@ -221,7 +221,7 @@ function AccessibleTextInput<
   return (
     <Container
       key={`${name}-${value}-${uniqueId ?? ""}`}
-      w="100%"
+      w={INPUT_WIDTH}
     >
       <Popover
         opened={isPopoverOpened}

@@ -78,7 +78,7 @@ function createAccessibleValueValidationTextElements({
       }
       <Text color={redColorShade}>
         {valueInvalidText}
-        {arePasswordsDifferent ? "Passwords do not match" : ""}
+        {arePasswordsDifferent ? "Passwords do not match." : ""}
       </Text>
     </Text>
   );

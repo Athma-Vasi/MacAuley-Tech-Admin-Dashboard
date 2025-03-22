@@ -6,15 +6,10 @@
       "sidebar main";
     grid-template-columns: 1fr 4fr;
     grid-template-rows: auto 1fr;
-    /* height: 100vb;
-    width: 100vi; */
     max-inline-size: 1920px;
-    max-block-size: 100vh;
-    min-inline-size: 600px;
+    /* max-block-size: 100vh; */
+    /* min-inline-size: 600px; */
     outline: 1px solid teal;
-    /* max-width: 1920px;
-    max-height: 100vh;
-    min-width: 600px; */
   }
 
   .header {
@@ -24,6 +19,7 @@
     outline: 1px solid goldenrod;
     justify-content: space-between;
     align-items: center;
+    padding: 16px;
   }
 
   .sidebar {
@@ -32,7 +28,7 @@
 
   .main {
     grid-area: main;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     display: grid;
     /* color:#daa520 */
     /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */

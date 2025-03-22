@@ -11,6 +11,7 @@ import type { ReactNode } from "react";
 import { MdCalendarMonth, MdDateRange } from "react-icons/md";
 import { RiCalendarLine } from "react-icons/ri";
 
+import { INPUT_WIDTH } from "../../constants";
 import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
 import {
   MONEY_SYMBOL_CATEGORIES,
@@ -47,13 +48,23 @@ function returnDashboardCardElement({
   // );
   const cardHeading = (
     <Group position="left">
-      <Title order={5} weight={600}>{heading}</Title>
+      <Title
+        order={4}
+        weight={400}
+        style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
+      >
+        {heading}
+      </Title>
     </Group>
   );
 
   const cardBody = (
     <Group w="100%" position="left" py="sm">
-      <Text size="xl" weight={600}>
+      <Text
+        size="xl"
+        weight={600}
+        style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
+      >
         {value}
       </Text>
     </Group>
@@ -73,7 +84,7 @@ function returnDashboardCardElement({
   );
 
   const createdChartCard = (
-    <Card shadow="sm" radius="md" withBorder>
+    <Card shadow="sm" radius="md" withBorder w={INPUT_WIDTH}>
       {cardHeading}
       {cardBody}
       {cardFooter}

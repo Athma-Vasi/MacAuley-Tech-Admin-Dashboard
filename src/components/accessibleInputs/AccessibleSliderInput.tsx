@@ -7,6 +7,7 @@ import {
 } from "@mantine/core";
 import type { ReactNode } from "react";
 
+import { INPUT_WIDTH } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { SliderMarksData } from "../../types";
 import { returnSliderMarks } from "../../utils";
@@ -155,7 +156,7 @@ function AccessibleSliderInput<
   return (
     <Container
       key={`${name}-${value}-${uniqueId ?? ""}`}
-      w="100%"
+      w={INPUT_WIDTH}
     >
       {accessibleSliderInput}
       <Box

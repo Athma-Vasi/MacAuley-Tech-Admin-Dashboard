@@ -1,4 +1,4 @@
-import { Flex } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import {
     TbAffiliate,
     TbHome2,
@@ -6,8 +6,8 @@ import {
     TbTools,
     TbUser,
 } from "react-icons/tb";
-import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 import { useNavigate } from "react-router-dom";
+import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 
 function Sidebar() {
     const navigate = useNavigate();
@@ -68,19 +68,13 @@ function Sidebar() {
     );
 
     return (
-        <Flex
-            direction="column"
-            gap={10}
-            p={20}
-            w="100%"
-            h="100vh"
-        >
+        <Stack>
             {homeNavlink}
             {productsNavlink}
             {financialsNavlink}
             {customersNavlink}
             {repairsNavlink}
-        </Flex>
+        </Stack>
     );
 }
 
