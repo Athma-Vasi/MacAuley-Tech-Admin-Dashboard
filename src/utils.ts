@@ -141,14 +141,7 @@ function returnTimeToRead(string: string) {
 
 function formatDate({
   date,
-  formatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    timeZoneName: "short",
-  },
+  formatOptions,
   locale = "en-US",
 }: {
   date: string;

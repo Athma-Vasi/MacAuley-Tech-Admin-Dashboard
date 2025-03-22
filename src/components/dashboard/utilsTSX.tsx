@@ -1,12 +1,4 @@
-import {
-  Accordion,
-  Card,
-  Center,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Accordion, Card, Center, Group, Stack, Text } from "@mantine/core";
 import type { ReactNode } from "react";
 import { MdCalendarMonth, MdDateRange } from "react-icons/md";
 import { RiCalendarLine } from "react-icons/ri";
@@ -49,21 +41,21 @@ function returnDashboardCardElement({
   // );
   const cardHeading = (
     <Group position="left">
-      <Title
-        order={4}
-        weight={400}
+      <Text
+        size={26}
+        weight={600}
         style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
       >
         {heading}
-      </Title>
+      </Text>
     </Group>
   );
 
   const cardBody = (
     <Group w="100%" position="left" py="sm">
       <Text
-        size="xl"
-        weight={600}
+        size={28}
+        weight={500}
         style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
       >
         {value}
@@ -72,7 +64,7 @@ function returnDashboardCardElement({
   );
 
   const displayPercentage = (
-    <Text size="sm" italic color={deltaTextColor}>
+    <Text size={16} italic color={deltaTextColor}>
       {percentage}
     </Text>
   );
@@ -80,12 +72,12 @@ function returnDashboardCardElement({
   const cardFooter = (
     <Group w="100%" position="apart">
       {displayPercentage}
-      <Text size="sm">{date}</Text>
+      <Text size={16}>{date}</Text>
     </Group>
   );
 
   const createdChartCard = (
-    <Card shadow="sm" radius="md" withBorder w={INPUT_WIDTH}>
+    <Card shadow="md" radius="md" withBorder w={INPUT_WIDTH}>
       {cardHeading}
       {cardBody}
       {cardFooter}
@@ -169,11 +161,11 @@ function createDashboardMetricsCards({
 
   const displayValue = isDisplayValueAsPercentage
     ? `${valueStr} %`
-    : `${isDisplayValueAsCurrency ? "CAD" : ""} ${
+    : `${
       selectedValue.toString().includes(".")
         ? valueStr
         : addCommaSeparator(selectedValue.toString())
-    }`;
+    } ${isDisplayValueAsCurrency ? "CAD" : ""}`;
 
   return {
     date,
@@ -296,7 +288,7 @@ function createStatisticsElements(
 
       const heading = (
         <Center>
-          <Text weight={500} size="md">
+          <Text weight={500} size={18}>
             {`${calendarView} ${key} ${
               splitCamelCase(metricCategory)
             } for ${storeLocation}`}
@@ -410,7 +402,7 @@ function createFinancialStatisticsElements(
 
       const heading = (
         <Center>
-          <Text weight={500} size="md">
+          <Text weight={500} size={18}>
             {`${calendarView} ${cardsKey} ${
               metricsKind === "pert" ? splitCamelCase(metricCategory) : ""
             } for ${storeLocation}`}
@@ -499,7 +491,7 @@ function consolidateCustomerCardsAndStatistics(
       <Accordion>
         <Accordion.Item value={key}>
           <Accordion.Control>
-            <Text size="sm" weight={500}>
+            <Text size={18} weight={500}>
               Statistics
             </Text>
           </Accordion.Control>

@@ -60,9 +60,9 @@ const initialResponsiveRadialBarChartState: ResponsiveRadialBarChartState = {
   labelsTextColor: "gray",
 
   // legend
-  enableLegend: false,
+  enableLegend: true,
   enableLegendJustify: false,
-  legendAnchor: "bottom-right",
+  legendAnchor: "right",
   legendDirection: "column",
   legendItemBackground: "rgba(255, 255, 255, 0)",
   legendItemDirection: "left-to-right",

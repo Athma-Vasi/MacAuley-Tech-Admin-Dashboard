@@ -1,16 +1,28 @@
-import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import {
+  Card,
+  Group,
+  Loader,
+  LoadingOverlay,
+  Stack,
+  Text,
+} from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
-import { returnThemeColors } from "../../../utils";
+import {
+  addCommaSeparator,
+  formatDate,
+  returnThemeColors,
+} from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
+  DashboardMetricsView,
   Month,
   Year,
 } from "../types";
@@ -69,6 +81,7 @@ function ProductMetrics({
     redColorShade,
     greenColorShade,
     backgroundColor,
+    grayColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -190,18 +203,151 @@ function ProductMetrics({
     </Group>
   );
 
+  function returnSelectedDateAllProductsMetrics(
+    businessMetrics: BusinessMetric[],
+    storeLocationView: BusinessMetricStoreLocation,
+    selectedYYYYMMDD: string,
+  ) {
+    const defaultValue = {
+      dailyRevenue: 0,
+      dailyUnitsSold: 0,
+    };
+
+    const [year, month, day] = selectedYYYYMMDD.split("-") as [
+      string,
+      string,
+      string,
+    ];
+    const productMetrics = businessMetrics.find(
+      (bmetric) => bmetric.storeLocation === storeLocationView,
+    )?.productMetrics;
+
+    if (!productMetrics) {
+      return defaultValue;
+    }
+
+    const allProductsYearlyMetrics = productMetrics.find(
+      (productMetric) => productMetric.name === "All Products",
+    );
+
+    console.log({ allProductsYearlyMetrics });
+
+    if (!allProductsYearlyMetrics) {
+      return defaultValue;
+    }
+
+    const allProductsDailyMetrics = allProductsYearlyMetrics.yearlyMetrics.find(
+      (yearlyMetric) => yearlyMetric.year === year,
+    )?.monthlyMetrics.find((monthlyMetric) =>
+      monthlyMetric.month === (MONTHS[Number(month) - 1].toString())
+    )
+      ?.dailyMetrics.find((dailyMetric) => dailyMetric.day === day);
+
+    if (!allProductsDailyMetrics) {
+      return defaultValue;
+    }
+
+    return {
+      ...defaultValue,
+      dailyRevenue: allProductsDailyMetrics.revenue.total,
+      dailyUnitsSold: allProductsDailyMetrics.unitsSold.total,
+    };
+  }
+
+  const { dailyRevenue, dailyUnitsSold } = returnSelectedDateAllProductsMetrics(
+    businessMetrics,
+    storeLocationView,
+    selectedYYYYMMDD,
+  );
+
+  function createOverviewMetricCard(
+    {
+      metricsView,
+      selectedYYYYMMDD,
+      storeLocationView,
+      subMetric,
+      unit,
+      value,
+    }: {
+      metricsView: DashboardMetricsView;
+      selectedYYYYMMDD: string;
+      storeLocationView: BusinessMetricStoreLocation;
+      subMetric: string;
+      unit: "CAD" | "%" | "Units";
+      value: number;
+    },
+  ) {
+    return (
+      <Card
+        shadow="sm"
+        padding="lg"
+        radius="md"
+        withBorder
+        w={INPUT_WIDTH}
+        h={185}
+      >
+        <Stack align="flex-start" spacing={4}>
+          <Text size={26} weight={600}>{metricsView}</Text>
+          <Text size={16} mb={5}>
+            {storeLocationView} {subMetric} for
+          </Text>
+          <Text size={16} mb={5}>
+            {formatDate({
+              date: selectedYYYYMMDD,
+              formatOptions: { dateStyle: "long" },
+            })}
+          </Text>
+          {/* <Text size={18} mb={5}>{subMetric}</Text> */}
+          <Text size={28} weight={500}>
+            {addCommaSeparator(value)} {unit}
+          </Text>
+        </Stack>
+      </Card>
+    );
+  }
+
+  const overviewRevenueCard = createOverviewMetricCard(
+    {
+      metricsView: "Products",
+      selectedYYYYMMDD,
+      storeLocationView,
+      subMetric: "Revenue",
+      unit: "CAD",
+      value: dailyRevenue,
+    },
+  );
+
+  const overviewUnitsSoldCard = createOverviewMetricCard(
+    {
+      metricsView: "Products",
+      selectedYYYYMMDD,
+      storeLocationView,
+      subMetric: "Units Sold",
+      unit: "Units",
+      value: dailyUnitsSold,
+    },
+  );
+
+  const overviewCards = (
+    <>
+      {overviewRevenueCard}
+      {overviewUnitsSoldCard}
+    </>
+  );
+
   const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
       <RUS
         calendarChartsData={calendarChartsData}
         calendarView={calendarView}
+        day={selectedDate}
+        metricsView="Products"
+        month={selectedYYYYMMDD.split("-")[1]}
+        overviewCards={overviewCards}
         productMetricsCards={cards}
         productMetricsCharts={charts}
-        day={selectedDate}
-        month={selectedYYYYMMDD.split("-")[1]}
-        subMetric={subMetric}
-        metricsView="Products"
         storeLocation={storeLocationView}
+        subMetric={subMetric}
         year={selectedYear}
       />
     </React.Fragment>
@@ -241,6 +387,7 @@ function ProductMetrics({
         {subMetricSegmentedControl}
         {productCategorySelectInput}
       </Group>
+
       {revenueUnitsSold}
     </Stack>
   );

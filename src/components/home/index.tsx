@@ -1,8 +1,8 @@
-import { lazy } from "react";
 import ErrorSuspenseHOC from "../error/ErrorSuspenseHOC";
+import Home from "./Home";
 
 function HomeWrapper() {
-    return ErrorSuspenseHOC(lazy(() => import("./Home")))({});
+    return ErrorSuspenseHOC(Home)({});
 }
 
 export default HomeWrapper;

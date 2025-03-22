@@ -1,4 +1,4 @@
-import { Group, Stack, Text, Title } from "@mantine/core";
+import { Card, Group, Stack, Text, Title } from "@mantine/core";
 import React from "react";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -8,17 +8,18 @@ import { DashboardCalendarView } from "./types";
 type DashboardBarLineLayoutProps = {
   barLineChart: React.JSX.Element;
   barLineChartHeading: string;
-  barLineChartYAxisSelectInput: React.JSX.Element;
   barLineChartKindSegmentedControl: React.JSX.Element;
+  barLineChartYAxisSelectInput: React.JSX.Element;
   barLineChartYAxisVariable: string;
   calendarChart?: React.JSX.Element | null;
-  calendarView: DashboardCalendarView;
   calendarChartHeading?: string;
   calendarChartYAxisSelectInput?: React.JSX.Element | null;
+  calendarView: DashboardCalendarView;
   cardsWithStatisticsElements: React.JSX.Element;
   expandBarLineChartButton: React.JSX.Element;
   expandCalendarChartButton?: React.JSX.Element | null;
   expandPieChartButton?: React.JSX.Element;
+  overviewCards?: React.JSX.Element;
   pieChart?: React.JSX.Element;
   pieChartHeading?: string;
   pieChartYAxisSelectInput?: React.JSX.Element;
@@ -34,13 +35,14 @@ function DashboardBarLineLayout(
     barLineChartYAxisSelectInput,
     barLineChartYAxisVariable,
     calendarChart,
-    calendarView,
     calendarChartHeading,
     calendarChartYAxisSelectInput,
+    calendarView,
     cardsWithStatisticsElements,
     expandBarLineChartButton,
     expandCalendarChartButton,
     expandPieChartButton,
+    overviewCards,
     pieChart,
     pieChartHeading,
     pieChartYAxisSelectInput,
@@ -88,25 +90,25 @@ function DashboardBarLineLayout(
   const pieSection = pieChart && pieChartHeading &&
       expandPieChartButton
     ? (
-      <Stack
-        w="100%"
-        px="md"
-        style={{ borderBottom: `3px solid ${grayBorderShade}` }}
-      >
-        <Group position="left">
-          <Text size="md" weight={500}>{pieChartHeading}</Text>
-        </Group>
-        <Group
-          w="100%"
-          position={pieChartYAxisSelectInput ? "center" : "right"}
-        >
-          {pieChartYAxisSelectInput}
-          {expandPieChartButton}
-        </Group>
-        <Group w="100%" position="center" align="center">
-          {pieChart}
-        </Group>
-      </Stack>
+      <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
+        <Stack px="md">
+          <Group position="apart" w="100%">
+            <Text size={20} weight={500}>{pieChartHeading}</Text>
+            {pieChartYAxisSelectInput}
+          </Group>
+
+          <Group w="100%" position="apart" align="center">
+            <Stack>{overviewCards}</Stack>
+            <Card
+              padding="lg"
+              radius="md"
+              withBorder
+            >
+              {pieChart}
+            </Card>
+          </Group>
+        </Stack>
+      </Card>
     )
     : null;
 
@@ -134,8 +136,6 @@ function DashboardBarLineLayout(
         </Stack>
       )
       : null;
-
-  console.log("sectionHeading", sectionHeading);
 
   const dashboardBarLineLayout = (
     <Stack align="flex-start" w="100%">

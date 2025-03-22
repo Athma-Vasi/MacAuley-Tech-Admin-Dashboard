@@ -1,5 +1,6 @@
 import type { TitleOrder } from "@mantine/core";
 
+import { RadialBarTooltipComponent } from "@nivo/radial-bar";
 import type {
   ScreenshotImageType,
   SetPageInErrorPayload,
@@ -27,6 +28,7 @@ type RadialBarChartData = {
 type ResponsiveRadialBarChartProps = {
   hideControls?: boolean;
   radialBarChartData: RadialBarChartData[];
+  tooltip?: RadialBarTooltipComponent | undefined;
 };
 
 type ResponsiveRadialBarChartState = {

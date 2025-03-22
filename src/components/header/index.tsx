@@ -1,8 +1,13 @@
-import { lazy } from "react";
-import ErrorSuspenseHOC from "../error/ErrorSuspenseHOC";
+import Settings from "./settings";
 
-function HeaderWrapper() {
-  return ErrorSuspenseHOC(lazy(() => import("./Header")))({});
+function Header() {
+  return (
+    <div className="header">
+      <h1>MacAuley Tech</h1>
+
+      <Settings />
+    </div>
+  );
 }
 
-export default HeaderWrapper;
+export default Header;

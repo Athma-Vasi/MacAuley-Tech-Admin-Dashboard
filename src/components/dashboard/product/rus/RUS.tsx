@@ -13,6 +13,7 @@ import {
   ResponsiveCalendarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
+  ResponsiveRadialBarChart,
 } from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -61,6 +62,7 @@ type RUSProps = {
   subMetric: ProductSubMetric;
   metricsView: DashboardMetricsView;
   month: string;
+  overviewCards?: React.JSX.Element;
   productMetricsCards: ProductMetricsCards;
   productMetricsCharts: ProductMetricsCharts;
   storeLocation: BusinessMetricStoreLocation;
@@ -72,13 +74,14 @@ function RUS(
   {
     calendarChartsData,
     calendarView,
-    productMetricsCards,
-    productMetricsCharts,
     day,
-    subMetric,
     metricsView,
     month,
+    overviewCards,
+    productMetricsCards,
+    productMetricsCharts,
     storeLocation,
+    subMetric,
     year,
   }: RUSProps,
 ) {
@@ -246,6 +249,23 @@ function RUS(
       />
     );
 
+  const radialBarChart = (
+    <ResponsiveRadialBarChart
+      radialBarChartData={lineCharts[barLineChartYAxisVariable]}
+      hideControls
+      tooltip={({ bar }) => (
+        <div>
+          <p>{`${bar.data.x} - ${bar.data.y}`}</p>
+          <p>
+            {`${addCommaSeparator(bar.data.y)} ${
+              subMetric === "revenue" ? "CAD" : "Units"
+            }`}
+          </p>
+        </div>
+      )}
+    />
+  );
+
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
     calendarChartYAxisVariable,
@@ -326,25 +346,29 @@ function RUS(
   );
 
   return (
-    <DashboardBarLineLayout
-      barLineChart={barLineChart}
-      barLineChartHeading={barLineChartHeading}
-      barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-      barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-      barLineChartYAxisVariable={barLineChartYAxisVariable}
-      calendarChart={calendarChart}
-      calendarView={calendarView}
-      calendarChartHeading={calendarChartHeading}
-      expandPieChartButton={expandPieChartButton}
-      pieChart={pieChart}
-      pieChartHeading={pieChartHeading}
-      expandCalendarChartButton={expandCalendarChartButton}
-      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-      cardsWithStatisticsElements={cardsWithStatisticsElements}
-      expandBarLineChartButton={expandBarLineChartButton}
-      sectionHeading={splitCamelCase(metricsView)}
-      semanticLabel="TODO"
-    />
+    <>
+      {radialBarChart}
+      <DashboardBarLineLayout
+        barLineChart={barLineChart}
+        barLineChartHeading={barLineChartHeading}
+        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
+        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
+        barLineChartYAxisVariable={barLineChartYAxisVariable}
+        calendarChart={calendarChart}
+        calendarChartHeading={calendarChartHeading}
+        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        calendarView={calendarView}
+        cardsWithStatisticsElements={cardsWithStatisticsElements}
+        expandBarLineChartButton={expandBarLineChartButton}
+        expandCalendarChartButton={expandCalendarChartButton}
+        expandPieChartButton={expandPieChartButton}
+        overviewCards={overviewCards}
+        pieChart={pieChart}
+        pieChartHeading={pieChartHeading}
+        sectionHeading={splitCamelCase(metricsView)}
+        semanticLabel="TODO"
+      />
+    </>
   );
 }
 

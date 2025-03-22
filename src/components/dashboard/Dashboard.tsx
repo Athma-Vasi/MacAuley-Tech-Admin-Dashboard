@@ -159,6 +159,10 @@ function Dashboard() {
     return displayLoadingOverlay;
   }
 
+  console.group("Dashboard");
+  console.log("businessMetrics", businessMetrics);
+  console.groupEnd();
+
   const { selectedDate, selectedMonth, selectedYear } =
     splitSelectedCalendarDate({
       calendarDate: selectedYYYYMMDD,
