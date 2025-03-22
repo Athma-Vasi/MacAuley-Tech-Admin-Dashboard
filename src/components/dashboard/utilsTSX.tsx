@@ -13,6 +13,7 @@ import { RiCalendarLine } from "react-icons/ri";
 
 import { INPUT_WIDTH } from "../../constants";
 import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
+import { GoldenGrid } from "../goldenGrid";
 import {
   MONEY_SYMBOL_CATEGORIES,
   PERCENTAGE_SYMBOL_CATEGORIES,
@@ -184,6 +185,91 @@ function createDashboardMetricsCards({
   };
 }
 
+function returnMinMaxSectionElement(
+  kind: "Min" | "Max",
+  data: { value: number; occurred: string },
+  unitSymbol: "$" | "%" | "",
+) {
+  return (
+    <Stack style={{ borderBottom: "1px solid hsl(0, 0%, 90%)" }}>
+      <GoldenGrid>
+        <Group position="right">
+          <Text>{kind}:</Text>
+        </Group>
+        <Group position="left">
+          <Text>
+            {`${unitSymbol === "%" ? "" : unitSymbol} ${
+              addCommaSeparator(data.value.toFixed(2))
+            } ${unitSymbol === "%" ? "%" : ""}`}
+          </Text>
+        </Group>
+      </GoldenGrid>
+
+      <GoldenGrid>
+        <Group position="right">
+          <Text>Occurred:</Text>
+        </Group>
+        <Group position="left">
+          <Text>{data.occurred}</Text>
+        </Group>
+      </GoldenGrid>
+    </Stack>
+  );
+}
+
+function returnMedianModeSection(
+  kind: "Mode" | "Median",
+  value: number,
+  unitSymbol: "$" | "%" | "",
+) {
+  return (
+    <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 90%)" }}>
+      <Group position="right">
+        <Text>{kind}:</Text>
+      </Group>
+      <Group position="left">
+        <Text>
+          {`${unitSymbol === "%" ? "" : unitSymbol} ${
+            addCommaSeparator(value.toFixed(2))
+          } ${unitSymbol === "%" ? "%" : ""}`}
+        </Text>
+      </Group>
+    </GoldenGrid>
+  );
+}
+
+function returnMeanRangeSDSection(
+  kind: "Arithmetic Mean" | "Interquartile Range" | "Standard Deviation",
+  value: number,
+  unitSymbol: "$" | "%" | "",
+) {
+  const [firstWord, lastWord] = kind.split(" ");
+
+  return (
+    <GoldenGrid
+      style={kind === "Standard Deviation"
+        ? {}
+        : { borderBottom: "1px solid hsl(0, 0%, 90%)" }}
+    >
+      <Stack spacing={0}>
+        <Group position="right">
+          <Text>{firstWord}</Text>
+        </Group>
+        <Group position="right">
+          <Text>{lastWord}:</Text>
+        </Group>
+      </Stack>
+      <Group position="left">
+        <Text>
+          {`${unitSymbol === "%" ? "" : unitSymbol} ${
+            addCommaSeparator(value.toFixed(2))
+          } ${unitSymbol === "%" ? "%" : ""}`}
+        </Text>
+      </Group>
+    </GoldenGrid>
+  );
+}
+
 function createStatisticsElements(
   calendarView: DashboardCalendarView,
   metricCategory: string,
@@ -208,61 +294,71 @@ function createStatisticsElements(
         ? "%"
         : "";
 
+      const heading = (
+        <Center>
+          <Text weight={500} size="md">
+            {`${calendarView} ${key} ${
+              splitCamelCase(metricCategory)
+            } for ${storeLocation}`}
+          </Text>
+        </Center>
+      );
+
+      const minSection = returnMinMaxSectionElement(
+        "Min",
+        min,
+        unitSymbol,
+      );
+
+      const maxSection = returnMinMaxSectionElement(
+        "Max",
+        max,
+        unitSymbol,
+      );
+
+      const medianSection = returnMedianModeSection(
+        "Median",
+        median,
+        unitSymbol,
+      );
+
+      const modeSection = returnMedianModeSection(
+        "Mode",
+        mode,
+        unitSymbol,
+      );
+
+      const meanSection = returnMeanRangeSDSection(
+        "Arithmetic Mean",
+        mean,
+        unitSymbol,
+      );
+
+      const iqRangeSection = returnMeanRangeSDSection(
+        "Interquartile Range",
+        interquartileRange,
+        unitSymbol,
+      );
+
+      const stdDeviationSection = returnMeanRangeSDSection(
+        "Standard Deviation",
+        standardDeviation,
+        unitSymbol,
+      );
+
       const statisticsElement = (
         <Stack
           key={`${idx}-${key}`}
+          w="100%"
         >
-          <Center>
-            <Text weight={500} size="md">
-              {`${calendarView} ${key} ${
-                splitCamelCase(metricCategory)
-              } for ${storeLocation}`}
-            </Text>
-          </Center>
-
-          <Text>
-            {`Min: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(min.value.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-          <Text>{`Occurred: ${min.occurred}`}</Text>
-
-          <Text>
-            {`Max: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(max.value.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-          <Text>{`Occurred: ${max.occurred}`}</Text>
-
-          <Text>
-            {`Median: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(median.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Mode: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(mode.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Arithmetic Mean: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(mean.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Interquartile Range: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(interquartileRange.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Standard Deviation: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(standardDeviation.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
+          {heading}
+          {minSection}
+          {maxSection}
+          {medianSection}
+          {modeSection}
+          {meanSection}
+          {iqRangeSection}
+          {stdDeviationSection}
         </Stack>
       );
 
@@ -312,61 +408,70 @@ function createFinancialStatisticsElements(
         ? "%"
         : "";
 
+      const heading = (
+        <Center>
+          <Text weight={500} size="md">
+            {`${calendarView} ${cardsKey} ${
+              metricsKind === "pert" ? splitCamelCase(metricCategory) : ""
+            } for ${storeLocation}`}
+          </Text>
+        </Center>
+      );
+
+      const minSection = returnMinMaxSectionElement(
+        "Min",
+        min,
+        unitSymbol,
+      );
+
+      const maxSection = returnMinMaxSectionElement(
+        "Max",
+        max,
+        unitSymbol,
+      );
+
+      const medianSection = returnMedianModeSection(
+        "Median",
+        median,
+        unitSymbol,
+      );
+
+      const modeSection = returnMedianModeSection(
+        "Mode",
+        mode,
+        unitSymbol,
+      );
+
+      const meanSection = returnMeanRangeSDSection(
+        "Arithmetic Mean",
+        mean,
+        unitSymbol,
+      );
+
+      const iqRangeSection = returnMeanRangeSDSection(
+        "Interquartile Range",
+        interquartileRange,
+        unitSymbol,
+      );
+
+      const stdDeviationSection = returnMeanRangeSDSection(
+        "Standard Deviation",
+        standardDeviation,
+        unitSymbol,
+      );
+
       const statisticsElement = (
         <Stack
           key={`${idx}-${key}`}
         >
-          <Center>
-            <Text weight={500} size="md">
-              {`${calendarView} ${cardsKey} ${
-                metricsKind === "pert" ? splitCamelCase(metricCategory) : ""
-              } for ${storeLocation}`}
-            </Text>
-          </Center>
-
-          <Text>
-            {`Min: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(min.value.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-          <Text>{`Occurred: ${min.occurred}`}</Text>
-
-          <Text>
-            {`Max: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(max.value.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-          <Text>{`Occurred: ${max.occurred}`}</Text>
-
-          <Text>
-            {`Median: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(median.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Mode: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(mode.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Arithmetic Mean: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(mean.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Interquartile Range: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(interquartileRange.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
-
-          <Text>
-            {`Standard Deviation: ${unitSymbol === "%" ? "" : unitSymbol} ${
-              addCommaSeparator(standardDeviation.toFixed(2))
-            } ${unitSymbol === "%" ? "%" : ""}`}
-          </Text>
+          {heading}
+          {minSection}
+          {maxSection}
+          {medianSection}
+          {modeSection}
+          {meanSection}
+          {iqRangeSection}
+          {stdDeviationSection}
         </Stack>
       );
 

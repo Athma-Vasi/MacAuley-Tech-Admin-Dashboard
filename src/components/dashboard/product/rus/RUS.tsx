@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
@@ -327,27 +326,25 @@ function RUS(
   );
 
   return (
-    <Stack>
-      <DashboardBarLineLayout
-        barLineChart={barLineChart}
-        barLineChartHeading={barLineChartHeading}
-        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-        barLineChartYAxisVariable={barLineChartYAxisVariable}
-        calendarChart={calendarChart}
-        calendarView={calendarView}
-        calendarChartHeading={calendarChartHeading}
-        expandPieChartButton={expandPieChartButton}
-        pieChart={pieChart}
-        pieChartHeading={pieChartHeading}
-        expandCalendarChartButton={expandCalendarChartButton}
-        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-        cardsWithStatisticsElements={cardsWithStatisticsElements}
-        expandBarLineChartButton={expandBarLineChartButton}
-        sectionHeading={splitCamelCase(metricsView)}
-        semanticLabel="TODO"
-      />
-    </Stack>
+    <DashboardBarLineLayout
+      barLineChart={barLineChart}
+      barLineChartHeading={barLineChartHeading}
+      barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
+      barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
+      barLineChartYAxisVariable={barLineChartYAxisVariable}
+      calendarChart={calendarChart}
+      calendarView={calendarView}
+      calendarChartHeading={calendarChartHeading}
+      expandPieChartButton={expandPieChartButton}
+      pieChart={pieChart}
+      pieChartHeading={pieChartHeading}
+      expandCalendarChartButton={expandCalendarChartButton}
+      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      expandBarLineChartButton={expandBarLineChartButton}
+      sectionHeading={splitCamelCase(metricsView)}
+      semanticLabel="TODO"
+    />
   );
 }
 

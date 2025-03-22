@@ -229,6 +229,7 @@ function FinancialMetrics({
     <Stack>
       {loadingOverlay}
       <Group
+        py="sm"
         style={{
           position: "sticky",
           top: 100,

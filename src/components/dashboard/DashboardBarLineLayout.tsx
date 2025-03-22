@@ -61,7 +61,9 @@ function DashboardBarLineLayout(
       p="md"
       style={{ borderBottom: `3px solid ${grayBorderShade}` }}
     >
-      <Text size="md" weight={500}>{barLineChartHeading}</Text>
+      <Group position="left">
+        <Text size="md" weight={500}>{barLineChartHeading}</Text>
+      </Group>
 
       <Group
         w="100%"
@@ -91,7 +93,9 @@ function DashboardBarLineLayout(
         px="md"
         style={{ borderBottom: `3px solid ${grayBorderShade}` }}
       >
-        <Text size="md" weight={500}>{pieChartHeading}</Text>
+        <Group position="left">
+          <Text size="md" weight={500}>{pieChartHeading}</Text>
+        </Group>
         <Group
           w="100%"
           position={pieChartYAxisSelectInput ? "center" : "right"}
@@ -114,7 +118,9 @@ function DashboardBarLineLayout(
           px="md"
           style={{ borderBottom: `3px solid ${grayBorderShade}` }}
         >
-          <Text size="md" weight={500}>{calendarChartHeading}</Text>
+          <Group position="left">
+            <Text size="md" weight={500}>{calendarChartHeading}</Text>
+          </Group>
           <Group
             w="100%"
             position={calendarChartYAxisSelectInput ? "center" : "right"}
@@ -129,13 +135,16 @@ function DashboardBarLineLayout(
       )
       : null;
 
+  console.log("sectionHeading", sectionHeading);
+
   const dashboardBarLineLayout = (
     <Stack align="flex-start" w="100%">
       <Group
         w="100%"
+        py="md"
         style={{
           position: "sticky",
-          top: 185,
+          top: sectionHeading === "Financials" ? 160 : 185,
           backgroundColor,
           zIndex: 2,
           boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
