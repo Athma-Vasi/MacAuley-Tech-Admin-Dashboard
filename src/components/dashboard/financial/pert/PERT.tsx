@@ -364,6 +364,7 @@ function PERT({
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
+        calendarView={calendarView}
         calendarChartHeading={calendarChartHeading}
         expandPieChartButton={expandPieChartButton}
         pieChart={pieChart}

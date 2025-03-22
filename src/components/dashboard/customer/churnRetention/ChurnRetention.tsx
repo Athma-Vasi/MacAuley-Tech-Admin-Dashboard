@@ -341,6 +341,7 @@ function ChurnRetention(
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
+        calendarView={calendarView}
         calendarChartHeading={calendarChartHeading}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
         cardsWithStatisticsElements={cardsWithStatisticsElements}

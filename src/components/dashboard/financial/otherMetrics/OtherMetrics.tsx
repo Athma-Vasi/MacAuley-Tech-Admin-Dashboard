@@ -301,6 +301,7 @@ function OtherMetrics({
       barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
       barLineChartYAxisVariable={barLineChartYAxisVariable}
       calendarChart={calendarChart}
+      calendarView={calendarView}
       calendarChartHeading={calendarChartHeading}
       expandCalendarChartButton={expandCalendarChartButton}
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
