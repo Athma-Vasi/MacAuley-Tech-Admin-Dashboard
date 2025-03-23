@@ -168,7 +168,16 @@ function ResponsiveCalendarChart({
 
   if (hideControls) {
     return (
-      <Group w={618} h={382}>
+      <Group
+        // h={chartHeight}
+        // w={chartWidth}
+        w="100%"
+        style={{
+          outline: "1px solid aqua",
+          // width: "clamp(350px, 100%, 618px)",
+          height: "clamp(250px, 400px, 500px)",
+        }}
+      >
         {displayCalendarChart}
       </Group>
     );

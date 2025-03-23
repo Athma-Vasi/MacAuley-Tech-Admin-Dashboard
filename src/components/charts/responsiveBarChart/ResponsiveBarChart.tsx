@@ -36,7 +36,6 @@ import { useWindowSize } from "../../../hooks/useWindowSize";
 import {
   ChartAndControlsDisplay,
   ChartsAndGraphsControlsStacker,
-  returnBarLineChartDimensions,
 } from "../utils";
 import { responsiveBarChartAction } from "./actions";
 import {
@@ -354,16 +353,16 @@ function ResponsiveBarChart({
     />
   );
 
-  const { chartHeight, chartWidth } = returnBarLineChartDimensions(windowWidth);
-
   if (hideControls) {
     return (
       <Group
         // h={chartHeight}
         // w={chartWidth}
+        w="100%"
         style={{
-          width: "clamp(350px, 100%, 618px)",
-          height: "clamp(250px, 300px, 500px)",
+          outline: "1px solid goldenrod",
+          // width: "clamp(350px, 100%, 618px)",
+          height: "clamp(250px, 400px, 500px)",
         }}
       >
         {displayResponsiveBar}

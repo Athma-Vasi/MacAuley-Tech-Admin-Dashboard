@@ -33,14 +33,12 @@ import {
 import {
   ChartAndControlsDisplay,
   ChartsAndGraphsControlsStacker,
-  returnPieRadialChartDimensions,
 } from "../utils";
 import { responsivePieChartAction } from "./actions";
 import { responsivePieChartReducer } from "./reducers";
 import { initialResponsivePieChartState } from "./state";
 import type { ResponsivePieChartProps } from "./types";
 import { createPieFillPatterns } from "./utils";
-import { useWindowSize } from "../../../hooks/useWindowSize";
 
 function ResponsivePieChart({
   dashboardChartTitle,
@@ -51,7 +49,6 @@ function ResponsivePieChart({
   const {
     globalState: { themeObject, isPrefersReducedMotion },
   } = useGlobalState();
-  const { windowHeight, windowWidth } = useWindowSize();
 
   const {
     textColor,
@@ -238,16 +235,17 @@ function ResponsivePieChart({
     />
   );
 
-  const { chartHeight, chartWidth } = returnPieRadialChartDimensions(
-    windowWidth,
-  );
-
   if (hideControls) {
     return (
       <Group
-        h={chartHeight}
-        w={chartWidth}
-        style={{ outline: "1px solid brown" }}
+        // h={chartHeight}
+        // w={chartWidth}
+        w="100%"
+        style={{
+          outline: "1px solid red",
+          // width: "clamp(350px, 100%, 618px)",
+          height: "clamp(250px, 400px, 500px)",
+        }}
       >
         {displayResponsivePie}
       </Group>

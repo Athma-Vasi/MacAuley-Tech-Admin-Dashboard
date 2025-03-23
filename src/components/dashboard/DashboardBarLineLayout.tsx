@@ -1,4 +1,4 @@
-import { Card, Group, Stack, Text, Title } from "@mantine/core";
+import { Card, Center, Group, Stack, Text, Title } from "@mantine/core";
 import React from "react";
 import {
   APP_HEADER_HEIGHT,
@@ -64,7 +64,7 @@ function DashboardBarLineLayout(
     themeObject,
   });
 
-  const overviewCardsSection = overviewCards
+  const overviewCardsSection = overviewCards && calendarView === "Daily"
     ? (
       <Group>
         {overviewCards}
@@ -77,17 +77,14 @@ function DashboardBarLineLayout(
       <Stack px="md">
         <Group position="apart" w="100%">
           {barLineChartYAxisSelectInput}
+          {barLineChartKindSegmentedControl}
+          {expandBarLineChartButton}
         </Group>
 
-        <Card
-          className="bar-line-chart"
-          padding="lg"
-          radius="md"
-          withBorder
-        >
-          <Text size={20} weight={500}>{barLineChartHeading}</Text>
-          {barLineChart}
-        </Card>
+        <Group w="100%" align="baseline">{cardsWithStatisticsElements}</Group>
+
+        <Text size={20} weight={500}>{barLineChartHeading}</Text>
+        <Center>{barLineChart}</Center>
       </Stack>
     </Card>
   );
@@ -97,19 +94,18 @@ function DashboardBarLineLayout(
     ? (
       <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
         <Stack px="md">
-          <Group position="apart" w="100%">
+          <Group
+            position={pieChartYAxisSelectInput ? "apart" : "right"}
+            w="100%"
+          >
             {pieChartYAxisSelectInput}
+            {expandPieChartButton}
           </Group>
 
-          <Card
-            className="pie-chart"
-            padding="lg"
-            radius="md"
-            withBorder
-          >
-            <Text size={20} weight={500}>{pieChartHeading}</Text>
+          <Text size={20} weight={500}>{pieChartHeading}</Text>
+          <Center>
             {pieChart}
-          </Card>
+          </Center>
         </Stack>
       </Card>
     )
@@ -118,25 +114,19 @@ function DashboardBarLineLayout(
   const calendarSection =
     calendarView === "Yearly" && calendarChart && calendarChartHeading
       ? (
-        <Stack
-          w="100%"
-          px="md"
-          style={{ borderBottom: `3px solid ${grayBorderShade}` }}
-        >
-          <Group position="left">
-            <Text size="md" weight={500}>{calendarChartHeading}</Text>
-          </Group>
-          <Group
-            w="100%"
-            position={calendarChartYAxisSelectInput ? "center" : "right"}
-          >
-            {calendarChartYAxisSelectInput}
-            {expandCalendarChartButton}
-          </Group>
-          <Group w="100%" position="center" align="center">
-            {calendarChart}
-          </Group>
-        </Stack>
+        <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
+          <Stack px="md">
+            <Group position="apart" w="100%">
+              {calendarChartYAxisSelectInput}
+              {expandCalendarChartButton}
+            </Group>
+
+            <Text size={20} weight={500}>{calendarChartHeading}</Text>
+            <Center>
+              {calendarChart}
+            </Center>
+          </Stack>
+        </Card>
       )
       : null;
 

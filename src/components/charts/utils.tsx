@@ -132,47 +132,6 @@ function ChartAndControlsDisplay(
     scrollBarStyle,
   } = props;
 
-  // const displayChartControls = (
-  //   <ScrollArea styles={() => scrollBarStyle} offsetScrollbars>
-  //     <Grid columns={1} >
-  //       <Grid.Col span={1}>{chartControlsStack}</Grid.Col>
-  //     </Grid>
-  //   </ScrollArea>
-  // );
-
-  // const displayChartTitle = (
-  //   <Group w="100%" position={chartTitlePosition}>
-  //     <Title order={chartTitleSize} color={chartTitleColor}>
-  //       {chartTitle}
-  //     </Title>
-  //   </Group>
-  // );
-
-  // const displayChartAndControls = (
-  //   <Grid columns={width < 1192 ? 1 : 15} w="100%" h="70vh">
-  //     <Grid.Col span={width < 1192 ? 1 : 5} h={width < 1192 ? "38vh" : "70vh"}>
-  //       {displayChartControls}
-  //     </Grid.Col>
-
-  //     <Grid.Col span={1}>
-  //       {width < 1192 ? <Space h="md" /> : <Space w="md" />}
-  //       <Divider
-  //         orientation={width < 1192 ? "horizontal" : "vertical"}
-  //         size="sm"
-  //         w="100%"
-  //         h="100%"
-  //       />
-  //     </Grid.Col>
-
-  //     <Grid.Col span={width < 1192 ? 1 : 9} h="70vh" ref={chartRef} p="xl">
-  //       {displayChartTitle}
-  //       {responsiveChart}
-  //     </Grid.Col>
-  //   </Grid>
-  // );
-
-  // return displayChartAndControls;
-
   return (
     <Stack
       style={{
@@ -239,8 +198,8 @@ function returnPieRadialChartDimensions(
   }
 
   return {
-    chartWidth: 420,
-    chartHeight: 420,
+    chartWidth: 400,
+    chartHeight: 400,
   };
 }
 

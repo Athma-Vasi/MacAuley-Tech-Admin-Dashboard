@@ -47,8 +47,8 @@ function returnDashboardCardElement({
   const cardHeading = (
     <Group position="left">
       <Text
-        size={26}
-        weight={600}
+        size={24}
+        weight={500}
         style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
       >
         {heading}
@@ -59,8 +59,8 @@ function returnDashboardCardElement({
   const cardBody = (
     <Group w="100%" position="left" py="sm">
       <Text
-        size={28}
-        weight={500}
+        size={26}
+        weight={600}
         style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
       >
         {value}
@@ -293,7 +293,7 @@ function createStatisticsElements(
 
       const heading = (
         <Center>
-          <Text weight={500} size={18}>
+          <Text weight={600} size={18}>
             {`${calendarView} ${key} ${
               splitCamelCase(metricCategory)
             } for ${storeLocation}`}
@@ -407,7 +407,7 @@ function createFinancialStatisticsElements(
 
       const heading = (
         <Center>
-          <Text weight={500} size={18}>
+          <Text weight={600} size={18}>
             {`${calendarView} ${cardsKey} ${
               metricsKind === "pert" ? splitCamelCase(metricCategory) : ""
             } for ${storeLocation}`}
@@ -607,8 +607,8 @@ function createOverviewMetricCard(
       h={185}
     >
       <Stack align="flex-start" spacing={2}>
-        <Text size={26} weight={600}>{splitCamelCase(subMetric)}</Text>
-        <Text size={22} mb={5}>
+        <Text size={24} weight={600}>{splitCamelCase(subMetric)}</Text>
+        <Text size={20} mb={5}>
           {storeLocationView}
         </Text>
         <Text size={16} mb={5}>
@@ -617,7 +617,7 @@ function createOverviewMetricCard(
             formatOptions: { dateStyle: "long" },
           })}
         </Text>
-        <Text size={26} weight={500}>
+        <Text size={26} weight={600}>
           {addCommaSeparator(value)} {unit}
         </Text>
       </Stack>
@@ -660,7 +660,7 @@ function createOverviewProductMetricCards(
     selectedYYYYMMDD,
     storeLocationView,
     subMetric: "transactions",
-    unit: "CAD",
+    unit: "Units",
     value: pert.dailyTransactions,
   });
 
@@ -693,7 +693,7 @@ function createOverviewProductMetricCards(
     storeLocationView,
     subMetric: "netProfitMargin",
     unit: "%",
-    value: otherMetrics.dailyNetProfitMargin,
+    value: toFixedFloat(otherMetrics.dailyNetProfitMargin),
   });
 
   return {

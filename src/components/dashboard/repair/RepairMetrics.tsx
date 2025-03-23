@@ -182,7 +182,7 @@ function RepairMetrics({
     <AccessibleSelectInput
       attributes={{
         data: REPAIR_METRICS_SUB_CATEGORY_DATA,
-        name: "Repairs",
+        name: "Sub-metric",
         parentDispatch: repairMetricsDispatch,
         validValueAction: repairMetricsAction.setSubMetric,
         value: subMetric,
