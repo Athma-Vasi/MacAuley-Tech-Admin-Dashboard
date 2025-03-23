@@ -301,11 +301,6 @@ function createStatisticsElements(
         standardDeviation,
       } = statisticsObj;
 
-      console.group("createStatisticsElements");
-      console.log("key", key);
-      console.log("statisticsObj", statisticsObj);
-      console.groupEnd();
-
       const cardsKey = metricCategory === "new"
         ? NEW_STATISTICS_KEY_TO_CARDS_KEY_MAP.get(key)
         : metricCategory === "returning"

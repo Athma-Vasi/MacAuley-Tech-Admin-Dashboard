@@ -128,6 +128,7 @@ function Returning(
       calendarView,
       metricCategory,
       storeLocation,
+      subMetric: "Customers",
       calendarChartYAxisVariable,
     });
 

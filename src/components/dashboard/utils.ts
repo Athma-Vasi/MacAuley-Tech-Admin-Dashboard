@@ -3768,6 +3768,16 @@ function returnChartTitles(
     subMetric?: string;
   },
 ) {
+  console.group("returnChartTitles");
+  console.log("calendarView", calendarView);
+  console.log("metricCategory", metricCategory);
+  console.log("subMetric", subMetric);
+  console.log("barLineChartYAxisVariable", barLineChartYAxisVariable);
+  console.log("calendarChartYAxisVariable", calendarChartYAxisVariable);
+  console.log("pieChartYAxisVariable", pieChartYAxisVariable);
+  console.log("storeLocation", storeLocation);
+  console.groupEnd();
+
   return {
     barLineChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
       splitCamelCase(subMetric)

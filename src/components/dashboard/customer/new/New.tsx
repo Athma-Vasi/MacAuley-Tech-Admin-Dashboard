@@ -127,7 +127,9 @@ function New(
             barLineChartYAxisVariable,
             calendarView,
             metricCategory,
+            pieChartYAxisVariable,
             storeLocation,
+            subMetric: "Customers",
             calendarChartYAxisVariable,
         });
 
@@ -355,21 +357,10 @@ function New(
         CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
     );
 
-    console.group(
-        "New Customers",
-    );
-    console.log("metricCategory", metricCategory);
-    console.log("statisticsMap", statisticsMap);
-    console.log("cardsMap", cardsMap);
-    console.log("statisticsElementsMap", statisticsElementsMap);
-    console.log("consolidatedCards", consolidatedCards);
-    console.log("cardsWithStatisticsElements", cardsWithStatisticsElements);
-    console.groupEnd();
-
     const overviewCards = (
         <>
-            {newOverviewCards.lifetimeValue}
             {newOverviewCards.totalCustomers}
+            {newOverviewCards.lifetimeValue}
             {newOverviewCards.dailyNewCustomers}
         </>
     );
