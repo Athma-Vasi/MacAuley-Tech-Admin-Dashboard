@@ -195,9 +195,6 @@ function FinancialMetrics({
     selectedYYYYMMDD,
   );
 
-  console.log("otherMetrics", otherMetrics);
-  console.log("pert", pert);
-
   const { otherMetricsOverviewCards, pertOverviewCards } =
     createOverviewProductMetricCards(
       otherMetrics,

@@ -7,7 +7,6 @@ import {
   METRICS_HEADER_HEIGHT,
 } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
 import { DashboardCalendarView } from "./types";
 
@@ -56,7 +55,6 @@ function DashboardBarLineLayout(
     semanticLabel,
   }: DashboardBarLineLayoutProps,
 ) {
-  const { windowHeight, windowWidth } = useWindowSize();
   const { globalState: { themeObject } } = useGlobalState();
 
   const { backgroundColor, grayBorderShade } = returnThemeColors({
@@ -66,9 +64,12 @@ function DashboardBarLineLayout(
 
   const overviewCardsSection = overviewCards && calendarView === "Daily"
     ? (
-      <Group>
-        {overviewCards}
-      </Group>
+      <Stack align="flex-start" w="100%">
+        <Title order={3}>Summary</Title>
+        <Group w="100%">
+          {overviewCards}
+        </Group>
+      </Stack>
     )
     : null;
 

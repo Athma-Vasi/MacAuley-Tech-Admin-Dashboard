@@ -63,6 +63,11 @@ type NewProps = {
     metricCategory: CustomerMetricsCategory;
     metricsView: DashboardMetricsView;
     month: string;
+    newOverviewCards: {
+        lifetimeValue: React.JSX.Element;
+        totalCustomers: React.JSX.Element;
+        dailyNewCustomers: React.JSX.Element;
+    };
     storeLocation: BusinessMetricStoreLocation;
     year: Year;
 };
@@ -77,6 +82,7 @@ function New(
         metricCategory,
         metricsView,
         month,
+        newOverviewCards,
         storeLocation,
         year,
     }: NewProps,
@@ -349,6 +355,14 @@ function New(
         CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
     );
 
+    const overviewCards = (
+        <>
+            {newOverviewCards.lifetimeValue}
+            {newOverviewCards.totalCustomers}
+            {newOverviewCards.dailyNewCustomers}
+        </>
+    );
+
     return (
         <Stack>
             <DashboardBarLineLayout
@@ -358,17 +372,18 @@ function New(
                 barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
                 barLineChartYAxisVariable={barLineChartYAxisVariable}
                 calendarChart={calendarChart}
-                calendarView={calendarView}
                 calendarChartHeading={calendarChartHeading}
                 calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+                calendarView={calendarView}
                 cardsWithStatisticsElements={cardsWithStatisticsElements}
                 expandBarLineChartButton={expandBarLineChartButton}
                 expandCalendarChartButton={expandCalendarChartButton}
-                pieChart={pieChart}
                 expandPieChartButton={expandPieChartButton}
-                pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
+                overviewCards={overviewCards}
+                pieChart={pieChart}
                 pieChartHeading={pieChartHeading}
-                sectionHeading="Customer New"
+                pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
+                sectionHeading="New Customers"
                 semanticLabel="Churn Retention"
             />
         </Stack>

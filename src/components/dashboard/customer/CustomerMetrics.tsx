@@ -18,6 +18,7 @@ import type {
   Month,
   Year,
 } from "../types";
+import { createOverviewCustomerMetricCards } from "../utilsTSX";
 import { customerMetricsAction } from "./actions";
 import { createCustomerMetricsCards } from "./cards";
 import {
@@ -31,6 +32,7 @@ import New from "./new/New";
 import { customerMetricsReducer } from "./reducers";
 import Returning from "./returning/Returning";
 import { initialCustomerMetricsState } from "./state";
+import { returnDailyOverviewCustomerMetrics } from "./utils";
 
 type CustomerMetricsProps = {
   businessMetrics: BusinessMetric[];
@@ -159,18 +161,6 @@ function CustomerMetrics({
     return null;
   }
 
-  // const categorySegmentedControl = (
-  //   <AccessibleSegmentedControl
-  //     attributes={{
-  //       data: CUSTOMER_METRICS_CATEGORY_DATA,
-  //       name: "category",
-  //       parentDispatch: customerMetricsDispatch,
-  //       validValueAction: customerMetricsAction.setCategory,
-  //       value: category,
-  //     }}
-  //   />
-  // );
-
   const categorySelectInput = (
     <AccessibleSelectInput
       attributes={{
@@ -183,6 +173,25 @@ function CustomerMetrics({
     />
   );
 
+  const {
+    churnOverview,
+    newOverview,
+    returningOverview,
+  } = returnDailyOverviewCustomerMetrics(
+    businessMetrics,
+    storeLocationView,
+    selectedYYYYMMDD,
+  );
+
+  const { churnOverviewCards, newOverviewCards, returningOverviewCards } =
+    createOverviewCustomerMetricCards(
+      newOverview,
+      returningOverview,
+      churnOverview,
+      selectedYYYYMMDD,
+      storeLocationView,
+    );
+
   const newCustomers = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
       <New
@@ -194,6 +203,7 @@ function CustomerMetrics({
         month={selectedYYYYMMDD.split("-")[1]}
         metricCategory={category}
         metricsView="Customers"
+        newOverviewCards={newOverviewCards}
         storeLocation={storeLocationView}
         year={selectedYear}
       />
@@ -214,6 +224,7 @@ function CustomerMetrics({
         month={selectedYYYYMMDD.split("-")[1]}
         metricCategory={category}
         metricsView="Customers"
+        returningOverviewCards={returningOverviewCards}
         storeLocation={storeLocationView}
         year={selectedYear}
       />
@@ -225,6 +236,7 @@ function CustomerMetrics({
       <ChurnRetention
         calendarChartsData={calendarChartsData}
         calendarView={calendarView}
+        churnOverviewCards={churnOverviewCards}
         customerMetricsCards={cards}
         customerMetricsCharts={charts}
         day={selectedDate}

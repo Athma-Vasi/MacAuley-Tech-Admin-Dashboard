@@ -593,7 +593,7 @@ function createOverviewMetricCard(
     selectedYYYYMMDD: string;
     storeLocationView: BusinessMetricStoreLocation;
     subMetric: string;
-    unit: "CAD" | "%" | "Units";
+    unit: "CAD" | "%" | "Units" | "Customers";
     value: number;
   },
 ) {
@@ -623,6 +623,90 @@ function createOverviewMetricCard(
       </Stack>
     </Card>
   );
+}
+
+function createOverviewCustomerMetricCards(
+  newOverview: {
+    lifetimeValue: number;
+    totalCustomers: number;
+    dailyNewCustomers: number;
+  },
+  returningOverview: {
+    lifetimeValue: number;
+    totalCustomers: number;
+    dailyReturningCustomers: number;
+  },
+  churnOverview: {
+    dailyChurnRate: number;
+    dailyRetentionRate: number;
+  },
+  selectedYYYYMMDD: string,
+  storeLocationView: BusinessMetricStoreLocation,
+) {
+  const overviewLifetimeValueCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "lifetimeValue",
+    unit: "CAD",
+    value: newOverview.lifetimeValue,
+  });
+
+  const overviewTotalCustomersCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "totalCustomers",
+    unit: "Customers",
+    value: newOverview.totalCustomers,
+  });
+
+  const overviewDailyNewCustomersCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "newCustomers",
+    unit: "Customers",
+    value: newOverview.dailyNewCustomers,
+  });
+
+  const overviewDailyReturningCustomersCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "returningCustomers",
+    unit: "Customers",
+    value: returningOverview.dailyReturningCustomers,
+  });
+
+  const overviewDailyChurnRateCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "churnRate",
+    unit: "%",
+    value: toFixedFloat(churnOverview.dailyChurnRate) * 100,
+  });
+
+  const overviewDailyRetentionRateCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "retentionRate",
+    unit: "%",
+    value: toFixedFloat(churnOverview.dailyRetentionRate) * 100,
+  });
+
+  return {
+    newOverviewCards: {
+      lifetimeValue: overviewLifetimeValueCard,
+      totalCustomers: overviewTotalCustomersCard,
+      dailyNewCustomers: overviewDailyNewCustomersCard,
+    },
+    returningOverviewCards: {
+      lifetimeValue: overviewLifetimeValueCard,
+      totalCustomers: overviewTotalCustomersCard,
+      dailyReturningCustomers: overviewDailyReturningCustomersCard,
+    },
+    churnOverviewCards: {
+      churnRate: overviewDailyChurnRateCard,
+      retentionRate: overviewDailyRetentionRateCard,
+    },
+  };
 }
 
 function createOverviewProductMetricCards(
@@ -716,6 +800,7 @@ export {
   consolidateCustomerCardsAndStatistics,
   createDashboardMetricsCards,
   createFinancialStatisticsElements,
+  createOverviewCustomerMetricCards,
   createOverviewMetricCard,
   createOverviewProductMetricCards,
   createStatisticsElements,

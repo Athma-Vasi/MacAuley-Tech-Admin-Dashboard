@@ -60,6 +60,10 @@ type ChurnRetentionProps = {
     previousYear: CustomerMetricsCalendarCharts | null;
   };
   calendarView: DashboardCalendarView;
+  churnOverviewCards: {
+    churnRate: React.JSX.Element;
+    retentionRate: React.JSX.Element;
+  };
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
   day: string;
@@ -74,6 +78,7 @@ function ChurnRetention(
   {
     calendarChartsData,
     calendarView,
+    churnOverviewCards,
     customerMetricsCards,
     customerMetricsCharts,
     day,
@@ -332,6 +337,13 @@ function ChurnRetention(
     CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
+  const overviewCards = (
+    <>
+      {churnOverviewCards.churnRate}
+      {churnOverviewCards.retentionRate}
+    </>
+  );
+
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -341,16 +353,17 @@ function ChurnRetention(
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
-        calendarView={calendarView}
         calendarChartHeading={calendarChartHeading}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineChartButton={expandBarLineChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
-        pieChart={pieChart}
         expandPieChartButton={expandPieChartButton}
+        overviewCards={overviewCards}
+        pieChart={pieChart}
         pieChartHeading={pieChartHeading}
-        sectionHeading="Churn Retention"
+        sectionHeading="Customers Churn"
         semanticLabel="TODO"
       />
     </Stack>

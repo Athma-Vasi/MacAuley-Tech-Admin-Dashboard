@@ -63,6 +63,11 @@ type ReturningProps = {
   metricCategory: CustomerMetricsCategory;
   metricsView: DashboardMetricsView;
   month: string;
+  returningOverviewCards: {
+    lifetimeValue: React.JSX.Element;
+    totalCustomers: React.JSX.Element;
+    dailyReturningCustomers: React.JSX.Element;
+  };
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -77,6 +82,7 @@ function Returning(
     metricCategory,
     metricsView,
     month,
+    returningOverviewCards,
     storeLocation,
     year,
   }: ReturningProps,
@@ -349,6 +355,14 @@ function Returning(
     CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
+  const overviewCards = (
+    <>
+      {returningOverviewCards.totalCustomers}
+      {returningOverviewCards.lifetimeValue}
+      {returningOverviewCards.dailyReturningCustomers}
+    </>
+  );
+
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -358,17 +372,18 @@ function Returning(
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
-        calendarView={calendarView}
         calendarChartHeading={calendarChartHeading}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineChartButton={expandBarLineChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
-        pieChart={pieChart}
         expandPieChartButton={expandPieChartButton}
-        pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
+        overviewCards={overviewCards}
+        pieChart={pieChart}
         pieChartHeading={pieChartHeading}
-        sectionHeading="Customer Returning"
+        pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
+        sectionHeading="Returning Customers"
         semanticLabel="TODO"
       />
     </Stack>
