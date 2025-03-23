@@ -26,10 +26,7 @@ import {
   createRepairMetricsCharts,
   returnSelectedDateRepairMetrics,
 } from "./chartsData";
-import {
-  REPAIR_METRICS_DATA,
-  REPAIR_METRICS_SUB_CATEGORY_DATA,
-} from "./constants";
+import { REPAIR_METRICS_DATA } from "./constants";
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
@@ -168,30 +165,16 @@ function RepairMetrics({
     return null;
   }
 
-  const subMetricSelectInput = (
+  const repairCategorySelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: REPAIR_METRICS_SUB_CATEGORY_DATA,
-        name: "Sub-metric",
+        data: REPAIR_METRICS_DATA,
+        name: "Repairs",
         parentDispatch: repairMetricsDispatch,
-        validValueAction: repairMetricsAction.setSubMetric,
-        value: subMetric,
+        validValueAction: repairMetricsAction.setRepairCategory,
+        value: repairCategory,
       }}
     />
-  );
-
-  const repairCategorySelectInput = (
-    <Group w={300}>
-      <AccessibleSelectInput
-        attributes={{
-          data: REPAIR_METRICS_DATA,
-          name: "Repairs",
-          parentDispatch: repairMetricsDispatch,
-          validValueAction: repairMetricsAction.setRepairCategory,
-          value: repairCategory,
-        }}
-      />
-    </Group>
   );
 
   const { repairRevenueOverview, repairUnitsOverview } =
@@ -217,6 +200,7 @@ function RepairMetrics({
         day={selectedDate}
         metricsView="Repairs"
         month={selectedYYYYMMDD.split("-")[1]}
+        repairCategory={repairCategory}
         repairMetricsCards={cards}
         repairMetricsCharts={charts}
         repairOverviewCards={repairOverviewCards}
@@ -251,16 +235,13 @@ function RepairMetrics({
         h={METRICS_HEADER_HEIGHT}
         opacity={0.97}
         py="sm"
-        position="apart"
         style={{
           position: "sticky",
           top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
           zIndex: 3,
           backgroundColor,
-          // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {subMetricSelectInput}
         {repairCategorySelectInput}
       </Group>
       {revenueUnitsSold}

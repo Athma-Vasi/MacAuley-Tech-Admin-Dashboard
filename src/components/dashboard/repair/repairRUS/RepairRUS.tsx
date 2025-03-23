@@ -43,7 +43,7 @@ import {
   REPAIR_METRICS_SUB_CATEGORY_DATA,
   REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
-import type { RepairSubMetric } from "../types";
+import type { RepairMetricCategory, RepairSubMetric } from "../types";
 import { repairRUSAction } from "./actions";
 import { repairRUSReducer } from "./reducers";
 import { initialRepairRUSState } from "./state";
@@ -57,6 +57,7 @@ type RepairRUSProps = {
   day: string;
   metricsView: DashboardMetricsView;
   month: string;
+  repairCategory: RepairMetricCategory;
   repairMetricsCards: RepairMetricsCards;
   repairMetricsCharts: RepairMetricsCharts;
   repairOverviewCards: {
@@ -76,6 +77,7 @@ function RepairRUS(
     day,
     metricsView,
     month,
+    repairCategory,
     repairMetricsCards,
     repairMetricsCharts,
     repairOverviewCards,
@@ -111,8 +113,9 @@ function RepairRUS(
   const { barLineChartHeading, calendarChartHeading } = returnChartTitles({
     barLineChartYAxisVariable,
     calendarView,
-    metricCategory: subMetric,
+    metricCategory: repairCategory,
     storeLocation,
+    // subMetric,
     calendarChartYAxisVariable,
   });
 
