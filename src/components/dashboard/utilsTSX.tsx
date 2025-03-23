@@ -4,7 +4,12 @@ import { MdCalendarMonth, MdDateRange } from "react-icons/md";
 import { RiCalendarLine } from "react-icons/ri";
 
 import { INPUT_WIDTH } from "../../constants";
-import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
+import {
+  addCommaSeparator,
+  formatDate,
+  splitCamelCase,
+  toFixedFloat,
+} from "../../utils";
 import { GoldenGrid } from "../goldenGrid";
 import {
   MONEY_SYMBOL_CATEGORIES,
@@ -577,11 +582,142 @@ function returnCardElementsForYAxisVariable(
   );
 }
 
+function createOverviewMetricCard(
+  {
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric,
+    unit,
+    value,
+  }: {
+    selectedYYYYMMDD: string;
+    storeLocationView: BusinessMetricStoreLocation;
+    subMetric: string;
+    unit: "CAD" | "%" | "Units";
+    value: number;
+  },
+) {
+  return (
+    <Card
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+      w={INPUT_WIDTH}
+      h={185}
+    >
+      <Stack align="flex-start" spacing={2}>
+        <Text size={26} weight={600}>{splitCamelCase(subMetric)}</Text>
+        <Text size={22} mb={5}>
+          {storeLocationView}
+        </Text>
+        <Text size={16} mb={5}>
+          {formatDate({
+            date: selectedYYYYMMDD,
+            formatOptions: { dateStyle: "long" },
+          })}
+        </Text>
+        <Text size={26} weight={500}>
+          {addCommaSeparator(value)} {unit}
+        </Text>
+      </Stack>
+    </Card>
+  );
+}
+
+function createOverviewProductMetricCards(
+  otherMetrics: {
+    dailyAverageOrderValue: number;
+    dailyConversionRate: number;
+    dailyNetProfitMargin: number;
+  },
+  pert: {
+    dailyExpenses: number;
+    dailyProfit: number;
+    dailyRevenue: number;
+    dailyTransactions: number;
+  },
+  selectedYYYYMMDD: string,
+  storeLocationView: BusinessMetricStoreLocation,
+) {
+  const overviewDailyProfitCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "profit",
+    unit: "CAD",
+    value: pert.dailyProfit,
+  });
+
+  const overviewDailyRevenueCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "revenue",
+    unit: "CAD",
+    value: pert.dailyRevenue,
+  });
+
+  const overviewDailyTransactionsCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "transactions",
+    unit: "CAD",
+    value: pert.dailyTransactions,
+  });
+
+  const overviewDailyExpensesCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "expenses",
+    unit: "CAD",
+    value: pert.dailyExpenses,
+  });
+
+  const overviewDailyAverageOrderValueCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "averageOrderValue",
+    unit: "CAD",
+    value: otherMetrics.dailyAverageOrderValue,
+  });
+
+  const overviewDailyConversionRateCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "conversionRate",
+    unit: "%",
+    value: otherMetrics.dailyConversionRate,
+  });
+
+  const overviewDailyNetProfitMarginCard = createOverviewMetricCard({
+    selectedYYYYMMDD,
+    storeLocationView,
+    subMetric: "netProfitMargin",
+    unit: "%",
+    value: otherMetrics.dailyNetProfitMargin,
+  });
+
+  return {
+    otherMetricsOverviewCards: {
+      averageOrderValue: overviewDailyAverageOrderValueCard,
+      conversionRate: overviewDailyConversionRateCard,
+      netProfitMargin: overviewDailyNetProfitMarginCard,
+    },
+    pertOverviewCards: {
+      expenses: overviewDailyExpensesCard,
+      profit: overviewDailyProfitCard,
+      revenue: overviewDailyRevenueCard,
+      transactions: overviewDailyTransactionsCard,
+    },
+  };
+}
+
 export {
   consolidateCardsAndStatistics,
   consolidateCustomerCardsAndStatistics,
   createDashboardMetricsCards,
   createFinancialStatisticsElements,
+  createOverviewMetricCard,
+  createOverviewProductMetricCards,
   createStatisticsElements,
   returnCardElementsForYAxisVariable,
   returnDashboardCardElement,

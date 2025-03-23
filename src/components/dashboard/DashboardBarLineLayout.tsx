@@ -2,6 +2,7 @@ import { Card, Group, Stack, Text, Title } from "@mantine/core";
 import React from "react";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
 import { DashboardCalendarView } from "./types";
 
@@ -50,6 +51,7 @@ function DashboardBarLineLayout(
     semanticLabel,
   }: DashboardBarLineLayoutProps,
 ) {
+  const { windowHeight, windowWidth } = useWindowSize();
   const { globalState: { themeObject } } = useGlobalState();
 
   const { backgroundColor, grayBorderShade } = returnThemeColors({
@@ -58,33 +60,53 @@ function DashboardBarLineLayout(
   });
 
   const barLineSection = (
-    <Stack
-      w="100%"
-      p="md"
-      style={{ borderBottom: `3px solid ${grayBorderShade}` }}
-    >
-      <Group position="left">
-        <Text size="md" weight={500}>{barLineChartHeading}</Text>
-      </Group>
+    // <Stack
+    //   w="100%"
+    //   p="md"
+    //   style={{ borderBottom: `3px solid ${grayBorderShade}` }}
+    // >
+    //   <Group position="left">
+    //     <Text size="md" weight={500}>{barLineChartHeading}</Text>
+    //   </Group>
 
-      <Group
-        w="100%"
-        position="center"
-      >
-        {barLineChartYAxisSelectInput}
-        {barLineChartKindSegmentedControl}
-        {expandBarLineChartButton}
-      </Group>
+    //   <Group
+    //     w="100%"
+    //     position="center"
+    //   >
+    //     {barLineChartYAxisSelectInput}
+    //     {barLineChartKindSegmentedControl}
+    //     {expandBarLineChartButton}
+    //   </Group>
 
-      <Group
-        w="100%"
-        position="apart"
-        align="center"
-      >
-        <Stack>{cardsWithStatisticsElements}</Stack>
-        {barLineChart}
-      </Group>
-    </Stack>
+    //   <Group
+    //     w="100%"
+    //     position="apart"
+    //     align="center"
+    //   >
+    //     <Stack>{cardsWithStatisticsElements}</Stack>
+    //     {barLineChart}
+    //   </Group>
+    // </Stack>
+    <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
+      <Stack px="md">
+        <Group position="apart" w="100%">
+          {barLineChartYAxisSelectInput}
+        </Group>
+
+        <div className="bar-line-cards-and-chart">
+          <div className="bar-line-cards">{cardsWithStatisticsElements}</div>
+          <Card
+            className="bar-line-chart"
+            padding="lg"
+            radius="md"
+            withBorder
+          >
+            <Text size={20} weight={500}>{barLineChartHeading}</Text>
+            {barLineChart}
+          </Card>
+        </div>
+      </Stack>
+    </Card>
   );
 
   const pieSection = pieChart && pieChartHeading &&
@@ -93,20 +115,21 @@ function DashboardBarLineLayout(
       <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
         <Stack px="md">
           <Group position="apart" w="100%">
-            <Text size={20} weight={500}>{pieChartHeading}</Text>
             {pieChartYAxisSelectInput}
           </Group>
 
-          <Group w="100%" position="apart" align="center">
-            <Stack>{overviewCards}</Stack>
+          <div className="pie-cards-and-chart">
+            <div className="pie-cards">{overviewCards}</div>
             <Card
+              className="pie-chart"
               padding="lg"
               radius="md"
               withBorder
             >
+              <Text size={20} weight={500}>{pieChartHeading}</Text>
               {pieChart}
             </Card>
-          </Group>
+          </div>
         </Stack>
       </Card>
     )
@@ -138,7 +161,7 @@ function DashboardBarLineLayout(
       : null;
 
   const dashboardBarLineLayout = (
-    <Stack align="flex-start" w="100%">
+    <Stack align="flex-start" w="100%" className="dashboard-content">
       <Group
         w="100%"
         py="md"

@@ -13,8 +13,8 @@ import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
 import { FinancialMetricCategory } from "./financial/types";
-import { ProductMetricCategory, ProductSubMetric } from "./product/types";
-import { RepairMetricCategory, RepairSubMetric } from "./repair/types";
+import { ProductSubMetric } from "./product/types";
+import { RepairSubMetric } from "./repair/types";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -3757,6 +3757,7 @@ function returnChartTitles(
     metricCategory,
     pieChartYAxisVariable,
     storeLocation,
+    subMetric = "",
   }: {
     barLineChartYAxisVariable: string;
     calendarChartYAxisVariable?: string;
@@ -3764,18 +3765,19 @@ function returnChartTitles(
     metricCategory: string;
     pieChartYAxisVariable?: string;
     storeLocation: BusinessMetricStoreLocation;
+    subMetric?: string;
   },
 ) {
   return {
-    barLineChartHeading: `${calendarView} ${
-      splitCamelCase(barLineChartYAxisVariable)
-    } ${splitCamelCase(metricCategory)} for ${storeLocation}`,
-    calendarChartHeading: `${calendarView} ${
-      splitCamelCase(calendarChartYAxisVariable ?? "")
-    } ${splitCamelCase(metricCategory)} for ${storeLocation}`,
-    pieChartHeading: `${calendarView} ${
-      splitCamelCase(pieChartYAxisVariable ?? "")
-    } ${splitCamelCase(metricCategory)} for ${storeLocation}`,
+    barLineChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
+      splitCamelCase(subMetric)
+    } ${splitCamelCase(barLineChartYAxisVariable)} for ${storeLocation}`,
+    calendarChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
+      splitCamelCase(subMetric)
+    } ${splitCamelCase(calendarChartYAxisVariable ?? "")} for ${storeLocation}`,
+    pieChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
+      splitCamelCase(subMetric)
+    } ${splitCamelCase(pieChartYAxisVariable ?? "")} for ${storeLocation}`,
   };
 }
 

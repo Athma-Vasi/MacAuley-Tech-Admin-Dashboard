@@ -32,9 +32,11 @@ import {
 } from "../constants";
 // import { ChartsAndGraphsControlsStacker } from "../utils";
 import { useGlobalState } from "../../../hooks/useGlobalState";
+import { useWindowSize } from "../../../hooks/useWindowSize";
 import {
   ChartAndControlsDisplay,
   ChartsAndGraphsControlsStacker,
+  returnBarLineChartDimensions,
 } from "../utils";
 import { responsiveBarChartAction } from "./actions";
 import {
@@ -55,6 +57,7 @@ function ResponsiveBarChart({
   keys,
   unitKind = "currency",
 }: ResponsiveBarChartProps) {
+  const { windowWidth } = useWindowSize();
   const {
     globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
@@ -351,9 +354,18 @@ function ResponsiveBarChart({
     />
   );
 
+  const { chartHeight, chartWidth } = returnBarLineChartDimensions(windowWidth);
+
   if (hideControls) {
     return (
-      <Group h={382} w={618}>
+      <Group
+        // h={chartHeight}
+        // w={chartWidth}
+        style={{
+          width: "clamp(350px, 100%, 618px)",
+          height: "clamp(250px, 300px, 500px)",
+        }}
+      >
         {displayResponsiveBar}
       </Group>
     );

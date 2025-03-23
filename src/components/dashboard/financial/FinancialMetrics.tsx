@@ -14,6 +14,7 @@ import type {
   Month,
   Year,
 } from "../types";
+import { createOverviewProductMetricCards } from "../utilsTSX";
 import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
@@ -26,6 +27,7 @@ import OtherMetrics from "./otherMetrics/OtherMetrics";
 import PERT from "./pert/PERT";
 import { financialMetricsReducer } from "./reducers";
 import { initialFinancialMetricsState } from "./state";
+import { returnDailyOverviewFinancialMetrics } from "./utils";
 
 type FinancialMetricsProps = {
   businessMetrics: BusinessMetric[];
@@ -170,6 +172,23 @@ function FinancialMetrics({
     />
   );
 
+  const { otherMetrics, pert } = returnDailyOverviewFinancialMetrics(
+    businessMetrics,
+    storeLocationView,
+    selectedYYYYMMDD,
+  );
+
+  console.log("otherMetrics", otherMetrics);
+  console.log("pert", pert);
+
+  const { otherMetricsOverviewCards, pertOverviewCards } =
+    createOverviewProductMetricCards(
+      otherMetrics,
+      pert,
+      selectedYYYYMMDD,
+      storeLocationView,
+    );
+
   const subCategoryPage = PERT_SET.has(category)
     ? (
       CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
@@ -183,6 +202,7 @@ function FinancialMetrics({
             month={selectedYYYYMMDD.split("-")[1]}
             metricCategory={category}
             metricsView="Financials"
+            pertOverviewCards={pertOverviewCards}
             storeLocation={storeLocationView}
             year={selectedYear}
           />
@@ -201,6 +221,7 @@ function FinancialMetrics({
             month={selectedYYYYMMDD.split("-")[1]}
             metricCategory={category}
             metricsView="Financials"
+            otherMetricsOverviewCards={otherMetricsOverviewCards}
             storeLocation={storeLocationView}
             year={selectedYear}
           />

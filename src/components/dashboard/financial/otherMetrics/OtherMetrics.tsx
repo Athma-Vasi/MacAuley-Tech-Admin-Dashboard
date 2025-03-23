@@ -63,6 +63,11 @@ type OtherMetricsProps = {
   metricCategory: FinancialMetricCategory;
   metricsView: DashboardMetricsView;
   month: string;
+  otherMetricsOverviewCards: {
+    averageOrderValue: React.JSX.Element;
+    conversionRate: React.JSX.Element;
+    netProfitMargin: React.JSX.Element;
+  };
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -76,6 +81,7 @@ function OtherMetrics({
   metricCategory,
   metricsView,
   month,
+  otherMetricsOverviewCards,
   storeLocation,
   year,
 }: OtherMetricsProps) {
@@ -293,6 +299,14 @@ function OtherMetrics({
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
+  const overviewCards = (
+    <>
+      {otherMetricsOverviewCards.netProfitMargin}
+      {otherMetricsOverviewCards.averageOrderValue}
+      {otherMetricsOverviewCards.conversionRate}
+    </>
+  );
+
   const otherMetrics = (
     <DashboardBarLineLayout
       barLineChart={barLineChart}
@@ -301,12 +315,13 @@ function OtherMetrics({
       barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
       barLineChartYAxisVariable={barLineChartYAxisVariable}
       calendarChart={calendarChart}
-      calendarView={calendarView}
       calendarChartHeading={calendarChartHeading}
-      expandCalendarChartButton={expandCalendarChartButton}
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+      calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
       expandBarLineChartButton={expandBarLineChartButton}
+      expandCalendarChartButton={expandCalendarChartButton}
+      overviewCards={overviewCards}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
     />

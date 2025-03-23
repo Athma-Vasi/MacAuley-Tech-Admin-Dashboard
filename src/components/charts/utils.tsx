@@ -1,9 +1,7 @@
 import {
-  Divider,
   Grid,
   Group,
   ScrollArea,
-  Space,
   Stack,
   Text,
   Title,
@@ -41,8 +39,7 @@ function ChartsAndGraphsControlsStacker({
   } = useGlobalState();
 
   const {
-    appThemeColors: { borderColor },
-    generalColors: { grayColorShade },
+    grayColorShade,
   } = returnThemeColors({
     themeObject,
     colorsSwatches: COLORS_SWATCHES,
@@ -85,12 +82,12 @@ function ChartsAndGraphsControlsStacker({
         <Text
           aria-live="polite"
           color={isInputDisabled ? grayColorShade : ""}
-          style={value === "" ? {} : {
-            border: borderColor,
-            borderRadius: 4,
-            padding: "0.5rem 0.75rem",
-            width: "fit-content",
-          }}
+          // style={value === "" ? {} : {
+          //   border: borderColor,
+          //   borderRadius: 4,
+          //   padding: "0.5rem 0.75rem",
+          //   width: "fit-content",
+          // }}
         >
           {splitWordIntoUpperCasedSentence(splitCamelCase(value.toString()))}
           {" "}
@@ -102,7 +99,7 @@ function ChartsAndGraphsControlsStacker({
   );
 
   return (
-    <Stack style={{ borderBottom: borderColor }} py="md">
+    <Stack py="md">
       {displayTopSection}
       {displayBottomSection}
     </Stack>
@@ -200,4 +197,56 @@ function ChartAndControlsDisplay(
   );
 }
 
-export { ChartAndControlsDisplay, ChartsAndGraphsControlsStacker };
+function returnBarLineChartDimensions(
+  windowWidth: number,
+) {
+  if (windowWidth < 400) {
+    return {
+      chartWidth: windowWidth - 20,
+      chartHeight: Math.floor(windowWidth * 0.382),
+    };
+  }
+
+  if (windowWidth > 400 && windowWidth < 618) {
+    return {
+      chartWidth: windowWidth - 20,
+      chartHeight: Math.floor(windowWidth * 0.382),
+    };
+  }
+
+  // if (windowWidth > 768 && windowWidth < 1024) {
+  //   return {
+  //     chartWidth: windowWidth - 40,
+  //     chartHeight: Math.floor(windowWidth * 0.382),
+  //   };
+  // }
+
+  return {
+    chartWidth: 618,
+    chartHeight: 382,
+  };
+}
+
+function returnPieRadialChartDimensions(
+  windowWidth: number,
+  isFullScreen?: boolean,
+) {
+  if (windowWidth < 400) {
+    return {
+      chartWidth: windowWidth - 20,
+      chartHeight: windowWidth - 20,
+    };
+  }
+
+  return {
+    chartWidth: 420,
+    chartHeight: 420,
+  };
+}
+
+export {
+  ChartAndControlsDisplay,
+  ChartsAndGraphsControlsStacker,
+  returnBarLineChartDimensions,
+  returnPieRadialChartDimensions,
+};

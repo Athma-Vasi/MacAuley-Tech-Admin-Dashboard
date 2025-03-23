@@ -154,7 +154,7 @@ function AccessibleSliderInput<
   );
 
   return (
-    <Container
+    <Box
       key={`${name}-${value}-${uniqueId ?? ""}`}
       w={INPUT_WIDTH}
     >
@@ -174,7 +174,7 @@ function AccessibleSliderInput<
       >
         {screenreaderTextElement}
       </Box>
-    </Container>
+    </Box>
   );
 }
 

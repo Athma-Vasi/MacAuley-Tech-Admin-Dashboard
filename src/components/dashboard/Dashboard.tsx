@@ -14,8 +14,9 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { useParams } from "react-router-dom";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
-import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmentedControl";
+import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
   DAYS_PER_MONTH,
@@ -41,6 +42,8 @@ function Dashboard() {
     dashboardReducer,
     initialDashboardState,
   );
+
+  const { windowWidth } = useWindowSize();
 
   const {
     globalState: { themeObject },
@@ -197,19 +200,26 @@ function Dashboard() {
     />
   );
 
-  const displayYYYYMMDDInput = (
-    <Group pr="md">
-      {createdYYYYMMDDInput}
-    </Group>
-  );
-
   const isStoreLocationSegmentDisabled = (storeLocationView === "Vancouver" &&
     Number(selectedYear) < 2019) ||
     (storeLocationView === "Calgary" && Number(selectedYear) < 2017) ||
     (storeLocationView === "Edmonton" && Number(selectedYear) < 2013);
 
-  const storeLocationSegmentedControl = (
-    <AccessibleSegmentedControl
+  // const storeLocationSegmentedControl = (
+  //   <AccessibleSegmentedControl
+  //     attributes={{
+  //       data: STORE_LOCATION_VIEW_DATA,
+  //       disabled: isStoreLocationSegmentDisabled,
+  //       name: "storeLocation",
+  //       orientation: windowWidth < 500 ? "vertical" : "horizontal",
+  //       parentDispatch: dashboardDispatch,
+  //       validValueAction: dashboardAction.setStoreLocationView,
+  //       value: storeLocationView,
+  //     }}
+  //   />
+  // );
+  const storeLocationSelectInput = (
+    <AccessibleSelectInput
       attributes={{
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
@@ -274,17 +284,20 @@ function Dashboard() {
       <Group
         h={100}
         py="sm"
+        px="md"
         position="apart"
         style={{
           backgroundColor: backgroundColor,
           position: "sticky",
           top: 0,
           zIndex: 3,
+          outline: "1px solid teal",
         }}
         opacity={0.97}
         w="100%"
       >
-        {storeLocationSegmentedControl} {displayYYYYMMDDInput}
+        {storeLocationSelectInput}
+        {createdYYYYMMDDInput}
       </Group>
       {displayMetricsView}
     </Stack>

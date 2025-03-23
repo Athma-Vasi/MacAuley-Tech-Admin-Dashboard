@@ -101,7 +101,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
   );
 
   return (
-    <Container key={`${name}-${index}`}>
+    <Box key={`${name}-${index}`}>
       {navLink}
       <Box
         style={
@@ -118,7 +118,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
       >
         {screenreaderTextElement}
       </Box>
-    </Container>
+    </Box>
   );
 }
 

@@ -1,14 +1,14 @@
 import {
-  Container,
+  Box,
   MantineColor,
   type MantineSize,
   NativeSelect,
 } from "@mantine/core";
 
+import { INPUT_WIDTH } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { splitCamelCase } from "../../utils";
-import { INPUT_WIDTH } from "../../constants";
 
 type AccessibleSelectInputAttributes<
   ValidValueAction extends string = string,
@@ -74,7 +74,7 @@ function AccessibleSelectInput<
   const label = attributes.label ?? splitCamelCase(name);
 
   return (
-    <Container
+    <Box
       key={`container-${name}-${uniqueId}`}
       w={INPUT_WIDTH}
     >
@@ -101,7 +101,7 @@ function AccessibleSelectInput<
         value={value}
         withAsterisk={withAsterisk}
       />
-    </Container>
+    </Box>
   );
 }
 

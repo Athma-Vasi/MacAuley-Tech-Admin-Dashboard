@@ -1,4 +1,5 @@
 import {
+  Box,
   Container,
   type MantineSize,
   PasswordInput,
@@ -160,7 +161,7 @@ function AccessiblePasswordInput<
     });
 
   return (
-    <Container
+    <Box
       w={INPUT_WIDTH}
     >
       <Popover
@@ -228,7 +229,7 @@ function AccessiblePasswordInput<
           )
           : null}
       </Popover>
-    </Container>
+    </Box>
   );
 }
 

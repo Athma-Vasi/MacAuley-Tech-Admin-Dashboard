@@ -67,6 +67,12 @@ type PERTProps = {
   metricCategory: FinancialMetricCategory;
   metricsView: DashboardMetricsView;
   month: string;
+  pertOverviewCards: {
+    expenses: React.JSX.Element;
+    profit: React.JSX.Element;
+    revenue: React.JSX.Element;
+    transactions: React.JSX.Element;
+  };
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -80,6 +86,7 @@ function PERT({
   metricCategory,
   metricsView,
   month,
+  pertOverviewCards,
   storeLocation,
   year,
 }: PERTProps) {
@@ -354,6 +361,15 @@ function PERT({
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
+  const overviewCards = (
+    <>
+      {pertOverviewCards.profit}
+      {pertOverviewCards.expenses}
+      {pertOverviewCards.revenue}
+      {pertOverviewCards.transactions}
+    </>
+  );
+
   return (
     <DashboardBarLineLayout
       barLineChart={barLineChart}
@@ -362,16 +378,17 @@ function PERT({
       barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
       barLineChartYAxisVariable={barLineChartYAxisVariable}
       calendarChart={calendarChart}
-      calendarView={calendarView}
       calendarChartHeading={calendarChartHeading}
+      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+      calendarView={calendarView}
+      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      expandBarLineChartButton={expandBarLineChartButton}
+      expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}
+      overviewCards={overviewCards}
       pieChart={pieChart}
       pieChartHeading={pieChartHeading}
       pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
-      expandCalendarChartButton={expandCalendarChartButton}
-      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-      cardsWithStatisticsElements={cardsWithStatisticsElements}
-      expandBarLineChartButton={expandBarLineChartButton}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
     />

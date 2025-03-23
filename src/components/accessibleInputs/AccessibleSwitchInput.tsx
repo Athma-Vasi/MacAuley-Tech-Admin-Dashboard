@@ -1,4 +1,4 @@
-import { Box, Container, type MantineSize, Switch } from "@mantine/core";
+import { Box, type MantineSize, Switch } from "@mantine/core";
 import type { ChangeEvent, ReactNode, RefObject } from "react";
 
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -107,9 +107,8 @@ function AccessibleSwitchInput<
     });
 
   return (
-    <Container
+    <Box
       key={`${name}-${value}-${uniqueId}`}
-      w="100%"
     >
       <Switch
         aria-label={name}
@@ -178,7 +177,7 @@ function AccessibleSwitchInput<
         {switchOnTextElement}
         {switchOffTextElement}
       </Box>
-    </Container>
+    </Box>
   );
 }
 

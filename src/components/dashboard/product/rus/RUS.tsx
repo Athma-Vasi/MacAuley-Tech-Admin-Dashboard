@@ -119,9 +119,10 @@ function RUS(
     returnChartTitles({
       barLineChartYAxisVariable,
       calendarView,
-      metricCategory: subMetric,
+      metricCategory: "Products",
       storeLocation,
       calendarChartYAxisVariable,
+      subMetric,
     });
 
   const expandPieChartButton = (
@@ -346,29 +347,26 @@ function RUS(
   );
 
   return (
-    <>
-      {radialBarChart}
-      <DashboardBarLineLayout
-        barLineChart={barLineChart}
-        barLineChartHeading={barLineChartHeading}
-        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-        barLineChartYAxisVariable={barLineChartYAxisVariable}
-        calendarChart={calendarChart}
-        calendarChartHeading={calendarChartHeading}
-        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
-        calendarView={calendarView}
-        cardsWithStatisticsElements={cardsWithStatisticsElements}
-        expandBarLineChartButton={expandBarLineChartButton}
-        expandCalendarChartButton={expandCalendarChartButton}
-        expandPieChartButton={expandPieChartButton}
-        overviewCards={overviewCards}
-        pieChart={pieChart}
-        pieChartHeading={pieChartHeading}
-        sectionHeading={splitCamelCase(metricsView)}
-        semanticLabel="TODO"
-      />
-    </>
+    <DashboardBarLineLayout
+      barLineChart={barLineChart}
+      barLineChartHeading={barLineChartHeading}
+      barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
+      barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
+      barLineChartYAxisVariable={barLineChartYAxisVariable}
+      calendarChart={calendarChart}
+      calendarChartHeading={calendarChartHeading}
+      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+      calendarView={calendarView}
+      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      expandBarLineChartButton={expandBarLineChartButton}
+      expandCalendarChartButton={expandCalendarChartButton}
+      expandPieChartButton={expandPieChartButton}
+      overviewCards={overviewCards}
+      pieChart={pieChart}
+      pieChartHeading={pieChartHeading}
+      sectionHeading={splitCamelCase(metricsView)}
+      semanticLabel="TODO"
+    />
   );
 }
 
