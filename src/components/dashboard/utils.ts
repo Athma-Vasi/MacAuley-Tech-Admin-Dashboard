@@ -3731,21 +3731,50 @@ function excludeTodayFromCalendarView() {
 }
 
 function createExpandChartNavigateLinks(
-  metricsView: DashboardMetricsView,
-  calendarView: DashboardCalendarView,
-  metricCategory: string,
+  {
+    barLineChartYAxisVariable,
+    calendarView,
+    metricCategory,
+    metricsView,
+    calendarChartYAxisVariable,
+    pieChartYAxisVariable,
+    subMetric = "",
+  }: {
+    barLineChartYAxisVariable: string;
+    calendarChartYAxisVariable?: string;
+    calendarView: DashboardCalendarView;
+    metricCategory: string;
+    metricsView: DashboardMetricsView;
+    pieChartYAxisVariable?: string;
+    subMetric?: string;
+  },
 ) {
-  const genericLink = `/home/dashboard/${metricsView}-${calendarView}-${
-    splitCamelCase(metricCategory)
-      .split(" ")
-      .join("-")
-  }`;
+  const genericLink =
+    `/home/dashboard/${metricsView.toLowerCase()}-${calendarView.toLowerCase()}-${
+      splitCamelCase(metricCategory).toLowerCase()
+        .split(" ")
+        .join("-")
+    }${
+      subMetric
+        ? `-${splitCamelCase(subMetric).toLowerCase().split(" ").join("-")}`
+        : ""
+    }`;
+
+  const barLineRadialVariable = splitCamelCase(
+    barLineChartYAxisVariable,
+  ).toLowerCase().split(" ").join("-");
 
   return {
-    expandBarChartNavigateLink: `${genericLink}-bar-chart`,
-    expandCalendarChartNavigateLink: `${genericLink}-calendar-chart`,
-    expandLineChartNavigateLink: `${genericLink}-line-chart`,
-    expandPieChartNavigateLink: `${genericLink}-pie-chart`,
+    expandBarChartNavigateLink:
+      `${genericLink}-${barLineRadialVariable}-bar-chart`,
+    expandCalendarChartNavigateLink:
+      `${genericLink}-${calendarChartYAxisVariable}-calendar-chart`,
+    expandLineChartNavigateLink:
+      `${genericLink}-${barLineRadialVariable}-line-chart`,
+    expandPieChartNavigateLink:
+      `${genericLink}-${pieChartYAxisVariable}-pie-chart`,
+    expandRadialBarChartNavigateLink:
+      `${genericLink}-${barLineRadialVariable}-radial-bar-chart`,
   };
 }
 

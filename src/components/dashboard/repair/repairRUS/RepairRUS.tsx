@@ -43,7 +43,7 @@ import {
   REPAIR_METRICS_SUB_CATEGORY_DATA,
   REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
-import type { RepairMetricCategory, RepairSubMetric } from "../types";
+import type { RepairMetricCategory } from "../types";
 import { repairRUSAction } from "./actions";
 import { repairRUSReducer } from "./reducers";
 import { initialRepairRUSState } from "./state";
@@ -106,7 +106,24 @@ function RepairRUS(
     expandBarChartNavigateLink,
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
-  } = createExpandChartNavigateLinks(metricsView, calendarView, subMetric);
+  } = createExpandChartNavigateLinks({
+    barLineChartYAxisVariable,
+    calendarView,
+    metricCategory: repairCategory,
+    metricsView,
+    calendarChartYAxisVariable,
+  });
+
+  console.group(
+    "RepairRUS",
+  );
+  console.log("expandBarChartNavigateLink", expandBarChartNavigateLink);
+  console.log(
+    "expandCalendarChartNavigateLink",
+    expandCalendarChartNavigateLink,
+  );
+  console.log("expandLineChartNavigateLink", expandLineChartNavigateLink);
+  console.groupEnd();
 
   const { barLineChartHeading, calendarChartHeading } = returnChartTitles({
     barLineChartYAxisVariable,
@@ -144,8 +161,8 @@ function RepairRUS(
             payload: {
               chartKind: barLineChartKind,
               chartData: barLineChartKind === "bar"
-                ? barCharts[subMetric]
-                : lineCharts[subMetric],
+                ? barCharts[barLineChartYAxisVariable]
+                : lineCharts[barLineChartYAxisVariable],
               chartTitle: barLineChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
@@ -201,7 +218,7 @@ function RepairRUS(
           } - ${x}`}
         yFormat={(y) =>
           `${addCommaSeparator(y)} ${
-            subMetric === "revenue" ? "CAD" : "Units"
+            barLineChartYAxisVariable === "revenue" ? "CAD" : "Units"
           }`}
         unitKind="number"
       />
@@ -274,7 +291,7 @@ function RepairRUS(
 
   const statisticsElementsMap = createStatisticsElements(
     calendarView,
-    subMetric,
+    barLineChartYAxisVariable,
     statisticsMap,
     storeLocation,
   );
