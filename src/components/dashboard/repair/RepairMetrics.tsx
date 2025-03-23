@@ -18,6 +18,7 @@ import type {
   Month,
   Year,
 } from "../types";
+import { createOverviewRepairMetricCards } from "../utilsTSX";
 import { repairMetricsAction } from "./actions";
 import { createRepairMetricsCards } from "./cards";
 import {
@@ -32,6 +33,7 @@ import {
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
+import { returnDailyOverviewRepairMetrics } from "./utils";
 
 type RepairMetricsProps = {
   businessMetrics: BusinessMetric[];
@@ -166,18 +168,6 @@ function RepairMetrics({
     return null;
   }
 
-  // const subMetricSegmentedControl = (
-  //   <AccessibleSegmentedControl
-  //     attributes={{
-  //       data: REPAIR_METRICS_SUB_CATEGORY_DATA,
-  //       name: "category",
-  //       parentDispatch: repairMetricsDispatch,
-  //       validValueAction: repairMetricsAction.setSubMetric,
-  //       value: subMetric,
-  //     }}
-  //   />
-  // );
-
   const subMetricSelectInput = (
     <AccessibleSelectInput
       attributes={{
@@ -204,18 +194,34 @@ function RepairMetrics({
     </Group>
   );
 
+  const { repairRevenueOverview, repairUnitsOverview } =
+    returnDailyOverviewRepairMetrics(
+      businessMetrics,
+      storeLocationView,
+      selectedYYYYMMDD,
+      repairCategory,
+    );
+
+  const repairOverviewCards = createOverviewRepairMetricCards(
+    repairRevenueOverview,
+    repairUnitsOverview,
+    selectedYYYYMMDD,
+    storeLocationView,
+  );
+
   const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
       <RepairRUS
         calendarChartsData={calendarChartsData}
         calendarView={calendarView}
+        day={selectedDate}
+        metricsView="Repairs"
+        month={selectedYYYYMMDD.split("-")[1]}
         repairMetricsCards={cards}
         repairMetricsCharts={charts}
-        day={selectedDate}
-        month={selectedYYYYMMDD.split("-")[1]}
-        subMetric={subMetric}
-        metricsView="Repairs"
+        repairOverviewCards={repairOverviewCards}
         storeLocation={storeLocationView}
+        subMetric={subMetric}
         year={selectedYear}
       />
     </React.Fragment>

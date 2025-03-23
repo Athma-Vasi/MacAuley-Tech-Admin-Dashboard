@@ -1,4 +1,3 @@
-import { StoreLocation } from "../../../types";
 import { MONTHS } from "../constants";
 import { BusinessMetric, BusinessMetricStoreLocation } from "../types";
 

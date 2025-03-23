@@ -55,12 +55,16 @@ type RepairRUSProps = {
   };
   calendarView: DashboardCalendarView;
   day: string;
-  subMetric: RepairSubMetric;
   metricsView: DashboardMetricsView;
   month: string;
   repairMetricsCards: RepairMetricsCards;
   repairMetricsCharts: RepairMetricsCharts;
+  repairOverviewCards: {
+    repairRevenueOverviewCard: React.JSX.Element;
+    repairUnitsOverviewCard: React.JSX.Element;
+  };
   storeLocation: BusinessMetricStoreLocation;
+  subMetric: RepairSubMetric;
   year: Year;
 };
 
@@ -69,13 +73,14 @@ function RepairRUS(
   {
     calendarChartsData,
     calendarView,
-    repairMetricsCards,
-    repairMetricsCharts,
     day,
-    subMetric,
     metricsView,
     month,
+    repairMetricsCards,
+    repairMetricsCharts,
+    repairOverviewCards,
     storeLocation,
+    subMetric,
     year,
   }: RepairRUSProps,
 ) {
@@ -285,6 +290,13 @@ function RepairRUS(
     REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
+  const overviewCards = (
+    <>
+      {repairOverviewCards.repairRevenueOverviewCard}
+      {repairOverviewCards.repairUnitsOverviewCard}
+    </>
+  );
+
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -294,12 +306,13 @@ function RepairRUS(
         barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
         barLineChartYAxisVariable={barLineChartYAxisVariable}
         calendarChart={calendarChart}
-        calendarView={calendarView}
         calendarChartHeading={calendarChartHeading}
-        expandCalendarChartButton={expandCalendarChartButton}
         calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineChartButton={expandBarLineChartButton}
+        expandCalendarChartButton={expandCalendarChartButton}
+        overviewCards={overviewCards}
         sectionHeading={splitCamelCase(metricsView)}
         semanticLabel="TODO"
       />
