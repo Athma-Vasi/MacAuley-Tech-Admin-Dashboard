@@ -34,7 +34,6 @@ const repairMetricsReducers = new Map<
     repairMetricsAction.setRepairCategory,
     repairMetricsReducer_setRepairCategory,
   ],
-  [repairMetricsAction.setSubMetric, repairMetricsReducer_setSubMetric],
 ]);
 
 function repairMetricsReducer_setCalendarChartsData(
@@ -57,16 +56,6 @@ function repairMetricsReducer_setCards(
   return {
     ...state,
     cards: dispatch.payload as RepairMetricsCards,
-  };
-}
-
-function repairMetricsReducer_setSubMetric(
-  state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch,
-): RepairMetricsState {
-  return {
-    ...state,
-    subMetric: dispatch.payload as RepairSubMetric,
   };
 }
 

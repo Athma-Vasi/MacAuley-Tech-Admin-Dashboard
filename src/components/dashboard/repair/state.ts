@@ -9,7 +9,6 @@ const initialRepairMetricsState: RepairMetricsState = {
   charts: null,
   isGenerating: false,
   repairCategory: "All Repairs",
-  subMetric: "revenue",
 };
 
 export { initialRepairMetricsState };

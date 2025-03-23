@@ -15,7 +15,6 @@ type RepairMetricsState = {
   charts: RepairMetricsCharts | null;
   isGenerating: boolean;
   repairCategory: RepairMetricCategory;
-  subMetric: RepairSubMetric;
 };
 
 type RepairMetricsDispatch =
@@ -29,10 +28,6 @@ type RepairMetricsDispatch =
   | {
     action: RepairMetricsAction["setCards"];
     payload: RepairMetricsCards;
-  }
-  | {
-    action: RepairMetricsAction["setSubMetric"];
-    payload: RepairSubMetric;
   }
   | {
     action: RepairMetricsAction["setCharts"];

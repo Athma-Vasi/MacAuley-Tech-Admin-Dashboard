@@ -59,7 +59,6 @@ function RepairMetrics({
     charts,
     isGenerating,
     repairCategory,
-    subMetric,
   } = repairMetricsState;
 
   const {
@@ -205,7 +204,6 @@ function RepairMetrics({
         repairMetricsCharts={charts}
         repairOverviewCards={repairOverviewCards}
         storeLocation={storeLocationView}
-        subMetric={subMetric}
         year={selectedYear}
       />
     </React.Fragment>

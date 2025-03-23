@@ -65,7 +65,6 @@ type RepairRUSProps = {
     repairUnitsOverviewCard: React.JSX.Element;
   };
   storeLocation: BusinessMetricStoreLocation;
-  subMetric: RepairSubMetric;
   year: Year;
 };
 
@@ -82,7 +81,6 @@ function RepairRUS(
     repairMetricsCharts,
     repairOverviewCards,
     storeLocation,
-    subMetric,
     year,
   }: RepairRUSProps,
 ) {
@@ -115,7 +113,6 @@ function RepairRUS(
     calendarView,
     metricCategory: repairCategory,
     storeLocation,
-    // subMetric,
     calendarChartYAxisVariable,
   });
 
