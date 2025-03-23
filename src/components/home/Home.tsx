@@ -1,4 +1,11 @@
-import { useMantineTheme } from "@mantine/core";
+import {
+    AppShell,
+    Burger,
+    Header as MantineHeader,
+    MediaQuery,
+    Navbar,
+    useMantineTheme,
+} from "@mantine/core";
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { COLORS_SWATCHES } from "../../constants";
@@ -20,52 +27,61 @@ function Home() {
         themeObject,
     });
 
-    // return (
-    //     <AppShell
-    //         header={
-    //             <Group>
-    //                 <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-    //                     <Burger
-    //                         opened={opened}
-    //                         onClick={() => setOpened((o) => !o)}
-    //                         size="sm"
-    //                         color={theme.colors.gray[6]}
-    //                         mr="xl"
-    //                     />
-    //                 </MediaQuery>
+    return (
+        <AppShell
+            header={
+                <MantineHeader height={{ base: 70 }} p="md">
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            height: "100%",
+                        }}
+                    >
+                        <MediaQuery
+                            largerThan="sm"
+                            styles={{ display: "none" }}
+                        >
+                            <Burger
+                                opened={opened}
+                                onClick={() => setOpened((o) => !o)}
+                                size="sm"
+                                color={theme.colors.gray[6]}
+                                mr="xl"
+                            />
+                        </MediaQuery>
 
-    //                 <Header />
-    //             </Group>
-    //         }
-    //         navbarOffsetBreakpoint="sm"
-    //         navbar={
-    //             <Navbar
-    //                 p="md"
-    //                 hiddenBreakpoint="sm"
-    //                 hidden={!opened}
-    //                 width={{ sm: 200, lg: 300 }}
-    //             >
-    //                 <Sidebar />
-    //             </Navbar>
-    //         }
-    //     >
+                        <Header />
+                    </div>
+                </MantineHeader>
+            }
+            navbarOffsetBreakpoint="sm"
+            navbar={
+                <Navbar
+                    p="md"
+                    hiddenBreakpoint="sm"
+                    hidden={!opened}
+                    width={{ sm: 200, lg: 300 }}
+                >
+                    <Sidebar />
+                </Navbar>
+            }
+        >
+            <Outlet />
+        </AppShell>
+    );
+
+    // return (
+    //     <div className="app" style={{ backgroundColor, color: textColor }}>
+    //         <Header />
+    //         <div className="sidebar">
+    //             <Sidebar />
+    //         </div>
     //         <div className="main">
     //             <Outlet />
     //         </div>
-    //     </AppShell>
+    //     </div>
     // );
-
-    return (
-        <div className="app" style={{ backgroundColor, color: textColor }}>
-            <Header />
-            <div className="sidebar">
-                <Sidebar />
-            </div>
-            <div className="main">
-                <Outlet />
-            </div>
-        </div>
-    );
 }
 
 export default Home;

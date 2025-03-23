@@ -6,38 +6,11 @@
   width: 100%;
 }
 
-.bar-line-cards-and-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.bar-line-cards {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.bar-line-chart {
-  display: grid;
-  place-content: center;
-  width: fit-content;
-}
-
-.pie-chart {
-  display: grid;
-  place-content: center;
-  height: fit-content;
-}
-
-@media screen and (max-width: 640px) {
+/* @media screen and (max-width: 640px) {
   .app {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    /* max-inline-size: 375px; */
-    /* max-block-size: 100vh; */
-    /* min-inline-size: 375px; */
     outline: 1px solid teal;
   }
 
@@ -54,9 +27,6 @@
       "sidebar main";
     grid-template-columns: 1fr 4fr;
     grid-template-rows: auto 1fr;
-    /* max-inline-size: 1920px; */
-    /* max-block-size: 100vh; */
-    /* min-inline-size: 600px; */
     outline: 1px solid teal;
   }
 
@@ -76,36 +46,6 @@
 
   .main {
     grid-area: main;
-    /* overflow-y: auto; */
     display: grid;
-    /* color:#daa520 */
-    /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
   }
-}
-
-@media screen and (min-width: 1280px) {
-  .pie-cards-and-chart {
-    display: grid;
-    grid-template-columns: 3fr 7fr;
-    gap: 16px;
-  }
-
-  .pie-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-}
-
-@media screen and (max-width: 1280px) {
-  .pie-cards-and-chart {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .pie-cards {
-    display: flex;
-    gap: 16px;
-  }
-}
+} */

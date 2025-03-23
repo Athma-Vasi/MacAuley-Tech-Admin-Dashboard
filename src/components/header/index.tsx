@@ -1,12 +1,13 @@
+import { Group } from "@mantine/core";
 import Settings from "./settings";
 
 function Header() {
   return (
-    <div className="header">
+    <Group position="apart" p="md" w="100%">
       <h1>MacAuley Tech</h1>
 
       <Settings />
-    </div>
+    </Group>
   );
 }
 
