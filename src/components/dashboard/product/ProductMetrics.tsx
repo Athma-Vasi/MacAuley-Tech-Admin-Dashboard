@@ -2,10 +2,14 @@ import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import {
+  APP_HEADER_HEIGHT,
+  COLORS_SWATCHES,
+  DASHBOARD_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT,
+} from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
-import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
@@ -167,11 +171,23 @@ function ProductMetrics({
     return null;
   }
 
-  const subMetricSegmentedControl = (
-    <AccessibleSegmentedControl
+  // const subMetricSegmentedControl = (
+  //   <AccessibleSegmentedControl
+  //     attributes={{
+  //       data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
+  //       name: "category",
+  //       parentDispatch: productMetricsDispatch,
+  //       validValueAction: productMetricsAction.setSubMetric,
+  //       value: subMetric,
+  //     }}
+  //   />
+  // );
+
+  const subMetricSelectInput = (
+    <AccessibleSelectInput
       attributes={{
         data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
-        name: "category",
+        name: "Sub-metric",
         parentDispatch: productMetricsDispatch,
         validValueAction: productMetricsAction.setSubMetric,
         value: subMetric,
@@ -184,7 +200,7 @@ function ProductMetrics({
       <AccessibleSelectInput
         attributes={{
           data: PRODUCT_METRIC_CATEGORY_DATA,
-          name: "category",
+          name: "Products",
           parentDispatch: productMetricsDispatch,
           validValueAction: productMetricsAction.setProductCategory,
           value: productCategory,
@@ -265,17 +281,18 @@ function ProductMetrics({
     <Stack w="100%">
       {loadingOverlay}
       <Group
+        h={METRICS_HEADER_HEIGHT}
         opacity={0.97}
         py="sm"
         position="apart"
         style={{
           position: "sticky",
-          top: 100,
+          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
           zIndex: 3,
           backgroundColor,
         }}
       >
-        {subMetricSegmentedControl}
+        {subMetricSelectInput}
         {productCategorySelectInput}
       </Group>
 

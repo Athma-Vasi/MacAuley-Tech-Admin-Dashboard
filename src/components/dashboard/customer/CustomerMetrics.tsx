@@ -2,10 +2,15 @@ import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import {
+  APP_HEADER_HEIGHT,
+  COLORS_SWATCHES,
+  DASHBOARD_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT,
+} from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
-import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
+import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
@@ -154,11 +159,23 @@ function CustomerMetrics({
     return null;
   }
 
-  const categorySegmentedControl = (
-    <AccessibleSegmentedControl
+  // const categorySegmentedControl = (
+  //   <AccessibleSegmentedControl
+  //     attributes={{
+  //       data: CUSTOMER_METRICS_CATEGORY_DATA,
+  //       name: "category",
+  //       parentDispatch: customerMetricsDispatch,
+  //       validValueAction: customerMetricsAction.setCategory,
+  //       value: category,
+  //     }}
+  //   />
+  // );
+
+  const categorySelectInput = (
+    <AccessibleSelectInput
       attributes={{
         data: CUSTOMER_METRICS_CATEGORY_DATA,
-        name: "category",
+        name: "Sub-metric",
         parentDispatch: customerMetricsDispatch,
         validValueAction: customerMetricsAction.setCategory,
         value: category,
@@ -241,18 +258,19 @@ function CustomerMetrics({
     <Stack>
       {loadingOverlay}
       <Group
+        h={METRICS_HEADER_HEIGHT}
         opacity={0.97}
         py="sm"
         position="apart"
         style={{
           position: "sticky",
-          top: 100,
+          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
           zIndex: 3,
           backgroundColor,
-          boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
+          // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {categorySegmentedControl}
+        {categorySelectInput}
       </Group>
       {category === "new"
         ? newCustomers

@@ -3,10 +3,15 @@ import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import React from "react";
-import { COLORS_SWATCHES } from "../../../constants";
+import {
+  APP_HEADER_HEIGHT,
+  COLORS_SWATCHES,
+  DASHBOARD_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT,
+} from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
-import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
+import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type {
   BusinessMetric,
@@ -160,10 +165,22 @@ function FinancialMetrics({
     return null;
   }
 
-  const categorySegmentedControl = (
-    <AccessibleSegmentedControl
+  // const categorySegmentedControl = (
+  //   <AccessibleSegmentedControl
+  //     attributes={{
+  //       data: FINANCIAL_METRICS_CATEGORY_DATA as any,
+  //       name: "category",
+  //       parentDispatch: financialMetricsDispatch,
+  //       validValueAction: financialMetricsAction.setCategory,
+  //       value: category,
+  //     }}
+  //   />
+  // );
+
+  const categorySelectInput = (
+    <AccessibleSelectInput
       attributes={{
-        data: FINANCIAL_METRICS_CATEGORY_DATA as any,
+        data: FINANCIAL_METRICS_CATEGORY_DATA,
         name: "category",
         parentDispatch: financialMetricsDispatch,
         validValueAction: financialMetricsAction.setCategory,
@@ -250,17 +267,19 @@ function FinancialMetrics({
     <Stack>
       {loadingOverlay}
       <Group
+        align="center"
+        h={METRICS_HEADER_HEIGHT}
         py="sm"
         style={{
           position: "sticky",
-          top: 100,
+          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
           zIndex: 3,
           backgroundColor,
-          boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
+          // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
         }}
         opacity={0.97}
       >
-        {categorySegmentedControl}
+        {categorySelectInput}
       </Group>
       {subCategoryPage}
     </Stack>

@@ -9,7 +9,12 @@ import {
 import React, { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES, STORE_LOCATION_DATA } from "../../constants";
+import {
+  APP_HEADER_HEIGHT,
+  COLORS_SWATCHES,
+  DASHBOARD_HEADER_HEIGHT,
+  STORE_LOCATION_DATA,
+} from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
@@ -282,16 +287,14 @@ function Dashboard() {
         <Text size="sm">Welcome to your dashboard</Text>
       </Stack>
       <Group
-        h={100}
+        h={DASHBOARD_HEADER_HEIGHT}
         py="sm"
-        px="md"
         position="apart"
         style={{
           backgroundColor: backgroundColor,
           position: "sticky",
-          top: 0,
+          top: APP_HEADER_HEIGHT,
           zIndex: 3,
-          outline: "1px solid teal",
         }}
         opacity={0.97}
         w="100%"

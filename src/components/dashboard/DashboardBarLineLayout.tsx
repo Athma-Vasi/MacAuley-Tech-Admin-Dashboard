@@ -1,6 +1,11 @@
 import { Card, Group, Stack, Text, Title } from "@mantine/core";
 import React from "react";
-import { COLORS_SWATCHES } from "../../constants";
+import {
+  APP_HEADER_HEIGHT,
+  COLORS_SWATCHES,
+  DASHBOARD_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT,
+} from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
@@ -59,52 +64,30 @@ function DashboardBarLineLayout(
     themeObject,
   });
 
+  const overviewCardsSection = overviewCards
+    ? (
+      <Group>
+        {overviewCards}
+      </Group>
+    )
+    : null;
+
   const barLineSection = (
-    // <Stack
-    //   w="100%"
-    //   p="md"
-    //   style={{ borderBottom: `3px solid ${grayBorderShade}` }}
-    // >
-    //   <Group position="left">
-    //     <Text size="md" weight={500}>{barLineChartHeading}</Text>
-    //   </Group>
-
-    //   <Group
-    //     w="100%"
-    //     position="center"
-    //   >
-    //     {barLineChartYAxisSelectInput}
-    //     {barLineChartKindSegmentedControl}
-    //     {expandBarLineChartButton}
-    //   </Group>
-
-    //   <Group
-    //     w="100%"
-    //     position="apart"
-    //     align="center"
-    //   >
-    //     <Stack>{cardsWithStatisticsElements}</Stack>
-    //     {barLineChart}
-    //   </Group>
-    // </Stack>
     <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
       <Stack px="md">
         <Group position="apart" w="100%">
           {barLineChartYAxisSelectInput}
         </Group>
 
-        <div className="bar-line-cards-and-chart">
-          <div className="bar-line-cards">{cardsWithStatisticsElements}</div>
-          <Card
-            className="bar-line-chart"
-            padding="lg"
-            radius="md"
-            withBorder
-          >
-            <Text size={20} weight={500}>{barLineChartHeading}</Text>
-            {barLineChart}
-          </Card>
-        </div>
+        <Card
+          className="bar-line-chart"
+          padding="lg"
+          radius="md"
+          withBorder
+        >
+          <Text size={20} weight={500}>{barLineChartHeading}</Text>
+          {barLineChart}
+        </Card>
       </Stack>
     </Card>
   );
@@ -118,18 +101,15 @@ function DashboardBarLineLayout(
             {pieChartYAxisSelectInput}
           </Group>
 
-          <div className="pie-cards-and-chart">
-            <div className="pie-cards">{overviewCards}</div>
-            <Card
-              className="pie-chart"
-              padding="lg"
-              radius="md"
-              withBorder
-            >
-              <Text size={20} weight={500}>{pieChartHeading}</Text>
-              {pieChart}
-            </Card>
-          </div>
+          <Card
+            className="pie-chart"
+            padding="lg"
+            radius="md"
+            withBorder
+          >
+            <Text size={20} weight={500}>{pieChartHeading}</Text>
+            {pieChart}
+          </Card>
         </Stack>
       </Card>
     )
@@ -167,7 +147,8 @@ function DashboardBarLineLayout(
         py="md"
         style={{
           position: "sticky",
-          top: sectionHeading === "Financials" ? 160 : 185,
+          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT +
+            METRICS_HEADER_HEIGHT,
           backgroundColor,
           zIndex: 2,
           boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
@@ -177,6 +158,8 @@ function DashboardBarLineLayout(
           {calendarView}{"  "}{sectionHeading}
         </Title>
       </Group>
+
+      {overviewCardsSection}
 
       {pieSection}
 
