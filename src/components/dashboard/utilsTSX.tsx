@@ -273,6 +273,22 @@ function createStatisticsElements(
   statisticsMap: Map<string, StatisticsObject>,
   storeLocation: BusinessMetricStoreLocation,
 ) {
+  const NEW_STATISTICS_KEY_TO_CARDS_KEY_MAP = new Map<string, string>([
+    ["Total", "Total New"],
+    ["Repair", "Repair"],
+    ["In Store", "Sales In-Store"],
+    ["Online", "Sales Online"],
+    ["Sales", "Sales"],
+  ]);
+
+  const RETURNING_STATISTICS_KEY_TO_CARDS_KEY_MAP = new Map<string, string>([
+    ["Total", "Total Returning"],
+    ["Repair", "Repair"],
+    ["In Store", "Sales In-Store"],
+    ["Online", "Sales Online"],
+    ["Sales", "Sales"],
+  ]);
+
   return statisticsMap
     ? Array.from(statisticsMap).reduce((acc, [key, statisticsObj], idx) => {
       const {
@@ -285,16 +301,31 @@ function createStatisticsElements(
         standardDeviation,
       } = statisticsObj;
 
-      const unitSymbol = MONEY_SYMBOL_CATEGORIES.has(key.toLowerCase())
+      console.group("createStatisticsElements");
+      console.log("key", key);
+      console.log("statisticsObj", statisticsObj);
+      console.groupEnd();
+
+      const cardsKey = metricCategory === "new"
+        ? NEW_STATISTICS_KEY_TO_CARDS_KEY_MAP.get(key)
+        : metricCategory === "returning"
+        ? RETURNING_STATISTICS_KEY_TO_CARDS_KEY_MAP.get(key)
+        : key;
+
+      if (!cardsKey) {
+        return acc;
+      }
+
+      const unitSymbol = MONEY_SYMBOL_CATEGORIES.has(cardsKey.toLowerCase())
         ? "$"
-        : PERCENTAGE_SYMBOL_CATEGORIES.has(key.toLowerCase())
+        : PERCENTAGE_SYMBOL_CATEGORIES.has(cardsKey.toLowerCase())
         ? "%"
         : "";
 
       const heading = (
         <Center>
           <Text weight={600} size={18}>
-            {`${calendarView} ${key} ${
+            {`${calendarView} ${cardsKey} ${
               splitCamelCase(metricCategory)
             } for ${storeLocation}`}
           </Text>
@@ -345,7 +376,7 @@ function createStatisticsElements(
 
       const statisticsElement = (
         <Stack
-          key={`${idx}-${key}`}
+          key={`${idx}-${cardsKey}`}
           w="100%"
         >
           {heading}
@@ -359,7 +390,7 @@ function createStatisticsElements(
         </Stack>
       );
 
-      acc.set(key, statisticsElement);
+      acc.set(cardsKey, statisticsElement);
 
       return acc;
     }, new Map())
@@ -593,7 +624,7 @@ function createOverviewMetricCard(
     selectedYYYYMMDD: string;
     storeLocationView: BusinessMetricStoreLocation;
     subMetric: string;
-    unit: "CAD" | "%" | "Units" | "Customers";
+    unit: "CAD" | "%" | "Units" | "";
     value: number;
   },
 ) {
@@ -683,7 +714,7 @@ function createOverviewCustomerMetricCards(
     selectedYYYYMMDD,
     storeLocationView,
     subMetric: "totalCustomers",
-    unit: "Customers",
+    unit: "",
     value: newOverview.totalCustomers,
   });
 
@@ -691,7 +722,7 @@ function createOverviewCustomerMetricCards(
     selectedYYYYMMDD,
     storeLocationView,
     subMetric: "newCustomers",
-    unit: "Customers",
+    unit: "",
     value: newOverview.dailyNewCustomers,
   });
 
@@ -699,7 +730,7 @@ function createOverviewCustomerMetricCards(
     selectedYYYYMMDD,
     storeLocationView,
     subMetric: "returningCustomers",
-    unit: "Customers",
+    unit: "",
     value: returningOverview.dailyReturningCustomers,
   });
 
