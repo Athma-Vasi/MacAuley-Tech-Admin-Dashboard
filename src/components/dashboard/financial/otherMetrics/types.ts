@@ -1,3 +1,4 @@
+import { ChartKindSegment } from "../../types";
 import {
   FinancialMetricsCalendarChartsKeyOtherMetrics,
   FinancialMetricsOtherMetricsChartsKey,
@@ -5,22 +6,22 @@ import {
 import { OtherMetricsAction } from "./actions";
 
 type OtherMetricsState = {
-  barLineChartYAxisVariable: FinancialMetricsOtherMetricsChartsKey;
-  barLineChartKind: "bar" | "line";
-  calendarChartYAxisVariable: FinancialMetricsCalendarChartsKeyOtherMetrics;
+  barLineRadialChartYAxis: FinancialMetricsOtherMetricsChartsKey;
+  barLineRadialChartKind: ChartKindSegment;
+  calendarChartYAxis: FinancialMetricsCalendarChartsKeyOtherMetrics;
 };
 
 type OtherMetricsDispatch =
   | {
-    action: OtherMetricsAction["setBarLineChartYAxisVariable"];
+    action: OtherMetricsAction["setBarLineRadialChartYAxis"];
     payload: FinancialMetricsOtherMetricsChartsKey;
   }
   | {
-    action: OtherMetricsAction["setBarLineChartKind"];
-    payload: "bar" | "line";
+    action: OtherMetricsAction["setBarLineRadialChartKind"];
+    payload: ChartKindSegment;
   }
   | {
-    action: OtherMetricsAction["setCalendarChartYAxisVariable"];
+    action: OtherMetricsAction["setCalendarChartYAxis"];
     payload: FinancialMetricsCalendarChartsKeyOtherMetrics;
   };
 

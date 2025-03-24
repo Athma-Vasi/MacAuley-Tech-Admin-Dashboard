@@ -1,13 +1,13 @@
 type OtherMetricsAction = {
-  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable";
-  setBarLineChartKind: "setBarLineChartKind";
-  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable";
+  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis";
+  setBarLineRadialChartKind: "setBarLineRadialChartKind";
+  setCalendarChartYAxis: "setCalendarChartYAxis";
 };
 
 const otherMetricsAction: OtherMetricsAction = {
-  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable",
-  setBarLineChartKind: "setBarLineChartKind",
-  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable",
+  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis",
+  setBarLineRadialChartKind: "setBarLineRadialChartKind",
+  setCalendarChartYAxis: "setCalendarChartYAxis",
 };
 
 export { otherMetricsAction };

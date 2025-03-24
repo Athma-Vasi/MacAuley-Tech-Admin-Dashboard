@@ -13,6 +13,7 @@ import {
   ResponsiveBarChart,
   ResponsiveCalendarChart,
   ResponsiveLineChart,
+  ResponsiveRadialBarChart,
 } from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -94,9 +95,9 @@ function OtherMetrics({
   );
 
   const {
-    barLineChartYAxisVariable,
-    barLineChartKind,
-    calendarChartYAxisVariable,
+    barLineRadialChartYAxis,
+    barLineRadialChartKind,
+    calendarChartYAxis,
   } = otherMetricsState;
 
   const charts = calendarView === "Daily"
@@ -113,29 +114,31 @@ function OtherMetrics({
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineChartYAxisVariable,
-    calendarChartYAxisVariable,
+    barLineRadialChartYAxis,
+    calendarChartYAxis,
     calendarView,
     metricCategory,
     metricsView,
   });
 
-  const { barLineChartHeading, calendarChartHeading } = returnChartTitles({
-    barLineChartYAxisVariable,
-    calendarView,
-    metricCategory,
-    storeLocation,
-    calendarChartYAxisVariable,
-  });
+  const { barLineRadialChartHeading, calendarChartHeading } = returnChartTitles(
+    {
+      barLineRadialChartYAxis,
+      calendarView,
+      metricCategory,
+      storeLocation,
+      calendarChartYAxis,
+    },
+  );
 
-  const barLineChartKindSegmentedControl = (
+  const barLineRadialChartKindSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
         data: CHART_KIND_DATA,
         name: "chartKind",
         parentDispatch: otherMetricsDispatch,
-        validValueAction: otherMetricsAction.setBarLineChartKind,
-        value: barLineChartKind,
+        validValueAction: otherMetricsAction.setBarLineRadialChartKind,
+        value: barLineRadialChartKind,
         defaultValue: "bar",
       }}
     />
@@ -154,17 +157,17 @@ function OtherMetrics({
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: barLineChartKind,
-              chartData: barLineChartKind === "bar"
-                ? barCharts[barLineChartYAxisVariable]
-                : lineCharts[barLineChartYAxisVariable],
-              chartTitle: barLineChartHeading,
+              chartKind: barLineRadialChartKind,
+              chartData: barLineRadialChartKind === "bar"
+                ? barCharts[barLineRadialChartYAxis]
+                : lineCharts[barLineRadialChartYAxis],
+              chartTitle: barLineRadialChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
           navigate(
-            barLineChartKind === "bar"
+            barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
               : expandLineChartNavigateLink,
           );
@@ -173,22 +176,22 @@ function OtherMetrics({
     />
   );
 
-  const barLineChartYAxisVariablesSelectInput = (
+  const barLineRadialChartYAxissSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_OTHERS_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: otherMetricsDispatch,
-        validValueAction: otherMetricsAction.setBarLineChartYAxisVariable,
-        value: barLineChartYAxisVariable,
+        validValueAction: otherMetricsAction.setBarLineRadialChartYAxis,
+        value: barLineRadialChartYAxis,
       }}
     />
   );
 
-  const barLineChart = barLineChartKind === "bar"
+  const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineChartYAxisVariable]}
+        barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
         indexBy={calendarView === "Daily"
           ? "Days"
@@ -199,9 +202,10 @@ function OtherMetrics({
         unitKind="number"
       />
     )
-    : (
+    : barLineRadialChartKind === "line"
+    ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
           `${
@@ -217,11 +221,17 @@ function OtherMetrics({
           }`}
         unitKind="number"
       />
+    )
+    : (
+      <ResponsiveRadialBarChart
+        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        hideControls
+      />
     );
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
     metricCategory,
   );
 
@@ -253,15 +263,15 @@ function OtherMetrics({
     )
     : null;
 
-  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+  const calendarChartYAxisSelectInput = calendarView === "Yearly"
     ? (
       <AccessibleSelectInput
         attributes={{
           data: FINANCIAL_OTHERS_Y_AXIS_DATA,
           name: "Y-Axis Pie",
           parentDispatch: otherMetricsDispatch,
-          validValueAction: otherMetricsAction.setCalendarChartYAxisVariable,
-          value: calendarChartYAxisVariable,
+          validValueAction: otherMetricsAction.setCalendarChartYAxis,
+          value: calendarChartYAxis,
         }}
       />
     )
@@ -301,7 +311,7 @@ function OtherMetrics({
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
@@ -315,14 +325,14 @@ function OtherMetrics({
 
   const otherMetrics = (
     <DashboardBarLineLayout
-      barLineChart={barLineChart}
-      barLineChartHeading={barLineChartHeading}
-      barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-      barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-      barLineChartYAxisVariable={barLineChartYAxisVariable}
+      barLineRadialChart={barLineRadialChart}
+      barLineRadialChartHeading={barLineRadialChartHeading}
+      barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxissSelectInput}
+      barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
       calendarChartHeading={calendarChartHeading}
-      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+      calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
       expandBarLineChartButton={expandBarLineChartButton}

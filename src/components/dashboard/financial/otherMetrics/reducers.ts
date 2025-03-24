@@ -1,3 +1,4 @@
+import { ChartKindSegment } from "../../types";
 import {
   FinancialMetricsCalendarChartsKeyOtherMetrics,
   FinancialMetricsOtherMetricsChartsKey,
@@ -21,47 +22,47 @@ const otherMetricsReducers = new Map<
   ) => OtherMetricsState
 >([
   [
-    otherMetricsAction.setBarLineChartYAxisVariable,
-    otherMetricsReducer_setBarLineChartYAxisVariable,
+    otherMetricsAction.setBarLineRadialChartYAxis,
+    otherMetricsReducer_setBarLineRadialChartYAxis,
   ],
   [
-    otherMetricsAction.setBarLineChartKind,
-    otherMetricsReducer_setBarLineChartKind,
+    otherMetricsAction.setBarLineRadialChartKind,
+    otherMetricsReducer_setBarLineRadialChartKind,
   ],
   [
-    otherMetricsAction.setCalendarChartYAxisVariable,
-    otherMetricsReducer_setCalendarChartYAxisVariable,
+    otherMetricsAction.setCalendarChartYAxis,
+    otherMetricsReducer_setCalendarChartYAxis,
   ],
 ]);
 
-function otherMetricsReducer_setBarLineChartYAxisVariable(
+function otherMetricsReducer_setBarLineRadialChartYAxis(
   state: OtherMetricsState,
   dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
   return {
     ...state,
-    barLineChartYAxisVariable: dispatch
+    barLineRadialChartYAxis: dispatch
       .payload as FinancialMetricsOtherMetricsChartsKey,
   };
 }
 
-function otherMetricsReducer_setBarLineChartKind(
+function otherMetricsReducer_setBarLineRadialChartKind(
   state: OtherMetricsState,
   dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
   return {
     ...state,
-    barLineChartKind: dispatch.payload as "bar" | "line",
+    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
   };
 }
 
-function otherMetricsReducer_setCalendarChartYAxisVariable(
+function otherMetricsReducer_setCalendarChartYAxis(
   state: OtherMetricsState,
   dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
   return {
     ...state,
-    calendarChartYAxisVariable: dispatch
+    calendarChartYAxis: dispatch
       .payload as FinancialMetricsCalendarChartsKeyOtherMetrics,
   };
 }

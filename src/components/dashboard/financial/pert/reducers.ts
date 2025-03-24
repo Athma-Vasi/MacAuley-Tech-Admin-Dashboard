@@ -16,45 +16,45 @@ const pertReducers = new Map<
   (state: PERTState, dispatch: PERTDispatch) => PERTState
 >([
   [
-    pertAction.setBarLineChartYAxisVariable,
-    pertReducer_setBarLineChartYAxisVariable,
+    pertAction.setBarLineRadialChartYAxis,
+    pertReducer_setBarLineRadialChartYAxis,
   ],
-  [pertAction.setBarLineChartKind, pertReducer_setBarLineChartKind],
+  [pertAction.setBarLineRadialChartKind, pertReducer_setBarLineRadialChartKind],
   [
-    pertAction.setCalendarChartYAxisVariable,
-    pertReducer_setCalendarChartYAxisVariable,
+    pertAction.setCalendarChartYAxis,
+    pertReducer_setCalendarChartYAxis,
   ],
   [pertAction.setPieChartYAxisVariable, pertReducer_setPieChartYAxisVariable],
 ]);
 
-function pertReducer_setBarLineChartYAxisVariable(
+function pertReducer_setBarLineRadialChartYAxis(
   state: PERTState,
   dispatch: PERTDispatch,
 ): PERTState {
   return {
     ...state,
-    barLineChartYAxisVariable: dispatch
+    barLineRadialChartYAxis: dispatch
       .payload as FinancialMetricsBarLineChartsKey,
   };
 }
 
-function pertReducer_setBarLineChartKind(
+function pertReducer_setBarLineRadialChartKind(
   state: PERTState,
   dispatch: PERTDispatch,
 ): PERTState {
   return {
     ...state,
-    barLineChartKind: dispatch.payload as "bar" | "line",
+    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
   };
 }
 
-function pertReducer_setCalendarChartYAxisVariable(
+function pertReducer_setCalendarChartYAxis(
   state: PERTState,
   dispatch: PERTDispatch,
 ): PERTState {
   return {
     ...state,
-    calendarChartYAxisVariable: dispatch
+    calendarChartYAxis: dispatch
       .payload as FinancialMetricsCalendarChartsKeyPERT,
   };
 }
@@ -65,7 +65,7 @@ function pertReducer_setPieChartYAxisVariable(
 ): PERTState {
   return {
     ...state,
-    pieChartYAxisVariable: dispatch.payload as FinancialMetricsPieChartsKey,
+    pieChartYAxis: dispatch.payload as FinancialMetricsPieChartsKey,
   };
 }
 

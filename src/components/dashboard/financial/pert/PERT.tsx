@@ -13,6 +13,7 @@ import {
   ResponsiveCalendarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
+  ResponsiveRadialBarChart,
 } from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -100,10 +101,10 @@ function PERT({
   );
 
   const {
-    barLineChartYAxisVariable,
-    barLineChartKind,
-    calendarChartYAxisVariable,
-    pieChartYAxisVariable,
+    barLineRadialChartYAxis,
+    barLineRadialChartKind,
+    calendarChartYAxis,
+    pieChartYAxis,
   } = pertState;
 
   const charts = returnCalendarViewFinancialCharts(
@@ -127,32 +128,32 @@ function PERT({
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineChartYAxisVariable,
-    calendarChartYAxisVariable,
+    barLineRadialChartYAxis,
+    calendarChartYAxis,
     calendarView,
     metricCategory,
     metricsView,
-    pieChartYAxisVariable,
+    pieChartYAxis,
   });
 
-  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+  const { barLineRadialChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({
-      barLineChartYAxisVariable,
+      barLineRadialChartYAxis,
       calendarView,
       metricCategory,
       storeLocation,
-      calendarChartYAxisVariable,
-      pieChartYAxisVariable,
+      calendarChartYAxis,
+      pieChartYAxis,
     });
 
-  const pieChartYAxisVariableSelectInput = (
+  const pieChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_PERT_PIE_Y_AXIS_DATA,
         name: "Y-Axis Pie",
         parentDispatch: pertDispatch,
         validValueAction: pertAction.setPieChartYAxisVariable,
-        value: pieChartYAxisVariable,
+        value: pieChartYAxis,
       }}
     />
   );
@@ -171,7 +172,7 @@ function PERT({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
               chartKind: "pie",
-              chartData: pieCharts[pieChartYAxisVariable],
+              chartData: pieCharts[pieChartYAxis],
               chartTitle: pieChartHeading,
               chartUnitKind: "number",
             },
@@ -185,20 +186,20 @@ function PERT({
 
   const pieChart = (
     <ResponsivePieChart
-      pieChartData={pieCharts[pieChartYAxisVariable]}
+      pieChartData={pieCharts[pieChartYAxis]}
       hideControls
       unitKind="number"
     />
   );
 
-  const barLineChartKindSegmentedControl = (
+  const barLineRadialChartKindSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
         data: CHART_KIND_DATA,
         name: "chartKind",
         parentDispatch: pertDispatch,
-        validValueAction: pertAction.setBarLineChartKind,
-        value: barLineChartKind,
+        validValueAction: pertAction.setBarLineRadialChartKind,
+        value: barLineRadialChartKind,
         defaultValue: "bar",
       }}
     />
@@ -217,17 +218,17 @@ function PERT({
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: barLineChartKind,
-              chartData: barLineChartKind === "bar"
-                ? barCharts[barLineChartYAxisVariable]
-                : lineCharts[barLineChartYAxisVariable],
-              chartTitle: barLineChartHeading,
+              chartKind: barLineRadialChartKind,
+              chartData: barLineRadialChartKind === "bar"
+                ? barCharts[barLineRadialChartYAxis]
+                : lineCharts[barLineRadialChartYAxis],
+              chartTitle: barLineRadialChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
           navigate(
-            barLineChartKind === "bar"
+            barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
               : expandLineChartNavigateLink,
           );
@@ -236,22 +237,22 @@ function PERT({
     />
   );
 
-  const barLineChartYAxisVariablesSelectInput = (
+  const barLineRadialChartYAxissSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: pertDispatch,
-        validValueAction: pertAction.setBarLineChartYAxisVariable,
-        value: barLineChartYAxisVariable,
+        validValueAction: pertAction.setBarLineRadialChartYAxis,
+        value: barLineRadialChartYAxis,
       }}
     />
   );
 
-  const barLineChart = barLineChartKind === "bar"
+  const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineChartYAxisVariable]}
+        barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
         indexBy={calendarView === "Daily"
           ? "Days"
@@ -262,9 +263,10 @@ function PERT({
         unitKind="number"
       />
     )
-    : (
+    : barLineRadialChartKind === "line"
+    ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
           `${
@@ -280,11 +282,17 @@ function PERT({
           }`}
         unitKind="number"
       />
+    )
+    : (
+      <ResponsiveRadialBarChart
+        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        hideControls
+      />
     );
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
     metricCategory,
   );
 
@@ -316,15 +324,15 @@ function PERT({
     )
     : null;
 
-  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+  const calendarChartYAxisSelectInput = calendarView === "Yearly"
     ? (
       <AccessibleSelectInput
         attributes={{
           data: FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
           name: "Y-Axis Pie",
           parentDispatch: pertDispatch,
-          validValueAction: pertAction.setCalendarChartYAxisVariable,
-          value: calendarChartYAxisVariable,
+          validValueAction: pertAction.setCalendarChartYAxis,
+          value: calendarChartYAxis,
         }}
       />
     )
@@ -364,7 +372,7 @@ function PERT({
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
@@ -379,14 +387,14 @@ function PERT({
 
   return (
     <DashboardBarLineLayout
-      barLineChart={barLineChart}
-      barLineChartHeading={barLineChartHeading}
-      barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-      barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-      barLineChartYAxisVariable={barLineChartYAxisVariable}
+      barLineRadialChart={barLineRadialChart}
+      barLineRadialChartHeading={barLineRadialChartHeading}
+      barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxissSelectInput}
+      barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
       calendarChartHeading={calendarChartHeading}
-      calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+      calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
       expandBarLineChartButton={expandBarLineChartButton}
@@ -395,7 +403,7 @@ function PERT({
       overviewCards={overviewCards}
       pieChart={pieChart}
       pieChartHeading={pieChartHeading}
-      pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
+      pieChartYAxisSelectInput={pieChartYAxisSelectInput}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
     />

@@ -1,3 +1,4 @@
+import { ChartKindSegment } from "../../types";
 import {
   FinancialMetricsBarLineChartsKey,
   FinancialMetricsCalendarChartsKeyPERT,
@@ -6,23 +7,23 @@ import {
 import { PERTAction } from "./actions";
 
 type PERTState = {
-  barLineChartYAxisVariable: FinancialMetricsBarLineChartsKey;
-  barLineChartKind: "bar" | "line";
-  calendarChartYAxisVariable: FinancialMetricsCalendarChartsKeyPERT;
-  pieChartYAxisVariable: FinancialMetricsPieChartsKey;
+  barLineRadialChartYAxis: FinancialMetricsBarLineChartsKey;
+  barLineRadialChartKind: ChartKindSegment;
+  calendarChartYAxis: FinancialMetricsCalendarChartsKeyPERT;
+  pieChartYAxis: FinancialMetricsPieChartsKey;
 };
 
 type PERTDispatch =
   | {
-    action: PERTAction["setBarLineChartYAxisVariable"];
+    action: PERTAction["setBarLineRadialChartYAxis"];
     payload: FinancialMetricsBarLineChartsKey;
   }
   | {
-    action: PERTAction["setBarLineChartKind"];
-    payload: "bar" | "line";
+    action: PERTAction["setBarLineRadialChartKind"];
+    payload: ChartKindSegment;
   }
   | {
-    action: PERTAction["setCalendarChartYAxisVariable"];
+    action: PERTAction["setCalendarChartYAxis"];
     payload: FinancialMetricsCalendarChartsKeyPERT;
   }
   | {
