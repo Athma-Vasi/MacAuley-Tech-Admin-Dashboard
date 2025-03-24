@@ -114,17 +114,6 @@ function RepairRUS(
     calendarChartYAxisVariable,
   });
 
-  console.group(
-    "RepairRUS",
-  );
-  console.log("expandBarChartNavigateLink", expandBarChartNavigateLink);
-  console.log(
-    "expandCalendarChartNavigateLink",
-    expandCalendarChartNavigateLink,
-  );
-  console.log("expandLineChartNavigateLink", expandLineChartNavigateLink);
-  console.groupEnd();
-
   const { barLineChartHeading, calendarChartHeading } = returnChartTitles({
     barLineChartYAxisVariable,
     calendarView,

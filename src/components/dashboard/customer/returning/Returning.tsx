@@ -117,9 +117,14 @@ function Returning(
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
   } = createExpandChartNavigateLinks(
-    metricsView,
-    calendarView,
-    metricCategory,
+    {
+      barLineChartYAxisVariable,
+      calendarChartYAxisVariable,
+      calendarView,
+      metricCategory,
+      metricsView,
+      pieChartYAxisVariable,
+    },
   );
 
   const { barLineChartHeading, calendarChartHeading, pieChartHeading } =

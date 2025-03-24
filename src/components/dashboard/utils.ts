@@ -3743,22 +3743,25 @@ function createExpandChartNavigateLinks(
     barLineChartYAxisVariable: string;
     calendarChartYAxisVariable?: string;
     calendarView: DashboardCalendarView;
-    metricCategory: string;
+    metricCategory?: string;
     metricsView: DashboardMetricsView;
     pieChartYAxisVariable?: string;
     subMetric?: string;
   },
 ) {
-  const genericLink =
-    `/home/dashboard/${metricsView.toLowerCase()}-${calendarView.toLowerCase()}-${
-      splitCamelCase(metricCategory).toLowerCase()
-        .split(" ")
-        .join("-")
-    }${
-      subMetric
-        ? `-${splitCamelCase(subMetric).toLowerCase().split(" ").join("-")}`
-        : ""
-    }`;
+  const genericLink = `/home/dashboard/${calendarView.toLowerCase()}${
+    metricCategory
+      ? `-${
+        splitCamelCase(metricCategory).toLowerCase()
+          .split(" ")
+          .join("-")
+      }`
+      : ""
+  }-${metricsView.toLowerCase()}${
+    subMetric
+      ? `-${splitCamelCase(subMetric).toLowerCase().split(" ").join("-")}`
+      : ""
+  }`;
 
   const barLineRadialVariable = splitCamelCase(
     barLineChartYAxisVariable,
@@ -3797,16 +3800,6 @@ function returnChartTitles(
     subMetric?: string;
   },
 ) {
-  console.group("returnChartTitles");
-  console.log("calendarView", calendarView);
-  console.log("metricCategory", metricCategory);
-  console.log("subMetric", subMetric);
-  console.log("barLineChartYAxisVariable", barLineChartYAxisVariable);
-  console.log("calendarChartYAxisVariable", calendarChartYAxisVariable);
-  console.log("pieChartYAxisVariable", pieChartYAxisVariable);
-  console.log("storeLocation", storeLocation);
-  console.groupEnd();
-
   return {
     barLineChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
       splitCamelCase(subMetric)

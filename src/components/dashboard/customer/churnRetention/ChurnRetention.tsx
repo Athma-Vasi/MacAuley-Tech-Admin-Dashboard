@@ -116,7 +116,12 @@ function ChurnRetention(
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
-  } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
+  } = createExpandChartNavigateLinks({
+    barLineChartYAxisVariable,
+    calendarView,
+    metricsView,
+    calendarChartYAxisVariable,
+  });
 
   const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({
