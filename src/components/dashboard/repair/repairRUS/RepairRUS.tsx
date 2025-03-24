@@ -170,11 +170,11 @@ function RepairRUS(
     />
   );
 
-  const barLineRadialChartYAxissSelectInput = (
+  const barLineRadialChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: REPAIR_METRICS_SUB_CATEGORY_DATA,
-        name: "Y-Axis Bar",
+        name: "Y-Axis",
         parentDispatch: repairRUSDispatch,
         validValueAction: repairRUSAction.setBarLineRadialChartYAxis,
         value: barLineRadialChartYAxis,
@@ -319,7 +319,7 @@ function RepairRUS(
         barLineRadialChart={barLineRadialChart}
         barLineRadialChartHeading={barLineRadialChartHeading}
         barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxissSelectInput}
+        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
         barLineRadialChartYAxis={barLineRadialChartYAxis}
         calendarChart={calendarChart}
         calendarChartHeading={calendarChartHeading}

@@ -217,7 +217,7 @@ function RUS(
     <AccessibleSelectInput
       attributes={{
         data: PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA,
-        name: "Y-Axis Bar",
+        name: "Y-Axis",
         parentDispatch: rusDispatch,
         validValueAction: rusAction.setBarLineRadialChartYAxis,
         value: barLineRadialChartYAxis,

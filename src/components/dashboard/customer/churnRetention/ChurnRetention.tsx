@@ -216,7 +216,7 @@ function ChurnRetention(
     <AccessibleSelectInput
       attributes={{
         data: CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
-        name: "Y-Axis Bar",
+        name: "Y-Axis",
         parentDispatch: churnRetentionDispatch,
         validValueAction: churnRetentionAction.setBarLineRadialChartYAxis,
         value: barLineRadialChartYAxis,

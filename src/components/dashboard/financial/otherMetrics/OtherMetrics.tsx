@@ -176,11 +176,11 @@ function OtherMetrics({
     />
   );
 
-  const barLineRadialChartYAxissSelectInput = (
+  const barLineRadialChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_OTHERS_Y_AXIS_DATA,
-        name: "Y-Axis Bar",
+        name: "Y-Axis",
         parentDispatch: otherMetricsDispatch,
         validValueAction: otherMetricsAction.setBarLineRadialChartYAxis,
         value: barLineRadialChartYAxis,
@@ -328,7 +328,7 @@ function OtherMetrics({
       barLineRadialChart={barLineRadialChart}
       barLineRadialChartHeading={barLineRadialChartHeading}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxissSelectInput}
+      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
       barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
       calendarChartHeading={calendarChartHeading}

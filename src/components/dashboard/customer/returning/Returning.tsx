@@ -233,7 +233,7 @@ function Returning(
     <AccessibleSelectInput
       attributes={{
         data: CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
-        name: "Y-Axis Bar",
+        name: "Y-Axis",
         parentDispatch: returningDispatch,
         validValueAction: returningAction.setBarLineRadialChartYAxis,
         value: barLineRadialChartYAxis,

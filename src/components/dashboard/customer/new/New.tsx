@@ -234,7 +234,7 @@ function New(
         <AccessibleSelectInput
             attributes={{
                 data: CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
-                name: "Y-Axis Bar",
+                name: "Y-Axis",
                 parentDispatch: newDispatch,
                 validValueAction: newAction.setBarLineRadialChartYAxis,
                 value: barLineRadialChartYAxis,

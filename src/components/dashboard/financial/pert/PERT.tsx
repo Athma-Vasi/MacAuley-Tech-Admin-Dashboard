@@ -237,11 +237,11 @@ function PERT({
     />
   );
 
-  const barLineRadialChartYAxissSelectInput = (
+  const barLineRadialChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
-        name: "Y-Axis Bar",
+        name: "Y-Axis",
         parentDispatch: pertDispatch,
         validValueAction: pertAction.setBarLineRadialChartYAxis,
         value: barLineRadialChartYAxis,
@@ -390,7 +390,7 @@ function PERT({
       barLineRadialChart={barLineRadialChart}
       barLineRadialChartHeading={barLineRadialChartHeading}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxissSelectInput}
+      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
       barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
       calendarChartHeading={calendarChartHeading}
