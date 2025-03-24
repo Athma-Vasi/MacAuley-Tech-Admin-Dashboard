@@ -28,7 +28,7 @@ type RadialBarChartData = {
 type ResponsiveRadialBarChartProps = {
   hideControls?: boolean;
   radialBarChartData: RadialBarChartData[];
-  tooltip?: RadialBarTooltipComponent | undefined;
+  tooltip: RadialBarTooltipComponent | undefined;
 };
 
 type ResponsiveRadialBarChartState = {

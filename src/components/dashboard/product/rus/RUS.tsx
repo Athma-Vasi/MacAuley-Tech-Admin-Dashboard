@@ -15,6 +15,7 @@ import {
   ResponsivePieChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import {
@@ -129,7 +130,7 @@ function RUS(
     returnChartTitles({
       barLineRadialChartYAxis,
       calendarView,
-      metricCategory: "Products",
+      metricCategory: productCategory,
       storeLocation,
       calendarChartYAxis,
       subMetric,
@@ -166,6 +167,12 @@ function RUS(
       pieChartData={pieCharts}
       hideControls
       unitKind="number"
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          kind: "pie",
+          unit: subMetric === "revenue" ? "CAD" : "Units",
+        })}
     />
   );
 
@@ -240,6 +247,12 @@ function RUS(
           : "Years"}
         keys={PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "bar",
+            unit: subMetric === "revenue" ? "CAD" : "Units",
+          })}
       />
     )
     : barLineRadialChartKind === "line"
@@ -260,22 +273,24 @@ function RUS(
             subMetric === "revenue" ? "CAD" : "Units"
           }`}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "line",
+            unit: subMetric === "revenue" ? "CAD" : "Units",
+          })}
       />
     )
     : (
       <ResponsiveRadialBarChart
         hideControls
         radialBarChartData={lineCharts[barLineRadialChartYAxis]}
-        tooltip={({ bar }) => (
-          <div>
-            <p>{`${bar.data.x} - ${bar.data.y}`}</p>
-            <p>
-              {`${addCommaSeparator(bar.data.y)} ${
-                subMetric === "revenue" ? "CAD" : "Units"
-              }`}
-            </p>
-          </div>
-        )}
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "radial",
+            unit: subMetric === "revenue" ? "CAD" : "Units",
+          })}
       />
     );
 
@@ -329,6 +344,12 @@ function RUS(
       hideControls
       from={`${year}-01-01`}
       to={`${year}-12-31`}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          kind: "calendar",
+          unit: subMetric === "revenue" ? "CAD" : "Units",
+        })}
     />
   );
 

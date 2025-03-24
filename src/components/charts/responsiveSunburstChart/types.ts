@@ -1,6 +1,8 @@
 import type { TitleOrder } from "@mantine/core";
 
+import { ComputedDatum } from "@nivo/bar";
 import type { ValueFormat } from "@nivo/core";
+import { JSX } from "react";
 import type {
   ScreenshotImageType,
   SetPageInErrorPayload,
@@ -16,15 +18,19 @@ import type {
 import type { ResponsiveSunburstChartAction } from "./actions";
 
 type SunburstChartData = {
+  children?: SunburstChartData[];
   name: string;
   value?: number;
-  children?: SunburstChartData[];
 };
 
 type ResponsiveSunburstChartProps = {
   hideControls?: boolean;
   sunburstChartData: SunburstChartData;
   valueFormat?: ValueFormat<number> | undefined;
+  tooltip:
+    | ((props: ComputedDatum<SunburstChartData>) => JSX.Element)
+    | undefined
+    | any;
 };
 
 type ResponsiveSunburstChartState = {

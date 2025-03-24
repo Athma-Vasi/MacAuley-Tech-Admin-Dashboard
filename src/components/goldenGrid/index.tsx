@@ -11,35 +11,19 @@ type GoldenGridProps = GridProps & {
 };
 
 function GoldenGrid({
-    align,
     children,
     columns = 50,
-    grow,
-    gutter,
-    gutterLg,
-    gutterMd,
-    gutterSm,
-    gutterXl,
-    gutterXs,
     isReversed = false,
-    justify,
     leftSpan = 19,
     rightSpan = 31,
     style,
+    ...props
 }: GoldenGridProps) {
     return (
         <Grid
-            align={align}
             columns={columns}
-            grow={grow}
-            gutter={gutter}
-            gutterLg={gutterLg}
-            gutterMd={gutterMd}
-            gutterSm={gutterSm}
-            gutterXl={gutterXl}
-            gutterXs={gutterXs}
-            justify={justify}
             style={style}
+            {...props}
         >
             <Grid.Col span={isReversed ? rightSpan : leftSpan}>
                 {children[0]}

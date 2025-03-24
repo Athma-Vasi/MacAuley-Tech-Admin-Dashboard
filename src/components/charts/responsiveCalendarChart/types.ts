@@ -1,5 +1,6 @@
 import type { TitleOrder } from "@mantine/core";
 
+import { CalendarTooltipProps } from "@nivo/calendar";
 import type {
   ScreenshotImageType,
   SetPageInErrorPayload,
@@ -25,6 +26,7 @@ type ResponsiveCalendarChartProps = {
   /** YYYY-MM-DD */
   to: string;
   hideControls?: boolean;
+  tooltip: React.FC<CalendarTooltipProps> | undefined;
 };
 
 type ResponsiveCalendarChartState = {

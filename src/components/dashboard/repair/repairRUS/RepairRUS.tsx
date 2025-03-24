@@ -15,6 +15,7 @@ import {
   ResponsiveLineChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
@@ -197,6 +198,12 @@ function RepairRUS(
           : "Years"}
         keys={REPAIR_METRICS_SUB_CATEGORY_DATA.map((obj) => obj.label)}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "bar",
+            unit: barLineRadialChartYAxis === "revenue" ? "CAD" : "Units",
+          })}
       />
     )
     : barLineRadialChartKind === "line"
@@ -217,12 +224,24 @@ function RepairRUS(
             barLineRadialChartYAxis === "revenue" ? "CAD" : "Units"
           }`}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "line",
+            unit: barLineRadialChartYAxis === "revenue" ? "CAD" : "Units",
+          })}
       />
     )
     : (
       <ResponsiveRadialBarChart
         radialBarChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "radial",
+            unit: barLineRadialChartYAxis === "revenue" ? "CAD" : "Units",
+          })}
       />
     );
 
@@ -275,6 +294,12 @@ function RepairRUS(
       hideControls
       from={`${year}-01-01`}
       to={`${year}-12-31`}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          kind: "calendar",
+          unit: calendarChartYAxis === "revenue" ? "CAD" : "Units",
+        })}
     />
   );
 

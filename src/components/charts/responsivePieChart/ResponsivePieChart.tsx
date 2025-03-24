@@ -29,11 +29,9 @@ import {
   SLIDER_TOOLTIP_COLOR,
   STICKY_STYLE,
 } from "../constants";
-// import { ChartsAndGraphsControlsStacker } from "../utils";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
+
+import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { responsivePieChartAction } from "./actions";
 import { responsivePieChartReducer } from "./reducers";
 import { initialResponsivePieChartState } from "./state";
@@ -45,6 +43,7 @@ function ResponsivePieChart({
   hideControls = false,
   pieChartData,
   unitKind = "currency",
+  tooltip,
 }: ResponsivePieChartProps) {
   const {
     globalState: { themeObject, isPrefersReducedMotion },
@@ -232,6 +231,11 @@ function ResponsivePieChart({
         `${unitKind === "currency" ? "$" : ""}${addCommaSeparator(value)}${
           unitKind === "percent" ? "%" : ""
         }`}
+      // tooltip={(value) => {
+      //   console.log(value);
+      //   return <p></p>;
+      // }}
+      tooltip={tooltip}
     />
   );
 

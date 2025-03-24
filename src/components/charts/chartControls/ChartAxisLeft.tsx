@@ -5,10 +5,10 @@ import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectIn
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextInput";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
 import { BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA } from "../responsiveBarChart/constants";
 import type { NivoAxisLegendPosition } from "../types";
-import { ChartsAndGraphsControlsStacker } from "../utils";
 
 type ChartAxisAction = {
   setAxisLeftLegend: "setAxisLeftLegend";

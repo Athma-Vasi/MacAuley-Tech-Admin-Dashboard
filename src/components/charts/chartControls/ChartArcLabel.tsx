@@ -4,10 +4,10 @@ import type { SetPageInErrorPayload } from "../../../types";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
 import { NIVO_SUNBURST_ARC_LABEL_DATA } from "../responsiveSunburstChart/constants";
 import type { NivoArcLabel } from "../types";
-import { ChartsAndGraphsControlsStacker } from "../utils";
 
 type ChartArcLabelAction = {
   setArcLabel: "setArcLabel";

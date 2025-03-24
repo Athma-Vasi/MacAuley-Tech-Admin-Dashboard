@@ -1,5 +1,6 @@
 import type { TitleOrder } from "@mantine/core";
 
+import { BarTooltipProps } from "@nivo/bar";
 import type {
   ScreenshotImageType,
   SetPageInErrorPayload,
@@ -36,6 +37,9 @@ type ResponsiveBarChartProps = {
   indexBy: string;
   keys: string[];
   unitKind?: NivoChartUnitKind;
+  tooltip:
+    | React.FC<BarTooltipProps<BarChartData<Record<string, string | number>>>>
+    | undefined;
 };
 
 type ResponsiveBarChartState = {

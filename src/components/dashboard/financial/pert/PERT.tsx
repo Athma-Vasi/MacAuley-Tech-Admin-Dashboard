@@ -15,6 +15,7 @@ import {
   ResponsivePieChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
@@ -190,6 +191,12 @@ function PERT({
       pieChartData={pieCharts[pieChartYAxis]}
       hideControls
       unitKind="number"
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          kind: "pie",
+          unit: metricCategory === "transactions" ? "" : "CAD",
+        })}
     />
   );
 
@@ -264,6 +271,12 @@ function PERT({
           : "Years"}
         keys={FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "bar",
+            unit: metricCategory === "transactions" ? "" : "CAD",
+          })}
       />
     )
     : barLineRadialChartKind === "line"
@@ -284,12 +297,24 @@ function PERT({
             addCommaSeparator(y)
           }`}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "line",
+            unit: metricCategory === "transactions" ? "" : "CAD",
+          })}
       />
     )
     : (
       <ResponsiveRadialBarChart
         radialBarChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "radial",
+            unit: metricCategory === "transactions" ? "" : "CAD",
+          })}
       />
     );
 
@@ -343,6 +368,12 @@ function PERT({
       hideControls
       from={`${year}-01-01`}
       to={`${year}-12-31`}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          kind: "calendar",
+          unit: metricCategory === "transactions" ? "" : "CAD",
+        })}
     />
   );
 

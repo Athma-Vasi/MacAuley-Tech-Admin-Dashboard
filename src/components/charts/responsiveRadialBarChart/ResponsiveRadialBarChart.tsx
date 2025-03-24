@@ -27,11 +27,8 @@ import {
   SLIDER_TOOLTIP_COLOR,
   STICKY_STYLE,
 } from "../constants";
-// import { ChartsAndGraphsControlsStacker } from "../utils";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
+
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { responsiveRadialBarChartAction } from "./actions";
 import { responsiveRadialBarChartReducer } from "./reducers";
 import { initialResponsiveRadialBarChartState } from "./state";
@@ -39,6 +36,7 @@ import type {
   ResponsiveRadialBarChartProps,
   ResponsiveRadialBarChartState,
 } from "./types";
+import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
 
 function ResponsiveRadialBarChart({
   hideControls = false,
@@ -245,17 +243,6 @@ function ResponsiveRadialBarChart({
       labelsSkipAngle={labelsSkipAngle}
       labelsRadiusOffset={labelsRadiusOffset}
       labelsTextColor={labelsTextColor}
-      tooltip={({ bar }) => (
-        <div>
-          <p>bar.formattedValue{bar.formattedValue}</p>
-          <p>x {bar.data.x}, y{bar.data.y}</p>
-          <p>category{bar.category}</p>
-          <p>groupId{bar.groupId}</p>
-          <p>id{bar.id}</p>
-          <p>stackedValue{bar.stackedValue}</p>
-          <p>value{bar.value}</p>
-        </div>
-      )}
       // legends
       legends={enableLegend
         ? [
@@ -296,6 +283,7 @@ function ResponsiveRadialBarChart({
       isInteractive={true}
       role="application"
       ariaLabel="Nivo radial bar chart"
+      tooltip={tooltip}
     />
   );
 

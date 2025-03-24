@@ -1,159 +1,110 @@
-import {
-  Grid,
-  Group,
-  ScrollArea,
-  Stack,
-  Text,
-  Title,
-  TitleOrder,
-} from "@mantine/core";
+import { Card, Group, Text } from "@mantine/core";
 
-import { COLORS_SWATCHES } from "../../constants";
-import { useGlobalState } from "../../hooks/useGlobalState";
-import {
-  returnThemeColors,
-  splitCamelCase,
-  splitWordIntoUpperCasedSentence,
-} from "../../utils";
-import { NivoChartTitlePosition } from "./types";
+import { BarTooltipProps } from "@nivo/bar";
+import { CalendarTooltipProps } from "@nivo/calendar";
+import { PointTooltipProps } from "@nivo/line";
+import { PieTooltipProps } from "@nivo/pie";
+import { RadialBarDatum, RadialBarTooltipProps } from "@nivo/radial-bar";
+import { toFixedFloat } from "../../utils";
+import { BarChartData } from "./responsiveBarChart/types";
+import { PieChartData } from "./responsivePieChart/types";
 
-type ChartsAndGraphsControlsStackerProps = {
-  initialChartState?: Record<string, any>;
-  input: React.JSX.Element;
-  isInputDisabled?: boolean;
-  label: string;
-  symbol?: string;
-  value: string | number | boolean;
+type ChartKindTooltipValue = {
+  kind: "bar";
+  arg: BarTooltipProps<BarChartData<Record<string, string | number>>>;
+} | {
+  kind: "pie";
+  arg: PieTooltipProps<PieChartData>;
+} | {
+  kind: "radial";
+  arg: RadialBarTooltipProps<RadialBarDatum>;
+} | {
+  kind: "calendar";
+  arg: CalendarTooltipProps;
+} | {
+  kind: "line";
+  arg: PointTooltipProps;
 };
 
-function ChartsAndGraphsControlsStacker({
-  initialChartState = {},
-  input,
-  isInputDisabled = false,
-  label,
-  symbol = "",
-  value,
-}: ChartsAndGraphsControlsStackerProps): React.JSX.Element {
-  const {
-    globalState: { themeObject },
-  } = useGlobalState();
-
-  const {
-    grayColorShade,
-  } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
-
-  const defaultValue = Object.entries(initialChartState).find(
-    ([key]) =>
-      splitCamelCase(key).toLowerCase() ===
-        splitCamelCase(label).toLowerCase(),
-  )?.[1] ?? "";
-
-  const displayDefaultValue = defaultValue === "" ? null : (
-    <Text
-      weight={300}
-      color={isInputDisabled
-        ? grayColorShade
-        : defaultValue === value
-        ? grayColorShade
-        : ""}
-    >
-      Default: {splitWordIntoUpperCasedSentence(
-        splitCamelCase(defaultValue.toString()),
-      )} {symbol}
-    </Text>
-  );
-
-  const displayTopSection = (
-    <Group w="100%" position="apart">
-      <Text weight={500} color={isInputDisabled ? grayColorShade : ""}>
-        {splitWordIntoUpperCasedSentence(label)}
-      </Text>
-
-      {displayDefaultValue}
-    </Group>
-  );
-
-  const displayBottomSection = (
-    <Stack>
-      <Group position="apart">
-        <Text
-          aria-live="polite"
-          color={isInputDisabled ? grayColorShade : ""}
-          // style={value === "" ? {} : {
-          //   border: borderColor,
-          //   borderRadius: 4,
-          //   padding: "0.5rem 0.75rem",
-          //   width: "fit-content",
-          // }}
-        >
-          {splitWordIntoUpperCasedSentence(splitCamelCase(value.toString()))}
-          {" "}
-          {symbol}
-        </Text>
-        <Group pb="xs">{input}</Group>
-      </Group>
-    </Stack>
-  );
-
-  return (
-    <Stack py="md">
-      {displayTopSection}
-      {displayBottomSection}
-    </Stack>
-  );
-}
-
-type ChartAndControlsDisplayProps = {
-  chartControlsStack: React.JSX.Element;
-  chartRef: React.RefObject<null>;
-  chartTitle: string;
-  chartTitleColor: string;
-  chartTitlePosition: NivoChartTitlePosition;
-  chartTitleSize: TitleOrder;
-  height?: number;
-  responsiveChart: React.JSX.Element;
-  scrollBarStyle: Record<string, any>;
+type CreateChartTooltipElementInput = ChartKindTooltipValue & {
+  unit: "CAD" | "%" | "Units" | "";
 };
 
-function ChartAndControlsDisplay(
-  props: ChartAndControlsDisplayProps,
-): React.JSX.Element {
-  const {
-    chartControlsStack,
-    chartRef,
-    chartTitle,
-    chartTitleColor,
-    chartTitlePosition,
-    chartTitleSize,
-    responsiveChart,
-    scrollBarStyle,
-  } = props;
+function createChartTooltipElement(
+  { arg, kind, unit }: CreateChartTooltipElementInput,
+) {
+  switch (kind) {
+    case "bar": {
+      const { color, formattedValue, id } = arg;
+      return returnTooltipCard({ color, id, unit, formattedValue });
+    }
 
-  return (
-    <Stack
-      style={{
-        border: "1px solid",
-        borderColor: "#ccc",
-        borderRadius: 4,
-        padding: "1rem",
-      }}
-    >
-      <Group w="100%" position={chartTitlePosition} ref={chartRef}>
-        <Title order={chartTitleSize} color={chartTitleColor}>
-          {chartTitle}
-        </Title>
-      </Group>
-      <ScrollArea styles={() => scrollBarStyle} offsetScrollbars>
-        <Grid columns={1}>
-          <Grid.Col span={1}>{chartControlsStack}</Grid.Col>
-        </Grid>
-      </ScrollArea>
-      {responsiveChart}
-    </Stack>
-  );
+    case "calendar": {
+      const { color, day, value } = arg;
+      return returnTooltipCard({
+        color,
+        id: day,
+        unit,
+        formattedValue: toFixedFloat(parseInt(value)),
+      });
+    }
+
+    case "line": {
+      const { point: { color, data: { xFormatted, yFormatted } } } = arg;
+      return returnTooltipCard({
+        color,
+        id: xFormatted,
+        unit,
+        formattedValue: toFixedFloat(parseInt(yFormatted.toString())),
+      });
+    }
+
+    case "pie": {
+      const { datum: { color, data: { id }, formattedValue } } = arg;
+      return returnTooltipCard({ color, id, unit, formattedValue });
+    }
+
+    // radial
+    default: {
+      const { bar: { color, data: { x, y } } } = arg;
+      return returnTooltipCard({
+        color,
+        id: x,
+        unit,
+        formattedValue: toFixedFloat(y),
+      });
+    }
+  }
+
+  function returnTooltipCard(
+    { color, id, unit, formattedValue }: {
+      color: string;
+      id: string | number;
+      unit: "CAD" | "%" | "Units" | "";
+      formattedValue: string | number;
+    },
+  ) {
+    return (
+      <Card bg="hsl(0, 0%, 25%)" maw={300} miw="fit-content">
+        <Group py="xs" position="center">
+          <Group>
+            <div
+              style={{
+                backgroundColor: color,
+                borderRadius: 3,
+                width: 15,
+                height: 15,
+              }}
+            />
+            <Text color={color} size={15}>{id}:</Text>
+          </Group>
+          <Group>
+            <Text color={color} size={15}>{formattedValue} {unit}</Text>
+          </Group>
+        </Group>
+      </Card>
+    );
+  }
 }
 
 function returnBarLineChartDimensions(
@@ -204,8 +155,7 @@ function returnPieRadialChartDimensions(
 }
 
 export {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
+  createChartTooltipElement,
   returnBarLineChartDimensions,
   returnPieRadialChartDimensions,
 };

@@ -15,6 +15,7 @@ import {
   ResponsiveLineChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
@@ -203,6 +204,12 @@ function OtherMetrics({
           : "Years"}
         keys={FINANCIAL_OTHERS_Y_AXIS_DATA.map((obj) => obj.label)}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "bar",
+            unit: barLineRadialChartYAxis === "averageOrderValue" ? "CAD" : "%",
+          })}
       />
     )
     : barLineRadialChartKind === "line"
@@ -223,12 +230,24 @@ function OtherMetrics({
             addCommaSeparator(y)
           }`}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "line",
+            unit: barLineRadialChartYAxis === "averageOrderValue" ? "CAD" : "%",
+          })}
       />
     )
     : (
       <ResponsiveRadialBarChart
         radialBarChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "radial",
+            unit: barLineRadialChartYAxis === "averageOrderValue" ? "CAD" : "%",
+          })}
       />
     );
 
@@ -282,6 +301,12 @@ function OtherMetrics({
       hideControls
       from={`${year}-01-01`}
       to={`${year}-12-31`}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          kind: "calendar",
+          unit: calendarChartYAxis === "averageOrderValue" ? "CAD" : "%",
+        })}
     />
   );
 

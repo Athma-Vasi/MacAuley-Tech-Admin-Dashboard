@@ -1,5 +1,6 @@
 import type { TitleOrder } from "@mantine/core";
 
+import { PieTooltipProps } from "@nivo/pie";
 import type {
   ScreenshotImageType,
   SetPageInErrorPayload,
@@ -29,6 +30,7 @@ type ResponsivePieChartProps = {
   hideControls?: boolean;
   pieChartData: PieChartData[];
   unitKind?: NivoChartUnitKind;
+  tooltip: React.FC<PieTooltipProps<PieChartData>> | undefined;
 };
 
 type ResponsivePieChartState = {

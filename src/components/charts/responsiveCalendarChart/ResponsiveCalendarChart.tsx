@@ -17,14 +17,11 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
+import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
 import { ChartMargin } from "../chartControls/ChartMargin";
 import { ChartOptions } from "../chartControls/ChartOptions";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
-// import { ChartsAndGraphsControlsStacker } from "../utils";
 import { responsiveCalendarChartAction } from "./actions";
 import {
   NIVO_CALENDAR_ALIGN_DATA,
@@ -45,6 +42,7 @@ function ResponsiveCalendarChart({
   from,
   to,
   hideControls = false,
+  tooltip,
 }: ResponsiveCalendarChartProps) {
   const {
     globalState: { themeObject },
@@ -158,11 +156,7 @@ function ResponsiveCalendarChart({
       dayBorderColor={dayBorderColor}
       // interactivity
       isInteractive={true}
-      // valueFormat={(value) =>
-      //   `${
-      //     unitKind === 'currency' ? '$' : unitKind === 'percent' ? '%' : ''
-      //   }${addCommaSeparator(value)}`
-      // }
+      tooltip={tooltip}
     />
   );
 

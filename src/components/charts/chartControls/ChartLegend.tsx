@@ -4,6 +4,7 @@ import type { SetPageInErrorPayload } from "../../../types";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import {
   NIVO_LEGEND_ANCHOR_DATA,
   NIVO_LEGEND_DIRECTION_DATA,
@@ -18,7 +19,6 @@ import type {
   NivoLegendItemDirection,
   NivoLegendSymbolShape,
 } from "../types";
-import { ChartsAndGraphsControlsStacker } from "../utils";
 
 type ChartLegendAction = {
   setEnableLegend: "setEnableLegend";

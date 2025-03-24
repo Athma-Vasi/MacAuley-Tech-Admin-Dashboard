@@ -17,9 +17,11 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
+import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
 import { ChartArcLabel } from "../chartControls/ChartArcLabel";
 import { ChartMargin } from "../chartControls/ChartMargin";
 import { ChartOptions } from "../chartControls/ChartOptions";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import {
   NIVO_CHART_PATTERN_DEFS,
   NIVO_COLOR_SCHEME_DATA,
@@ -27,11 +29,6 @@ import {
   NIVO_TRANSITION_MODE_DATA,
   STICKY_STYLE,
 } from "../constants";
-// import { ChartsAndGraphsControlsStacker } from "../utils";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
 import { responsiveSunburstChartAction } from "./actions";
 import { responsiveSunburstChartReducer } from "./reducers";
 import { initialResponsiveSunburstChartState } from "./state";
@@ -44,6 +41,7 @@ function ResponsiveSunburstChart({
   hideControls = false,
   sunburstChartData,
   valueFormat,
+  tooltip,
 }: ResponsiveSunburstChartProps) {
   const {
     globalState: {
@@ -169,6 +167,7 @@ function ResponsiveSunburstChart({
       animate={enableAnimate}
       motionConfig={motionConfig}
       transitionMode={transitionMode}
+      tooltip={tooltip}
     />
   );
 

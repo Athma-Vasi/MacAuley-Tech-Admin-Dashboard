@@ -1,7 +1,7 @@
 import { Group, Stack, Text, Title } from "@mantine/core";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
-import { ChartsAndGraphsControlsStacker } from "../utils";
 
 type ChartMarginAction = {
   setMarginTop: "setMarginTop";

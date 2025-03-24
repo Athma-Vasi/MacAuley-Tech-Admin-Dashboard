@@ -1,6 +1,7 @@
 import type { TitleOrder } from "@mantine/core";
 import type { ValueFormat } from "@nivo/core";
 
+import { PointTooltip } from "@nivo/line";
 import type {
   ScreenshotImageType,
   SetPageInErrorPayload,
@@ -40,6 +41,7 @@ type ResponsiveLineChartProps = {
   yScaleMin?: number | "auto";
   yScaleMax?: number | "auto";
   unitKind?: NivoChartUnitKind;
+  tooltip: PointTooltip | undefined;
 };
 
 type ResponsiveLineChartState = {

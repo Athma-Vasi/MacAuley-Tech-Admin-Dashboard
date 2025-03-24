@@ -11,6 +11,8 @@ import { ResponsiveBar } from "@nivo/bar";
 import { useEffect, useReducer, useRef } from "react";
 
 import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { useWindowSize } from "../../../hooks/useWindowSize";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
@@ -30,13 +32,9 @@ import {
   SLIDER_TOOLTIP_COLOR,
   STICKY_STYLE,
 } from "../constants";
-// import { ChartsAndGraphsControlsStacker } from "../utils";
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import { useWindowSize } from "../../../hooks/useWindowSize";
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
+
+import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { responsiveBarChartAction } from "./actions";
 import {
   BAR_CHART_GROUP_MODE_SELECT_DATA,
@@ -55,6 +53,7 @@ function ResponsiveBarChart({
   indexBy,
   keys,
   unitKind = "currency",
+  tooltip,
 }: ResponsiveBarChartProps) {
   const { windowWidth } = useWindowSize();
   const {
@@ -350,6 +349,7 @@ function ResponsiveBarChart({
         `${unitKind === "currency" ? "$" : ""}${addCommaSeparator(value)}${
           unitKind === "percent" ? "%" : ""
         }`}
+      tooltip={tooltip}
     />
   );
 

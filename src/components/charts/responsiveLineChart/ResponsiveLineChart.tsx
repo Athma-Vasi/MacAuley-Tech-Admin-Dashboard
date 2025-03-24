@@ -33,10 +33,8 @@ import {
   STICKY_STYLE,
 } from "../constants";
 
-import {
-  ChartAndControlsDisplay,
-  ChartsAndGraphsControlsStacker,
-} from "../utils";
+import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
+import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { responsiveLineChartAction } from "./actions";
 import {
   NIVO_LINE_AREA_BLEND_MODE_DATA,
@@ -61,6 +59,7 @@ function ResponsiveLineChart({
   yScaleMin = "auto",
   yScaleMax = "auto",
   unitKind = "currency",
+  tooltip,
 }: ResponsiveLineChartProps) {
   const {
     globalState: { isPrefersReducedMotion, themeObject },
@@ -337,6 +336,7 @@ function ResponsiveLineChart({
       // motion
       animate={enableAnimate}
       motionConfig={motionConfig}
+      tooltip={tooltip}
     />
   );
 

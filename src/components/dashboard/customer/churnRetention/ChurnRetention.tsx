@@ -16,6 +16,7 @@ import {
   ResponsivePieChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
@@ -165,6 +166,8 @@ function ChurnRetention(
       pieChartData={pieCharts}
       hideControls
       unitKind="number"
+      tooltip={(arg) =>
+        createChartTooltipElement({ arg, kind: "pie", unit: "%" })}
     />
   );
 
@@ -239,6 +242,8 @@ function ChurnRetention(
           : "Years"}
         keys={CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA.map((obj) => obj.label)}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({ arg, kind: "bar", unit: "%" })}
       />
     )
     : barLineRadialChartKind === "line"
@@ -256,12 +261,16 @@ function ChurnRetention(
           } - ${x}`}
         yFormat={(y) => `${addCommaSeparator(y)} Customers`}
         unitKind="number"
+        tooltip={(arg) =>
+          createChartTooltipElement({ arg, kind: "line", unit: "%" })}
       />
     )
     : (
       <ResponsiveRadialBarChart
         radialBarChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
+        tooltip={(arg) =>
+          createChartTooltipElement({ arg, kind: "radial", unit: "%" })}
       />
     );
 
@@ -315,6 +324,8 @@ function ChurnRetention(
       hideControls
       from={`${year}-01-01`}
       to={`${year}-12-31`}
+      tooltip={(arg) =>
+        createChartTooltipElement({ arg, kind: "calendar", unit: "%" })}
     />
   );
 
