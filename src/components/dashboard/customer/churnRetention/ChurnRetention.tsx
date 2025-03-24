@@ -301,7 +301,7 @@ function ChurnRetention(
       <AccessibleSelectInput
         attributes={{
           data: CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
-          name: "Y-Axis Pie",
+          name: "Y-Axis",
           parentDispatch: churnRetentionDispatch,
           validValueAction: churnRetentionAction.setCalendarChartYAxis,
           value: calendarChartYAxis,

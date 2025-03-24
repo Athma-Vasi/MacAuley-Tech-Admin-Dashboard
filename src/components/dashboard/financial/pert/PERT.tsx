@@ -150,7 +150,7 @@ function PERT({
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_PERT_PIE_Y_AXIS_DATA,
-        name: "Y-Axis Pie",
+        name: "Y-Axis",
         parentDispatch: pertDispatch,
         validValueAction: pertAction.setPieChartYAxisVariable,
         value: pieChartYAxis,
@@ -329,7 +329,7 @@ function PERT({
       <AccessibleSelectInput
         attributes={{
           data: FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
-          name: "Y-Axis Pie",
+          name: "Y-Axis",
           parentDispatch: pertDispatch,
           validValueAction: pertAction.setCalendarChartYAxis,
           value: calendarChartYAxis,

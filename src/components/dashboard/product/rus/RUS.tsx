@@ -312,7 +312,7 @@ function RUS(
     <AccessibleSelectInput
       attributes={{
         data: PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,
-        name: "Y-Axis Pie",
+        name: "Y-Axis",
         parentDispatch: rusDispatch,
         validValueAction: rusAction.setCalendarChartYAxis,
         value: calendarChartYAxis,

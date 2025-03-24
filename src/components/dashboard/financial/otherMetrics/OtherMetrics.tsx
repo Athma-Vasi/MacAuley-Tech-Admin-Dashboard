@@ -268,7 +268,7 @@ function OtherMetrics({
       <AccessibleSelectInput
         attributes={{
           data: FINANCIAL_OTHERS_Y_AXIS_DATA,
-          name: "Y-Axis Pie",
+          name: "Y-Axis",
           parentDispatch: otherMetricsDispatch,
           validValueAction: otherMetricsAction.setCalendarChartYAxis,
           value: calendarChartYAxis,

@@ -261,7 +261,7 @@ function RepairRUS(
       <AccessibleSelectInput
         attributes={{
           data: REPAIR_METRICS_SUB_CATEGORY_DATA,
-          name: "Y-Axis Pie",
+          name: "Y-Axis",
           parentDispatch: repairRUSDispatch,
           validValueAction: repairRUSAction.setCalendarChartYAxis,
           value: calendarChartYAxis,

@@ -168,7 +168,7 @@ function Returning(
     <AccessibleSelectInput
       attributes={{
         data: CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
-        name: "Y-Axis Pie",
+        name: "Y-Axis",
         parentDispatch: returningDispatch,
         validValueAction: returningAction.setPieChartYAxis,
         value: pieChartYAxis,
@@ -320,7 +320,7 @@ function Returning(
       <AccessibleSelectInput
         attributes={{
           data: CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
-          name: "Y-Axis Pie",
+          name: "Y-Axis",
           parentDispatch: returningDispatch,
           validValueAction: returningAction.setCalendarChartYAxis,
           value: calendarChartYAxis,
