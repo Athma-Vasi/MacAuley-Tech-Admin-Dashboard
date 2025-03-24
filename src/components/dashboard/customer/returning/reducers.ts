@@ -1,9 +1,10 @@
+import { ChartKindSegment } from "../../types";
 import {
   CustomerMetricsNewReturningChartsKey,
   CustomerMetricsNewReturningPieChartsKey,
   CustomerNewReturningCalendarChartsKey,
 } from "../chartsData";
-import { returningAction, ReturningAction } from "./actions";
+import { ReturningAction, returningAction } from "./actions";
 import { ReturningDispatch, ReturningState } from "./types";
 
 function returningReducer(state: ReturningState, dispatch: ReturningDispatch) {
@@ -15,54 +16,63 @@ const returningReducers = new Map<
   ReturningAction[keyof ReturningAction],
   (state: ReturningState, dispatch: ReturningDispatch) => ReturningState
 >([
-  [returningAction.setBarLineChartKind, returningReducer_setBarLineChartKind],
   [
-    returningAction.setBarLineChartYAxisVariable,
-    returningReducer_setBarLineChartYAxisVariable,
+    returningAction.setBarLineRadialChartKind,
+    returningReducer_setBarLineRadialChartKind,
   ],
   [
-    returningAction.setCalendarChartYAxisVariable,
-    returningReducer_setCalendarChartYAxisVariable,
+    returningAction.setBarLineRadialChartYAxis,
+    returningReducer_setBarLineRadialChartYAxis,
   ],
-  [returningAction.setPieChartYAxisVariable, returningReducer_setPieChartYAxisVariable],
+  [
+    returningAction.setCalendarChartYAxis,
+    returningReducer_setCalendarChartYAxis,
+  ],
+  [
+    returningAction.setPieChartYAxis,
+    returningReducer_setPieChartYAxis,
+  ],
 ]);
 
-function returningReducer_setBarLineChartKind(
-  state: ReturningState,
-  dispatch: ReturningDispatch,
-): ReturningState {
-  return { ...state, barLineChartKind: dispatch.payload as "bar" | "line" };
-}
-
-function returningReducer_setBarLineChartYAxisVariable(
+function returningReducer_setBarLineRadialChartKind(
   state: ReturningState,
   dispatch: ReturningDispatch,
 ): ReturningState {
   return {
     ...state,
-    barLineChartYAxisVariable: dispatch
+    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
+  };
+}
+
+function returningReducer_setBarLineRadialChartYAxis(
+  state: ReturningState,
+  dispatch: ReturningDispatch,
+): ReturningState {
+  return {
+    ...state,
+    barLineRadialChartYAxis: dispatch
       .payload as CustomerMetricsNewReturningChartsKey,
   };
 }
 
-function returningReducer_setCalendarChartYAxisVariable(
+function returningReducer_setCalendarChartYAxis(
   state: ReturningState,
   dispatch: ReturningDispatch,
 ): ReturningState {
   return {
     ...state,
-    calendarChartYAxisVariable: dispatch
+    calendarChartYAxis: dispatch
       .payload as CustomerNewReturningCalendarChartsKey,
   };
 }
 
-function returningReducer_setPieChartYAxisVariable(
+function returningReducer_setPieChartYAxis(
   state: ReturningState,
   dispatch: ReturningDispatch,
 ): ReturningState {
   return {
     ...state,
-    pieChartYAxisVariable: dispatch
+    pieChartYAxis: dispatch
       .payload as CustomerMetricsNewReturningPieChartsKey,
   };
 }

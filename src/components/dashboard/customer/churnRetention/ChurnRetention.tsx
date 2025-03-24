@@ -14,6 +14,7 @@ import {
   ResponsiveCalendarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
+  ResponsiveRadialBarChart,
 } from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -98,9 +99,9 @@ function ChurnRetention(
   );
 
   const {
-    barLineChartKind,
-    barLineChartYAxisVariable,
-    calendarChartYAxisVariable,
+    barLineRadialChartKind,
+    barLineRadialChartYAxis,
+    calendarChartYAxis,
   } = churnRetentionState;
 
   const charts = returnCalendarViewCustomerCharts(
@@ -117,19 +118,19 @@ function ChurnRetention(
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     calendarView,
     metricsView,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
   });
 
-  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+  const { barLineRadialChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({
-      barLineChartYAxisVariable,
+      barLineRadialChartYAxis,
       calendarView,
       metricCategory,
       storeLocation,
-      calendarChartYAxisVariable,
+      calendarChartYAxis,
     });
 
   const expandPieChartButton = (
@@ -166,14 +167,14 @@ function ChurnRetention(
     />
   );
 
-  const barLineChartKindSegmentedControl = (
+  const barLineRadialChartKindSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
         data: CHART_KIND_DATA,
         name: "chartKind",
         parentDispatch: churnRetentionDispatch,
-        validValueAction: churnRetentionAction.setBarLineChartKind,
-        value: barLineChartKind,
+        validValueAction: churnRetentionAction.setBarLineRadialChartKind,
+        value: barLineRadialChartKind,
         defaultValue: "bar",
       }}
     />
@@ -192,17 +193,17 @@ function ChurnRetention(
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: barLineChartKind,
-              chartData: barLineChartKind === "bar"
-                ? barCharts[barLineChartYAxisVariable]
-                : lineCharts[barLineChartYAxisVariable],
-              chartTitle: barLineChartHeading,
+              chartKind: barLineRadialChartKind,
+              chartData: barLineRadialChartKind === "bar"
+                ? barCharts[barLineRadialChartYAxis]
+                : lineCharts[barLineRadialChartYAxis],
+              chartTitle: barLineRadialChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
           navigate(
-            barLineChartKind === "bar"
+            barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
               : expandLineChartNavigateLink,
           );
@@ -211,22 +212,22 @@ function ChurnRetention(
     />
   );
 
-  const barLineChartYAxisVariablesSelectInput = (
+  const barLineRadialChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: churnRetentionDispatch,
-        validValueAction: churnRetentionAction.setBarLineChartYAxisVariable,
-        value: barLineChartYAxisVariable,
+        validValueAction: churnRetentionAction.setBarLineRadialChartYAxis,
+        value: barLineRadialChartYAxis,
       }}
     />
   );
 
-  const barLineChart = barLineChartKind === "bar"
+  const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineChartYAxisVariable]}
+        barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
         indexBy={calendarView === "Daily"
           ? "Days"
@@ -237,9 +238,10 @@ function ChurnRetention(
         unitKind="number"
       />
     )
-    : (
+    : barLineRadialChartKind === "line"
+    ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
           `${
@@ -252,11 +254,17 @@ function ChurnRetention(
         yFormat={(y) => `${addCommaSeparator(y)} Customers`}
         unitKind="number"
       />
+    )
+    : (
+      <ResponsiveRadialBarChart
+        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        hideControls
+      />
     );
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
     metricCategory,
   );
 
@@ -288,15 +296,15 @@ function ChurnRetention(
     )
     : null;
 
-  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+  const calendarChartYAxisSelectInput = calendarView === "Yearly"
     ? (
       <AccessibleSelectInput
         attributes={{
           data: CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
           name: "Y-Axis Pie",
           parentDispatch: churnRetentionDispatch,
-          validValueAction: churnRetentionAction.setCalendarChartYAxisVariable,
-          value: calendarChartYAxisVariable,
+          validValueAction: churnRetentionAction.setCalendarChartYAxis,
+          value: calendarChartYAxis,
         }}
       />
     )
@@ -338,7 +346,7 @@ function ChurnRetention(
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
@@ -352,14 +360,14 @@ function ChurnRetention(
   return (
     <Stack>
       <DashboardBarLineLayout
-        barLineChart={barLineChart}
-        barLineChartHeading={barLineChartHeading}
-        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-        barLineChartYAxisVariable={barLineChartYAxisVariable}
+        barLineRadialChart={barLineRadialChart}
+        barLineRadialChartHeading={barLineRadialChartHeading}
+        barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
+        barLineRadialChartYAxis={barLineRadialChartYAxis}
         calendarChart={calendarChart}
         calendarChartHeading={calendarChartHeading}
-        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
         calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineChartButton={expandBarLineChartButton}

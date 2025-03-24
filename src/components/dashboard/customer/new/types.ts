@@ -1,3 +1,4 @@
+import { ChartKindSegment } from "../../types";
 import {
   CustomerMetricsNewReturningChartsKey,
   CustomerMetricsNewReturningPieChartsKey,
@@ -6,23 +7,23 @@ import {
 import { NewAction } from "./actions";
 
 type NewState = {
-  barLineChartYAxisVariable: CustomerMetricsNewReturningChartsKey;
-  barLineChartKind: "bar" | "line";
-  calendarChartYAxisVariable: CustomerNewReturningCalendarChartsKey;
-  pieChartYAxisVariable: CustomerMetricsNewReturningPieChartsKey;
+  barLineRadialChartYAxis: CustomerMetricsNewReturningChartsKey;
+  barLineRadialChartKind: ChartKindSegment;
+  calendarChartYAxis: CustomerNewReturningCalendarChartsKey;
+  pieChartYAxis: CustomerMetricsNewReturningPieChartsKey;
 };
 
 type NewDispatch = {
-  action: NewAction["setBarLineChartYAxisVariable"];
+  action: NewAction["setBarLineRadialChartYAxis"];
   payload: CustomerMetricsNewReturningChartsKey;
 } | {
-  action: NewAction["setBarLineChartKind"];
-  payload: "bar" | "line";
+  action: NewAction["setBarLineRadialChartKind"];
+  payload: ChartKindSegment;
 } | {
-  action: NewAction["setCalendarChartYAxisVariable"];
+  action: NewAction["setCalendarChartYAxis"];
   payload: CustomerNewReturningCalendarChartsKey;
 } | {
-  action: NewAction["setPieChartYAxisVariable"];
+  action: NewAction["setPieChartYAxis"];
   payload: CustomerMetricsNewReturningPieChartsKey;
 };
 

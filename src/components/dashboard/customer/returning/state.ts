@@ -1,10 +1,10 @@
 import { ReturningState } from "./types";
 
 const initialReturningState: ReturningState = {
-  barLineChartYAxisVariable: "overview",
-  barLineChartKind: "bar",
-  calendarChartYAxisVariable: "total",
-  pieChartYAxisVariable: "overview",
+  barLineRadialChartYAxis: "overview",
+  barLineRadialChartKind: "bar",
+  calendarChartYAxis: "total",
+  pieChartYAxis: "overview",
 };
 
 export { initialReturningState };

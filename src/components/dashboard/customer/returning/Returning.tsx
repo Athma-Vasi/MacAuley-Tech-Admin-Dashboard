@@ -13,6 +13,7 @@ import {
   ResponsiveCalendarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
+  ResponsiveRadialBarChart,
 } from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -96,10 +97,10 @@ function Returning(
   );
 
   const {
-    barLineChartKind,
-    barLineChartYAxisVariable,
-    calendarChartYAxisVariable,
-    pieChartYAxisVariable,
+    barLineRadialChartKind,
+    barLineRadialChartYAxis,
+    calendarChartYAxis,
+    pieChartYAxis,
   } = returningState;
 
   const charts = returnCalendarViewCustomerCharts(
@@ -118,23 +119,23 @@ function Returning(
     expandPieChartNavigateLink,
   } = createExpandChartNavigateLinks(
     {
-      barLineChartYAxisVariable,
-      calendarChartYAxisVariable,
+      barLineRadialChartYAxis,
+      calendarChartYAxis,
       calendarView,
       metricCategory,
       metricsView,
-      pieChartYAxisVariable,
+      pieChartYAxis,
     },
   );
 
-  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+  const { barLineRadialChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({
-      barLineChartYAxisVariable,
+      barLineRadialChartYAxis,
       calendarView,
       metricCategory,
       storeLocation,
       subMetric: "Customers",
-      calendarChartYAxisVariable,
+      calendarChartYAxis,
     });
 
   const expandPieChartButton = (
@@ -151,7 +152,7 @@ function Returning(
             action: globalAction.setCustomizeChartsPageData,
             payload: {
               chartKind: "pie",
-              chartData: pieCharts[pieChartYAxisVariable],
+              chartData: pieCharts[pieChartYAxis],
               chartTitle: pieChartHeading,
               chartUnitKind: "number",
             },
@@ -163,34 +164,34 @@ function Returning(
     />
   );
 
-  const pieChartYAxisVariableSelectInput = (
+  const pieChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
         name: "Y-Axis Pie",
         parentDispatch: returningDispatch,
-        validValueAction: returningAction.setPieChartYAxisVariable,
-        value: pieChartYAxisVariable,
+        validValueAction: returningAction.setPieChartYAxis,
+        value: pieChartYAxis,
       }}
     />
   );
 
   const pieChart = (
     <ResponsivePieChart
-      pieChartData={pieCharts[pieChartYAxisVariable]}
+      pieChartData={pieCharts[pieChartYAxis]}
       hideControls
       unitKind="number"
     />
   );
 
-  const barLineChartKindSegmentedControl = (
+  const barLineRadialChartKindSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
         data: CHART_KIND_DATA,
         name: "chartKind",
         parentDispatch: returningDispatch,
-        validValueAction: returningAction.setBarLineChartKind,
-        value: barLineChartKind,
+        validValueAction: returningAction.setBarLineRadialChartKind,
+        value: barLineRadialChartKind,
         defaultValue: "bar",
       }}
     />
@@ -209,17 +210,17 @@ function Returning(
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: barLineChartKind,
-              chartData: barLineChartKind === "bar"
-                ? barCharts[barLineChartYAxisVariable]
-                : lineCharts[barLineChartYAxisVariable],
-              chartTitle: barLineChartHeading,
+              chartKind: barLineRadialChartKind,
+              chartData: barLineRadialChartKind === "bar"
+                ? barCharts[barLineRadialChartYAxis]
+                : lineCharts[barLineRadialChartYAxis],
+              chartTitle: barLineRadialChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
           navigate(
-            barLineChartKind === "bar"
+            barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
               : expandLineChartNavigateLink,
           );
@@ -228,22 +229,22 @@ function Returning(
     />
   );
 
-  const barLineChartYAxisVariablesSelectInput = (
+  const barLineRadialChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: returningDispatch,
-        validValueAction: returningAction.setBarLineChartYAxisVariable,
-        value: barLineChartYAxisVariable,
+        validValueAction: returningAction.setBarLineRadialChartYAxis,
+        value: barLineRadialChartYAxis,
       }}
     />
   );
 
-  const barLineChart = barLineChartKind === "bar"
+  const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineChartYAxisVariable]}
+        barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
         indexBy={calendarView === "Daily"
           ? "Days"
@@ -256,9 +257,10 @@ function Returning(
         unitKind="number"
       />
     )
-    : (
+    : barLineRadialChartKind === "line"
+    ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
           `${
@@ -271,11 +273,17 @@ function Returning(
         yFormat={(y) => `${addCommaSeparator(y)} Customers`}
         unitKind="number"
       />
+    )
+    : (
+      <ResponsiveRadialBarChart
+        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        hideControls
+      />
     );
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
     metricCategory,
   );
 
@@ -307,15 +315,15 @@ function Returning(
     )
     : null;
 
-  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+  const calendarChartYAxisSelectInput = calendarView === "Yearly"
     ? (
       <AccessibleSelectInput
         attributes={{
           data: CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
           name: "Y-Axis Pie",
           parentDispatch: returningDispatch,
-          validValueAction: returningAction.setCalendarChartYAxisVariable,
-          value: calendarChartYAxisVariable,
+          validValueAction: returningAction.setCalendarChartYAxis,
+          value: calendarChartYAxis,
         }}
       />
     )
@@ -357,7 +365,7 @@ function Returning(
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
@@ -372,14 +380,14 @@ function Returning(
   return (
     <Stack>
       <DashboardBarLineLayout
-        barLineChart={barLineChart}
-        barLineChartHeading={barLineChartHeading}
-        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-        barLineChartYAxisVariable={barLineChartYAxisVariable}
+        barLineRadialChart={barLineRadialChart}
+        barLineRadialChartHeading={barLineRadialChartHeading}
+        barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
+        barLineRadialChartYAxis={barLineRadialChartYAxis}
         calendarChart={calendarChart}
         calendarChartHeading={calendarChartHeading}
-        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
         calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineChartButton={expandBarLineChartButton}
@@ -388,7 +396,7 @@ function Returning(
         overviewCards={overviewCards}
         pieChart={pieChart}
         pieChartHeading={pieChartHeading}
-        pieChartYAxisSelectInput={pieChartYAxisVariableSelectInput}
+        pieChartYAxisSelectInput={pieChartYAxisSelectInput}
         sectionHeading="Returning Customers"
         semanticLabel="TODO"
       />

@@ -1,17 +1,16 @@
 type ReturningAction = {
-  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable";
-  setBarLineChartKind: "setBarLineChartKind";
-  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable";
-  setPieChartYAxisVariable: "setPieChartYAxisVariable";
+  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis";
+  setBarLineRadialChartKind: "setBarLineRadialChartKind";
+  setCalendarChartYAxis: "setCalendarChartYAxis";
+  setPieChartYAxis: "setPieChartYAxis";
 };
 
 const returningAction: ReturningAction = {
-  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable",
-  setBarLineChartKind: "setBarLineChartKind",
-  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable",
-  setPieChartYAxisVariable: "setPieChartYAxisVariable",
+  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis",
+  setBarLineRadialChartKind: "setBarLineRadialChartKind",
+  setCalendarChartYAxis: "setCalendarChartYAxis",
+  setPieChartYAxis: "setPieChartYAxis",
 };
 
 export { returningAction };
 export type { ReturningAction };
-

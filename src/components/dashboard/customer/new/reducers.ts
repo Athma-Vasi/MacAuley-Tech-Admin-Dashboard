@@ -1,3 +1,4 @@
+import { ChartKindSegment } from "../../types";
 import {
   CustomerMetricsNewReturningChartsKey,
   CustomerMetricsNewReturningPieChartsKey,
@@ -15,54 +16,57 @@ const newReducers = new Map<
   NewAction[keyof NewAction],
   (state: NewState, dispatch: NewDispatch) => NewState
 >([
-  [newAction.setBarLineChartKind, newReducer_setBarLineChartKind],
+  [newAction.setBarLineRadialChartKind, newReducer_setBarLineRadialChartKind],
   [
-    newAction.setBarLineChartYAxisVariable,
-    newReducer_setBarLineChartYAxisVariable,
+    newAction.setBarLineRadialChartYAxis,
+    newReducer_setBarLineRadialChartYAxis,
   ],
   [
-    newAction.setCalendarChartYAxisVariable,
-    newReducer_setCalendarChartYAxisVariable,
+    newAction.setCalendarChartYAxis,
+    newReducer_setCalendarChartYAxis,
   ],
-  [newAction.setPieChartYAxisVariable, newReducer_setPieChartYAxisVariable],
+  [newAction.setPieChartYAxis, newReducer_setPieChartYAxis],
 ]);
 
-function newReducer_setBarLineChartKind(
-  state: NewState,
-  dispatch: NewDispatch,
-): NewState {
-  return { ...state, barLineChartKind: dispatch.payload as "bar" | "line" };
-}
-
-function newReducer_setBarLineChartYAxisVariable(
+function newReducer_setBarLineRadialChartKind(
   state: NewState,
   dispatch: NewDispatch,
 ): NewState {
   return {
     ...state,
-    barLineChartYAxisVariable: dispatch
+    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
+  };
+}
+
+function newReducer_setBarLineRadialChartYAxis(
+  state: NewState,
+  dispatch: NewDispatch,
+): NewState {
+  return {
+    ...state,
+    barLineRadialChartYAxis: dispatch
       .payload as CustomerMetricsNewReturningChartsKey,
   };
 }
 
-function newReducer_setCalendarChartYAxisVariable(
+function newReducer_setCalendarChartYAxis(
   state: NewState,
   dispatch: NewDispatch,
 ): NewState {
   return {
     ...state,
-    calendarChartYAxisVariable: dispatch
+    calendarChartYAxis: dispatch
       .payload as CustomerNewReturningCalendarChartsKey,
   };
 }
 
-function newReducer_setPieChartYAxisVariable(
+function newReducer_setPieChartYAxis(
   state: NewState,
   dispatch: NewDispatch,
 ): NewState {
   return {
     ...state,
-    pieChartYAxisVariable: dispatch
+    pieChartYAxis: dispatch
       .payload as CustomerMetricsNewReturningPieChartsKey,
   };
 }
