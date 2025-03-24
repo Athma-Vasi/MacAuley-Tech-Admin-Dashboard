@@ -1,13 +1,13 @@
 type RUSAction = {
-  setBarLineChartKind: "setBarLineChartKind";
-  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable";
-  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable";
+  setBarLineRadialChartKind: "setBarLineRadialChartKind";
+  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis";
+  setCalendarChartYAxis: "setCalendarChartYAxis";
 };
 
 const rusAction: RUSAction = {
-  setBarLineChartKind: "setBarLineChartKind",
-  setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable",
-  setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable",
+  setBarLineRadialChartKind: "setBarLineRadialChartKind",
+  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis",
+  setCalendarChartYAxis: "setCalendarChartYAxis",
 };
 
 export { rusAction };

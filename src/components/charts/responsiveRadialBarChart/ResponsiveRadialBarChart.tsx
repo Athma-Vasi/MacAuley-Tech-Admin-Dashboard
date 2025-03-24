@@ -41,8 +41,8 @@ import type {
 } from "./types";
 
 function ResponsiveRadialBarChart({
-  radialBarChartData,
   hideControls = false,
+  radialBarChartData,
   tooltip,
 }: ResponsiveRadialBarChartProps) {
   const {
@@ -61,10 +61,10 @@ function ResponsiveRadialBarChart({
   // sets initial colors based on color scheme
   const modifiedResponsiveRadialBarChartState: ResponsiveRadialBarChartState = {
     ...initialResponsiveRadialBarChartState,
+    chartTitleColor: textColor,
+    labelsTextColor: textColor,
     ringBorderColor: textColor,
     tracksColor: grayColorShade,
-    labelsTextColor: textColor,
-    chartTitleColor: textColor,
   };
 
   const [responsiveRadialBarChartState, responsiveRadialBarChartDispatch] =

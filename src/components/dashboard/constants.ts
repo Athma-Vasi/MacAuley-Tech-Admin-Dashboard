@@ -1,6 +1,7 @@
 import type { CheckboxRadioSelectData } from "../../types";
 import type {
   BusinessMetricStoreLocation,
+  ChartKindSegment,
   DashboardCalendarView,
   DashboardCustomerMetric,
   DashboardFinancialMetric,
@@ -150,9 +151,10 @@ const PERCENTAGE_METRICS_SET = new Set([
 
 const UNITLESS_METRICS_SET = new Set(["Units Sold", "Units Repaired"]);
 
-const CHART_KIND_DATA: CheckboxRadioSelectData<"bar" | "line"> = [
+const CHART_KIND_DATA: CheckboxRadioSelectData<ChartKindSegment> = [
   { label: "Bar", value: "bar" },
   { label: "Line", value: "line" },
+  { label: "Radial", value: "radial" },
 ];
 
 export {

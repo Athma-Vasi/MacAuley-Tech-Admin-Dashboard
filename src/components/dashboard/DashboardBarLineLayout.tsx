@@ -11,11 +11,11 @@ import { returnThemeColors } from "../../utils";
 import { DashboardCalendarView } from "./types";
 
 type DashboardBarLineLayoutProps = {
-  barLineChart: React.JSX.Element;
-  barLineChartHeading: string;
-  barLineChartKindSegmentedControl: React.JSX.Element;
-  barLineChartYAxisSelectInput: React.JSX.Element;
-  barLineChartYAxisVariable: string;
+  barLineRadialChart: React.JSX.Element;
+  barLineRadialChartHeading: string;
+  barLineRadialChartKindSegmentedControl: React.JSX.Element;
+  barLineRadialChartYAxisSelectInput: React.JSX.Element;
+  barLineRadialChartYAxis: string;
   calendarChart?: React.JSX.Element | null;
   calendarChartHeading?: string;
   calendarChartYAxisSelectInput?: React.JSX.Element | null;
@@ -34,11 +34,11 @@ type DashboardBarLineLayoutProps = {
 
 function DashboardBarLineLayout(
   {
-    barLineChart,
-    barLineChartHeading,
-    barLineChartKindSegmentedControl,
-    barLineChartYAxisSelectInput,
-    barLineChartYAxisVariable,
+    barLineRadialChart,
+    barLineRadialChartHeading,
+    barLineRadialChartKindSegmentedControl,
+    barLineRadialChartYAxisSelectInput,
+    barLineRadialChartYAxis,
     calendarChart,
     calendarChartHeading,
     calendarChartYAxisSelectInput,
@@ -77,15 +77,17 @@ function DashboardBarLineLayout(
     <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
       <Stack px="md">
         <Group position="apart" w="100%">
-          {barLineChartYAxisSelectInput}
-          {barLineChartKindSegmentedControl}
+          {barLineRadialChartYAxisSelectInput}
+          {barLineRadialChartKindSegmentedControl}
           {expandBarLineChartButton}
         </Group>
 
-        <Group w="100%" align="baseline">{cardsWithStatisticsElements}</Group>
+        <Group w="100%" align="baseline" py="md">
+          {cardsWithStatisticsElements}
+        </Group>
 
-        <Text size={20} weight={500}>{barLineChartHeading}</Text>
-        <Center>{barLineChart}</Center>
+        <Text size={20} weight={500}>{barLineRadialChartHeading}</Text>
+        <Center>{barLineRadialChart}</Center>
       </Stack>
     </Card>
   );

@@ -1,3 +1,4 @@
+import { ChartKindSegment } from "../../types";
 import {
   ProductMetricsCalendarChartsKey,
   ProductMetricsChartKey,
@@ -5,22 +6,22 @@ import {
 import { RUSAction } from "./actions";
 
 type RUSState = {
-  barLineChartYAxisVariable: ProductMetricsChartKey;
-  barLineChartKind: "bar" | "line";
-  calendarChartYAxisVariable: ProductMetricsCalendarChartsKey;
+  barLineRadialChartYAxis: ProductMetricsChartKey;
+  barLineRadialChartKind: ChartKindSegment;
+  calendarChartYAxis: ProductMetricsCalendarChartsKey;
 };
 
 type RUSDispatch =
   | {
-    action: RUSAction["setBarLineChartKind"];
-    payload: "bar" | "line";
+    action: RUSAction["setBarLineRadialChartKind"];
+    payload: ChartKindSegment;
   }
   | {
-    action: RUSAction["setBarLineChartYAxisVariable"];
+    action: RUSAction["setBarLineRadialChartYAxis"];
     payload: ProductMetricsChartKey;
   }
   | {
-    action: RUSAction["setCalendarChartYAxisVariable"];
+    action: RUSAction["setCalendarChartYAxis"];
     payload: ProductMetricsCalendarChartsKey;
   };
 

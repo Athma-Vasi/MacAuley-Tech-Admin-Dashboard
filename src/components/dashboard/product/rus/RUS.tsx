@@ -93,9 +93,9 @@ function RUS(
   const [rusState, rusDispatch] = React.useReducer(rusReducer, initialRUSState);
 
   const {
-    barLineChartKind,
-    barLineChartYAxisVariable,
-    calendarChartYAxisVariable,
+    barLineRadialChartKind,
+    barLineRadialChartYAxis,
+    calendarChartYAxis,
   } = rusState;
 
   const charts = calendarView === "Daily"
@@ -116,21 +116,21 @@ function RUS(
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     metricCategory: productCategory,
     calendarView,
     metricsView,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
     subMetric,
   });
 
-  const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
+  const { barLineRadialChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({
-      barLineChartYAxisVariable,
+      barLineRadialChartYAxis,
       calendarView,
       metricCategory: "Products",
       storeLocation,
-      calendarChartYAxisVariable,
+      calendarChartYAxis,
       subMetric,
     });
 
@@ -168,14 +168,14 @@ function RUS(
     />
   );
 
-  const barLineChartKindSegmentedControl = (
+  const barLineRadialChartKindSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
         data: CHART_KIND_DATA,
         name: "chartKind",
         parentDispatch: rusDispatch,
-        validValueAction: rusAction.setBarLineChartKind,
-        value: barLineChartKind,
+        validValueAction: rusAction.setBarLineRadialChartKind,
+        value: barLineRadialChartKind,
         defaultValue: "bar",
       }}
     />
@@ -194,17 +194,17 @@ function RUS(
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: barLineChartKind,
-              chartData: barLineChartKind === "bar"
-                ? barCharts[barLineChartYAxisVariable]
-                : lineCharts[barLineChartYAxisVariable],
-              chartTitle: barLineChartHeading,
+              chartKind: barLineRadialChartKind,
+              chartData: barLineRadialChartKind === "bar"
+                ? barCharts[barLineRadialChartYAxis]
+                : lineCharts[barLineRadialChartYAxis],
+              chartTitle: barLineRadialChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
           navigate(
-            barLineChartKind === "bar"
+            barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
               : expandLineChartNavigateLink,
           );
@@ -213,22 +213,22 @@ function RUS(
     />
   );
 
-  const barLineChartYAxisVariablesSelectInput = (
+  const barLineRadialChartYAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA,
         name: "Y-Axis Bar",
         parentDispatch: rusDispatch,
-        validValueAction: rusAction.setBarLineChartYAxisVariable,
-        value: barLineChartYAxisVariable,
+        validValueAction: rusAction.setBarLineRadialChartYAxis,
+        value: barLineRadialChartYAxis,
       }}
     />
   );
 
-  const barLineChart = barLineChartKind === "bar"
+  const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineChartYAxisVariable]}
+        barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
         indexBy={calendarView === "Daily"
           ? "Days"
@@ -239,9 +239,10 @@ function RUS(
         unitKind="number"
       />
     )
-    : (
+    : barLineRadialChartKind === "line"
+    ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
           `${
@@ -257,28 +258,27 @@ function RUS(
           }`}
         unitKind="number"
       />
+    )
+    : (
+      <ResponsiveRadialBarChart
+        hideControls
+        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        tooltip={({ bar }) => (
+          <div>
+            <p>{`${bar.data.x} - ${bar.data.y}`}</p>
+            <p>
+              {`${addCommaSeparator(bar.data.y)} ${
+                subMetric === "revenue" ? "CAD" : "Units"
+              }`}
+            </p>
+          </div>
+        )}
+      />
     );
-
-  const radialBarChart = (
-    <ResponsiveRadialBarChart
-      radialBarChartData={lineCharts[barLineChartYAxisVariable]}
-      hideControls
-      tooltip={({ bar }) => (
-        <div>
-          <p>{`${bar.data.x} - ${bar.data.y}`}</p>
-          <p>
-            {`${addCommaSeparator(bar.data.y)} ${
-              subMetric === "revenue" ? "CAD" : "Units"
-            }`}
-          </p>
-        </div>
-      )}
-    />
-  );
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
     subMetric,
   );
 
@@ -314,8 +314,8 @@ function RUS(
         data: PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,
         name: "Y-Axis Pie",
         parentDispatch: rusDispatch,
-        validValueAction: rusAction.setCalendarChartYAxisVariable,
-        value: calendarChartYAxisVariable,
+        validValueAction: rusAction.setCalendarChartYAxis,
+        value: calendarChartYAxis,
       }}
     />
   );
@@ -351,17 +351,17 @@ function RUS(
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
   return (
     <DashboardBarLineLayout
-      barLineChart={barLineChart}
-      barLineChartHeading={barLineChartHeading}
-      barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-      barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-      barLineChartYAxisVariable={barLineChartYAxisVariable}
+      barLineRadialChart={barLineRadialChart}
+      barLineRadialChartHeading={barLineRadialChartHeading}
+      barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
+      barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
       calendarChartHeading={calendarChartHeading}
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}

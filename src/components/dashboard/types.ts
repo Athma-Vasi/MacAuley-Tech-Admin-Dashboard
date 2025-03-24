@@ -104,6 +104,8 @@ type RepairCategory =
   | "Audio/Video"
   | "Accessory";
 
+type ChartKindSegment = "bar" | "line" | "radial";
+
 type LocationYearSpread = Record<
   StoreLocation,
   Record<string, [number, number]>
@@ -284,6 +286,7 @@ type BusinessMetric = {
 export type {
   BusinessMetric,
   BusinessMetricStoreLocation,
+  ChartKindSegment,
   CustomerDailyMetric,
   CustomerMetrics,
   CustomerMonthlyMetric,
