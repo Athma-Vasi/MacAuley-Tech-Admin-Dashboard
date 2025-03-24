@@ -117,6 +117,7 @@ function New(
         expandCalendarChartNavigateLink,
         expandLineChartNavigateLink,
         expandPieChartNavigateLink,
+        expandRadialBarChartNavigateLink,
     } = createExpandChartNavigateLinks(
         {
             barLineRadialChartYAxis,
@@ -223,7 +224,9 @@ function New(
                     navigate(
                         barLineRadialChartKind === "bar"
                             ? expandBarChartNavigateLink
-                            : expandLineChartNavigateLink,
+                            : barLineRadialChartKind === "line"
+                            ? expandLineChartNavigateLink
+                            : expandRadialBarChartNavigateLink,
                     );
                 },
             }}
@@ -288,58 +291,52 @@ function New(
         metricCategory,
     );
 
-    const expandCalendarChartButton = calendarView === "Yearly"
-        ? (
-            <AccessibleButton
-                attributes={{
-                    enabledScreenreaderText: "Expand and customize chart",
-                    kind: "expand",
-                    onClick: (
-                        _event:
-                            | React.MouseEvent<HTMLButtonElement>
-                            | React.PointerEvent<HTMLButtonElement>,
-                    ) => {
-                        globalDispatch({
-                            action: globalAction.setCustomizeChartsPageData,
-                            payload: {
-                                chartKind: "calendar",
-                                chartData: calendarChartData,
-                                chartTitle: calendarChartHeading,
-                                chartUnitKind: "number",
-                            } as CustomizeChartsPageData,
-                        });
+    const expandCalendarChartButton = (
+        <AccessibleButton
+            attributes={{
+                enabledScreenreaderText: "Expand and customize chart",
+                kind: "expand",
+                onClick: (
+                    _event:
+                        | React.MouseEvent<HTMLButtonElement>
+                        | React.PointerEvent<HTMLButtonElement>,
+                ) => {
+                    globalDispatch({
+                        action: globalAction.setCustomizeChartsPageData,
+                        payload: {
+                            chartKind: "calendar",
+                            chartData: calendarChartData,
+                            chartTitle: calendarChartHeading,
+                            chartUnitKind: "number",
+                        } as CustomizeChartsPageData,
+                    });
 
-                        navigate(expandCalendarChartNavigateLink);
-                    },
-                }}
-            />
-        )
-        : null;
+                    navigate(expandCalendarChartNavigateLink);
+                },
+            }}
+        />
+    );
 
-    const calendarChartYAxisSelectInput = calendarView === "Yearly"
-        ? (
-            <AccessibleSelectInput
-                attributes={{
-                    data: CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
-                    name: "Y-Axis",
-                    parentDispatch: newDispatch,
-                    validValueAction: newAction.setCalendarChartYAxis,
-                    value: calendarChartYAxis,
-                }}
-            />
-        )
-        : null;
+    const calendarChartYAxisSelectInput = (
+        <AccessibleSelectInput
+            attributes={{
+                data: CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
+                name: "Y-Axis",
+                parentDispatch: newDispatch,
+                validValueAction: newAction.setCalendarChartYAxis,
+                value: calendarChartYAxis,
+            }}
+        />
+    );
 
-    const calendarChart = calendarView === "Yearly"
-        ? (
-            <ResponsiveCalendarChart
-                calendarChartData={calendarChartData}
-                hideControls
-                from={`${year}-01-01`}
-                to={`${year}-12-31`}
-            />
-        )
-        : null;
+    const calendarChart = (
+        <ResponsiveCalendarChart
+            calendarChartData={calendarChartData}
+            hideControls
+            from={`${year}-01-01`}
+            to={`${year}-12-31`}
+        />
+    );
 
     const statisticsMap = returnStatistics<
         CustomerMetricsNewReturningChartsKey

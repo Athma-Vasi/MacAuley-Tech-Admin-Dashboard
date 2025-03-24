@@ -115,6 +115,7 @@ function RUS(
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
+    expandRadialBarChartNavigateLink,
   } = createExpandChartNavigateLinks({
     barLineRadialChartYAxis,
     metricCategory: productCategory,
@@ -206,7 +207,9 @@ function RUS(
           navigate(
             barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
-              : expandLineChartNavigateLink,
+              : barLineRadialChartKind === "line"
+              ? expandLineChartNavigateLink
+              : expandRadialBarChartNavigateLink,
           );
         },
       }}

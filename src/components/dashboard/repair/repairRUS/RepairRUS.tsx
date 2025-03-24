@@ -107,6 +107,7 @@ function RepairRUS(
     expandBarChartNavigateLink,
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
+    expandRadialBarChartNavigateLink,
   } = createExpandChartNavigateLinks({
     barLineRadialChartYAxis,
     calendarView,
@@ -163,7 +164,9 @@ function RepairRUS(
           navigate(
             barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
-              : expandLineChartNavigateLink,
+              : barLineRadialChartKind === "line"
+              ? expandLineChartNavigateLink
+              : expandRadialBarChartNavigateLink,
           );
         },
       }}
@@ -228,58 +231,52 @@ function RepairRUS(
     calendarChartYAxis,
   );
 
-  const expandCalendarChartButton = calendarView === "Yearly"
-    ? (
-      <AccessibleButton
-        attributes={{
-          enabledScreenreaderText: "Expand and customize chart",
-          kind: "expand",
-          onClick: (
-            _event:
-              | React.MouseEvent<HTMLButtonElement>
-              | React.PointerEvent<HTMLButtonElement>,
-          ) => {
-            globalDispatch({
-              action: globalAction.setCustomizeChartsPageData,
-              payload: {
-                chartKind: "calendar",
-                chartData: calendarChartData,
-                chartTitle: calendarChartHeading,
-                chartUnitKind: "number",
-              } as CustomizeChartsPageData,
-            });
+  const expandCalendarChartButton = (
+    <AccessibleButton
+      attributes={{
+        enabledScreenreaderText: "Expand and customize chart",
+        kind: "expand",
+        onClick: (
+          _event:
+            | React.MouseEvent<HTMLButtonElement>
+            | React.PointerEvent<HTMLButtonElement>,
+        ) => {
+          globalDispatch({
+            action: globalAction.setCustomizeChartsPageData,
+            payload: {
+              chartKind: "calendar",
+              chartData: calendarChartData,
+              chartTitle: calendarChartHeading,
+              chartUnitKind: "number",
+            } as CustomizeChartsPageData,
+          });
 
-            navigate(expandCalendarChartNavigateLink);
-          },
-        }}
-      />
-    )
-    : null;
+          navigate(expandCalendarChartNavigateLink);
+        },
+      }}
+    />
+  );
 
-  const calendarChartYAxisSelectInput = calendarView === "Yearly"
-    ? (
-      <AccessibleSelectInput
-        attributes={{
-          data: REPAIR_METRICS_SUB_CATEGORY_DATA,
-          name: "Y-Axis",
-          parentDispatch: repairRUSDispatch,
-          validValueAction: repairRUSAction.setCalendarChartYAxis,
-          value: calendarChartYAxis,
-        }}
-      />
-    )
-    : null;
+  const calendarChartYAxisSelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: REPAIR_METRICS_SUB_CATEGORY_DATA,
+        name: "Y-Axis",
+        parentDispatch: repairRUSDispatch,
+        validValueAction: repairRUSAction.setCalendarChartYAxis,
+        value: calendarChartYAxis,
+      }}
+    />
+  );
 
-  const calendarChart = calendarView === "Yearly"
-    ? (
-      <ResponsiveCalendarChart
-        calendarChartData={calendarChartData}
-        hideControls
-        from={`${year}-01-01`}
-        to={`${year}-12-31`}
-      />
-    )
-    : null;
+  const calendarChart = (
+    <ResponsiveCalendarChart
+      calendarChartData={calendarChartData}
+      hideControls
+      from={`${year}-01-01`}
+      to={`${year}-12-31`}
+    />
+  );
 
   const selectedCards = returnRepairMetricsCards(
     repairMetricsCards,
