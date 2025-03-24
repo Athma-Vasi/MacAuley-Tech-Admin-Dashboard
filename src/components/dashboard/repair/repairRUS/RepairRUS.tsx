@@ -13,6 +13,7 @@ import {
   ResponsiveBarChart,
   ResponsiveCalendarChart,
   ResponsiveLineChart,
+  ResponsiveRadialBarChart,
 } from "../../../charts";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -91,9 +92,9 @@ function RepairRUS(
     initialRepairRUSState,
   );
   const {
-    barLineChartKind,
-    barLineChartYAxisVariable,
-    calendarChartYAxisVariable,
+    barLineRadialChartKind,
+    barLineRadialChartYAxis,
+    calendarChartYAxis,
   } = repairRUSState;
 
   const charts = returnCalendarViewRepairCharts(
@@ -107,29 +108,31 @@ function RepairRUS(
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     calendarView,
     metricCategory: repairCategory,
     metricsView,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
   });
 
-  const { barLineChartHeading, calendarChartHeading } = returnChartTitles({
-    barLineChartYAxisVariable,
-    calendarView,
-    metricCategory: repairCategory,
-    storeLocation,
-    calendarChartYAxisVariable,
-  });
+  const { barLineRadialChartHeading, calendarChartHeading } = returnChartTitles(
+    {
+      barLineRadialChartYAxis,
+      calendarView,
+      metricCategory: repairCategory,
+      storeLocation,
+      calendarChartYAxis,
+    },
+  );
 
-  const barLineChartKindSegmentedControl = (
+  const barLineRadialChartKindSegmentedControl = (
     <AccessibleSegmentedControl
       attributes={{
         data: CHART_KIND_DATA,
         name: "chartKind",
         parentDispatch: repairRUSDispatch,
-        validValueAction: repairRUSAction.setBarLineChartKind,
-        value: barLineChartKind,
+        validValueAction: repairRUSAction.setBarLineRadialChartKind,
+        value: barLineRadialChartKind,
         defaultValue: "bar",
       }}
     />
@@ -148,17 +151,17 @@ function RepairRUS(
           globalDispatch({
             action: globalAction.setCustomizeChartsPageData,
             payload: {
-              chartKind: barLineChartKind,
-              chartData: barLineChartKind === "bar"
-                ? barCharts[barLineChartYAxisVariable]
-                : lineCharts[barLineChartYAxisVariable],
-              chartTitle: barLineChartHeading,
+              chartKind: barLineRadialChartKind,
+              chartData: barLineRadialChartKind === "bar"
+                ? barCharts[barLineRadialChartYAxis]
+                : lineCharts[barLineRadialChartYAxis],
+              chartTitle: barLineRadialChartHeading,
               chartUnitKind: "number",
             } as CustomizeChartsPageData,
           });
 
           navigate(
-            barLineChartKind === "bar"
+            barLineRadialChartKind === "bar"
               ? expandBarChartNavigateLink
               : expandLineChartNavigateLink,
           );
@@ -167,22 +170,22 @@ function RepairRUS(
     />
   );
 
-  const barLineChartYAxisVariablesSelectInput = (
+  const barLineRadialChartYAxissSelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: REPAIR_METRICS_SUB_CATEGORY_DATA,
         name: "Y-Axis Bar",
         parentDispatch: repairRUSDispatch,
-        validValueAction: repairRUSAction.setBarLineChartYAxisVariable,
-        value: barLineChartYAxisVariable,
+        validValueAction: repairRUSAction.setBarLineRadialChartYAxis,
+        value: barLineRadialChartYAxis,
       }}
     />
   );
 
-  const barLineChart = barLineChartKind === "bar"
+  const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineChartYAxisVariable]}
+        barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
         indexBy={calendarView === "Daily"
           ? "Days"
@@ -193,9 +196,10 @@ function RepairRUS(
         unitKind="number"
       />
     )
-    : (
+    : barLineRadialChartKind === "line"
+    ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineChartYAxisVariable]}
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
           `${
@@ -207,15 +211,21 @@ function RepairRUS(
           } - ${x}`}
         yFormat={(y) =>
           `${addCommaSeparator(y)} ${
-            barLineChartYAxisVariable === "revenue" ? "CAD" : "Units"
+            barLineRadialChartYAxis === "revenue" ? "CAD" : "Units"
           }`}
         unitKind="number"
+      />
+    )
+    : (
+      <ResponsiveRadialBarChart
+        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        hideControls
       />
     );
 
   const calendarChartData = returnSelectedRepairCalendarCharts(
     calendarChartsData,
-    calendarChartYAxisVariable,
+    calendarChartYAxis,
   );
 
   const expandCalendarChartButton = calendarView === "Yearly"
@@ -246,15 +256,15 @@ function RepairRUS(
     )
     : null;
 
-  const calendarChartYAxisVariableSelectInput = calendarView === "Yearly"
+  const calendarChartYAxisSelectInput = calendarView === "Yearly"
     ? (
       <AccessibleSelectInput
         attributes={{
           data: REPAIR_METRICS_SUB_CATEGORY_DATA,
           name: "Y-Axis Pie",
           parentDispatch: repairRUSDispatch,
-          validValueAction: repairRUSAction.setCalendarChartYAxisVariable,
-          value: calendarChartYAxisVariable,
+          validValueAction: repairRUSAction.setCalendarChartYAxis,
+          value: calendarChartYAxis,
         }}
       />
     )
@@ -280,7 +290,7 @@ function RepairRUS(
 
   const statisticsElementsMap = createStatisticsElements(
     calendarView,
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     statisticsMap,
     storeLocation,
   );
@@ -292,7 +302,7 @@ function RepairRUS(
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineChartYAxisVariable,
+    barLineRadialChartYAxis,
     REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
@@ -306,14 +316,14 @@ function RepairRUS(
   return (
     <Stack>
       <DashboardBarLineLayout
-        barLineChart={barLineChart}
-        barLineChartHeading={barLineChartHeading}
-        barLineChartKindSegmentedControl={barLineChartKindSegmentedControl}
-        barLineChartYAxisSelectInput={barLineChartYAxisVariablesSelectInput}
-        barLineChartYAxisVariable={barLineChartYAxisVariable}
+        barLineRadialChart={barLineRadialChart}
+        barLineRadialChartHeading={barLineRadialChartHeading}
+        barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxissSelectInput}
+        barLineRadialChartYAxis={barLineRadialChartYAxis}
         calendarChart={calendarChart}
         calendarChartHeading={calendarChartHeading}
-        calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
+        calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
         calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineChartButton={expandBarLineChartButton}

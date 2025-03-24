@@ -1,3 +1,4 @@
+import { ChartKindSegment } from "../../types";
 import { RepairSubMetric } from "../types";
 import { RepairRUSAction, repairRUSAction } from "./actions";
 import { RepairRUSDispatch, RepairRUSState } from "./types";
@@ -14,44 +15,47 @@ const repairRUSReducersMap = new Map<
     RepairRUSAction[keyof RepairRUSAction],
     (state: RepairRUSState, dispatch: RepairRUSDispatch) => RepairRUSState
 >([
-    [repairRUSAction.setBarLineChartKind, repairRUSReducer_setBarLineChartKind],
     [
-        repairRUSAction.setBarLineChartYAxisVariable,
-        repairRUSReducer_setBarLineChartYAxisVariable,
+        repairRUSAction.setBarLineRadialChartKind,
+        repairRUSReducer_setBarLineRadialChartKind,
     ],
     [
-        repairRUSAction.setCalendarChartYAxisVariable,
-        repairRUSReducer_setCalendarChartYAxisVariable,
+        repairRUSAction.setBarLineRadialChartYAxis,
+        repairRUSReducer_setBarLineRadialChartYAxis,
+    ],
+    [
+        repairRUSAction.setCalendarChartYAxis,
+        repairRUSReducer_setCalendarChartYAxis,
     ],
 ]);
 
-function repairRUSReducer_setBarLineChartKind(
+function repairRUSReducer_setBarLineRadialChartKind(
     state: RepairRUSState,
     dispatch: RepairRUSDispatch,
 ): RepairRUSState {
     return {
         ...state,
-        barLineChartKind: dispatch.payload as "bar" | "line",
+        barLineRadialChartKind: dispatch.payload as ChartKindSegment,
     };
 }
 
-function repairRUSReducer_setBarLineChartYAxisVariable(
+function repairRUSReducer_setBarLineRadialChartYAxis(
     state: RepairRUSState,
     dispatch: RepairRUSDispatch,
 ): RepairRUSState {
     return {
         ...state,
-        barLineChartYAxisVariable: dispatch.payload as RepairSubMetric,
+        barLineRadialChartYAxis: dispatch.payload as RepairSubMetric,
     };
 }
 
-function repairRUSReducer_setCalendarChartYAxisVariable(
+function repairRUSReducer_setCalendarChartYAxis(
     state: RepairRUSState,
     dispatch: RepairRUSDispatch,
 ): RepairRUSState {
     return {
         ...state,
-        calendarChartYAxisVariable: dispatch.payload as RepairSubMetric,
+        calendarChartYAxis: dispatch.payload as RepairSubMetric,
     };
 }
 

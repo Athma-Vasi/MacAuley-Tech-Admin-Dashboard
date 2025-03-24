@@ -1,9 +1,9 @@
 import { RepairRUSState } from "./types";
 
 const initialRepairRUSState: RepairRUSState = {
-    barLineChartKind: "bar",
-    barLineChartYAxisVariable: "revenue",
-    calendarChartYAxisVariable: "revenue",
+    barLineRadialChartKind: "bar",
+    barLineRadialChartYAxis: "revenue",
+    calendarChartYAxis: "revenue",
 };
 
 export { initialRepairRUSState };

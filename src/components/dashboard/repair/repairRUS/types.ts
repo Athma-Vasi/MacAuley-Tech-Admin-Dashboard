@@ -1,20 +1,21 @@
+import { ChartKindSegment } from "../../types";
 import { RepairSubMetric } from "../types";
 import { RepairRUSAction } from "./actions";
 
 type RepairRUSState = {
-    barLineChartKind: "bar" | "line";
-    barLineChartYAxisVariable: RepairSubMetric;
-    calendarChartYAxisVariable: RepairSubMetric;
+    barLineRadialChartKind: ChartKindSegment;
+    barLineRadialChartYAxis: RepairSubMetric;
+    calendarChartYAxis: RepairSubMetric;
 };
 
 type RepairRUSDispatch = {
-    action: RepairRUSAction["setBarLineChartKind"];
-    payload: "bar" | "line";
+    action: RepairRUSAction["setBarLineRadialChartKind"];
+    payload: ChartKindSegment;
 } | {
-    action: RepairRUSAction["setBarLineChartYAxisVariable"];
+    action: RepairRUSAction["setBarLineRadialChartYAxis"];
     payload: RepairSubMetric;
 } | {
-    action: RepairRUSAction["setCalendarChartYAxisVariable"];
+    action: RepairRUSAction["setCalendarChartYAxis"];
     payload: RepairSubMetric;
 };
 

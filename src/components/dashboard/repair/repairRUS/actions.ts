@@ -1,13 +1,13 @@
 type RepairRUSAction = {
-    setBarLineChartKind: "setBarLineChartKind";
-    setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable";
-    setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable";
+    setBarLineRadialChartKind: "setBarLineRadialChartKind";
+    setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis";
+    setCalendarChartYAxis: "setCalendarChartYAxis";
 };
 
 const repairRUSAction: RepairRUSAction = {
-    setBarLineChartKind: "setBarLineChartKind",
-    setBarLineChartYAxisVariable: "setBarLineChartYAxisVariable",
-    setCalendarChartYAxisVariable: "setCalendarChartYAxisVariable",
+    setBarLineRadialChartKind: "setBarLineRadialChartKind",
+    setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis",
+    setCalendarChartYAxis: "setCalendarChartYAxis",
 };
 
 export { repairRUSAction };

@@ -611,7 +611,7 @@ function returnSelectedRepairCalendarCharts(
     currentYear: RepairMetricCalendarCharts | null;
     previousYear: RepairMetricCalendarCharts | null;
   },
-  calendarChartYAxisVariable: RepairSubMetric,
+  calendarChartYAxis: RepairSubMetric,
 ): Array<CalendarChartData> {
   const defaultValue = [{
     day: "",
@@ -625,10 +625,10 @@ function returnSelectedRepairCalendarCharts(
     return defaultValue;
   }
 
-  const currentYearCharts = calendarChartYAxisVariable === "revenue"
+  const currentYearCharts = calendarChartYAxis === "revenue"
     ? currentYear.revenue
     : currentYear.unitsRepaired;
-  const previousYearCharts = calendarChartYAxisVariable === "revenue"
+  const previousYearCharts = calendarChartYAxis === "revenue"
     ? previousYear.revenue
     : previousYear.unitsRepaired;
 
