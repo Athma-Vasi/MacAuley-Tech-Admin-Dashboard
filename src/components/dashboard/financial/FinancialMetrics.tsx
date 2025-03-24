@@ -165,18 +165,6 @@ function FinancialMetrics({
     return null;
   }
 
-  // const categorySegmentedControl = (
-  //   <AccessibleSegmentedControl
-  //     attributes={{
-  //       data: FINANCIAL_METRICS_CATEGORY_DATA as any,
-  //       name: "category",
-  //       parentDispatch: financialMetricsDispatch,
-  //       validValueAction: financialMetricsAction.setCategory,
-  //       value: category,
-  //     }}
-  //   />
-  // );
-
   const categorySelectInput = (
     <AccessibleSelectInput
       attributes={{

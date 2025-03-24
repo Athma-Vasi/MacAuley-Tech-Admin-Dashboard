@@ -126,7 +126,14 @@ function PERT({
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
-  } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
+  } = createExpandChartNavigateLinks({
+    barLineChartYAxisVariable,
+    calendarChartYAxisVariable,
+    calendarView,
+    metricCategory,
+    metricsView,
+    pieChartYAxisVariable,
+  });
 
   const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({

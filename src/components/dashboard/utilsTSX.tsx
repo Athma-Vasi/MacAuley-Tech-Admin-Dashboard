@@ -823,7 +823,7 @@ function createOverviewProductMetricCards(
     storeLocationView,
     subMetric: "conversionRate",
     unit: "%",
-    value: otherMetrics.dailyConversionRate,
+    value: toFixedFloat(otherMetrics.dailyConversionRate * 100),
   });
 
   const overviewDailyNetProfitMarginCard = createOverviewMetricCard({
@@ -831,7 +831,7 @@ function createOverviewProductMetricCards(
     storeLocationView,
     subMetric: "netProfitMargin",
     unit: "%",
-    value: toFixedFloat(otherMetrics.dailyNetProfitMargin),
+    value: toFixedFloat(otherMetrics.dailyNetProfitMargin * 100),
   });
 
   return {

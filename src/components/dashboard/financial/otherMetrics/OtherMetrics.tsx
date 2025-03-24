@@ -112,7 +112,13 @@ function OtherMetrics({
     expandBarChartNavigateLink,
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
-  } = createExpandChartNavigateLinks(metricsView, calendarView, metricCategory);
+  } = createExpandChartNavigateLinks({
+    barLineChartYAxisVariable,
+    calendarChartYAxisVariable,
+    calendarView,
+    metricCategory,
+    metricsView,
+  });
 
   const { barLineChartHeading, calendarChartHeading } = returnChartTitles({
     barLineChartYAxisVariable,
