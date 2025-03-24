@@ -47,7 +47,7 @@ import {
   PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA,
   PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,
 } from "../constants";
-import type { ProductSubMetric } from "../types";
+import type { ProductMetricCategory, ProductSubMetric } from "../types";
 import { rusAction } from "./actions";
 import { rusReducer } from "./reducers";
 import { initialRUSState } from "./state";
@@ -63,6 +63,7 @@ type RUSProps = {
   metricsView: DashboardMetricsView;
   month: string;
   overviewCards?: React.JSX.Element;
+  productCategory: ProductMetricCategory;
   productMetricsCards: ProductMetricsCards;
   productMetricsCharts: ProductMetricsCharts;
   storeLocation: BusinessMetricStoreLocation;
@@ -78,6 +79,7 @@ function RUS(
     metricsView,
     month,
     overviewCards,
+    productCategory,
     productMetricsCards,
     productMetricsCharts,
     storeLocation,
@@ -113,7 +115,14 @@ function RUS(
     expandCalendarChartNavigateLink,
     expandLineChartNavigateLink,
     expandPieChartNavigateLink,
-  } = createExpandChartNavigateLinks(metricsView, calendarView, subMetric);
+  } = createExpandChartNavigateLinks({
+    barLineChartYAxisVariable,
+    metricCategory: productCategory,
+    calendarView,
+    metricsView,
+    calendarChartYAxisVariable,
+    subMetric,
+  });
 
   const { barLineChartHeading, calendarChartHeading, pieChartHeading } =
     returnChartTitles({

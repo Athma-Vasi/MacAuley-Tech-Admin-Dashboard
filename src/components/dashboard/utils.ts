@@ -3738,7 +3738,7 @@ function createExpandChartNavigateLinks(
     metricsView,
     calendarChartYAxisVariable,
     pieChartYAxisVariable,
-    subMetric = "",
+    subMetric,
   }: {
     barLineChartYAxisVariable: string;
     calendarChartYAxisVariable?: string;
@@ -3774,8 +3774,9 @@ function createExpandChartNavigateLinks(
       `${genericLink}-${calendarChartYAxisVariable}-calendar-chart`,
     expandLineChartNavigateLink:
       `${genericLink}-${barLineRadialVariable}-line-chart`,
-    expandPieChartNavigateLink:
-      `${genericLink}-${pieChartYAxisVariable}-pie-chart`,
+    expandPieChartNavigateLink: `${genericLink}${
+      pieChartYAxisVariable ? `-${pieChartYAxisVariable}` : ""
+    }-pie-chart`,
     expandRadialBarChartNavigateLink:
       `${genericLink}-${barLineRadialVariable}-radial-bar-chart`,
   };

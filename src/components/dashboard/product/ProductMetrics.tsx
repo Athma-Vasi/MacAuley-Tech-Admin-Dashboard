@@ -171,18 +171,6 @@ function ProductMetrics({
     return null;
   }
 
-  // const subMetricSegmentedControl = (
-  //   <AccessibleSegmentedControl
-  //     attributes={{
-  //       data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
-  //       name: "category",
-  //       parentDispatch: productMetricsDispatch,
-  //       validValueAction: productMetricsAction.setSubMetric,
-  //       value: subMetric,
-  //     }}
-  //   />
-  // );
-
   const subMetricSelectInput = (
     <AccessibleSelectInput
       attributes={{
@@ -196,17 +184,15 @@ function ProductMetrics({
   );
 
   const productCategorySelectInput = (
-    <Group w={300}>
-      <AccessibleSelectInput
-        attributes={{
-          data: PRODUCT_METRIC_CATEGORY_DATA,
-          name: "Products",
-          parentDispatch: productMetricsDispatch,
-          validValueAction: productMetricsAction.setProductCategory,
-          value: productCategory,
-        }}
-      />
-    </Group>
+    <AccessibleSelectInput
+      attributes={{
+        data: PRODUCT_METRIC_CATEGORY_DATA,
+        name: "Products",
+        parentDispatch: productMetricsDispatch,
+        validValueAction: productMetricsAction.setProductCategory,
+        value: productCategory,
+      }}
+    />
   );
 
   const { dailyRevenue, dailyUnitsSold } = returnSelectedDateAllProductsMetrics(
@@ -251,6 +237,7 @@ function ProductMetrics({
         metricsView="Products"
         month={selectedYYYYMMDD.split("-")[1]}
         overviewCards={overviewCards}
+        productCategory={productCategory}
         productMetricsCards={cards}
         productMetricsCharts={charts}
         storeLocation={storeLocationView}
