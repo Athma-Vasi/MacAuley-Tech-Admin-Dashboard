@@ -1,11 +1,14 @@
 import type { ValidationFunctionsTable } from "./types";
 
 type ValidationKey =
-  | "objectKey"
   | "accessoryType"
   | "acknowledgement"
   | "addressLine"
   | "allowAll"
+  | "axisBottomLegend"
+  | "axisLeftLegend"
+  | "axisRightLegend"
+  | "axisTopLegend"
   | "brand"
   | "city"
   | "colorVariant"
@@ -29,6 +32,7 @@ type ValidationKey =
   | "mediumInteger"
   | "money"
   | "name"
+  | "objectKey"
   | "objectKey"
   | "password"
   | "phoneNumber"
@@ -76,6 +80,54 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
   ],
 
   allowAll: [],
+
+  axisBottomLegend: [
+    [
+      /^(?=.*[A-Za-z0-9])/,
+      "Must contain at least one alphanumeric character.",
+    ],
+    [
+      /^[A-Za-z0-9\s.,#-]+$/,
+      "Must contain only letters, numbers, spaces, and special characters: . , # -",
+    ],
+    [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
+  ],
+
+  axisLeftLegend: [
+    [
+      /^(?=.*[A-Za-z0-9])/,
+      "Must contain at least one alphanumeric character.",
+    ],
+    [
+      /^[A-Za-z0-9\s.,#-]+$/,
+      "Must contain only letters, numbers, spaces, and special characters: . , # -",
+    ],
+    [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
+  ],
+
+  axisRightLegend: [
+    [
+      /^(?=.*[A-Za-z0-9])/,
+      "Must contain at least one alphanumeric character.",
+    ],
+    [
+      /^[A-Za-z0-9\s.,#-]+$/,
+      "Must contain only letters, numbers, spaces, and special characters: . , # -",
+    ],
+    [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
+  ],
+
+  axisTopLegend: [
+    [
+      /^(?=.*[A-Za-z0-9])/,
+      "Must contain at least one alphanumeric character.",
+    ],
+    [
+      /^[A-Za-z0-9\s.,#-]+$/,
+      "Must contain only letters, numbers, spaces, and special characters: . , # -",
+    ],
+    [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
+  ],
 
   brand: [
     [
