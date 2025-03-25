@@ -185,7 +185,14 @@ function New(
             hideControls
             unitKind="number"
             tooltip={(arg) =>
-                createChartTooltipElement({ arg, kind: "pie", unit: "" })}
+                createChartTooltipElement({
+                    arg,
+                    day,
+                    kind: "pie",
+                    month,
+                    unit: "",
+                    year,
+                })}
         />
     );
 
@@ -274,11 +281,11 @@ function New(
                 xFormat={(x) =>
                     `${
                         calendarView === "Daily"
-                            ? "Day"
-                            : calendarView === "Monthly"
-                            ? "Month"
-                            : "Year"
-                    } - ${x}`}
+                            ? "Day - "
+                            : calendarView === "Yearly"
+                            ? "Year - "
+                            : ""
+                    }${x}`}
                 yFormat={(y) => `${addCommaSeparator(y)} Customers`}
                 unitKind="number"
                 tooltip={(arg) =>
@@ -292,6 +299,7 @@ function New(
                 tooltip={(arg) =>
                     createChartTooltipElement({
                         arg,
+                        calendarView,
                         kind: "radial",
                         unit: "",
                     })}
@@ -349,7 +357,12 @@ function New(
             from={`${year}-01-01`}
             to={`${year}-12-31`}
             tooltip={(arg) =>
-                createChartTooltipElement({ arg, kind: "calendar", unit: "" })}
+                createChartTooltipElement({
+                    arg,
+                    calendarChartYAxis,
+                    kind: "calendar",
+                    unit: "",
+                })}
         />
     );
 

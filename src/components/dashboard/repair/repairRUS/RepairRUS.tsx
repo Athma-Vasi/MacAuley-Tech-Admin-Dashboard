@@ -214,11 +214,11 @@ function RepairRUS(
         xFormat={(x) =>
           `${
             calendarView === "Daily"
-              ? "Day"
-              : calendarView === "Monthly"
-              ? "Month"
-              : "Year"
-          } - ${x}`}
+              ? "Day - "
+              : calendarView === "Yearly"
+              ? "Year - "
+              : ""
+          }${x}`}
         yFormat={(y) =>
           `${addCommaSeparator(y)} ${
             barLineRadialChartYAxis === "revenue" ? "CAD" : "Units"
@@ -227,6 +227,7 @@ function RepairRUS(
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            calendarView,
             kind: "line",
             unit: barLineRadialChartYAxis === "revenue" ? "CAD" : "Units",
           })}
@@ -297,6 +298,7 @@ function RepairRUS(
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          calendarChartYAxis,
           kind: "calendar",
           unit: calendarChartYAxis === "revenue" ? "CAD" : "Units",
         })}

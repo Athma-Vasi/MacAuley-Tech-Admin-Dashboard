@@ -220,11 +220,11 @@ function OtherMetrics({
         xFormat={(x) =>
           `${
             calendarView === "Daily"
-              ? "Day"
-              : calendarView === "Monthly"
-              ? "Month"
-              : "Year"
-          } - ${x}`}
+              ? "Day - "
+              : calendarView === "Yearly"
+              ? "Year - "
+              : ""
+          }${x}`}
         yFormat={(y) =>
           `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
             addCommaSeparator(y)
@@ -233,6 +233,7 @@ function OtherMetrics({
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            calendarView,
             kind: "line",
             unit: barLineRadialChartYAxis === "averageOrderValue" ? "CAD" : "%",
           })}
@@ -304,6 +305,7 @@ function OtherMetrics({
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          calendarChartYAxis,
           kind: "calendar",
           unit: calendarChartYAxis === "averageOrderValue" ? "CAD" : "%",
         })}

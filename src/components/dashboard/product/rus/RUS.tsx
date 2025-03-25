@@ -170,8 +170,11 @@ function RUS(
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          day,
           kind: "pie",
+          month,
           unit: subMetric === "revenue" ? "CAD" : "Units",
+          year,
         })}
     />
   );
@@ -263,11 +266,11 @@ function RUS(
         xFormat={(x) =>
           `${
             calendarView === "Daily"
-              ? "Day"
-              : calendarView === "Monthly"
-              ? "Month"
-              : "Year"
-          } - ${x}`}
+              ? "Day - "
+              : calendarView === "Yearly"
+              ? "Year - "
+              : ""
+          }${x}`}
         yFormat={(y) =>
           `${addCommaSeparator(y)} ${
             subMetric === "revenue" ? "CAD" : "Units"
@@ -288,6 +291,7 @@ function RUS(
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            calendarView,
             kind: "radial",
             unit: subMetric === "revenue" ? "CAD" : "Units",
           })}
@@ -347,6 +351,7 @@ function RUS(
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          calendarChartYAxis,
           kind: "calendar",
           unit: subMetric === "revenue" ? "CAD" : "Units",
         })}

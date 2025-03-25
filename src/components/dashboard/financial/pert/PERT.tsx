@@ -194,8 +194,11 @@ function PERT({
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          day,
           kind: "pie",
+          month,
           unit: metricCategory === "transactions" ? "" : "CAD",
+          year,
         })}
     />
   );
@@ -287,11 +290,11 @@ function PERT({
         xFormat={(x) =>
           `${
             calendarView === "Daily"
-              ? "Day"
-              : calendarView === "Monthly"
-              ? "Month"
-              : "Year"
-          } - ${x}`}
+              ? "Day - "
+              : calendarView === "Yearly"
+              ? "Year - "
+              : ""
+          }${x}`}
         yFormat={(y) =>
           `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
             addCommaSeparator(y)
@@ -300,6 +303,7 @@ function PERT({
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            calendarView,
             kind: "line",
             unit: metricCategory === "transactions" ? "" : "CAD",
           })}
@@ -371,6 +375,7 @@ function PERT({
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          calendarChartYAxis,
           kind: "calendar",
           unit: metricCategory === "transactions" ? "" : "CAD",
         })}

@@ -4,7 +4,9 @@ import { BarTooltipProps } from "@nivo/bar";
 import { PointTooltipProps } from "@nivo/line";
 import { PieTooltipProps } from "@nivo/pie";
 import { RadialBarDatum, RadialBarTooltipProps } from "@nivo/radial-bar";
-import { addCommaSeparator, toFixedFloat } from "../../utils";
+import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
+import { MONTHS } from "../dashboard/constants";
+import { DashboardCalendarView } from "../dashboard/types";
 import { BarChartData } from "./responsiveBarChart/types";
 import { MyCalendarTooltipProps } from "./responsiveCalendarChart/types";
 import { PieChartData } from "./responsivePieChart/types";
@@ -27,76 +29,158 @@ type ChartKindTooltipValue = {
 };
 
 type CreateChartTooltipElementInput = ChartKindTooltipValue & {
+  calendarView?: DashboardCalendarView; // only for radial chart
+  day?: string; // only for pie chart
+  month?: string; // only for pie chart
+  calendarChartYAxis?: string; // only for calendar chart
   unit: "CAD" | "%" | "Units" | "";
+  year?: string; // only for pie chart
 };
 
 function createChartTooltipElement(
-  { arg, kind, unit }: CreateChartTooltipElementInput,
+  { calendarView, calendarChartYAxis, arg, day, month, year, kind, unit }:
+    CreateChartTooltipElementInput,
 ) {
   switch (kind) {
     case "bar": {
-      const { color, formattedValue, id } = arg;
-      return returnTooltipCard({ color, id, unit, formattedValue });
+      const { color, formattedValue, id, data } = arg;
+      return returnTooltipCard({
+        color,
+        id,
+        xAxis: { kind: "bar", data },
+        unit,
+        formattedValue,
+      });
     }
 
     case "calendar": {
       const { color, data: { day, value } } = arg;
+      console.log({ arg });
+      let [year, month, day_] = day.split("-");
+      month = MONTHS[Number(month) - 1];
       return returnTooltipCard({
         color,
         id: day,
         unit,
         formattedValue: addCommaSeparator(value),
+        xAxis: {
+          kind: "calendar",
+          calendarChartYAxis: splitCamelCase(calendarChartYAxis ?? ""),
+          day: day_,
+          month,
+          year,
+        },
       });
     }
 
     case "line": {
-      const { point: { borderColor, data: { xFormatted, yFormatted } } } = arg;
+      const {
+        point: { serieId, borderColor, data: { xFormatted, yStacked = 0 } },
+      } = arg;
       return returnTooltipCard({
         color: borderColor,
-        id: xFormatted,
+        id: serieId,
         unit,
-        formattedValue: toFixedFloat(parseInt(yFormatted.toString())),
+        formattedValue: addCommaSeparator(yStacked),
+        xAxis: { kind: "line", xFormatted },
       });
     }
 
     case "pie": {
       const { datum: { color, data: { id }, formattedValue } } = arg;
-      return returnTooltipCard({ color, id, unit, formattedValue });
+      return returnTooltipCard({
+        color,
+        id,
+        unit,
+        formattedValue,
+        xAxis: { kind: "pie", day, month, year },
+      });
     }
 
     // radial
     default: {
-      const { bar: { color, data: { x, y } } } = arg;
+      const { bar: { color, data: { x, y }, groupId } } = arg;
       return returnTooltipCard({
         color,
-        id: x,
+        id: groupId,
         unit,
         formattedValue: addCommaSeparator(toFixedFloat(y)),
+        xAxis: { kind: "radial", calendarView, x },
       });
     }
   }
 
   function returnTooltipCard(
-    { color, id, unit, formattedValue }: {
+    { color, id, xAxis, unit, formattedValue }: {
       color: string;
       id: string | number;
+      xAxis?: {
+        kind: "bar";
+        data: BarChartData<Record<string, string | number>>;
+      } | {
+        kind: "pie";
+        day: string | undefined;
+        month: string | undefined;
+        year: string | undefined;
+      } | {
+        kind: "line";
+        xFormatted: string | number;
+      } | {
+        kind: "radial";
+        calendarView?: DashboardCalendarView;
+        x: string | number;
+      } | {
+        kind: "calendar";
+        calendarChartYAxis?: string;
+        day: string;
+        month: string;
+        year: string;
+      };
       unit: "CAD" | "%" | "Units" | "";
       formattedValue: string | number;
     },
   ) {
+    const xAxisIndex = xAxis?.kind === "bar"
+      ? xAxis?.data?.Days
+        ? `Day - ${xAxis?.data?.Days}`
+        : xAxis?.data?.Months
+        ? xAxis?.data?.Months
+        : `Year - ${xAxis?.data?.Years}`
+      : xAxis?.kind === "pie"
+      ? `${MONTHS[Number(xAxis?.month) - 1]} ${xAxis?.day}, ${xAxis?.year}`
+      : xAxis?.kind === "line"
+      ? xAxis?.xFormatted
+      : xAxis?.kind === "radial"
+      ? calendarView === "Daily"
+        ? `Day - ${xAxis?.x}`
+        : calendarView === "Monthly"
+        ? xAxis?.x
+        : `Year - ${xAxis?.x}`
+      : xAxis?.kind === "calendar"
+      ? `${xAxis.month} ${xAxis.day}, ${xAxis.year}`
+      : "";
+
     return (
       <Card bg="hsl(0, 0%, 25%)" maw={300} miw="fit-content">
-        <Group py="xs" position="center">
+        <Group position="center" pb="xs">
+          <div
+            style={{
+              backgroundColor: color,
+              borderRadius: 3,
+              width: 15,
+              height: 15,
+            }}
+          />
+          <Text color={color} size={15}>
+            {xAxis?.kind === "calendar" ? xAxis.calendarChartYAxis : id}
+          </Text>
+        </Group>
+
+        <Group position="center">
           <Group>
-            <div
-              style={{
-                backgroundColor: color,
-                borderRadius: 3,
-                width: 15,
-                height: 15,
-              }}
-            />
-            <Text color={color} size={15}>{id}:</Text>
+            <Text color={color} size={15}>
+              {xAxisIndex}:
+            </Text>
           </Group>
           <Group>
             <Text color={color} size={15}>{formattedValue} {unit}</Text>
