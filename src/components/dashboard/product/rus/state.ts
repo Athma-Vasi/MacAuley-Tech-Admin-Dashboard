@@ -1,7 +1,7 @@
 import { RUSState } from "./types";
 
 const initialRUSState: RUSState = {
-  barLineRadialChartKind: "radial",
+  barLineRadialChartKind: "bar",
   barLineRadialChartYAxis: "overview",
   calendarChartYAxis: "total",
 };

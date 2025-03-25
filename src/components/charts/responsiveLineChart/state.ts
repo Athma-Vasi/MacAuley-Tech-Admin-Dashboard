@@ -83,7 +83,7 @@ const initialResponsiveLineChartState: ResponsiveLineChartState = {
   legendItemOpacity: 1,
   legendItemTextColor: "gray",
   legendItemWidth: 60,
-  legendItemsSpacing: 2,
+  legendItemsSpacing: 10,
   legendSymbolBorderColor: "rgba(0, 0, 0, .5)",
   legendSymbolBorderWidth: 0,
   legendSymbolShape: "circle",

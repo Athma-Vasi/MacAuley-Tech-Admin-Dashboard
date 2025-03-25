@@ -71,7 +71,7 @@ function createChartTooltipElement(
         color,
         id: x,
         unit,
-        formattedValue: toFixedFloat(y),
+        formattedValue: addCommaSeparator(toFixedFloat(y)),
       });
     }
   }
