@@ -107,12 +107,12 @@ type ExpandLineChartData = CustomizeChartsData & {
 };
 
 type ExpandPieChartData = CustomizeChartsData & {
-  kind: "pie";
+  chartKind: "pie";
   chartData: PieChartData[];
 };
 
 type ExpandRadialBarChartData = CustomizeChartsData & {
-  kind: "radial";
+  chartKind: "radial";
   chartData: RadialBarChartData[];
 };
 

@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
@@ -136,6 +135,8 @@ function RUS(
       subMetric,
     });
 
+  const unit = subMetric === "revenue" ? "CAD" : "Units";
+
   const expandPieChartButton = (
     <AccessibleButton
       attributes={{
@@ -147,16 +148,21 @@ function RUS(
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandPieChartData,
             payload: {
-              chartKind: "pie",
+              calendarView,
               chartData: pieCharts,
+              chartKind: "pie",
               chartTitle: pieChartHeading,
               chartUnitKind: "number",
+              day,
+              month,
+              unit,
+              year,
             },
           });
 
-          navigate(expandPieChartNavigateLink, { state: { pieCharts } });
+          navigate(expandPieChartNavigateLink);
         },
       }}
     />
@@ -173,7 +179,7 @@ function RUS(
           day,
           kind: "pie",
           month,
-          unit: subMetric === "revenue" ? "CAD" : "Units",
+          unit,
           year,
         })}
     />
@@ -192,7 +198,16 @@ function RUS(
     />
   );
 
-  const expandBarLineChartButton = (
+  const barChartIndexBy = calendarView === "Daily"
+    ? "Days"
+    : calendarView === "Monthly"
+    ? "Months"
+    : "Years";
+  const barChartKeys = PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA.map((obj) =>
+    obj.label
+  );
+
+  const expandBarLineRadialChartButton = (
     <AccessibleButton
       attributes={{
         enabledScreenreaderText: "Expand and customize chart",
@@ -202,17 +217,58 @@ function RUS(
             | React.MouseEvent<HTMLButtonElement>
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: barLineRadialChartKind,
-              chartData: barLineRadialChartKind === "bar"
-                ? barCharts[barLineRadialChartYAxis]
-                : lineCharts[barLineRadialChartYAxis],
-              chartTitle: barLineRadialChartHeading,
-              chartUnitKind: "number",
-            } as CustomizeChartsPageData,
-          });
+          if (barLineRadialChartKind === "bar") {
+            globalDispatch({
+              action: globalAction.setExpandBarChartData,
+              payload: {
+                calendarView,
+                chartData: barCharts[barLineRadialChartYAxis],
+                chartKind: "bar",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                day,
+                indexBy: barChartIndexBy,
+                keys: barChartKeys,
+                unit,
+                year,
+                month,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "line") {
+            globalDispatch({
+              action: globalAction.setExpandLineChartData,
+              payload: {
+                calendarView,
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartKind: "line",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                day,
+                month,
+                unit,
+                year,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "radial") {
+            globalDispatch({
+              action: globalAction.setExpandRadialBarChartData,
+              payload: {
+                calendarView,
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartKind: "radial",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                day,
+                month,
+                unit,
+                year,
+              },
+            });
+          }
 
           navigate(
             barLineRadialChartKind === "bar"
@@ -243,18 +299,14 @@ function RUS(
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
-        indexBy={calendarView === "Daily"
-          ? "Days"
-          : calendarView === "Monthly"
-          ? "Months"
-          : "Years"}
-        keys={PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
+        indexBy={barChartIndexBy}
+        keys={barChartKeys}
         unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             kind: "bar",
-            unit: subMetric === "revenue" ? "CAD" : "Units",
+            unit,
           })}
       />
     )
@@ -271,16 +323,13 @@ function RUS(
               ? "Year - "
               : ""
           }${x}`}
-        yFormat={(y) =>
-          `${addCommaSeparator(y)} ${
-            subMetric === "revenue" ? "CAD" : "Units"
-          }`}
+        yFormat={(y) => `${addCommaSeparator(y)} ${unit}`}
         unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             kind: "line",
-            unit: subMetric === "revenue" ? "CAD" : "Units",
+            unit,
           })}
       />
     )
@@ -293,7 +342,7 @@ function RUS(
             arg,
             calendarView,
             kind: "radial",
-            unit: subMetric === "revenue" ? "CAD" : "Units",
+            unit,
           })}
       />
     );
@@ -315,13 +364,19 @@ function RUS(
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandCalendarChartData,
             payload: {
-              chartKind: "calendar",
+              calendarChartYAxis,
+              calendarView,
               chartData: calendarChartData,
+              chartKind: "calendar",
               chartTitle: calendarChartHeading,
               chartUnitKind: "number",
-            } as CustomizeChartsPageData,
+              day,
+              month,
+              unit,
+              year,
+            },
           });
 
           navigate(expandCalendarChartNavigateLink);
@@ -396,7 +451,7 @@ function RUS(
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
-      expandBarLineChartButton={expandBarLineChartButton}
+      expandBarLineChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}
       overviewCards={overviewCards}
