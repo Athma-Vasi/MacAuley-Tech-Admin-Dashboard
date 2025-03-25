@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
@@ -140,7 +139,23 @@ function RepairRUS(
     />
   );
 
-  const expandBarLineChartButton = (
+  const barLineRadialChartUnit = barLineRadialChartYAxis === "revenue"
+    ? "CAD"
+    : "Units";
+  const barChartIndexBy = calendarView === "Daily"
+    ? "Days"
+    : calendarView === "Monthly"
+    ? "Months"
+    : "Years";
+  const barChartKeys = REPAIR_METRICS_SUB_CATEGORY_DATA.map((obj) => obj.label);
+  const commonPayload = {
+    calendarView,
+    day,
+    month,
+    year,
+  };
+
+  const expandBarLineRadialChartButton = (
     <AccessibleButton
       attributes={{
         enabledScreenreaderText: "Expand and customize chart",
@@ -150,17 +165,49 @@ function RepairRUS(
             | React.MouseEvent<HTMLButtonElement>
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: barLineRadialChartKind,
-              chartData: barLineRadialChartKind === "bar"
-                ? barCharts[barLineRadialChartYAxis]
-                : lineCharts[barLineRadialChartYAxis],
-              chartTitle: barLineRadialChartHeading,
-              chartUnitKind: "number",
-            } as CustomizeChartsPageData,
-          });
+          if (barLineRadialChartKind === "bar") {
+            globalDispatch({
+              action: globalAction.setExpandBarChartData,
+              payload: {
+                ...commonPayload,
+                chartData: barCharts[barLineRadialChartYAxis],
+                chartKind: "bar",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                indexBy: barChartIndexBy,
+                keys: barChartKeys,
+                unit: barLineRadialChartUnit,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "line") {
+            globalDispatch({
+              action: globalAction.setExpandLineChartData,
+              payload: {
+                ...commonPayload,
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartKind: "line",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit: barLineRadialChartUnit,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "radial") {
+            globalDispatch({
+              action: globalAction.setExpandRadialBarChartData,
+              payload: {
+                ...commonPayload,
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartKind: "radial",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit: barLineRadialChartUnit,
+              },
+            });
+          }
 
           navigate(
             barLineRadialChartKind === "bar"
@@ -191,12 +238,8 @@ function RepairRUS(
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
-        indexBy={calendarView === "Daily"
-          ? "Days"
-          : calendarView === "Monthly"
-          ? "Months"
-          : "Years"}
-        keys={REPAIR_METRICS_SUB_CATEGORY_DATA.map((obj) => obj.label)}
+        indexBy={barChartIndexBy}
+        keys={barChartKeys}
         unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -262,13 +305,16 @@ function RepairRUS(
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandCalendarChartData,
             payload: {
-              chartKind: "calendar",
+              ...commonPayload,
+              calendarChartYAxis,
               chartData: calendarChartData,
+              chartKind: "calendar",
               chartTitle: calendarChartHeading,
               chartUnitKind: "number",
-            } as CustomizeChartsPageData,
+              unit: calendarChartYAxis === "revenue" ? "CAD" : "Units",
+            },
           });
 
           navigate(expandCalendarChartNavigateLink);
@@ -350,7 +396,7 @@ function RepairRUS(
         calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
         calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
-        expandBarLineChartButton={expandBarLineChartButton}
+        expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         overviewCards={overviewCards}
         sectionHeading={splitCamelCase(metricsView)}
