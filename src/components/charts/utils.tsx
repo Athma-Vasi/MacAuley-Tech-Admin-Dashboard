@@ -1,12 +1,12 @@
 import { Card, Group, Text } from "@mantine/core";
 
 import { BarTooltipProps } from "@nivo/bar";
-import { CalendarTooltipProps } from "@nivo/calendar";
 import { PointTooltipProps } from "@nivo/line";
 import { PieTooltipProps } from "@nivo/pie";
 import { RadialBarDatum, RadialBarTooltipProps } from "@nivo/radial-bar";
 import { toFixedFloat } from "../../utils";
 import { BarChartData } from "./responsiveBarChart/types";
+import { MyCalendarTooltipProps } from "./responsiveCalendarChart/types";
 import { PieChartData } from "./responsivePieChart/types";
 
 type ChartKindTooltipValue = {
@@ -20,7 +20,7 @@ type ChartKindTooltipValue = {
   arg: RadialBarTooltipProps<RadialBarDatum>;
 } | {
   kind: "calendar";
-  arg: CalendarTooltipProps;
+  arg: MyCalendarTooltipProps;
 } | {
   kind: "line";
   arg: PointTooltipProps;
@@ -40,19 +40,19 @@ function createChartTooltipElement(
     }
 
     case "calendar": {
-      const { color, day, value } = arg;
+      const { color, data: { day, value } } = arg;
       return returnTooltipCard({
         color,
         id: day,
         unit,
-        formattedValue: toFixedFloat(parseInt(value)),
+        formattedValue: toFixedFloat(value),
       });
     }
 
     case "line": {
-      const { point: { color, data: { xFormatted, yFormatted } } } = arg;
+      const { point: { borderColor, data: { xFormatted, yFormatted } } } = arg;
       return returnTooltipCard({
-        color,
+        color: borderColor,
         id: xFormatted,
         unit,
         formattedValue: toFixedFloat(parseInt(yFormatted.toString())),

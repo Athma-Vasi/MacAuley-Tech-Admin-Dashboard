@@ -18,6 +18,17 @@ type CalendarChartData = {
   value: number;
 };
 
+type MyCalendarTooltipProps = {
+  color: string;
+  data: { value: number; day: string };
+  date: string;
+  day: string;
+  size: number;
+  value: number;
+  x: number;
+  y: number;
+};
+
 type ResponsiveCalendarChartProps = {
   calendarChartData: CalendarChartData[];
   dashboardChartTitle?: string;
@@ -26,7 +37,7 @@ type ResponsiveCalendarChartProps = {
   /** YYYY-MM-DD */
   to: string;
   hideControls?: boolean;
-  tooltip: React.FC<CalendarTooltipProps> | undefined;
+  tooltip: React.FC<CalendarTooltipProps | MyCalendarTooltipProps> | undefined;
 };
 
 type ResponsiveCalendarChartState = {
@@ -147,6 +158,7 @@ type ResponsiveCalendarChartDispatch =
 
 export type {
   CalendarChartData,
+  MyCalendarTooltipProps,
   ResponsiveCalendarChartAction,
   ResponsiveCalendarChartDispatch,
   ResponsiveCalendarChartProps,
