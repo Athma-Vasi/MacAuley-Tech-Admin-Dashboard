@@ -451,7 +451,7 @@ function RUS(
       calendarChartYAxisSelectInput={calendarChartYAxisVariableSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
-      expandBarLineChartButton={expandBarLineRadialChartButton}
+      expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}
       overviewCards={overviewCards}

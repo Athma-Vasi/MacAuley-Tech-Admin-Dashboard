@@ -21,7 +21,7 @@ type DashboardBarLineLayoutProps = {
   calendarChartYAxisSelectInput?: React.JSX.Element | null;
   calendarView: DashboardCalendarView;
   cardsWithStatisticsElements: React.JSX.Element;
-  expandBarLineChartButton: React.JSX.Element;
+  expandBarLineRadialChartButton: React.JSX.Element;
   expandCalendarChartButton?: React.JSX.Element | null;
   expandPieChartButton?: React.JSX.Element;
   overviewCards?: React.JSX.Element;
@@ -44,7 +44,7 @@ function DashboardBarLineLayout(
     calendarChartYAxisSelectInput,
     calendarView,
     cardsWithStatisticsElements,
-    expandBarLineChartButton,
+    expandBarLineRadialChartButton,
     expandCalendarChartButton,
     expandPieChartButton,
     overviewCards,
@@ -79,7 +79,7 @@ function DashboardBarLineLayout(
         <Group position="apart" w="100%">
           {barLineRadialChartYAxisSelectInput}
           {barLineRadialChartKindSegmentedControl}
-          {expandBarLineChartButton}
+          {expandBarLineRadialChartButton}
         </Group>
 
         <Group w="100%" align="baseline" py="md">
