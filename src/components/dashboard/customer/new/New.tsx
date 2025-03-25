@@ -2,7 +2,6 @@ import { Stack } from "@mantine/core";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
@@ -141,6 +140,13 @@ function New(
       calendarChartYAxis,
     });
 
+  const commonPayload = {
+    calendarView,
+    day,
+    month,
+    year,
+  };
+
   const expandPieChartButton = (
     <AccessibleButton
       attributes={{
@@ -152,12 +158,14 @@ function New(
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandPieChartData,
             payload: {
+              ...commonPayload,
               chartKind: "pie",
               chartData: pieCharts[pieChartYAxis],
               chartTitle: pieChartHeading,
               chartUnitKind: "number",
+              unit: "",
             },
           });
 
@@ -209,7 +217,16 @@ function New(
     />
   );
 
-  const expandBarLineChartButton = (
+  const barChartIndexBy = calendarView === "Daily"
+    ? "Days"
+    : calendarView === "Monthly"
+    ? "Months"
+    : "Years";
+  const barChartKeys = CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA.map((obj) =>
+    obj.label
+  );
+
+  const expandBarLineRadialChartButton = (
     <AccessibleButton
       attributes={{
         enabledScreenreaderText: "Expand and customize chart",
@@ -219,17 +236,49 @@ function New(
             | React.MouseEvent<HTMLButtonElement>
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: barLineRadialChartKind,
-              chartData: barLineRadialChartKind === "bar"
-                ? barCharts[barLineRadialChartYAxis]
-                : lineCharts[barLineRadialChartYAxis],
-              chartTitle: barLineRadialChartHeading,
-              chartUnitKind: "number",
-            } as CustomizeChartsPageData,
-          });
+          if (barLineRadialChartKind === "bar") {
+            globalDispatch({
+              action: globalAction.setExpandBarChartData,
+              payload: {
+                ...commonPayload,
+                chartKind: "bar",
+                chartData: barCharts[barLineRadialChartYAxis],
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                indexBy: barChartIndexBy,
+                keys: barChartKeys,
+                unit: "",
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "line") {
+            globalDispatch({
+              action: globalAction.setExpandLineChartData,
+              payload: {
+                ...commonPayload,
+                chartKind: "line",
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit: "",
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "radial") {
+            globalDispatch({
+              action: globalAction.setExpandRadialBarChartData,
+              payload: {
+                ...commonPayload,
+                chartKind: "radial",
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit: "",
+              },
+            });
+          }
 
           navigate(
             barLineRadialChartKind === "bar"
@@ -260,14 +309,8 @@ function New(
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
-        indexBy={calendarView === "Daily"
-          ? "Days"
-          : calendarView === "Monthly"
-          ? "Months"
-          : "Years"}
-        keys={CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA.map((obj) =>
-          obj.label
-        )}
+        indexBy={barChartIndexBy}
+        keys={barChartKeys}
         unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({ arg, kind: "bar", unit: "" })}
@@ -323,13 +366,16 @@ function New(
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandCalendarChartData,
             payload: {
-              chartKind: "calendar",
+              ...commonPayload,
+              calendarChartYAxis,
               chartData: calendarChartData,
+              chartKind: "calendar",
               chartTitle: calendarChartHeading,
               chartUnitKind: "number",
-            } as CustomizeChartsPageData,
+              unit: "",
+            },
           });
 
           navigate(expandCalendarChartNavigateLink);
@@ -416,7 +462,7 @@ function New(
         calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
         calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
-        expandBarLineChartButton={expandBarLineChartButton}
+        expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
         overviewCards={overviewCards}
