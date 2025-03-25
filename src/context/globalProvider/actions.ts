@@ -1,31 +1,39 @@
 type GlobalAction = {
   setColorScheme: "setColorScheme";
-  setCustomizeChartsPageData: "setCustomizeChartsPageData";
-  setCustomizeChartsPageDataSelectedYYYYMMDD:
-    "setCustomizeChartsPageDataSelectedYYYYMMDD";
   setDefaultGradient: "setDefaultGradient";
+  setExpandBarChartData: "setExpandBarChartData";
+  setExpandCalendarChartData: "setExpandCalendarChartData";
+  setExpandLineChartData: "setExpandLineChartData";
+  setExpandPieChartData: "setExpandPieChartData";
+  setExpandRadialBarChartData: "setExpandRadialBarChartData";
+  setExpandSunburstChartData: "setExpandSunburstChartData";
   setFontFamily: "setFontFamily";
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
   setPrefersReducedMotion: "setPrefersReducedMotion";
   setPrimaryColor: "setPrimaryColor";
-  setPrimaryShadeLight: "setPrimaryShadeLight";
   setPrimaryShadeDark: "setPrimaryShadeDark";
+  setPrimaryShadeLight: "setPrimaryShadeLight";
   setRespectReducedMotion: "setRespectReducedMotion";
+  setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
 };
 
 const globalAction: GlobalAction = {
   setColorScheme: "setColorScheme",
-  setCustomizeChartsPageData: "setCustomizeChartsPageData",
-  setCustomizeChartsPageDataSelectedYYYYMMDD:
-    "setCustomizeChartsPageDataSelectedYYYYMMDD",
   setDefaultGradient: "setDefaultGradient",
+  setExpandBarChartData: "setExpandBarChartData",
   setFontFamily: "setFontFamily",
-  setPageInError: "setPageInError",
+  setIsError: "setIsError",
   setPrefersReducedMotion: "setPrefersReducedMotion",
   setPrimaryColor: "setPrimaryColor",
-  setPrimaryShadeLight: "setPrimaryShadeLight",
   setPrimaryShadeDark: "setPrimaryShadeDark",
+  setPrimaryShadeLight: "setPrimaryShadeLight",
   setRespectReducedMotion: "setRespectReducedMotion",
+  setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
+  setExpandCalendarChartData: "setExpandCalendarChartData",
+  setExpandLineChartData: "setExpandLineChartData",
+  setExpandPieChartData: "setExpandPieChartData",
+  setExpandRadialBarChartData: "setExpandRadialBarChartData",
+  setExpandSunburstChartData: "setExpandSunburstChartData",
 };
 
 export { globalAction };

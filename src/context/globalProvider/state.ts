@@ -32,15 +32,16 @@ const initialThemeObject: ThemeObject = {
 };
 
 const initialGlobalState: GlobalState = {
-  themeObject: initialThemeObject,
+  expandBarChartData: null,
+  expandCalendarChartData: null,
+  expandLineChartData: null,
+  expandPieChartData: null,
+  expandRadialBarChartData: null,
+  expandSunburstChartData: null,
+  isError: false,
   isPrefersReducedMotion: false,
-  customizeChartsPageData: {
-    chartData: [],
-    chartKind: "bar",
-    chartTitle: "",
-    chartUnitKind: "currency",
-    selectedYYYYMMDD: new Date().toISOString().slice(0, 10),
-  },
+  selectedYYYYMMDD: new Date().toISOString().split("T")[0],
+  themeObject: initialThemeObject,
 };
 
 export { initialGlobalState };

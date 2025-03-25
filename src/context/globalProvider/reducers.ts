@@ -2,7 +2,12 @@ import { MantineColor } from "@mantine/core";
 import { type GlobalAction, globalAction } from "./actions";
 import type {
   ColorScheme,
-  CustomizeChartsPageData,
+  ExpandBarChartData,
+  ExpandCalendarChartData,
+  ExpandLineChartData,
+  ExpandPieChartData,
+  ExpandRadialBarChartData,
+  ExpandSunburstChartData,
   GlobalDispatch,
   GlobalState,
   Shade,
@@ -22,12 +27,8 @@ const globalReducersMap = new Map<
 >([
   [globalAction.setColorScheme, globalReducer_setColorScheme],
   [
-    globalAction.setCustomizeChartsPageData,
-    globalReducer_setCustomizeChartsPageData,
-  ],
-  [
-    globalAction.setCustomizeChartsPageDataSelectedYYYYMMDD,
-    globalReducer_setCustomizeChartsPageDataSelectedYYYYMMDD,
+    globalAction.setSelectedYYYYMMDD,
+    globalReducer_setSelectedYYYYMMDD,
   ],
   [globalAction.setDefaultGradient, globalReducer_setDefaultGradient],
   [globalAction.setFontFamily, globalReducer_setFontFamily],
@@ -41,6 +42,22 @@ const globalReducersMap = new Map<
   [
     globalAction.setRespectReducedMotion,
     globalReducer_setRespectReducedMotion,
+  ],
+  [globalAction.setIsError, globalReducer_setIsError],
+  [globalAction.setExpandBarChartData, globalReducer_setExpandBarChartData],
+  [
+    globalAction.setExpandCalendarChartData,
+    globalReducer_setExpandCalendarChartData,
+  ],
+  [globalAction.setExpandLineChartData, globalReducer_setExpandLineChartData],
+  [globalAction.setExpandPieChartData, globalReducer_setExpandPieChartData],
+  [
+    globalAction.setExpandRadialBarChartData,
+    globalReducer_setExpandRadialBarChartData,
+  ],
+  [
+    globalAction.setExpandSunburstChartData,
+    globalReducer_setExpandSunburstChartData,
   ],
 ]);
 
@@ -97,42 +114,13 @@ function globalReducer_setColorScheme(
   };
 }
 
-function globalReducer_setCustomizeChartsPageData(
+function globalReducer_setSelectedYYYYMMDD(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const customizeChartsPageData = dispatch.payload as CustomizeChartsPageData;
-  const existingYYYYMMDD = state.customizeChartsPageData?.selectedYYYYMMDD ??
-    new Date().toISOString().slice(0, 10);
-
-  let [existingYYYY, existingMM, existingDD] = existingYYYYMMDD.split("-");
-  existingMM = existingMM.padStart(2, "0");
-  existingDD = existingDD.padStart(2, "0");
-
   return {
     ...state,
-    customizeChartsPageData: {
-      ...customizeChartsPageData,
-      selectedYYYYMMDD: `${existingYYYY}-${existingMM}-${existingDD}`,
-    },
-  };
-}
-
-function globalReducer_setCustomizeChartsPageDataSelectedYYYYMMDD(
-  state: GlobalState,
-  dispatch: GlobalDispatch,
-): GlobalState {
-  const { customizeChartsPageData } = state;
-  if (!customizeChartsPageData) return state;
-
-  const clonedCustomizeChartsPageData = structuredClone(
-    customizeChartsPageData,
-  );
-  clonedCustomizeChartsPageData.selectedYYYYMMDD = dispatch.payload as string;
-
-  return {
-    ...state,
-    customizeChartsPageData: clonedCustomizeChartsPageData,
+    selectedYYYYMMDD: dispatch.payload as string,
   };
 }
 
@@ -231,6 +219,76 @@ function globalReducer_setRespectReducedMotion(
       ...state.themeObject,
       respectReducedMotion: dispatch.payload as boolean,
     },
+  };
+}
+
+function globalReducer_setIsError(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    isError: dispatch.payload as boolean,
+  };
+}
+
+function globalReducer_setExpandBarChartData(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    expandBarChartData: dispatch.payload as ExpandBarChartData,
+  };
+}
+
+function globalReducer_setExpandCalendarChartData(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    expandCalendarChartData: dispatch.payload as ExpandCalendarChartData,
+  };
+}
+
+function globalReducer_setExpandLineChartData(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    expandLineChartData: dispatch.payload as ExpandLineChartData,
+  };
+}
+
+function globalReducer_setExpandPieChartData(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    expandPieChartData: dispatch.payload as ExpandPieChartData,
+  };
+}
+
+function globalReducer_setExpandRadialBarChartData(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    expandRadialBarChartData: dispatch.payload as ExpandRadialBarChartData,
+  };
+}
+
+function globalReducer_setExpandSunburstChartData(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    expandSunburstChartData: dispatch.payload as ExpandSunburstChartData,
   };
 }
 

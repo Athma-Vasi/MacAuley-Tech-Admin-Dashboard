@@ -2,54 +2,54 @@ import { MONTHS } from "../constants";
 import { BusinessMetric, BusinessMetricStoreLocation } from "../types";
 
 function returnSelectedDateAllProductsMetrics(
-    businessMetrics: BusinessMetric[],
-    storeLocationView: BusinessMetricStoreLocation,
-    selectedYYYYMMDD: string,
+  businessMetrics: BusinessMetric[],
+  storeLocationView: BusinessMetricStoreLocation,
+  selectedYYYYMMDD: string,
 ) {
-    const defaultValue = {
-        dailyRevenue: 0,
-        dailyUnitsSold: 0,
-    };
+  const defaultValue = {
+    dailyRevenue: 0,
+    dailyUnitsSold: 0,
+  };
 
-    const [year, month, day] = selectedYYYYMMDD.split("-") as [
-        string,
-        string,
-        string,
-    ];
-    const productMetrics = businessMetrics.find(
-        (bmetric) => bmetric.storeLocation === storeLocationView,
-    )?.productMetrics;
+  const [year, month, day] = selectedYYYYMMDD.split("-") as [
+    string,
+    string,
+    string,
+  ];
+  const productMetrics = businessMetrics.find(
+    (bmetric) => bmetric.storeLocation === storeLocationView,
+  )?.productMetrics;
 
-    if (!productMetrics) {
-        return defaultValue;
-    }
+  if (!productMetrics) {
+    return defaultValue;
+  }
 
-    const allProductsYearlyMetrics = productMetrics.find(
-        (productMetric) => productMetric.name === "All Products",
-    );
+  const allProductsYearlyMetrics = productMetrics.find(
+    (productMetric) => productMetric.name === "All Products",
+  );
 
-    console.log({ allProductsYearlyMetrics });
+  console.log({ allProductsYearlyMetrics });
 
-    if (!allProductsYearlyMetrics) {
-        return defaultValue;
-    }
+  if (!allProductsYearlyMetrics) {
+    return defaultValue;
+  }
 
-    const allProductsDailyMetrics = allProductsYearlyMetrics.yearlyMetrics.find(
-        (yearlyMetric) => yearlyMetric.year === year,
-    )?.monthlyMetrics.find((monthlyMetric) =>
-        monthlyMetric.month === (MONTHS[Number(month) - 1].toString())
-    )
-        ?.dailyMetrics.find((dailyMetric) => dailyMetric.day === day);
+  const allProductsDailyMetrics = allProductsYearlyMetrics.yearlyMetrics.find(
+    (yearlyMetric) => yearlyMetric.year === year,
+  )?.monthlyMetrics.find((monthlyMetric) =>
+    monthlyMetric.month === (MONTHS[Number(month) - 1].toString())
+  )
+    ?.dailyMetrics.find((dailyMetric) => dailyMetric.day === day);
 
-    if (!allProductsDailyMetrics) {
-        return defaultValue;
-    }
+  if (!allProductsDailyMetrics) {
+    return defaultValue;
+  }
 
-    return {
-        ...defaultValue,
-        dailyRevenue: allProductsDailyMetrics.revenue.total,
-        dailyUnitsSold: allProductsDailyMetrics.unitsSold.total,
-    };
+  return {
+    ...defaultValue,
+    dailyRevenue: allProductsDailyMetrics.revenue.total,
+    dailyUnitsSold: allProductsDailyMetrics.unitsSold.total,
+  };
 }
 
 export { returnSelectedDateAllProductsMetrics };

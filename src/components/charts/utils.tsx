@@ -114,7 +114,7 @@ function createChartTooltipElement(
     { color, id, xAxis, unit, formattedValue }: {
       color: string;
       id: string | number;
-      xAxis?: {
+      xAxis: {
         kind: "bar";
         data: BarChartData<Record<string, string | number>>;
       } | {
@@ -140,23 +140,23 @@ function createChartTooltipElement(
       formattedValue: string | number;
     },
   ) {
-    const xAxisIndex = xAxis?.kind === "bar"
-      ? xAxis?.data?.Days
-        ? `Day - ${xAxis?.data?.Days}`
-        : xAxis?.data?.Months
-        ? xAxis?.data?.Months
-        : `Year - ${xAxis?.data?.Years}`
-      : xAxis?.kind === "pie"
-      ? `${MONTHS[Number(xAxis?.month) - 1]} ${xAxis?.day}, ${xAxis?.year}`
-      : xAxis?.kind === "line"
-      ? xAxis?.xFormatted
-      : xAxis?.kind === "radial"
+    const xAxisIndex = xAxis.kind === "bar"
+      ? xAxis.data?.Days
+        ? `Day - ${xAxis.data?.Days}`
+        : xAxis.data?.Months
+        ? xAxis.data?.Months
+        : `Year - ${xAxis.data?.Years}`
+      : xAxis.kind === "pie"
+      ? `${MONTHS[Number(xAxis.month) - 1]} ${xAxis.day}, ${xAxis.year}`
+      : xAxis.kind === "line"
+      ? xAxis.xFormatted
+      : xAxis.kind === "radial"
       ? calendarView === "Daily"
-        ? `Day - ${xAxis?.x}`
+        ? `Day - ${xAxis.x}`
         : calendarView === "Monthly"
-        ? xAxis?.x
-        : `Year - ${xAxis?.x}`
-      : xAxis?.kind === "calendar"
+        ? xAxis.x
+        : `Year - ${xAxis.x}`
+      : xAxis.kind === "calendar"
       ? `${xAxis.month} ${xAxis.day}, ${xAxis.year}`
       : "";
 

@@ -14,8 +14,8 @@ import type { PieChartData } from "../../components/charts/responsivePieChart/ty
 import type { RadialBarChartData } from "../../components/charts/responsiveRadialBarChart/types";
 import type { SunburstChartData } from "../../components/charts/responsiveSunburstChart/types";
 import type { NivoChartUnitKind } from "../../components/charts/types";
+import { DashboardCalendarView } from "../../components/dashboard/types";
 import type { GlobalAction } from "./actions";
-import type { SetPageInErrorPayload } from "../../types";
 
 type ColorScheme = "light" | "dark";
 type Shade = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -78,42 +78,59 @@ interface ThemeObject extends MantineThemeOverride {
   };
 }
 
-type CustomizeChartsPageData =
-  & {
-    chartTitle: string;
-    selectedYYYYMMDD?: string;
-    chartUnitKind: NivoChartUnitKind;
-  }
-  & (
-    | {
-      chartKind: "bar";
-      chartData: BarChartData[];
-    }
-    | {
-      chartKind: "calendar";
-      chartData: CalendarChartData[];
-    }
-    | {
-      chartKind: "line";
-      chartData: LineChartData[];
-    }
-    | {
-      chartKind: "pie";
-      chartData: PieChartData[];
-    }
-    | {
-      chartKind: "radialBar";
-      chartData: RadialBarChartData[];
-    }
-    | {
-      chartKind: "sunburst";
-      chartData: SunburstChartData[];
-    }
-  );
+type CustomizeChartsData = {
+  calendarView: DashboardCalendarView;
+  chartTitle: string;
+  day: string;
+  month: string;
+  year: string;
+  chartUnitKind: NivoChartUnitKind;
+  unit: "CAD" | "%" | "Units" | "";
+};
+
+type ExpandBarChartData = CustomizeChartsData & {
+  chartKind: "bar";
+  chartData: BarChartData[];
+  indexBy: string;
+  keys: string[];
+};
+
+type ExpandCalendarChartData = CustomizeChartsData & {
+  calendarChartYAxis: string;
+  chartKind: "calendar";
+  chartData: CalendarChartData[];
+};
+
+type ExpandLineChartData = CustomizeChartsData & {
+  chartKind: "line";
+  chartData: LineChartData[];
+};
+
+type ExpandPieChartData = CustomizeChartsData & {
+  kind: "pie";
+  chartData: PieChartData[];
+};
+
+type ExpandRadialBarChartData = CustomizeChartsData & {
+  kind: "radial";
+  chartData: RadialBarChartData[];
+};
+
+type ExpandSunburstChartData = CustomizeChartsData & {
+  chartKind: "sunburst";
+  chartData: SunburstChartData[];
+};
 
 type GlobalState = {
-  customizeChartsPageData: CustomizeChartsPageData | null;
+  expandBarChartData: ExpandBarChartData | null;
+  expandCalendarChartData: ExpandCalendarChartData | null;
+  expandLineChartData: ExpandLineChartData | null;
+  expandPieChartData: ExpandPieChartData | null;
+  expandRadialBarChartData: ExpandRadialBarChartData | null;
+  expandSunburstChartData: ExpandSunburstChartData | null;
+  isError: boolean;
   isPrefersReducedMotion: boolean;
+  selectedYYYYMMDD: string;
   themeObject: ThemeObject;
 };
 
@@ -147,16 +164,36 @@ type GlobalDispatch =
     payload: string;
   }
   | {
-    action: GlobalAction["setCustomizeChartsPageData"];
-    payload: CustomizeChartsPageData;
-  }
-  | {
-    action: GlobalAction["setCustomizeChartsPageDataSelectedYYYYMMDD"];
+    action: GlobalAction["setSelectedYYYYMMDD"];
     payload: string;
   }
   | {
-    action: GlobalAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: GlobalAction["setIsError"];
+    payload: boolean;
+  }
+  | {
+    action: GlobalAction["setExpandBarChartData"];
+    payload: ExpandBarChartData;
+  }
+  | {
+    action: GlobalAction["setExpandCalendarChartData"];
+    payload: ExpandCalendarChartData;
+  }
+  | {
+    action: GlobalAction["setExpandLineChartData"];
+    payload: ExpandLineChartData;
+  }
+  | {
+    action: GlobalAction["setExpandPieChartData"];
+    payload: ExpandPieChartData;
+  }
+  | {
+    action: GlobalAction["setExpandRadialBarChartData"];
+    payload: ExpandRadialBarChartData;
+  }
+  | {
+    action: GlobalAction["setExpandSunburstChartData"];
+    payload: ExpandSunburstChartData;
   };
 
 type GlobalReducer = (
@@ -170,7 +207,13 @@ type GlobalProviderProps = {
 
 export type {
   ColorScheme,
-  CustomizeChartsPageData,
+  CustomizeChartsData,
+  ExpandBarChartData,
+  ExpandCalendarChartData,
+  ExpandLineChartData,
+  ExpandPieChartData,
+  ExpandRadialBarChartData,
+  ExpandSunburstChartData,
   GlobalDispatch,
   GlobalProviderProps,
   GlobalReducer,
