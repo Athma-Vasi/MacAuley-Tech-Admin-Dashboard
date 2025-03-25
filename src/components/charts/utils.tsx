@@ -4,7 +4,7 @@ import { BarTooltipProps } from "@nivo/bar";
 import { PointTooltipProps } from "@nivo/line";
 import { PieTooltipProps } from "@nivo/pie";
 import { RadialBarDatum, RadialBarTooltipProps } from "@nivo/radial-bar";
-import { toFixedFloat } from "../../utils";
+import { addCommaSeparator, toFixedFloat } from "../../utils";
 import { BarChartData } from "./responsiveBarChart/types";
 import { MyCalendarTooltipProps } from "./responsiveCalendarChart/types";
 import { PieChartData } from "./responsivePieChart/types";
@@ -45,7 +45,7 @@ function createChartTooltipElement(
         color,
         id: day,
         unit,
-        formattedValue: toFixedFloat(value),
+        formattedValue: addCommaSeparator(value),
       });
     }
 

@@ -13,7 +13,6 @@ import {
   Year,
   YearlyFinancialMetric,
 } from "../types";
-import { FinancialMetricCategory } from "./types";
 
 type SelectedDateFinancialMetrics = {
   dayFinancialMetrics: {
@@ -3808,12 +3807,12 @@ async function createFinancialMetricsCalendarCharts(
               });
 
               resultAcc.otherMetrics.conversionRate.push({
-                value: dailyMetric.conversionRate,
+                value: toFixedFloat(dailyMetric.conversionRate * 100),
                 day,
               });
 
               resultAcc.otherMetrics.netProfitMargin.push({
-                value: dailyMetric.netProfitMargin,
+                value: toFixedFloat(dailyMetric.netProfitMargin * 100),
                 day,
               });
             });

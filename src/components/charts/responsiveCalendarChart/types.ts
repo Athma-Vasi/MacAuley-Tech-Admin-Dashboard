@@ -37,7 +37,9 @@ type ResponsiveCalendarChartProps = {
   /** YYYY-MM-DD */
   to: string;
   hideControls?: boolean;
-  tooltip: React.FC<CalendarTooltipProps | MyCalendarTooltipProps> | undefined;
+  tooltip:
+    | React.FC<CalendarTooltipProps | MyCalendarTooltipProps | any>
+    | undefined;
 };
 
 type ResponsiveCalendarChartState = {
