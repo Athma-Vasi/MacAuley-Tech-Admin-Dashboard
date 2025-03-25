@@ -136,6 +136,12 @@ function RUS(
     });
 
   const unit = subMetric === "revenue" ? "CAD" : "Units";
+  const commonPayload = {
+    calendarView,
+    day,
+    month,
+    year,
+  };
 
   const expandPieChartButton = (
     <AccessibleButton
@@ -150,15 +156,12 @@ function RUS(
           globalDispatch({
             action: globalAction.setExpandPieChartData,
             payload: {
-              calendarView,
+              ...commonPayload,
               chartData: pieCharts,
               chartKind: "pie",
               chartTitle: pieChartHeading,
               chartUnitKind: "number",
-              day,
-              month,
               unit,
-              year,
             },
           });
 
@@ -221,17 +224,14 @@ function RUS(
             globalDispatch({
               action: globalAction.setExpandBarChartData,
               payload: {
-                calendarView,
+                ...commonPayload,
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartKind: "bar",
                 chartTitle: barLineRadialChartHeading,
                 chartUnitKind: "number",
-                day,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
                 unit,
-                year,
-                month,
               },
             });
           }
@@ -240,15 +240,12 @@ function RUS(
             globalDispatch({
               action: globalAction.setExpandLineChartData,
               payload: {
-                calendarView,
+                ...commonPayload,
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "line",
                 chartTitle: barLineRadialChartHeading,
                 chartUnitKind: "number",
-                day,
-                month,
                 unit,
-                year,
               },
             });
           }
@@ -257,15 +254,12 @@ function RUS(
             globalDispatch({
               action: globalAction.setExpandRadialBarChartData,
               payload: {
-                calendarView,
+                ...commonPayload,
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
                 chartUnitKind: "number",
-                day,
-                month,
                 unit,
-                year,
               },
             });
           }
@@ -366,16 +360,13 @@ function RUS(
           globalDispatch({
             action: globalAction.setExpandCalendarChartData,
             payload: {
+              ...commonPayload,
               calendarChartYAxis,
-              calendarView,
               chartData: calendarChartData,
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
               chartUnitKind: "number",
-              day,
-              month,
               unit,
-              year,
             },
           });
 
