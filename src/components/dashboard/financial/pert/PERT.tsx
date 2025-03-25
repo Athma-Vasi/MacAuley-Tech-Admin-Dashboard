@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
@@ -160,6 +159,14 @@ function PERT({
     />
   );
 
+  const unit = metricCategory === "transactions" ? "" : "CAD";
+  const commonPayload = {
+    calendarView,
+    day,
+    month,
+    year,
+  };
+
   const expandPieChartButton = (
     <AccessibleButton
       attributes={{
@@ -171,12 +178,14 @@ function PERT({
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandPieChartData,
             payload: {
-              chartKind: "pie",
+              ...commonPayload,
               chartData: pieCharts[pieChartYAxis],
+              chartKind: "pie",
               chartTitle: pieChartHeading,
               chartUnitKind: "number",
+              unit,
             },
           });
 
@@ -197,7 +206,7 @@ function PERT({
           day,
           kind: "pie",
           month,
-          unit: metricCategory === "transactions" ? "" : "CAD",
+          unit,
           year,
         })}
     />
@@ -216,7 +225,16 @@ function PERT({
     />
   );
 
-  const expandBarLineChartButton = (
+  const barChartIndexBy = calendarView === "Daily"
+    ? "Days"
+    : calendarView === "Monthly"
+    ? "Months"
+    : "Years";
+  const barChartKeys = FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA.map((obj) =>
+    obj.label
+  );
+
+  const expandBarLineRadialChartButton = (
     <AccessibleButton
       attributes={{
         enabledScreenreaderText: "Expand and customize chart",
@@ -226,17 +244,49 @@ function PERT({
             | React.MouseEvent<HTMLButtonElement>
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: barLineRadialChartKind,
-              chartData: barLineRadialChartKind === "bar"
-                ? barCharts[barLineRadialChartYAxis]
-                : lineCharts[barLineRadialChartYAxis],
-              chartTitle: barLineRadialChartHeading,
-              chartUnitKind: "number",
-            } as CustomizeChartsPageData,
-          });
+          if (barLineRadialChartKind === "bar") {
+            globalDispatch({
+              action: globalAction.setExpandBarChartData,
+              payload: {
+                ...commonPayload,
+                chartData: barCharts[barLineRadialChartYAxis],
+                chartKind: "bar",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                indexBy: barChartIndexBy,
+                keys: barChartKeys,
+                unit,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "line") {
+            globalDispatch({
+              action: globalAction.setExpandLineChartData,
+              payload: {
+                ...commonPayload,
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartKind: "line",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "radial") {
+            globalDispatch({
+              action: globalAction.setExpandRadialBarChartData,
+              payload: {
+                ...commonPayload,
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartKind: "radial",
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit,
+              },
+            });
+          }
 
           navigate(
             barLineRadialChartKind === "bar"
@@ -267,18 +317,14 @@ function PERT({
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
-        indexBy={calendarView === "Daily"
-          ? "Days"
-          : calendarView === "Monthly"
-          ? "Months"
-          : "Years"}
-        keys={FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA.map((obj) => obj.label)}
+        indexBy={barChartIndexBy}
+        keys={barChartKeys}
         unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             kind: "bar",
-            unit: metricCategory === "transactions" ? "" : "CAD",
+            unit,
           })}
       />
     )
@@ -305,7 +351,7 @@ function PERT({
             arg,
             calendarView,
             kind: "line",
-            unit: metricCategory === "transactions" ? "" : "CAD",
+            unit,
           })}
       />
     )
@@ -317,7 +363,7 @@ function PERT({
           createChartTooltipElement({
             arg,
             kind: "radial",
-            unit: metricCategory === "transactions" ? "" : "CAD",
+            unit,
           })}
       />
     );
@@ -339,13 +385,16 @@ function PERT({
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandCalendarChartData,
             payload: {
-              chartKind: "calendar",
+              ...commonPayload,
+              calendarChartYAxis,
               chartData: calendarChartData,
+              chartKind: "calendar",
               chartTitle: calendarChartHeading,
               chartUnitKind: "number",
-            } as CustomizeChartsPageData,
+              unit,
+            },
           });
 
           navigate(expandCalendarChartNavigateLink);
@@ -377,7 +426,7 @@ function PERT({
           arg,
           calendarChartYAxis,
           kind: "calendar",
-          unit: metricCategory === "transactions" ? "" : "CAD",
+          unit,
         })}
     />
   );
@@ -430,7 +479,7 @@ function PERT({
       calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
-      expandBarLineChartButton={expandBarLineChartButton}
+      expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}
       overviewCards={overviewCards}
