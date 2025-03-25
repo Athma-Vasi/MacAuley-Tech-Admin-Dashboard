@@ -10,10 +10,7 @@ import {
 import type { ChangeEvent } from "react";
 
 import { SCREENSHOT_IMAGE_TYPE_DATA } from "../../../constants";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import { captureScreenshot } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
@@ -32,7 +29,7 @@ type ChartOptionsAction = {
   setChartTitleColor: "setChartTitleColor";
   setChartTitlePosition: "setChartTitlePosition";
   setChartTitleSize: "setChartTitleSize";
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
   setScreenshotFilename: "setScreenshotFilename";
   setScreenshotImageQuality: "setScreenshotImageQuality";
   setScreenshotImageType: "setScreenshotImageType";
@@ -64,8 +61,8 @@ type ChartOptionsDispatch =
     payload: TitleOrder;
   }
   | {
-    action: ChartOptionsAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ChartOptionsAction["setIsError"];
+    payload: boolean;
   };
 
 type ChartOptionsProps = {
@@ -100,7 +97,7 @@ function ChartOptions(props: ChartOptionsProps) {
   const chartTitleTextInput = (
     <AccessibleTextInput
       attributes={{
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "chartTitle",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setChartTitle,
@@ -166,7 +163,7 @@ function ChartOptions(props: ChartOptionsProps) {
   const screenshotFilenameTextInput = (
     <AccessibleTextInput
       attributes={{
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "screenshotFilename",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setScreenshotFilename,

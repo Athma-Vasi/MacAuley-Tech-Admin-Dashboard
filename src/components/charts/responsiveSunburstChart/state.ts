@@ -41,7 +41,7 @@ const initialResponsiveSunburstChartState: ResponsiveSunburstChartState = {
   screenshotImageQuality: 1,
   screenshotImageType: "image/png",
 
-  pagesInError: new Set(),
+  isError: false,
 };
 
 export { initialResponsiveSunburstChartState };

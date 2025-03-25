@@ -109,7 +109,7 @@ type ResponsiveLineChartAction = {
   resetChartToDefault: "resetChartToDefault";
 
   // error
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 const responsiveLineChartAction: ResponsiveLineChartAction = {
@@ -223,7 +223,7 @@ const responsiveLineChartAction: ResponsiveLineChartAction = {
   resetChartToDefault: "resetChartToDefault",
 
   // error
-  setPageInError: "setPageInError",
+  setIsError: "setIsError",
 };
 
 export { responsiveLineChartAction };

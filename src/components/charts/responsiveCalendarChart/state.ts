@@ -44,7 +44,7 @@ const initialResponsiveCalendarChartState: ResponsiveCalendarChartState = {
   screenshotImageType: "image/png",
 
   // error
-  pagesInError: new Set(),
+  isError: false,
 };
 
 export { initialResponsiveCalendarChartState };

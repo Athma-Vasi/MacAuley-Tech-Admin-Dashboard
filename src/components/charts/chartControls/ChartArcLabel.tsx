@@ -1,6 +1,5 @@
 import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
 
-import type { SetPageInErrorPayload } from "../../../types";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
@@ -15,7 +14,7 @@ type ChartArcLabelAction = {
   setArcLabelsSkipAngle: "setArcLabelsSkipAngle";
   setArcLabelsTextColor: "setArcLabelsTextColor";
   setEnableArcLabels: "setEnableArcLabels";
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 type ChartArcLabelDispatch =
@@ -39,8 +38,8 @@ type ChartArcLabelDispatch =
     payload: boolean;
   }
   | {
-    action: ChartArcLabelAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ChartArcLabelAction["setIsError"];
+    payload: boolean;
   };
 
 type ChartArcLabelProps = {
@@ -70,7 +69,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableArcLabels,
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "enableArcLabels",
         offLabel: "Off",
         onLabel: "On",

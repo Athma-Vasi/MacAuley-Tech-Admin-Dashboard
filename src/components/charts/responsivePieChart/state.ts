@@ -79,7 +79,7 @@ const initialResponsivePieChartState: ResponsivePieChartState = {
   screenshotImageType: "image/png",
 
   // error
-  pagesInError: new Set(),
+  isError: false,
 };
 
 export { initialResponsivePieChartState };

@@ -1,10 +1,7 @@
 import type { TitleOrder } from "@mantine/core";
 
 import { BarTooltipProps } from "@nivo/bar";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoAxisLegendPosition,
   NivoBarGroupMode,
@@ -143,7 +140,7 @@ type ResponsiveBarChartState = {
   screenshotImageType: ScreenshotImageType;
 
   /** error */
-  pagesInError: Set<number>;
+  isError: boolean;
 };
 
 type ResponsiveBarChartDispatch =
@@ -283,8 +280,8 @@ type ResponsiveBarChartDispatch =
     payload: ResponsiveBarChartState;
   }
   | {
-    action: ResponsiveBarChartAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ResponsiveBarChartAction["setIsError"];
+    payload: boolean;
   };
 
 export type {

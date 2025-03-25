@@ -2,10 +2,7 @@ import type { TitleOrder } from "@mantine/core";
 import type { ValueFormat } from "@nivo/core";
 
 import { PointTooltip } from "@nivo/line";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoAxisLegendPosition,
   NivoChartTitlePosition,
@@ -153,7 +150,7 @@ type ResponsiveLineChartState = {
   screenshotImageType: ScreenshotImageType;
 
   // error
-  pagesInError: Set<number>;
+  isError: boolean;
 };
 
 type ResponsiveLineChartDispatch =
@@ -306,8 +303,8 @@ type ResponsiveLineChartDispatch =
     payload: ResponsiveLineChartState;
   }
   | {
-    action: ResponsiveLineChartAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ResponsiveLineChartAction["setIsError"];
+    payload: boolean;
   };
 
 export type {

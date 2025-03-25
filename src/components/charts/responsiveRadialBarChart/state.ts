@@ -95,7 +95,7 @@ const initialResponsiveRadialBarChartState: ResponsiveRadialBarChartState = {
   screenshotImageQuality: 1.0,
   screenshotImageType: "image/png",
 
-  pagesInError: new Set(),
+  isError: false,
 };
 
 export { initialResponsiveRadialBarChartState };

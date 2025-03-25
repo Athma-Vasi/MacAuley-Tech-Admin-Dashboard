@@ -1,10 +1,7 @@
 import type { TitleOrder } from "@mantine/core";
 
 import { PieTooltipProps } from "@nivo/pie";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoArcLabel,
   NivoChartTitlePosition,
@@ -112,7 +109,7 @@ type ResponsivePieChartState = {
   screenshotImageType: ScreenshotImageType;
 
   // error
-  pagesInError: Set<number>;
+  isError: boolean;
 };
 
 type ResponsivePieChartDispatch =
@@ -227,8 +224,8 @@ type ResponsivePieChartDispatch =
     payload: ResponsivePieChartState;
   }
   | {
-    action: ResponsivePieChartAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ResponsivePieChartAction["setIsError"];
+    payload: boolean;
   };
 
 export type {

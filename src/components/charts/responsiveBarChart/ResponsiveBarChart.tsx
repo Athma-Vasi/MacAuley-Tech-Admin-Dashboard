@@ -413,7 +413,7 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: reverse,
-        invalidValueAction: responsiveBarChartAction.setPageInError,
+        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "reverse",
         offLabel: "Off",
         onLabel: "On",
@@ -532,7 +532,7 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableFillPatterns,
-        invalidValueAction: responsiveBarChartAction.setPageInError,
+        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableFillPatterns",
         offLabel: "Off",
         onLabel: "On",
@@ -549,7 +549,7 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableLabels,
-        invalidValueAction: responsiveBarChartAction.setPageInError,
+        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableLabels",
         offLabel: "Off",
         onLabel: "On",
@@ -617,7 +617,7 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableGridX,
-        invalidValueAction: responsiveBarChartAction.setPageInError,
+        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableGridX",
         offLabel: "Off",
         onLabel: "On",
@@ -632,7 +632,7 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableGridY,
-        invalidValueAction: responsiveBarChartAction.setPageInError,
+        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableGridY",
         offLabel: "Off",
         onLabel: "On",
@@ -649,7 +649,7 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableAnimate,
-        invalidValueAction: responsiveBarChartAction.setPageInError,
+        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableAnimate",
         offLabel: "Off",
         onLabel: "On",

@@ -108,7 +108,7 @@ const initialResponsiveLineChartState: ResponsiveLineChartState = {
   screenshotImageType: "image/png",
 
   // error
-  pagesInError: new Set<number>(),
+  isError: false,
 };
 
 export { initialResponsiveLineChartState };

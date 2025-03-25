@@ -28,6 +28,7 @@ import {
   STICKY_STYLE,
 } from "../constants";
 
+import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { responsiveRadialBarChartAction } from "./actions";
 import { responsiveRadialBarChartReducer } from "./reducers";
@@ -36,7 +37,6 @@ import type {
   ResponsiveRadialBarChartProps,
   ResponsiveRadialBarChartState,
 } from "./types";
-import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
 
 function ResponsiveRadialBarChart({
   hideControls = false,
@@ -457,7 +457,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableTracks,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableTracks",
         offLabel: "Off",
         onLabel: "On",
@@ -488,7 +488,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableRadialGrid,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableRadialGrid",
         offLabel: "Off",
         onLabel: "On",
@@ -503,7 +503,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableCircularGrid,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableCircularGrid",
         offLabel: "Off",
         onLabel: "On",
@@ -519,7 +519,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableRadialAxisStart,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableRadialAxisStart",
         offLabel: "Off",
         onLabel: "On",
@@ -596,7 +596,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableRadialAxisEnd,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableRadialAxisEnd",
         offLabel: "Off",
         onLabel: "On",
@@ -672,7 +672,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableCircularAxisInner,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableCircularAxisInner",
         offLabel: "Off",
         onLabel: "On",
@@ -749,7 +749,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableCircularAxisOuter,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableCircularAxisOuter",
         offLabel: "Off",
         onLabel: "On",
@@ -826,7 +826,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableLabels,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableLabels",
         offLabel: "Off",
         onLabel: "On",
@@ -895,7 +895,7 @@ function ResponsiveRadialBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableAnimate,
-        invalidValueAction: responsiveRadialBarChartAction.setPageInError,
+        invalidValueAction: responsiveRadialBarChartAction.setIsError,
         name: "enableAnimate",
         offLabel: "Off",
         onLabel: "On",

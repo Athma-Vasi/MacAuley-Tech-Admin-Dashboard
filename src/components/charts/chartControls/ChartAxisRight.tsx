@@ -1,6 +1,5 @@
 import { Group, Stack, Text, Title } from "@mantine/core";
 import type { ChangeEvent } from "react";
-import type { SetPageInErrorPayload } from "../../../types";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
@@ -18,7 +17,7 @@ type ChartAxisAction = {
   setAxisRightTickRotation: "setAxisRightTickRotation";
   setAxisRightTickSize: "setAxisRightTickSize";
   setEnableAxisRight: "setEnableAxisRight";
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 type ChartAxisDispatch =
@@ -43,8 +42,8 @@ type ChartAxisDispatch =
     payload: NivoAxisLegendPosition;
   }
   | {
-    action: ChartAxisAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ChartAxisAction["setIsError"];
+    payload: boolean;
   };
 
 type ChartAxisRightProps = {
@@ -78,7 +77,7 @@ function ChartAxisRight(props: ChartAxisRightProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableAxisRight,
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "enableAxisRight",
         offLabel: "Off",
         onLabel: "On",
@@ -146,7 +145,7 @@ function ChartAxisRight(props: ChartAxisRightProps) {
   const axisRightLegendTextInput = (
     <AccessibleTextInput
       attributes={{
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "axisRightLegend",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setAxisRightLegend,

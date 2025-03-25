@@ -221,7 +221,7 @@ function ResponsiveCalendarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableDefaultColors,
-        invalidValueAction: responsiveCalendarChartAction.setPageInError,
+        invalidValueAction: responsiveCalendarChartAction.setIsError,
         name: "enableDefaultColors",
         offLabel: "Off",
         onLabel: "On",

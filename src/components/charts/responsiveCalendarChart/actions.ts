@@ -45,7 +45,7 @@ type ResponsiveCalendarChartAction = {
   resetChartToDefault: "resetChartToDefault";
 
   // error
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 const responsiveCalendarChartAction: ResponsiveCalendarChartAction = {
@@ -95,7 +95,7 @@ const responsiveCalendarChartAction: ResponsiveCalendarChartAction = {
   resetChartToDefault: "resetChartToDefault",
 
   // error
-  setPageInError: "setPageInError",
+  setIsError: "setIsError",
 };
 
 export { responsiveCalendarChartAction };

@@ -1,10 +1,7 @@
 import type { TitleOrder } from "@mantine/core";
 
 import { CalendarTooltipProps } from "@nivo/calendar";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoCalendarAlign,
   NivoCalendarDirection,
@@ -86,7 +83,7 @@ type ResponsiveCalendarChartState = {
   screenshotImageType: ScreenshotImageType;
 
   // error
-  pagesInError: Set<number>;
+  isError: boolean;
 };
 
 type ResponsiveCalendarChartDispatch =
@@ -154,8 +151,8 @@ type ResponsiveCalendarChartDispatch =
     payload: ResponsiveCalendarChartState;
   }
   | {
-    action: ResponsiveCalendarChartAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ResponsiveCalendarChartAction["setIsError"];
+    payload: boolean;
   };
 
 export type {

@@ -2,7 +2,6 @@ import { Box, type MantineSize, Switch } from "@mantine/core";
 import type { ChangeEvent, ReactNode, RefObject } from "react";
 
 import { useGlobalState } from "../../hooks/useGlobalState";
-import type { SetPageInErrorPayload } from "../../types";
 import { splitCamelCase } from "../../utils";
 import { createAccessibleSwitchOnOffTextElements } from "./utils";
 
@@ -27,7 +26,7 @@ type AccessibleSwitchInputAttributes<
     }
     | {
       action: InvalidValueAction;
-      payload: SetPageInErrorPayload;
+      payload: boolean;
     }
   >;
   radius?: MantineSize;
@@ -143,10 +142,7 @@ function AccessibleSwitchInput<
           if (!preventErrorStateWhenOff) {
             parentDispatch({
               action: invalidValueAction,
-              payload: {
-                kind: checked ? "delete" : "add",
-                page,
-              },
+              payload: !checked,
             });
           }
 

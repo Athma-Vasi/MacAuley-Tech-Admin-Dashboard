@@ -80,7 +80,7 @@ type ResponsivePieChartAction = {
   resetChartToDefault: "resetChartToDefault";
 
   // error
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 const responsivePieChartAction: ResponsivePieChartAction = {
@@ -165,7 +165,7 @@ const responsivePieChartAction: ResponsivePieChartAction = {
   resetChartToDefault: "resetChartToDefault",
 
   // error
-  setPageInError: "setPageInError",
+  setIsError: "setIsError",
 };
 
 export { responsivePieChartAction };

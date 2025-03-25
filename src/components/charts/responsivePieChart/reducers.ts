@@ -1,8 +1,5 @@
 import type { TitleOrder } from "@mantine/core";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoArcLabel,
   NivoChartTitlePosition,
@@ -295,8 +292,8 @@ const responsivePieChartReducersMap = new Map<
 
   // error
   [
-    responsivePieChartAction.setPageInError,
-    responsivePieChartReducer_setPageInError,
+    responsivePieChartAction.setIsError,
+    responsivePieChartReducer_setIsError,
   ],
 ]);
 
@@ -877,21 +874,13 @@ function responsivePieChartReducer_resetChartToDefault(
   return initialResponsivePieChartState;
 }
 
-function responsivePieChartReducer_setPageInError(
+function responsivePieChartReducer_setIsError(
   state: ResponsivePieChartState,
   dispatch: ResponsivePieChartDispatch,
 ): ResponsivePieChartState {
-  const { kind, page } = dispatch.payload as SetPageInErrorPayload;
-  const pagesInError = new Set(state.pagesInError);
-  if (kind === "add") {
-    pagesInError.add(page);
-  } else {
-    pagesInError.delete(page);
-  }
-
   return {
     ...state,
-    pagesInError,
+    isError: dispatch.payload as boolean,
   };
 }
 

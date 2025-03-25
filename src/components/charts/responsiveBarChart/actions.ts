@@ -101,7 +101,7 @@ type ResponsiveBarChartAction = {
   resetChartToDefault: "resetChartToDefault";
 
   // error
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 const responsiveBarChartAction: ResponsiveBarChartAction = {
@@ -207,7 +207,7 @@ const responsiveBarChartAction: ResponsiveBarChartAction = {
   resetChartToDefault: "resetChartToDefault",
 
   // error
-  setPageInError: "setPageInError",
+  setIsError: "setIsError",
 };
 
 export { responsiveBarChartAction };

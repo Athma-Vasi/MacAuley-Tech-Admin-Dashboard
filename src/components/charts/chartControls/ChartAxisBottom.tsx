@@ -1,6 +1,5 @@
 import { Group, Stack, Text, Title } from "@mantine/core";
 import type { ChangeEvent } from "react";
-import type { SetPageInErrorPayload } from "../../../types";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
@@ -18,7 +17,7 @@ type ChartAxisAction = {
   setAxisBottomTickRotation: "setAxisBottomTickRotation";
   setAxisBottomTickSize: "setAxisBottomTickSize";
   setEnableAxisBottom: "setEnableAxisBottom";
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 type ChartAxisDispatch =
@@ -43,8 +42,8 @@ type ChartAxisDispatch =
     payload: NivoAxisLegendPosition;
   }
   | {
-    action: ChartAxisAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ChartAxisAction["setIsError"];
+    payload: boolean;
   };
 
 type ChartAxisBottomProps = {
@@ -78,7 +77,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableAxisBottom,
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "enableAxisBottom",
         offLabel: "Off",
         onLabel: "On",
@@ -146,7 +145,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const axisBottomLegendTextInput = (
     <AccessibleTextInput
       attributes={{
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "axisBottomLegend",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setAxisBottomLegend,

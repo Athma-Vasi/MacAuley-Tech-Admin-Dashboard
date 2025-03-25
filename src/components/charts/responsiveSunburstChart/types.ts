@@ -3,10 +3,7 @@ import type { TitleOrder } from "@mantine/core";
 import { ComputedDatum } from "@nivo/bar";
 import type { ValueFormat } from "@nivo/core";
 import { JSX } from "react";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoArcLabel,
   NivoChartTitlePosition,
@@ -74,7 +71,7 @@ type ResponsiveSunburstChartState = {
   screenshotImageQuality: number; // 0 - 1 default: 1 step: 0.05
   screenshotImageType: ScreenshotImageType;
 
-  pagesInError: Set<number>;
+  isError: boolean;
 };
 
 type ResponsiveSunburstChartDispatch =
@@ -148,8 +145,8 @@ type ResponsiveSunburstChartDispatch =
     payload: ResponsiveSunburstChartState;
   }
   | {
-    action: ResponsiveSunburstChartAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ResponsiveSunburstChartAction["setIsError"];
+    payload: boolean;
   };
 
 export type {

@@ -1,8 +1,5 @@
 import type { TitleOrder } from "@mantine/core";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoAxisLegendPosition,
   NivoBarGroupMode,
@@ -367,8 +364,8 @@ const responsiveBarChartReducersMap = new Map<
 
   // error
   [
-    responsiveBarChartAction.setPageInError,
-    responsiveBarChartReducer_setPageInError,
+    responsiveBarChartAction.setIsError,
+    responsiveBarChartReducer_setIsError,
   ],
 ]);
 
@@ -1139,21 +1136,13 @@ function responsiveBarChartReducer_resetChartToDefault(
   return initialResponsiveBarChartState;
 }
 
-function responsiveBarChartReducer_setPageInError(
+function responsiveBarChartReducer_setIsError(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
-  const { kind, page } = dispatch.payload as SetPageInErrorPayload;
-  const pagesInError = new Set(state.pagesInError);
-  if (kind === "add") {
-    pagesInError.add(page);
-  } else {
-    pagesInError.delete(page);
-  }
-
   return {
     ...state,
-    pagesInError,
+    isError: dispatch.payload as boolean,
   };
 }
 

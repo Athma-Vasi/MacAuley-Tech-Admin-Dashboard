@@ -1,10 +1,7 @@
 import type { TitleOrder } from "@mantine/core";
 
 import { RadialBarTooltipComponent } from "@nivo/radial-bar";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoChartTitlePosition,
   NivoColorScheme,
@@ -126,7 +123,7 @@ type ResponsiveRadialBarChartState = {
   screenshotImageQuality: number; // 0 - 1 default: 1 step: 0.05
   screenshotImageType: ScreenshotImageType;
 
-  pagesInError: Set<number>;
+  isError: boolean;
 };
 
 type ResponsiveRadialBarChartDispatch =
@@ -245,8 +242,8 @@ type ResponsiveRadialBarChartDispatch =
     payload: ResponsiveRadialBarChartState;
   }
   | {
-    action: ResponsiveRadialBarChartAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ResponsiveRadialBarChartAction["setIsError"];
+    payload: boolean;
   };
 
 export type {

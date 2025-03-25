@@ -97,7 +97,7 @@ type ResponsiveRadialBarChartAction = {
   resetChartToDefault: "resetChartToDefault";
 
   // page error
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 const responsiveRadialBarChartAction: ResponsiveRadialBarChartAction = {
@@ -199,7 +199,7 @@ const responsiveRadialBarChartAction: ResponsiveRadialBarChartAction = {
   resetChartToDefault: "resetChartToDefault",
 
   // page error
-  setPageInError: "setPageInError",
+  setIsError: "setIsError",
 };
 
 export { responsiveRadialBarChartAction };

@@ -1,6 +1,5 @@
 import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
 
-import type { SetPageInErrorPayload } from "../../../types";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
@@ -39,7 +38,7 @@ type ChartLegendAction = {
   setLegendSymbolSpacing: "setLegendSymbolSpacing";
   setLegendTranslateX: "setLegendTranslateX";
   setLegendTranslateY: "setLegendTranslateY";
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 type ChartLegendDispatch =
@@ -89,8 +88,8 @@ type ChartLegendDispatch =
     payload: NivoLegendSymbolShape;
   }
   | {
-    action: ChartLegendAction["setPageInError"];
-    payload: SetPageInErrorPayload;
+    action: ChartLegendAction["setIsError"];
+    payload: boolean;
   };
 
 type ChartLegendProps = {
@@ -146,7 +145,7 @@ function ChartLegend(props: ChartLegendProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableLegend,
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "enableLegend",
         offLabel: "Off",
         onLabel: "On",
@@ -219,7 +218,7 @@ function ChartLegend(props: ChartLegendProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableLegendJustify,
-        invalidValueAction: parentChartAction.setPageInError,
+        invalidValueAction: parentChartAction.setIsError,
         name: "enableLegendJustify",
         offLabel: "Off",
         onLabel: "On",

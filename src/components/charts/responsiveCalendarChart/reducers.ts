@@ -1,8 +1,5 @@
 import type { TitleOrder } from "@mantine/core";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoCalendarAlign,
   NivoCalendarDirection,
@@ -159,8 +156,8 @@ const responsiveCalendarChartReducersMap = new Map<
 
   // error
   [
-    responsiveCalendarChartAction.setPageInError,
-    responsiveCalendarChartReducer_setPageInError,
+    responsiveCalendarChartAction.setIsError,
+    responsiveCalendarChartReducer_setIsError,
   ],
 ]);
 
@@ -431,21 +428,13 @@ function responsiveCalendarChartReducer_resetChartToDefault(
   return dispatch.payload as ResponsiveCalendarChartState;
 }
 
-function responsiveCalendarChartReducer_setPageInError(
+function responsiveCalendarChartReducer_setIsError(
   state: ResponsiveCalendarChartState,
   dispatch: ResponsiveCalendarChartDispatch,
 ): ResponsiveCalendarChartState {
-  const { kind, page } = dispatch.payload as SetPageInErrorPayload;
-  const pagesInError = new Set(state.pagesInError);
-  if (kind === "add") {
-    pagesInError.add(page);
-  } else {
-    pagesInError.delete(page);
-  }
-
   return {
     ...state,
-    pagesInError,
+    isError: dispatch.payload as boolean,
   };
 }
 

@@ -1,8 +1,5 @@
 import type { TitleOrder } from "@mantine/core";
-import type {
-  ScreenshotImageType,
-  SetPageInErrorPayload,
-} from "../../../types";
+import type { ScreenshotImageType } from "../../../types";
 import type {
   NivoChartTitlePosition,
   NivoColorScheme,
@@ -328,8 +325,8 @@ const responsiveRadialBarChartReducersMap = new Map<
     responsiveRadialBarChartReducer_resetChartToDefault,
   ],
   [
-    responsiveRadialBarChartAction.setPageInError,
-    responsiveRadialBarChartReducer_setPageInError,
+    responsiveRadialBarChartAction.setIsError,
+    responsiveRadialBarChartReducer_setIsError,
   ],
 ]);
 
@@ -980,21 +977,13 @@ function responsiveRadialBarChartReducer_resetChartToDefault(
   return initialResponsiveRadialBarChartState;
 }
 
-function responsiveRadialBarChartReducer_setPageInError(
+function responsiveRadialBarChartReducer_setIsError(
   state: ResponsiveRadialBarChartState,
   dispatch: ResponsiveRadialBarChartDispatch,
 ): ResponsiveRadialBarChartState {
-  const { kind, page } = dispatch.payload as SetPageInErrorPayload;
-  const pagesInError = new Set(state.pagesInError);
-  if (kind === "add") {
-    pagesInError.add(page);
-  } else {
-    pagesInError.delete(page);
-  }
-
   return {
     ...state,
-    pagesInError,
+    isError: dispatch.payload as boolean,
   };
 }
 

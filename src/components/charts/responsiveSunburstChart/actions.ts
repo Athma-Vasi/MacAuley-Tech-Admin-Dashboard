@@ -41,7 +41,7 @@ type ResponsiveSunburstChartAction = {
 
   // reset all
   resetChartToDefault: "resetChartToDefault";
-  setPageInError: "setPageInError";
+  setIsError: "setIsError";
 };
 
 const responsiveSunburstChartAction: ResponsiveSunburstChartAction = {
@@ -87,7 +87,7 @@ const responsiveSunburstChartAction: ResponsiveSunburstChartAction = {
 
   // reset all
   resetChartToDefault: "resetChartToDefault",
-  setPageInError: "setPageInError",
+  setIsError: "setIsError",
 };
 
 export { responsiveSunburstChartAction };

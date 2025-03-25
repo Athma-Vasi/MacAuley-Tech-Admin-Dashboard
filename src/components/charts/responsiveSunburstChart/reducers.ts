@@ -1,5 +1,4 @@
 import type { TitleOrder } from "@mantine/core";
-import type { SetPageInErrorPayload } from "../../../types";
 import type {
   NivoArcLabel,
   NivoChartTitlePosition,
@@ -154,8 +153,8 @@ const responsiveSunburstChartReducersMap = new Map<
   ],
 
   [
-    responsiveSunburstChartAction.setPageInError,
-    responsiveSunburstChartReducer_setPageInError,
+    responsiveSunburstChartAction.setIsError,
+    responsiveSunburstChartReducer_setIsError,
   ],
 ]);
 
@@ -418,21 +417,13 @@ function responsiveSunburstChartReducer_resetChartToDefault(
   };
 }
 
-function responsiveSunburstChartReducer_setPageInError(
+function responsiveSunburstChartReducer_setIsError(
   state: ResponsiveSunburstChartState,
   dispatch: ResponsiveSunburstChartDispatch,
 ): ResponsiveSunburstChartState {
-  const { kind, page } = dispatch.payload as SetPageInErrorPayload;
-  const pagesInError = new Set(state.pagesInError);
-  if (kind === "add") {
-    pagesInError.add(page);
-  } else {
-    pagesInError.delete(page);
-  }
-
   return {
     ...state,
-    pagesInError,
+    isError: dispatch.payload as boolean,
   };
 }
 

@@ -100,7 +100,7 @@ const initialResponsiveBarChartState: ResponsiveBarChartState = {
   screenshotImageType: "image/png",
 
   /** error */
-  pagesInError: new Set(),
+  isError: false,
 };
 
 export { initialResponsiveBarChartState };
