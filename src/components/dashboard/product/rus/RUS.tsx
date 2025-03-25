@@ -156,7 +156,7 @@ function RUS(
             },
           });
 
-          navigate(expandPieChartNavigateLink);
+          navigate(expandPieChartNavigateLink, { state: { pieCharts } });
         },
       }}
     />

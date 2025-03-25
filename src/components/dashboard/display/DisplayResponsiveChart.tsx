@@ -1,5 +1,6 @@
 import { Group, Stack, Text } from "@mantine/core";
 
+import { useLocation } from "react-router-dom";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { addCommaSeparator } from "../../../utils";
 import {
@@ -8,6 +9,7 @@ import {
   ResponsiveLineChart,
   ResponsivePieChart,
 } from "../../charts";
+import { createChartTooltipElement } from "../../charts/utils";
 import {
   MONTHS,
   PERCENTAGE_METRICS_SET,
@@ -19,6 +21,13 @@ function DisplayResponsiveChart() {
   const {
     globalState: { customizeChartsPageData, themeObject },
   } = useGlobalState();
+
+  const { state } = useLocation();
+
+  console.group("DisplayResponsiveChart");
+  console.log("customizeChartsPageData", customizeChartsPageData);
+  console.log("state", state);
+  console.groupEnd();
 
   if (!customizeChartsPageData) {
     return null;
@@ -63,6 +72,8 @@ function DisplayResponsiveChart() {
         indexBy={barChartIndexBy}
         keys={barChartKeys}
         unitKind={chartUnitKind}
+        tooltip={(arg) =>
+          createChartTooltipElement({ arg, kind: "bar", unit: "" })}
       />
     )
     : chartKind === "calendar"
@@ -72,6 +83,8 @@ function DisplayResponsiveChart() {
         dashboardChartTitle={chartTitle}
         from={`${year}-${month}-01`}
         to={`${year}-${month}-${day}`}
+        tooltip={(arg) =>
+          createChartTooltipElement({ arg, kind: "calendar", unit: "" })}
       />
     )
     : chartKind === "line"
@@ -82,6 +95,8 @@ function DisplayResponsiveChart() {
         xFormat={xFormatLineChart}
         yFormat={yFormatLineChart}
         unitKind={chartUnitKind}
+        tooltip={(arg) =>
+          createChartTooltipElement({ arg, kind: "line", unit: "" })}
       />
     )
     : chartKind === "pie"
@@ -90,6 +105,8 @@ function DisplayResponsiveChart() {
         dashboardChartTitle={chartTitle}
         pieChartData={chartData}
         unitKind={chartUnitKind}
+        tooltip={(arg) =>
+          createChartTooltipElement({ arg, kind: "pie", unit: "" })}
       />
     )
     : null;

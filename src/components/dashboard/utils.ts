@@ -3749,7 +3749,7 @@ function createExpandChartNavigateLinks(
     subMetric?: string;
   },
 ) {
-  const genericLink = `/home/dashboard/${calendarView.toLowerCase()}${
+  const genericLink = `/chart/${calendarView.toLowerCase()}${
     metricCategory
       ? `-${
         splitCamelCase(metricCategory).toLowerCase()
@@ -3768,17 +3768,15 @@ function createExpandChartNavigateLinks(
   ).toLowerCase().split(" ").join("-");
 
   return {
-    expandBarChartNavigateLink:
-      `${genericLink}-${barLineRadialVariable}-bar-chart`,
+    expandBarChartNavigateLink: `${genericLink}-${barLineRadialVariable}-bar`,
     expandCalendarChartNavigateLink:
-      `${genericLink}-${calendarChartYAxis}-calendar-chart`,
-    expandLineChartNavigateLink:
-      `${genericLink}-${barLineRadialVariable}-line-chart`,
+      `${genericLink}-${calendarChartYAxis}-calendar`,
+    expandLineChartNavigateLink: `${genericLink}-${barLineRadialVariable}-line`,
     expandPieChartNavigateLink: `${genericLink}${
       pieChartYAxis ? `-${pieChartYAxis}` : ""
-    }-pie-chart`,
+    }-pie`,
     expandRadialBarChartNavigateLink:
-      `${genericLink}-${barLineRadialVariable}-radial-bar-chart`,
+      `${genericLink}-${barLineRadialVariable}-radial-bar`,
   };
 }
 

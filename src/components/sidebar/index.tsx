@@ -12,16 +12,16 @@ import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 function Sidebar() {
   const navigate = useNavigate();
 
-  const homeNavlink = (
-    <AccessibleNavLink
-      attributes={{
-        description: "Home",
-        icon: <TbHome2 />,
-        name: "Home",
-        onClick: () => navigate("/"),
-      }}
-    />
-  );
+  // const homeNavlink = (
+  //   <AccessibleNavLink
+  //     attributes={{
+  //       description: "Home",
+  //       icon: <TbHome2 />,
+  //       name: "Home",
+  //       onClick: () => navigate("/"),
+  //     }}
+  //   />
+  // );
 
   const productsNavlink = (
     <AccessibleNavLink
@@ -29,7 +29,7 @@ function Sidebar() {
         description: "Products",
         icon: <TbAffiliate />,
         name: "Products",
-        onClick: () => navigate("/products"),
+        onClick: () => navigate("/dashboard/products"),
       }}
     />
   );
@@ -40,7 +40,7 @@ function Sidebar() {
         description: "Financials",
         icon: <TbReportMoney />,
         name: "Financials",
-        onClick: () => navigate("/financials"),
+        onClick: () => navigate("/dashboard/financials"),
       }}
     />
   );
@@ -51,7 +51,7 @@ function Sidebar() {
         description: "Customers",
         icon: <TbUser />,
         name: "Customers",
-        onClick: () => navigate("/customers"),
+        onClick: () => navigate("/dashboard/customers"),
       }}
     />
   );
@@ -62,16 +62,15 @@ function Sidebar() {
         description: "Repairs",
         icon: <TbTools />,
         name: "Repairs",
-        onClick: () => navigate("/repairs"),
+        onClick: () => navigate("/dashboard/repairs"),
       }}
     />
   );
 
   return (
     <Stack>
-      {homeNavlink}
-      {productsNavlink}
       {financialsNavlink}
+      {productsNavlink}
       {customersNavlink}
       {repairsNavlink}
     </Stack>

@@ -4,6 +4,7 @@ import "./App.css";
 import CustomFonts from "./components/customFonts";
 import Dashboard from "./components/dashboard/Dashboard";
 
+import DisplayResponsiveChartWrapper from "./components/dashboard/display";
 import Home from "./components/home";
 import Login from "./components/login";
 import Register from "./components/register";
@@ -19,10 +20,14 @@ function App() {
       <CustomFonts />
       <Routes>
         <Route path="/" element={<Home />}>
-          <Route path=":metricsView" element={<Dashboard />} />
-          <Route path=":metricsView" element={<Dashboard />} />
-          <Route path=":metricsView" element={<Dashboard />} />
-          <Route path=":metricsView" element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />}>
+            <Route path=":metricsView" element={<Dashboard />} />
+          </Route>
+
+          <Route
+            path="chart/:chartHeading"
+            element={<DisplayResponsiveChartWrapper />}
+          />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Route>
         <Route path="/login" element={<Login />} />
