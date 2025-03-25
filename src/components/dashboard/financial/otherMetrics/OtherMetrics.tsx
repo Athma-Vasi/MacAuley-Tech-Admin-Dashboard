@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
-import { CustomizeChartsPageData } from "../../../../context/globalProvider/types";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator, splitCamelCase } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
@@ -146,7 +145,23 @@ function OtherMetrics({
     />
   );
 
-  const expandBarLineChartButton = (
+  const barLineRadialUnit = barLineRadialChartYAxis === "averageOrderValue"
+    ? "CAD"
+    : "%";
+  const barChartIndexBy = calendarView === "Daily"
+    ? "Days"
+    : calendarView === "Monthly"
+    ? "Months"
+    : "Years";
+  const barChartKeys = FINANCIAL_OTHERS_Y_AXIS_DATA.map((obj) => obj.label);
+  const commonPayload = {
+    calendarView,
+    day,
+    month,
+    year,
+  };
+
+  const expandBarLineRadialChartButton = (
     <AccessibleButton
       attributes={{
         enabledScreenreaderText: "Expand and customize chart",
@@ -156,17 +171,49 @@ function OtherMetrics({
             | React.MouseEvent<HTMLButtonElement>
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
-          globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
-            payload: {
-              chartKind: barLineRadialChartKind,
-              chartData: barLineRadialChartKind === "bar"
-                ? barCharts[barLineRadialChartYAxis]
-                : lineCharts[barLineRadialChartYAxis],
-              chartTitle: barLineRadialChartHeading,
-              chartUnitKind: "number",
-            } as CustomizeChartsPageData,
-          });
+          if (barLineRadialChartKind === "bar") {
+            globalDispatch({
+              action: globalAction.setExpandBarChartData,
+              payload: {
+                ...commonPayload,
+                chartKind: "bar",
+                chartData: barCharts[barLineRadialChartYAxis],
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                indexBy: barChartIndexBy,
+                keys: barChartKeys,
+                unit: barLineRadialUnit,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "line") {
+            globalDispatch({
+              action: globalAction.setExpandLineChartData,
+              payload: {
+                ...commonPayload,
+                chartKind: "line",
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit: barLineRadialUnit,
+              },
+            });
+          }
+
+          if (barLineRadialChartKind === "radial") {
+            globalDispatch({
+              action: globalAction.setExpandRadialBarChartData,
+              payload: {
+                ...commonPayload,
+                chartKind: "radial",
+                chartData: lineCharts[barLineRadialChartYAxis],
+                chartTitle: barLineRadialChartHeading,
+                chartUnitKind: "number",
+                unit: barLineRadialUnit,
+              },
+            });
+          }
 
           navigate(
             barLineRadialChartKind === "bar"
@@ -197,18 +244,14 @@ function OtherMetrics({
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
         hideControls
-        indexBy={calendarView === "Daily"
-          ? "Days"
-          : calendarView === "Monthly"
-          ? "Months"
-          : "Years"}
-        keys={FINANCIAL_OTHERS_Y_AXIS_DATA.map((obj) => obj.label)}
+        indexBy={barChartIndexBy}
+        keys={barChartKeys}
         unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             kind: "bar",
-            unit: barLineRadialChartYAxis === "averageOrderValue" ? "CAD" : "%",
+            unit: barLineRadialUnit,
           })}
       />
     )
@@ -235,7 +278,7 @@ function OtherMetrics({
             arg,
             calendarView,
             kind: "line",
-            unit: barLineRadialChartYAxis === "averageOrderValue" ? "CAD" : "%",
+            unit: barLineRadialUnit,
           })}
       />
     )
@@ -247,7 +290,7 @@ function OtherMetrics({
           createChartTooltipElement({
             arg,
             kind: "radial",
-            unit: barLineRadialChartYAxis === "averageOrderValue" ? "CAD" : "%",
+            unit: barLineRadialUnit,
           })}
       />
     );
@@ -257,6 +300,8 @@ function OtherMetrics({
     calendarChartYAxis,
     metricCategory,
   );
+
+  const calendarUnit = calendarChartYAxis === "averageOrderValue" ? "CAD" : "%";
 
   const expandCalendarChartButton = (
     <AccessibleButton
@@ -269,13 +314,16 @@ function OtherMetrics({
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           globalDispatch({
-            action: globalAction.setCustomizeChartsPageData,
+            action: globalAction.setExpandCalendarChartData,
             payload: {
+              ...commonPayload,
+              calendarChartYAxis,
               chartKind: "calendar",
               chartData: calendarChartData,
               chartTitle: calendarChartHeading,
               chartUnitKind: "number",
-            } as CustomizeChartsPageData,
+              unit: calendarUnit,
+            },
           });
 
           navigate(expandCalendarChartNavigateLink);
@@ -307,7 +355,7 @@ function OtherMetrics({
           arg,
           calendarChartYAxis,
           kind: "calendar",
-          unit: calendarChartYAxis === "averageOrderValue" ? "CAD" : "%",
+          unit: calendarUnit,
         })}
     />
   );
@@ -359,7 +407,7 @@ function OtherMetrics({
       calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
-      expandBarLineChartButton={expandBarLineChartButton}
+      expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       overviewCards={overviewCards}
       sectionHeading={splitCamelCase(metricsView)}
