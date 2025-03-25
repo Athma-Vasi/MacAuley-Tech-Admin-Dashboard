@@ -10,6 +10,7 @@ type ValidationKey =
   | "axisRightLegend"
   | "axisTopLegend"
   | "brand"
+  | "chartTitle"
   | "city"
   | "colorVariant"
   | "confirmPassword"
@@ -41,6 +42,7 @@ type ValidationKey =
   | "privacyConsent"
   | "ramTiming"
   | "ramVoltage"
+  | "screenshotFilename"
   | "search"
   | "searchValue"
   | "smallInteger"
@@ -135,6 +137,18 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
       "Must contain only letters, numbers, spaces, periods, commas, hyphens, and apostrophes.",
     ],
     [/^.{2,30}$/, "Must be between 2 and 30 characters length."],
+  ],
+
+  chartTitle: [
+    [
+      /^(?!^\s*$)/,
+      "Must not be empty or consist entirely of whitespace characters.",
+    ],
+    [
+      /^[a-zA-Z0-9!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/,
+      "Must contain only alphanumeric characters and special characters.",
+    ],
+    [/^.{2,100}$/, "Must be between 2 and 100 characters length."],
   ],
 
   city: [
@@ -399,6 +413,18 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     ],
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [/^.{1,5}$/, "Must be 3 to 5 characters length."],
+  ],
+
+  screenshotFilename: [
+    [
+      /^(?!^\s*$)/,
+      "Must not be empty or consist entirely of whitespace characters.",
+    ],
+    [
+      /^[a-zA-Z0-9!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/,
+      "Must contain only alphanumeric characters and special characters.",
+    ],
+    [/^.{2,100}$/, "Must be between 2 and 100 characters length."],
   ],
 
   search: [
