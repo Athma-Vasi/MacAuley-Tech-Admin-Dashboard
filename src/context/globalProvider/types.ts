@@ -13,10 +13,7 @@ import type { LineChartData } from "../../components/charts/responsiveLineChart/
 import type { PieChartData } from "../../components/charts/responsivePieChart/types";
 import type { RadialBarChartData } from "../../components/charts/responsiveRadialBarChart/types";
 import type { SunburstChartData } from "../../components/charts/responsiveSunburstChart/types";
-import type {
-  ChartUnitKind,
-  NivoChartUnitKind,
-} from "../../components/charts/types";
+import type { ChartUnitKind } from "../../components/charts/types";
 import { DashboardCalendarView } from "../../components/dashboard/types";
 import type { GlobalAction } from "./actions";
 

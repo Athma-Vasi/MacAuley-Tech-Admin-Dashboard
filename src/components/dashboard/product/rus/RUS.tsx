@@ -51,6 +51,7 @@ import type { ProductMetricCategory, ProductSubMetric } from "../types";
 import { rusAction } from "./actions";
 import { rusReducer } from "./reducers";
 import { initialRUSState } from "./state";
+import { ChartUnitKind } from "../../../charts/types";
 
 type RUSProps = {
   calendarChartsData: {
@@ -135,9 +136,12 @@ function RUS(
       subMetric,
     });
 
-  const chartUnitKind = subMetric === "revenue" ? "CAD" : "Units";
+  const chartUnitKind = subMetric === "revenue"
+    ? "CAD"
+    : "Units" as ChartUnitKind;
   const commonPayload = {
     calendarView,
+    chartUnitKind,
     day,
     month,
     year,
@@ -160,7 +164,6 @@ function RUS(
               chartData: pieCharts,
               chartKind: "pie",
               chartTitle: pieChartHeading,
-              chartUnitKind,
             },
           });
 
@@ -227,7 +230,6 @@ function RUS(
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartKind: "bar",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
               },
@@ -242,7 +244,6 @@ function RUS(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "line",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind,
               },
             });
           }
@@ -255,7 +256,6 @@ function RUS(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind,
               },
             });
           }
@@ -318,8 +318,8 @@ function RUS(
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
-            kind: "line",
             chartUnitKind,
+            kind: "line",
           })}
       />
     )
@@ -330,8 +330,8 @@ function RUS(
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
-            chartUnitKind,
             calendarView,
+            chartUnitKind,
             kind: "radial",
           })}
       />
@@ -361,7 +361,6 @@ function RUS(
               chartData: calendarChartData,
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
-              chartUnitKind,
             },
           });
 

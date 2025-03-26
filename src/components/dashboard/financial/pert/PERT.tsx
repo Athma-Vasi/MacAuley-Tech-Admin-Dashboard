@@ -14,6 +14,7 @@ import {
   ResponsivePieChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -158,7 +159,9 @@ function PERT({
     />
   );
 
-  const chartUnitKind = metricCategory === "transactions" ? "" : "CAD";
+  const chartUnitKind = metricCategory === "transactions"
+    ? ""
+    : "CAD" as ChartUnitKind;
   const commonPayload = {
     calendarView,
     chartUnitKind,
