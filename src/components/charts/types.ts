@@ -153,9 +153,10 @@ type NivoBarLayout = "horizontal" | "vertical";
 type NivoBarValueScale = "linear" | "symlog";
 type NivoChartTitlePosition = "left" | "center" | "right";
 
-type NivoChartUnitKind = "currency" | "percent" | "number";
+type ChartUnitKind = "CAD" | "%" | "Units" | "";
 
 export type {
+  ChartUnitKind,
   NivoArcLabel,
   NivoAxisLegendPosition,
   NivoBarGroupMode,
@@ -165,7 +166,6 @@ export type {
   NivoCalendarDirection,
   NivoCalendarLegendPosition,
   NivoChartTitlePosition,
-  NivoChartUnitKind,
   NivoColorScheme,
   NivoFillPatternObject,
   NivoLegendAnchor,

@@ -3,12 +3,12 @@ import type { TitleOrder } from "@mantine/core";
 import { BarTooltipProps } from "@nivo/bar";
 import type { ScreenshotImageType } from "../../../types";
 import type {
+  ChartUnitKind,
   NivoAxisLegendPosition,
   NivoBarGroupMode,
   NivoBarLayout,
   NivoBarValueScale,
   NivoChartTitlePosition,
-  NivoChartUnitKind,
   NivoColorScheme,
   NivoLegendAnchor,
   NivoLegendDirection,
@@ -33,7 +33,7 @@ type ResponsiveBarChartProps = {
   hideControls?: boolean;
   indexBy: string;
   keys: string[];
-  unitKind?: NivoChartUnitKind;
+  chartUnitKind: ChartUnitKind;
   tooltip:
     | React.FC<BarTooltipProps<BarChartData<Record<string, string | number>>>>
     | undefined;

@@ -3,9 +3,9 @@ import type { TitleOrder } from "@mantine/core";
 import { PieTooltipProps } from "@nivo/pie";
 import type { ScreenshotImageType } from "../../../types";
 import type {
+  ChartUnitKind,
   NivoArcLabel,
   NivoChartTitlePosition,
-  NivoChartUnitKind,
   NivoColorScheme,
   NivoLegendAnchor,
   NivoLegendDirection,
@@ -26,7 +26,7 @@ type ResponsivePieChartProps = {
   dashboardChartTitle?: string;
   hideControls?: boolean;
   pieChartData: PieChartData[];
-  unitKind?: NivoChartUnitKind;
+  chartUnitKind: ChartUnitKind;
   tooltip: React.FC<PieTooltipProps<PieChartData>> | undefined;
 };
 

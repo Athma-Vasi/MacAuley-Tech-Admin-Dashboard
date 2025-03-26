@@ -4,9 +4,9 @@ import type { ValueFormat } from "@nivo/core";
 import { PointTooltip } from "@nivo/line";
 import type { ScreenshotImageType } from "../../../types";
 import type {
+  ChartUnitKind,
   NivoAxisLegendPosition,
   NivoChartTitlePosition,
-  NivoChartUnitKind,
   NivoColorScheme,
   NivoLegendAnchor,
   NivoLegendDirection,
@@ -37,7 +37,7 @@ type ResponsiveLineChartProps = {
   yFormat?: ValueFormat<any>;
   yScaleMin?: number | "auto";
   yScaleMax?: number | "auto";
-  unitKind?: NivoChartUnitKind;
+  chartUnitKind: ChartUnitKind;
   tooltip: PointTooltip | undefined;
 };
 

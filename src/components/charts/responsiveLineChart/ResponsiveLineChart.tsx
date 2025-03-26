@@ -58,7 +58,7 @@ function ResponsiveLineChart({
   yFormat,
   yScaleMin = "auto",
   yScaleMax = "auto",
-  unitKind = "currency",
+  chartUnitKind,
   tooltip,
 }: ResponsiveLineChartProps) {
   const {
@@ -206,13 +206,6 @@ function ResponsiveLineChart({
     });
   }, [isPrefersReducedMotion]);
 
-  const yAxisValue = (value: string) =>
-    unitKind === "currency"
-      ? "$" + addCommaSeparator(value)
-      : unitKind === "percent"
-      ? value + "%"
-      : value;
-
   const displayResponsiveLine = (
     <ResponsiveLine
       data={lineChartData}
@@ -257,44 +250,46 @@ function ResponsiveLineChart({
       // axes
       axisTop={enableAxisTop
         ? {
-          tickSize: axisTopTickSize,
-          tickPadding: axisTopTickPadding,
-          tickRotation: axisTopTickRotation,
+          format: (value) => addCommaSeparator(value) + chartUnitKind,
           legend: axisTopLegend,
           legendOffset: axisTopLegendOffset,
           legendPosition: axisTopLegendPosition,
+          tickPadding: axisTopTickPadding,
+          tickRotation: axisTopTickRotation,
+          tickSize: axisTopTickSize,
         }
         : null}
       axisRight={enableAxisRight
         ? {
-          tickSize: axisRightTickSize,
-          tickPadding: axisRightTickPadding,
-          tickRotation: axisRightTickRotation,
+          format: (value) => addCommaSeparator(value) + chartUnitKind,
           legend: axisRightLegend,
           legendOffset: axisRightLegendOffset,
           legendPosition: axisRightLegendPosition,
-          format: (value) => addCommaSeparator(value),
+          tickPadding: axisRightTickPadding,
+          tickRotation: axisRightTickRotation,
+          tickSize: axisRightTickSize,
         }
         : null}
       axisBottom={enableAxisBottom
         ? {
-          tickSize: axisBottomTickSize,
-          tickPadding: axisBottomTickPadding,
-          tickRotation: axisBottomTickRotation,
+          format: (value) => addCommaSeparator(value) + chartUnitKind,
           legend: axisBottomLegend,
           legendOffset: axisBottomLegendOffset,
           legendPosition: axisBottomLegendPosition,
+          tickPadding: axisBottomTickPadding,
+          tickRotation: axisBottomTickRotation,
+          tickSize: axisBottomTickSize,
         }
         : null}
       axisLeft={enableAxisLeft
         ? {
-          tickSize: axisLeftTickSize,
-          tickPadding: axisLeftTickPadding,
-          tickRotation: axisLeftTickRotation,
+          format: (value) => addCommaSeparator(value) + chartUnitKind,
           legend: axisLeftLegend,
           legendOffset: axisLeftLegendOffset,
           legendPosition: axisLeftLegendPosition,
-          format: (value) => addCommaSeparator(value),
+          tickPadding: axisLeftTickPadding,
+          tickRotation: axisLeftTickRotation,
+          tickSize: axisLeftTickSize,
         }
         : null}
       // interactivity

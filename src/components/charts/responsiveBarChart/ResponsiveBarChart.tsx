@@ -52,7 +52,7 @@ function ResponsiveBarChart({
   hideControls = false,
   indexBy,
   keys,
-  unitKind = "currency",
+  chartUnitKind,
   tooltip,
 }: ResponsiveBarChartProps) {
   const { windowWidth } = useWindowSize();
@@ -250,9 +250,7 @@ function ResponsiveBarChart({
           legendPosition: axisTopLegendPosition,
           format: (value) =>
             layout === "horizontal"
-              ? `${unitKind === "currency" ? "$" : ""}${
-                addCommaSeparator(value)
-              }${unitKind === "percent" ? "%" : ""}`
+              ? addCommaSeparator(value) + chartUnitKind
               : null,
         }
         : null}
@@ -266,9 +264,7 @@ function ResponsiveBarChart({
           legendPosition: axisRightLegendPosition,
           format: (value) =>
             layout === "vertical"
-              ? `${unitKind === "currency" ? "$" : ""}${
-                addCommaSeparator(value)
-              }${unitKind === "percent" ? "%" : ""}`
+              ? addCommaSeparator(value) + chartUnitKind
               : null,
         }
         : null}
@@ -282,9 +278,7 @@ function ResponsiveBarChart({
           legendPosition: axisBottomLegendPosition,
           format: (value) =>
             layout === "horizontal"
-              ? `${unitKind === "currency" ? "$" : ""}${
-                addCommaSeparator(value)
-              }${unitKind === "percent" ? "%" : ""}`
+              ? addCommaSeparator(value) + chartUnitKind
               : null,
         }
         : null}
@@ -298,9 +292,7 @@ function ResponsiveBarChart({
           legendPosition: axisLeftLegendPosition,
           format: (value) =>
             layout === "vertical"
-              ? `${unitKind === "currency" ? "$" : ""}${
-                addCommaSeparator(value)
-              }${unitKind === "percent" ? "%" : ""}`
+              ? addCommaSeparator(value) + chartUnitKind
               : null,
         }
         : null}
@@ -345,10 +337,7 @@ function ResponsiveBarChart({
       role="application"
       ariaLabel={chartTitle}
       barAriaLabel={(e) => `${e.id}: ${e.formattedValue}${e.indexValue}`}
-      valueFormat={(value) =>
-        `${unitKind === "currency" ? "$" : ""}${addCommaSeparator(value)}${
-          unitKind === "percent" ? "%" : ""
-        }`}
+      valueFormat={(value) => addCommaSeparator(value) + chartUnitKind}
       tooltip={tooltip}
     />
   );

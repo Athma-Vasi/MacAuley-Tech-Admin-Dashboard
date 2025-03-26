@@ -42,7 +42,7 @@ function ResponsivePieChart({
   dashboardChartTitle,
   hideControls = false,
   pieChartData,
-  unitKind = "currency",
+  chartUnitKind,
   tooltip,
 }: ResponsivePieChartProps) {
   const {
@@ -227,14 +227,7 @@ function ResponsivePieChart({
           },
         ]
         : []}
-      valueFormat={(value) =>
-        `${unitKind === "currency" ? "$" : ""}${addCommaSeparator(value)}${
-          unitKind === "percent" ? "%" : ""
-        }`}
-      // tooltip={(value) => {
-      //   console.log(value);
-      //   return <p></p>;
-      // }}
+      valueFormat={(value) => addCommaSeparator(value) + chartUnitKind}
       tooltip={tooltip}
     />
   );
@@ -255,53 +248,6 @@ function ResponsivePieChart({
       </Group>
     );
   }
-  /**
- * const enableArcLinkLabelsSwitchInput = (
-    <AccessibleSwitchInput
-      attributes={{
-        checked: enableArcLinkLabels,
-        invalidValueAction: parentChartAction.setIsError,
-        name: "enableArcLinkLabels",
-        offLabel: "Off",
-        onLabel: "On",
-        parentDispatch: parentChartDispatch,
-        validValueAction: parentChartAction.setEnableArcLabels,
-        value: enableArcLinkLabels,
-      }}
-    />
-  );
-
-  const arcLabelSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: NIVO_SUNBURST_ARC_LABEL_DATA,
-        description: "Define arc label",
-        name: "arcLabel",
-        parentDispatch: parentChartDispatch,
-        validValueAction: parentChartAction.setArcLabel,
-        value: arcLabel,
-      }}
-    />
-  );
-
-  const arcLabelsRadiusOffsetSliderInput = (
-    <AccessibleSliderInput
-      attributes={{
-        label: (value) => (
-          <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value}</Text>
-        ),
-        max: 2,
-        min: 0,
-        name: "arcLabelsRadiusOffset",
-        parentDispatch: parentChartDispatch,
-        sliderDefaultValue: 0.5,
-        step: 0.05,
-        validValueAction: parentChartAction.setArcLabelsRadiusOffset,
-        value: arcLabelsRadiusOffset,
-      }}
-    />
-  );
- */
 
   const startAngleSliderInput = (
     <AccessibleSliderInput
