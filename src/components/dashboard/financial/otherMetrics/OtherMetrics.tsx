@@ -179,10 +179,9 @@ function OtherMetrics({
                 chartKind: "bar",
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
+                chartUnitKind: barLineRadialUnit,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
-                unit: barLineRadialUnit,
               },
             });
           }
@@ -195,8 +194,7 @@ function OtherMetrics({
                 chartKind: "line",
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: barLineRadialUnit,
+                chartUnitKind: barLineRadialUnit,
               },
             });
           }
@@ -209,8 +207,7 @@ function OtherMetrics({
                 chartKind: "radial",
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: barLineRadialUnit,
+                chartUnitKind: barLineRadialUnit,
               },
             });
           }
@@ -243,21 +240,22 @@ function OtherMetrics({
     ? (
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
+        chartUnitKind={barLineRadialUnit}
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
-        unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            chartUnitKind: barLineRadialUnit,
             kind: "bar",
-            unit: barLineRadialUnit,
           })}
       />
     )
     : barLineRadialChartKind === "line"
     ? (
       <ResponsiveLineChart
+        chartUnitKind={barLineRadialUnit}
         lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
@@ -268,17 +266,13 @@ function OtherMetrics({
               ? "Year - "
               : ""
           }${x}`}
-        yFormat={(y) =>
-          `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
-            addCommaSeparator(y)
-          }`}
-        unitKind="number"
+        yFormat={(y) => addCommaSeparator(y) + barLineRadialUnit}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             calendarView,
+            chartUnitKind: barLineRadialUnit,
             kind: "line",
-            unit: barLineRadialUnit,
           })}
       />
     )
@@ -289,8 +283,8 @@ function OtherMetrics({
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            chartUnitKind: barLineRadialUnit,
             kind: "radial",
-            unit: barLineRadialUnit,
           })}
       />
     );
@@ -321,8 +315,7 @@ function OtherMetrics({
               chartKind: "calendar",
               chartData: calendarChartData,
               chartTitle: calendarChartHeading,
-              chartUnitKind: "number",
-              unit: calendarUnit,
+              chartUnitKind: calendarUnit,
             },
           });
 
@@ -354,8 +347,8 @@ function OtherMetrics({
         createChartTooltipElement({
           arg,
           calendarChartYAxis,
+          chartUnitKind: calendarUnit,
           kind: "calendar",
-          unit: calendarUnit,
         })}
     />
   );
