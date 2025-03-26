@@ -15,6 +15,7 @@ import {
   ResponsivePieChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -134,8 +135,10 @@ function ChurnRetention(
       calendarChartYAxis,
     });
 
+  const chartUnitKind = "%" as ChartUnitKind;
   const commonPayload = {
     calendarView,
+    chartUnitKind,
     day,
     month,
     year,
@@ -158,8 +161,6 @@ function ChurnRetention(
               chartData: pieCharts,
               chartKind: "pie",
               chartTitle: pieChartHeading,
-              chartUnitKind: "number",
-              unit: "%",
             },
           });
 
@@ -171,16 +172,16 @@ function ChurnRetention(
 
   const pieChart = (
     <ResponsivePieChart
-      pieChartData={pieCharts}
+      chartUnitKind={chartUnitKind}
       hideControls
-      unitKind="number"
+      pieChartData={pieCharts}
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          chartUnitKind,
           day,
           kind: "pie",
           month,
-          unit: "%",
           year,
         })}
     />
@@ -226,10 +227,8 @@ function ChurnRetention(
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartKind: "bar",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
-                unit: "%",
               },
             });
           }
@@ -242,8 +241,6 @@ function ChurnRetention(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "line",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: "%",
               },
             });
           }
@@ -256,8 +253,6 @@ function ChurnRetention(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: "%",
               },
             });
           }
@@ -290,19 +285,20 @@ function ChurnRetention(
     ? (
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
+        chartUnitKind={chartUnitKind}
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
-        unitKind="number"
         tooltip={(arg) =>
-          createChartTooltipElement({ arg, kind: "bar", unit: "%" })}
+          createChartTooltipElement({ arg, chartUnitKind, kind: "bar" })}
       />
     )
     : barLineRadialChartKind === "line"
     ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        chartUnitKind={chartUnitKind}
         hideControls
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         xFormat={(x) =>
           `${
             calendarView === "Daily"
@@ -311,10 +307,9 @@ function ChurnRetention(
               ? "Year - "
               : ""
           }${x}`}
-        yFormat={(y) => `${addCommaSeparator(y)} Customers`}
-        unitKind="number"
+        yFormat={(y) => addCommaSeparator(y) + chartUnitKind}
         tooltip={(arg) =>
-          createChartTooltipElement({ arg, kind: "line", unit: "%" })}
+          createChartTooltipElement({ arg, chartUnitKind, kind: "line" })}
       />
     )
     : (
@@ -325,8 +320,8 @@ function ChurnRetention(
           createChartTooltipElement({
             arg,
             calendarView,
+            chartUnitKind,
             kind: "radial",
-            unit: "%",
           })}
       />
     );
@@ -355,8 +350,6 @@ function ChurnRetention(
               chartData: calendarChartData,
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
-              chartUnitKind: "number",
-              unit: "%",
             },
           });
 
@@ -388,8 +381,8 @@ function ChurnRetention(
         createChartTooltipElement({
           arg,
           calendarChartYAxis,
+          chartUnitKind,
           kind: "calendar",
-          unit: "%",
         })}
     />
   );
