@@ -14,6 +14,7 @@ import {
   ResponsivePieChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -140,8 +141,10 @@ function New(
       calendarChartYAxis,
     });
 
+  const chartUnitKind = "" as ChartUnitKind;
   const commonPayload = {
     calendarView,
+    chartUnitKind,
     day,
     month,
     year,
@@ -164,8 +167,6 @@ function New(
               chartKind: "pie",
               chartData: pieCharts[pieChartYAxis],
               chartTitle: pieChartHeading,
-              chartUnitKind: "number",
-              unit: "",
             },
           });
 
@@ -189,16 +190,16 @@ function New(
 
   const pieChart = (
     <ResponsivePieChart
-      pieChartData={pieCharts[pieChartYAxis]}
+      chartUnitKind={chartUnitKind}
       hideControls
-      unitKind="number"
+      pieChartData={pieCharts[pieChartYAxis]}
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          chartUnitKind,
           day,
           kind: "pie",
           month,
-          unit: "",
           year,
         })}
     />
@@ -244,10 +245,8 @@ function New(
                 chartKind: "bar",
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
-                unit: "",
               },
             });
           }
@@ -260,8 +259,6 @@ function New(
                 chartKind: "line",
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: "",
               },
             });
           }
@@ -274,8 +271,6 @@ function New(
                 chartKind: "radial",
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: "",
               },
             });
           }
@@ -308,19 +303,20 @@ function New(
     ? (
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
+        chartUnitKind={chartUnitKind}
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
-        unitKind="number"
         tooltip={(arg) =>
-          createChartTooltipElement({ arg, kind: "bar", unit: "" })}
+          createChartTooltipElement({ arg, chartUnitKind, kind: "bar" })}
       />
     )
     : barLineRadialChartKind === "line"
     ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        chartUnitKind={chartUnitKind}
         hideControls
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         xFormat={(x) =>
           `${
             calendarView === "Daily"
@@ -329,10 +325,9 @@ function New(
               ? "Year - "
               : ""
           }${x}`}
-        yFormat={(y) => `${addCommaSeparator(y)} Customers`}
-        unitKind="number"
+        yFormat={(y) => addCommaSeparator(y) + chartUnitKind}
         tooltip={(arg) =>
-          createChartTooltipElement({ arg, kind: "line", unit: "" })}
+          createChartTooltipElement({ arg, chartUnitKind, kind: "line" })}
       />
     )
     : (
@@ -343,8 +338,8 @@ function New(
           createChartTooltipElement({
             arg,
             calendarView,
+            chartUnitKind,
             kind: "radial",
-            unit: "",
           })}
       />
     );
@@ -373,8 +368,6 @@ function New(
               chartData: calendarChartData,
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
-              chartUnitKind: "number",
-              unit: "",
             },
           });
 
@@ -406,8 +399,8 @@ function New(
         createChartTooltipElement({
           arg,
           calendarChartYAxis,
+          chartUnitKind,
           kind: "calendar",
-          unit: "",
         })}
     />
   );
