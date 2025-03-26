@@ -1,6 +1,8 @@
-.app {
-  width: clamp(375px, 100vw, 1280px);
+#root {
+  width: clamp(375px, 100vw, 1440px);
 }
+
+.app {}
 
 .main {
   width: 100%;

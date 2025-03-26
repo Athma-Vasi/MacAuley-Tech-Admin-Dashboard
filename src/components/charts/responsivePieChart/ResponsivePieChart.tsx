@@ -30,8 +30,8 @@ import {
   STICKY_STYLE,
 } from "../constants";
 
-import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
-import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
+import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
+import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { responsivePieChartAction } from "./actions";
 import { responsivePieChartReducer } from "./reducers";
 import { initialResponsivePieChartState } from "./state";

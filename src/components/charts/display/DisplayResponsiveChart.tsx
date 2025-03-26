@@ -1,13 +1,14 @@
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import { addCommaSeparator } from "../../../utils";
+import { Group } from "@mantine/core";
 import {
   ResponsiveBarChart,
   ResponsiveCalendarChart,
   ResponsiveLineChart,
   ResponsivePieChart,
   ResponsiveRadialBarChart,
-} from "../../charts";
-import { createChartTooltipElement } from "../../charts/utils";
+} from "..";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { addCommaSeparator } from "../../../utils";
+import { createChartTooltipElement } from "../utils";
 
 function DisplayResponsiveChart() {
   const {
@@ -33,34 +34,6 @@ function DisplayResponsiveChart() {
   console.log("themeObject", themeObject);
   console.groupEnd();
 
-  // const barChartIndexBy = chartKind === "bar"
-  //   ? Object.keys(chartData[0]).filter(
-  //     (key) => key === "Days" || key === "Months" || key === "Years",
-  //   )[0]
-  //   : "";
-
-  // const barChartKeys = Object.keys(chartData[0]).filter(
-  //   (key) => key !== "Days" && key !== "Months" && key !== "Years",
-  // );
-
-  // let [year, month, day] = selectedYYYYMMDD?.split("-") ?? ["2021", "01", "01"];
-  // month = month.padStart(2, "0");
-  // day = day.padStart(2, "0");
-
-  // const xValueLine = chartKind === "line" ? chartData[0].data[0].x : "";
-  // const xFormatLineChart = MONTHS.includes(xValueLine as any)
-  //   ? () => ""
-  //   : YEARS_SET.has(xValueLine)
-  //   ? (x: string) => `Year - ${x}`
-  //   : (x: string) => `Day - ${x}`;
-
-  // const lineChartKey = chartKind === "line" ? chartData[0].id : "";
-  // const yFormatLineChart = PERCENTAGE_METRICS_SET.has(lineChartKey)
-  //   ? (y: number) => `${y}%`
-  //   : UNITLESS_METRICS_SET.has(lineChartKey)
-  //   ? (y: number) => `${addCommaSeparator(y)}`
-  //   : (y: number) => `$${addCommaSeparator(y)}`;
-
   if (selectedChartKind === "bar") {
     if (!expandBarChartData) {
       return null;
@@ -78,24 +51,35 @@ function DisplayResponsiveChart() {
       year,
     } = expandBarChartData;
 
+    console.log("inside bar");
+
     return (
-      <ResponsiveBarChart
-        barChartData={chartData}
-        chartUnitKind={chartUnitKind}
-        indexBy={indexBy}
-        keys={keys}
-        tooltip={(arg) =>
-          createChartTooltipElement({
-            arg,
-            kind: "bar",
-            chartUnitKind,
-            calendarView,
-            day,
-            month,
-            year,
-          })}
-        dashboardChartTitle={chartTitle}
-      />
+      <Group
+        w="100%"
+        style={{
+          outline: "1px solid red",
+          // width: "clamp(350px, 100%, 618px)",
+          height: "clamp(250px, 400px, 500px)",
+        }}
+      >
+        <ResponsiveBarChart
+          barChartData={chartData}
+          chartUnitKind={chartUnitKind}
+          indexBy={indexBy}
+          keys={keys}
+          tooltip={(arg) =>
+            createChartTooltipElement({
+              arg,
+              kind: "bar",
+              chartUnitKind,
+              calendarView,
+              day,
+              month,
+              year,
+            })}
+          dashboardChartTitle={chartTitle}
+        />
+      </Group>
     );
   }
 
@@ -207,64 +191,6 @@ function DisplayResponsiveChart() {
       />
     );
   }
-
-  // const displayResponsiveChart = selectedChartKind === "bar"
-  //   ? (
-  //     <ResponsiveBarChart
-  //       barChartData={chartData}
-  //       dashboardChartTitle={chartTitle}
-  //       indexBy={barChartIndexBy}
-  //       keys={barChartKeys}
-  //       unitKind={chartUnitKind}
-  //       tooltip={(arg) =>
-  //         createChartTooltipElement({ arg, kind: "bar", unit: "" })}
-  //     />
-  //   )
-  //   : chartKind === "calendar"
-  //   ? (
-  //     <ResponsiveCalendarChart
-  //       calendarChartData={chartData}
-  //       dashboardChartTitle={chartTitle}
-  //       from={`${year}-${month}-01`}
-  //       to={`${year}-${month}-${day}`}
-  //       tooltip={(arg) =>
-  //         createChartTooltipElement({ arg, kind: "calendar", unit: "" })}
-  //     />
-  //   )
-  //   : chartKind === "line"
-  //   ? (
-  //     <ResponsiveLineChart
-  //       dashboardChartTitle={chartTitle}
-  //       lineChartData={chartData}
-  //       xFormat={xFormatLineChart}
-  //       yFormat={yFormatLineChart}
-  //       unitKind={chartUnitKind}
-  //       tooltip={(arg) =>
-  //         createChartTooltipElement({ arg, kind: "line", unit: "" })}
-  //     />
-  //   )
-  //   : chartKind === "pie"
-  //   ? (
-  //     <ResponsivePieChart
-  //       dashboardChartTitle={chartTitle}
-  //       pieChartData={chartData}
-  //       unitKind={chartUnitKind}
-  //       tooltip={(arg) =>
-  //         createChartTooltipElement({ arg, kind: "pie", unit: "" })}
-  //     />
-  //   )
-  //   : null;
-
-  // return (
-  //   <Stack w="100%">
-  //     <Text size="lg" weight={500}>
-  //       {chartTitle}
-  //     </Text>
-  //     <Group w="100%">
-  //       {displayResponsiveChart}
-  //     </Group>
-  //   </Stack>
-  // );
 }
 
 export default DisplayResponsiveChart;

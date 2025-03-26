@@ -1,6 +1,7 @@
 import {
   AppShell,
   Burger,
+  Group,
   Header as MantineHeader,
   MediaQuery,
   Navbar,
@@ -66,7 +67,9 @@ function Home() {
         </Navbar>
       }
     >
-      <Outlet />
+      <Group w="100%" style={{ outline: "1px solid red" }}>
+        <Outlet />
+      </Group>
     </AppShell>
   );
 

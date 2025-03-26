@@ -16,12 +16,12 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextInput";
-import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import {
   NIVO_CHART_TITLE_POSITION_DATA,
   SLIDER_TOOLTIP_COLOR,
   STICKY_STYLE,
 } from "../constants";
+import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import type { NivoChartTitlePosition } from "../types";
 
 type ChartOptionsAction = {

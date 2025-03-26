@@ -3,7 +3,6 @@ import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import {
   NIVO_LEGEND_ANCHOR_DATA,
   NIVO_LEGEND_DIRECTION_DATA,
@@ -12,6 +11,7 @@ import {
   SLIDER_TOOLTIP_COLOR,
   STICKY_STYLE,
 } from "../constants";
+import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import type {
   NivoLegendAnchor,
   NivoLegendDirection,

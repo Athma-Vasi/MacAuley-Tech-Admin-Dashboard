@@ -1,10 +1,9 @@
 import { MantineProvider } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
-import "./App.css";
 import CustomFonts from "./components/customFonts";
 import Dashboard from "./components/dashboard/Dashboard";
 
-import DisplayResponsiveChartWrapper from "./components/dashboard/display";
+import DisplayResponsiveChartWrapper from "./components/charts/display";
 import Home from "./components/home";
 import Login from "./components/login";
 import Register from "./components/register";

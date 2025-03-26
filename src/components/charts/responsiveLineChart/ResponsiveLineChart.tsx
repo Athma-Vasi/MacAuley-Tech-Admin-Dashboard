@@ -33,8 +33,8 @@ import {
   STICKY_STYLE,
 } from "../constants";
 
-import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
-import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
+import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
+import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { responsiveLineChartAction } from "./actions";
 import {
   NIVO_LINE_AREA_BLEND_MODE_DATA,

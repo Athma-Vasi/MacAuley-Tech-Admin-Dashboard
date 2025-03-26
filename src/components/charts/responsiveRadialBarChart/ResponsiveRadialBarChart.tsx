@@ -28,8 +28,8 @@ import {
   STICKY_STYLE,
 } from "../constants";
 
-import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
-import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
+import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
+import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { responsiveRadialBarChartAction } from "./actions";
 import { responsiveRadialBarChartReducer } from "./reducers";
 import { initialResponsiveRadialBarChartState } from "./state";

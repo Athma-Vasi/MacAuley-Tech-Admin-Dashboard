@@ -132,11 +132,6 @@ function AccessibleTextInput<
   const [isPopoverOpened, { open: openPopover, close: closePopover }] =
     useDisclosure(false);
 
-  // prevents stale value as input placeholder in dynamically created inputs
-  // useEffect(() => {
-  //   setValueBuffer(value);
-  // }, [value]);
-
   const {
     globalState: { themeObject },
   } = useGlobalState();
@@ -165,20 +160,6 @@ function AccessibleTextInput<
         )
     )
     : null;
-
-  // const { partials } = returnPartialValidations({
-  //   name,
-  //   stepperPages,
-  //   validationFunctionsTable,
-  // });
-
-  // const isValueBufferValid = partials.every((
-  //   [regexOrFunc, _validationText]: [any, any],
-  // ) =>
-  //   typeof regexOrFunc === "function"
-  //     ? regexOrFunc(valueBuffer)
-  //     : regexOrFunc.test(valueBuffer)
-  // );
 
   const regexesArray = validationFunctionsTable[name];
   const isValueBufferValid = regexesArray.every(
@@ -211,12 +192,12 @@ function AccessibleTextInput<
       valueBuffer,
     });
 
-  console.group(`AccessibleTextInput: ${name}`);
-  console.log("name:", name);
-  console.log("valueBuffer:", valueBuffer);
-  console.log("isValueBufferValid:", isValueBufferValid);
-  console.log("validationTexts:", validationTexts);
-  console.groupEnd();
+  // console.group(`AccessibleTextInput: ${name}`);
+  // console.log("name:", name);
+  // console.log("valueBuffer:", valueBuffer);
+  // console.log("isValueBufferValid:", isValueBufferValid);
+  // console.log("validationTexts:", validationTexts);
+  // console.groupEnd();
 
   return (
     <Container

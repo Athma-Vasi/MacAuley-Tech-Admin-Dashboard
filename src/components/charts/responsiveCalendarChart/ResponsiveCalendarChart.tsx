@@ -17,11 +17,11 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import ChartAndControlsDisplay from "../ChartAndControlsDisplay";
 import { ChartMargin } from "../chartControls/ChartMargin";
 import { ChartOptions } from "../chartControls/ChartOptions";
-import ChartsAndGraphsControlsStacker from "../ChartsAndControlsStacker";
 import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
+import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
+import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { responsiveCalendarChartAction } from "./actions";
 import {
   NIVO_CALENDAR_ALIGN_DATA,

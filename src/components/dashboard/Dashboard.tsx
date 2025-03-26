@@ -196,7 +196,7 @@ function Dashboard() {
         });
 
         globalDispatch({
-          action: globalAction.setCustomizeChartsPageDataSelectedYYYYMMDD,
+          action: globalAction.setSelectedYYYYMMDD,
           payload: value,
         });
       }}
