@@ -173,10 +173,9 @@ function RepairRUS(
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartKind: "bar",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
+                chartUnitKind: barLineRadialChartUnit,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
-                unit: barLineRadialChartUnit,
               },
             });
           }
@@ -189,8 +188,7 @@ function RepairRUS(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "line",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: barLineRadialChartUnit,
+                chartUnitKind: barLineRadialChartUnit,
               },
             });
           }
@@ -203,8 +201,7 @@ function RepairRUS(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit: barLineRadialChartUnit,
+                chartUnitKind: barLineRadialChartUnit,
               },
             });
           }
@@ -240,18 +237,19 @@ function RepairRUS(
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
-        unitKind="number"
+        chartUnitKind={barLineRadialChartUnit}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            chartUnitKind: barLineRadialChartUnit,
             kind: "bar",
-            unit: barLineRadialChartYAxis === "revenue" ? "CAD" : "Units",
           })}
       />
     )
     : barLineRadialChartKind === "line"
     ? (
       <ResponsiveLineChart
+        chartUnitKind={barLineRadialChartUnit}
         lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
@@ -262,17 +260,13 @@ function RepairRUS(
               ? "Year - "
               : ""
           }${x}`}
-        yFormat={(y) =>
-          `${addCommaSeparator(y)} ${
-            barLineRadialChartYAxis === "revenue" ? "CAD" : "Units"
-          }`}
-        unitKind="number"
+        yFormat={(y) => addCommaSeparator(y) + barLineRadialChartUnit}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             calendarView,
+            chartUnitKind: barLineRadialChartUnit,
             kind: "line",
-            unit: barLineRadialChartYAxis === "revenue" ? "CAD" : "Units",
           })}
       />
     )
@@ -283,8 +277,8 @@ function RepairRUS(
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            chartUnitKind: barLineRadialChartUnit,
             kind: "radial",
-            unit: barLineRadialChartYAxis === "revenue" ? "CAD" : "Units",
           })}
       />
     );
@@ -293,6 +287,8 @@ function RepairRUS(
     calendarChartsData,
     calendarChartYAxis,
   );
+
+  const calendarUnitKind = calendarChartYAxis === "revenue" ? "CAD" : "Units";
 
   const expandCalendarChartButton = (
     <AccessibleButton
@@ -312,8 +308,7 @@ function RepairRUS(
               chartData: calendarChartData,
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
-              chartUnitKind: "number",
-              unit: calendarChartYAxis === "revenue" ? "CAD" : "Units",
+              chartUnitKind: calendarUnitKind,
             },
           });
 
@@ -345,8 +340,8 @@ function RepairRUS(
         createChartTooltipElement({
           arg,
           calendarChartYAxis,
+          chartUnitKind: calendarUnitKind,
           kind: "calendar",
-          unit: calendarChartYAxis === "revenue" ? "CAD" : "Units",
         })}
     />
   );
