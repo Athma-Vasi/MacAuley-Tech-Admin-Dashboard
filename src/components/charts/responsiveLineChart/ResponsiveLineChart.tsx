@@ -250,7 +250,7 @@ function ResponsiveLineChart({
       // axes
       axisTop={enableAxisTop
         ? {
-          format: (value) => addCommaSeparator(value) + chartUnitKind,
+          format: (value) => addCommaSeparator(value),
           legend: axisTopLegend,
           legendOffset: axisTopLegendOffset,
           legendPosition: axisTopLegendPosition,
@@ -261,7 +261,7 @@ function ResponsiveLineChart({
         : null}
       axisRight={enableAxisRight
         ? {
-          format: (value) => addCommaSeparator(value) + chartUnitKind,
+          format: (value) => addCommaSeparator(value),
           legend: axisRightLegend,
           legendOffset: axisRightLegendOffset,
           legendPosition: axisRightLegendPosition,
@@ -272,7 +272,7 @@ function ResponsiveLineChart({
         : null}
       axisBottom={enableAxisBottom
         ? {
-          format: (value) => addCommaSeparator(value) + chartUnitKind,
+          format: (value) => addCommaSeparator(value),
           legend: axisBottomLegend,
           legendOffset: axisBottomLegendOffset,
           legendPosition: axisBottomLegendPosition,
@@ -283,7 +283,7 @@ function ResponsiveLineChart({
         : null}
       axisLeft={enableAxisLeft
         ? {
-          format: (value) => addCommaSeparator(value) + chartUnitKind,
+          format: (value) => addCommaSeparator(value),
           legend: axisLeftLegend,
           legendOffset: axisLeftLegendOffset,
           legendPosition: axisLeftLegendPosition,

@@ -227,7 +227,7 @@ function ResponsivePieChart({
           },
         ]
         : []}
-      valueFormat={(value) => addCommaSeparator(value) + chartUnitKind}
+      valueFormat={(value) => addCommaSeparator(value)}
       tooltip={tooltip}
     />
   );

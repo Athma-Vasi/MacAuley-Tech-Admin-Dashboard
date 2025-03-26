@@ -53,6 +53,7 @@ function createChartTooltipElement(
   switch (kind) {
     case "bar": {
       const { color, formattedValue, id, data } = arg;
+      console.log({ arg });
       return returnTooltipCard({
         color,
         id,

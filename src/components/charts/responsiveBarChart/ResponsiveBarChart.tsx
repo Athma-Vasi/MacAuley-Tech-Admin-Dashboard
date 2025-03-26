@@ -249,9 +249,7 @@ function ResponsiveBarChart({
           legendOffset: axisTopLegendOffset,
           legendPosition: axisTopLegendPosition,
           format: (value) =>
-            layout === "horizontal"
-              ? addCommaSeparator(value) + chartUnitKind
-              : null,
+            layout === "horizontal" ? addCommaSeparator(value) : null,
         }
         : null}
       axisRight={enableAxisRight
@@ -263,9 +261,7 @@ function ResponsiveBarChart({
           legendOffset: axisRightLegendOffset,
           legendPosition: axisRightLegendPosition,
           format: (value) =>
-            layout === "vertical"
-              ? addCommaSeparator(value) + chartUnitKind
-              : null,
+            layout === "vertical" ? addCommaSeparator(value) : null,
         }
         : null}
       axisBottom={enableAxisBottom
@@ -277,9 +273,7 @@ function ResponsiveBarChart({
           legendOffset: axisBottomLegendOffset,
           legendPosition: axisBottomLegendPosition,
           format: (value) =>
-            layout === "horizontal"
-              ? addCommaSeparator(value) + chartUnitKind
-              : null,
+            layout === "horizontal" ? addCommaSeparator(value) : null,
         }
         : null}
       axisLeft={enableAxisLeft
@@ -291,9 +285,7 @@ function ResponsiveBarChart({
           legendOffset: axisLeftLegendOffset,
           legendPosition: axisLeftLegendPosition,
           format: (value) =>
-            layout === "vertical"
-              ? addCommaSeparator(value) + chartUnitKind
-              : null,
+            layout === "vertical" ? addCommaSeparator(value) : null,
         }
         : null}
       legends={enableLegend
@@ -337,7 +329,7 @@ function ResponsiveBarChart({
       role="application"
       ariaLabel={chartTitle}
       barAriaLabel={(e) => `${e.id}: ${e.formattedValue}${e.indexValue}`}
-      valueFormat={(value) => addCommaSeparator(value) + chartUnitKind}
+      valueFormat={(value) => addCommaSeparator(value)}
       tooltip={tooltip}
     />
   );
