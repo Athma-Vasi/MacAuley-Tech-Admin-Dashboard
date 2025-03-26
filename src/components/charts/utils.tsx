@@ -10,6 +10,7 @@ import { DashboardCalendarView } from "../dashboard/types";
 import { BarChartData } from "./responsiveBarChart/types";
 import { MyCalendarTooltipProps } from "./responsiveCalendarChart/types";
 import { PieChartData } from "./responsivePieChart/types";
+import { ChartUnitKind } from "./types";
 
 type ChartKindTooltipValue = {
   kind: "bar";
@@ -33,13 +34,21 @@ type CreateChartTooltipElementInput = ChartKindTooltipValue & {
   day?: string; // only for pie chart
   month?: string; // only for pie chart
   calendarChartYAxis?: string; // only for calendar chart
-  unit: "CAD" | "%" | "Units" | "";
+  chartUnitKind: ChartUnitKind;
   year?: string; // only for pie chart
 };
 
 function createChartTooltipElement(
-  { calendarView, calendarChartYAxis, arg, day, month, year, kind, unit }:
-    CreateChartTooltipElementInput,
+  {
+    calendarView,
+    calendarChartYAxis,
+    arg,
+    day,
+    month,
+    year,
+    kind,
+    chartUnitKind,
+  }: CreateChartTooltipElementInput,
 ) {
   switch (kind) {
     case "bar": {
@@ -48,7 +57,7 @@ function createChartTooltipElement(
         color,
         id,
         xAxis: { kind: "bar", data },
-        unit,
+        chartUnitKind,
         formattedValue,
       });
     }
@@ -61,7 +70,7 @@ function createChartTooltipElement(
       return returnTooltipCard({
         color,
         id: day,
-        unit,
+        chartUnitKind,
         formattedValue: addCommaSeparator(value),
         xAxis: {
           kind: "calendar",
@@ -80,7 +89,7 @@ function createChartTooltipElement(
       return returnTooltipCard({
         color: borderColor,
         id: serieId,
-        unit,
+        chartUnitKind,
         formattedValue: addCommaSeparator(yStacked),
         xAxis: { kind: "line", xFormatted },
       });
@@ -91,7 +100,7 @@ function createChartTooltipElement(
       return returnTooltipCard({
         color,
         id,
-        unit,
+        chartUnitKind,
         formattedValue,
         xAxis: { kind: "pie", day, month, year },
       });
@@ -103,7 +112,7 @@ function createChartTooltipElement(
       return returnTooltipCard({
         color,
         id: groupId,
-        unit,
+        chartUnitKind,
         formattedValue: addCommaSeparator(toFixedFloat(y)),
         xAxis: { kind: "radial", calendarView, x },
       });
@@ -111,7 +120,7 @@ function createChartTooltipElement(
   }
 
   function returnTooltipCard(
-    { color, id, xAxis, unit, formattedValue }: {
+    { color, id, xAxis, chartUnitKind, formattedValue }: {
       color: string;
       id: string | number;
       xAxis: {
@@ -136,7 +145,7 @@ function createChartTooltipElement(
         month: string;
         year: string;
       };
-      unit: "CAD" | "%" | "Units" | "";
+      chartUnitKind: ChartUnitKind;
       formattedValue: string | number;
     },
   ) {
@@ -183,7 +192,9 @@ function createChartTooltipElement(
             </Text>
           </Group>
           <Group>
-            <Text color={color} size={15}>{formattedValue} {unit}</Text>
+            <Text color={color} size={15}>
+              {formattedValue} {chartUnitKind}
+            </Text>
           </Group>
         </Group>
       </Card>

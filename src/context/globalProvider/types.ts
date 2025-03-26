@@ -13,7 +13,10 @@ import type { LineChartData } from "../../components/charts/responsiveLineChart/
 import type { PieChartData } from "../../components/charts/responsivePieChart/types";
 import type { RadialBarChartData } from "../../components/charts/responsiveRadialBarChart/types";
 import type { SunburstChartData } from "../../components/charts/responsiveSunburstChart/types";
-import type { NivoChartUnitKind } from "../../components/charts/types";
+import type {
+  ChartUnitKind,
+  NivoChartUnitKind,
+} from "../../components/charts/types";
 import { DashboardCalendarView } from "../../components/dashboard/types";
 import type { GlobalAction } from "./actions";
 
@@ -81,11 +84,10 @@ interface ThemeObject extends MantineThemeOverride {
 type CustomizeChartsData = {
   calendarView: DashboardCalendarView;
   chartTitle: string;
+  chartUnitKind: ChartUnitKind;
   day: string;
   month: string;
   year: string;
-  chartUnitKind: NivoChartUnitKind;
-  unit: "CAD" | "%" | "Units" | "";
 };
 
 type ExpandBarChartData = CustomizeChartsData & {

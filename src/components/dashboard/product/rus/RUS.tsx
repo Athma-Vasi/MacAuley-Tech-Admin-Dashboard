@@ -135,7 +135,7 @@ function RUS(
       subMetric,
     });
 
-  const unit = subMetric === "revenue" ? "CAD" : "Units";
+  const chartUnitKind = subMetric === "revenue" ? "CAD" : "Units";
   const commonPayload = {
     calendarView,
     day,
@@ -160,8 +160,7 @@ function RUS(
               chartData: pieCharts,
               chartKind: "pie",
               chartTitle: pieChartHeading,
-              chartUnitKind: "number",
-              unit,
+              chartUnitKind,
             },
           });
 
@@ -175,14 +174,14 @@ function RUS(
     <ResponsivePieChart
       pieChartData={pieCharts}
       hideControls
-      unitKind="number"
+      chartUnitKind={chartUnitKind}
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          chartUnitKind,
           day,
           kind: "pie",
           month,
-          unit,
           year,
         })}
     />
@@ -228,10 +227,9 @@ function RUS(
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartKind: "bar",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
+                chartUnitKind,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
-                unit,
               },
             });
           }
@@ -244,8 +242,7 @@ function RUS(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "line",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit,
+                chartUnitKind,
               },
             });
           }
@@ -258,8 +255,7 @@ function RUS(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit,
+                chartUnitKind,
               },
             });
           }
@@ -295,18 +291,19 @@ function RUS(
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
-        unitKind="number"
+        chartUnitKind={chartUnitKind}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            chartUnitKind,
             kind: "bar",
-            unit,
           })}
       />
     )
     : barLineRadialChartKind === "line"
     ? (
       <ResponsiveLineChart
+        chartUnitKind={chartUnitKind}
         lineChartData={lineCharts[barLineRadialChartYAxis]}
         hideControls
         xFormat={(x) =>
@@ -317,13 +314,12 @@ function RUS(
               ? "Year - "
               : ""
           }${x}`}
-        yFormat={(y) => `${addCommaSeparator(y)} ${unit}`}
-        unitKind="number"
+        yFormat={(y) => addCommaSeparator(y) + chartUnitKind}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             kind: "line",
-            unit,
+            chartUnitKind,
           })}
       />
     )
@@ -334,9 +330,9 @@ function RUS(
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            chartUnitKind,
             calendarView,
             kind: "radial",
-            unit,
           })}
       />
     );
@@ -365,8 +361,7 @@ function RUS(
               chartData: calendarChartData,
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
-              chartUnitKind: "number",
-              unit,
+              chartUnitKind,
             },
           });
 
@@ -398,8 +393,8 @@ function RUS(
         createChartTooltipElement({
           arg,
           calendarChartYAxis,
+          chartUnitKind,
           kind: "calendar",
-          unit: subMetric === "revenue" ? "CAD" : "Units",
         })}
     />
   );
