@@ -48,7 +48,6 @@ import {
   FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  MONEY_SYMBOL_CATEGORIES,
   PERT_SET,
 } from "../constants";
 import { type FinancialMetricCategory } from "../types";
@@ -159,9 +158,10 @@ function PERT({
     />
   );
 
-  const unit = metricCategory === "transactions" ? "" : "CAD";
+  const chartUnitKind = metricCategory === "transactions" ? "" : "CAD";
   const commonPayload = {
     calendarView,
+    chartUnitKind,
     day,
     month,
     year,
@@ -184,8 +184,6 @@ function PERT({
               chartData: pieCharts[pieChartYAxis],
               chartKind: "pie",
               chartTitle: pieChartHeading,
-              chartUnitKind: "number",
-              unit,
             },
           });
 
@@ -197,16 +195,16 @@ function PERT({
 
   const pieChart = (
     <ResponsivePieChart
-      pieChartData={pieCharts[pieChartYAxis]}
+      chartUnitKind={chartUnitKind}
       hideControls
-      unitKind="number"
+      pieChartData={pieCharts[pieChartYAxis]}
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
           day,
           kind: "pie",
           month,
-          unit,
+          chartUnitKind,
           year,
         })}
     />
@@ -252,10 +250,8 @@ function PERT({
                 chartData: barCharts[barLineRadialChartYAxis],
                 chartKind: "bar",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
-                unit,
               },
             });
           }
@@ -268,8 +264,6 @@ function PERT({
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "line",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit,
               },
             });
           }
@@ -282,8 +276,6 @@ function PERT({
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
-                chartUnitKind: "number",
-                unit,
               },
             });
           }
@@ -316,23 +308,24 @@ function PERT({
     ? (
       <ResponsiveBarChart
         barChartData={barCharts[barLineRadialChartYAxis]}
+        chartUnitKind={chartUnitKind}
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
-        unitKind="number"
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             kind: "bar",
-            unit,
+            chartUnitKind,
           })}
       />
     )
     : barLineRadialChartKind === "line"
     ? (
       <ResponsiveLineChart
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        chartUnitKind={chartUnitKind}
         hideControls
+        lineChartData={lineCharts[barLineRadialChartYAxis]}
         xFormat={(x) =>
           `${
             calendarView === "Daily"
@@ -341,17 +334,13 @@ function PERT({
               ? "Year - "
               : ""
           }${x}`}
-        yFormat={(y) =>
-          `${MONEY_SYMBOL_CATEGORIES.has(metricCategory) ? "CAD" : ""} ${
-            addCommaSeparator(y)
-          }`}
-        unitKind="number"
+        yFormat={(y) => addCommaSeparator(y) + chartUnitKind}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
             calendarView,
+            chartUnitKind,
             kind: "line",
-            unit,
           })}
       />
     )
@@ -362,8 +351,8 @@ function PERT({
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
+            chartUnitKind,
             kind: "radial",
-            unit,
           })}
       />
     );
@@ -392,8 +381,6 @@ function PERT({
               chartData: calendarChartData,
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
-              chartUnitKind: "number",
-              unit,
             },
           });
 
@@ -425,8 +412,8 @@ function PERT({
         createChartTooltipElement({
           arg,
           calendarChartYAxis,
+          chartUnitKind,
           kind: "calendar",
-          unit,
         })}
     />
   );
