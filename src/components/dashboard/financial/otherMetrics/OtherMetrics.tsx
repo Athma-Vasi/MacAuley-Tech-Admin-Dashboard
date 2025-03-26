@@ -45,7 +45,6 @@ import {
 import {
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  MONEY_SYMBOL_CATEGORIES,
 } from "../constants";
 import type { FinancialMetricCategory } from "../types";
 import { otherMetricsAction } from "./actions";
@@ -184,6 +183,11 @@ function OtherMetrics({
                 keys: barChartKeys,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "bar",
+            });
           }
 
           if (barLineRadialChartKind === "line") {
@@ -197,6 +201,11 @@ function OtherMetrics({
                 chartUnitKind: barLineRadialUnit,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "line",
+            });
           }
 
           if (barLineRadialChartKind === "radial") {
@@ -209,6 +218,11 @@ function OtherMetrics({
                 chartTitle: barLineRadialChartHeading,
                 chartUnitKind: barLineRadialUnit,
               },
+            });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "radial",
             });
           }
 
@@ -317,6 +331,11 @@ function OtherMetrics({
               chartTitle: calendarChartHeading,
               chartUnitKind: calendarUnit,
             },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "calendar",
           });
 
           navigate(expandCalendarChartNavigateLink);

@@ -120,6 +120,8 @@ type ExpandSunburstChartData = CustomizeChartsData & {
   chartData: SunburstChartData[];
 };
 
+type ChartKind = "bar" | "calendar" | "line" | "pie" | "radial" | "sunburst";
+
 type GlobalState = {
   expandBarChartData: ExpandBarChartData | null;
   expandCalendarChartData: ExpandCalendarChartData | null;
@@ -129,6 +131,7 @@ type GlobalState = {
   expandSunburstChartData: ExpandSunburstChartData | null;
   isError: boolean;
   isPrefersReducedMotion: boolean;
+  selectedChartKind: ChartKind;
   selectedYYYYMMDD: string;
   themeObject: ThemeObject;
 };
@@ -161,6 +164,10 @@ type GlobalDispatch =
   | {
     action: GlobalAction["setFontFamily"];
     payload: string;
+  }
+  | {
+    action: GlobalAction["setSelectedChartKind"];
+    payload: ChartKind;
   }
   | {
     action: GlobalAction["setSelectedYYYYMMDD"];
@@ -205,6 +212,7 @@ type GlobalProviderProps = {
 };
 
 export type {
+  ChartKind,
   ColorScheme,
   CustomizeChartsData,
   ExpandBarChartData,

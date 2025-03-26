@@ -1,6 +1,7 @@
 import { MantineColor } from "@mantine/core";
 import { type GlobalAction, globalAction } from "./actions";
 import type {
+  ChartKind,
   ColorScheme,
   ExpandBarChartData,
   ExpandCalendarChartData,
@@ -59,6 +60,7 @@ const globalReducersMap = new Map<
     globalAction.setExpandSunburstChartData,
     globalReducer_setExpandSunburstChartData,
   ],
+  [globalAction.setSelectedChartKind, globalReducer_setSelectedChartKind],
 ]);
 
 function globalReducer_setColorScheme(
@@ -289,6 +291,16 @@ function globalReducer_setExpandSunburstChartData(
   return {
     ...state,
     expandSunburstChartData: dispatch.payload as ExpandSunburstChartData,
+  };
+}
+
+function globalReducer_setSelectedChartKind(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    selectedChartKind: dispatch.payload as ChartKind,
   };
 }
 

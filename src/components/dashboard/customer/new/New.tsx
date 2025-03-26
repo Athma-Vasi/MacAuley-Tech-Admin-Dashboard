@@ -170,6 +170,11 @@ function New(
             },
           });
 
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "pie",
+          });
+
           navigate(expandPieChartNavigateLink);
         },
       }}
@@ -249,6 +254,11 @@ function New(
                 keys: barChartKeys,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "bar",
+            });
           }
 
           if (barLineRadialChartKind === "line") {
@@ -261,6 +271,11 @@ function New(
                 chartTitle: barLineRadialChartHeading,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "line",
+            });
           }
 
           if (barLineRadialChartKind === "radial") {
@@ -272,6 +287,11 @@ function New(
                 chartData: lineCharts[barLineRadialChartYAxis],
                 chartTitle: barLineRadialChartHeading,
               },
+            });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "radial",
             });
           }
 
@@ -369,6 +389,11 @@ function New(
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
             },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "calendar",
           });
 
           navigate(expandCalendarChartNavigateLink);

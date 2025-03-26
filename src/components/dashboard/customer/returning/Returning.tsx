@@ -170,6 +170,11 @@ function Returning(
             },
           });
 
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "pie",
+          });
+
           navigate(expandPieChartNavigateLink);
         },
       }}
@@ -249,6 +254,11 @@ function Returning(
                 keys: barChartKeys,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "bar",
+            });
           }
 
           if (barLineRadialChartKind === "line") {
@@ -261,6 +271,11 @@ function Returning(
                 chartTitle: barLineRadialChartHeading,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "line",
+            });
           }
 
           if (barLineRadialChartKind === "radial") {
@@ -272,6 +287,11 @@ function Returning(
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
               },
+            });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "radial",
             });
           }
 
@@ -369,6 +389,11 @@ function Returning(
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
             },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "calendar",
           });
 
           navigate(expandCalendarChartNavigateLink);

@@ -14,6 +14,7 @@ import {
   ResponsivePieChart,
   ResponsiveRadialBarChart,
 } from "../../../charts";
+import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
@@ -51,7 +52,6 @@ import type { ProductMetricCategory, ProductSubMetric } from "../types";
 import { rusAction } from "./actions";
 import { rusReducer } from "./reducers";
 import { initialRUSState } from "./state";
-import { ChartUnitKind } from "../../../charts/types";
 
 type RUSProps = {
   calendarChartsData: {
@@ -167,6 +167,11 @@ function RUS(
             },
           });
 
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "pie",
+          });
+
           navigate(expandPieChartNavigateLink);
         },
       }}
@@ -234,6 +239,11 @@ function RUS(
                 keys: barChartKeys,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "bar",
+            });
           }
 
           if (barLineRadialChartKind === "line") {
@@ -246,6 +256,11 @@ function RUS(
                 chartTitle: barLineRadialChartHeading,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "line",
+            });
           }
 
           if (barLineRadialChartKind === "radial") {
@@ -257,6 +272,11 @@ function RUS(
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
               },
+            });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "radial",
             });
           }
 
@@ -362,6 +382,11 @@ function RUS(
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
             },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "calendar",
           });
 
           navigate(expandCalendarChartNavigateLink);

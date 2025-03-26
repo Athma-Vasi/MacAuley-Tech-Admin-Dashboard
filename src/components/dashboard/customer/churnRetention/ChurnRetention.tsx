@@ -164,6 +164,11 @@ function ChurnRetention(
             },
           });
 
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "pie",
+          });
+
           navigate(expandPieChartNavigateLink);
         },
       }}
@@ -231,6 +236,11 @@ function ChurnRetention(
                 keys: barChartKeys,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "bar",
+            });
           }
 
           if (barLineRadialChartKind === "line") {
@@ -243,6 +253,11 @@ function ChurnRetention(
                 chartTitle: barLineRadialChartHeading,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "line",
+            });
           }
 
           if (barLineRadialChartKind === "radial") {
@@ -254,6 +269,11 @@ function ChurnRetention(
                 chartKind: "radial",
                 chartTitle: barLineRadialChartHeading,
               },
+            });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "radial",
             });
           }
 
@@ -351,6 +371,11 @@ function ChurnRetention(
               chartKind: "calendar",
               chartTitle: calendarChartHeading,
             },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "calendar",
           });
 
           navigate(expandCalendarChartNavigateLink);

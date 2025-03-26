@@ -28,8 +28,6 @@ function returnSelectedDateAllProductsMetrics(
     (productMetric) => productMetric.name === "All Products",
   );
 
-  console.log({ allProductsYearlyMetrics });
-
   if (!allProductsYearlyMetrics) {
     return defaultValue;
   }

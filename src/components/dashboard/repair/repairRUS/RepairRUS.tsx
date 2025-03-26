@@ -178,6 +178,11 @@ function RepairRUS(
                 keys: barChartKeys,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "bar",
+            });
           }
 
           if (barLineRadialChartKind === "line") {
@@ -191,6 +196,11 @@ function RepairRUS(
                 chartUnitKind: barLineRadialChartUnit,
               },
             });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "line",
+            });
           }
 
           if (barLineRadialChartKind === "radial") {
@@ -203,6 +213,11 @@ function RepairRUS(
                 chartTitle: barLineRadialChartHeading,
                 chartUnitKind: barLineRadialChartUnit,
               },
+            });
+
+            globalDispatch({
+              action: globalAction.setSelectedChartKind,
+              payload: "radial",
             });
           }
 
@@ -310,6 +325,11 @@ function RepairRUS(
               chartTitle: calendarChartHeading,
               chartUnitKind: calendarUnitKind,
             },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "calendar",
           });
 
           navigate(expandCalendarChartNavigateLink);

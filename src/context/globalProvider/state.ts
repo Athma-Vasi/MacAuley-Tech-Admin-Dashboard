@@ -40,6 +40,7 @@ const initialGlobalState: GlobalState = {
   expandSunburstChartData: null,
   isError: false,
   isPrefersReducedMotion: false,
+  selectedChartKind: "bar",
   selectedYYYYMMDD: new Date().toISOString().split("T")[0],
   themeObject: initialThemeObject,
 };

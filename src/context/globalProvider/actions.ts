@@ -14,6 +14,7 @@ type GlobalAction = {
   setPrimaryShadeDark: "setPrimaryShadeDark";
   setPrimaryShadeLight: "setPrimaryShadeLight";
   setRespectReducedMotion: "setRespectReducedMotion";
+  setSelectedChartKind: "setSelectedChartKind";
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
 };
 
@@ -33,6 +34,7 @@ const globalAction: GlobalAction = {
   setExpandLineChartData: "setExpandLineChartData",
   setExpandPieChartData: "setExpandPieChartData",
   setExpandRadialBarChartData: "setExpandRadialBarChartData",
+  setSelectedChartKind: "setSelectedChartKind",
   setExpandSunburstChartData: "setExpandSunburstChartData",
 };
 

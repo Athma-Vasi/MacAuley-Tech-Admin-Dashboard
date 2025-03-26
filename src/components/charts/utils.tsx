@@ -53,7 +53,6 @@ function createChartTooltipElement(
   switch (kind) {
     case "bar": {
       const { color, formattedValue, id, data } = arg;
-      console.log({ arg });
       return returnTooltipCard({
         color,
         id,
@@ -65,7 +64,6 @@ function createChartTooltipElement(
 
     case "calendar": {
       const { color, data: { day, value } } = arg;
-      console.log({ arg });
       let [year, month, day_] = day.split("-");
       month = MONTHS[Number(month) - 1];
       return returnTooltipCard({
