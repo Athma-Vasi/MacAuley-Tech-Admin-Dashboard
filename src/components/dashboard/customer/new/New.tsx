@@ -463,7 +463,7 @@ function New(
     <>
       {newOverviewCards.totalCustomers}
       {newOverviewCards.lifetimeValue}
-      {newOverviewCards.dailyNewCustomers}
+      {/* {newOverviewCards.dailyNewCustomers} */}
     </>
   );
 

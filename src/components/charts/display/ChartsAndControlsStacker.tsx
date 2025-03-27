@@ -1,12 +1,11 @@
 import { Group, Stack, Text } from "@mantine/core";
-import { COLORS_SWATCHES } from "../../constants";
-import { ThemeObject } from "../../types";
+import { COLORS_SWATCHES } from "../../../constants";
 import {
   returnThemeColors,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
-} from "../../utils";
-import { useGlobalState } from "../../hooks/useGlobalState";
+} from "../../../utils";
+import { useGlobalState } from "../../../hooks/useGlobalState";
 
 type ChartsAndGraphsControlsStackerProps = {
   initialChartState?: Record<string, any>;

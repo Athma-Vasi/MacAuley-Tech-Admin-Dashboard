@@ -1,11 +1,56 @@
-#root {
-  width: clamp(375px, 100vw, 1440px);
+#root {}
+
+body {
+  width: clamp(375px, 100vw, 1650px);
+  outline: 1px solid green;
 }
 
-.app {}
+.app-shell {
+  width: clamp(375px, 100vw, 1650px);
+}
 
-.main {
-  width: 100%;
+.mantine-header {
+  width: clamp(375px, 100vw, 1650px);
+}
+
+.pie-chart-card {
+  width: clamp(350px, 100vw, 640px);
+}
+
+.overview-card {
+  width: clamp(350px, 100vw, 768px);
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 2em 1em;
+}
+
+.overview-cards {
+  display: flex;
+  gap: 2em;
+}
+
+@media screen and (min-width: 1300px) {
+  .overview-and-pie {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 3fr 7fr;
+    outline: 1px solid teal;
+  }
+
+  .pie-chart-card {
+    width: 100%;
+    outline: 1px solid brown;
+  }
+
+  .overview-card {
+    width: 400px;
+  }
+
+  .overview-cards {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 /* @media screen and (max-width: 640px) {

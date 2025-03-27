@@ -463,7 +463,7 @@ function Returning(
     <>
       {returningOverviewCards.totalCustomers}
       {returningOverviewCards.lifetimeValue}
-      {returningOverviewCards.dailyReturningCustomers}
+      {/* {returningOverviewCards.dailyReturningCustomers} */}
     </>
   );
 

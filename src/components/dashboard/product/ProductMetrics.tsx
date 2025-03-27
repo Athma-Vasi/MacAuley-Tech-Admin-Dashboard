@@ -18,7 +18,6 @@ import type {
   Month,
   Year,
 } from "../types";
-import { createOverviewMetricCard } from "../utilsTSX";
 import { productMetricsAction } from "./actions";
 import { createProductMetricsCards } from "./cards";
 import {
@@ -33,7 +32,10 @@ import {
 import { productMetricsReducer } from "./reducers";
 import { RUS } from "./rus/RUS";
 import { initialProductMetricsState } from "./state";
-import { returnSelectedDateAllProductsMetrics } from "./utils";
+import {
+  returnOverviewAllProductsMetrics,
+  returnProductMetricsOverviewCards,
+} from "./utils";
 
 type ProductMetricsProps = {
   businessMetrics: BusinessMetric[];
@@ -195,38 +197,44 @@ function ProductMetrics({
     />
   );
 
-  const { dailyRevenue, dailyUnitsSold } = returnSelectedDateAllProductsMetrics(
+  const overviewMetrics = returnOverviewAllProductsMetrics(
     businessMetrics,
     storeLocationView,
     selectedYYYYMMDD,
   );
 
-  const overviewRevenueCard = createOverviewMetricCard(
-    {
-      selectedYYYYMMDD,
-      storeLocationView,
-      subMetric: "Revenue",
-      unit: "CAD",
-      value: dailyRevenue,
-    },
-  );
+  // const overviewRevenueCard = createOverviewMetricCard(
+  //   {
+  //     selectedYYYYMMDD,
+  //     storeLocationView,
+  //     subMetric: "Revenue",
+  //     unit: "CAD",
+  //     value: dailyRevenue,
+  //   },
+  // );
 
-  const overviewUnitsSoldCard = createOverviewMetricCard(
-    {
-      selectedYYYYMMDD,
-      storeLocationView,
-      subMetric: "Units Sold",
-      unit: "Units",
-      value: dailyUnitsSold,
-    },
-  );
+  // const overviewUnitsSoldCard = createOverviewMetricCard(
+  //   {
+  //     selectedYYYYMMDD,
+  //     storeLocationView,
+  //     subMetric: "Units Sold",
+  //     unit: "Units",
+  //     value: dailyUnitsSold,
+  //   },
+  // );
 
-  const overviewCards = (
-    <>
-      {overviewRevenueCard}
-      {overviewUnitsSoldCard}
-    </>
-  );
+  // const overviewCards = (
+  //   <>
+  //     {overviewRevenueCard}
+  //     {overviewUnitsSoldCard}
+  //   </>
+  // );
+
+  const overviewCards = returnProductMetricsOverviewCards({
+    overviewMetrics,
+    selectedYYYYMMDD,
+    storeLocationView,
+  });
 
   const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
@@ -236,7 +244,7 @@ function ProductMetrics({
         day={selectedDate}
         metricsView="Products"
         month={selectedYYYYMMDD.split("-")[1]}
-        overviewCards={overviewCards}
+        overviewCards={overviewCards[calendarView]}
         productCategory={productCategory}
         productMetricsCards={cards}
         productMetricsCharts={charts}

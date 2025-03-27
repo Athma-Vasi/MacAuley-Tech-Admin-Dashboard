@@ -22,7 +22,6 @@ function App() {
           <Route path="dashboard" element={<Dashboard />}>
             <Route path=":metricsView" element={<Dashboard />} />
           </Route>
-
           <Route
             path="chart/:chartHeading"
             element={<DisplayResponsiveChartWrapper />}

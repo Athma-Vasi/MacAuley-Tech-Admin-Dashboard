@@ -63,7 +63,7 @@ type RUSProps = {
   subMetric: ProductSubMetric;
   metricsView: DashboardMetricsView;
   month: string;
-  overviewCards?: React.JSX.Element;
+  overviewCards: React.JSX.Element;
   productCategory: ProductMetricCategory;
   productMetricsCards: ProductMetricsCards;
   productMetricsCharts: ProductMetricsCharts;

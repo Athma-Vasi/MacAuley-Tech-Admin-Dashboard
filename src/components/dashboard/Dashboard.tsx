@@ -281,7 +281,7 @@ function Dashboard() {
     );
 
   const dashboard = (
-    <Stack w="100%" py="sm">
+    <Stack w="100%" py="sm" style={{ outline: "1px solid green" }}>
       <Stack align="flex-start" spacing={2}>
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>

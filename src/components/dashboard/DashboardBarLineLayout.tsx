@@ -24,7 +24,7 @@ type DashboardBarLineLayoutProps = {
   expandBarLineRadialChartButton: React.JSX.Element;
   expandCalendarChartButton?: React.JSX.Element | null;
   expandPieChartButton?: React.JSX.Element;
-  overviewCards?: React.JSX.Element;
+  overviewCards: React.JSX.Element;
   pieChart?: React.JSX.Element;
   pieChartHeading?: string;
   pieChartYAxisSelectInput?: React.JSX.Element;
@@ -62,16 +62,49 @@ function DashboardBarLineLayout(
     themeObject,
   });
 
-  const overviewCardsSection = overviewCards && calendarView === "Daily"
-    ? (
-      <Stack align="flex-start" w="100%">
-        <Title order={3}>Summary</Title>
-        <Group w="100%">
-          {overviewCards}
+  const overviewCardsSection = (
+    <div className="overview-card">
+      <Title order={3}>Summary</Title>
+      <div className="overview-cards">
+        {overviewCards}
+      </div>
+    </div>
+  );
+
+  const pieChartCard = (
+    <Card
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+      className="pie-chart-card"
+    >
+      <Stack px="md">
+        <Group
+          position={pieChartYAxisSelectInput ? "apart" : "right"}
+          w="100%"
+        >
+          {pieChartYAxisSelectInput}
+          {expandPieChartButton}
         </Group>
+
+        <Text size={20} weight={500}>{pieChartHeading}</Text>
+        <Center>
+          {pieChart}
+        </Center>
       </Stack>
+    </Card>
+  );
+
+  const pieSectionMaybe = pieChart && pieChartHeading &&
+      expandPieChartButton
+    ? (
+      <div className="overview-and-pie">
+        {overviewCardsSection}
+        {pieChartCard}
+      </div>
     )
-    : null;
+    : overviewCardsSection;
 
   const barLineSection = (
     <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
@@ -85,34 +118,11 @@ function DashboardBarLineLayout(
         <Group w="100%" align="baseline" py="md">
           {cardsWithStatisticsElements}
         </Group>
-
         <Text size={20} weight={500}>{barLineRadialChartHeading}</Text>
         <Center>{barLineRadialChart}</Center>
       </Stack>
     </Card>
   );
-
-  const pieSection = pieChart && pieChartHeading &&
-      expandPieChartButton
-    ? (
-      <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
-        <Stack px="md">
-          <Group
-            position={pieChartYAxisSelectInput ? "apart" : "right"}
-            w="100%"
-          >
-            {pieChartYAxisSelectInput}
-            {expandPieChartButton}
-          </Group>
-
-          <Text size={20} weight={500}>{pieChartHeading}</Text>
-          <Center>
-            {pieChart}
-          </Center>
-        </Stack>
-      </Card>
-    )
-    : null;
 
   const calendarSection =
     calendarView === "Yearly" && calendarChart && calendarChartHeading
@@ -152,9 +162,7 @@ function DashboardBarLineLayout(
         </Title>
       </Group>
 
-      {overviewCardsSection}
-
-      {pieSection}
+      {pieSectionMaybe}
 
       {barLineSection}
 

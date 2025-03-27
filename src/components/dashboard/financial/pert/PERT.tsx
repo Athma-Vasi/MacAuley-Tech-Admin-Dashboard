@@ -476,9 +476,9 @@ function PERT({
   const overviewCards = (
     <>
       {pertOverviewCards.profit}
-      {pertOverviewCards.expenses}
+      {/* {pertOverviewCards.expenses} */}
       {pertOverviewCards.revenue}
-      {pertOverviewCards.transactions}
+      {/* {pertOverviewCards.transactions} */}
     </>
   );
 

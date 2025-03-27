@@ -29,8 +29,13 @@ function Home() {
 
   return (
     <AppShell
+      className="app-shell"
       header={
-        <MantineHeader height={{ base: APP_HEADER_HEIGHT }} p="md">
+        <MantineHeader
+          height={{ base: APP_HEADER_HEIGHT }}
+          p="md"
+          className="mantine-header"
+        >
           <div
             style={{
               display: "flex",
@@ -50,7 +55,6 @@ function Home() {
                 mr="xl"
               />
             </MediaQuery>
-
             <Header />
           </div>
         </MantineHeader>
@@ -61,7 +65,7 @@ function Home() {
           p="md"
           hiddenBreakpoint="sm"
           hidden={!opened}
-          width={{ sm: 200, lg: 300 }}
+          width={{ sm: 200 }}
         >
           <Sidebar />
         </Navbar>
