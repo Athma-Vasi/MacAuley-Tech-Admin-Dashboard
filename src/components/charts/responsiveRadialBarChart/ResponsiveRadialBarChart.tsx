@@ -1586,7 +1586,7 @@ function ResponsiveRadialBarChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%">
+    <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={modifiedResponsiveRadialBarChartState}
         input={displayResetAllButton}

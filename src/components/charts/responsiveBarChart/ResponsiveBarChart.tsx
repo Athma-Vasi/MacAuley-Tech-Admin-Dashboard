@@ -1079,7 +1079,7 @@ function ResponsiveBarChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%">
+    <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={modifiedInitialResponsiveBarChartState}
         input={displayResetAllButton}

@@ -529,7 +529,7 @@ function ResponsiveSunburstChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%">
+    <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={modifiedResponsiveSunburstChartState}
         input={displayResetAllButton}

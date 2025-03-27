@@ -1073,7 +1073,7 @@ function ResponsivePieChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%">
+    <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={modifiedInitialResponsivePieChartState}
         input={displayResetAllButton}
