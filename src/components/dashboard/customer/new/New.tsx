@@ -65,11 +65,7 @@ type NewProps = {
   metricCategory: CustomerMetricsCategory;
   metricsView: DashboardMetricsView;
   month: string;
-  newOverviewCards: {
-    lifetimeValue: React.JSX.Element;
-    totalCustomers: React.JSX.Element;
-    dailyNewCustomers: React.JSX.Element;
-  };
+  newOverviewCards: React.JSX.Element;
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -459,14 +455,6 @@ function New(
     CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  const overviewCards = (
-    <>
-      {newOverviewCards.totalCustomers}
-      {newOverviewCards.lifetimeValue}
-      {/* {newOverviewCards.dailyNewCustomers} */}
-    </>
-  );
-
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -483,7 +471,7 @@ function New(
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
-        overviewCards={overviewCards}
+        overviewCards={newOverviewCards}
         pieChart={pieChart}
         pieChartHeading={pieChartHeading}
         pieChartYAxisSelectInput={pieChartYAxisSelectInput}

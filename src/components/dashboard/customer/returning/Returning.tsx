@@ -65,11 +65,7 @@ type ReturningProps = {
   metricCategory: CustomerMetricsCategory;
   metricsView: DashboardMetricsView;
   month: string;
-  returningOverviewCards: {
-    lifetimeValue: React.JSX.Element;
-    totalCustomers: React.JSX.Element;
-    dailyReturningCustomers: React.JSX.Element;
-  };
+  returningOverviewCards: React.JSX.Element;
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -459,14 +455,6 @@ function Returning(
     CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  const overviewCards = (
-    <>
-      {returningOverviewCards.totalCustomers}
-      {returningOverviewCards.lifetimeValue}
-      {/* {returningOverviewCards.dailyReturningCustomers} */}
-    </>
-  );
-
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -483,7 +471,7 @@ function Returning(
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
-        overviewCards={overviewCards}
+        overviewCards={returningOverviewCards}
         pieChart={pieChart}
         pieChartHeading={pieChartHeading}
         pieChartYAxisSelectInput={pieChartYAxisSelectInput}

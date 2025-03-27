@@ -62,10 +62,7 @@ type ChurnRetentionProps = {
     previousYear: CustomerMetricsCalendarCharts | null;
   };
   calendarView: DashboardCalendarView;
-  churnOverviewCards: {
-    churnRate: React.JSX.Element;
-    retentionRate: React.JSX.Element;
-  };
+  churnOverviewCards: React.JSX.Element;
   customerMetricsCards: CustomerMetricsCards;
   customerMetricsCharts: CustomerMetricsCharts;
   day: string;
@@ -441,13 +438,6 @@ function ChurnRetention(
     CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  const overviewCards = (
-    <>
-      {churnOverviewCards.churnRate}
-      {churnOverviewCards.retentionRate}
-    </>
-  );
-
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -464,7 +454,7 @@ function ChurnRetention(
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
-        overviewCards={overviewCards}
+        overviewCards={churnOverviewCards}
         pieChart={pieChart}
         pieChartHeading={pieChartHeading}
         sectionHeading="Customers Churn"
