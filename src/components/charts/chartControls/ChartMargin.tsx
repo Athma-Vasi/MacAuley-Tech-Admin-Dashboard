@@ -167,10 +167,12 @@ function ChartMargin(props: ChartMarginProps) {
   const displayMarginSection = (
     <Stack w="100%">
       {displayMarginHeading}
-      {displayMarginTopSliderInput}
-      {displayMarginRightSliderInput}
-      {displayMarginBottomSliderInput}
-      {displayMarginLeftSliderInput}
+      <Group w="100%">
+        {displayMarginTopSliderInput}
+        {displayMarginRightSliderInput}
+        {displayMarginBottomSliderInput}
+        {displayMarginLeftSliderInput}
+      </Group>
     </Stack>
   );
 

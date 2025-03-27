@@ -10,7 +10,7 @@ import {
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { useEffect, useReducer, useRef } from "react";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
@@ -431,6 +431,7 @@ function ResponsiveRadialBarChart({
         });
       }}
       value={ringBorderColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -480,6 +481,7 @@ function ResponsiveRadialBarChart({
         });
       }}
       value={tracksColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -887,6 +889,7 @@ function ResponsiveRadialBarChart({
         });
       }}
       value={labelsTextColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -1024,12 +1027,14 @@ function ResponsiveRadialBarChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      {displayStartAngleSliderInput}
-      {displayEndAngleSliderInput}
-      {displayInnerRadiusSliderInput}
-      {displayPaddingRingSliderInput}
-      {displayPadAngleSliderInput}
-      {displayCornerRadiusSliderInput}
+      <Group w="100%" align="baseline">
+        {displayStartAngleSliderInput}
+        {displayEndAngleSliderInput}
+        {displayInnerRadiusSliderInput}
+        {displayPaddingRingSliderInput}
+        {displayPadAngleSliderInput}
+        {displayCornerRadiusSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -1091,9 +1096,11 @@ function ResponsiveRadialBarChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      {displayChartColorsSelectInput}
-      {displayRingBorderColorsInput}
-      {displayRingBorderWidthSliderInput}
+      <Group w="100%" align="baseline">
+        {displayChartColorsSelectInput}
+        {displayRingBorderColorsInput}
+        {displayRingBorderWidthSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -1220,10 +1227,12 @@ function ResponsiveRadialBarChart({
   const displayRadialAxisStartSection = (
     <Stack w="100%">
       {displayRadialAxisStartHeading}
-      {displayEnableRadialAxisStartSwitchInput}
-      {displayRadialAxisStartTickSizeSliderInput}
-      {displayRadialAxisStartTickPaddingSliderInput}
-      {displayRadialAxisStartTickRotationSliderInput}
+      <Group w="100%" align="baseline">
+        {displayEnableRadialAxisStartSwitchInput}
+        {displayRadialAxisStartTickSizeSliderInput}
+        {displayRadialAxisStartTickPaddingSliderInput}
+        {displayRadialAxisStartTickRotationSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -1281,10 +1290,12 @@ function ResponsiveRadialBarChart({
   const displayRadialAxisEndSection = (
     <Stack w="100%">
       {displayRadialAxisEndHeading}
-      {displayEnableRadialAxisEndSwitchInput}
-      {displayRadialAxisEndTickSizeSliderInput}
-      {displayRadialAxisEndTickPaddingSliderInput}
-      {displayRadialAxisEndTickRotationSliderInput}
+      <Group w="100%" align="baseline">
+        {displayEnableRadialAxisEndSwitchInput}
+        {displayRadialAxisEndTickSizeSliderInput}
+        {displayRadialAxisEndTickPaddingSliderInput}
+        {displayRadialAxisEndTickRotationSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -1342,10 +1353,12 @@ function ResponsiveRadialBarChart({
   const displayCircularAxisInnerSection = (
     <Stack w="100%">
       {displayCircularAxisInnerHeading}
-      {displayEnableCircularAxisInnerSwitchInput}
-      {displayCircularAxisInnerTickSizeSliderInput}
-      {displayCircularAxisInnerTickPaddingSliderInput}
-      {displayCircularAxisInnerTickRotationSliderInput}
+      <Group w="100%" align="baseline">
+        {displayEnableCircularAxisInnerSwitchInput}
+        {displayCircularAxisInnerTickSizeSliderInput}
+        {displayCircularAxisInnerTickPaddingSliderInput}
+        {displayCircularAxisInnerTickRotationSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -1403,10 +1416,12 @@ function ResponsiveRadialBarChart({
   const displayCircularAxisOuterSection = (
     <Stack w="100%">
       {displayCircularAxisOuterHeading}
-      {displayEnableCircularAxisOuterSwitchInput}
-      {displayCircularAxisOuterTickSizeSliderInput}
-      {displayCircularAxisOuterTickPaddingSliderInput}
-      {displayCircularAxisOuterTickRotationSliderInput}
+      <Group w="100%" align="baseline">
+        {displayEnableCircularAxisOuterSwitchInput}
+        {displayCircularAxisOuterTickSizeSliderInput}
+        {displayCircularAxisOuterTickPaddingSliderInput}
+        {displayCircularAxisOuterTickRotationSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -1463,10 +1478,12 @@ function ResponsiveRadialBarChart({
   const displayLabelsSection = (
     <Stack w="100%">
       {displayLabelsHeading}
-      {displayEnableLabelsSwitchInput}
-      {displayLabelsSkipAngleSliderInput}
-      {displayLabelsRadiusOffsetSliderInput}
-      {displayLabelsTextColorInput}
+      <Group w="100%" align="baseline">
+        {displayEnableLabelsSwitchInput}
+        {displayLabelsSkipAngleSliderInput}
+        {displayLabelsRadiusOffsetSliderInput}
+        {displayLabelsTextColorInput}
+      </Group>
     </Stack>
   );
 
@@ -1537,9 +1554,11 @@ function ResponsiveRadialBarChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      {displayEnableAnimateSwitchInput}
-      {displayMotionConfigSelectInput}
-      {displayTransitionModeSelectInput}
+      <Group w="100%" align="baseline">
+        {displayEnableAnimateSwitchInput}
+        {displayMotionConfigSelectInput}
+        {displayTransitionModeSelectInput}
+      </Group>
     </Stack>
   );
 

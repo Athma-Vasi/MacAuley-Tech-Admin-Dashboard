@@ -645,24 +645,26 @@ function ChartLegend(props: ChartLegendProps) {
   const displayLegendSection = (
     <Stack w="100%">
       {displayLegendHeading}
-      {displayToggleLegendSwitchInput}
-      {displayLegendAnchorSelectInput}
-      {displayLegendDirectionSelectInput}
-      {displayToggleLegendJustifySwitchInput}
-      {displayLegendTranslateXSliderInput}
-      {displayLegendTranslateYSliderInput}
-      {displayLegendItemWidthSliderInput}
-      {displayLegendItemHeightSliderInput}
-      {displayLegendItemsSpacingSliderInput}
-      {displayLegendItemBackgroundColorInput}
-      {displayLegendItemTextColorInput}
-      {displayLegendItemDirectionSelectInput}
-      {displayLegendItemOpacitySliderInput}
-      {displayLegendSymbolSizeSliderInput}
-      {displayLegendSymbolBorderColorInput}
-      {displayLegendSymbolBorderWidthSliderInput}
-      {displayLegendSymbolShapeSelectInput}
-      {displayLegendSymbolSpacingSliderInput}
+      <Group w="100%" align="baseline">
+        {displayToggleLegendSwitchInput}
+        {displayLegendAnchorSelectInput}
+        {displayLegendDirectionSelectInput}
+        {displayToggleLegendJustifySwitchInput}
+        {displayLegendTranslateXSliderInput}
+        {displayLegendTranslateYSliderInput}
+        {displayLegendItemWidthSliderInput}
+        {displayLegendItemHeightSliderInput}
+        {displayLegendItemsSpacingSliderInput}
+        {displayLegendItemBackgroundColorInput}
+        {displayLegendItemTextColorInput}
+        {displayLegendItemDirectionSelectInput}
+        {displayLegendItemOpacitySliderInput}
+        {displayLegendSymbolSizeSliderInput}
+        {displayLegendSymbolBorderColorInput}
+        {displayLegendSymbolBorderWidthSliderInput}
+        {displayLegendSymbolShapeSelectInput}
+        {displayLegendSymbolSpacingSliderInput}
+      </Group>
     </Stack>
   );
 

@@ -774,10 +774,12 @@ function ResponsiveLineChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      {displayXScaleSelectInput}
-      {displayYScaleSelectInput}
-      {displayEnableYScaleStackedSwitchInput}
-      {displayReverseScaleSwitchInput}
+      <Group w="100%" align="baseline">
+        {displayXScaleSelectInput}
+        {displayYScaleSelectInput}
+        {displayEnableYScaleStackedSwitchInput}
+        {displayReverseScaleSwitchInput}
+      </Group>
     </Stack>
   );
 
@@ -863,12 +865,14 @@ function ResponsiveLineChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      {displayLineCurveSelectInput}
-      {displayChartColorsSelectInput}
-      {displayLineWidthSliderInput}
-      {displayEnableAreaSwitchInput}
-      {displayAreaOpacitySliderInput}
-      {displayAreaBlendModeSelectInput}
+      <Group w="100%" align="baseline">
+        {displayLineCurveSelectInput}
+        {displayChartColorsSelectInput}
+        {displayLineWidthSliderInput}
+        {displayEnableAreaSwitchInput}
+        {displayAreaOpacitySliderInput}
+        {displayAreaBlendModeSelectInput}
+      </Group>
     </Stack>
   );
 
@@ -952,13 +956,15 @@ function ResponsiveLineChart({
   const displayPointsSection = (
     <Stack w="100%">
       {displayPointsHeading}
-      {displayEnablePointsSwitchInput}
-      {displayPointSizeSliderInput}
-      {displayPointColorInput}
-      {displayPointBorderWidthSliderInput}
-      {displayEnablePointLabelSwitchInput}
-      {displayPointLabelSelectInput}
-      {displayPointLabelYOffsetSliderInput}
+      <Group w="100%" align="baseline">
+        {displayEnablePointsSwitchInput}
+        {displayPointSizeSliderInput}
+        {displayPointColorInput}
+        {displayPointBorderWidthSliderInput}
+        {displayEnablePointLabelSwitchInput}
+        {displayPointLabelSelectInput}
+        {displayPointLabelYOffsetSliderInput}
+      </Group>
     </Stack>
   );
 

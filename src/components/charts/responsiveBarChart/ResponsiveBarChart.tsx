@@ -10,7 +10,7 @@ import {
 import { ResponsiveBar } from "@nivo/bar";
 import { useEffect, useReducer, useRef } from "react";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
@@ -506,6 +506,7 @@ function ResponsiveBarChart({
         });
       }}
       value={chartBorderColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -589,6 +590,7 @@ function ResponsiveBarChart({
         });
       }}
       value={labelTextColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -741,12 +743,14 @@ function ResponsiveBarChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      {displayGroupModeSelectInput}
-      {displayLayoutSelectInput}
-      {displayValueScaleSelectInput}
-      {displayReverseSwitchInput}
-      {displayPaddingBarSliderInput}
-      {displayInnerPaddingBarSliderInput}
+      <Group w="100%" align="baseline">
+        {displayGroupModeSelectInput}
+        {displayLayoutSelectInput}
+        {displayValueScaleSelectInput}
+        {displayReverseSwitchInput}
+        {displayPaddingBarSliderInput}
+        {displayInnerPaddingBarSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -822,11 +826,13 @@ function ResponsiveBarChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      {displayColorsSelectInput}
-      {displayBorderRadiusSliderInput}
-      {displayBorderWidthSliderInput}
-      {displayBorderColorInput}
-      {displayToggleFillPatternsSwitchInput}
+      <Group w="100%" align="baseline">
+        {displayColorsSelectInput}
+        {displayBorderRadiusSliderInput}
+        {displayBorderWidthSliderInput}
+        {displayBorderColorInput}
+        {displayToggleFillPatternsSwitchInput}
+      </Group>
     </Stack>
   );
 
@@ -943,10 +949,12 @@ function ResponsiveBarChart({
   const displayLabelsSection = (
     <Stack w="100%">
       {displayLabelsHeading}
-      {displayToggleLabelsSwitchInput}
-      {displayLabelSkipWidthSliderInput}
-      {displayLabelSkipHeightSliderInput}
-      {displayLabelTextColorInput}
+      <Group w="100%" align="baseline">
+        {displayToggleLabelsSwitchInput}
+        {displayLabelSkipWidthSliderInput}
+        {displayLabelSkipHeightSliderInput}
+        {displayLabelTextColorInput}
+      </Group>
     </Stack>
   );
 
@@ -963,13 +971,13 @@ function ResponsiveBarChart({
   );
 
   const displayToggleGridXSwitchInput = (
-    <Group w="100%">
+    <Group>
       {enableGridXSwitchInput}
     </Group>
   );
 
   const displayToggleGridYSwitchInput = (
-    <Group w="100%">
+    <Group>
       {enableGridYSwitchInput}
     </Group>
   );
@@ -977,8 +985,10 @@ function ResponsiveBarChart({
   const displayGridSection = (
     <Stack w="100%">
       {displayGridHeading}
-      {displayToggleGridXSwitchInput}
-      {displayToggleGridYSwitchInput}
+      <Group w="100%" align="baseline">
+        {displayToggleGridXSwitchInput}
+        {displayToggleGridYSwitchInput}
+      </Group>
     </Stack>
   );
 
@@ -1012,8 +1022,10 @@ function ResponsiveBarChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      {displayToggleAnimateSwitchInput}
-      {displayMotionConfigSelectInput}
+      <Group w="100%" align="baseline">
+        {displayToggleAnimateSwitchInput}
+        {displayMotionConfigSelectInput}
+      </Group>
     </Stack>
   );
 

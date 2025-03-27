@@ -1,4 +1,4 @@
-import { Group } from "@mantine/core";
+import { Stack, Title } from "@mantine/core";
 import {
   ResponsiveBarChart,
   ResponsiveCalendarChart,
@@ -54,14 +54,7 @@ function DisplayResponsiveChart() {
     console.log("inside bar");
 
     return (
-      <Group
-        w="100%"
-        style={{
-          outline: "1px solid red",
-          // width: "clamp(350px, 100%, 618px)",
-          height: "clamp(250px, 400px, 500px)",
-        }}
-      >
+      <Stack w="100%">
         <ResponsiveBarChart
           barChartData={chartData}
           chartUnitKind={chartUnitKind}
@@ -79,7 +72,7 @@ function DisplayResponsiveChart() {
             })}
           dashboardChartTitle={chartTitle}
         />
-      </Group>
+      </Stack>
     );
   }
 

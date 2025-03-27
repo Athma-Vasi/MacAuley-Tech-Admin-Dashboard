@@ -275,13 +275,15 @@ function ChartAxisRight(props: ChartAxisRightProps) {
   const displayAxisRightSection = (
     <Stack w="100%">
       {displayAxisRightHeading}
-      {displayToggleAxisRightSwitchInput}
-      {displayAxisRightTickSizeSliderInput}
-      {displayAxisRightTickPaddingSliderInput}
-      {displayAxisRightTickRotationSliderInput}
-      {displayAxisRightLegendTextInput}
-      {displayAxisRightLegendOffsetSliderInput}
-      {displayAxisRightLegendPositionSelectInput}
+      <Group w="100%" align="baseline">
+        {displayToggleAxisRightSwitchInput}
+        {displayAxisRightTickSizeSliderInput}
+        {displayAxisRightTickPaddingSliderInput}
+        {displayAxisRightTickRotationSliderInput}
+        {displayAxisRightLegendTextInput}
+        {displayAxisRightLegendOffsetSliderInput}
+        {displayAxisRightLegendPositionSelectInput}
+      </Group>
     </Stack>
   );
 

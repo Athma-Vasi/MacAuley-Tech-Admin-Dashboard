@@ -275,13 +275,15 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   const displayAxisTopSection = (
     <Stack w="100%">
       {displayAxisTopHeading}
-      {displayToggleAxisTopSwitchInput}
-      {displayAxisTopTickSizeSliderInput}
-      {displayAxisTopTickPaddingSliderInput}
-      {displayAxisTopTickRotationSliderInput}
-      {displayAxisTopLegendTextInput}
-      {displayAxisTopLegendOffsetSliderInput}
-      {displayAxisTopLegendPositionSelectInput}
+      <Group w="100%" align="baseline">
+        {displayToggleAxisTopSwitchInput}
+        {displayAxisTopTickSizeSliderInput}
+        {displayAxisTopTickPaddingSliderInput}
+        {displayAxisTopTickRotationSliderInput}
+        {displayAxisTopLegendTextInput}
+        {displayAxisTopLegendOffsetSliderInput}
+        {displayAxisTopLegendPositionSelectInput}
+      </Group>
     </Stack>
   );
 

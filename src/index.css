@@ -2,7 +2,6 @@
 
 body {
   width: clamp(375px, 100vw, 1650px);
-  outline: 1px solid green;
 }
 
 .app-shell {
@@ -20,7 +19,6 @@ body {
 .pie-chart-card {
   width: clamp(350px, 100vw, 640px);
   margin: 0 auto;
-  outline: 1px solid salmon;
 }
 
 .overview-card {
@@ -42,7 +40,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1em;
-    outline: 1px solid rebeccapurple;
   }
 
   .overview-cards {
@@ -57,12 +54,10 @@ body {
     width: 100%;
     display: grid;
     grid-template-columns: 3fr 7fr;
-    outline: 1px solid teal;
   }
 
   .pie-chart-card {
     width: 100%;
-    outline: 1px solid brown;
   }
 
   .overview-card {

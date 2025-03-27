@@ -1,4 +1,4 @@
-import { Group, TitleOrder } from "@mantine/core";
+import { Group, Stack, Title, TitleOrder } from "@mantine/core";
 import { NivoChartTitlePosition } from "../types";
 
 type ChartAndControlsDisplayProps = {
@@ -49,19 +49,26 @@ function ChartAndControlsDisplay(
     //   <Group w="100%" h="clamp(250px, 400px, 500px)">{responsiveChart}</Group>
     // </Stack>
 
-    <Group position="apart" w="100%">
+    <Stack w="100%">
       {chartControlsStack}
       <Group
         w="100%"
+        ref={chartRef}
+        position="center"
+        py="xl"
         style={{
-          outline: "1px solid red",
           // width: "clamp(350px, 100%, 618px)",
           height: "clamp(250px, 400px, 500px)",
         }}
       >
+        <Group w="100%" position={chartTitlePosition} px="xl">
+          <Title order={chartTitleSize} color={chartTitleColor}>
+            {chartTitle}
+          </Title>
+        </Group>
         {responsiveChart}
       </Group>
-    </Group>
+    </Stack>
   );
 }
 

@@ -10,7 +10,7 @@ import {
 import { ResponsivePie } from "@nivo/pie";
 import { useEffect, useReducer, useRef } from "react";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
@@ -378,6 +378,7 @@ function ResponsivePieChart({
         });
       }}
       value={arcBorderColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -551,6 +552,7 @@ function ResponsivePieChart({
         });
       }}
       value={arcLinkLabelsTextColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -721,12 +723,14 @@ function ResponsivePieChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      {displayStartAngleSliderInput}
-      {displayEndAngleSliderInput}
-      {displayInnerRadiusSliderInput}
-      {displayPadAngleSliderInput}
-      {displayCornerRadiusSliderInput}
-      {displaySortByValueSwitchInput}
+      <Group w="100%" align="baseline">
+        {displayStartAngleSliderInput}
+        {displayEndAngleSliderInput}
+        {displayInnerRadiusSliderInput}
+        {displayPadAngleSliderInput}
+        {displayCornerRadiusSliderInput}
+        {displaySortByValueSwitchInput}
+      </Group>
     </Stack>
   );
 
@@ -781,10 +785,12 @@ function ResponsivePieChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      {displayEnableFillPatternsSwitchInput}
-      {displayColorSchemeSelectInput}
-      {displayBorderColorInput}
-      {displayArcBorderWidthSliderInput}
+      <Group w="100%" align="baseline">
+        {displayEnableFillPatternsSwitchInput}
+        {displayColorSchemeSelectInput}
+        {displayBorderColorInput}
+        {displayArcBorderWidthSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -899,14 +905,16 @@ function ResponsivePieChart({
   const displayArcLinkLabelsSection = (
     <Stack w="100%">
       {displayArcLinkLabelsHeading}
-      {displayEnableArcLinkLabelsSwitchInput}
-      {displayArcLinkLabelsSkipAngleSliderInput}
-      {displayArcLinkLabelsOffsetSliderInput}
-      {displayArcLinkLabelsDiagonalLengthSliderInput}
-      {displayArcLinkLabelsStraightLengthSliderInput}
-      {displayArcLinkLabelsHeadingOffsetSliderInput}
-      {displayArcLinkLabelsThicknessSliderInput}
-      {displayArcLinkLabelsHeadingColorInput}
+      <Group w="100%" align="baseline">
+        {displayEnableArcLinkLabelsSwitchInput}
+        {displayArcLinkLabelsSkipAngleSliderInput}
+        {displayArcLinkLabelsOffsetSliderInput}
+        {displayArcLinkLabelsDiagonalLengthSliderInput}
+        {displayArcLinkLabelsStraightLengthSliderInput}
+        {displayArcLinkLabelsHeadingOffsetSliderInput}
+        {displayArcLinkLabelsThicknessSliderInput}
+        {displayArcLinkLabelsHeadingColorInput}
+      </Group>
     </Stack>
   );
 
@@ -945,8 +953,10 @@ function ResponsivePieChart({
   const displayInteractivitySection = (
     <Stack w="100%">
       {displayInteractivityHeading}
-      {displayActiveInnerRadiusOffsetSliderInput}
-      {displayActiveOuterRadiusOffsetSliderInput}
+      <Group w="100%" align="baseline">
+        {displayActiveInnerRadiusOffsetSliderInput}
+        {displayActiveOuterRadiusOffsetSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -991,9 +1001,11 @@ function ResponsivePieChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      {displayAnimateMotionSwitchInput}
-      {displayMotionConfigSelectInput}
-      {displayTransitionModeSelectInput}
+      <Group w="100%" align="baseline">
+        {displayAnimateMotionSwitchInput}
+        {displayMotionConfigSelectInput}
+        {displayTransitionModeSelectInput}
+      </Group>
     </Stack>
   );
 

@@ -10,7 +10,7 @@ import {
 import { ResponsiveSunburst } from "@nivo/sunburst";
 import { useEffect, useReducer, useRef } from "react";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
@@ -255,6 +255,7 @@ function ResponsiveSunburstChart({
         });
       }}
       value={chartBorderColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -431,11 +432,13 @@ function ResponsiveSunburstChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      {displayChartColorsSelectInput}
-      {displayInheritColorFromParentSwitchInput}
-      {displayChartBorderWidthSliderInput}
-      {displayChartBorderColorInput}
-      {displayEnableFillPatternsSwitchInput}
+      <Group w="100%" align="baseline">
+        {displayChartColorsSelectInput}
+        {displayInheritColorFromParentSwitchInput}
+        {displayChartBorderWidthSliderInput}
+        {displayChartBorderColorInput}
+        {displayEnableFillPatternsSwitchInput}
+      </Group>
     </Stack>
   );
 
@@ -494,9 +497,11 @@ function ResponsiveSunburstChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      {displayEnableAnimateSwitchInput}
-      {displayMotionConfigSelectInput}
-      {displayTransitionModeSelectInput}
+      <Group w="100%" align="baseline">
+        {displayEnableAnimateSwitchInput}
+        {displayMotionConfigSelectInput}
+        {displayTransitionModeSelectInput}
+      </Group>
     </Stack>
   );
 

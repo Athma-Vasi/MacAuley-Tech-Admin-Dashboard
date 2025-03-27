@@ -275,13 +275,15 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const displayAxisBottomSection = (
     <Stack w="100%">
       {displayAxisBottomHeading}
-      {displayToggleAxisBottomSwitchInput}
-      {displayAxisBottomTickSizeSliderInput}
-      {displayAxisBottomTickPaddingSliderInput}
-      {displayAxisBottomTickRotationSliderInput}
-      {displayAxisBottomLegendTextInput}
-      {displayAxisBottomLegendOffsetSliderInput}
-      {displayAxisBottomLegendPositionSelectInput}
+      <Group w="100%" align="baseline">
+        {displayToggleAxisBottomSwitchInput}
+        {displayAxisBottomTickSizeSliderInput}
+        {displayAxisBottomTickPaddingSliderInput}
+        {displayAxisBottomTickRotationSliderInput}
+        {displayAxisBottomLegendTextInput}
+        {displayAxisBottomLegendOffsetSliderInput}
+        {displayAxisBottomLegendPositionSelectInput}
+      </Group>
     </Stack>
   );
 

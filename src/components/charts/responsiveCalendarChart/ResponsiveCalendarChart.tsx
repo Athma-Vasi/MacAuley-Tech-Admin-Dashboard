@@ -467,8 +467,10 @@ function ResponsiveCalendarChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      {displayCalendarDirectionSelectInput}
-      {displayCalendarAlignSelectInput}
+      <Group w="100%" align="baseline">
+        {displayCalendarDirectionSelectInput}
+        {displayCalendarAlignSelectInput}
+      </Group>
     </Stack>
   );
 
@@ -515,8 +517,8 @@ function ResponsiveCalendarChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      {displayEmptyColorInput}
       {displayEnableDefaultColorsSwitchInput}
+      {displayEmptyColorInput}
     </Stack>
   );
 
@@ -564,9 +566,11 @@ function ResponsiveCalendarChart({
   const displayYearsSection = (
     <Stack w="100%">
       {displayYearsHeading}
-      {displayYearSpacingSliderInput}
-      {displayYearLegendPositionSelectInput}
-      {displayYearLegendOffsetSliderInput}
+      <Group w="100%" align="baseline">
+        {displayYearSpacingSliderInput}
+        {displayYearLegendPositionSelectInput}
+        {displayYearLegendOffsetSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -633,11 +637,13 @@ function ResponsiveCalendarChart({
   const displayMonthsSection = (
     <Stack w="100%">
       {displayMonthsHeading}
-      {displayMonthSpacingSliderInput}
-      {displayMonthBorderWidthSliderInput}
-      {displayMonthBorderColorInput}
-      {displayMonthLegendPositionSelectInput}
-      {displayMonthLegendOffsetSliderInput}
+      <Group w="100%" align="baseline">
+        {displayMonthSpacingSliderInput}
+        {displayMonthBorderWidthSliderInput}
+        {displayMonthBorderColorInput}
+        {displayMonthLegendPositionSelectInput}
+        {displayMonthLegendOffsetSliderInput}
+      </Group>
     </Stack>
   );
 
@@ -685,9 +691,11 @@ function ResponsiveCalendarChart({
   const displayDaysSection = (
     <Stack w="100%">
       {displayDaysHeading}
-      {displayDaySpacingSliderInput}
-      {displayDayBorderWidthSliderInput}
-      {displayDayBorderColorInput}
+      <Group w="100%" align="baseline">
+        {displayDaySpacingSliderInput}
+        {displayDayBorderWidthSliderInput}
+        {displayDayBorderColorInput}
+      </Group>
     </Stack>
   );
 
@@ -715,7 +723,7 @@ function ResponsiveCalendarChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%">
+    <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={modifiedResponsiveCalendarChartState}
         input={displayResetAllButton}

@@ -1,3 +1,4 @@
+import html2canvas from "html2canvas";
 import jwtDecode from "jwt-decode";
 import { NavigateFunction } from "react-router-dom";
 import { Err, Ok } from "ts-results";
@@ -5,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ColorsSwatches } from "./constants";
 import { AuthAction } from "./context/authProvider";
 import { AuthDispatch, AuthState } from "./context/authProvider/types";
+
 import {
   DecodedToken,
   HttpServerResponse,

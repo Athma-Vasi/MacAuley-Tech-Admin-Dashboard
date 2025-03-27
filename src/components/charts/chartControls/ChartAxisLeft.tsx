@@ -275,13 +275,15 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
   const displayAxisLeftSection = (
     <Stack w="100%">
       {displayAxisLeftHeading}
-      {displayToggleAxisLeftSwitchInput}
-      {displayAxisLeftTickSizeSliderInput}
-      {displayAxisLeftTickPaddingSliderInput}
-      {displayAxisLeftTickRotationSliderInput}
-      {displayAxisLeftLegendTextInput}
-      {displayAxisLeftLegendOffsetSliderInput}
-      {displayAxisLeftLegendPositionSelectInput}
+      <Group w="100%" align="baseline">
+        {displayToggleAxisLeftSwitchInput}
+        {displayAxisLeftTickSizeSliderInput}
+        {displayAxisLeftTickPaddingSliderInput}
+        {displayAxisLeftTickRotationSliderInput}
+        {displayAxisLeftLegendTextInput}
+        {displayAxisLeftLegendOffsetSliderInput}
+        {displayAxisLeftLegendPositionSelectInput}
+      </Group>
     </Stack>
   );
 

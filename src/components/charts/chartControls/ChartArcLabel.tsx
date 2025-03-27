@@ -205,11 +205,13 @@ function ChartArcLabel(props: ChartArcLabelProps) {
   const displayArcLabelsSection = (
     <Stack w="100%">
       {displayArcLabelsHeading}
-      {displayEnableArcLabelsSwitchInput}
-      {displayArcLabelSelectInput}
-      {displayArcLabelsRadiusOffsetSliderInput}
-      {displayArcLabelsSkipAngleSliderInput}
-      {displayArcLabelsTextColorInput}
+      <Group w="100%" align="baseline">
+        {displayEnableArcLabelsSwitchInput}
+        {displayArcLabelSelectInput}
+        {displayArcLabelsRadiusOffsetSliderInput}
+        {displayArcLabelsSkipAngleSliderInput}
+        {displayArcLabelsTextColorInput}
+      </Group>
     </Stack>
   );
 

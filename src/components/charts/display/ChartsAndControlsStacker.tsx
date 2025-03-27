@@ -1,11 +1,11 @@
-import { Group, Stack, Text } from "@mantine/core";
+import { Card, Group, Space, Stack, Text } from "@mantine/core";
 import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
 import {
   returnThemeColors,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
 } from "../../../utils";
-import { useGlobalState } from "../../../hooks/useGlobalState";
 
 type ChartsAndGraphsControlsStackerProps = {
   initialChartState?: Record<string, any>;
@@ -64,7 +64,7 @@ function ChartsAndGraphsControlsStacker({
   );
 
   const displayBottomSection = (
-    <Stack>
+    <Stack w="100%">
       <Group position="apart">
         <Text
           aria-live="polite"
@@ -86,10 +86,18 @@ function ChartsAndGraphsControlsStacker({
   );
 
   return (
-    <Stack py="md">
+    <Card
+      p="sm"
+      withBorder
+      style={{
+        // outline: "1px solid rebeccapurple",
+        width: "clamp(350px, 100vw, 425px)",
+      }}
+    >
       {displayTopSection}
+      <Space h="sm" />
       {displayBottomSection}
-    </Stack>
+    </Card>
   );
 }
 export default ChartsAndGraphsControlsStacker;

@@ -318,14 +318,16 @@ function ChartOptions(props: ChartOptionsProps) {
   const displayOptionsSection = (
     <Stack w="100%">
       {displayOptionsHeading}
-      {displayChartTitleTextInput}
-      {displayChartTitleColorInput}
-      {displayChartTitleSizeSliderInput}
-      {displayChartTitlePositionSelectInput}
-      {displayScreenshotFilenameTextInput}
-      {displayScreenshotImageTypeSelectInput}
-      {displayScreenshotImageQualitySliderInput}
-      {displayDownloadScreenshot}
+      <Group w="100%" align="baseline">
+        {displayChartTitleTextInput}
+        {displayChartTitleColorInput}
+        {displayChartTitleSizeSliderInput}
+        {displayChartTitlePositionSelectInput}
+        {displayScreenshotFilenameTextInput}
+        {displayScreenshotImageTypeSelectInput}
+        {displayScreenshotImageQualitySliderInput}
+        {displayDownloadScreenshot}
+      </Group>
     </Stack>
   );
 
