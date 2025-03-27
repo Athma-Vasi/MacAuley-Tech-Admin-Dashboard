@@ -63,11 +63,7 @@ type OtherMetricsProps = {
   metricCategory: FinancialMetricCategory;
   metricsView: DashboardMetricsView;
   month: string;
-  otherMetricsOverviewCards: {
-    averageOrderValue: React.JSX.Element;
-    conversionRate: React.JSX.Element;
-    netProfitMargin: React.JSX.Element;
-  };
+  otherMetricsOverviewCards: React.JSX.Element;
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -399,14 +395,6 @@ function OtherMetrics({
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  const overviewCards = (
-    <>
-      {otherMetricsOverviewCards.netProfitMargin}
-      {otherMetricsOverviewCards.averageOrderValue}
-      {otherMetricsOverviewCards.conversionRate}
-    </>
-  );
-
   const otherMetrics = (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
@@ -421,7 +409,7 @@ function OtherMetrics({
       cardsWithStatisticsElements={cardsWithStatisticsElements}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
-      overviewCards={overviewCards}
+      overviewCards={otherMetricsOverviewCards}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
     />

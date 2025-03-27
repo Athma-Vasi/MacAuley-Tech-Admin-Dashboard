@@ -40,7 +40,7 @@ function returnOverviewAllProductsMetrics(
     (bmetric) => bmetric.storeLocation === storeLocationView,
   )?.productMetrics;
 
-  if (!productMetrics) {
+  if (productMetrics === null || productMetrics === undefined) {
     return defaultValue;
   }
 
@@ -49,7 +49,9 @@ function returnOverviewAllProductsMetrics(
   )?.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === year,
   );
-  if (!allProductsYearlyMetrics) {
+  if (
+    allProductsYearlyMetrics === null || allProductsYearlyMetrics === undefined
+  ) {
     return defaultValue;
   }
 
@@ -62,7 +64,10 @@ function returnOverviewAllProductsMetrics(
     .find((monthlyMetric) =>
       monthlyMetric.month === (MONTHS[Number(month) - 1].toString())
     );
-  if (!allProductsMonthlyMetrics) {
+  if (
+    allProductsMonthlyMetrics === null ||
+    allProductsMonthlyMetrics === undefined
+  ) {
     return defaultValue;
   }
 
@@ -74,8 +79,9 @@ function returnOverviewAllProductsMetrics(
   const allProductsDailyMetrics = allProductsMonthlyMetrics.dailyMetrics.find((
     dailyMetric,
   ) => dailyMetric.day === day);
-
-  if (!allProductsDailyMetrics) {
+  if (
+    allProductsDailyMetrics === null || allProductsDailyMetrics === undefined
+  ) {
     return defaultValue;
   }
 
@@ -88,11 +94,7 @@ function returnOverviewAllProductsMetrics(
 }
 
 function returnProductMetricsOverviewCards(
-  {
-    overviewMetrics,
-    selectedYYYYMMDD,
-    storeLocationView,
-  }: {
+  { overviewMetrics, selectedYYYYMMDD, storeLocationView }: {
     overviewMetrics: OverviewAllProductsMetrics;
     selectedYYYYMMDD: string;
     storeLocationView: BusinessMetricStoreLocation;
@@ -104,35 +106,45 @@ function returnProductMetricsOverviewCards(
     Yearly: <></>,
   };
 
-  return Object.entries(overviewMetrics).reduce((acc, [key, metrics]) => {
-    const { revenue, unitsSold } = metrics;
-    const overviewRevenueCard = createOverviewMetricCard({
-      selectedYYYYMMDD,
-      storeLocationView,
-      subMetric: "Revenue",
-      unit: "CAD",
-      value: revenue,
-    });
-    const overviewUnitsSoldCard = createOverviewMetricCard({
-      selectedYYYYMMDD,
-      storeLocationView,
-      subMetric: "Units Sold",
-      unit: "Units",
-      value: unitsSold,
-    });
+  return Object.entries(overviewMetrics).reduce(
+    (acc, curr) => {
+      const [calendarView, metrics] = curr as [
+        DashboardCalendarView,
+        { revenue: number; unitsSold: number },
+      ];
+      const { revenue, unitsSold } = metrics;
 
-    Object.defineProperty(acc, key, {
-      value: (
-        <>
-          {overviewRevenueCard}
-          {overviewUnitsSoldCard}
-        </>
-      ),
-      enumerable: true,
-    });
+      const overviewRevenueCard = createOverviewMetricCard({
+        calendarView,
+        selectedYYYYMMDD,
+        storeLocationView,
+        subMetric: "Revenue",
+        unit: "CAD",
+        value: revenue,
+      });
+      const overviewUnitsSoldCard = createOverviewMetricCard({
+        calendarView,
+        selectedYYYYMMDD,
+        storeLocationView,
+        subMetric: "Units Sold",
+        unit: "Units",
+        value: unitsSold,
+      });
 
-    return acc;
-  }, initialAcc);
+      Object.defineProperty(acc, calendarView, {
+        value: (
+          <>
+            {overviewRevenueCard}
+            {overviewUnitsSoldCard}
+          </>
+        ),
+        enumerable: true,
+      });
+
+      return acc;
+    },
+    initialAcc,
+  );
 }
 
 export { returnOverviewAllProductsMetrics, returnProductMetricsOverviewCards };

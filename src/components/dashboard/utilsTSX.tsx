@@ -11,6 +11,7 @@ import {
   toFixedFloat,
 } from "../../utils";
 import { GoldenGrid } from "../goldenGrid";
+import { MONTHS } from "./constants";
 import {
   MONEY_SYMBOL_CATEGORIES,
   PERCENTAGE_SYMBOL_CATEGORIES,
@@ -609,20 +610,26 @@ function returnCardElementsForYAxisVariable(
 }
 
 function createOverviewMetricCard(
-  {
-    selectedYYYYMMDD,
-    storeLocationView,
-    subMetric,
-    unit,
-    value,
-  }: {
-    selectedYYYYMMDD: string;
-    storeLocationView: BusinessMetricStoreLocation;
-    subMetric: string;
-    unit: "CAD" | "%" | "Units" | "";
-    value: number;
-  },
+  { calendarView, selectedYYYYMMDD, storeLocationView, subMetric, unit, value }:
+    {
+      calendarView: DashboardCalendarView;
+      selectedYYYYMMDD: string;
+      storeLocationView: BusinessMetricStoreLocation;
+      subMetric: string;
+      unit: "CAD" | "%" | "Units" | "";
+      value: number;
+    },
 ) {
+  const [year, month, _day] = selectedYYYYMMDD.split("-");
+  const date = calendarView === "Daily"
+    ? formatDate({
+      date: selectedYYYYMMDD,
+      formatOptions: { dateStyle: "long" },
+    })
+    : calendarView === "Monthly"
+    ? `${MONTHS[Number(month) - 1]} ${year}`
+    : year;
+
   return (
     <Card
       shadow="sm"
@@ -638,10 +645,7 @@ function createOverviewMetricCard(
           {storeLocationView}
         </Text>
         <Text size={16} mb={5}>
-          {formatDate({
-            date: selectedYYYYMMDD,
-            formatOptions: { dateStyle: "long" },
-          })}
+          {date}
         </Text>
         <Text size={26} weight={600}>
           {addCommaSeparator(value)} {unit}

@@ -68,12 +68,7 @@ type PERTProps = {
   metricCategory: FinancialMetricCategory;
   metricsView: DashboardMetricsView;
   month: string;
-  pertOverviewCards: {
-    expenses: React.JSX.Element;
-    profit: React.JSX.Element;
-    revenue: React.JSX.Element;
-    transactions: React.JSX.Element;
-  };
+  pertOverviewCards: React.JSX.Element;
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -473,15 +468,6 @@ function PERT({
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  const overviewCards = (
-    <>
-      {pertOverviewCards.profit}
-      {/* {pertOverviewCards.expenses} */}
-      {pertOverviewCards.revenue}
-      {/* {pertOverviewCards.transactions} */}
-    </>
-  );
-
   return (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
@@ -497,7 +483,7 @@ function PERT({
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}
-      overviewCards={overviewCards}
+      overviewCards={pertOverviewCards}
       pieChart={pieChart}
       pieChartHeading={pieChartHeading}
       pieChartYAxisSelectInput={pieChartYAxisSelectInput}

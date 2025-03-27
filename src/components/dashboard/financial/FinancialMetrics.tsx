@@ -19,7 +19,6 @@ import type {
   Month,
   Year,
 } from "../types";
-import { createOverviewProductMetricCards } from "../utilsTSX";
 import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
@@ -32,7 +31,10 @@ import OtherMetrics from "./otherMetrics/OtherMetrics";
 import PERT from "./pert/PERT";
 import { financialMetricsReducer } from "./reducers";
 import { initialFinancialMetricsState } from "./state";
-import { returnDailyOverviewFinancialMetrics } from "./utils";
+import {
+  returnFinancialMetricsOverviewCards,
+  returnOverviewFinancialMetrics,
+} from "./utils";
 
 type FinancialMetricsProps = {
   businessMetrics: BusinessMetric[];
@@ -177,19 +179,18 @@ function FinancialMetrics({
     />
   );
 
-  const { otherMetrics, pert } = returnDailyOverviewFinancialMetrics(
+  const overviewMetrics = returnOverviewFinancialMetrics(
     businessMetrics,
     storeLocationView,
     selectedYYYYMMDD,
   );
 
-  const { otherMetricsOverviewCards, pertOverviewCards } =
-    createOverviewProductMetricCards(
-      otherMetrics,
-      pert,
+  const { pertOverviewCards, otherMetricsOverviewCards } =
+    returnFinancialMetricsOverviewCards({
+      overviewMetrics,
       selectedYYYYMMDD,
       storeLocationView,
-    );
+    });
 
   const subCategoryPage = PERT_SET.has(category)
     ? (
@@ -204,7 +205,7 @@ function FinancialMetrics({
             month={selectedYYYYMMDD.split("-")[1]}
             metricCategory={category}
             metricsView="Financials"
-            pertOverviewCards={pertOverviewCards}
+            pertOverviewCards={pertOverviewCards[calendarView]}
             storeLocation={storeLocationView}
             year={selectedYear}
           />
@@ -223,7 +224,7 @@ function FinancialMetrics({
             month={selectedYYYYMMDD.split("-")[1]}
             metricCategory={category}
             metricsView="Financials"
-            otherMetricsOverviewCards={otherMetricsOverviewCards}
+            otherMetricsOverviewCards={otherMetricsOverviewCards[calendarView]}
             storeLocation={storeLocationView}
             year={selectedYear}
           />

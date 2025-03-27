@@ -1,4 +1,3 @@
-import { StoreLocation } from "../../../types";
 import { MONTHS } from "../constants";
 import {
   BusinessMetric,
@@ -43,21 +42,21 @@ function returnOverviewRepairMetrics(
   const repairMetrics = businessMetrics.find(
     (bmetric) => bmetric.storeLocation === storeLocationView,
   )?.repairMetrics;
-  if (!repairMetrics) {
+  if (repairMetrics === null || repairMetrics === undefined) {
     return defaultValue;
   }
 
   const subMetrics = repairMetrics.find(
     (repairMetric) => repairMetric.name === category,
   );
-  if (!subMetrics) {
+  if (subMetrics === null || subMetrics === undefined) {
     return defaultValue;
   }
 
   const yearlyMetrics = subMetrics.yearlyMetrics.find((repairMetric) =>
     repairMetric.year === year
   );
-  if (!yearlyMetrics) {
+  if (yearlyMetrics === null || yearlyMetrics === undefined) {
     return defaultValue;
   }
 
@@ -69,7 +68,7 @@ function returnOverviewRepairMetrics(
   const monthlyMetrics = yearlyMetrics.monthlyMetrics.find((monthlyMetric) =>
     monthlyMetric.month === (MONTHS[Number(month) - 1].toString())
   );
-  if (!monthlyMetrics) {
+  if (monthlyMetrics === null || monthlyMetrics === undefined) {
     return defaultValue;
   }
 
@@ -81,7 +80,7 @@ function returnOverviewRepairMetrics(
   const dailyMetrics = monthlyMetrics.dailyMetrics.find((dailyMetric) =>
     dailyMetric.day === day
   );
-  if (!dailyMetrics) {
+  if (dailyMetrics === null || dailyMetrics === undefined) {
     return defaultValue;
   }
 
@@ -107,9 +106,14 @@ function createOverviewRepairMetricsCards(
   };
 
   return Object.entries(overviewMetrics).reduce(
-    (acc, [calendarView, metrics]) => {
+    (acc, curr) => {
+      const [calendarView, metrics] = curr as [
+        DashboardCalendarView,
+        { revenue: number; unitsRepaired: number },
+      ];
       const { revenue, unitsRepaired } = metrics;
       const overviewRevenueCard = createOverviewMetricCard({
+        calendarView,
         selectedYYYYMMDD,
         storeLocationView,
         subMetric: "Repairs",
@@ -117,6 +121,7 @@ function createOverviewRepairMetricsCards(
         value: revenue,
       });
       const overviewUnitsRepairedCard = createOverviewMetricCard({
+        calendarView,
         selectedYYYYMMDD,
         storeLocationView,
         subMetric: "Units Repaired",
