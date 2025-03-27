@@ -651,34 +651,6 @@ function createOverviewMetricCard(
   );
 }
 
-function createOverviewRepairMetricCards(
-  repairRevenueOverview: number,
-  repairUnitsOverview: number,
-  selectedYYYYMMDD: string,
-  storeLocationView: BusinessMetricStoreLocation,
-) {
-  const overviewRepairRevenueCard = createOverviewMetricCard({
-    selectedYYYYMMDD,
-    storeLocationView,
-    subMetric: "revenue",
-    unit: "CAD",
-    value: repairRevenueOverview,
-  });
-
-  const overviewRepairUnitsCard = createOverviewMetricCard({
-    selectedYYYYMMDD,
-    storeLocationView,
-    subMetric: "units",
-    unit: "Units",
-    value: repairUnitsOverview,
-  });
-
-  return {
-    repairRevenueOverviewCard: overviewRepairRevenueCard,
-    repairUnitsOverviewCard: overviewRepairUnitsCard,
-  };
-}
-
 function createOverviewCustomerMetricCards(
   newOverview: {
     lifetimeValue: number;
@@ -857,7 +829,6 @@ export {
   createOverviewCustomerMetricCards,
   createOverviewMetricCard,
   createOverviewProductMetricCards,
-  createOverviewRepairMetricCards,
   createStatisticsElements,
   returnCardElementsForYAxisVariable,
   returnDashboardCardElement,

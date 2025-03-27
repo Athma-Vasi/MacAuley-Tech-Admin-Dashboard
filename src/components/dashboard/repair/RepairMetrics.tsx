@@ -18,7 +18,6 @@ import type {
   Month,
   Year,
 } from "../types";
-import { createOverviewRepairMetricCards } from "../utilsTSX";
 import { repairMetricsAction } from "./actions";
 import { createRepairMetricsCards } from "./cards";
 import {
@@ -30,7 +29,10 @@ import { REPAIR_METRICS_DATA } from "./constants";
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
-import { returnDailyOverviewRepairMetrics } from "./utils";
+import {
+  createOverviewRepairMetricsCards,
+  returnOverviewRepairMetrics,
+} from "./utils";
 
 type RepairMetricsProps = {
   businessMetrics: BusinessMetric[];
@@ -176,20 +178,18 @@ function RepairMetrics({
     />
   );
 
-  const { repairRevenueOverview, repairUnitsOverview } =
-    returnDailyOverviewRepairMetrics(
-      businessMetrics,
-      storeLocationView,
-      selectedYYYYMMDD,
-      repairCategory,
-    );
+  const overviewMetrics = returnOverviewRepairMetrics(
+    businessMetrics,
+    storeLocationView,
+    selectedYYYYMMDD,
+    repairCategory,
+  );
 
-  const repairOverviewCards = createOverviewRepairMetricCards(
-    repairRevenueOverview,
-    repairUnitsOverview,
+  const overviewCards = createOverviewRepairMetricsCards({
+    overviewMetrics,
     selectedYYYYMMDD,
     storeLocationView,
-  );
+  });
 
   const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
     <React.Fragment key={idx}>
@@ -202,7 +202,7 @@ function RepairMetrics({
         repairCategory={repairCategory}
         repairMetricsCards={cards}
         repairMetricsCharts={charts}
-        repairOverviewCards={repairOverviewCards}
+        repairOverviewCards={overviewCards[calendarView]}
         storeLocation={storeLocationView}
         year={selectedYear}
       />

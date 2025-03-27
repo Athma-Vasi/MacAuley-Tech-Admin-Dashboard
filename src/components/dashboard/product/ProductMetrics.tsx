@@ -203,33 +203,6 @@ function ProductMetrics({
     selectedYYYYMMDD,
   );
 
-  // const overviewRevenueCard = createOverviewMetricCard(
-  //   {
-  //     selectedYYYYMMDD,
-  //     storeLocationView,
-  //     subMetric: "Revenue",
-  //     unit: "CAD",
-  //     value: dailyRevenue,
-  //   },
-  // );
-
-  // const overviewUnitsSoldCard = createOverviewMetricCard(
-  //   {
-  //     selectedYYYYMMDD,
-  //     storeLocationView,
-  //     subMetric: "Units Sold",
-  //     unit: "Units",
-  //     value: dailyUnitsSold,
-  //   },
-  // );
-
-  // const overviewCards = (
-  //   <>
-  //     {overviewRevenueCard}
-  //     {overviewUnitsSoldCard}
-  //   </>
-  // );
-
   const overviewCards = returnProductMetricsOverviewCards({
     overviewMetrics,
     selectedYYYYMMDD,

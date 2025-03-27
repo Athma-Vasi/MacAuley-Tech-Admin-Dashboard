@@ -61,10 +61,7 @@ type RepairRUSProps = {
   repairCategory: RepairMetricCategory;
   repairMetricsCards: RepairMetricsCards;
   repairMetricsCharts: RepairMetricsCharts;
-  repairOverviewCards: {
-    repairRevenueOverviewCard: React.JSX.Element;
-    repairUnitsOverviewCard: React.JSX.Element;
-  };
+  repairOverviewCards: React.JSX.Element;
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
@@ -391,13 +388,6 @@ function RepairRUS(
     REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
-  const overviewCards = (
-    <>
-      {repairOverviewCards.repairRevenueOverviewCard}
-      {repairOverviewCards.repairUnitsOverviewCard}
-    </>
-  );
-
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -413,7 +403,7 @@ function RepairRUS(
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
-        overviewCards={overviewCards}
+        overviewCards={repairOverviewCards}
         sectionHeading={splitCamelCase(metricsView)}
         semanticLabel="TODO"
       />

@@ -104,7 +104,14 @@ function DashboardBarLineLayout(
         {pieChartCard}
       </div>
     )
-    : overviewCardsSection;
+    : (
+      <Stack w="100%">
+        <Title order={3}>Summary</Title>
+        <Group w="100%">
+          {overviewCards}
+        </Group>
+      </Stack>
+    );
 
   const barLineSection = (
     <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
