@@ -77,9 +77,10 @@ function DashboardBarLineLayout(
       padding="lg"
       radius="md"
       withBorder
+      w="100%"
       className="pie-chart-card"
     >
-      <Stack px="md">
+      <Stack px="md" w="100%">
         <Group
           position={pieChartYAxisSelectInput ? "apart" : "right"}
           w="100%"
@@ -89,7 +90,7 @@ function DashboardBarLineLayout(
         </Group>
 
         <Text size={20} weight={500}>{pieChartHeading}</Text>
-        <Center>
+        <Center w="100%">
           {pieChart}
         </Center>
       </Stack>

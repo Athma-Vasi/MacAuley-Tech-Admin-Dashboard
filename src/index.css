@@ -13,8 +13,14 @@ body {
   width: clamp(375px, 100vw, 1650px);
 }
 
+.overview-and-pie {
+  width: 100%;
+}
+
 .pie-chart-card {
   width: clamp(350px, 100vw, 640px);
+  margin: 0 auto;
+  outline: 1px solid salmon;
 }
 
 .overview-card {
@@ -28,6 +34,22 @@ body {
 .overview-cards {
   display: flex;
   gap: 2em;
+}
+
+@media (max-width: 900px) {
+  .overview-and-pie {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    outline: 1px solid rebeccapurple;
+  }
+
+  .overview-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
 }
 
 @media screen and (min-width: 1300px) {
