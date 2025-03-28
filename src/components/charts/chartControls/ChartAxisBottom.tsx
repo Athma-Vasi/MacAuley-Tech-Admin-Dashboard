@@ -1,13 +1,17 @@
 import { Group, Stack, Text, Title } from "@mantine/core";
 import type { ChangeEvent } from "react";
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextInput";
-import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
+import { SLIDER_TOOLTIP_COLOR } from "../constants";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA } from "../responsiveBarChart/constants";
 import type { NivoAxisLegendPosition } from "../types";
+import { createChartHeaderStyles } from "../utils";
 
 type ChartAxisAction = {
   setAxisBottomLegend: "setAxisBottomLegend";
@@ -60,6 +64,12 @@ type ChartAxisBottomProps = {
 };
 
 function ChartAxisBottom(props: ChartAxisBottomProps) {
+  const { globalState: { themeObject } } = useGlobalState();
+  const { backgroundColor } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const {
     axisBottomLegend,
     axisBottomLegendOffset,
@@ -193,7 +203,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
 
   const displayAxisBottomHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5}>

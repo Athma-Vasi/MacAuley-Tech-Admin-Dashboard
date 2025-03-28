@@ -1,12 +1,16 @@
 import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
 
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
+import { SLIDER_TOOLTIP_COLOR } from "../constants";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { NIVO_SUNBURST_ARC_LABEL_DATA } from "../responsiveSunburstChart/constants";
 import type { NivoArcLabel } from "../types";
+import { createChartHeaderStyles } from "../utils";
 
 type ChartArcLabelAction = {
   setArcLabel: "setArcLabel";
@@ -54,6 +58,12 @@ type ChartArcLabelProps = {
 };
 
 function ChartArcLabel(props: ChartArcLabelProps) {
+  const { globalState: { themeObject } } = useGlobalState();
+  const { backgroundColor } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const {
     arcLabel,
     arcLabelsRadiusOffset,
@@ -146,7 +156,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
 
   const displayArcLabelsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5}>
