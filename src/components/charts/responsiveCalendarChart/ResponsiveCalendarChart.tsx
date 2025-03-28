@@ -19,9 +19,10 @@ import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderIn
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { ChartMargin } from "../chartControls/ChartMargin";
 import { ChartOptions } from "../chartControls/ChartOptions";
-import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
+import { SLIDER_TOOLTIP_COLOR } from "../constants";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../utils";
 import { responsiveCalendarChartAction } from "./actions";
 import {
   NIVO_CALENDAR_ALIGN_DATA,
@@ -48,10 +49,11 @@ function ResponsiveCalendarChart({
     globalState: { themeObject },
   } = useGlobalState();
 
-  const { grayColorShade, textColor, scrollBarStyle } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
+  const { grayColorShade, textColor, scrollBarStyle, backgroundColor } =
+    returnThemeColors({
+      themeObject,
+      colorsSwatches: COLORS_SWATCHES,
+    });
 
   // sets initial colors based on app theme
   const modifiedResponsiveCalendarChartState: ResponsiveCalendarChartState = {
@@ -437,7 +439,7 @@ function ResponsiveCalendarChart({
   // base
   const displayBaseHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -490,7 +492,7 @@ function ResponsiveCalendarChart({
   // style
   const displayStyleHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -525,7 +527,7 @@ function ResponsiveCalendarChart({
   // years
   const displayYearsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -577,7 +579,7 @@ function ResponsiveCalendarChart({
   // months
   const displayMonthsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -650,7 +652,7 @@ function ResponsiveCalendarChart({
   // days
   const displayDaysHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={4} color={textColor}>
