@@ -9,9 +9,13 @@ import {
 } from "@mantine/core";
 import type { ChangeEvent } from "react";
 
-import { SCREENSHOT_IMAGE_TYPE_DATA } from "../../../constants";
+import {
+  COLORS_SWATCHES,
+  SCREENSHOT_IMAGE_TYPE_DATA,
+} from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
 import type { ScreenshotImageType } from "../../../types";
-import { captureScreenshot } from "../../../utils";
+import { captureScreenshot, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
@@ -19,10 +23,10 @@ import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextI
 import {
   NIVO_CHART_TITLE_POSITION_DATA,
   SLIDER_TOOLTIP_COLOR,
-  STICKY_STYLE,
 } from "../constants";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import type { NivoChartTitlePosition } from "../types";
+import { createChartHeaderStyles } from "../utils";
 
 type ChartOptionsAction = {
   setChartTitle: "setChartTitle";
@@ -80,6 +84,12 @@ type ChartOptionsProps = {
 };
 
 function ChartOptions(props: ChartOptionsProps) {
+  const { globalState: { themeObject } } = useGlobalState();
+  const { backgroundColor } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const {
     chartRef,
     chartTitle,
@@ -227,7 +237,7 @@ function ChartOptions(props: ChartOptionsProps) {
 
   const displayOptionsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5}>
