@@ -71,7 +71,11 @@ function Home() {
         </Navbar>
       }
     >
-      <Group w="100%" style={{ outline: "1px solid red" }}>
+      <Group
+        className="main-outlet"
+        w="100%"
+        style={{ outline: "1px solid red" }}
+      >
         <Outlet />
       </Group>
     </AppShell>

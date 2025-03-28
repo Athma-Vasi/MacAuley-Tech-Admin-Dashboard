@@ -12,6 +12,10 @@ body {
   width: clamp(375px, 100vw, 1650px);
 }
 
+.main-outlet {
+  width: 100%;
+}
+
 .overview-and-pie {
   width: 100%;
 }
@@ -40,6 +44,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1em;
+  }
+
+  .pie-chart-card {
+    width: 100%;
+    margin: 0 auto;
   }
 
   .overview-cards {

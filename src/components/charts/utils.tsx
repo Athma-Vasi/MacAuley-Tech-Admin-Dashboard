@@ -256,8 +256,9 @@ function createChartHeaderStyles(
 ): React.CSSProperties {
   return {
     backgroundColor,
-    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.15)",
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.05)",
     height: "2.5em",
+    marginTop: "1em",
     position: "sticky",
     top,
     zIndex,

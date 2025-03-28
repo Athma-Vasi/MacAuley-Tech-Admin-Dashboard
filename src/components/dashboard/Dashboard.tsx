@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Group,
   LoadingOverlay,
   Stack,
@@ -210,19 +211,6 @@ function Dashboard() {
     (storeLocationView === "Calgary" && Number(selectedYear) < 2017) ||
     (storeLocationView === "Edmonton" && Number(selectedYear) < 2013);
 
-  // const storeLocationSegmentedControl = (
-  //   <AccessibleSegmentedControl
-  //     attributes={{
-  //       data: STORE_LOCATION_VIEW_DATA,
-  //       disabled: isStoreLocationSegmentDisabled,
-  //       name: "storeLocation",
-  //       orientation: windowWidth < 500 ? "vertical" : "horizontal",
-  //       parentDispatch: dashboardDispatch,
-  //       validValueAction: dashboardAction.setStoreLocationView,
-  //       value: storeLocationView,
-  //     }}
-  //   />
-  // );
   const storeLocationSelectInput = (
     <AccessibleSelectInput
       attributes={{
@@ -234,6 +222,54 @@ function Dashboard() {
         value: storeLocationView,
       }}
     />
+  );
+
+  const dashboardHeader = (
+    <Group
+      h={DASHBOARD_HEADER_HEIGHT}
+      py="sm"
+      position="apart"
+      style={{
+        backgroundColor: backgroundColor,
+        position: "sticky",
+        top: APP_HEADER_HEIGHT,
+        zIndex: 3,
+      }}
+      opacity={0.97}
+      w="100%"
+    >
+      {storeLocationSelectInput}
+      {createdYYYYMMDDInput}
+    </Group>
+  );
+
+  const dashboardHeaderAccordion = (
+    <Group
+      h={DASHBOARD_HEADER_HEIGHT}
+      py="sm"
+      style={{
+        backgroundColor: backgroundColor,
+        position: "sticky",
+        top: APP_HEADER_HEIGHT,
+        zIndex: 4,
+      }}
+      opacity={0.97}
+      w="100%"
+    >
+      <Accordion bg={backgroundColor} w="100%">
+        <Accordion.Item value="Location and Date">
+          <Accordion.Control>
+            <Text weight={500} size="md">Location and Date</Text>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Group w="100%" position="apart">
+              {storeLocationSelectInput}
+              {createdYYYYMMDDInput}
+            </Group>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </Group>
   );
 
   const displayMetricsView = metricsView === "financials"
@@ -286,22 +322,7 @@ function Dashboard() {
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>
       </Stack>
-      <Group
-        h={DASHBOARD_HEADER_HEIGHT}
-        py="sm"
-        position="apart"
-        style={{
-          backgroundColor: backgroundColor,
-          position: "sticky",
-          top: APP_HEADER_HEIGHT,
-          zIndex: 3,
-        }}
-        opacity={0.97}
-        w="100%"
-      >
-        {storeLocationSelectInput}
-        {createdYYYYMMDDInput}
-      </Group>
+      {windowWidth < 460 ? dashboardHeaderAccordion : dashboardHeader}
       {displayMetricsView}
     </Stack>
   );
