@@ -208,7 +208,7 @@ const STORE_LOCATION_DATA: CheckboxRadioSelectData<StoreLocation> = [
   { label: "Vancouver", value: "Vancouver" },
 ];
 
-const INPUT_WIDTH = 300;
+const INPUT_WIDTH = 310;
 
 const APP_HEADER_HEIGHT = 70;
 const DASHBOARD_HEADER_HEIGHT = 100;

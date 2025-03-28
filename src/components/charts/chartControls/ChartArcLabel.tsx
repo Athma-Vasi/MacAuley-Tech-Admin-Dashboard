@@ -1,6 +1,6 @@
 import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
@@ -151,6 +151,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
         });
       }}
       value={arcLabelsTextColor}
+      w={INPUT_WIDTH}
     />
   );
 

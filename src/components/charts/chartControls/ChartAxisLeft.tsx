@@ -1,4 +1,4 @@
-import { Group, Stack, Text, Title } from "@mantine/core";
+import { Flex, Group, Stack, Text, Title } from "@mantine/core";
 import type { ChangeEvent } from "react";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
@@ -7,7 +7,10 @@ import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectIn
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextInput";
-import { SLIDER_TOOLTIP_COLOR } from "../constants";
+import {
+  CHART_CONTROLS_TEXT_INPUT_HEIGHT,
+  SLIDER_TOOLTIP_COLOR,
+} from "../constants";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA } from "../responsiveBarChart/constants";
 import type { NivoAxisLegendPosition } from "../types";
@@ -153,15 +156,22 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
   );
 
   const axisLeftLegendTextInput = (
-    <AccessibleTextInput
-      attributes={{
-        invalidValueAction: parentChartAction.setIsError,
-        name: "axisLeftLegend",
-        parentDispatch: parentChartDispatch,
-        validValueAction: parentChartAction.setAxisLeftLegend,
-        value: axisLeftLegend,
-      }}
-    />
+    <Flex
+      h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
+      direction="column"
+      justify="space-between"
+    >
+      <Text pt="xl">{axisLeftLegend}</Text>
+      <AccessibleTextInput
+        attributes={{
+          invalidValueAction: parentChartAction.setIsError,
+          name: "axisLeftLegend",
+          parentDispatch: parentChartDispatch,
+          validValueAction: parentChartAction.setAxisLeftLegend,
+          value: axisLeftLegend,
+        }}
+      />
+    </Flex>
   );
 
   const axisLeftLegendOffsetSliderInput = (
@@ -257,7 +267,7 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
       input={axisLeftLegendTextInput}
       isInputDisabled={!enableAxisLeft}
       label="Axis left legend"
-      value={axisLeftLegend}
+      value=""
     />
   );
 

@@ -1,4 +1,4 @@
-import { Card, Group, Space, Stack, Text } from "@mantine/core";
+import { Card, Group, Space, Text } from "@mantine/core";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import {
@@ -64,25 +64,23 @@ function ChartsAndGraphsControlsStacker({
   );
 
   const displayBottomSection = (
-    <Stack w="100%">
-      <Group position="apart">
-        <Text
-          aria-live="polite"
-          color={isInputDisabled ? grayColorShade : ""}
-          // style={value === "" ? {} : {
-          //   border: borderColor,
-          //   borderRadius: 4,
-          //   padding: "0.5rem 0.75rem",
-          //   width: "fit-content",
-          // }}
-        >
-          {splitWordIntoUpperCasedSentence(
-            splitCamelCase(value.toString()),
-          )} {symbol}
-        </Text>
-        <Group pb="xs">{input}</Group>
-      </Group>
-    </Stack>
+    <Group position="apart" w="100%" style={{ outline: "1px solid green" }}>
+      <Text
+        aria-live="polite"
+        color={isInputDisabled ? grayColorShade : ""}
+        // style={value === "" ? {} : {
+        //   border: borderColor,
+        //   borderRadius: 4,
+        //   padding: "0.5rem 0.75rem",
+        //   width: "fit-content",
+        // }}
+      >
+        {splitWordIntoUpperCasedSentence(
+          splitCamelCase(value.toString()),
+        )} {symbol}
+      </Text>
+      <Group pb="xs">{input}</Group>
+    </Group>
   );
 
   return (

@@ -14,6 +14,8 @@ body {
 
 .main-outlet {
   width: 100%;
+  display: grid;
+  place-items: center;
 }
 
 .overview-and-pie {
@@ -77,48 +79,44 @@ body {
     display: flex;
     flex-direction: column;
   }
-}
 
-/* @media screen and (max-width: 640px) {
-  .app {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    outline: 1px solid teal;
-  }
-
-  .sidebar {
-    display: none;
-  }
-}
-
-@media screen and (min-width: 640px) {
-  .app {
+  /* .chart-and-controls {
     display: grid;
-    grid-template-areas:
-      "header header"
-      "sidebar main";
-    grid-template-columns: 1fr 4fr;
-    grid-template-rows: auto 1fr;
-    outline: 1px solid teal;
+    grid-template-columns: 4fr 8fr;
+    gap: 1em;
+    width: 100%;
   }
 
-  .header {
-    grid-area: header;
+  .chart-controls {
+    height: 100vh;
+    overflow-y: scroll;
+  } */
+  .chart-and-controls {
     display: flex;
     width: 100%;
+    height: calc(100vh - 120px);
+  }
+
+  .chart-controls {
+    overflow-y: scroll;
+    width: 33%;
+    outline: 1px solid teal;
+    padding-left: 0.5em;
+    padding-bottom: 1em;
+  }
+
+  .chart-container {
     outline: 1px solid goldenrod;
-    justify-content: space-between;
+    width: 67%;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding: 16px;
   }
 
-  .sidebar {
-    grid-area: sidebar;
+  .chart-display {
+    width: 100%;
+    height: clamp(250px, 50%, 500px);
   }
-
-  .main {
-    grid-area: main;
-    display: grid;
-  }
-} */
+}

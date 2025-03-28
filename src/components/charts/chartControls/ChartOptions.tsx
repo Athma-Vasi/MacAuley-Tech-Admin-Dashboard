@@ -1,5 +1,6 @@
 import {
   ColorInput,
+  Flex,
   Group,
   Stack,
   Text,
@@ -8,9 +9,10 @@ import {
   Tooltip,
 } from "@mantine/core";
 import type { ChangeEvent } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 import {
   COLORS_SWATCHES,
+  INPUT_WIDTH,
   SCREENSHOT_IMAGE_TYPE_DATA,
 } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
@@ -21,6 +23,7 @@ import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectIn
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextInput";
 import {
+  CHART_CONTROLS_TEXT_INPUT_HEIGHT,
   NIVO_CHART_TITLE_POSITION_DATA,
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
@@ -99,21 +102,30 @@ function ChartOptions(props: ChartOptionsProps) {
     initialChartState,
     parentChartAction,
     parentChartDispatch,
-    screenshotFilename,
     screenshotImageQuality,
     screenshotImageType,
   } = props;
+  const screenshotFilename = props.screenshotFilename.length === 0
+    ? uuidv4()
+    : props.screenshotFilename;
 
   const chartTitleTextInput = (
-    <AccessibleTextInput
-      attributes={{
-        invalidValueAction: parentChartAction.setIsError,
-        name: "chartTitle",
-        parentDispatch: parentChartDispatch,
-        validValueAction: parentChartAction.setChartTitle,
-        value: chartTitle,
-      }}
-    />
+    <Flex
+      h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
+      direction="column"
+      justify="space-between"
+    >
+      <Text pt="xl">{chartTitle}</Text>
+      <AccessibleTextInput
+        attributes={{
+          invalidValueAction: parentChartAction.setIsError,
+          name: "chartTitle",
+          parentDispatch: parentChartDispatch,
+          validValueAction: parentChartAction.setChartTitle,
+          value: chartTitle,
+        }}
+      />
+    </Flex>
   );
 
   const chartTitleColorInput = (
@@ -127,6 +139,7 @@ function ChartOptions(props: ChartOptionsProps) {
         });
       }}
       value={chartTitleColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -171,15 +184,22 @@ function ChartOptions(props: ChartOptionsProps) {
 
   // screenshot
   const screenshotFilenameTextInput = (
-    <AccessibleTextInput
-      attributes={{
-        invalidValueAction: parentChartAction.setIsError,
-        name: "screenshotFilename",
-        parentDispatch: parentChartDispatch,
-        validValueAction: parentChartAction.setScreenshotFilename,
-        value: screenshotFilename,
-      }}
-    />
+    <Flex
+      h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
+      direction="column"
+      justify="space-between"
+    >
+      <Text pt="xl">{screenshotFilename}</Text>
+      <AccessibleTextInput
+        attributes={{
+          invalidValueAction: parentChartAction.setIsError,
+          name: "screenshotFilename",
+          parentDispatch: parentChartDispatch,
+          validValueAction: parentChartAction.setScreenshotFilename,
+          value: screenshotFilename,
+        }}
+      />
+    </Flex>
   );
 
   const screenshotImageTypeSelectInput = (
@@ -251,7 +271,7 @@ function ChartOptions(props: ChartOptionsProps) {
       initialChartState={initialChartState}
       input={chartTitleTextInput}
       label="Chart title"
-      value={chartTitle}
+      value=""
     />
   );
 
@@ -287,7 +307,7 @@ function ChartOptions(props: ChartOptionsProps) {
       initialChartState={initialChartState}
       input={screenshotFilenameTextInput}
       label="Screenshot filename"
-      value={screenshotFilename}
+      value=""
     />
   );
 

@@ -145,9 +145,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
       "Must not be empty or consist entirely of whitespace characters.",
     ],
     [
-      /^[a-zA-Z0-9!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/,
-      "Must contain only alphanumeric characters and special characters.",
+      /^[A-Za-z\s.\-']+$/,
+      "Must contain only letters, spaces, periods, hyphens, and apostrophes.",
     ],
+    // [
+    //   /^[a-zA-Z0-9!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/,
+    //   "Must contain only alphanumeric characters and special characters.",
+    // ],
     [/^.{2,100}$/, "Must be between 2 and 100 characters length."],
   ],
 
@@ -421,9 +425,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
       "Must not be empty or consist entirely of whitespace characters.",
     ],
     [
-      /^[a-zA-Z0-9!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/,
-      "Must contain only alphanumeric characters and special characters.",
+      /^[a-zA-Z0-9-_]+$/,
+      "Can only contain alphanumeric characters, hyphens and underscores.",
     ],
+    // [
+    //   /^[a-zA-Z0-9!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/,
+    //   "Must contain only alphanumeric characters and special characters.",
+    // ],
     [/^.{2,100}$/, "Must be between 2 and 100 characters length."],
   ],
 
