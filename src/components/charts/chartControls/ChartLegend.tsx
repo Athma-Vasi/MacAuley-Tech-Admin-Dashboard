@@ -1,5 +1,8 @@
 import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
 
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
@@ -9,7 +12,6 @@ import {
   NIVO_LEGEND_ITEM_DIRECTION_DATA,
   NIVO_LEGEND_SYMBOL_SHAPE_DATA,
   SLIDER_TOOLTIP_COLOR,
-  STICKY_STYLE,
 } from "../constants";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import type {
@@ -18,6 +20,7 @@ import type {
   NivoLegendItemDirection,
   NivoLegendSymbolShape,
 } from "../types";
+import { createChartHeaderStyles } from "../utils";
 
 type ChartLegendAction = {
   setEnableLegend: "setEnableLegend";
@@ -117,6 +120,12 @@ type ChartLegendProps = {
 };
 
 function ChartLegend(props: ChartLegendProps) {
+  const { globalState: { themeObject } } = useGlobalState();
+  const { backgroundColor } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const {
     enableLegend,
     enableLegendJustify,
@@ -445,7 +454,7 @@ function ChartLegend(props: ChartLegendProps) {
 
   const displayLegendHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5}>
