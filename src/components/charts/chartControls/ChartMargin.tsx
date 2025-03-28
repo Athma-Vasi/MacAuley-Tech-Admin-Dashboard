@@ -1,7 +1,11 @@
 import { Group, Stack, Text, Title } from "@mantine/core";
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { SLIDER_TOOLTIP_COLOR, STICKY_STYLE } from "../constants";
+import { SLIDER_TOOLTIP_COLOR } from "../constants";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../utils";
 
 type ChartMarginAction = {
   setMarginTop: "setMarginTop";
@@ -31,6 +35,12 @@ type ChartMarginProps = {
 };
 
 function ChartMargin(props: ChartMarginProps) {
+  const { globalState: { themeObject } } = useGlobalState();
+  const { backgroundColor } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const {
     initialChartState,
     marginBottom,
@@ -115,7 +125,7 @@ function ChartMargin(props: ChartMarginProps) {
 
   const displayMarginHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5}>
