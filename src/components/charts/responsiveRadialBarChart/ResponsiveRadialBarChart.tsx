@@ -25,11 +25,11 @@ import {
   NIVO_MOTION_CONFIG_DATA,
   NIVO_TRANSITION_MODE_DATA,
   SLIDER_TOOLTIP_COLOR,
-  STICKY_STYLE,
 } from "../constants";
 
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../utils";
 import { responsiveRadialBarChartAction } from "./actions";
 import { responsiveRadialBarChartReducer } from "./reducers";
 import { initialResponsiveRadialBarChartState } from "./state";
@@ -47,14 +47,11 @@ function ResponsiveRadialBarChart({
     globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
 
-  const {
-    grayColorShade,
-    textColor,
-    scrollBarStyle,
-  } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
+  const { backgroundColor, grayColorShade, textColor, scrollBarStyle } =
+    returnThemeColors({
+      themeObject,
+      colorsSwatches: COLORS_SWATCHES,
+    });
 
   // sets initial colors based on color scheme
   const modifiedResponsiveRadialBarChartState: ResponsiveRadialBarChartState = {
@@ -956,7 +953,7 @@ function ResponsiveRadialBarChart({
 
   const displayBaseHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1053,7 +1050,7 @@ function ResponsiveRadialBarChart({
   // style
   const displayStyleHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1107,7 +1104,7 @@ function ResponsiveRadialBarChart({
   // tracks
   const displayTracksHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1143,7 +1140,7 @@ function ResponsiveRadialBarChart({
   // grids
   const displayGridsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1176,7 +1173,7 @@ function ResponsiveRadialBarChart({
   // radial axis start
   const displayRadialAxisStartHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1239,7 +1236,7 @@ function ResponsiveRadialBarChart({
   // radial axis end
   const displayRadialAxisEndHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1302,7 +1299,7 @@ function ResponsiveRadialBarChart({
   // circular axis inner
   const displayCircularAxisInnerHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1365,7 +1362,7 @@ function ResponsiveRadialBarChart({
   // circular axis outer
   const displayCircularAxisOuterHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1428,7 +1425,7 @@ function ResponsiveRadialBarChart({
   // labels
   const displayLabelsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1516,7 +1513,7 @@ function ResponsiveRadialBarChart({
   // motion
   const displayMotionHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>

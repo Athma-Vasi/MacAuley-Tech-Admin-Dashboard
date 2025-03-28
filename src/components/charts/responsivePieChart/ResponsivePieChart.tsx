@@ -27,11 +27,11 @@ import {
   NIVO_MOTION_CONFIG_DATA,
   NIVO_TRANSITION_MODE_DATA,
   SLIDER_TOOLTIP_COLOR,
-  STICKY_STYLE,
 } from "../constants";
 
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../utils";
 import { responsivePieChartAction } from "./actions";
 import { responsivePieChartReducer } from "./reducers";
 import { initialResponsivePieChartState } from "./state";
@@ -49,14 +49,11 @@ function ResponsivePieChart({
     globalState: { themeObject, isPrefersReducedMotion },
   } = useGlobalState();
 
-  const {
-    textColor,
-    grayColorShade,
-    scrollBarStyle,
-  } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
+  const { backgroundColor, textColor, grayColorShade, scrollBarStyle } =
+    returnThemeColors({
+      themeObject,
+      colorsSwatches: COLORS_SWATCHES,
+    });
 
   // ensures appropriate colors based on color scheme
   const modifiedInitialResponsivePieChartState = {
@@ -655,7 +652,7 @@ function ResponsivePieChart({
 
   const displayBaseHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -738,7 +735,7 @@ function ResponsivePieChart({
   const displayStyleHeading = (
     <Group
       w="100%"
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
     >
       <Title order={5} color={textColor}>
         Style
@@ -811,7 +808,7 @@ function ResponsivePieChart({
   /** arc link labels */
   const displayArcLinkLabelsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -922,7 +919,7 @@ function ResponsivePieChart({
   const displayInteractivityHeading = (
     <Group
       w="100%"
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
     >
       <Title order={5} color={textColor}>
         Interactivity
@@ -963,7 +960,7 @@ function ResponsivePieChart({
   /** motion */
   const displayMotionHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>

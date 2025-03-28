@@ -30,11 +30,11 @@ import {
   NIVO_COLOR_SCHEME_DATA,
   NIVO_MOTION_CONFIG_DATA,
   SLIDER_TOOLTIP_COLOR,
-  STICKY_STYLE,
 } from "../constants";
 
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../utils";
 import { responsiveLineChartAction } from "./actions";
 import {
   NIVO_LINE_AREA_BLEND_MODE_DATA,
@@ -65,10 +65,11 @@ function ResponsiveLineChart({
     globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
 
-  const { grayColorShade, textColor, scrollBarStyle } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
+  const { grayColorShade, textColor, scrollBarStyle, backgroundColor } =
+    returnThemeColors({
+      themeObject,
+      colorsSwatches: COLORS_SWATCHES,
+    });
 
   // sets initial colors based on app theme
   const modifiedResponsiveLineChartState: ResponsiveLineChartState = {
@@ -732,7 +733,7 @@ function ResponsiveLineChart({
   // base
   const displayBaseHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -799,7 +800,7 @@ function ResponsiveLineChart({
   // style
   const displayStyleHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -879,7 +880,7 @@ function ResponsiveLineChart({
   // points
   const displayPointsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -971,7 +972,7 @@ function ResponsiveLineChart({
   // grids
   const displayGridsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1064,7 +1065,7 @@ function ResponsiveLineChart({
   // interactivity
   const displayInteractivityHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1127,7 +1128,7 @@ function ResponsiveLineChart({
   // motion
   const displayMotionHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
