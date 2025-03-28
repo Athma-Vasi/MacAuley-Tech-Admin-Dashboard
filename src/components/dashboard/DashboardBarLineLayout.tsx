@@ -4,9 +4,13 @@ import {
   APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
+  DASHBOARD_HEADER_HEIGHT_MOBILE,
   METRICS_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT_MOBILE,
+  MOBILE_BREAKPOINT,
 } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
 import { DashboardCalendarView } from "./types";
 
@@ -56,6 +60,7 @@ function DashboardBarLineLayout(
   }: DashboardBarLineLayoutProps,
 ) {
   const { globalState: { themeObject } } = useGlobalState();
+  const { windowWidth } = useWindowSize();
 
   const { backgroundColor, grayBorderShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
@@ -158,8 +163,11 @@ function DashboardBarLineLayout(
         py="md"
         style={{
           position: "sticky",
-          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT +
-            METRICS_HEADER_HEIGHT,
+          top: windowWidth < MOBILE_BREAKPOINT
+            ? APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE +
+              METRICS_HEADER_HEIGHT_MOBILE
+            : APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT +
+              METRICS_HEADER_HEIGHT,
           backgroundColor,
           zIndex: 2,
           boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",

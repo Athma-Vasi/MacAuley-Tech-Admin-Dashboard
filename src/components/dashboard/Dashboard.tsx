@@ -14,6 +14,8 @@ import {
   APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
+  DASHBOARD_HEADER_HEIGHT_MOBILE,
+  MOBILE_BREAKPOINT,
   STORE_LOCATION_DATA,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
@@ -245,7 +247,7 @@ function Dashboard() {
 
   const dashboardHeaderAccordion = (
     <Group
-      h={DASHBOARD_HEADER_HEIGHT}
+      h={DASHBOARD_HEADER_HEIGHT_MOBILE}
       py="sm"
       style={{
         backgroundColor: backgroundColor,
@@ -322,7 +324,9 @@ function Dashboard() {
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>
       </Stack>
-      {windowWidth < 460 ? dashboardHeaderAccordion : dashboardHeader}
+      {windowWidth < MOBILE_BREAKPOINT
+        ? dashboardHeaderAccordion
+        : dashboardHeader}
       {displayMetricsView}
     </Stack>
   );

@@ -1,4 +1,11 @@
-import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import {
+  Accordion,
+  Group,
+  Loader,
+  LoadingOverlay,
+  Stack,
+  Text,
+} from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -6,9 +13,13 @@ import {
   APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
+  DASHBOARD_HEADER_HEIGHT_MOBILE,
   METRICS_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT_MOBILE,
+  MOBILE_BREAKPOINT,
 } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
+import { useWindowSize } from "../../../hooks/useWindowSize";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
@@ -70,6 +81,7 @@ function ProductMetrics({
   const {
     globalState: { themeObject },
   } = useGlobalState();
+  const { windowWidth } = useWindowSize();
 
   const { showBoundary } = useErrorBoundary();
 
@@ -197,6 +209,52 @@ function ProductMetrics({
     />
   );
 
+  const productMetricsHeader = (
+    <Group
+      h={METRICS_HEADER_HEIGHT}
+      opacity={0.97}
+      py="sm"
+      position="apart"
+      style={{
+        position: "sticky",
+        top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
+        zIndex: 3,
+        backgroundColor,
+      }}
+    >
+      {subMetricSelectInput}
+      {productCategorySelectInput}
+    </Group>
+  );
+
+  const productMetricsHeaderAccordion = (
+    <Group
+      h={METRICS_HEADER_HEIGHT_MOBILE}
+      opacity={0.97}
+      py="sm"
+      style={{
+        position: "sticky",
+        top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE,
+        zIndex: 3,
+        backgroundColor,
+      }}
+    >
+      <Accordion bg={backgroundColor} w="100%">
+        <Accordion.Item value="Sub-metrics and Category">
+          <Accordion.Control>
+            <Text weight={500} size="md">Sub-metrics and Category</Text>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Group w="100%" position="apart">
+              {subMetricSelectInput}
+              {productCategorySelectInput}
+            </Group>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </Group>
+  );
+
   const overviewMetrics = returnOverviewAllProductsMetrics(
     businessMetrics,
     storeLocationView,
@@ -248,22 +306,10 @@ function ProductMetrics({
   const productMetrics = (
     <Stack w="100%">
       {loadingOverlay}
-      <Group
-        h={METRICS_HEADER_HEIGHT}
-        opacity={0.97}
-        py="sm"
-        position="apart"
-        style={{
-          position: "sticky",
-          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
-          zIndex: 3,
-          backgroundColor,
-        }}
-      >
-        {subMetricSelectInput}
-        {productCategorySelectInput}
-      </Group>
 
+      {windowWidth < MOBILE_BREAKPOINT
+        ? productMetricsHeaderAccordion
+        : productMetricsHeader}
       {revenueUnitsSold}
     </Stack>
   );

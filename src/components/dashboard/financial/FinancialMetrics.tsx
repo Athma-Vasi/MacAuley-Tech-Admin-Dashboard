@@ -7,9 +7,13 @@ import {
   APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
+  DASHBOARD_HEADER_HEIGHT_MOBILE,
   METRICS_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT_MOBILE,
+  MOBILE_BREAKPOINT,
 } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
+import { useWindowSize } from "../../../hooks/useWindowSize";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
@@ -63,7 +67,7 @@ function FinancialMetrics({
   const {
     globalState: { themeObject },
   } = useGlobalState();
-
+  const { windowWidth } = useWindowSize();
   const { showBoundary } = useErrorBoundary();
 
   const {
@@ -179,6 +183,28 @@ function FinancialMetrics({
     />
   );
 
+  const financialMetricsHeader = (
+    <Group
+      align="center"
+      h={windowWidth < MOBILE_BREAKPOINT
+        ? METRICS_HEADER_HEIGHT_MOBILE
+        : METRICS_HEADER_HEIGHT}
+      py="sm"
+      style={{
+        position: "sticky",
+        top: windowWidth < MOBILE_BREAKPOINT
+          ? APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE
+          : APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
+        zIndex: 3,
+        backgroundColor,
+        // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
+      }}
+      opacity={0.97}
+    >
+      {categorySelectInput}
+    </Group>
+  );
+
   const overviewMetrics = returnOverviewFinancialMetrics(
     businessMetrics,
     storeLocationView,
@@ -252,21 +278,7 @@ function FinancialMetrics({
   const financialMetrics = (
     <Stack>
       {loadingOverlay}
-      <Group
-        align="center"
-        h={METRICS_HEADER_HEIGHT}
-        py="sm"
-        style={{
-          position: "sticky",
-          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
-          zIndex: 3,
-          backgroundColor,
-          // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
-        }}
-        opacity={0.97}
-      >
-        {categorySelectInput}
-      </Group>
+      {financialMetricsHeader}
       {subCategoryPage}
     </Stack>
   );

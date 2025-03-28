@@ -6,9 +6,13 @@ import {
   APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
+  DASHBOARD_HEADER_HEIGHT_MOBILE,
   METRICS_HEADER_HEIGHT,
+  METRICS_HEADER_HEIGHT_MOBILE,
+  MOBILE_BREAKPOINT,
 } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
+import { useWindowSize } from "../../../hooks/useWindowSize";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
@@ -66,6 +70,7 @@ function RepairMetrics({
   const {
     globalState: { themeObject },
   } = useGlobalState();
+  const { windowWidth } = useWindowSize();
 
   const { showBoundary } = useErrorBoundary();
 
@@ -178,6 +183,26 @@ function RepairMetrics({
     />
   );
 
+  const repairMetricsHeader = (
+    <Group
+      h={windowWidth < MOBILE_BREAKPOINT
+        ? METRICS_HEADER_HEIGHT_MOBILE
+        : METRICS_HEADER_HEIGHT}
+      opacity={0.97}
+      py="sm"
+      style={{
+        position: "sticky",
+        top: windowWidth < MOBILE_BREAKPOINT
+          ? APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE
+          : APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
+        zIndex: 3,
+        backgroundColor,
+      }}
+    >
+      {repairCategorySelectInput}
+    </Group>
+  );
+
   const overviewMetrics = returnOverviewRepairMetrics(
     businessMetrics,
     storeLocationView,
@@ -229,19 +254,7 @@ function RepairMetrics({
   const repairMetrics = (
     <Stack>
       {loadingOverlay}
-      <Group
-        h={METRICS_HEADER_HEIGHT}
-        opacity={0.97}
-        py="sm"
-        style={{
-          position: "sticky",
-          top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
-          zIndex: 3,
-          backgroundColor,
-        }}
-      >
-        {repairCategorySelectInput}
-      </Group>
+      {repairMetricsHeader}
       {revenueUnitsSold}
     </Stack>
   );
