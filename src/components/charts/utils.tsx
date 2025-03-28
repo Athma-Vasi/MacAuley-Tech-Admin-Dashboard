@@ -4,6 +4,7 @@ import { BarTooltipProps } from "@nivo/bar";
 import { PointTooltipProps } from "@nivo/line";
 import { PieTooltipProps } from "@nivo/pie";
 import { RadialBarDatum, RadialBarTooltipProps } from "@nivo/radial-bar";
+import { APP_HEADER_HEIGHT } from "../../constants";
 import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
 import { MONTHS } from "../dashboard/constants";
 import { DashboardCalendarView } from "../dashboard/types";
@@ -248,7 +249,23 @@ function returnPieRadialChartDimensions(
   };
 }
 
+function createChartHeaderStyles(
+  backgroundColor: string,
+  top = APP_HEADER_HEIGHT,
+  zIndex = 3,
+): React.CSSProperties {
+  return {
+    backgroundColor,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.15)",
+    height: "2.5em",
+    position: "sticky",
+    top,
+    zIndex,
+  };
+}
+
 export {
+  createChartHeaderStyles,
   createChartTooltipElement,
   returnBarLineChartDimensions,
   returnPieRadialChartDimensions,

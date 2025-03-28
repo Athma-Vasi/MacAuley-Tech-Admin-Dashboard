@@ -50,6 +50,7 @@ function ChartAndControlsDisplay(
     // </Stack>
 
     <Stack w="100%">
+      <Title order={2}>Chart Controls</Title>
       {chartControlsStack}
       <Group
         w="100%"

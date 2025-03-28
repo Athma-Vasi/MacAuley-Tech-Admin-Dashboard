@@ -1,4 +1,4 @@
-import { COLORS_SWATCHES } from "../../constants";
+import { APP_HEADER_HEIGHT, COLORS_SWATCHES } from "../../constants";
 import type { CheckboxRadioSelectData } from "../../types";
 import type {
   NivoColorScheme,
@@ -11,10 +11,11 @@ import type {
 } from "./types";
 
 const STICKY_STYLE: React.CSSProperties = {
-  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.15)",
+  height: "2.5em",
   position: "sticky",
-  top: 0,
-  zIndex: 4,
+  top: APP_HEADER_HEIGHT,
+  zIndex: 3,
 };
 
 const NIVO_LEGEND_ANCHOR_DATA: CheckboxRadioSelectData<NivoLegendAnchor> = [

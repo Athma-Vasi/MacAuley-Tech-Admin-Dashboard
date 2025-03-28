@@ -30,11 +30,11 @@ import {
   NIVO_COLOR_SCHEME_DATA,
   NIVO_MOTION_CONFIG_DATA,
   SLIDER_TOOLTIP_COLOR,
-  STICKY_STYLE,
 } from "../constants";
 
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../utils";
 import { responsiveBarChartAction } from "./actions";
 import {
   BAR_CHART_GROUP_MODE_SELECT_DATA,
@@ -64,6 +64,7 @@ function ResponsiveBarChart({
     textColor,
     scrollBarStyle,
     grayColorShade,
+    backgroundColor,
   } = returnThemeColors({
     themeObject,
     colorsSwatches: COLORS_SWATCHES,
@@ -679,7 +680,7 @@ function ResponsiveBarChart({
 
   const displayBaseHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -770,7 +771,7 @@ function ResponsiveBarChart({
   // display style
   const displayStyleHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -899,7 +900,7 @@ function ResponsiveBarChart({
   // display labels
   const displayLabelsHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -961,7 +962,7 @@ function ResponsiveBarChart({
   // display grid
   const displayGridHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -995,7 +996,7 @@ function ResponsiveBarChart({
   // display motion
   const displayMotionHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
     >
       <Title order={5} color={textColor}>
         Motion
