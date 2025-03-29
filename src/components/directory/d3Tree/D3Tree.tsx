@@ -1,10 +1,11 @@
 import { Card, Flex, Stack, Text } from "@mantine/core";
 import Tree, { type CustomNodeElementProps, type Point } from "react-d3-tree";
 
-import { useCenteredTree } from "../../hooks";
-import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import AccessibleImage from "../accessibleInputs/AccessibleImage";
-import { GoldenGrid } from "../accessibleInputs/GoldenGrid";
+import { useCenteredTree } from "../../../hooks/userCenteredTree";
+import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
+// import AccessibleImage from "../../accessibleInputs/";
+
+import { GoldenGrid } from "../../goldenGrid";
 import type { D3TreeInput } from "./utils";
 
 function renderForeignObjectNode({
