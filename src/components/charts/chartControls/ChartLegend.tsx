@@ -1,6 +1,6 @@
 import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
@@ -171,6 +171,7 @@ function ChartLegend(props: ChartLegendProps) {
         data: NIVO_LEGEND_ANCHOR_DATA,
         description: "Define legend anchor",
         disabled: !enableLegend,
+        hideLabel: true,
         name: "legendAnchor",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setLegendAnchor,
@@ -185,6 +186,7 @@ function ChartLegend(props: ChartLegendProps) {
         data: NIVO_LEGEND_DIRECTION_DATA,
         description: "Define legend direction",
         disabled: !enableLegend,
+        hideLabel: true,
         name: "legendDirection",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setLegendDirection,
@@ -205,6 +207,7 @@ function ChartLegend(props: ChartLegendProps) {
         });
       }}
       value={legendItemBackground}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -220,6 +223,7 @@ function ChartLegend(props: ChartLegendProps) {
         });
       }}
       value={legendItemTextColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -227,6 +231,7 @@ function ChartLegend(props: ChartLegendProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableLegendJustify,
+        disabled: !enableLegend,
         invalidValueAction: parentChartAction.setIsError,
         name: "enableLegendJustify",
         offLabel: "Off",
@@ -339,6 +344,7 @@ function ChartLegend(props: ChartLegendProps) {
         data: NIVO_LEGEND_ITEM_DIRECTION_DATA,
         description: "Define legend item direction.",
         disabled: !enableLegend,
+        hideLabel: true,
         name: "legendItemDirection",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setLegendItemDirection,
@@ -397,6 +403,7 @@ function ChartLegend(props: ChartLegendProps) {
         });
       }}
       value={legendSymbolBorderColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -425,6 +432,7 @@ function ChartLegend(props: ChartLegendProps) {
         data: NIVO_LEGEND_SYMBOL_SHAPE_DATA,
         description: "Define legend symbol shape.",
         disabled: !enableLegend,
+        hideLabel: true,
         name: "legendSymbolShape",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setLegendSymbolShape,
