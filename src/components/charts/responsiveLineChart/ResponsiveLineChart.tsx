@@ -10,7 +10,7 @@ import {
 import { ResponsiveLine } from "@nivo/line";
 import { useEffect, useReducer, useRef } from "react";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
@@ -75,7 +75,7 @@ function ResponsiveLineChart({
   const modifiedResponsiveLineChartState: ResponsiveLineChartState = {
     ...initialResponsiveLineChartState,
     chartTitle: dashboardChartTitle ?? "Line Chart",
-    pointColor: "rgba(0, 0, 0, 0)",
+    pointColor: "#00000000",
     chartTitleColor: textColor,
   };
 
@@ -190,6 +190,7 @@ function ResponsiveLineChart({
     screenshotFilename,
     screenshotImageQuality, // 0 - 1 default: 1 step: 0.1
     screenshotImageType, // default: 'image/png'
+
     isError,
   } = responsiveLineChartState;
 
@@ -361,6 +362,7 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_LINE_AXES_SCALE,
         description: "Define x scale",
+        hideLabel: true,
         name: "xScale",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setXScale,
@@ -374,6 +376,7 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_LINE_AXES_SCALE,
         description: "Define y scale",
+        hideLabel: true,
         name: "yScale",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setYScale,
@@ -419,6 +422,7 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_LINE_CURVE_DATA,
         description: "Define line curve",
+        hideLabel: true,
         name: "lineCurve",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setLineCurve,
@@ -432,6 +436,7 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_COLOR_SCHEME_DATA,
         description: "Define chart colors",
+        hideLabel: true,
         name: "chartColors",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setChartColors,
@@ -476,6 +481,7 @@ function ResponsiveLineChart({
   const areaOpacitySliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArea,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value}</Text>
         ),
@@ -496,6 +502,8 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_LINE_AREA_BLEND_MODE_DATA,
         description: "Define line area blend mode",
+        disabled: !enableArea,
+        hideLabel: true,
         name: "areaBlendMode",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setAreaBlendMode,
@@ -524,6 +532,7 @@ function ResponsiveLineChart({
   const pointSizeSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enablePoints,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -551,12 +560,14 @@ function ResponsiveLineChart({
         });
       }}
       value={pointColor}
+      w={INPUT_WIDTH}
     />
   );
 
   const pointBorderWidthSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enablePoints,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -592,6 +603,8 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_LINE_POINT_LABEL_DATA,
         description: "Define point label",
+        disabled: !enablePointLabel,
+        hideLabel: true,
         name: "pointLabel",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setPointLabel,
@@ -603,6 +616,7 @@ function ResponsiveLineChart({
   const pointLabelYOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enablePointLabel,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -672,6 +686,8 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_LINE_CROSSHAIR_TYPE_DATA,
         description: "Define crosshair type",
+        disabled: !enableCrosshair,
+        hideLabel: true,
         name: "crosshairType",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setCrosshairType,
@@ -702,6 +718,8 @@ function ResponsiveLineChart({
       attributes={{
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Define motion config",
+        disabled: !enableAnimate,
+        hideLabel: true,
         name: "motionConfig",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setMotionConfig,
@@ -1170,6 +1188,7 @@ function ResponsiveLineChart({
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
       initialChartState={modifiedResponsiveLineChartState}
+      isError={isError}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
       screenshotFilename={screenshotFilename}

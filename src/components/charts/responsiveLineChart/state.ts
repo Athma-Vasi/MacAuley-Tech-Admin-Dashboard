@@ -18,13 +18,13 @@ const initialResponsiveLineChartState: ResponsiveLineChartState = {
   areaOpacity: 0.2,
   chartColors: "nivo",
   enableArea: false,
-  lineCurve: "catmullRom",
+  lineCurve: "natural",
   lineWidth: 2,
 
   // points
   enablePoints: true,
   pointSize: 6,
-  pointColor: "rgba(0, 0, 0, .25)",
+  pointColor: "#000000",
   pointBorderWidth: 1,
   enablePointLabel: false,
   pointLabel: "y",

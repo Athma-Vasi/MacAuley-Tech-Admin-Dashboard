@@ -658,6 +658,7 @@ function ResponsiveBarChart({
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Define motion config.",
         disabled: !enableAnimate,
+        hideLabel: true,
         name: "motionConfig",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setMotionConfig,
