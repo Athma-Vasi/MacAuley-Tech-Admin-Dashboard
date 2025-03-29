@@ -676,6 +676,10 @@ function ResponsiveBarChart({
     />
   );
 
+  const stateWithChartTitle = {
+    ...responsiveBarChartState,
+    chartTitle: dashboardChartTitle ?? "Bar Chart",
+  };
   const resetAllButton = (
     <AccessibleButton
       attributes={{
@@ -685,7 +689,7 @@ function ResponsiveBarChart({
         onClick: () => {
           responsiveBarChartDispatch({
             action: responsiveBarChartAction.resetChartToDefault,
-            payload: initialResponsiveBarChartState,
+            payload: stateWithChartTitle,
           });
         },
       }}
@@ -709,7 +713,7 @@ function ResponsiveBarChart({
 
   const displayGroupModeSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={groupModeSelectInput}
       label="Group mode"
       value={groupMode}
@@ -718,7 +722,7 @@ function ResponsiveBarChart({
 
   const displayLayoutSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={layoutSelectInput}
       label="Layout"
       value={layout}
@@ -727,7 +731,7 @@ function ResponsiveBarChart({
 
   const displayValueScaleSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={valueScaleSelectInput}
       label="Value scale"
       value={valueScale}
@@ -742,7 +746,7 @@ function ResponsiveBarChart({
 
   const displayPaddingBarSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={paddingBarSliderInput}
       label="Padding bar"
       value={paddingBar}
@@ -751,7 +755,7 @@ function ResponsiveBarChart({
 
   const displayInnerPaddingBarSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={innerPaddingBarSliderInput}
       label="Inner padding bar"
       symbol="px"
@@ -776,7 +780,7 @@ function ResponsiveBarChart({
   // margin
   const displayChartMargin = (
     <ChartMargin
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       marginBottom={marginBottom}
       marginLeft={marginLeft}
       marginRight={marginRight}
@@ -800,7 +804,7 @@ function ResponsiveBarChart({
 
   const displayColorsSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={chartColorsSelectInput}
       label="Colors"
       value={chartColors}
@@ -809,7 +813,7 @@ function ResponsiveBarChart({
 
   const displayBorderRadiusSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={chartBorderRadiusSliderInput}
       label="Chart border radius"
       symbol="px"
@@ -819,7 +823,7 @@ function ResponsiveBarChart({
 
   const displayBorderWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={chartBorderWidthSliderInput}
       label="Chart border width"
       symbol="px"
@@ -829,7 +833,7 @@ function ResponsiveBarChart({
 
   const displayBorderColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={chartBorderColorInput}
       label="Chart border color"
       value={chartBorderColor}
@@ -864,7 +868,7 @@ function ResponsiveBarChart({
       axisTopTickRotation={axisTopTickRotation}
       axisTopTickSize={axisTopTickSize}
       enableAxisTop={enableAxisTop}
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveBarChartAction}
       parentChartDispatch={responsiveBarChartDispatch}
     />
@@ -879,7 +883,7 @@ function ResponsiveBarChart({
       axisRightTickRotation={axisRightTickRotation}
       axisRightTickSize={axisRightTickSize}
       enableAxisRight={enableAxisRight}
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveBarChartAction}
       parentChartDispatch={responsiveBarChartDispatch}
     />
@@ -894,7 +898,7 @@ function ResponsiveBarChart({
       axisBottomTickRotation={axisBottomTickRotation}
       axisBottomTickSize={axisBottomTickSize}
       enableAxisBottom={enableAxisBottom}
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveBarChartAction}
       parentChartDispatch={responsiveBarChartDispatch}
     />
@@ -909,7 +913,7 @@ function ResponsiveBarChart({
       axisLeftTickRotation={axisLeftTickRotation}
       axisLeftTickSize={axisLeftTickSize}
       enableAxisLeft={enableAxisLeft}
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveBarChartAction}
       parentChartDispatch={responsiveBarChartDispatch}
     />
@@ -935,7 +939,7 @@ function ResponsiveBarChart({
 
   const displayLabelSkipWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={labelSkipWidthSliderInput}
       isInputDisabled={!enableLabels}
       label="Label skip width"
@@ -946,7 +950,7 @@ function ResponsiveBarChart({
 
   const displayLabelSkipHeightSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={labelSkipHeightSliderInput}
       isInputDisabled={!enableLabels}
       label="Label skip height"
@@ -957,7 +961,7 @@ function ResponsiveBarChart({
 
   const displayLabelTextColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={labelTextColorInput}
       isInputDisabled={!enableLabels}
       label="Label text color"
@@ -1030,7 +1034,7 @@ function ResponsiveBarChart({
 
   const displayMotionConfigSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       input={motionConfigSelectInput}
       isInputDisabled={!enableAnimate}
       label="Motion config"
@@ -1052,7 +1056,7 @@ function ResponsiveBarChart({
     <ChartLegend
       enableLegend={enableLegend}
       enableLegendJustify={enableLegendJustify}
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       legendAnchor={legendAnchor}
       legendDirection={legendDirection}
       legendItemBackground={legendItemBackground}
@@ -1081,7 +1085,7 @@ function ResponsiveBarChart({
       chartTitleColor={chartTitleColor}
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
-      initialChartState={initialResponsiveBarChartState}
+      initialChartState={stateWithChartTitle}
       isError={isError}
       parentChartAction={responsiveBarChartAction}
       parentChartDispatch={responsiveBarChartDispatch}
@@ -1101,7 +1105,7 @@ function ResponsiveBarChart({
   const displayResetAll = (
     <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
-        initialChartState={initialResponsiveBarChartState}
+        initialChartState={stateWithChartTitle}
         input={displayResetAllButton}
         label="Reset all values"
         value=""
