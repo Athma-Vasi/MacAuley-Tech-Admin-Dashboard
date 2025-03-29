@@ -77,10 +77,16 @@ function ResponsivePieChart({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeObject]);
 
+  const stateWithChartTitle = {
+    ...initialResponsivePieChartState,
+    chartTitle: dashboardChartTitle ?? "Pie Chart",
+  };
+
   const [responsivePieChartState, responsivePieChartDispatch] = useReducer(
     responsivePieChartReducer,
-    initialResponsivePieChartState,
+    stateWithChartTitle,
   );
+
   const {
     startAngle, // -180 - 360 default: 0 step: 1
     endAngle, // -360 - 360 default: 360 step: 1
@@ -658,10 +664,6 @@ function ResponsivePieChart({
 
   // reset all button
 
-  const stateWithChartTitle = {
-    ...initialResponsivePieChartState,
-    chartTitle: dashboardChartTitle ?? "Pie Chart",
-  };
   const resetAllButton = (
     <AccessibleButton
       attributes={{

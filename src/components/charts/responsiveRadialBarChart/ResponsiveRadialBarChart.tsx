@@ -77,10 +77,15 @@ function ResponsiveRadialBarChart(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeObject]);
 
+  const stateWithChartTitle = {
+    ...initialResponsiveRadialBarChartState,
+    chartTitle: dashboardChartTitle ?? "Radial Bar Chart",
+  };
+
   const [responsiveRadialBarChartState, responsiveRadialBarChartDispatch] =
     useReducer(
       responsiveRadialBarChartReducer,
-      initialResponsiveRadialBarChartState,
+      stateWithChartTitle,
     );
 
   const chartRef = useRef(null);
@@ -956,10 +961,6 @@ function ResponsiveRadialBarChart(
 
   // reset all button
 
-  const stateWithChartTitle = {
-    ...responsiveRadialBarChartState,
-    chartTitle: dashboardChartTitle ?? "Radial Bar Chart",
-  };
   const resetAllButton = (
     <AccessibleButton
       attributes={{

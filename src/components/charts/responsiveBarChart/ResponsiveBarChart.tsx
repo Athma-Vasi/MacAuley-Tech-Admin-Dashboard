@@ -88,9 +88,14 @@ function ResponsiveBarChart({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeObject]);
 
+  const stateWithChartTitle = {
+    ...initialResponsiveBarChartState,
+    chartTitle: dashboardChartTitle ?? "Bar Chart",
+  };
+
   const [responsiveBarChartState, responsiveBarChartDispatch] = useReducer(
     responsiveBarChartReducer,
-    initialResponsiveBarChartState,
+    stateWithChartTitle,
   );
 
   const chartRef = useRef(null);
@@ -676,10 +681,6 @@ function ResponsiveBarChart({
     />
   );
 
-  const stateWithChartTitle = {
-    ...responsiveBarChartState,
-    chartTitle: dashboardChartTitle ?? "Bar Chart",
-  };
   const resetAllButton = (
     <AccessibleButton
       attributes={{

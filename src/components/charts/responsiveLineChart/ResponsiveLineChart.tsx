@@ -87,9 +87,14 @@ function ResponsiveLineChart({
     });
   }, [themeObject]);
 
+  const stateWithChartTitle = {
+    ...initialResponsiveLineChartState,
+    chartTitle: dashboardChartTitle ?? "Line Chart",
+  };
+
   const [responsiveLineChartState, responsiveLineChartDispatch] = useReducer(
     responsiveLineChartReducer,
-    initialResponsiveLineChartState,
+    stateWithChartTitle,
   );
 
   const {
@@ -740,10 +745,6 @@ function ResponsiveLineChart({
 
   // reset all button
 
-  const stateWithChartTitle = {
-    ...responsiveLineChartState,
-    chartTitle: dashboardChartTitle ?? "Line Chart",
-  };
   const resetAllButton = (
     <AccessibleButton
       attributes={{
