@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { ResponsiveCalendar } from "@nivo/calendar";
-import { useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 
 import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
@@ -55,20 +55,32 @@ function ResponsiveCalendarChart({
       colorsSwatches: COLORS_SWATCHES,
     });
 
-  // sets initial colors based on app theme
-  const modifiedResponsiveCalendarChartState: ResponsiveCalendarChartState = {
+  useEffect(() => {
+    // sets initial colors based on app theme
+    const modifiedResponsiveCalendarChartState: ResponsiveCalendarChartState = {
+      ...initialResponsiveCalendarChartState,
+      chartTitle: dashboardChartTitle ?? "Calendar Chart",
+      emptyColor: grayColorShade,
+      monthBorderColor: textColor,
+      chartTitleColor: textColor,
+      dayBorderColor: textColor,
+    };
+
+    responsiveCalendarChartDispatch({
+      action: responsiveCalendarChartAction.resetChartToDefault,
+      payload: modifiedResponsiveCalendarChartState,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [themeObject]);
+
+  const stateWithChartTitle = {
     ...initialResponsiveCalendarChartState,
     chartTitle: dashboardChartTitle ?? "Calendar Chart",
-    emptyColor: grayColorShade,
-    monthBorderColor: textColor,
-    chartTitleColor: textColor,
-    dayBorderColor: textColor,
   };
-
   const [responsiveCalendarChartState, responsiveCalendarChartDispatch] =
     useReducer(
       responsiveCalendarChartReducer,
-      modifiedResponsiveCalendarChartState,
+      stateWithChartTitle,
     );
 
   const chartRef = useRef(null);
@@ -459,7 +471,7 @@ function ResponsiveCalendarChart({
 
   const displayCalendarDirectionSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={calendarDirectionSelectInput}
       label="Calendar Direction"
       value={calendarDirection}
@@ -468,7 +480,7 @@ function ResponsiveCalendarChart({
 
   const displayCalendarAlignSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={calendarAlignSelectInput}
       label="Calendar Align"
       value={calendarAlign}
@@ -488,7 +500,7 @@ function ResponsiveCalendarChart({
   // margin
   const displayChartMargin = (
     <ChartMargin
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       marginBottom={marginBottom}
       marginLeft={marginLeft}
       marginRight={marginRight}
@@ -512,7 +524,7 @@ function ResponsiveCalendarChart({
 
   const displayEmptyColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={emptyColorInput}
       label="Empty Color"
       value={emptyColor}
@@ -547,7 +559,7 @@ function ResponsiveCalendarChart({
 
   const displayYearSpacingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={yearSpacingSliderInput}
       label="Year Spacing"
       symbol="px"
@@ -557,7 +569,7 @@ function ResponsiveCalendarChart({
 
   const displayYearLegendPositionSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={yearLegendPositionSelectInput}
       label="Year Legend Position"
       value={yearLegendPosition}
@@ -566,7 +578,7 @@ function ResponsiveCalendarChart({
 
   const displayYearLegendOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={yearLegendOffsetSliderInput}
       label="Year Legend Offset"
       symbol="px"
@@ -599,7 +611,7 @@ function ResponsiveCalendarChart({
 
   const displayMonthSpacingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={monthSpacingSliderInput}
       label="Month Spacing"
       symbol="px"
@@ -609,7 +621,7 @@ function ResponsiveCalendarChart({
 
   const displayMonthBorderWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={monthBorderWidthSliderInput}
       label="Month Border Width"
       symbol="px"
@@ -619,7 +631,7 @@ function ResponsiveCalendarChart({
 
   const displayMonthBorderColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={monthBorderColorInput}
       label="Month Border Color"
       value={monthBorderColor}
@@ -628,7 +640,7 @@ function ResponsiveCalendarChart({
 
   const displayMonthLegendPositionSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={monthLegendPositionSelectInput}
       label="Month Legend Position"
       value={monthLegendPosition}
@@ -637,7 +649,7 @@ function ResponsiveCalendarChart({
 
   const displayMonthLegendOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={monthLegendOffsetSliderInput}
       label="Month Legend Offset"
       symbol="px"
@@ -672,7 +684,7 @@ function ResponsiveCalendarChart({
 
   const displayDaySpacingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={daySpacingSliderInput}
       label="Day Spacing"
       symbol="px"
@@ -682,7 +694,7 @@ function ResponsiveCalendarChart({
 
   const displayDayBorderWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={dayBorderWidthSliderInput}
       label="Day Border Width"
       symbol="px"
@@ -692,7 +704,7 @@ function ResponsiveCalendarChart({
 
   const displayDayBorderColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       input={dayBorderColorInput}
       label="Day Border Color"
       value={dayBorderColor}
@@ -718,7 +730,7 @@ function ResponsiveCalendarChart({
       chartTitleColor={chartTitleColor}
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
-      initialChartState={modifiedResponsiveCalendarChartState}
+      initialChartState={stateWithChartTitle}
       isError={isError}
       parentChartAction={responsiveCalendarChartAction}
       parentChartDispatch={responsiveCalendarChartDispatch}
@@ -737,7 +749,7 @@ function ResponsiveCalendarChart({
   const displayResetAll = (
     <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
-        initialChartState={modifiedResponsiveCalendarChartState}
+        initialChartState={stateWithChartTitle}
         input={displayResetAllButton}
         label="Reset all values"
         value=""

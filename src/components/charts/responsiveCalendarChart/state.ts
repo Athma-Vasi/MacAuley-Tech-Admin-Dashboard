@@ -13,7 +13,7 @@ const initialResponsiveCalendarChartState: ResponsiveCalendarChartState = {
 
   // style
   emptyColor: "#fff",
-  enableDefaultColors: true,
+  enableDefaultColors: false,
 
   // years
   yearSpacing: 30,
