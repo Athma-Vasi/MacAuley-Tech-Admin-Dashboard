@@ -80,17 +80,6 @@ body {
     flex-direction: column;
   }
 
-  /* .chart-and-controls {
-    display: grid;
-    grid-template-columns: 4fr 8fr;
-    gap: 1em;
-    width: 100%;
-  }
-
-  .chart-controls {
-    height: 100vh;
-    overflow-y: scroll;
-  } */
   .chart-and-controls {
     display: flex;
     width: 100%;

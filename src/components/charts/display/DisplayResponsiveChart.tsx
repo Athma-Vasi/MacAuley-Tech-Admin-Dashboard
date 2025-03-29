@@ -1,4 +1,4 @@
-import { Stack, Title } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import {
   ResponsiveBarChart,
   ResponsiveCalendarChart,
@@ -148,7 +148,8 @@ function DisplayResponsiveChart() {
       return null;
     }
 
-    const { chartData, chartTitle, chartUnitKind } = expandPieChartData;
+    const { chartData, chartTitle, chartUnitKind, day, month, year } =
+      expandPieChartData;
 
     return (
       <ResponsivePieChart
@@ -158,8 +159,11 @@ function DisplayResponsiveChart() {
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
-            kind: "pie",
             chartUnitKind,
+            day,
+            kind: "pie",
+            month,
+            year,
           })}
       />
     );

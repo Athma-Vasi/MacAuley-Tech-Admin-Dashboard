@@ -869,9 +869,9 @@ function responsivePieChartReducer_setScreenshotImageType(
 
 function responsivePieChartReducer_resetChartToDefault(
   _state: ResponsivePieChartState,
-  _dispatch: ResponsivePieChartDispatch,
+  dispatch: ResponsivePieChartDispatch,
 ): ResponsivePieChartState {
-  return initialResponsivePieChartState;
+  return dispatch.payload as ResponsivePieChartState;
 }
 
 function responsivePieChartReducer_setIsError(

@@ -49,24 +49,36 @@ function ResponsivePieChart({
     globalState: { themeObject, isPrefersReducedMotion },
   } = useGlobalState();
 
-  const { backgroundColor, textColor, grayColorShade, scrollBarStyle } =
-    returnThemeColors({
-      themeObject,
-      colorsSwatches: COLORS_SWATCHES,
-    });
+  const {
+    darkColorShade,
+    backgroundColor,
+    textColor,
+    grayColorShade,
+    scrollBarStyle,
+  } = returnThemeColors({
+    themeObject,
+    colorsSwatches: COLORS_SWATCHES,
+  });
 
-  // ensures appropriate colors based on color scheme
-  const modifiedInitialResponsivePieChartState = {
-    ...initialResponsivePieChartState,
-    chartTitle: dashboardChartTitle ?? "Pie Chart",
-    arcLabelsTextColor: textColor,
-    arcLinkLabelsTextColor: textColor,
-    chartTitleColor: textColor,
-  };
+  useEffect(() => {
+    // ensures appropriate colors based on color scheme
+    const modifiedResponsivePieChartState = {
+      ...initialResponsivePieChartState,
+      chartTitle: dashboardChartTitle ?? "Pie Chart",
+      arcLabelsTextColor: darkColorShade,
+      arcLinkLabelsTextColor: textColor,
+      chartTitleColor: textColor,
+    };
+
+    responsivePieChartDispatch({
+      action: responsivePieChartAction.resetChartToDefault,
+      payload: modifiedResponsivePieChartState,
+    });
+  }, [darkColorShade, dashboardChartTitle, textColor, themeObject]);
 
   const [responsivePieChartState, responsivePieChartDispatch] = useReducer(
     responsivePieChartReducer,
-    modifiedInitialResponsivePieChartState,
+    initialResponsivePieChartState,
   );
   const {
     startAngle, // -180 - 360 default: 0 step: 1
@@ -654,7 +666,7 @@ function ResponsivePieChart({
         onClick: () => {
           responsivePieChartDispatch({
             action: responsivePieChartAction.resetChartToDefault,
-            payload: modifiedInitialResponsivePieChartState,
+            payload: initialResponsivePieChartState,
           });
         },
       }}
@@ -676,7 +688,7 @@ function ResponsivePieChart({
 
   const displayStartAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={startAngleSliderInput}
       label="Start angle"
       symbol="°"
@@ -686,7 +698,7 @@ function ResponsivePieChart({
 
   const displayEndAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={endAngleSliderInput}
       label="End angle"
       symbol="°"
@@ -696,7 +708,7 @@ function ResponsivePieChart({
 
   const displayInnerRadiusSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={innerRadiusSliderInput}
       label="Inner radius"
       symbol="px"
@@ -706,7 +718,7 @@ function ResponsivePieChart({
 
   const displayPadAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={padAngleSliderInput}
       label="Pad angle"
       symbol="°"
@@ -716,7 +728,7 @@ function ResponsivePieChart({
 
   const displayCornerRadiusSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={cornerRadiusSliderInput}
       label="Corner radius"
       symbol="px"
@@ -764,7 +776,7 @@ function ResponsivePieChart({
 
   const displayColorSchemeSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={colorSchemeSelectInput}
       label="Chart colors"
       // prevents display of camelCased or snake_cased value
@@ -775,7 +787,7 @@ function ResponsivePieChart({
 
   const displayBorderColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={borderColorInput}
       label="Arc Border color"
       value={arcBorderColor}
@@ -784,7 +796,7 @@ function ResponsivePieChart({
 
   const displayArcBorderWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={chartBorderWidthSliderInput}
       label="Arc border width"
       symbol="px"
@@ -812,7 +824,7 @@ function ResponsivePieChart({
       arcLabelsSkipAngle={arcLabelsSkipAngle}
       arcLabelsTextColor={arcLabelsTextColor}
       enableArcLabels={enableArcLabels}
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       parentChartAction={responsivePieChartAction}
       parentChartDispatch={responsivePieChartDispatch}
     />
@@ -838,7 +850,7 @@ function ResponsivePieChart({
 
   const displayArcLinkLabelsSkipAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={arcLinkLabelsSkipAngleSliderInput}
       isInputDisabled={!enableArcLinkLabels}
       label="Arc link labels skip angle"
@@ -849,7 +861,7 @@ function ResponsivePieChart({
 
   const displayArcLinkLabelsOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={arcLinkLabelsOffsetSliderInput}
       isInputDisabled={!enableArcLinkLabels}
       label="Arc link labels offset"
@@ -860,7 +872,7 @@ function ResponsivePieChart({
 
   const displayArcLinkLabelsDiagonalLengthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={arcLinkLabelsDiagonalLengthSliderInput}
       isInputDisabled={!enableArcLinkLabels}
       label="Arc link labels diagonal length"
@@ -871,7 +883,7 @@ function ResponsivePieChart({
 
   const displayArcLinkLabelsStraightLengthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={arcLinkLabelsStraightLengthSliderInput}
       isInputDisabled={!enableArcLinkLabels}
       label="Arc link labels straight length"
@@ -882,7 +894,7 @@ function ResponsivePieChart({
 
   const displayArcLinkLabelsHeadingOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={arcLinkLabelsTextOffsetSliderInput}
       isInputDisabled={!enableArcLinkLabels}
       label="Arc link labels text offset"
@@ -893,7 +905,7 @@ function ResponsivePieChart({
 
   const displayArcLinkLabelsThicknessSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={arcLinkLabelsThicknessSliderInput}
       isInputDisabled={!enableArcLinkLabels}
       label="Arc link labels thickness"
@@ -904,7 +916,7 @@ function ResponsivePieChart({
 
   const displayArcLinkLabelsHeadingColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={arcLinkLabelsTextColorInput}
       isInputDisabled={!enableArcLinkLabels}
       label="Arc link labels text color"
@@ -942,7 +954,7 @@ function ResponsivePieChart({
 
   const displayActiveInnerRadiusOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={activeInnerRadiusOffsetSliderInput}
       label="Active inner radius offset"
       value={activeInnerRadiusOffset}
@@ -952,7 +964,7 @@ function ResponsivePieChart({
 
   const displayActiveOuterRadiusOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={activeOuterRadiusOffsetSliderInput}
       label="Active outer radius offset"
       value={activeOuterRadiusOffset}
@@ -990,7 +1002,7 @@ function ResponsivePieChart({
 
   const displayMotionConfigSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={motionConfigSelectInput}
       isInputDisabled={!enableAnimate}
       label="Motion config"
@@ -1000,7 +1012,7 @@ function ResponsivePieChart({
 
   const displayTransitionModeSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       input={transitionModeSelectInput}
       isInputDisabled={!enableAnimate}
       label="Transition mode"
@@ -1022,7 +1034,7 @@ function ResponsivePieChart({
   /** margin */
   const displayChartMargin = (
     <ChartMargin
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       marginBottom={marginBottom}
       marginLeft={marginLeft}
       marginRight={marginRight}
@@ -1037,7 +1049,7 @@ function ResponsivePieChart({
     <ChartLegend
       enableLegend={enableLegend}
       enableLegendJustify={enableLegendJustify}
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       legendAnchor={legendAnchor}
       legendDirection={legendDirection}
       legendItemBackground={legendItemBackground}
@@ -1067,7 +1079,7 @@ function ResponsivePieChart({
       chartTitleColor={chartTitleColor}
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
-      initialChartState={modifiedInitialResponsivePieChartState}
+      initialChartState={initialResponsivePieChartState}
       isError={isError}
       parentChartAction={responsivePieChartAction}
       parentChartDispatch={responsivePieChartDispatch}
@@ -1086,7 +1098,7 @@ function ResponsivePieChart({
   const displayResetAll = (
     <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
-        initialChartState={modifiedInitialResponsivePieChartState}
+        initialChartState={initialResponsivePieChartState}
         input={displayResetAllButton}
         label="Reset all values"
         value=""

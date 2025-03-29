@@ -25,7 +25,7 @@ const initialThemeObject: ThemeObject = {
     },
     Title: {
       defaultProps: {
-        color: "dark.4",
+        color: "dark.3",
       },
     },
   },

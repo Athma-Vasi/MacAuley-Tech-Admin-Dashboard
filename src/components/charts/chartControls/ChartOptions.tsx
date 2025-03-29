@@ -8,7 +8,7 @@ import {
   type TitleOrder,
   Tooltip,
 } from "@mantine/core";
-import type { ChangeEvent } from "react";
+import { type ChangeEvent, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   COLORS_SWATCHES,
@@ -104,12 +104,23 @@ function ChartOptions(props: ChartOptionsProps) {
     isError,
     parentChartAction,
     parentChartDispatch,
+    screenshotFilename,
     screenshotImageQuality,
     screenshotImageType,
   } = props;
-  const screenshotFilename = props.screenshotFilename.length === 0
-    ? uuidv4()
-    : props.screenshotFilename;
+
+  useEffect(() => {
+    if (screenshotFilename.length === 0) {
+      parentChartDispatch({
+        action: parentChartAction.setScreenshotFilename,
+        payload: uuidv4(),
+      });
+    }
+  }, [
+    parentChartAction.setScreenshotFilename,
+    parentChartDispatch,
+    screenshotFilename.length,
+  ]);
 
   const chartTitleTextInput = (
     <Flex

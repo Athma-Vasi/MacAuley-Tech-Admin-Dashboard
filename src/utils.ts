@@ -211,6 +211,14 @@ function returnThemeColors({
   const textColorSliderLabel = gray[3];
   const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[6];
 
+  console.group("returnThemeColors");
+  console.log("colorScheme", colorScheme);
+  console.log("primaryColor", primaryColor);
+  console.log("primaryShade", primaryShade);
+  console.log("themeColorShade", themeColorShade);
+  console.log("textColor", textColor);
+  console.groupEnd();
+
   // const lightSchemeGray = gray[8];
   // const darkSchemeGray = gray[5];
   // const textColor = colorScheme === "light"
