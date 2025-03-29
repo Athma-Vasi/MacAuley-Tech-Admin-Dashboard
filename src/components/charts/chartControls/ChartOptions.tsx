@@ -118,9 +118,11 @@ function ChartOptions(props: ChartOptionsProps) {
       <Text pt="xl">{chartTitle}</Text>
       <AccessibleTextInput
         attributes={{
+          hideLabel: true,
           invalidValueAction: parentChartAction.setIsError,
           name: "chartTitle",
           parentDispatch: parentChartDispatch,
+          placeholder: "Chart title",
           validValueAction: parentChartAction.setChartTitle,
           value: chartTitle,
         }}
@@ -169,6 +171,7 @@ function ChartOptions(props: ChartOptionsProps) {
       attributes={{
         data: NIVO_CHART_TITLE_POSITION_DATA,
         description: "Define chart title position",
+        hideLabel: true,
         name: "chartTitlePosition",
         onChange: (event: ChangeEvent<HTMLSelectElement>) => {
           parentChartDispatch({
@@ -192,9 +195,11 @@ function ChartOptions(props: ChartOptionsProps) {
       <Text pt="xl">{screenshotFilename}</Text>
       <AccessibleTextInput
         attributes={{
+          hideLabel: true,
           invalidValueAction: parentChartAction.setIsError,
           name: "screenshotFilename",
           parentDispatch: parentChartDispatch,
+          placeholder: "Screenshot filename",
           validValueAction: parentChartAction.setScreenshotFilename,
           value: screenshotFilename,
         }}
@@ -207,6 +212,7 @@ function ChartOptions(props: ChartOptionsProps) {
       attributes={{
         data: SCREENSHOT_IMAGE_TYPE_DATA,
         description: "Define screenshot image type.",
+        hideLabel: true,
         name: "screenshotImageType",
         onChange: (event: ChangeEvent<HTMLSelectElement>) => {
           parentChartDispatch({
