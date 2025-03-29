@@ -1193,9 +1193,9 @@ function responsiveLineChartReducer_setScreenshotImageType(
 
 function responsiveLineChartReducer_resetChartToDefault(
   _state: ResponsiveLineChartState,
-  _dispatch: ResponsiveLineChartDispatch,
+  dispatch: ResponsiveLineChartDispatch,
 ): ResponsiveLineChartState {
-  return initialResponsiveLineChartState;
+  return dispatch.payload as ResponsiveLineChartState;
 }
 
 function responsiveLineChartReducer_setIsError(

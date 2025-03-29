@@ -71,17 +71,25 @@ function ResponsiveLineChart({
       colorsSwatches: COLORS_SWATCHES,
     });
 
-  // sets initial colors based on app theme
-  const modifiedResponsiveLineChartState: ResponsiveLineChartState = {
-    ...initialResponsiveLineChartState,
-    chartTitle: dashboardChartTitle ?? "Line Chart",
-    pointColor: "#00000000",
-    chartTitleColor: textColor,
-  };
+  useEffect(() => {
+    // sets initial colors based on app theme
+    const modifiedResponsiveLineChartState: ResponsiveLineChartState = {
+      ...initialResponsiveLineChartState,
+      chartTitle: dashboardChartTitle ?? "Line Chart",
+      pointColor: "#00000000",
+      chartTitleColor: textColor,
+      legendItemTextColor: textColor,
+    };
+
+    responsiveLineChartDispatch({
+      action: responsiveLineChartAction.resetChartToDefault,
+      payload: modifiedResponsiveLineChartState,
+    });
+  }, [themeObject]);
 
   const [responsiveLineChartState, responsiveLineChartDispatch] = useReducer(
     responsiveLineChartReducer,
-    modifiedResponsiveLineChartState,
+    initialResponsiveLineChartState,
   );
 
   const {
@@ -310,6 +318,8 @@ function ResponsiveLineChart({
             translateY: legendTranslateY,
             itemsSpacing: legendItemsSpacing,
             itemDirection: legendItemDirection,
+            itemTextColor: legendItemTextColor,
+            itemBackground: legendItemBackground,
             itemWidth: legendItemWidth,
             itemHeight: legendItemHeight,
             itemOpacity: legendItemOpacity,
@@ -730,6 +740,10 @@ function ResponsiveLineChart({
 
   // reset all button
 
+  const stateWithChartTitle = {
+    ...responsiveLineChartState,
+    chartTitle: dashboardChartTitle ?? "Line Chart",
+  };
   const resetAllButton = (
     <AccessibleButton
       attributes={{
@@ -739,7 +753,7 @@ function ResponsiveLineChart({
         onClick: () => {
           responsiveLineChartDispatch({
             action: responsiveLineChartAction.resetChartToDefault,
-            payload: modifiedResponsiveLineChartState,
+            payload: stateWithChartTitle,
           });
         },
       }}
@@ -762,7 +776,7 @@ function ResponsiveLineChart({
 
   const displayXScaleSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={xScaleSelectInput}
       label="X scale"
       value={xScale}
@@ -771,7 +785,7 @@ function ResponsiveLineChart({
 
   const displayYScaleSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={yScaleSelectInput}
       label="Y scale"
       value={yScale}
@@ -805,7 +819,7 @@ function ResponsiveLineChart({
   // margin
   const displayChartMargin = (
     <ChartMargin
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       marginBottom={marginBottom}
       marginLeft={marginLeft}
       marginRight={marginRight}
@@ -829,7 +843,7 @@ function ResponsiveLineChart({
 
   const displayLineCurveSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={lineCurveSelectInput}
       label="Line curve"
       value={lineCurve}
@@ -838,7 +852,7 @@ function ResponsiveLineChart({
 
   const displayChartColorsSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={chartColorsSelectInput}
       label="Chart colors"
       value={chartColors}
@@ -847,7 +861,7 @@ function ResponsiveLineChart({
 
   const displayLineWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={lineWidthSliderInput}
       label="Line width"
       symbol="px"
@@ -863,7 +877,7 @@ function ResponsiveLineChart({
 
   const displayAreaOpacitySliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={areaOpacitySliderInput}
       isInputDisabled={!enableArea}
       label="Area opacity"
@@ -873,7 +887,7 @@ function ResponsiveLineChart({
 
   const displayAreaBlendModeSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={areaBlendModeSelectInput}
       isInputDisabled={!enableArea}
       label="Area blend mode"
@@ -915,7 +929,7 @@ function ResponsiveLineChart({
 
   const displayPointSizeSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={pointSizeSliderInput}
       isInputDisabled={!enablePoints}
       label="Point size"
@@ -926,7 +940,7 @@ function ResponsiveLineChart({
 
   const displayPointColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={pointColorInput}
       isInputDisabled={!enablePoints}
       label="Point color"
@@ -936,7 +950,7 @@ function ResponsiveLineChart({
 
   const displayPointBorderWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={pointBorderWidthSliderInput}
       isInputDisabled={!enablePoints}
       label="Point border width"
@@ -953,7 +967,7 @@ function ResponsiveLineChart({
 
   const displayPointLabelSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={pointLabelSelectInput}
       isInputDisabled={!enablePointLabel}
       label="Point label"
@@ -963,7 +977,7 @@ function ResponsiveLineChart({
 
   const displayPointLabelYOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={pointLabelYOffsetSliderInput}
       isInputDisabled={!enablePointLabel}
       label="Point label Y offset"
@@ -1029,7 +1043,7 @@ function ResponsiveLineChart({
       axisTopTickRotation={axisTopTickRotation}
       axisTopTickSize={axisTopTickSize}
       enableAxisTop={enableAxisTop}
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
     />
@@ -1044,7 +1058,7 @@ function ResponsiveLineChart({
       axisRightTickRotation={axisRightTickRotation}
       axisRightTickSize={axisRightTickSize}
       enableAxisRight={enableAxisRight}
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
     />
@@ -1059,7 +1073,7 @@ function ResponsiveLineChart({
       axisBottomTickRotation={axisBottomTickRotation}
       axisBottomTickSize={axisBottomTickSize}
       enableAxisBottom={enableAxisBottom}
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
     />
@@ -1074,7 +1088,7 @@ function ResponsiveLineChart({
       axisLeftTickRotation={axisLeftTickRotation}
       axisLeftTickSize={axisLeftTickSize}
       enableAxisLeft={enableAxisLeft}
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
     />
@@ -1100,7 +1114,7 @@ function ResponsiveLineChart({
 
   const displayCrosshairTypeSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={crosshairTypeSelectInput}
       isInputDisabled={!enableCrosshair}
       label="Crosshair type"
@@ -1121,7 +1135,7 @@ function ResponsiveLineChart({
     <ChartLegend
       enableLegend={enableLegend}
       enableLegendJustify={enableLegendJustify}
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       legendAnchor={legendAnchor}
       legendDirection={legendDirection}
       legendItemBackground={legendItemBackground}
@@ -1163,7 +1177,7 @@ function ResponsiveLineChart({
 
   const displayMotionConfigSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       input={motionConfigSelectInput}
       isInputDisabled={!enableAnimate}
       label="Motion config"
@@ -1187,7 +1201,7 @@ function ResponsiveLineChart({
       chartTitleColor={chartTitleColor}
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
-      initialChartState={modifiedResponsiveLineChartState}
+      initialChartState={stateWithChartTitle}
       isError={isError}
       parentChartAction={responsiveLineChartAction}
       parentChartDispatch={responsiveLineChartDispatch}
@@ -1206,7 +1220,7 @@ function ResponsiveLineChart({
   const displayResetAll = (
     <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
-        initialChartState={modifiedResponsiveLineChartState}
+        initialChartState={stateWithChartTitle}
         input={displayResetAllButton}
         label="Reset all values"
         value=""
