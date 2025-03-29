@@ -95,6 +95,8 @@ function ChartArcLabel(props: ChartArcLabelProps) {
       attributes={{
         data: NIVO_SUNBURST_ARC_LABEL_DATA,
         description: "Define arc label",
+        disabled: !enableArcLabels,
+        hideLabel: true,
         name: "arcLabel",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setArcLabel,
@@ -106,6 +108,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
   const arcLabelsRadiusOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value}</Text>
         ),
@@ -124,6 +127,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
   const arcLabelsSkipAngleSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} °</Text>
         ),

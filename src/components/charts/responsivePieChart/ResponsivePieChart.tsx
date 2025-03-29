@@ -137,6 +137,8 @@ function ResponsivePieChart({
     screenshotFilename,
     screenshotImageQuality,
     screenshotImageType,
+
+    isError,
   } = responsivePieChartState;
 
   const chartRef = useRef(null);
@@ -356,6 +358,7 @@ function ResponsivePieChart({
       attributes={{
         data: NIVO_COLOR_SCHEME_DATA,
         description: "Define chart's colors",
+        hideLabel: true,
         name: "colorScheme",
         parentDispatch: responsivePieChartDispatch,
         validValueAction: responsivePieChartAction.setColorScheme,
@@ -430,6 +433,7 @@ function ResponsivePieChart({
   const arcLinkLabelsSkipAngleSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLinkLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} °</Text>
         ),
@@ -448,6 +452,7 @@ function ResponsivePieChart({
   const arcLinkLabelsOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLinkLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -466,6 +471,7 @@ function ResponsivePieChart({
   const arcLinkLabelsDiagonalLengthSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLinkLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -485,6 +491,7 @@ function ResponsivePieChart({
   const arcLinkLabelsStraightLengthSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLinkLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -504,6 +511,7 @@ function ResponsivePieChart({
   const arcLinkLabelsTextOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLinkLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -522,6 +530,7 @@ function ResponsivePieChart({
   const arcLinkLabelsThicknessSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableArcLinkLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -609,6 +618,8 @@ function ResponsivePieChart({
       attributes={{
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Configure react-spring.",
+        disabled: !enableAnimate,
+        hideLabel: true,
         name: "motionConfig",
         parentDispatch: responsivePieChartDispatch,
         validValueAction: responsivePieChartAction.setMotionConfig,
@@ -622,6 +633,8 @@ function ResponsivePieChart({
       attributes={{
         data: NIVO_TRANSITION_MODE_DATA,
         description: "Define how transitions behave.",
+        disabled: !enableAnimate,
+        hideLabel: true,
         name: "transitionMode",
         parentDispatch: responsivePieChartDispatch,
         validValueAction: responsivePieChartAction.setTransitionMode,
@@ -1055,6 +1068,7 @@ function ResponsivePieChart({
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
       initialChartState={modifiedInitialResponsivePieChartState}
+      isError={isError}
       parentChartAction={responsivePieChartAction}
       parentChartDispatch={responsivePieChartDispatch}
       screenshotFilename={screenshotFilename}
