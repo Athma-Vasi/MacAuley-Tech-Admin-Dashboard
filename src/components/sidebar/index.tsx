@@ -1,5 +1,11 @@
 import { Stack } from "@mantine/core";
-import { TbAffiliate, TbReportMoney, TbTools, TbUser } from "react-icons/tb";
+import {
+  TbAffiliate,
+  TbFileDatabase,
+  TbReportMoney,
+  TbTools,
+  TbUser,
+} from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 
@@ -61,12 +67,24 @@ function Sidebar() {
     />
   );
 
+  const directoryNavlink = (
+    <AccessibleNavLink
+      attributes={{
+        description: "Directory",
+        icon: <TbFileDatabase />,
+        name: "Directory",
+        onClick: () => navigate("/directory"),
+      }}
+    />
+  );
+
   return (
     <Stack>
       {financialsNavlink}
       {productsNavlink}
       {customersNavlink}
       {repairsNavlink}
+      {directoryNavlink}
     </Stack>
   );
 }

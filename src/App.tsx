@@ -4,6 +4,7 @@ import CustomFonts from "./components/customFonts";
 import Dashboard from "./components/dashboard/Dashboard";
 
 import DisplayResponsiveChartWrapper from "./components/charts/display";
+import DirectoryWrapper from "./components/directory";
 import Home from "./components/home";
 import Login from "./components/login";
 import Register from "./components/register";
@@ -26,6 +27,7 @@ function App() {
             path="chart/:chartHeading"
             element={<DisplayResponsiveChartWrapper />}
           />
+          <Route path="directory" element={<DirectoryWrapper />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Route>
         <Route path="/login" element={<Login />} />
