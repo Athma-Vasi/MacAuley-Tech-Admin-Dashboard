@@ -1,4 +1,4 @@
-import { Container } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { useReducer } from "react";
 
 import { COLORS_SWATCHES, STORE_LOCATION_DATA } from "../../constants";
@@ -6,9 +6,10 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
+import { type DirectoryAction, directoryAction } from "./actions";
+import { DEPARTMENT_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
-import { type DirectoryAction, directoryAction } from "./actions";
 import { DIRECTORY_EMPLOYEE_DATA } from "./data";
 import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";
@@ -17,7 +18,6 @@ import type {
   StoreLocationsWithDefaultKey,
 } from "./types";
 import { filterEmployees, returnIsStoreLocationDisabled } from "./utils";
-import { DEPARTMENT_DATA } from "./constants";
 
 function Directory() {
   const [directoryState, directoryDispatch] = useReducer(
@@ -88,18 +88,21 @@ function Directory() {
     storeLocation,
   });
 
-  console.log(buildD3Tree(filteredEmployees, themeColorShade));
+  const builtD3Tree = buildD3Tree(filteredEmployees, themeColorShade);
+  console.log("builtD3Tree", builtD3Tree);
 
   const d3Tree = (
     <D3Tree data={buildD3Tree(filteredEmployees, themeColorShade)} />
   );
 
   return (
-    <Container>
-      {departmentSelectInput}
-      {storeLocationSelectInput}
+    <Stack w="100%" align="center">
+      <Group w="100%" position="center">
+        {departmentSelectInput}
+        {storeLocationSelectInput}
+      </Group>
       {d3Tree}
-    </Container>
+    </Stack>
   );
 }
 

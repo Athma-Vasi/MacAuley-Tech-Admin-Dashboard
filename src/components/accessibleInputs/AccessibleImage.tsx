@@ -1,8 +1,7 @@
-import { Box, Card, Image, LoadingOverlay } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Box, Card, Image } from "@mantine/core";
 import { type CSSProperties, type ReactNode, useState } from "react";
 import { TbPhotoOff } from "react-icons/tb";
-import { useGlobalState } from "../../hooks";
+import { useGlobalState } from "../../hooks/useGlobalState";
 import { createAccessibleImageTextElement } from "./utils";
 
 type AccessibleImageAttributes = {
@@ -49,9 +48,9 @@ function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
         globalState: { themeObject },
     } = useGlobalState();
 
-    const [loadingOverlayVisible, { toggle: toggleLoadingOverlay }] =
-        useDisclosure(true);
-    const [_isImageLoading, setIsImageLoading] = useState(true);
+    // const [loadingOverlayVisible, { toggle: toggleLoadingOverlay }] =
+    //     useDisclosure(true);
+    // const [_isImageLoading, setIsImageLoading] = useState(true);
     const [isImageLoadFailed, setIsImageLoadFailed] = useState(false);
 
     const { screenreaderTextElement } = createAccessibleImageTextElement({
@@ -60,14 +59,14 @@ function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
         themeObject,
     });
 
-    const loadingOverlay = (
-        <LoadingOverlay
-            visible={loadingOverlayVisible}
-            overlayBlur={4}
-            overlayOpacity={0.9}
-            radius="md"
-        />
-    );
+    // const loadingOverlay = (
+    //     <LoadingOverlay
+    //         visible={loadingOverlayVisible}
+    //         overlayBlur={4}
+    //         overlayOpacity={0.9}
+    //         radius="md"
+    //     />
+    // );
 
     const fallbackAlt = "Image failed to load. Here is a cute picture instead!";
     const fallbackSrc =
@@ -82,10 +81,10 @@ function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
             fit={fit}
             height={height}
             onError={() => setIsImageLoadFailed(true)}
-            onLoad={() => {
-                setIsImageLoading(false);
-                toggleLoadingOverlay();
-            }}
+            // onLoad={() => {
+            //     // setIsImageLoading(false);
+            //     toggleLoadingOverlay();
+            // }}
             placeholder={placeholder}
             radius={radius}
             ref={imageRef}
@@ -107,7 +106,7 @@ function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
         >
             <Card.Section style={{ position: "relative" }}>
                 {image}
-                {loadingOverlay}
+                {/* {loadingOverlay} */}
             </Card.Section>
 
             <Box

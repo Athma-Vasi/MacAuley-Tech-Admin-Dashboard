@@ -1,4 +1,4 @@
-import { EmployeeDoc } from "../directory/data";
+import { EmployeeDoc } from "../data";
 
 type D3TreeInput = {
   attributes: Record<string, string>;
@@ -12,7 +12,7 @@ type TreeHelpers = {
 
 function createTreeHelpers(
   employees: Array<EmployeeDoc>,
-  nodeColor: string
+  nodeColor: string,
 ): TreeHelpers {
   const initialAcc = {
     nodeMap: new Map<number, D3TreeInput>(),
@@ -55,7 +55,7 @@ function createTreeHelpers(
 
 function buildD3Tree(
   employees: Array<EmployeeDoc>,
-  nodeColor: string
+  nodeColor: string,
 ): Array<D3TreeInput> {
   const { minOrgId, nodeMap } = createTreeHelpers(employees, nodeColor);
 
@@ -66,9 +66,11 @@ function buildD3Tree(
       return result;
     }
 
-    parentOrgId === 0 || orgId === minOrgId // root node
-      ? result.push(node)
-      : nodeMap.get(employee.parentOrgId)?.children.push(node);
+    if (parentOrgId === 0 || orgId === minOrgId) { // root node
+      result.push(node);
+    } else {
+      nodeMap.get(employee.parentOrgId)?.children.push(node);
+    }
 
     return result;
   }, []);

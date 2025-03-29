@@ -309,6 +309,30 @@ function createAccessibleButtonScreenreaderTextElements({
   return { enabledTextElement, disabledTextElement };
 }
 
+type AccessibleImageTextElements = {
+  description: string;
+  name: string;
+  themeObject: ThemeObject;
+};
+
+function createAccessibleImageTextElement(
+  { description, name, themeObject }: AccessibleImageTextElements,
+): {
+  screenreaderTextElement: React.JSX.Element;
+} {
+  const screenreaderTextElement = (
+    <Text
+      id={`${name}-selected`}
+      w="100%"
+      aria-live="polite"
+    >
+      {description}
+    </Text>
+  );
+
+  return { screenreaderTextElement };
+}
+
 type CreateAccessibleSliderSelectionTextElements = {
   name: string;
   theme?: "muted" | "default";
@@ -580,6 +604,7 @@ export {
   createAccessibleButtons,
   createAccessibleButtonScreenreaderTextElements,
   createAccessibleCheckboxSelectionsTextElements,
+  createAccessibleImageTextElement,
   createAccessibleNavLinkTextElement,
   createAccessibleSelectInputs,
   createAccessibleSliderScreenreaderTextElements,

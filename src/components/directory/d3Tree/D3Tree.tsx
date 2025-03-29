@@ -1,10 +1,11 @@
-import { Card, Flex, Stack, Text } from "@mantine/core";
+import { Card, Flex, Group, Stack, Text } from "@mantine/core";
 import Tree, { type CustomNodeElementProps, type Point } from "react-d3-tree";
 
 import { useCenteredTree } from "../../../hooks/userCenteredTree";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 // import AccessibleImage from "../../accessibleInputs/";
 
+import AccessibleImage from "../../accessibleInputs/AccessibleImage";
 import { GoldenGrid } from "../../goldenGrid";
 import type { D3TreeInput } from "./utils";
 
@@ -17,17 +18,6 @@ function renderForeignObjectNode({
   toggleNode: () => void;
   foreignObjectProps: React.SVGProps<SVGForeignObjectElement>;
 }) {
-  /**
-   * <div style={{ border: "1px solid black", backgroundColor: "#dedede" }}>
-        <h3 style={{ textAlign: "center" }}>{nodeDatum.name}</h3>
-        {nodeDatum.children && (
-          <button style={{ width: "100%" }} onClick={toggleNode}>
-            {nodeDatum.__rd3t.collapsed ? "Expand" : "Collapse"}
-          </button>
-        )}
-      </div>
-   */
-
   const button = (
     <AccessibleButton
       attributes={{
@@ -36,6 +26,7 @@ function renderForeignObjectNode({
         enabledScreenreaderText: `${
           nodeDatum.__rd3t.collapsed ? "Expand" : "Collapse"
         } subordinates`,
+        size: "md",
       }}
     />
   );
@@ -45,48 +36,77 @@ function renderForeignObjectNode({
       attributes={{
         alt: nodeDatum.name,
         fit: "cover",
-        height: 50,
+        height: 75,
         name: nodeDatum.name,
         radius: 9999,
         src: nodeDatum.attributes.profilePictureUrl ?? "",
-        width: 50,
+        width: 75,
       }}
     />
   );
 
-  const foreignChild = (
-    <Flex direction="column" gap={4}>
-      {Object.entries(nodeDatum.attributes).map(([key, value], index) => {
-        const disallowedKeysSet = new Set(["profilePictureUrl", "nodeColor"]);
+  // const foreignChild = (
+  //   <Flex direction="column" gap={4}>
+  //     {Object.entries(nodeDatum.attributes).map(([key, value], index) => {
+  //       const disallowedKeysSet = new Set(["profilePictureUrl", "nodeColor"]);
 
-        return disallowedKeysSet.has(key)
-          ? null
-          : (
-            <Text key={`${key}-${value}-${index.toString()}`}>
-              {value as string}
-            </Text>
-          );
-      })}
+  //       return disallowedKeysSet.has(key) ? null : (
+  //         <Text
+  //           key={`${key}-${value}-${index.toString()}`}
+  //           size={index === 0 ? 22 : 19}
+  //           style={{ textAlign: "center" }}
+  //           pb={index === 0 ? "xs" : 0}
+  //         >
+  //           {value as string}
+  //         </Text>
+  //       );
+  //     })}
+  //   </Flex>
+  // );
+
+  const foreignChild = (
+    <Flex direction="column" rowGap={2} align="center">
+      <Text size={22}>
+        {nodeDatum.attributes.jobPosition}
+      </Text>
+
+      <Text size={18}>
+        {nodeDatum.attributes.city}, {nodeDatum.attributes.country}
+      </Text>
     </Flex>
   );
 
   const [firstName, middleName, lastName] = nodeDatum.name.split(" ");
 
   const foreignCard = (
-    <Card shadow="sm" padding="md" radius="md" withBorder maw={200} mah={250}>
+    <Card
+      shadow="sm"
+      padding="md"
+      radius="md"
+      withBorder
+      w="clamp(200px, 20vw, 350px)"
+      mih={250}
+      mah={350}
+    >
       <Stack w="100%">
-        <GoldenGrid>
+        <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 50%)" }}>
           <Flex h="100%" direction="column" align="start" justify="center">
             {profilePic}
           </Flex>
           <Flex direction="column">
-            <Text>{firstName}</Text>
-            <Text>{middleName}</Text>
-            <Text>{lastName}</Text>
+            <Text size={24} weight={600}>{firstName}</Text>
+            {middleName
+              ? <Text size={24} weight={600}>{middleName}</Text>
+              : null}
+            <Text size={24} weight={600}>{lastName}</Text>
           </Flex>
         </GoldenGrid>
+
         {foreignChild}
-        {nodeDatum.children.length ? button : null}
+
+        <Group position="right">
+          {nodeDatum.children.length ? button : null}
+        </Group>
       </Stack>
     </Card>
   );
