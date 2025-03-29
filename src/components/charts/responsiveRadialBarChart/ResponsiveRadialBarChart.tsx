@@ -164,6 +164,8 @@ function ResponsiveRadialBarChart({
     screenshotFilename,
     screenshotImageQuality,
     screenshotImageType,
+
+    isError,
   } = responsiveRadialBarChartState;
 
   // set motion config on enable
@@ -409,6 +411,7 @@ function ResponsiveRadialBarChart({
       attributes={{
         data: NIVO_COLOR_SCHEME_DATA,
         description: "Define chart colors.",
+        hideLabel: true,
         name: "chartColors",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setChartColors,
@@ -911,6 +914,8 @@ function ResponsiveRadialBarChart({
       attributes={{
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Define motion config",
+        disabled: !enableAnimate,
+        hideLabel: true,
         name: "motionConfig",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setMotionConfig,
@@ -924,6 +929,8 @@ function ResponsiveRadialBarChart({
       attributes={{
         data: NIVO_TRANSITION_MODE_DATA,
         description: "Define transition mode",
+        disabled: !enableAnimate,
+        hideLabel: true,
         name: "transitionMode",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setTransitionMode,
@@ -1568,6 +1575,7 @@ function ResponsiveRadialBarChart({
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
       initialChartState={modifiedResponsiveRadialBarChartState}
+      isError={isError}
       parentChartAction={responsiveRadialBarChartAction}
       parentChartDispatch={responsiveRadialBarChartDispatch}
       screenshotFilename={screenshotFilename}
