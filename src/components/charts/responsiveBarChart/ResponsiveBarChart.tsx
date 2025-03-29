@@ -185,6 +185,8 @@ function ResponsiveBarChart({
     screenshotFilename,
     screenshotImageQuality,
     screenshotImageType,
+
+    isError,
   } = responsiveBarChartState;
 
   // set motion config on enable
@@ -357,6 +359,7 @@ function ResponsiveBarChart({
       attributes={{
         data: BAR_CHART_GROUP_MODE_SELECT_DATA,
         description: "Define how bars are grouped together",
+        hideLabel: true,
         name: "groupMode",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setGroupMode,
@@ -370,6 +373,7 @@ function ResponsiveBarChart({
       attributes={{
         data: BAR_CHART_LAYOUT_SELECT_DATA,
         description: "Define the chart layout",
+        hideLabel: true,
         name: "layout",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setLayout,
@@ -383,6 +387,7 @@ function ResponsiveBarChart({
       attributes={{
         data: BAR_CHART_VALUE_SCALE_SELECT_DATA,
         description: "Define the scale of the chart",
+        hideLabel: true,
         name: "valueScale",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setValueScale,
@@ -448,6 +453,7 @@ function ResponsiveBarChart({
       attributes={{
         data: NIVO_COLOR_SCHEME_DATA,
         description: "Define chart colors",
+        hideLabel: true,
         name: "chartColors",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setChartColors,
@@ -546,6 +552,7 @@ function ResponsiveBarChart({
   const labelSkipWidthSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value}</Text>
         ),
@@ -564,6 +571,7 @@ function ResponsiveBarChart({
   const labelSkipHeightSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableLabels,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value}</Text>
         ),
@@ -1064,6 +1072,7 @@ function ResponsiveBarChart({
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
       initialChartState={modifiedInitialResponsiveBarChartState}
+      isError={isError}
       parentChartAction={responsiveBarChartAction}
       parentChartDispatch={responsiveBarChartDispatch}
       screenshotFilename={screenshotFilename}

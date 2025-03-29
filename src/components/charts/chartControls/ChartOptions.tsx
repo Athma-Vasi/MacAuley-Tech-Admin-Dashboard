@@ -79,6 +79,7 @@ type ChartOptionsProps = {
   chartTitlePosition: NivoChartTitlePosition; // default: center
   chartTitleSize: TitleOrder; // 1 - 6 px default: 3 step: 1
   initialChartState: Record<string, any>;
+  isError: boolean;
   parentChartAction: ChartOptionsAction;
   parentChartDispatch: React.Dispatch<ChartOptionsDispatch>;
   screenshotFilename: string;
