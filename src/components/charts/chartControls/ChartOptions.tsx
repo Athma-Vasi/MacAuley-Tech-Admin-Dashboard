@@ -101,6 +101,7 @@ function ChartOptions(props: ChartOptionsProps) {
     chartTitlePosition,
     chartTitleSize,
     initialChartState,
+    isError,
     parentChartAction,
     parentChartDispatch,
     screenshotImageQuality,
@@ -248,6 +249,7 @@ function ChartOptions(props: ChartOptionsProps) {
   const screenshotDownloadButton = (
     <AccessibleButton
       attributes={{
+        disabled: isError,
         kind: "download",
         name: "screenshotDownload",
         onClick: async () => {

@@ -10,7 +10,7 @@ import {
 import { ResponsiveCalendar } from "@nivo/calendar";
 import { useReducer, useRef } from "react";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
@@ -115,6 +115,8 @@ function ResponsiveCalendarChart({
     screenshotFilename,
     screenshotImageQuality, // 0 - 1 default: 1 step: 0.1
     screenshotImageType, // default: 'image/png'
+
+    isError,
   } = responsiveCalendarChartState;
 
   const { primaryColor } = themeObject;
@@ -185,6 +187,7 @@ function ResponsiveCalendarChart({
       attributes={{
         data: NIVO_CALENDAR_DIRECTION_DATA,
         description: "Define calendar direction",
+        hideLabel: true,
         name: "calendarDirection",
         validValueAction: responsiveCalendarChartAction.setCalendarDirection,
         value: calendarDirection,
@@ -197,6 +200,7 @@ function ResponsiveCalendarChart({
       attributes={{
         data: NIVO_CALENDAR_ALIGN_DATA,
         description: "Define calendar align",
+        hideLabel: true,
         name: "calendarAlign",
         validValueAction: responsiveCalendarChartAction.setCalendarAlign,
         value: calendarAlign,
@@ -216,6 +220,7 @@ function ResponsiveCalendarChart({
         });
       }}
       value={emptyColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -258,6 +263,7 @@ function ResponsiveCalendarChart({
       attributes={{
         data: NIVO_CALENDAR_LEGEND_POSITION_DATA,
         description: "Define year legend position",
+        hideLabel: true,
         name: "yearLegendPosition",
         validValueAction: responsiveCalendarChartAction.setYearLegendPosition,
         value: yearLegendPosition,
@@ -332,6 +338,7 @@ function ResponsiveCalendarChart({
         });
       }}
       value={monthBorderColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -340,6 +347,7 @@ function ResponsiveCalendarChart({
       attributes={{
         data: NIVO_CALENDAR_LEGEND_POSITION_DATA,
         description: "Define month legend position",
+        hideLabel: true,
         name: "monthLegendPosition",
         validValueAction: responsiveCalendarChartAction.setMonthLegendPosition,
         value: monthLegendPosition,
@@ -414,6 +422,7 @@ function ResponsiveCalendarChart({
         });
       }}
       value={dayBorderColor}
+      w={INPUT_WIDTH}
     />
   );
 
@@ -710,6 +719,7 @@ function ResponsiveCalendarChart({
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
       initialChartState={modifiedResponsiveCalendarChartState}
+      isError={isError}
       parentChartAction={responsiveCalendarChartAction}
       parentChartDispatch={responsiveCalendarChartDispatch}
       screenshotFilename={screenshotFilename}
