@@ -230,15 +230,15 @@ function Dashboard() {
     <Group
       h={DASHBOARD_HEADER_HEIGHT}
       py="sm"
-      position="apart"
+      position="left"
       style={{
-        backgroundColor: backgroundColor,
+        backgroundColor,
         position: "sticky",
         top: APP_HEADER_HEIGHT,
         zIndex: 3,
       }}
+      spacing="xl"
       opacity={0.97}
-      w="100%"
     >
       {storeLocationSelectInput}
       {createdYYYYMMDDInput}

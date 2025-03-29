@@ -38,34 +38,49 @@ import type {
   ResponsiveRadialBarChartState,
 } from "./types";
 
-function ResponsiveRadialBarChart({
-  hideControls = false,
-  radialBarChartData,
-  tooltip,
-}: ResponsiveRadialBarChartProps) {
+function ResponsiveRadialBarChart(
+  { dashboardChartTitle, hideControls = false, radialBarChartData, tooltip }:
+    ResponsiveRadialBarChartProps,
+) {
   const {
     globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
 
-  const { backgroundColor, grayColorShade, textColor, scrollBarStyle } =
-    returnThemeColors({
-      themeObject,
-      colorsSwatches: COLORS_SWATCHES,
-    });
+  const {
+    darkColorShade,
+    backgroundColor,
+    grayColorShade,
+    textColor,
+    scrollBarStyle,
+  } = returnThemeColors({
+    themeObject,
+    colorsSwatches: COLORS_SWATCHES,
+  });
 
-  // sets initial colors based on color scheme
-  const modifiedResponsiveRadialBarChartState: ResponsiveRadialBarChartState = {
-    ...initialResponsiveRadialBarChartState,
-    chartTitleColor: textColor,
-    labelsTextColor: textColor,
-    ringBorderColor: textColor,
-    tracksColor: grayColorShade,
-  };
+  useEffect(() => {
+    // sets initial colors based on color scheme
+    const modifiedResponsiveRadialBarChartState: ResponsiveRadialBarChartState =
+      {
+        ...initialResponsiveRadialBarChartState,
+        chartTitle: dashboardChartTitle ?? "Radial Bar Chart",
+        chartTitleColor: textColor,
+        legendItemTextColor: textColor,
+        labelsTextColor: darkColorShade,
+        ringBorderColor: textColor,
+        tracksColor: grayColorShade,
+      };
+
+    responsiveRadialBarChartDispatch({
+      action: responsiveRadialBarChartAction.resetChartToDefault,
+      payload: modifiedResponsiveRadialBarChartState,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [themeObject]);
 
   const [responsiveRadialBarChartState, responsiveRadialBarChartDispatch] =
     useReducer(
       responsiveRadialBarChartReducer,
-      modifiedResponsiveRadialBarChartState,
+      initialResponsiveRadialBarChartState,
     );
 
   const chartRef = useRef(null);
@@ -940,6 +955,11 @@ function ResponsiveRadialBarChart({
   );
 
   // reset all button
+
+  const stateWithChartTitle = {
+    ...responsiveRadialBarChartState,
+    chartTitle: dashboardChartTitle ?? "Radial Bar Chart",
+  };
   const resetAllButton = (
     <AccessibleButton
       attributes={{
@@ -949,7 +969,7 @@ function ResponsiveRadialBarChart({
         onClick: () => {
           responsiveRadialBarChartDispatch({
             action: responsiveRadialBarChartAction.resetChartToDefault,
-            payload: modifiedResponsiveRadialBarChartState,
+            payload: stateWithChartTitle,
           });
         },
       }}
@@ -971,7 +991,7 @@ function ResponsiveRadialBarChart({
 
   const displayStartAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={startAngleSliderInput}
       label="Start angle"
       symbol="°"
@@ -981,7 +1001,7 @@ function ResponsiveRadialBarChart({
 
   const displayEndAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={endAngleSliderInput}
       label="End angle"
       symbol="°"
@@ -991,7 +1011,7 @@ function ResponsiveRadialBarChart({
 
   const displayInnerRadiusSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={innerRadiusSliderInput}
       label="Inner radius"
       symbol="px"
@@ -1001,7 +1021,7 @@ function ResponsiveRadialBarChart({
 
   const displayPaddingRingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={paddingRingSliderInput}
       label="Padding ring"
       value={paddingRing}
@@ -1010,7 +1030,7 @@ function ResponsiveRadialBarChart({
 
   const displayPadAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={padAngleSliderInput}
       label="Pad angle"
       symbol="°"
@@ -1020,7 +1040,7 @@ function ResponsiveRadialBarChart({
 
   const displayCornerRadiusSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={cornerRadiusSliderInput}
       label="Corner radius"
       symbol="px"
@@ -1044,7 +1064,7 @@ function ResponsiveRadialBarChart({
 
   const displayChartMargin = (
     <ChartMargin
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       marginBottom={marginBottom}
       marginLeft={marginLeft}
       marginRight={marginRight}
@@ -1068,7 +1088,7 @@ function ResponsiveRadialBarChart({
 
   const displayChartColorsSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={chartColorsSelectInput}
       isInputDisabled={false}
       label="Chart colors"
@@ -1078,7 +1098,7 @@ function ResponsiveRadialBarChart({
 
   const displayRingBorderColorsInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={ringBorderColorsInput}
       isInputDisabled={false}
       label="Ring border color"
@@ -1088,7 +1108,7 @@ function ResponsiveRadialBarChart({
 
   const displayRingBorderWidthSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={ringBorderWidthSliderInput}
       isInputDisabled={false}
       label="Ring border width"
@@ -1128,7 +1148,7 @@ function ResponsiveRadialBarChart({
 
   const displayTracksColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={tracksColorInput}
       isInputDisabled={!enableTracks}
       label="Tracks color"
@@ -1197,7 +1217,7 @@ function ResponsiveRadialBarChart({
 
   const displayRadialAxisStartTickSizeSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={radialAxisStartTickSizeSliderInput}
       isInputDisabled={!enableRadialAxisStart}
       label="Radial axis start tick size"
@@ -1208,7 +1228,7 @@ function ResponsiveRadialBarChart({
 
   const displayRadialAxisStartTickPaddingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={radialAxisStartTickPaddingSliderInput}
       isInputDisabled={!enableRadialAxisStart}
       label="Radial axis start tick padding"
@@ -1219,7 +1239,7 @@ function ResponsiveRadialBarChart({
 
   const displayRadialAxisStartTickRotationSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={radialAxisStartTickRotationSliderInput}
       isInputDisabled={!enableRadialAxisStart}
       label="Radial axis start tick rotation"
@@ -1260,7 +1280,7 @@ function ResponsiveRadialBarChart({
 
   const displayRadialAxisEndTickSizeSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={radialAxisEndTickSizeSliderInput}
       isInputDisabled={!enableRadialAxisEnd}
       label="Radial axis end tick size"
@@ -1271,7 +1291,7 @@ function ResponsiveRadialBarChart({
 
   const displayRadialAxisEndTickPaddingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={radialAxisEndTickPaddingSliderInput}
       isInputDisabled={!enableRadialAxisEnd}
       label="Radial axis end tick padding"
@@ -1282,7 +1302,7 @@ function ResponsiveRadialBarChart({
 
   const displayRadialAxisEndTickRotationSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={radialAxisEndTickRotationSliderInput}
       isInputDisabled={!enableRadialAxisEnd}
       label="Radial axis end tick rotation"
@@ -1323,7 +1343,7 @@ function ResponsiveRadialBarChart({
 
   const displayCircularAxisInnerTickSizeSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={circularAxisInnerTickSizeSliderInput}
       isInputDisabled={!enableCircularAxisInner}
       label="Circular axis inner tick size"
@@ -1334,7 +1354,7 @@ function ResponsiveRadialBarChart({
 
   const displayCircularAxisInnerTickPaddingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={circularAxisInnerTickPaddingSliderInput}
       isInputDisabled={!enableCircularAxisInner}
       label="Circular axis inner tick padding"
@@ -1345,7 +1365,7 @@ function ResponsiveRadialBarChart({
 
   const displayCircularAxisInnerTickRotationSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={circularAxisInnerTickRotationSliderInput}
       isInputDisabled={!enableCircularAxisInner}
       label="Circular axis inner tick rotation"
@@ -1386,7 +1406,7 @@ function ResponsiveRadialBarChart({
 
   const displayCircularAxisOuterTickSizeSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={circularAxisOuterTickSizeSliderInput}
       isInputDisabled={!enableCircularAxisOuter}
       label="Circular axis outer tick size"
@@ -1397,7 +1417,7 @@ function ResponsiveRadialBarChart({
 
   const displayCircularAxisOuterTickPaddingSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={circularAxisOuterTickPaddingSliderInput}
       isInputDisabled={!enableCircularAxisOuter}
       label="Circular axis outer tick padding"
@@ -1408,7 +1428,7 @@ function ResponsiveRadialBarChart({
 
   const displayCircularAxisOuterTickRotationSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={circularAxisOuterTickRotationSliderInput}
       isInputDisabled={!enableCircularAxisOuter}
       label="Circular axis outer tick rotation"
@@ -1449,7 +1469,7 @@ function ResponsiveRadialBarChart({
 
   const displayLabelsSkipAngleSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={labelsSkipAngleSliderInput}
       isInputDisabled={!enableLabels}
       label="Labels skip angle"
@@ -1460,7 +1480,7 @@ function ResponsiveRadialBarChart({
 
   const displayLabelsRadiusOffsetSliderInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={labelsRadiusOffsetSliderInput}
       isInputDisabled={!enableLabels}
       label="Labels radius offset"
@@ -1471,7 +1491,7 @@ function ResponsiveRadialBarChart({
 
   const displayLabelsTextColorInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={labelsTextColorInput}
       isInputDisabled={!enableLabels}
       label="Labels text color"
@@ -1495,7 +1515,7 @@ function ResponsiveRadialBarChart({
     <ChartLegend
       enableLegend={enableLegend}
       enableLegendJustify={enableLegendJustify}
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       legendAnchor={legendAnchor}
       legendDirection={legendDirection}
       legendItemBackground={legendItemBackground}
@@ -1537,7 +1557,7 @@ function ResponsiveRadialBarChart({
 
   const displayMotionConfigSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={motionConfigSelectInput}
       isInputDisabled={!enableAnimate}
       label="Motion config"
@@ -1547,7 +1567,7 @@ function ResponsiveRadialBarChart({
 
   const displayTransitionModeSelectInput = (
     <ChartsAndGraphsControlsStacker
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       input={transitionModeSelectInput}
       isInputDisabled={!enableAnimate}
       label="Transition mode"
@@ -1574,7 +1594,7 @@ function ResponsiveRadialBarChart({
       chartTitleColor={chartTitleColor}
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
-      initialChartState={modifiedResponsiveRadialBarChartState}
+      initialChartState={stateWithChartTitle}
       isError={isError}
       parentChartAction={responsiveRadialBarChartAction}
       parentChartDispatch={responsiveRadialBarChartDispatch}
@@ -1593,7 +1613,7 @@ function ResponsiveRadialBarChart({
   const displayResetAll = (
     <Stack w="100%" pt="md">
       <ChartsAndGraphsControlsStacker
-        initialChartState={modifiedResponsiveRadialBarChartState}
+        initialChartState={stateWithChartTitle}
         input={displayResetAllButton}
         label="Reset all values"
         value=""

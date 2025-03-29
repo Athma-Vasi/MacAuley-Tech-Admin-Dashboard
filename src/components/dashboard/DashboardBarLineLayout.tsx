@@ -2,7 +2,6 @@ import { Card, Center, Group, Stack, Text, Title } from "@mantine/core";
 import React from "react";
 import {
   APP_HEADER_HEIGHT,
-  COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
   METRICS_HEADER_HEIGHT,
@@ -11,7 +10,6 @@ import {
 } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
-import { returnThemeColors } from "../../utils";
 import { DashboardCalendarView } from "./types";
 
 type DashboardBarLineLayoutProps = {
@@ -62,10 +60,10 @@ function DashboardBarLineLayout(
   const { globalState: { themeObject } } = useGlobalState();
   const { windowWidth } = useWindowSize();
 
-  const { backgroundColor, grayBorderShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
+  // const { backgroundColor, grayBorderShade } = returnThemeColors({
+  //   colorsSwatches: COLORS_SWATCHES,
+  //   themeObject,
+  // });
 
   const overviewCardsSection = (
     <div className="overview-card">
@@ -168,7 +166,7 @@ function DashboardBarLineLayout(
               METRICS_HEADER_HEIGHT_MOBILE
             : APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT +
               METRICS_HEADER_HEIGHT,
-          backgroundColor,
+          // backgroundColor,
           zIndex: 2,
           boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
         }}

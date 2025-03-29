@@ -1,10 +1,4 @@
-import {
-  Box,
-  Container,
-  type MantineColor,
-  NavLink,
-  type Variants,
-} from "@mantine/core";
+import { Box, type MantineColor, NavLink, type Variants } from "@mantine/core";
 import type { ReactNode } from "react";
 import { TbChevronDownRight } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
@@ -52,7 +46,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
     active = false,
     children = null,
     childrenOffset = 0,
-    color = primaryColor,
+    color = textColor,
     defaultOpened = false,
     description,
     disableRightSectionRotation = false,

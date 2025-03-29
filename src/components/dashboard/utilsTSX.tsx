@@ -189,7 +189,7 @@ function returnMinMaxSectionElement(
   unitSymbol: "$" | "%" | "",
 ) {
   return (
-    <Stack style={{ borderBottom: "1px solid hsl(0, 0%, 90%)" }}>
+    <Stack style={{ borderBottom: "1px solid hsl(0, 0%, 33%)" }}>
       <GoldenGrid>
         <Group position="right">
           <Text>{kind}:</Text>
@@ -221,7 +221,7 @@ function returnMedianModeSection(
   unitSymbol: "$" | "%" | "",
 ) {
   return (
-    <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 90%)" }}>
+    <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 33%)" }}>
       <Group position="right">
         <Text>{kind}:</Text>
       </Group>
@@ -247,7 +247,7 @@ function returnMeanRangeSDSection(
     <GoldenGrid
       style={kind === "Standard Deviation"
         ? {}
-        : { borderBottom: "1px solid hsl(0, 0%, 90%)" }}
+        : { borderBottom: "1px solid hsl(0, 0%, 33%)" }}
     >
       <Stack spacing={0}>
         <Group position="right">

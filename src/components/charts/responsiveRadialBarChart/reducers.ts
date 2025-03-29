@@ -14,7 +14,6 @@ import {
   type ResponsiveRadialBarChartAction,
   responsiveRadialBarChartAction,
 } from "./actions";
-import { initialResponsiveRadialBarChartState } from "./state";
 import type {
   ResponsiveRadialBarChartDispatch,
   ResponsiveRadialBarChartState,
@@ -82,6 +81,10 @@ const responsiveRadialBarChartReducersMap = new Map<
   [
     responsiveRadialBarChartAction.setChartColors,
     responsiveRadialBarChartReducer_setChartColors,
+  ],
+  [
+    responsiveRadialBarChartAction.setRingBorderColor,
+    responsiveRadialBarChartReducer_setRingBorderColor,
   ],
   [
     responsiveRadialBarChartAction.setRingBorderWidth,
@@ -447,6 +450,16 @@ function responsiveRadialBarChartReducer_setRingBorderWidth(
   return {
     ...state,
     ringBorderWidth: dispatch.payload as number,
+  };
+}
+
+function responsiveRadialBarChartReducer_setRingBorderColor(
+  state: ResponsiveRadialBarChartState,
+  dispatch: ResponsiveRadialBarChartDispatch,
+): ResponsiveRadialBarChartState {
+  return {
+    ...state,
+    ringBorderColor: dispatch.payload as string,
   };
 }
 
@@ -972,9 +985,9 @@ function responsiveRadialBarChartReducer_setScreenshotImageType(
 
 function responsiveRadialBarChartReducer_resetChartToDefault(
   _state: ResponsiveRadialBarChartState,
-  _dispatch: ResponsiveRadialBarChartDispatch,
+  dispatch: ResponsiveRadialBarChartDispatch,
 ): ResponsiveRadialBarChartState {
-  return initialResponsiveRadialBarChartState;
+  return dispatch.payload as ResponsiveRadialBarChartState;
 }
 
 function responsiveRadialBarChartReducer_setIsError(

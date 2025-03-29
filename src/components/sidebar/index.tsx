@@ -1,11 +1,5 @@
 import { Stack } from "@mantine/core";
-import {
-  TbAffiliate,
-  TbHome2,
-  TbReportMoney,
-  TbTools,
-  TbUser,
-} from "react-icons/tb";
+import { TbAffiliate, TbReportMoney, TbTools, TbUser } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 

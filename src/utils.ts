@@ -209,7 +209,7 @@ function returnThemeColors({
 
   const textColor = colorScheme === "light" ? gray[8] : gray[5];
   const textColorSliderLabel = gray[3];
-  const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[6];
+  const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[5];
 
   // const lightSchemeGray = gray[8];
   // const darkSchemeGray = gray[5];

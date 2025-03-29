@@ -214,7 +214,7 @@ function ProductMetrics({
       h={METRICS_HEADER_HEIGHT}
       opacity={0.97}
       py="sm"
-      position="apart"
+      position="left"
       style={{
         position: "sticky",
         top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,

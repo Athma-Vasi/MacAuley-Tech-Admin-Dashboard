@@ -23,6 +23,7 @@ type RadialBarChartData = {
 };
 
 type ResponsiveRadialBarChartProps = {
+  dashboardChartTitle?: string;
   hideControls?: boolean;
   radialBarChartData: RadialBarChartData[];
   tooltip: RadialBarTooltipComponent | undefined;

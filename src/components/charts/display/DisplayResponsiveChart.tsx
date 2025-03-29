@@ -58,6 +58,7 @@ function DisplayResponsiveChart() {
         <ResponsiveBarChart
           barChartData={chartData}
           chartUnitKind={chartUnitKind}
+          dashboardChartTitle={chartTitle}
           indexBy={indexBy}
           keys={keys}
           tooltip={(arg) =>
@@ -70,7 +71,6 @@ function DisplayResponsiveChart() {
               month,
               year,
             })}
-          dashboardChartTitle={chartTitle}
         />
       </Stack>
     );
@@ -178,6 +178,7 @@ function DisplayResponsiveChart() {
 
     return (
       <ResponsiveRadialBarChart
+        dashboardChartTitle={chartTitle}
         radialBarChartData={chartData}
         tooltip={(arg) =>
           createChartTooltipElement({
