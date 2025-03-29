@@ -104,6 +104,7 @@ function ChartAxisRight(props: ChartAxisRightProps) {
   const axisRightTickSizeSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisRight,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -122,6 +123,7 @@ function ChartAxisRight(props: ChartAxisRightProps) {
   const axisRightTickPaddingSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisRight,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -140,6 +142,7 @@ function ChartAxisRight(props: ChartAxisRightProps) {
   const axisRightTickRotationSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisRight,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} °</Text>
         ),
@@ -164,9 +167,12 @@ function ChartAxisRight(props: ChartAxisRightProps) {
       <Text pt="xl">{axisRightLegend}</Text>
       <AccessibleTextInput
         attributes={{
+          disabled: !enableAxisRight,
+          hideLabel: true,
           invalidValueAction: parentChartAction.setIsError,
           name: "axisRightLegend",
           parentDispatch: parentChartDispatch,
+          placeholder: "Axis right legend",
           validValueAction: parentChartAction.setAxisRightLegend,
           value: axisRightLegend,
         }}
@@ -177,6 +183,7 @@ function ChartAxisRight(props: ChartAxisRightProps) {
   const axisRightLegendOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisRight,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -198,6 +205,7 @@ function ChartAxisRight(props: ChartAxisRightProps) {
         data: BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA,
         description: "Define the position of the right axis legend",
         disabled: !enableAxisRight || !axisRightLegend,
+        hideLabel: true,
         name: "axisRightLegendPosition",
         onChange: (event: ChangeEvent<HTMLSelectElement>) => {
           parentChartDispatch({
