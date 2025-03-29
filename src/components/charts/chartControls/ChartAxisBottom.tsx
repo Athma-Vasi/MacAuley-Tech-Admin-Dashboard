@@ -104,6 +104,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const axisBottomTickSizeSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisBottom,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -122,6 +123,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const axisBottomTickPaddingSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisBottom,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -140,6 +142,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const axisBottomTickRotationSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisBottom,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} °</Text>
         ),
@@ -164,9 +167,12 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
       <Text pt="xl">{axisBottomLegend}</Text>
       <AccessibleTextInput
         attributes={{
+          disabled: !enableAxisBottom,
+          hideLabel: true,
           invalidValueAction: parentChartAction.setIsError,
           name: "axisBottomLegend",
           parentDispatch: parentChartDispatch,
+          placeholder: "Axis bottom legend",
           validValueAction: parentChartAction.setAxisBottomLegend,
           value: axisBottomLegend,
         }}
@@ -177,6 +183,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const axisBottomLegendOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisBottom,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -198,6 +205,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
         data: BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA,
         description: "Define the position of the bottom axis legend",
         disabled: !enableAxisBottom || !axisBottomLegend,
+        hideLabel: true,
         name: "axisBottomLegendPosition",
         onChange: (event: ChangeEvent<HTMLSelectElement>) => {
           parentChartDispatch({
