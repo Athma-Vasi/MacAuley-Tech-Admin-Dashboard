@@ -39,6 +39,7 @@ type AccessibleTextInputAttributes<
   ariaAutoComplete?: "both" | "list" | "none" | "inline";
   autoComplete?: "on" | "off";
   disabled?: boolean;
+  hideLabel?: boolean;
   icon?: ReactNode;
   initialInputValue?: string;
   invalidValueAction: InvalidValueAction;
@@ -98,6 +99,7 @@ function AccessibleTextInput<
     ariaAutoComplete = "none",
     autoComplete = "off",
     disabled = false,
+    hideLabel = false,
     icon = null,
     initialInputValue = "",
     invalidValueAction,
@@ -228,7 +230,7 @@ function AccessibleTextInput<
             disabled={disabled}
             error={!isValueBufferValid && valueBuffer !== initialInputValue}
             icon={leftIcon}
-            label={label}
+            label={hideLabel ? null : label}
             maxLength={maxLength}
             minLength={minLength}
             name={name}

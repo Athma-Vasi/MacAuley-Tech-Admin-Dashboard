@@ -19,6 +19,7 @@ type AccessibleSelectInputAttributes<
   describedBy?: string;
   description?: string;
   disabled?: boolean;
+  hideLabel?: boolean;
   label?: React.ReactNode;
   name: string;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -60,6 +61,7 @@ function AccessibleSelectInput<
     describedBy = "",
     description,
     disabled = false,
+    hideLabel = false,
     name,
     onChange,
     parentDispatch,
@@ -85,7 +87,7 @@ function AccessibleSelectInput<
         color={color}
         data={data}
         disabled={disabled}
-        label={label}
+        label={hideLabel ? null : label}
         name={name}
         onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
           parentDispatch?.({

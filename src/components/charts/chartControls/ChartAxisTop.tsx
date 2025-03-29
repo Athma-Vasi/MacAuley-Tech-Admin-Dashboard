@@ -104,6 +104,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   const axisTopTickSizeSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisTop,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -122,6 +123,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   const axisTopTickPaddingSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisTop,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -140,6 +142,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   const axisTopTickRotationSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisTop,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} °</Text>
         ),
@@ -164,9 +167,12 @@ function ChartAxisTop(props: ChartAxisTopProps) {
       <Text pt="xl">{axisTopLegend}</Text>
       <AccessibleTextInput
         attributes={{
+          disabled: !enableAxisTop,
+          hideLabel: true,
           invalidValueAction: parentChartAction.setIsError,
           name: "axisTopLegend",
           parentDispatch: parentChartDispatch,
+          placeholder: "Axis top legend",
           validValueAction: parentChartAction.setAxisTopLegend,
           value: axisTopLegend,
         }}
@@ -177,6 +183,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   const axisTopLegendOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
+        disabled: !enableAxisTop,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -198,6 +205,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
         data: BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA,
         description: "Define the position of the top axis legend",
         disabled: !enableAxisTop || !axisTopLegend,
+        hideLabel: true,
         name: "axisTopLegendPosition",
         onChange: (event: ChangeEvent<HTMLSelectElement>) => {
           parentChartDispatch({
