@@ -95,6 +95,11 @@ function Login() {
         signal: fetchAbortController.signal,
       };
 
+      loginDispatch({
+        action: loginAction.setIsSubmitting,
+        payload: true,
+      });
+
       try {
         const responseResult = await fetchSafe(url, requestInit);
 
@@ -185,7 +190,7 @@ function Login() {
           payload: false,
         });
 
-        navigate("/");
+        navigate("/dashboard/financials");
       } catch (error: unknown) {
         if (
           !isComponentMounted || fetchAbortController?.signal.aborted

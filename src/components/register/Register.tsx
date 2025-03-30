@@ -157,7 +157,7 @@ function Register() {
           payload: false,
         });
 
-        navigateFn("/dashboard");
+        navigateFn("/dashboard/financials");
       } catch (error: unknown) {
         if (
           !isComponentMounted || fetchAbortController.signal.aborted

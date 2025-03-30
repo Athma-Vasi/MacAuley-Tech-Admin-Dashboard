@@ -44,6 +44,7 @@ import {
   excludeTodayFromCalendarView,
   splitSelectedCalendarDate,
 } from "./utils";
+import { useAuth } from "../../hooks/useAuth";
 
 function Dashboard() {
   const [dashboardState, dashboardDispatch] = useReducer(
@@ -57,6 +58,10 @@ function Dashboard() {
     globalState: { themeObject },
     globalDispatch,
   } = useGlobalState();
+
+  const { authState } = useAuth();
+
+  console.log("authState", authState);
 
   const { metricsView } = useParams();
 
