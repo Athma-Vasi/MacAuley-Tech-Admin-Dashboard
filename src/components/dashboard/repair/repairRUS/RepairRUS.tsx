@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator, splitCamelCase } from "../../../../utils";
@@ -389,25 +388,23 @@ function RepairRUS(
   );
 
   return (
-    <Stack>
-      <DashboardBarLineLayout
-        barLineRadialChart={barLineRadialChart}
-        barLineRadialChartHeading={barLineRadialChartHeading}
-        barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
-        barLineRadialChartYAxis={barLineRadialChartYAxis}
-        calendarChart={calendarChart}
-        calendarChartHeading={calendarChartHeading}
-        calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
-        calendarView={calendarView}
-        cardsWithStatisticsElements={cardsWithStatisticsElements}
-        expandBarLineRadialChartButton={expandBarLineRadialChartButton}
-        expandCalendarChartButton={expandCalendarChartButton}
-        overviewCards={repairOverviewCards}
-        sectionHeading={splitCamelCase(metricsView)}
-        semanticLabel="TODO"
-      />
-    </Stack>
+    <DashboardBarLineLayout
+      barLineRadialChart={barLineRadialChart}
+      barLineRadialChartHeading={barLineRadialChartHeading}
+      barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
+      barLineRadialChartYAxis={barLineRadialChartYAxis}
+      calendarChart={calendarChart}
+      calendarChartHeading={calendarChartHeading}
+      calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
+      calendarView={calendarView}
+      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      expandBarLineRadialChartButton={expandBarLineRadialChartButton}
+      expandCalendarChartButton={expandCalendarChartButton}
+      overviewCards={repairOverviewCards}
+      sectionHeading={splitCamelCase(metricsView)}
+      semanticLabel="TODO"
+    />
   );
 }
 

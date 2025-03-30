@@ -5,9 +5,9 @@ import Dashboard from "./components/dashboard/Dashboard";
 
 import DisplayResponsiveChartWrapper from "./components/charts/display";
 import DirectoryWrapper from "./components/directory";
-import Home from "./components/home";
-import Login from "./components/login";
-import Register from "./components/register";
+import HomeWrapper from "./components/home";
+import LoginWrapper from "./components/login";
+import RegisterWrapper from "./components/register";
 import { useGlobalState } from "./hooks/useGlobalState";
 
 function App() {
@@ -19,19 +19,19 @@ function App() {
     <MantineProvider withGlobalStyles withNormalizeCSS theme={themeObject}>
       <CustomFonts />
       <Routes>
-        <Route path="/" element={<Home />}>
-          <Route path="dashboard" element={<Dashboard />}>
-            <Route path=":metricsView" element={<Dashboard />} />
-          </Route>
-          <Route
-            path="chart/:chartHeading"
-            element={<DisplayResponsiveChartWrapper />}
-          />
-          <Route path="directory" element={<DirectoryWrapper />} />
-          <Route path="*" element={<div>404 Not Found</div>} />
+        <Route path="/" element={<LoginWrapper />} />
+        <Route path="dashboard" element={<HomeWrapper />}>
+          <Route path=":metricsView" element={<Dashboard />} />
         </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="chart/:chartHeading"
+          element={<DisplayResponsiveChartWrapper />}
+        />
+        <Route path="directory" element={<DirectoryWrapper />} />
+        <Route path="*" element={<div>404 Not Found</div>} />
+
+        <Route path="/login" element={<LoginWrapper />} />
+        <Route path="/register" element={<RegisterWrapper />} />
       </Routes>
     </MantineProvider>
   );

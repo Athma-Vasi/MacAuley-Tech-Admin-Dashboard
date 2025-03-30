@@ -252,7 +252,7 @@ function RepairMetrics({
   );
 
   const repairMetrics = (
-    <Stack>
+    <Stack w="100%">
       {loadingOverlay}
       {repairMetricsHeader}
       {revenueUnitsSold}

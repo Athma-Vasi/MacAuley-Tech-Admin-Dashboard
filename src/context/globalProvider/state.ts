@@ -4,7 +4,7 @@ const initialThemeObject: ThemeObject = {
   colorScheme: "light",
   respectReducedMotion: true,
   // white: '#f8f9fa', // gray.0
-  white: "#f5f5f5",
+  white: "#f8f9fa",
   // black: '#212529', // gray.9
   black: "#25262b",
   primaryColor: "violet",
@@ -25,7 +25,7 @@ const initialThemeObject: ThemeObject = {
     },
     Title: {
       defaultProps: {
-        color: "dark.3",
+        color: "dark.4",
       },
     },
   },

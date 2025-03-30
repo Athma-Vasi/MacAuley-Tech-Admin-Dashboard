@@ -1,6 +1,5 @@
 import {
   Box,
-  Container,
   type MantineSize,
   PasswordInput,
   Popover,
@@ -17,7 +16,7 @@ import {
 } from "react";
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 
-import { COLORS_SWATCHES, INPUT_WIDTH } from "../../constants";
+import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { ValidationFunctionsTable } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
@@ -162,7 +161,7 @@ function AccessiblePasswordInput<
 
   return (
     <Box
-      w={INPUT_WIDTH}
+      w={310}
     >
       <Popover
         opened={isPopoverOpened}
@@ -191,7 +190,7 @@ function AccessiblePasswordInput<
             onBlur={() => {
               parentDispatch({
                 action: invalidValueAction,
-                payload: isValueBufferValid,
+                payload: !isValueBufferValid,
               });
 
               parentDispatch({

@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import {
   TbAffiliate,
   TbFileDatabase,
@@ -79,11 +79,17 @@ function Sidebar() {
   );
 
   return (
-    <Stack>
+    <Stack pt="xl">
+      <Text size={18} weight={400}>
+        Dashboard
+      </Text>
       {financialsNavlink}
       {productsNavlink}
       {customersNavlink}
       {repairsNavlink}
+      <Text size={18} weight={400} pt="xl">
+        Directory
+      </Text>
       {directoryNavlink}
     </Stack>
   );

@@ -119,7 +119,7 @@ function DashboardBarLineLayout(
 
   const barLineSection = (
     <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
-      <Stack px="md">
+      <Stack px="md" w="100%">
         <Group position="apart" w="100%">
           {barLineRadialChartYAxisSelectInput}
           {barLineRadialChartKindSegmentedControl}
@@ -130,7 +130,7 @@ function DashboardBarLineLayout(
           {cardsWithStatisticsElements}
         </Group>
         <Text size={20} weight={500}>{barLineRadialChartHeading}</Text>
-        <Center>{barLineRadialChart}</Center>
+        <Center w="100%">{barLineRadialChart}</Center>
       </Stack>
     </Card>
   );

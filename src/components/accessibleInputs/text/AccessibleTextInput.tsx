@@ -1,5 +1,5 @@
 import {
-  Container,
+  Box,
   Group,
   type MantineSize,
   Popover,
@@ -202,7 +202,7 @@ function AccessibleTextInput<
   // console.groupEnd();
 
   return (
-    <Container
+    <Box
       key={`${name}-${value}-${uniqueId ?? ""}`}
       w={INPUT_WIDTH}
     >
@@ -237,7 +237,7 @@ function AccessibleTextInput<
             onBlur={() => {
               parentDispatch({
                 action: invalidValueAction,
-                payload: isValueBufferValid,
+                payload: !isValueBufferValid,
               });
 
               parentDispatch({
@@ -278,7 +278,7 @@ function AccessibleTextInput<
           )
           : null}
       </Popover>
-    </Container>
+    </Box>
   );
 }
 

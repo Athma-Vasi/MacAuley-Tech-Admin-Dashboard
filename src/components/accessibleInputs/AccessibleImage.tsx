@@ -29,7 +29,7 @@ type AccessibleImageProps = {
 function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
     const {
         alt,
-        caption,
+        caption = null,
         fit,
         height,
         imageRef,
@@ -88,7 +88,7 @@ function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
             placeholder={placeholder}
             radius={radius}
             ref={imageRef}
-            src={isImageLoadFailed ? fallbackSrc : src}
+            src={src}
             style={styles}
             width={width}
         />
