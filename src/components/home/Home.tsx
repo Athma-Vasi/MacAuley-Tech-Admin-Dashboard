@@ -9,8 +9,9 @@ import {
 } from "@mantine/core";
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { APP_HEADER_HEIGHT } from "../../constants";
+import { APP_HEADER_HEIGHT, COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { returnThemeColors } from "../../utils";
 import Header from "../header";
 import Sidebar from "../sidebar";
 
@@ -22,10 +23,10 @@ function Home() {
 
   const [opened, setOpened] = React.useState(false);
 
-  // const { backgroundColor, textColor } = returnThemeColors({
-  //     colorsSwatches: COLORS_SWATCHES,
-  //     themeObject,
-  // });
+  const { backgroundColor } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
 
   return (
     <AppShell

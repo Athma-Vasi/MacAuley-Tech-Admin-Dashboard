@@ -136,6 +136,23 @@ function Register() {
           return;
         }
 
+        if (serverResponse.kind === "error") {
+          registerDispatch({
+            action: registerAction.setIsSubmitting,
+            payload: false,
+          });
+          registerDispatch({
+            action: registerAction.setIsError,
+            payload: true,
+          });
+          registerDispatch({
+            action: registerAction.setErrorMessage,
+            payload: serverResponse.message,
+          });
+          navigateFn("/register");
+          return;
+        }
+
         registerDispatch({
           action: registerAction.setIsSubmitting,
           payload: false,
@@ -157,7 +174,7 @@ function Register() {
           payload: false,
         });
 
-        navigateFn("/dashboard/financials");
+        navigateFn("/");
       } catch (error: unknown) {
         if (
           !isComponentMounted || fetchAbortController.signal.aborted

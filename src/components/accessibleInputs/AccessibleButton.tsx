@@ -25,6 +25,7 @@ import {
   TbEdit,
   TbFilter,
   TbHelp,
+  TbLogout,
   TbMessageCirclePlus,
   TbMessageReport,
   TbPlayerPauseFilled,
@@ -60,6 +61,7 @@ type AccessibleButtonKind =
   | "hide"
   | "insert"
   | "like"
+  | "logout"
   | "next"
   | "pause"
   | "play"
@@ -154,6 +156,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     help: <TbHelp />,
     hide: <TbArrowDown />,
     like: <BiLike />,
+    logout: <TbLogout />,
     next: <TiArrowRightThick />,
     pause: <TbPlayerPauseFilled />,
     play: <TbPlayerPlayFilled />,

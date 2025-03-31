@@ -1,4 +1,6 @@
-import { Stack, Text } from "@mantine/core";
+import { Flex, Group, Stack, Text } from "@mantine/core";
+import React, { useEffect, useRef } from "react";
+import { useErrorBoundary } from "react-error-boundary";
 import {
   TbAffiliate,
   TbFileDatabase,
@@ -7,21 +9,81 @@ import {
   TbUser,
 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import { FETCH_REQUEST_TIMEOUT } from "../../constants";
+import { useAuth } from "../../hooks/useAuth";
+import { useGlobalState } from "../../hooks/useGlobalState";
+import { fetchSafe } from "../../utils";
+import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 
 function Sidebar() {
+  const { authState: { accessToken } } = useAuth();
+  const { globalState: { themeObject } } = useGlobalState();
   const navigate = useNavigate();
+  const { showBoundary } = useErrorBoundary();
+  const [triggerFormSubmit, setTriggerFormSubmit] = React.useState(false);
+  const fetchAbortControllerRef = useRef<AbortController | null>(null);
+  const isComponentMountedRef = useRef(false);
 
-  // const homeNavlink = (
-  //   <AccessibleNavLink
-  //     attributes={{
-  //       description: "Home",
-  //       icon: <TbHome2 />,
-  //       name: "Home",
-  //       onClick: () => navigate("/"),
-  //     }}
-  //   />
-  // );
+  useEffect(() => {
+    fetchAbortControllerRef.current?.abort("Previous request cancelled");
+    fetchAbortControllerRef.current = new AbortController();
+    const fetchAbortController = fetchAbortControllerRef.current;
+
+    isComponentMountedRef.current = true;
+    const isComponentMounted = isComponentMountedRef.current;
+
+    async function logoutFormSubmit() {
+      const LOGOUT_URL = "http://localhost:5000/auth/logout";
+
+      const requestInit: RequestInit = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        mode: "cors",
+        signal: fetchAbortController.signal,
+      };
+
+      try {
+        const responseResult = await fetchSafe(LOGOUT_URL, requestInit);
+
+        if (!isComponentMounted) {
+          return;
+        }
+
+        if (responseResult.err) {
+          showBoundary(responseResult.val.data);
+          return;
+        }
+
+        setTriggerFormSubmit(false);
+        navigate("/");
+      } catch (error: unknown) {
+        if (
+          !isComponentMounted || fetchAbortController?.signal.aborted
+        ) {
+          return;
+        }
+        showBoundary(error);
+      }
+    }
+
+    if (triggerFormSubmit) {
+      logoutFormSubmit();
+    }
+
+    const timerId = setTimeout(() => {
+      fetchAbortController?.abort("Request timed out");
+    }, FETCH_REQUEST_TIMEOUT);
+
+    return () => {
+      clearTimeout(timerId);
+      fetchAbortController?.abort("Component unmounted");
+      isComponentMountedRef.current = false;
+    };
+  }, [triggerFormSubmit]);
 
   const productsNavlink = (
     <AccessibleNavLink
@@ -73,25 +135,48 @@ function Sidebar() {
         description: "Directory",
         icon: <TbFileDatabase />,
         name: "Directory",
-        onClick: () => navigate("/directory"),
+        onClick: () => navigate("/dashboard/directory"),
+      }}
+    />
+  );
+
+  const logoutButton = (
+    <AccessibleButton
+      attributes={{
+        enabledScreenreaderText: "Logout",
+        kind: "logout",
+        name: "logout",
+        onClick: () => {
+          setTriggerFormSubmit(true);
+        },
       }}
     />
   );
 
   return (
-    <Stack pt="xl">
-      <Text size={18} weight={400}>
-        Dashboard
-      </Text>
-      {financialsNavlink}
-      {productsNavlink}
-      {customersNavlink}
-      {repairsNavlink}
-      <Text size={18} weight={400} pt="xl">
-        Directory
-      </Text>
-      {directoryNavlink}
-    </Stack>
+    <Flex
+      direction="column"
+      justify="space-between"
+      pt="xl"
+      style={{ outline: "1px solid teal" }}
+      h="100%"
+    >
+      <Stack>
+        <Text size={18} weight={400}>
+          Metrics
+        </Text>
+        {financialsNavlink}
+        {productsNavlink}
+        {customersNavlink}
+        {repairsNavlink}
+        <Text size={18} weight={400} pt="xl">
+          Directory
+        </Text>
+        {directoryNavlink}
+      </Stack>
+
+      <Group p="xl">{logoutButton}</Group>
+    </Flex>
   );
 }
 

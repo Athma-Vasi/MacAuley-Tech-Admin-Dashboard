@@ -4,7 +4,7 @@ const REGISTER_ROLE_ROUTE_PATHS = {
   employee: "/user",
 };
 
-const REGISTER_URL = "http://localhost:5000/api/v1/user";
+const REGISTER_URL = "http://localhost:5000/auth/register";
 
 const REGISTER_MAX_STEPPER_POSITION = 5;
 

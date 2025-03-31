@@ -22,6 +22,7 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { useParams } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
@@ -44,7 +45,6 @@ import {
   excludeTodayFromCalendarView,
   splitSelectedCalendarDate,
 } from "./utils";
-import { useAuth } from "../../hooks/useAuth";
 
 function Dashboard() {
   const [dashboardState, dashboardDispatch] = useReducer(
@@ -325,7 +325,7 @@ function Dashboard() {
 
   const dashboard = (
     <Stack w="100%" py="sm">
-      <Stack align="flex-start" spacing={2}>
+      <Stack align="flex-start" spacing={2} bg={backgroundColor}>
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>
       </Stack>
