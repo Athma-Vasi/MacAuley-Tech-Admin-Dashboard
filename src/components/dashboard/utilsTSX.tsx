@@ -632,7 +632,6 @@ function createOverviewMetricCard(
 
   return (
     <Card
-      shadow="sm"
       padding="lg"
       radius="md"
       withBorder

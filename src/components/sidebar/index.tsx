@@ -1,4 +1,4 @@
-import { Flex, Group, Stack, Text } from "@mantine/core";
+import { Space, Stack, Text } from "@mantine/core";
 import localforage from "localforage";
 import React, { useEffect, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
@@ -156,29 +156,30 @@ function Sidebar() {
   );
 
   return (
-    <Flex
-      direction="column"
-      justify="space-between"
-      pt="xl"
-      h="100%"
+    <Stack
       w="100%"
+      style={{
+        position: "sticky",
+        top: 0,
+        height: "100vh",
+        zIndex: 2,
+      }}
+      pt="xl"
     >
-      <Stack>
-        <Text size={18} weight={400}>
-          Metrics
-        </Text>
-        {financialsNavlink}
-        {productsNavlink}
-        {customersNavlink}
-        {repairsNavlink}
-        <Text size={18} weight={400} pt="xl">
-          Directory
-        </Text>
-        {directoryNavlink}
-      </Stack>
-
-      <Group p="xl">{logoutButton}</Group>
-    </Flex>
+      <Text size={18} weight={400}>
+        Metrics
+      </Text>
+      {financialsNavlink}
+      {productsNavlink}
+      {customersNavlink}
+      {repairsNavlink}
+      <Text size={18} weight={400} pt="xl">
+        Directory
+      </Text>
+      {directoryNavlink}
+      <Space h="xl" />
+      {logoutButton}
+    </Stack>
   );
 }
 

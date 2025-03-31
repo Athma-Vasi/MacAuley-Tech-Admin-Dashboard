@@ -1,9 +1,8 @@
-import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
-import React, { useEffect, useReducer, useRef } from "react";
+import { Box, Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
-  APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
@@ -193,8 +192,8 @@ function RepairMetrics({
       style={{
         position: "sticky",
         top: windowWidth < MOBILE_BREAKPOINT
-          ? APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE
-          : APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
+          ? DASHBOARD_HEADER_HEIGHT_MOBILE
+          : DASHBOARD_HEADER_HEIGHT,
         zIndex: 3,
         backgroundColor,
       }}
@@ -217,7 +216,7 @@ function RepairMetrics({
   });
 
   const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-    <React.Fragment key={idx}>
+    <Box key={idx} w="100%">
       <RepairRUS
         calendarChartsData={calendarChartsData}
         calendarView={calendarView}
@@ -231,7 +230,7 @@ function RepairMetrics({
         storeLocation={storeLocationView}
         year={selectedYear}
       />
-    </React.Fragment>
+    </Box>
   ));
 
   const loadingOverlay = (

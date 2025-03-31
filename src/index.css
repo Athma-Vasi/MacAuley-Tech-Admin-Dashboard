@@ -1,30 +1,45 @@
 :root {
+  --min-app-width: 375px;
+  --max-app-width: 1650px;
+  --min-card-width: 350px;
+  --max-card-width: 640px;
+
   --app-header-height: 70px;
   --dashboard-header-height: 130px;
   --dashboard-header-height-mobile: 70px;
   --metrics-header-height: 100px;
   --metrics-header-height-mobile: 70px;
 
-  --min-app-width: 375px;
-  --max-app-width: 1650px;
-  --min-card-width: 350px;
-  --max-card-width: 640px;
+  --sidebar-width: 225px;
 }
 
-body {
-  width: clamp(var(--min-app-width), 100vw, var(--max-app-width));
-}
+body {}
 
 .app-shell {
-  width: 100%;
+  width: clamp(var(--min-app-width), 100vw, var(--max-app-width));
+  display: flex;
+}
+
+.main {
+  display: flex;
+  width: calc(100vw - var(--sidebar-width));
 }
 
 .burger {
   display: none;
 }
 
-@media screen and (max-width: 768px) {
+.dashboard-bar-line-layout {
+  padding: 1em 2em 1em 1em;
+}
+
+.chart-card {
+  width: 100%;
+}
+
+@media screen and (max-width: 1024px) {
   .app-shell {
+    width: 100vw;
     display: flex;
     flex-direction: column;
   }
@@ -48,6 +63,109 @@ body {
 
   .main-sidebar-opened {
     display: none;
+  }
+
+  .dashboard-bar-line-layout {
+    width: 100vw;
+  }
+
+  .overview-with-pie, .overview-without-pie {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+    outline: 1px solid gold;
+  }
+
+  .overview-summary-with-pie, .overview-summary-without-pie {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+    width: fit-content;
+    outline: 1px solid teal;
+  }
+
+  .overview-cards-with-pie, .overview-cards-without-pie {
+    display: flex;
+    column-gap: 1em;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  .app-shell {
+    display: grid;
+    grid-template-areas:
+      "header header"
+      "sidebar main";
+  }
+
+  .header {
+    grid-area: header;
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+    width: var(--sidebar-width);
+    padding: 2em;
+  }
+
+  .main {
+    grid-area: main;
+    width: 100%;
+  }
+
+  .overview-with-pie {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+    width: 100%;
+  }
+
+  .overview-summary-with-pie, .overview-summary-without-pie {
+    display: flex;
+    flex-direction: column;
+    outline: 1px solid maroon;
+    row-gap: 1em;
+    width: fit-content;
+  }
+
+  .overview-cards-with-pie, .overview-cards-without-pie {
+    display: flex;
+    column-gap: 1em;
+  }
+
+  .pie-chart-card {
+    width: 100%;
+    outline: 1px solid gold;
+  }
+}
+
+@media screen and (min-width: 1300px) {
+  .overview-with-pie {
+    display: grid;
+    grid-template-columns: 3fr 7fr;
+    outline: 1px solid teal;
+    width: 100%;
+    column-gap: 2em;
+  }
+
+  .overview-summary-with-pie, .overview-summary-without-pie {
+    outline: 1px solid rebeccapurple;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    row-gap: 1em;
+  }
+
+  .overview-cards-without-pie {
+    display: flex;
+    column-gap: 1em;
+  }
+
+  .overview-cards-with-pie {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
   }
 }
 

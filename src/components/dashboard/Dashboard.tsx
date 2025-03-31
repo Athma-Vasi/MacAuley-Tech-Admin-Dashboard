@@ -11,7 +11,6 @@ import React, { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
-  APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
@@ -235,13 +234,14 @@ function Dashboard() {
 
   const dashboardHeader = (
     <Group
+      align="flex-end"
       h={DASHBOARD_HEADER_HEIGHT}
       py="sm"
       position="left"
       style={{
         backgroundColor,
         position: "sticky",
-        top: APP_HEADER_HEIGHT,
+        top: 0,
         zIndex: 3,
       }}
       spacing="xl"
@@ -259,7 +259,7 @@ function Dashboard() {
       style={{
         backgroundColor: backgroundColor,
         position: "sticky",
-        top: APP_HEADER_HEIGHT,
+        top: 0,
         zIndex: 4,
       }}
       opacity={0.97}

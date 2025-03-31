@@ -1,7 +1,6 @@
 import { Card, Center, Group, Stack, Text, Title } from "@mantine/core";
 import React from "react";
 import {
-  APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
@@ -67,23 +66,13 @@ function DashboardBarLineLayout(
     themeObject,
   });
 
-  const overviewCardsSection = (
-    <div className="overview-card">
-      <Title order={3}>Summary</Title>
-      <div className="overview-cards">
-        {overviewCards}
-      </div>
-    </div>
-  );
-
   const pieChartCard = (
     <Card
       shadow="sm"
       padding="lg"
       radius="md"
       withBorder
-      w="100%"
-      className="pie-chart-card"
+      className="chart-card pie-chart-card"
     >
       <Stack px="md" w="100%">
         <Group
@@ -102,25 +91,21 @@ function DashboardBarLineLayout(
     </Card>
   );
 
-  // const pieSectionMaybe = pieChart && pieChartHeading &&
-  //     expandPieChartButton
-  //   ? (
-  //     <div className="overview-and-pie">
-  //       {overviewCardsSection}
-  //       {pieChartCard}
-  //     </div>
-  //   )
-  //   : (
-  //     <Stack className="summary-without-pie" w="100%">
-  //       <Title order={3}>Summary</Title>
-  //       <Group w="100%">
-  //         {overviewCards}
-  //       </Group>
-  //     </Stack>
-  //   );
   const pieSectionMaybe = (
-    <div className="overview-and-pie">
-      {overviewCardsSection}
+    <div className={`overview-${pieChart ? "with" : "without"}-pie `}>
+      <Card
+        className={`overview-summary-${pieChart ? "with" : "without"}-pie`}
+        shadow="sm"
+        padding="lg"
+        radius="md"
+        withBorder
+      >
+        <Title order={3}>Summary</Title>
+        <div className={`overview-cards-${pieChart ? "with" : "without"}-pie`}>
+          {overviewCards}
+        </div>
+      </Card>
+
       {pieChart && pieChartHeading && expandPieChartButton
         ? pieChartCard
         : null}
@@ -128,7 +113,13 @@ function DashboardBarLineLayout(
   );
 
   const barLineSection = (
-    <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
+    <Card
+      className="chart-card bar-line-chart-card"
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+    >
       <Stack px="md" w="100%">
         <Group position="apart" w="100%">
           {barLineRadialChartYAxisSelectInput}
@@ -148,7 +139,13 @@ function DashboardBarLineLayout(
   const calendarSection =
     calendarView === "Yearly" && calendarChart && calendarChartHeading
       ? (
-        <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
+        <Card
+          className="chart-card calendar-chart-card"
+          shadow="sm"
+          padding="lg"
+          radius="md"
+          withBorder
+        >
           <Stack px="md">
             <Group position="apart" w="100%">
               {calendarChartYAxisSelectInput}
@@ -170,7 +167,6 @@ function DashboardBarLineLayout(
       className="dashboard-bar-line-layout"
       w="100%"
       bg={backgroundColor}
-      style={{ outline: "1px solid green" }}
     >
       <Group
         w="100%"
@@ -178,9 +174,9 @@ function DashboardBarLineLayout(
         style={{
           position: "sticky",
           top: windowWidth < MOBILE_BREAKPOINT
-            ? APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE +
+            ? DASHBOARD_HEADER_HEIGHT_MOBILE +
               METRICS_HEADER_HEIGHT_MOBILE
-            : APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT +
+            : DASHBOARD_HEADER_HEIGHT +
               METRICS_HEADER_HEIGHT,
           backgroundColor,
           zIndex: 2,
