@@ -102,22 +102,30 @@ function DashboardBarLineLayout(
     </Card>
   );
 
-  const pieSectionMaybe = pieChart && pieChartHeading &&
-      expandPieChartButton
-    ? (
-      <div className="overview-and-pie">
-        {overviewCardsSection}
-        {pieChartCard}
-      </div>
-    )
-    : (
-      <Stack w="100%">
-        <Title order={3}>Summary</Title>
-        <Group w="100%">
-          {overviewCards}
-        </Group>
-      </Stack>
-    );
+  // const pieSectionMaybe = pieChart && pieChartHeading &&
+  //     expandPieChartButton
+  //   ? (
+  //     <div className="overview-and-pie">
+  //       {overviewCardsSection}
+  //       {pieChartCard}
+  //     </div>
+  //   )
+  //   : (
+  //     <Stack className="summary-without-pie" w="100%">
+  //       <Title order={3}>Summary</Title>
+  //       <Group w="100%">
+  //         {overviewCards}
+  //       </Group>
+  //     </Stack>
+  //   );
+  const pieSectionMaybe = (
+    <div className="overview-and-pie">
+      {overviewCardsSection}
+      {pieChart && pieChartHeading && expandPieChartButton
+        ? pieChartCard
+        : null}
+    </div>
+  );
 
   const barLineSection = (
     <Card shadow="sm" padding="lg" radius="md" w="100%" withBorder>
@@ -159,9 +167,10 @@ function DashboardBarLineLayout(
   const dashboardBarLineLayout = (
     <Stack
       align="flex-start"
+      className="dashboard-bar-line-layout"
       w="100%"
-      className="dashboard-content"
       bg={backgroundColor}
+      style={{ outline: "1px solid green" }}
     >
       <Group
         w="100%"

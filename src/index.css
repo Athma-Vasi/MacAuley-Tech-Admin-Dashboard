@@ -1,10 +1,57 @@
-#root {}
+:root {
+  --app-header-height: 70px;
+  --dashboard-header-height: 130px;
+  --dashboard-header-height-mobile: 70px;
+  --metrics-header-height: 100px;
+  --metrics-header-height-mobile: 70px;
+
+  --min-app-width: 375px;
+  --max-app-width: 1650px;
+  --min-card-width: 350px;
+  --max-card-width: 640px;
+}
 
 body {
-  width: clamp(375px, 100vw, 1650px);
+  width: clamp(var(--min-app-width), 100vw, var(--max-app-width));
 }
 
 .app-shell {
+  width: 100%;
+}
+
+.burger {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .sidebar-opened {
+    display: flex;
+    padding: 2em;
+  }
+
+  .main-sidebar-opened {
+    display: none;
+  }
+}
+
+/* .app-shell {
   width: clamp(375px, 100vw, 1650px);
 }
 
@@ -16,9 +63,9 @@ body {
   width: 100%;
   display: grid;
   place-items: center;
-}
+} */
 
-.overview-and-pie {
+/* .overview-and-pie {
   width: 100%;
 }
 
@@ -33,6 +80,7 @@ body {
   flex-direction: column;
   gap: 1em;
   padding: 2em 1em;
+  outline: 1px solid gold;
 }
 
 .overview-cards {
@@ -108,4 +156,4 @@ body {
     width: 100%;
     height: clamp(250px, 50%, 500px);
   }
-}
+} */

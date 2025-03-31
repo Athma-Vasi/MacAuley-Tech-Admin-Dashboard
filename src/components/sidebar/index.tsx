@@ -1,4 +1,5 @@
 import { Flex, Group, Stack, Text } from "@mantine/core";
+import localforage from "localforage";
 import React, { useEffect, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -146,8 +147,9 @@ function Sidebar() {
         enabledScreenreaderText: "Logout",
         kind: "logout",
         name: "logout",
-        onClick: () => {
+        onClick: async () => {
           setTriggerFormSubmit(true);
+          localforage.removeItem("businessMetrics");
         },
       }}
     />
@@ -158,8 +160,8 @@ function Sidebar() {
       direction="column"
       justify="space-between"
       pt="xl"
-      style={{ outline: "1px solid teal" }}
       h="100%"
+      w="100%"
     >
       <Stack>
         <Text size={18} weight={400}>
