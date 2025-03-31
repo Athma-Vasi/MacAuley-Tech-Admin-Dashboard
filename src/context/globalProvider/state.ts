@@ -6,7 +6,8 @@ const initialThemeObject: ThemeObject = {
   // white: '#f8f9fa', // gray.0
   white: "#f8f9fa",
   // black: '#212529', // gray.9
-  black: "#25262b",
+  // black: "#25262b",
+  black: "#121212",
   primaryColor: "violet",
   primaryShade: { light: 5, dark: 7 },
   defaultGradient: { deg: 45, from: "blue", to: "cyan" },

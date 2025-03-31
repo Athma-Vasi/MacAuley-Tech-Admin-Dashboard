@@ -342,7 +342,7 @@ function Login() {
         p="lg"
         radius="md"
         withBorder
-        w="clamp(300px, 50vw, 500px)"
+        w="clamp(300px, 400px, 500px)"
       >
         <Stack>
           <Title order={2}>Sign in</Title>

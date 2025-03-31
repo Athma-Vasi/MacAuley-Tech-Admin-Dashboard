@@ -21,6 +21,7 @@ import {
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
+import localforage from "localforage";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
@@ -40,6 +41,7 @@ import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
+import { BusinessMetric } from "./types";
 import {
   createRandomBusinessMetrics,
   excludeTodayFromCalendarView,
@@ -97,22 +99,22 @@ function Dashboard() {
           payload: true,
         });
 
-        // const existingMetrics = await localforage.getItem<BusinessMetric[]>(
-        //   "businessMetrics",
-        // );
-        // if (existingMetrics && isMounted) {
-        //   dashboardDispatch({
-        //     action: dashboardAction.setBusinessMetrics,
-        //     payload: existingMetrics,
-        //   });
+        const existingMetrics = await localforage.getItem<BusinessMetric[]>(
+          "businessMetrics",
+        );
+        if (existingMetrics && isMounted) {
+          dashboardDispatch({
+            action: dashboardAction.setBusinessMetrics,
+            payload: existingMetrics,
+          });
 
-        //   dashboardDispatch({
-        //     action: dashboardAction.setIsLoading,
-        //     payload: false,
-        //   });
+          dashboardDispatch({
+            action: dashboardAction.setIsLoading,
+            payload: false,
+          });
 
-        //   return;
-        // }
+          return;
+        }
 
         console.time("createRandomBusinessMetrics");
 
@@ -135,10 +137,10 @@ function Dashboard() {
           payload: createdBusinessMetrics,
         });
 
-        // localforage.setItem<BusinessMetric[]>(
-        //   "businessMetrics",
-        //   createdBusinessMetrics,
-        // );
+        localforage.setItem<BusinessMetric[]>(
+          "businessMetrics",
+          createdBusinessMetrics,
+        );
 
         dashboardDispatch({
           action: dashboardAction.setIsLoading,
