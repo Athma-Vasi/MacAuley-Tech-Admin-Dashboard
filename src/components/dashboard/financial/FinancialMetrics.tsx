@@ -4,7 +4,6 @@ import { useErrorBoundary } from "react-error-boundary";
 
 import React from "react";
 import {
-  APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
@@ -189,12 +188,12 @@ function FinancialMetrics({
       h={windowWidth < MOBILE_BREAKPOINT
         ? METRICS_HEADER_HEIGHT_MOBILE
         : METRICS_HEADER_HEIGHT}
-      py="sm"
+      px="md"
       style={{
         position: "sticky",
         top: windowWidth < MOBILE_BREAKPOINT
-          ? APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE
-          : APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
+          ? DASHBOARD_HEADER_HEIGHT_MOBILE
+          : DASHBOARD_HEADER_HEIGHT,
         zIndex: 3,
         backgroundColor,
         // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",

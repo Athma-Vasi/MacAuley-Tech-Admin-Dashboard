@@ -271,7 +271,7 @@ function Dashboard() {
             <Text weight={500} size="md">Location and Date</Text>
           </Accordion.Control>
           <Accordion.Panel>
-            <Group w="100%" position="apart">
+            <Group w="100%" position="left" align="flex-end" spacing="xl">
               {storeLocationSelectInput}
               {createdYYYYMMDDInput}
             </Group>
@@ -327,7 +327,7 @@ function Dashboard() {
 
   const dashboard = (
     <Stack w="100%" py="sm">
-      <Stack align="flex-start" spacing={2} bg={backgroundColor}>
+      <Stack align="flex-start" spacing={2} bg={backgroundColor} px="md">
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>
       </Stack>

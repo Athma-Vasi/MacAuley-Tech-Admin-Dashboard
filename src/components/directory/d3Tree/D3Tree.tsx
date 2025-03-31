@@ -36,11 +36,11 @@ function renderForeignObjectNode({
       attributes={{
         alt: nodeDatum.name,
         fit: "cover",
-        height: 75,
+        height: 96,
         name: nodeDatum.name,
         radius: 9999,
         src: nodeDatum.attributes.profilePictureUrl ?? "",
-        width: 75,
+        width: 96,
       }}
     />
   );
@@ -84,7 +84,8 @@ function renderForeignObjectNode({
       padding="md"
       radius="md"
       withBorder
-      w="clamp(200px, 20vw, 350px)"
+      miw={250}
+      maw={325}
       mih={250}
       mah={350}
     >

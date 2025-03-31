@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { MdCalendarMonth, MdDateRange } from "react-icons/md";
 import { RiCalendarLine } from "react-icons/ri";
 
+import React from "react";
 import { INPUT_WIDTH } from "../../constants";
 import {
   addCommaSeparator,
@@ -39,12 +40,6 @@ function returnDashboardCardElement({
   deltaTextColor,
   value,
 }: DashboardCardInfo): React.JSX.Element {
-  // const cardHeading = (
-  //   <Group w="100%" position="apart">
-  //     <Text size="md">{heading}</Text>
-  //     {icon}
-  //   </Group>
-  // );
   const cardHeading = (
     <Group position="left">
       <Text
@@ -83,7 +78,12 @@ function returnDashboardCardElement({
   );
 
   const createdChartCard = (
-    <Card shadow="md" radius="md" withBorder w={INPUT_WIDTH}>
+    <Card
+      className="statistics-card"
+      shadow="md"
+      radius="md"
+      withBorder
+    >
       {cardHeading}
       {cardBody}
       {cardFooter}
@@ -599,9 +599,9 @@ function returnCardElementsForYAxisVariable(
 
         return cardsSet?.has(key)
           ? (
-            <Group key={`${idx}-${key}`}>
+            <React.Fragment key={`${idx}-${key}`}>
               {card}
-            </Group>
+            </React.Fragment>
           )
           : null;
       })}
@@ -632,6 +632,7 @@ function createOverviewMetricCard(
 
   return (
     <Card
+      className="overview-card"
       padding="lg"
       radius="md"
       withBorder

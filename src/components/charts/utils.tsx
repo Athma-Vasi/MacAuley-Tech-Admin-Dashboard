@@ -169,7 +169,7 @@ function createChartTooltipElement(
       : "";
 
     return (
-      <Card bg="hsl(0, 0%, 25%)" maw={300} miw="fit-content">
+      <Card bg="hsl(0, 0%, 33%)" maw={300} miw="fit-content">
         <Group position="center" pb="xs">
           <div
             style={{

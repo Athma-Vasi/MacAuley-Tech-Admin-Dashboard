@@ -80,7 +80,7 @@ function Home() {
         <Header opened={opened} setOpened={setOpened} />
       </div>
       <div className={`sidebar ${opened ? "sidebar-opened" : ""}`}>
-        <Sidebar />
+        <Sidebar setOpened={setOpened} />
       </div>
       <div className={`main ${opened ? "main-sidebar-opened" : ""}`}>
         <Outlet />

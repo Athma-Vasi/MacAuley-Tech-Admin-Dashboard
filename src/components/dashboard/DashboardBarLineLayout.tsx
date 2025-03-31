@@ -1,4 +1,4 @@
-import { Card, Center, Group, Stack, Text, Title } from "@mantine/core";
+import { Card, Center, Group, Space, Stack, Text, Title } from "@mantine/core";
 import React from "react";
 import {
   COLORS_SWATCHES,
@@ -69,7 +69,7 @@ function DashboardBarLineLayout(
   const pieChartCard = (
     <Card
       shadow="sm"
-      padding="lg"
+      padding="md"
       radius="md"
       withBorder
       className="chart-card pie-chart-card"
@@ -96,7 +96,7 @@ function DashboardBarLineLayout(
       <Card
         className={`overview-summary-${pieChart ? "with" : "without"}-pie`}
         shadow="sm"
-        padding="lg"
+        padding="md"
         radius="md"
         withBorder
       >
@@ -116,20 +116,23 @@ function DashboardBarLineLayout(
     <Card
       className="chart-card bar-line-chart-card"
       shadow="sm"
-      padding="lg"
+      padding="md"
       radius="md"
       withBorder
     >
-      <Stack px="md" w="100%">
+      <Stack w="100%">
         <Group position="apart" w="100%">
           {barLineRadialChartYAxisSelectInput}
           {barLineRadialChartKindSegmentedControl}
           {expandBarLineRadialChartButton}
         </Group>
 
-        <Group w="100%" align="baseline" py="md">
+        <div
+          className="statistics-elements-container"
+          style={{ outline: "1px solid maroon" }}
+        >
           {cardsWithStatisticsElements}
-        </Group>
+        </div>
         <Text size={20} weight={500}>{barLineRadialChartHeading}</Text>
         <Center w="100%">{barLineRadialChart}</Center>
       </Stack>
@@ -142,7 +145,7 @@ function DashboardBarLineLayout(
         <Card
           className="chart-card calendar-chart-card"
           shadow="sm"
-          padding="lg"
+          padding="md"
           radius="md"
           withBorder
         >
@@ -167,7 +170,9 @@ function DashboardBarLineLayout(
       className="dashboard-bar-line-layout"
       w="100%"
       bg={backgroundColor}
+      spacing="xl"
     >
+      <Space h="md" />
       <Group
         w="100%"
         py="md"

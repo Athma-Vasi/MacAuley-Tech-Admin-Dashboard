@@ -17,7 +17,11 @@ import { fetchSafe } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 
-function Sidebar() {
+type SidebarProps = {
+  setOpened: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+function Sidebar({ setOpened }: SidebarProps) {
   const { authState: { accessToken } } = useAuth();
   const { globalState: { themeObject } } = useGlobalState();
   const navigate = useNavigate();
@@ -92,7 +96,10 @@ function Sidebar() {
         description: "Products",
         icon: <TbAffiliate />,
         name: "Products",
-        onClick: () => navigate("/dashboard/products"),
+        onClick: () => {
+          navigate("/dashboard/products");
+          setOpened(false);
+        },
       }}
     />
   );
@@ -103,7 +110,10 @@ function Sidebar() {
         description: "Financials",
         icon: <TbReportMoney />,
         name: "Financials",
-        onClick: () => navigate("/dashboard/financials"),
+        onClick: () => {
+          navigate("/dashboard/financials");
+          setOpened(false);
+        },
       }}
     />
   );
@@ -114,7 +124,10 @@ function Sidebar() {
         description: "Customers",
         icon: <TbUser />,
         name: "Customers",
-        onClick: () => navigate("/dashboard/customers"),
+        onClick: () => {
+          navigate("/dashboard/customers");
+          setOpened(false);
+        },
       }}
     />
   );
@@ -125,7 +138,10 @@ function Sidebar() {
         description: "Repairs",
         icon: <TbTools />,
         name: "Repairs",
-        onClick: () => navigate("/dashboard/repairs"),
+        onClick: () => {
+          navigate("/dashboard/repairs");
+          setOpened(false);
+        },
       }}
     />
   );
@@ -136,7 +152,10 @@ function Sidebar() {
         description: "Directory",
         icon: <TbFileDatabase />,
         name: "Directory",
-        onClick: () => navigate("/dashboard/directory"),
+        onClick: () => {
+          navigate("/dashboard/directory");
+          setOpened(false);
+        },
       }}
     />
   );

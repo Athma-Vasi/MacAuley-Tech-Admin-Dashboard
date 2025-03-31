@@ -188,7 +188,7 @@ function RepairMetrics({
         ? METRICS_HEADER_HEIGHT_MOBILE
         : METRICS_HEADER_HEIGHT}
       opacity={0.97}
-      py="sm"
+      px="md"
       style={{
         position: "sticky",
         top: windowWidth < MOBILE_BREAKPOINT

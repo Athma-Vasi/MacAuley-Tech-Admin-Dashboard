@@ -10,7 +10,6 @@ import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
-  APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
@@ -217,7 +216,7 @@ function ProductMetrics({
       position="left"
       style={{
         position: "sticky",
-        top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT,
+        top: DASHBOARD_HEADER_HEIGHT,
         zIndex: 3,
         backgroundColor,
       }}
@@ -234,7 +233,7 @@ function ProductMetrics({
       py="sm"
       style={{
         position: "sticky",
-        top: APP_HEADER_HEIGHT + DASHBOARD_HEADER_HEIGHT_MOBILE,
+        top: DASHBOARD_HEADER_HEIGHT_MOBILE,
         zIndex: 3,
         backgroundColor,
       }}
@@ -245,7 +244,7 @@ function ProductMetrics({
             <Text weight={500} size="md">Sub-metrics and Category</Text>
           </Accordion.Control>
           <Accordion.Panel>
-            <Group w="100%" position="apart">
+            <Group w="100%" position="left" align="flex-end" spacing="xl">
               {subMetricSelectInput}
               {productCategorySelectInput}
             </Group>
