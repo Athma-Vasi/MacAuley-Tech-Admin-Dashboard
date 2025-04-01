@@ -11,18 +11,24 @@
   --ideal-card-width: calc(100% - var(--padding-xTotal));
   --max-card-width: 350px;
 
-  --min-summary-card-width: calc(100vw - var(--padding-xTotal));
+  --min-summary-card-width: calc(100% - var(--padding-xTotal));
   --ideal-summary-card-width: calc(100% - var(--padding));
   --max-summary-card-width: calc(
     var(--max-card-width) + var(--max-card-width) + var(--padding)
   );
+
+  --min-chart-controls-card-width: 300px;
+  --ideal-chart-controls-card-width: calc(100% - var(--padding));
+  --max-chart-controls-card-width: 425px;
 
   --app-header-height: 70px;
   --dashboard-header-height: 130px;
   --dashboard-header-height-mobile: 70px;
   --metrics-header-height: 100px;
   --metrics-header-height-mobile: 70px;
-  --chart-controls-header-height: 70px --sidebar-width: 225px;
+  --chart-controls-header-height: 70px;
+
+  --sidebar-width: 225px;
   --sidebar-padding: 2em;
 }
 
@@ -68,7 +74,38 @@
 
 .chart-and-controls {
   width: 100%;
-  height: calc(100vh - var(--chart-controls-header-height));
+  height: calc(100vh - var(--dashboard-header-height));
+  /* display: grid;
+  grid-template-rows: 7fr 3fr; */
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--row-gap);
+  outline: 1px solid rebeccapurple;
+}
+
+.chart-controls {
+  /* height: calc(62vh - var(--dashboard-header-height)); */
+  height: 50vh;
+  overflow: scroll;
+}
+
+.chart-controls-card {
+  width: clamp(
+    var(--min-chart-controls-card-width),
+    var(--ideal-chart-controls-card-width),
+    var(--max-chart-controls-card-width)
+  );
+}
+
+.chart-container {
+  height: 50vh;
+  width: 100%;
+  outline: 1px solid salmon;
+}
+
+.chart-display {
+  height: 80%;
+  width: 100%;
 }
 
 @media screen and (max-width: 640px) {
@@ -177,7 +214,7 @@
     width: 100%;
   }
 
-  .overview-with-pie {
+  .overview-with-pie, .overview-without-pie {
     display: flex;
     flex-direction: column;
     row-gap: var(--row-gap);
@@ -217,7 +254,7 @@
 }
 
 @media screen and (min-width: 1300px) {
-  .overview-with-pie {
+  .overview-with-pie .overview-without-pie {
     display: grid;
     grid-template-columns: 3fr 7fr;
     outline: 1px solid teal;

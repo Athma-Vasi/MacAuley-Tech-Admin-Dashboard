@@ -64,7 +64,7 @@ function ChartsAndGraphsControlsStacker({
   );
 
   const displayBottomSection = (
-    <Group position="apart" w="100%" style={{ outline: "1px solid green" }}>
+    <Group position="apart" w="100%">
       <Text
         aria-live="polite"
         color={isInputDisabled ? grayColorShade : ""}
@@ -85,12 +85,14 @@ function ChartsAndGraphsControlsStacker({
 
   return (
     <Card
+      className="chart-controls-card"
       p="sm"
       withBorder
-      style={{
-        // outline: "1px solid rebeccapurple",
-        width: "clamp(350px, 100vw, 425px)",
-      }}
+      radius="md"
+      // style={{
+      //   // outline: "1px solid rebeccapurple",
+      //   width: "clamp(350px, 100vw, 425px)",
+      // }}
     >
       {displayTopSection}
       <Space h="sm" />

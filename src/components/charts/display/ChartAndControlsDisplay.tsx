@@ -1,4 +1,4 @@
-import { Group, Stack, Title, TitleOrder } from "@mantine/core";
+import { Card, Group, Stack, Title, TitleOrder } from "@mantine/core";
 import { NivoChartTitlePosition } from "../types";
 
 type ChartAndControlsDisplayProps = {
@@ -50,10 +50,10 @@ function ChartAndControlsDisplay(
     //   </Group>
     // </Stack>
     <div className="chart-and-controls">
-      <div className="chart-controls">
+      <Card shadow="md" radius="md" withBorder className="chart-controls">
         <Title order={2}>Chart Controls</Title>
         {chartControlsStack}
-      </div>
+      </Card>
 
       <Group
         className="chart-container"
