@@ -36,6 +36,8 @@ import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
 
 function Login() {
+  console.log("LOGIN RENDERED");
+
   const [loginState, loginDispatch] = useReducer(
     loginReducer,
     initialLoginState,

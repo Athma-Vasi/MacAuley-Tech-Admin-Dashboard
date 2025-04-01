@@ -1,4 +1,4 @@
-import { APP_HEADER_HEIGHT, COLORS_SWATCHES } from "../../constants";
+import { COLORS_SWATCHES } from "../../constants";
 import type { CheckboxRadioSelectData } from "../../types";
 import type {
   NivoColorScheme,
@@ -9,14 +9,6 @@ import type {
   NivoMotionConfig,
   NivoTransitionMode,
 } from "./types";
-
-const STICKY_STYLE: React.CSSProperties = {
-  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.15)",
-  height: "2.5em",
-  position: "sticky",
-  top: APP_HEADER_HEIGHT,
-  zIndex: 3,
-};
 
 const NIVO_LEGEND_ANCHOR_DATA: CheckboxRadioSelectData<NivoLegendAnchor> = [
   { value: "top", label: "Top" },
@@ -144,8 +136,10 @@ const NIVO_CHART_TITLE_POSITION_DATA: CheckboxRadioSelectData = [
 const { gray } = COLORS_SWATCHES;
 const SLIDER_TOOLTIP_COLOR = gray[3];
 const CHART_CONTROLS_TEXT_INPUT_HEIGHT = 155;
+const CHART_CONTROLS_HEADER_HEIGHT = 70;
 
 export {
+  CHART_CONTROLS_HEADER_HEIGHT,
   CHART_CONTROLS_TEXT_INPUT_HEIGHT,
   NIVO_CHART_PATTERN_DEFS,
   NIVO_CHART_TITLE_POSITION_DATA,
@@ -157,5 +151,4 @@ export {
   NIVO_MOTION_CONFIG_DATA,
   NIVO_TRANSITION_MODE_DATA,
   SLIDER_TOOLTIP_COLOR,
-  STICKY_STYLE,
 };

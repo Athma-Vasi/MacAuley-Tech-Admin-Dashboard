@@ -23,11 +23,11 @@ function App() {
         <Route path="dashboard" element={<HomeWrapper />}>
           <Route path=":metricsView" element={<Dashboard />} />
           <Route path="directory" element={<DirectoryWrapper />} />
+          <Route
+            path="chart/:chartHeading"
+            element={<DisplayResponsiveChartWrapper />}
+          />
         </Route>
-        <Route
-          path="chart/:chartHeading"
-          element={<DisplayResponsiveChartWrapper />}
-        />
 
         <Route path="*" element={<div>404 Not Found</div>} />
 

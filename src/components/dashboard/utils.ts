@@ -3749,7 +3749,7 @@ function createExpandChartNavigateLinks(
     subMetric?: string;
   },
 ) {
-  const genericLink = `/chart/${calendarView.toLowerCase()}${
+  const genericLink = `/dashboard/chart/${calendarView.toLowerCase()}${
     metricCategory
       ? `-${
         splitCamelCase(metricCategory).toLowerCase()

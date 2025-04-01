@@ -22,8 +22,7 @@
   --dashboard-header-height-mobile: 70px;
   --metrics-header-height: 100px;
   --metrics-header-height-mobile: 70px;
-
-  --sidebar-width: 225px;
+  --chart-controls-header-height: 70px --sidebar-width: 225px;
   --sidebar-padding: 2em;
 }
 
@@ -65,6 +64,11 @@
     var(--max-card-width)
   );
   outline: 1px solid tomato;
+}
+
+.chart-and-controls {
+  width: 100%;
+  height: calc(100vh - var(--chart-controls-header-height));
 }
 
 @media screen and (max-width: 640px) {

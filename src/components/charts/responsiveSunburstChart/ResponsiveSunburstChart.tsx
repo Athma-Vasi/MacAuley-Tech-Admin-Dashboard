@@ -26,10 +26,10 @@ import {
   NIVO_COLOR_SCHEME_DATA,
   NIVO_MOTION_CONFIG_DATA,
   NIVO_TRANSITION_MODE_DATA,
-  STICKY_STYLE,
 } from "../constants";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../utils";
 import { responsiveSunburstChartAction } from "./actions";
 import { responsiveSunburstChartReducer } from "./reducers";
 import { initialResponsiveSunburstChartState } from "./state";
@@ -51,14 +51,11 @@ function ResponsiveSunburstChart({
     },
   } = useGlobalState();
 
-  const {
-    grayColorShade,
-    textColor,
-    scrollBarStyle,
-  } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
+  const { backgroundColor, grayColorShade, textColor, scrollBarStyle } =
+    returnThemeColors({
+      themeObject,
+      colorsSwatches: COLORS_SWATCHES,
+    });
 
   // sets initial colors based on app theme
   const modifiedResponsiveSunburstChartState: ResponsiveSunburstChartState = {
@@ -116,6 +113,8 @@ function ResponsiveSunburstChart({
     screenshotFilename,
     screenshotImageQuality,
     screenshotImageType,
+
+    isError,
   } = responsiveSunburstChartState;
 
   // set motion config on enable
@@ -338,7 +337,7 @@ function ResponsiveSunburstChart({
   // base
   const displayBaseHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -380,7 +379,7 @@ function ResponsiveSunburstChart({
   // style
   const displayStyleHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -459,7 +458,7 @@ function ResponsiveSunburstChart({
   // motion
   const displayMotionHeading = (
     <Group
-      style={STICKY_STYLE}
+      style={createChartHeaderStyles(backgroundColor)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -514,6 +513,7 @@ function ResponsiveSunburstChart({
       chartTitlePosition={chartTitlePosition}
       chartTitleSize={chartTitleSize}
       initialChartState={modifiedResponsiveSunburstChartState}
+      isError={isError}
       parentChartAction={responsiveSunburstChartAction}
       parentChartDispatch={responsiveSunburstChartDispatch}
       screenshotFilename={screenshotFilename}

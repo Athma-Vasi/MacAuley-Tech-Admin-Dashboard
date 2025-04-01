@@ -7,6 +7,7 @@ import { RadialBarDatum, RadialBarTooltipProps } from "@nivo/radial-bar";
 import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
 import { MONTHS } from "../dashboard/constants";
 import { DashboardCalendarView } from "../dashboard/types";
+import { CHART_CONTROLS_HEADER_HEIGHT } from "./constants";
 import { BarChartData } from "./responsiveBarChart/types";
 import { MyCalendarTooltipProps } from "./responsiveCalendarChart/types";
 import { PieChartData } from "./responsivePieChart/types";
@@ -256,8 +257,9 @@ function createChartHeaderStyles(
   return {
     backgroundColor,
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.05)",
-    height: "2.5em",
+    height: CHART_CONTROLS_HEADER_HEIGHT,
     marginTop: "1em",
+    padding: "0.5em 1em",
     position: "sticky",
     top,
     zIndex,
