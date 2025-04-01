@@ -200,7 +200,7 @@ const SCREENSHOT_IMAGE_TYPE_DATA = [
   { value: "image/webp", label: "Image/webp" },
 ];
 
-const FETCH_REQUEST_TIMEOUT = 5000;
+const FETCH_REQUEST_TIMEOUT = 10000;
 
 const STORE_LOCATION_DATA: CheckboxRadioSelectData<StoreLocation> = [
   { label: "Edmonton", value: "Edmonton" },
