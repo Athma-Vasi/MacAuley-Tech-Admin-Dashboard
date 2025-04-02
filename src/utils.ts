@@ -72,7 +72,7 @@ function addCommaSeparator(numStr: string | number): string {
 }
 
 function toFixedFloat(num: number, precision = 4): number {
-  return Number(num.toFixed(precision));
+  return num === undefined ? 0 : Number(num.toFixed(precision));
 }
 
 function removeUndefinedAndNull<T>(value: T | undefined | null): value is T {

@@ -1,9 +1,6 @@
+import { CustomerMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
-import {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
-  DashboardCalendarView,
-} from "../types";
+import { BusinessMetricStoreLocation, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
 
 type OverviewCustomerMetrics = {
@@ -19,8 +16,7 @@ type OverviewCustomerMetrics = {
 };
 
 function returnOverviewCustomerMetrics(
-  businessMetrics: BusinessMetric[],
-  storeLocationView: BusinessMetricStoreLocation,
+  customerMetricsDocument: CustomerMetricsDocument,
   selectedYYYYMMDD: string,
 ) {
   const defaultValue: OverviewCustomerMetrics = {
@@ -73,16 +69,15 @@ function returnOverviewCustomerMetrics(
     string,
     string,
   ];
-  const customerMetrics = businessMetrics.find(
-    (bmetric) => bmetric.storeLocation === storeLocationView,
-  )?.customerMetrics;
-  if (customerMetrics === null || customerMetrics === undefined) {
-    return defaultValue;
-  }
+  // const customerMetrics = businessMetrics.find(
+  //   (bmetric) => bmetric.storeLocation === storeLocationView,
+  // )?.customerMetrics;
+  // if (customerMetrics === null || customerMetrics === undefined) {
+  //   return defaultValue;
+  // }
 
-  const yearlyMetrics = customerMetrics.yearlyMetrics.find((customerMetric) =>
-    customerMetric.year === year
-  );
+  const yearlyMetrics = customerMetricsDocument.customerMetrics.yearlyMetrics
+    .find((customerMetric) => customerMetric.year === year);
   if (yearlyMetrics === null || yearlyMetrics === undefined) {
     return defaultValue;
   }

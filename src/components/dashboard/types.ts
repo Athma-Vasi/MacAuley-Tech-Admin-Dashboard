@@ -18,7 +18,7 @@ type DashboardProductMetric = ProductCategory | "All Products";
 type DashboardRepairMetric = RepairCategory | "All Repairs";
 
 type DashboardState = {
-  businessMetrics: BusinessMetricsDocument | null;
+  businessMetricsDocument: BusinessMetricsDocument | null;
   selectedYYYYMMDD: string;
   storeLocationView: BusinessMetricStoreLocation;
   isLoading: boolean;
@@ -27,7 +27,7 @@ type DashboardState = {
 
 type DashboardDispatch =
   | {
-    action: DashboardAction["setBusinessMetrics"];
+    action: DashboardAction["setBusinessMetricsDocument"];
     payload: BusinessMetricsDocument;
   }
   | {

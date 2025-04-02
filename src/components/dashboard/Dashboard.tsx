@@ -24,6 +24,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import {
   BusinessMetricsDocument,
+  CustomerMetricsDocument,
   FinancialMetricsDocument,
   HttpServerResponse,
 } from "../../types";
@@ -31,13 +32,11 @@ import { fetchSafe, responseToJSONSafe, returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import { MONTHS, STORE_LOCATION_VIEW_DATA } from "./constants";
+import { CustomerMetrics } from "./customer/CustomerMetrics";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
 import { dashboardReducer } from "./reducers";
 import { initialDashboardState } from "./state";
-import {
-  excludeTodayFromCalendarView,
-  splitSelectedCalendarDate,
-} from "./utils";
+import { splitSelectedCalendarDate } from "./utils";
 
 function Dashboard() {
   const [dashboardState, dashboardDispatch] = useReducer(
@@ -65,7 +64,7 @@ function Dashboard() {
   });
 
   const {
-    businessMetrics,
+    businessMetricsDocument,
     storeLocationView,
     selectedYYYYMMDD,
     isLoading,
@@ -137,7 +136,7 @@ function Dashboard() {
         }
 
         dashboardDispatch({
-          action: dashboardAction.setBusinessMetrics,
+          action: dashboardAction.setBusinessMetricsDocument,
           payload: serverResponse.data[0],
         });
 
@@ -167,84 +166,97 @@ function Dashboard() {
     };
   }, []);
 
-  // const isComponentMountedRef = React.useRef(false);
-  // useEffect(() => {
-  //   isComponentMountedRef.current = true;
-  //   const isMounted = isComponentMountedRef.current;
+  useEffect(() => {
+    // fetchAbortControllerRef.current?.abort("Previous request cancelled");
+    // fetchAbortControllerRef.current = new AbortController();
+    // const fetchAbortController = fetchAbortControllerRef.current;
 
-  //   async function createBusinessMetrics() {
-  //     try {
-  //       if (businessMetrics?.length) {
-  //         return;
-  //       }
+    isComponentMountedRef.current = true;
+    const isComponentMounted = isComponentMountedRef.current;
 
-  //       dashboardDispatch({
-  //         action: dashboardAction.setIsLoading,
-  //         payload: true,
-  //       });
+    async function fetchMetrics() {
+      const url =
+        `http://localhost:5000/api/v1/metrics/${metricsView}/?&storeLocation[$eq]=${storeLocationView}`;
 
-  //       const existingMetrics = await localforage.getItem<BusinessMetric[]>(
-  //         "businessMetrics",
-  //       );
-  //       if (existingMetrics && isMounted) {
-  //         dashboardDispatch({
-  //           action: dashboardAction.setBusinessMetrics,
-  //           payload: existingMetrics,
-  //         });
+      const requestInit: RequestInit = {
+        method: "GET",
+        // signal: fetchAbortController.signal,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
 
-  //         dashboardDispatch({
-  //           action: dashboardAction.setIsLoading,
-  //           payload: false,
-  //         });
+      try {
+        const responseResult = await fetchSafe(url, requestInit);
+        if (!isComponentMounted) {
+          return;
+        }
 
-  //         return;
-  //       }
+        if (responseResult.err) {
+          showBoundary(responseResult.val.data);
+          return;
+        }
 
-  //       console.time("createRandomBusinessMetrics");
+        const responseUnwrapped = responseResult.safeUnwrap().data;
 
-  //       const createdBusinessMetrics = await createRandomBusinessMetrics({
-  //         daysPerMonth: DAYS_PER_MONTH,
-  //         months: MONTHS,
-  //         productCategories: PRODUCT_CATEGORIES,
-  //         repairCategories: REPAIR_CATEGORIES,
-  //         storeLocations: STORE_LOCATION_DATA.map((obj) => obj.value),
-  //       });
+        if (responseUnwrapped === undefined) {
+          showBoundary(new Error("No data returned from server"));
+          return;
+        }
 
-  //       console.timeEnd("createRandomBusinessMetrics");
+        const jsonResult = await responseToJSONSafe<
+          HttpServerResponse<BusinessMetricsDocument>
+        >(
+          responseUnwrapped,
+        );
 
-  //       if (!isMounted) {
-  //         return;
-  //       }
+        if (!isComponentMounted) {
+          return;
+        }
 
-  //       dashboardDispatch({
-  //         action: dashboardAction.setBusinessMetrics,
-  //         payload: createdBusinessMetrics,
-  //       });
+        if (jsonResult.err) {
+          showBoundary(jsonResult.val.data);
+          return;
+        }
 
-  //       localforage.setItem<BusinessMetric[]>(
-  //         "businessMetrics",
-  //         createdBusinessMetrics,
-  //       );
+        const serverResponse = jsonResult.safeUnwrap().data;
 
-  //       dashboardDispatch({
-  //         action: dashboardAction.setIsLoading,
-  //         payload: false,
-  //       });
-  //     } catch (error: any) {
-  //       if (!isMounted) {
-  //         return;
-  //       }
-  //       showBoundary(error);
-  //     }
-  //   }
+        if (serverResponse === undefined) {
+          showBoundary(new Error("No data returned from server"));
+          return;
+        }
 
-  //   createBusinessMetrics();
+        dashboardDispatch({
+          action: dashboardAction.setBusinessMetricsDocument,
+          payload: serverResponse.data[0],
+        });
 
-  //   return () => {
-  //     isComponentMountedRef.current = false;
-  //   };
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+        console.group("fetchMetrics");
+        console.log("serverResponse", serverResponse);
+        console.groupEnd();
+      } catch (error: unknown) {
+        // if (
+        //   !isComponentMounted || fetchAbortController?.signal.aborted
+        // ) {
+        //   return;
+        // }
+        showBoundary(error);
+      }
+    }
+
+    fetchMetrics();
+
+    // const timerId = setTimeout(() => {
+    //   fetchAbortController?.abort("Request timed out");
+    // }, FETCH_REQUEST_TIMEOUT);
+
+    return () => {
+      // clearTimeout(timerId);
+      // fetchAbortController?.abort("Component unmounted");
+      isComponentMountedRef.current = false;
+    };
+  }, [storeLocationView]);
 
   const displayLoadingOverlay = (
     <LoadingOverlay
@@ -257,12 +269,14 @@ function Dashboard() {
     />
   );
 
-  if (businessMetrics === null || businessMetrics === undefined) {
+  if (
+    businessMetricsDocument === null || businessMetricsDocument === undefined
+  ) {
     return displayLoadingOverlay;
   }
 
   console.group("Dashboard");
-  console.log("businessMetrics", businessMetrics);
+  console.log("businessMetricsDocument", businessMetricsDocument);
   console.groupEnd();
 
   const { selectedDate, selectedMonth, selectedYear } =
@@ -276,7 +290,7 @@ function Dashboard() {
       aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'
       description="View metrics for selected calendar date."
       label="Calendar Date"
-      max={excludeTodayFromCalendarView()}
+      max={"2025-03-31"}
       min={storeLocationView === "Vancouver"
         ? new Date(2019, 0, 1).toISOString().split("T")[0]
         : storeLocationView === "Calgary"
@@ -369,7 +383,7 @@ function Dashboard() {
   const displayMetricsView = metricsView === "financials"
     ? (
       <FinancialMetrics
-        financialMetricsDocument={businessMetrics as FinancialMetricsDocument}
+        financialMetricsDocument={businessMetricsDocument as FinancialMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         storeLocationView={storeLocationView}
@@ -379,15 +393,14 @@ function Dashboard() {
     )
     : metricsView === "customers"
     ? (
-      null
-      // <CustomerMetrics
-      //   businessMetrics={businessMetrics}
-      //   selectedDate={selectedDate}
-      //   selectedMonth={selectedMonth}
-      //   storeLocationView={storeLocationView}
-      //   selectedYYYYMMDD={selectedYYYYMMDD}
-      //   selectedYear={selectedYear}
-      // />
+      <CustomerMetrics
+        customerMetricsDocument={businessMetricsDocument as CustomerMetricsDocument}
+        selectedDate={selectedDate}
+        selectedMonth={selectedMonth}
+        storeLocationView={storeLocationView}
+        selectedYYYYMMDD={selectedYYYYMMDD}
+        selectedYear={selectedYear}
+      />
     )
     : metricsView === "products"
     ? (
@@ -415,6 +428,7 @@ function Dashboard() {
 
   const dashboard = (
     <Stack w="100%" py="sm">
+      {displayLoadingOverlay}
       <Stack align="flex-start" spacing={2} bg={backgroundColor} px="md">
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>
@@ -430,3 +444,82 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+// const isComponentMountedRef = React.useRef(false);
+// useEffect(() => {
+//   isComponentMountedRef.current = true;
+//   const isMounted = isComponentMountedRef.current;
+
+//   async function createBusinessMetrics() {
+//     try {
+//       if (businessMetrics?.length) {
+//         return;
+//       }
+
+//       dashboardDispatch({
+//         action: dashboardAction.setIsLoading,
+//         payload: true,
+//       });
+
+//       const existingMetrics = await localforage.getItem<BusinessMetric[]>(
+//         "businessMetrics",
+//       );
+//       if (existingMetrics && isMounted) {
+//         dashboardDispatch({
+//           action: dashboardAction.setBusinessMetrics,
+//           payload: existingMetrics,
+//         });
+
+//         dashboardDispatch({
+//           action: dashboardAction.setIsLoading,
+//           payload: false,
+//         });
+
+//         return;
+//       }
+
+//       console.time("createRandomBusinessMetrics");
+
+//       const createdBusinessMetrics = await createRandomBusinessMetrics({
+//         daysPerMonth: DAYS_PER_MONTH,
+//         months: MONTHS,
+//         productCategories: PRODUCT_CATEGORIES,
+//         repairCategories: REPAIR_CATEGORIES,
+//         storeLocations: STORE_LOCATION_DATA.map((obj) => obj.value),
+//       });
+
+//       console.timeEnd("createRandomBusinessMetrics");
+
+//       if (!isMounted) {
+//         return;
+//       }
+
+//       dashboardDispatch({
+//         action: dashboardAction.setBusinessMetrics,
+//         payload: createdBusinessMetrics,
+//       });
+
+//       localforage.setItem<BusinessMetric[]>(
+//         "businessMetrics",
+//         createdBusinessMetrics,
+//       );
+
+//       dashboardDispatch({
+//         action: dashboardAction.setIsLoading,
+//         payload: false,
+//       });
+//     } catch (error: any) {
+//       if (!isMounted) {
+//         return;
+//       }
+//       showBoundary(error);
+//     }
+//   }
+
+//   createBusinessMetrics();
+
+//   return () => {
+//     isComponentMountedRef.current = false;
+//   };
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+// }, []);

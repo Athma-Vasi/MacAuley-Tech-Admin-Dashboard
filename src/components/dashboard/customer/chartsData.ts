@@ -1,14 +1,11 @@
+import { CustomerMetricsDocument } from "../../../types";
 import { toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
 import { MONTHS } from "../constants";
-import { FinancialMetricCategory } from "../financial/types";
-import { ProductMetricCategory } from "../product/types";
-import { RepairMetricCategory } from "../repair/types";
 import {
-  BusinessMetric,
   BusinessMetricStoreLocation,
   CustomerDailyMetric,
   CustomerMonthlyMetric,
@@ -17,7 +14,6 @@ import {
   Month,
   Year,
 } from "../types";
-import { CustomerMetricsCategory } from "./types";
 
 type SelectedDateCustomerMetrics = {
   dayCustomerMetrics: {
@@ -35,29 +31,24 @@ type SelectedDateCustomerMetrics = {
 };
 
 function returnSelectedDateCustomerMetrics({
-  businessMetrics,
+  customerMetricsDocument,
   day,
   month,
   months,
-  storeLocation,
   year,
 }: {
-  businessMetrics: BusinessMetric[];
+  customerMetricsDocument: CustomerMetricsDocument;
   day: string;
   month: Month;
   months: Month[];
-  storeLocation: BusinessMetricStoreLocation;
   year: Year;
 }): SelectedDateCustomerMetrics {
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
-
-  const selectedYearMetrics = currentStoreMetrics?.customerMetrics.yearlyMetrics
+  const selectedYearMetrics = customerMetricsDocument.customerMetrics
+    .yearlyMetrics
     .find(
       (yearlyMetric) => yearlyMetric.year === year,
     );
-  const prevYearMetrics = currentStoreMetrics?.customerMetrics.yearlyMetrics
+  const prevYearMetrics = customerMetricsDocument.customerMetrics.yearlyMetrics
     .find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
     );
@@ -65,7 +56,8 @@ function returnSelectedDateCustomerMetrics({
   const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
     (monthlyMetric) => monthlyMetric.month === month,
   );
-  const prevPrevYearMetrics = currentStoreMetrics?.customerMetrics.yearlyMetrics
+  const prevPrevYearMetrics = customerMetricsDocument.customerMetrics
+    .yearlyMetrics
     .find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
     );
@@ -160,10 +152,9 @@ type CustomerChurnRetentionLineCharts = Record<
 >; // y-axis variables: churn rate, retention rate
 
 type ReturnCustomerMetricsChartsInput = {
-  businessMetrics: BusinessMetric[];
+  customerMetricsDocument: CustomerMetricsDocument;
   months: Month[];
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics;
-  storeLocation: BusinessMetricStoreLocation;
 };
 
 type CustomerMetricsCharts = {
@@ -248,10 +239,9 @@ type CustomerMetricsCharts = {
    */
 
 async function createCustomerMetricsCharts({
-  businessMetrics,
+  customerMetricsDocument,
   months,
   selectedDateCustomerMetrics,
-  storeLocation,
 }: ReturnCustomerMetricsChartsInput): Promise<CustomerMetricsCharts> {
   const {
     yearCustomerMetrics: { selectedYearMetrics },
@@ -312,9 +302,9 @@ async function createCustomerMetricsCharts({
       retentionRate: [{ id: "Retention Rate", data: [] }],
     };
 
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
+  // const currentStoreMetrics = businessMetrics.find(
+  //   (businessMetric) => businessMetric.storeLocation === storeLocation,
+  // );
 
   const [dailyCustomerCharts, monthlyCustomerCharts, yearlyCustomerCharts] =
     await Promise.all([
@@ -341,7 +331,7 @@ async function createCustomerMetricsCharts({
         selectedMonthMetrics,
       }),
       createYearlyCustomerCharts({
-        yearlyMetrics: currentStoreMetrics?.customerMetrics.yearlyMetrics,
+        yearlyMetrics: customerMetricsDocument.customerMetrics.yearlyMetrics,
         newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
         newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
         returningBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,

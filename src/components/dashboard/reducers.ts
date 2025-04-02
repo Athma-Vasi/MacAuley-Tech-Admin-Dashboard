@@ -21,7 +21,10 @@ const dashboardReducersMap = new Map<
   DashboardAction[keyof DashboardAction],
   (state: DashboardState, dispatch: DashboardDispatch) => DashboardState
 >([
-  [dashboardAction.setBusinessMetrics, dashboardReducer_setBusinessMetrics],
+  [
+    dashboardAction.setBusinessMetricsDocument,
+    dashboardReducer_setBusinessMetrics,
+  ],
   [dashboardAction.setSelectedYYYYMMDD, dashboardReducer_setSelectedYYYYMMDD],
   [
     dashboardAction.setStoreLocationView,
@@ -37,7 +40,7 @@ function dashboardReducer_setBusinessMetrics(
 ): DashboardState {
   return {
     ...state,
-    businessMetrics: dispatch.payload as BusinessMetricsDocument,
+    businessMetricsDocument: dispatch.payload as BusinessMetricsDocument,
   };
 }
 

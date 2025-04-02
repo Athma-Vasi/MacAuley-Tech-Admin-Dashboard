@@ -190,7 +190,7 @@ function Login() {
           payload: false,
         });
 
-        navigate("/dashboard/financials");
+        navigate("/dashboard/customers");
       } catch (error: unknown) {
         if (
           !isComponentMounted || fetchAbortController?.signal.aborted

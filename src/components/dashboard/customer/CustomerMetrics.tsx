@@ -12,15 +12,11 @@ import {
 } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
+import { CustomerMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
-  Month,
-  Year,
-} from "../types";
+import type { BusinessMetricStoreLocation, Month, Year } from "../types";
 import { customerMetricsAction } from "./actions";
 import { createCustomerMetricsCards } from "./cards";
 import {
@@ -40,7 +36,7 @@ import {
 } from "./utils";
 
 type CustomerMetricsProps = {
-  businessMetrics: BusinessMetric[];
+  customerMetricsDocument: CustomerMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
   storeLocationView: BusinessMetricStoreLocation;
@@ -49,7 +45,7 @@ type CustomerMetricsProps = {
 };
 
 function CustomerMetrics({
-  businessMetrics,
+  customerMetricsDocument,
   selectedDate,
   selectedMonth,
   selectedYYYYMMDD,
@@ -92,11 +88,10 @@ function CustomerMetrics({
 
       try {
         const selectedDateCustomerMetrics = returnSelectedDateCustomerMetrics({
-          businessMetrics,
+          customerMetricsDocument,
           day: selectedDate,
           month: selectedMonth,
           months: MONTHS,
-          storeLocation: storeLocationView,
           year: selectedYear,
         });
 
@@ -106,10 +101,9 @@ function CustomerMetrics({
           );
 
         const customerMetricsCharts = await createCustomerMetricsCharts({
-          businessMetrics,
+          customerMetricsDocument,
           months: MONTHS,
           selectedDateCustomerMetrics,
-          storeLocation: storeLocationView,
         });
 
         const customerMetricsCards = await createCustomerMetricsCards({
@@ -153,7 +147,7 @@ function CustomerMetrics({
       }
     }
 
-    if (businessMetrics?.length || !cards || !charts) {
+    if (!cards || !charts) {
       generateCustomerChartsCards();
     }
 
@@ -163,7 +157,7 @@ function CustomerMetrics({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYYYYMMDD, storeLocationView]);
 
-  if (!businessMetrics?.length || !cards || !charts) {
+  if (!customerMetricsDocument || !cards || !charts) {
     return null;
   }
 
@@ -203,8 +197,7 @@ function CustomerMetrics({
   );
 
   const overviewMetrics = returnOverviewCustomerMetrics(
-    businessMetrics,
-    storeLocationView,
+    customerMetricsDocument,
     selectedYYYYMMDD,
   );
 

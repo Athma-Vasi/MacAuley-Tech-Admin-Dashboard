@@ -198,7 +198,7 @@ type FinancialMetricsDocument = FinancialMetricsSchema & {
 
 type CustomerMetricsSchema = {
   storeLocation: BusinessMetricStoreLocation;
-  customerMetrics: CustomerMetrics[];
+  customerMetrics: CustomerMetrics;
 };
 
 type CustomerMetricsDocument = CustomerMetricsSchema & {
