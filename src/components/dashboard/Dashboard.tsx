@@ -7,7 +7,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import React, { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
@@ -15,34 +15,26 @@ import {
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
   MOBILE_BREAKPOINT,
-  STORE_LOCATION_DATA,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
-import localforage from "localforage";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
-import { returnThemeColors } from "../../utils";
+import {
+  BusinessMetricsDocument,
+  FinancialMetricsDocument,
+  HttpServerResponse,
+} from "../../types";
+import { fetchSafe, responseToJSONSafe, returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
-import {
-  DAYS_PER_MONTH,
-  MONTHS,
-  PRODUCT_CATEGORIES,
-  REPAIR_CATEGORIES,
-  STORE_LOCATION_VIEW_DATA,
-} from "./constants";
-import { CustomerMetrics } from "./customer/CustomerMetrics";
+import { MONTHS, STORE_LOCATION_VIEW_DATA } from "./constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
-import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
-import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
-import { BusinessMetric } from "./types";
 import {
-  createRandomBusinessMetrics,
   excludeTodayFromCalendarView,
   splitSelectedCalendarDate,
 } from "./utils";
@@ -60,9 +52,7 @@ function Dashboard() {
     globalDispatch,
   } = useGlobalState();
 
-  const { authState } = useAuth();
-
-  console.log("authState", authState);
+  const { authState: { accessToken } } = useAuth();
 
   const { metricsView } = useParams();
 
@@ -82,84 +72,179 @@ function Dashboard() {
     loadingMessage,
   } = dashboardState;
 
-  const isComponentMountedRef = React.useRef(false);
+  // const fetchAbortControllerRef = useRef<AbortController | null>(null);
+  const isComponentMountedRef = useRef(false);
+
   useEffect(() => {
+    // fetchAbortControllerRef.current?.abort("Previous request cancelled");
+    // fetchAbortControllerRef.current = new AbortController();
+    // const fetchAbortController = fetchAbortControllerRef.current;
+
     isComponentMountedRef.current = true;
-    const isMounted = isComponentMountedRef.current;
+    const isComponentMounted = isComponentMountedRef.current;
 
-    async function createBusinessMetrics() {
+    async function fetchMetrics() {
+      const url =
+        `http://localhost:5000/api/v1/metrics/${metricsView}/?&storeLocation[$eq]=${storeLocationView}`;
+
+      const requestInit: RequestInit = {
+        method: "GET",
+        // signal: fetchAbortController.signal,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
       try {
-        if (businessMetrics?.length) {
+        const responseResult = await fetchSafe(url, requestInit);
+        if (!isComponentMounted) {
           return;
         }
 
-        dashboardDispatch({
-          action: dashboardAction.setIsLoading,
-          payload: true,
-        });
+        if (responseResult.err) {
+          showBoundary(responseResult.val.data);
+          return;
+        }
 
-        const existingMetrics = await localforage.getItem<BusinessMetric[]>(
-          "businessMetrics",
+        const responseUnwrapped = responseResult.safeUnwrap().data;
+
+        if (responseUnwrapped === undefined) {
+          showBoundary(new Error("No data returned from server"));
+          return;
+        }
+
+        const jsonResult = await responseToJSONSafe<
+          HttpServerResponse<BusinessMetricsDocument>
+        >(
+          responseUnwrapped,
         );
-        if (existingMetrics && isMounted) {
-          dashboardDispatch({
-            action: dashboardAction.setBusinessMetrics,
-            payload: existingMetrics,
-          });
 
-          dashboardDispatch({
-            action: dashboardAction.setIsLoading,
-            payload: false,
-          });
-
+        if (!isComponentMounted) {
           return;
         }
 
-        console.time("createRandomBusinessMetrics");
+        if (jsonResult.err) {
+          showBoundary(jsonResult.val.data);
+          return;
+        }
 
-        const createdBusinessMetrics = await createRandomBusinessMetrics({
-          daysPerMonth: DAYS_PER_MONTH,
-          months: MONTHS,
-          productCategories: PRODUCT_CATEGORIES,
-          repairCategories: REPAIR_CATEGORIES,
-          storeLocations: STORE_LOCATION_DATA.map((obj) => obj.value),
-        });
+        const serverResponse = jsonResult.safeUnwrap().data;
 
-        console.timeEnd("createRandomBusinessMetrics");
-
-        if (!isMounted) {
+        if (serverResponse === undefined) {
+          showBoundary(new Error("No data returned from server"));
           return;
         }
 
         dashboardDispatch({
           action: dashboardAction.setBusinessMetrics,
-          payload: createdBusinessMetrics,
+          payload: serverResponse.data[0],
         });
 
-        localforage.setItem<BusinessMetric[]>(
-          "businessMetrics",
-          createdBusinessMetrics,
-        );
-
-        dashboardDispatch({
-          action: dashboardAction.setIsLoading,
-          payload: false,
-        });
-      } catch (error: any) {
-        if (!isMounted) {
-          return;
-        }
+        console.group("fetchMetrics");
+        console.log("serverResponse", serverResponse);
+        console.groupEnd();
+      } catch (error: unknown) {
+        // if (
+        //   !isComponentMounted || fetchAbortController?.signal.aborted
+        // ) {
+        //   return;
+        // }
         showBoundary(error);
       }
     }
 
-    createBusinessMetrics();
+    fetchMetrics();
+
+    // const timerId = setTimeout(() => {
+    //   fetchAbortController?.abort("Request timed out");
+    // }, FETCH_REQUEST_TIMEOUT);
 
     return () => {
+      // clearTimeout(timerId);
+      // fetchAbortController?.abort("Component unmounted");
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // const isComponentMountedRef = React.useRef(false);
+  // useEffect(() => {
+  //   isComponentMountedRef.current = true;
+  //   const isMounted = isComponentMountedRef.current;
+
+  //   async function createBusinessMetrics() {
+  //     try {
+  //       if (businessMetrics?.length) {
+  //         return;
+  //       }
+
+  //       dashboardDispatch({
+  //         action: dashboardAction.setIsLoading,
+  //         payload: true,
+  //       });
+
+  //       const existingMetrics = await localforage.getItem<BusinessMetric[]>(
+  //         "businessMetrics",
+  //       );
+  //       if (existingMetrics && isMounted) {
+  //         dashboardDispatch({
+  //           action: dashboardAction.setBusinessMetrics,
+  //           payload: existingMetrics,
+  //         });
+
+  //         dashboardDispatch({
+  //           action: dashboardAction.setIsLoading,
+  //           payload: false,
+  //         });
+
+  //         return;
+  //       }
+
+  //       console.time("createRandomBusinessMetrics");
+
+  //       const createdBusinessMetrics = await createRandomBusinessMetrics({
+  //         daysPerMonth: DAYS_PER_MONTH,
+  //         months: MONTHS,
+  //         productCategories: PRODUCT_CATEGORIES,
+  //         repairCategories: REPAIR_CATEGORIES,
+  //         storeLocations: STORE_LOCATION_DATA.map((obj) => obj.value),
+  //       });
+
+  //       console.timeEnd("createRandomBusinessMetrics");
+
+  //       if (!isMounted) {
+  //         return;
+  //       }
+
+  //       dashboardDispatch({
+  //         action: dashboardAction.setBusinessMetrics,
+  //         payload: createdBusinessMetrics,
+  //       });
+
+  //       localforage.setItem<BusinessMetric[]>(
+  //         "businessMetrics",
+  //         createdBusinessMetrics,
+  //       );
+
+  //       dashboardDispatch({
+  //         action: dashboardAction.setIsLoading,
+  //         payload: false,
+  //       });
+  //     } catch (error: any) {
+  //       if (!isMounted) {
+  //         return;
+  //       }
+  //       showBoundary(error);
+  //     }
+  //   }
+
+  //   createBusinessMetrics();
+
+  //   return () => {
+  //     isComponentMountedRef.current = false;
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const displayLoadingOverlay = (
     <LoadingOverlay
@@ -172,7 +257,7 @@ function Dashboard() {
     />
   );
 
-  if (!businessMetrics?.length) {
+  if (businessMetrics === null || businessMetrics === undefined) {
     return displayLoadingOverlay;
   }
 
@@ -284,7 +369,7 @@ function Dashboard() {
   const displayMetricsView = metricsView === "financials"
     ? (
       <FinancialMetrics
-        businessMetrics={businessMetrics}
+        financialMetricsDocument={businessMetrics as FinancialMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         storeLocationView={storeLocationView}
@@ -294,35 +379,38 @@ function Dashboard() {
     )
     : metricsView === "customers"
     ? (
-      <CustomerMetrics
-        businessMetrics={businessMetrics}
-        selectedDate={selectedDate}
-        selectedMonth={selectedMonth}
-        storeLocationView={storeLocationView}
-        selectedYYYYMMDD={selectedYYYYMMDD}
-        selectedYear={selectedYear}
-      />
+      null
+      // <CustomerMetrics
+      //   businessMetrics={businessMetrics}
+      //   selectedDate={selectedDate}
+      //   selectedMonth={selectedMonth}
+      //   storeLocationView={storeLocationView}
+      //   selectedYYYYMMDD={selectedYYYYMMDD}
+      //   selectedYear={selectedYear}
+      // />
     )
     : metricsView === "products"
     ? (
-      <ProductMetrics
-        businessMetrics={businessMetrics}
-        selectedDate={selectedDate}
-        selectedMonth={selectedMonth}
-        selectedYYYYMMDD={selectedYYYYMMDD}
-        selectedYear={selectedYear}
-        storeLocationView={storeLocationView}
-      />
+      null
+      // <ProductMetrics
+      //   businessMetrics={businessMetrics}
+      //   selectedDate={selectedDate}
+      //   selectedMonth={selectedMonth}
+      //   selectedYYYYMMDD={selectedYYYYMMDD}
+      //   selectedYear={selectedYear}
+      //   storeLocationView={storeLocationView}
+      // />
     )
     : (
-      <RepairMetrics
-        businessMetrics={businessMetrics}
-        selectedDate={selectedDate}
-        selectedMonth={selectedMonth}
-        selectedYYYYMMDD={selectedYYYYMMDD}
-        selectedYear={selectedYear}
-        storeLocationView={storeLocationView}
-      />
+      null
+      // <RepairMetrics
+      //   businessMetrics={businessMetrics}
+      //   selectedDate={selectedDate}
+      //   selectedMonth={selectedMonth}
+      //   selectedYYYYMMDD={selectedYYYYMMDD}
+      //   selectedYear={selectedYear}
+      //   storeLocationView={storeLocationView}
+      // />
     );
 
   const dashboard = (

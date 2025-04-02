@@ -1,4 +1,4 @@
-import type { StoreLocation } from "../../types";
+import type { BusinessMetricsDocument, StoreLocation } from "../../types";
 import type { DashboardAction } from "./actions";
 
 type DashboardCalendarView = "Daily" | "Monthly" | "Yearly";
@@ -18,7 +18,7 @@ type DashboardProductMetric = ProductCategory | "All Products";
 type DashboardRepairMetric = RepairCategory | "All Repairs";
 
 type DashboardState = {
-  businessMetrics: BusinessMetric[];
+  businessMetrics: BusinessMetricsDocument | null;
   selectedYYYYMMDD: string;
   storeLocationView: BusinessMetricStoreLocation;
   isLoading: boolean;
@@ -28,7 +28,7 @@ type DashboardState = {
 type DashboardDispatch =
   | {
     action: DashboardAction["setBusinessMetrics"];
-    payload: BusinessMetric[];
+    payload: BusinessMetricsDocument;
   }
   | {
     action: DashboardAction["setStoreLocationView"];

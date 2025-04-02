@@ -1,3 +1,4 @@
+import { FinancialMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
 import {
   BusinessMetric,
@@ -15,7 +16,7 @@ type OverviewFinancialMetrics = {
 };
 
 function returnOverviewFinancialMetrics(
-  businessMetrics: BusinessMetric[],
+  financialMetricsDocument: FinancialMetricsDocument,
   storeLocationView: BusinessMetricStoreLocation,
   selectedYYYYMMDD: string,
 ) {
@@ -55,16 +56,16 @@ function returnOverviewFinancialMetrics(
     string,
     string,
   ];
-  const financialMetrics = businessMetrics.find(
-    (bmetric) => bmetric.storeLocation === storeLocationView,
-  )?.financialMetrics;
-  if (financialMetrics === null || financialMetrics === undefined) {
-    return defaultValue;
-  }
+  // const financialMetrics = businessMetrics.find(
+  //   (bmetric) => bmetric.storeLocation === storeLocationView,
+  // )?.financialMetrics;
+  // if (financialMetrics === null || financialMetrics === undefined) {
+  //   return defaultValue;
+  // }
 
-  const yearlyMetrics = financialMetrics.find((financialMetric) =>
-    financialMetric.year === year
-  );
+  const yearlyMetrics = financialMetricsDocument.financialMetrics.find((
+    financialMetric,
+  ) => financialMetric.year === year);
   if (yearlyMetrics === null || yearlyMetrics === undefined) {
     return defaultValue;
   }

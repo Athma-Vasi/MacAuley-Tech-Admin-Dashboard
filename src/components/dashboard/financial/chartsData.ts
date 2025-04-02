@@ -1,3 +1,7 @@
+import {
+  BusinessMetricsDocument,
+  FinancialMetricsDocument,
+} from "../../../types";
 import { toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -30,35 +34,35 @@ type SelectedDateFinancialMetrics = {
 };
 
 function returnSelectedDateFinancialMetrics({
-  businessMetrics,
+  financialMetricsDocument,
   day,
   month,
   months,
   storeLocation,
   year,
 }: {
-  businessMetrics: BusinessMetric[];
+  financialMetricsDocument: FinancialMetricsDocument;
   day: string;
   month: Month;
   months: Month[];
   storeLocation: BusinessMetricStoreLocation;
   year: Year;
 }): SelectedDateFinancialMetrics {
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
+  // const currentStoreMetrics = businessMetrics.find(
+  //   (businessMetric) => businessMetric.storeLocation === storeLocation,
+  // );
 
-  const selectedYearMetrics = currentStoreMetrics?.financialMetrics.find(
+  const selectedYearMetrics = financialMetricsDocument.financialMetrics.find(
     (yearlyMetric) => yearlyMetric.year === year,
   );
-  const prevYearMetrics = currentStoreMetrics?.financialMetrics.find(
+  const prevYearMetrics = financialMetricsDocument.financialMetrics.find(
     (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
   );
 
   const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
     (monthlyMetric) => monthlyMetric.month === month,
   );
-  const prevPrevYearMetrics = currentStoreMetrics?.financialMetrics.find(
+  const prevPrevYearMetrics = financialMetricsDocument.financialMetrics.find(
     (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
   );
   const prevMonthMetrics = month === "January"
@@ -103,13 +107,6 @@ function returnSelectedDateFinancialMetrics({
     dayFinancialMetrics: { selectedDayMetrics, prevDayMetrics },
   };
 }
-
-type ReturnFinancialMetricsChartsInput = {
-  businessMetrics: BusinessMetric[];
-  months: Month[];
-  selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
-  storeLocation: BusinessMetricStoreLocation;
-};
 
 /**
  * dailyMetrics: {
@@ -306,8 +303,15 @@ type FinancialMetricsCharts = {
   };
 };
 
+type ReturnFinancialMetricsChartsInput = {
+  financialMetricsDocument: FinancialMetricsDocument;
+  months: Month[];
+  selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
+  storeLocation: BusinessMetricStoreLocation;
+};
+
 async function createFinancialMetricsCharts({
-  businessMetrics,
+  financialMetricsDocument,
   months,
   selectedDateFinancialMetrics,
   storeLocation,
@@ -374,9 +378,9 @@ async function createFinancialMetricsCharts({
   };
 
   // selected store's business metrics
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
+  // const currentStoreMetrics = businessMetrics.find(
+  //   (businessMetric) => businessMetric.storeLocation === storeLocation,
+  // );
 
   const [dailyFinancialCharts, monthlyFinancialCharts, yearlyFinancialCharts] =
     await Promise.all([
@@ -407,7 +411,7 @@ async function createFinancialMetricsCharts({
         otherMetricsLineChartsTemplate: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
         pieChartsTemplate: PIE_CHARTS_TEMPLATE,
         selectedYearMetrics,
-        yearlyMetrics: currentStoreMetrics?.financialMetrics,
+        yearlyMetrics: financialMetricsDocument.financialMetrics,
       }),
     ]);
 

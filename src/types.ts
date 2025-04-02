@@ -6,6 +6,13 @@ import {
   MantineThemeOverride,
 } from "@mantine/core";
 import type { Result } from "ts-results";
+import {
+  BusinessMetricStoreLocation,
+  CustomerMetrics,
+  ProductMetric,
+  RepairMetric,
+  YearlyFinancialMetric,
+} from "./components/dashboard/types";
 import { ValidationKey } from "./validations";
 
 type CheckboxRadioSelectData<Payload extends string = string> = Array<{
@@ -153,6 +160,60 @@ type UserDocument = UserSchema & {
   __v: number;
 };
 
+type RepairMetricsSchema = {
+  storeLocation: BusinessMetricStoreLocation;
+  repairMetrics: RepairMetric[];
+};
+
+type RepairMetricsDocument = RepairMetricsSchema & {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+};
+
+type ProductMetricsSchema = {
+  storeLocation: BusinessMetricStoreLocation;
+  productMetrics: ProductMetric[];
+};
+
+type ProductMetricsDocument = ProductMetricsSchema & {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+};
+
+type FinancialMetricsSchema = {
+  storeLocation: BusinessMetricStoreLocation;
+  financialMetrics: YearlyFinancialMetric[];
+};
+
+type FinancialMetricsDocument = FinancialMetricsSchema & {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+};
+
+type CustomerMetricsSchema = {
+  storeLocation: BusinessMetricStoreLocation;
+  customerMetrics: CustomerMetrics[];
+};
+
+type CustomerMetricsDocument = CustomerMetricsSchema & {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+};
+
+type BusinessMetricsDocument =
+  | FinancialMetricsDocument
+  | ProductMetricsDocument
+  | RepairMetricsDocument
+  | CustomerMetricsDocument;
+
 type UserRoles = ("Admin" | "Employee" | "Manager")[];
 
 type HttpServerResponse<Data = unknown> = {
@@ -175,11 +236,16 @@ type SafeBox<Data = unknown> = {
 type SafeBoxResult<Data = unknown> = Result<SafeBox<Data>, SafeBox>;
 
 export type {
+  BusinessMetricsDocument,
   CheckboxRadioSelectData,
   ColorScheme,
+  CustomerMetricsDocument,
   DecodedToken,
+  FinancialMetricsDocument,
   HttpServerResponse,
   InputType,
+  ProductMetricsDocument,
+  RepairMetricsDocument,
   SafeBox,
   SafeBoxResult,
   ScreenshotImageType,

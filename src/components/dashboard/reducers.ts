@@ -1,3 +1,4 @@
+import { BusinessMetricsDocument } from "../../types";
 import { dashboardAction } from "./actions";
 import type {
   BusinessMetric,
@@ -36,7 +37,7 @@ function dashboardReducer_setBusinessMetrics(
 ): DashboardState {
   return {
     ...state,
-    businessMetrics: dispatch.payload as BusinessMetric[],
+    businessMetrics: dispatch.payload as BusinessMetricsDocument,
   };
 }
 

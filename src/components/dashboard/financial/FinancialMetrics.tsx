@@ -13,15 +13,11 @@ import {
 } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
+import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
-  Month,
-  Year,
-} from "../types";
+import type { BusinessMetricStoreLocation, Month, Year } from "../types";
 import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
@@ -40,7 +36,7 @@ import {
 } from "./utils";
 
 type FinancialMetricsProps = {
-  businessMetrics: BusinessMetric[];
+  financialMetricsDocument: FinancialMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
   storeLocationView: BusinessMetricStoreLocation;
@@ -49,7 +45,7 @@ type FinancialMetricsProps = {
 };
 
 function FinancialMetrics({
-  businessMetrics,
+  financialMetricsDocument,
   selectedDate,
   selectedMonth,
   selectedYYYYMMDD,
@@ -92,7 +88,7 @@ function FinancialMetrics({
       try {
         const selectedDateFinancialMetrics = returnSelectedDateFinancialMetrics(
           {
-            businessMetrics,
+            financialMetricsDocument,
             day: selectedDate,
             month: selectedMonth,
             months: MONTHS,
@@ -109,7 +105,7 @@ function FinancialMetrics({
         );
 
         const financialMetricsCharts = await createFinancialMetricsCharts({
-          businessMetrics,
+          financialMetricsDocument,
           months: MONTHS,
           selectedDateFinancialMetrics,
           storeLocation: storeLocationView,
@@ -156,7 +152,7 @@ function FinancialMetrics({
       }
     }
 
-    if (businessMetrics?.length || !cards || !charts) {
+    if (financialMetricsDocument || !cards || !charts) {
       generateFinancialChartsCards();
     }
 
@@ -166,7 +162,7 @@ function FinancialMetrics({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYYYYMMDD, storeLocationView]);
 
-  if (!businessMetrics?.length || !cards || !charts) {
+  if (!financialMetricsDocument || !cards || !charts) {
     return null;
   }
 
@@ -205,7 +201,7 @@ function FinancialMetrics({
   );
 
   const overviewMetrics = returnOverviewFinancialMetrics(
-    businessMetrics,
+    financialMetricsDocument,
     storeLocationView,
     selectedYYYYMMDD,
   );
