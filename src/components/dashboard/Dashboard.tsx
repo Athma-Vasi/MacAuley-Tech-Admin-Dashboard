@@ -27,6 +27,7 @@ import {
   CustomerMetricsDocument,
   FinancialMetricsDocument,
   HttpServerResponse,
+  ProductMetricsDocument,
 } from "../../types";
 import { fetchSafe, responseToJSONSafe, returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
@@ -34,6 +35,7 @@ import { dashboardAction } from "./actions";
 import { MONTHS, STORE_LOCATION_VIEW_DATA } from "./constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
+import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
 import { initialDashboardState } from "./state";
 import { splitSelectedCalendarDate } from "./utils";
@@ -404,15 +406,14 @@ function Dashboard() {
     )
     : metricsView === "products"
     ? (
-      null
-      // <ProductMetrics
-      //   businessMetrics={businessMetrics}
-      //   selectedDate={selectedDate}
-      //   selectedMonth={selectedMonth}
-      //   selectedYYYYMMDD={selectedYYYYMMDD}
-      //   selectedYear={selectedYear}
-      //   storeLocationView={storeLocationView}
-      // />
+      <ProductMetrics
+        productMetricsDocument={businessMetricsDocument as ProductMetricsDocument}
+        selectedDate={selectedDate}
+        selectedMonth={selectedMonth}
+        selectedYYYYMMDD={selectedYYYYMMDD}
+        selectedYear={selectedYear}
+        storeLocationView={storeLocationView}
+      />
     )
     : (
       null

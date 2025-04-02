@@ -1,3 +1,4 @@
+import { ProductMetricsDocument } from "../../../types";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -30,29 +31,27 @@ type SelectedDateProductMetrics = {
 };
 
 type CreateSelectedDateProductMetricsInput = {
-  businessMetrics: BusinessMetric[];
+  productMetricsDocument: ProductMetricsDocument;
   day: string;
   month: Month;
   months: Month[];
   selectedProductCategory: ProductCategory | "All Products";
-  storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
 
 function returnSelectedDateProductMetrics({
-  businessMetrics,
+  productMetricsDocument,
   day,
   month,
   months,
   selectedProductCategory,
-  storeLocation,
   year,
 }: CreateSelectedDateProductMetricsInput): SelectedDateProductMetrics {
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
+  // const currentStoreMetrics = businessMetrics.find(
+  //   (businessMetric) => businessMetric.storeLocation === storeLocation,
+  // );
 
-  const selectedDateProductMetrics = currentStoreMetrics?.productMetrics.find(
+  const selectedDateProductMetrics = productMetricsDocument.productMetrics.find(
     (productMetric) => productMetric.name === selectedProductCategory,
   );
 
@@ -113,11 +112,10 @@ function returnSelectedDateProductMetrics({
 }
 
 type CreateProductMetricsChartsInput = {
-  businessMetrics: BusinessMetric[];
+  productMetricsDocument: ProductMetricsDocument;
   months: Month[];
   selectedProductCategory: ProductCategory | "All Products";
   selectedDateProductMetrics: SelectedDateProductMetrics;
-  storeLocation: BusinessMetricStoreLocation;
 };
 
 type ProductMetricsChartKey =
@@ -207,11 +205,10 @@ type ProductMetricsCharts = {
 };
 
 async function createProductMetricsCharts({
-  businessMetrics,
+  productMetricsDocument,
   months,
   selectedProductCategory,
   selectedDateProductMetrics,
-  storeLocation,
 }: CreateProductMetricsChartsInput): Promise<ProductMetricsCharts> {
   const {
     yearProductMetrics: { selectedYearMetrics },
@@ -253,11 +250,11 @@ async function createProductMetricsCharts({
     { id: "Online", label: "Online", value: 0 },
   ];
 
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
+  // const currentStoreMetrics = businessMetrics.find(
+  //   (businessMetric) => businessMetric.storeLocation === storeLocation,
+  // );
 
-  const productMetrics = currentStoreMetrics?.productMetrics.find(
+  const productMetrics = productMetricsDocument?.productMetrics.find(
     (productMetric) => productMetric.name === selectedProductCategory,
   );
 

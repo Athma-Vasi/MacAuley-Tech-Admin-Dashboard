@@ -19,15 +19,11 @@ import {
 } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
+import { ProductMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
-  Month,
-  Year,
-} from "../types";
+import type { BusinessMetricStoreLocation, Month, Year } from "../types";
 import { productMetricsAction } from "./actions";
 import { createProductMetricsCards } from "./cards";
 import {
@@ -48,7 +44,7 @@ import {
 } from "./utils";
 
 type ProductMetricsProps = {
-  businessMetrics: BusinessMetric[];
+  productMetricsDocument: ProductMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
   storeLocationView: BusinessMetricStoreLocation;
@@ -57,7 +53,7 @@ type ProductMetricsProps = {
 };
 
 function ProductMetrics({
-  businessMetrics,
+  productMetricsDocument,
   selectedDate,
   selectedMonth,
   selectedYYYYMMDD,
@@ -107,12 +103,11 @@ function ProductMetrics({
 
       try {
         const selectedDateProductMetrics = returnSelectedDateProductMetrics({
-          businessMetrics,
+          productMetricsDocument,
           day: selectedDate,
           month: selectedMonth,
           months: MONTHS,
           selectedProductCategory: productCategory,
-          storeLocation: storeLocationView,
           year: selectedYear,
         });
 
@@ -122,11 +117,10 @@ function ProductMetrics({
           );
 
         const productMetricsCharts = await createProductMetricsCharts({
-          businessMetrics,
+          productMetricsDocument,
           months: MONTHS,
           selectedProductCategory: productCategory,
           selectedDateProductMetrics,
-          storeLocation: storeLocationView,
         });
 
         const productMetricsCards = await createProductMetricsCards({
@@ -170,7 +164,7 @@ function ProductMetrics({
       }
     }
 
-    if (businessMetrics?.length || !cards || !charts) {
+    if (productMetricsDocument || !cards || !charts) {
       generateProductChartsCards();
     }
 
@@ -180,7 +174,7 @@ function ProductMetrics({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYYYYMMDD, storeLocationView, productCategory]);
 
-  if (!businessMetrics?.length || !cards || !charts) {
+  if (!productMetricsDocument || !cards || !charts) {
     return null;
   }
 
@@ -255,8 +249,7 @@ function ProductMetrics({
   );
 
   const overviewMetrics = returnOverviewAllProductsMetrics(
-    businessMetrics,
-    storeLocationView,
+    productMetricsDocument,
     selectedYYYYMMDD,
   );
 
