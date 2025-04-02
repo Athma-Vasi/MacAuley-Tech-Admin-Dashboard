@@ -28,6 +28,7 @@ import {
   FinancialMetricsDocument,
   HttpServerResponse,
   ProductMetricsDocument,
+  RepairMetricsDocument,
 } from "../../types";
 import { fetchSafe, responseToJSONSafe, returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
@@ -37,6 +38,7 @@ import { CustomerMetrics } from "./customer/CustomerMetrics";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
 import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
+import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
 import { splitSelectedCalendarDate } from "./utils";
 
@@ -416,15 +418,14 @@ function Dashboard() {
       />
     )
     : (
-      null
-      // <RepairMetrics
-      //   businessMetrics={businessMetrics}
-      //   selectedDate={selectedDate}
-      //   selectedMonth={selectedMonth}
-      //   selectedYYYYMMDD={selectedYYYYMMDD}
-      //   selectedYear={selectedYear}
-      //   storeLocationView={storeLocationView}
-      // />
+      <RepairMetrics
+        repairMetricsDocument={businessMetricsDocument as RepairMetricsDocument}
+        selectedDate={selectedDate}
+        selectedMonth={selectedMonth}
+        selectedYYYYMMDD={selectedYYYYMMDD}
+        selectedYear={selectedYear}
+        storeLocationView={storeLocationView}
+      />
     );
 
   const dashboard = (

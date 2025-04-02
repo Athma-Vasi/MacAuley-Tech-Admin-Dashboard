@@ -1,3 +1,4 @@
+import { RepairMetricsDocument } from "../../../types";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -23,12 +24,11 @@ type RepairMetricLineCharts = {
 };
 
 type CreateSelectedDateRepairMetricsInput = {
-  businessMetrics: BusinessMetric[];
+  repairMetricsDocument: RepairMetricsDocument;
   day: string;
   month: Month;
   months: Month[];
   selectedRepairCategory: RepairCategory | "All Repairs";
-  storeLocation: BusinessMetricStoreLocation;
   year: Year;
 };
 
@@ -48,19 +48,14 @@ type SelectedDateRepairMetrics = {
 };
 
 function returnSelectedDateRepairMetrics({
-  businessMetrics,
+  repairMetricsDocument,
   day,
   month,
   months,
   selectedRepairCategory,
-  storeLocation,
   year,
 }: CreateSelectedDateRepairMetricsInput): SelectedDateRepairMetrics {
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
-
-  const selectedRepairMetrics = currentStoreMetrics?.repairMetrics.find(
+  const selectedRepairMetrics = repairMetricsDocument.repairMetrics.find(
     (repairMetric) => repairMetric.name === selectedRepairCategory,
   );
 
@@ -122,11 +117,10 @@ function returnSelectedDateRepairMetrics({
 }
 
 type ReturnRepairChartsInput = {
-  businessMetrics: BusinessMetric[];
+  repairMetricsDocument: RepairMetricsDocument;
   months: Month[];
   selectedRepairCategory: RepairCategory | "All Repairs";
   selectedDateRepairMetrics: SelectedDateRepairMetrics;
-  storeLocation: BusinessMetricStoreLocation;
 };
 
 type RepairMetricsCharts = {
@@ -168,11 +162,10 @@ type RepairMetricsCharts = {
  */
 
 async function createRepairMetricsCharts({
-  businessMetrics,
+  repairMetricsDocument,
   months,
   selectedDateRepairMetrics,
   selectedRepairCategory,
-  storeLocation,
 }: ReturnRepairChartsInput): Promise<RepairMetricsCharts> {
   const {
     yearRepairMetrics: { selectedYearMetrics },
@@ -189,11 +182,7 @@ async function createRepairMetricsCharts({
     "0",
   );
 
-  const currentStoreMetrics = businessMetrics.find(
-    (businessMetric) => businessMetric.storeLocation === storeLocation,
-  );
-
-  const repairMetrics = currentStoreMetrics?.repairMetrics.find(
+  const repairMetrics = repairMetricsDocument.repairMetrics.find(
     (repairMetric) => repairMetric.name === selectedRepairCategory,
   );
 

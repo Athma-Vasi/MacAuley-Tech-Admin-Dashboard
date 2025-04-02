@@ -1,3 +1,4 @@
+import { RepairMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
 import {
   BusinessMetric,
@@ -13,8 +14,7 @@ type OverviewRevenueMetrics = Record<
 >;
 
 function returnOverviewRepairMetrics(
-  businessMetrics: BusinessMetric[],
-  storeLocationView: BusinessMetricStoreLocation,
+  repairMetricsDocument: RepairMetricsDocument,
   selectedYYYYMMDD: string,
   category: RepairMetricCategory,
 ) {
@@ -39,14 +39,7 @@ function returnOverviewRepairMetrics(
     string,
   ];
 
-  const repairMetrics = businessMetrics.find(
-    (bmetric) => bmetric.storeLocation === storeLocationView,
-  )?.repairMetrics;
-  if (repairMetrics === null || repairMetrics === undefined) {
-    return defaultValue;
-  }
-
-  const subMetrics = repairMetrics.find(
+  const subMetrics = repairMetricsDocument.repairMetrics.find(
     (repairMetric) => repairMetric.name === category,
   );
   if (subMetrics === null || subMetrics === undefined) {
