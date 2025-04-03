@@ -164,25 +164,6 @@ function RepairMetrics({
     return null;
   }
 
-  const repairMetricsHeader = (
-    <Group
-      h={windowWidth < MOBILE_BREAKPOINT
-        ? METRICS_HEADER_HEIGHT_MOBILE
-        : METRICS_HEADER_HEIGHT}
-      opacity={0.97}
-      px="md"
-      style={{
-        position: "sticky",
-        top: windowWidth < MOBILE_BREAKPOINT
-          ? DASHBOARD_HEADER_HEIGHT_MOBILE
-          : DASHBOARD_HEADER_HEIGHT,
-        zIndex: 3,
-        backgroundColor,
-      }}
-    >
-    </Group>
-  );
-
   const overviewMetrics = returnOverviewRepairMetrics(
     repairMetricsDocument,
     selectedYYYYMMDD,
@@ -231,9 +212,8 @@ function RepairMetrics({
   );
 
   const repairMetrics = (
-    <Stack w="100%">
+    <Stack w="100%" pos="relative">
       {loadingOverlay}
-      {repairMetricsHeader}
       {revenueUnitsSold}
     </Stack>
   );

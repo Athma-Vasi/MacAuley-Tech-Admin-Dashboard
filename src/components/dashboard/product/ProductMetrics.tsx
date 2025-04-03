@@ -1,27 +1,12 @@
-import {
-  Accordion,
-  Group,
-  Loader,
-  LoadingOverlay,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import {
-  COLORS_SWATCHES,
-  DASHBOARD_HEADER_HEIGHT,
-  DASHBOARD_HEADER_HEIGHT_MOBILE,
-  METRICS_HEADER_HEIGHT,
-  METRICS_HEADER_HEIGHT_MOBILE,
-  MOBILE_BREAKPOINT,
-} from "../../../constants";
+import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
 import { ProductMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type { BusinessMetricStoreLocation, Month, Year } from "../types";
 import { productMetricsAction } from "./actions";
@@ -31,35 +16,38 @@ import {
   createProductMetricsCharts,
   returnSelectedDateProductMetrics,
 } from "./chartsData";
-import {
-  PRODUCT_METRIC_CATEGORY_DATA,
-  PRODUCT_METRICS_SUB_CATEGORY_DATA,
-} from "./constants";
 import { productMetricsReducer } from "./reducers";
 import { RUS } from "./rus/RUS";
 import { initialProductMetricsState } from "./state";
+import { ProductMetricCategory, ProductSubMetric } from "./types";
 import {
   returnOverviewAllProductsMetrics,
   returnProductMetricsOverviewCards,
 } from "./utils";
 
 type ProductMetricsProps = {
+  productMetricCategory: ProductMetricCategory;
   productMetricsDocument: ProductMetricsDocument;
+  productSubMetricCategory: ProductSubMetric;
   selectedDate: string;
   selectedMonth: Month;
-  storeLocationView: BusinessMetricStoreLocation;
-  selectedYear: Year;
   selectedYYYYMMDD: string;
+  selectedYear: Year;
+  storeLocationView: BusinessMetricStoreLocation;
 };
 
-function ProductMetrics({
-  productMetricsDocument,
-  selectedDate,
-  selectedMonth,
-  selectedYYYYMMDD,
-  selectedYear,
-  storeLocationView,
-}: ProductMetricsProps) {
+function ProductMetrics(
+  {
+    productMetricCategory,
+    productMetricsDocument,
+    productSubMetricCategory,
+    selectedDate,
+    selectedMonth,
+    selectedYYYYMMDD,
+    selectedYear,
+    storeLocationView,
+  }: ProductMetricsProps,
+) {
   const [productMetricsState, productMetricsDispatch] = useReducer(
     productMetricsReducer,
     initialProductMetricsState,
@@ -69,8 +57,6 @@ function ProductMetrics({
     cards,
     charts,
     isGenerating,
-    productCategory,
-    subMetric,
   } = productMetricsState;
 
   const {
@@ -107,7 +93,7 @@ function ProductMetrics({
           day: selectedDate,
           month: selectedMonth,
           months: MONTHS,
-          selectedProductCategory: productCategory,
+          selectedProductCategory: productMetricCategory,
           year: selectedYear,
         });
 
@@ -119,7 +105,7 @@ function ProductMetrics({
         const productMetricsCharts = await createProductMetricsCharts({
           productMetricsDocument,
           months: MONTHS,
-          selectedProductCategory: productCategory,
+          selectedProductCategory: productMetricCategory,
           selectedDateProductMetrics,
         });
 
@@ -172,85 +158,15 @@ function ProductMetrics({
       isComponentMountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYYYYMMDD, storeLocationView, productCategory]);
+  }, [selectedYYYYMMDD, storeLocationView, productMetricCategory]);
 
   if (!productMetricsDocument || !cards || !charts) {
     return null;
   }
 
-  const subMetricSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
-        name: "Sub-metric",
-        parentDispatch: productMetricsDispatch,
-        validValueAction: productMetricsAction.setSubMetric,
-        value: subMetric,
-      }}
-    />
-  );
-
-  const productCategorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: PRODUCT_METRIC_CATEGORY_DATA,
-        name: "Products",
-        parentDispatch: productMetricsDispatch,
-        validValueAction: productMetricsAction.setProductCategory,
-        value: productCategory,
-      }}
-    />
-  );
-
-  const productMetricsHeader = (
-    <Group
-      h={METRICS_HEADER_HEIGHT}
-      opacity={0.97}
-      py="sm"
-      position="left"
-      style={{
-        position: "sticky",
-        top: DASHBOARD_HEADER_HEIGHT,
-        zIndex: 3,
-        backgroundColor,
-      }}
-    >
-      {subMetricSelectInput}
-      {productCategorySelectInput}
-    </Group>
-  );
-
-  const productMetricsHeaderAccordion = (
-    <Group
-      h={METRICS_HEADER_HEIGHT_MOBILE}
-      opacity={0.97}
-      py="sm"
-      style={{
-        position: "sticky",
-        top: DASHBOARD_HEADER_HEIGHT_MOBILE,
-        zIndex: 3,
-        backgroundColor,
-      }}
-    >
-      <Accordion bg={backgroundColor} w="100%">
-        <Accordion.Item value="Sub-metrics and Category">
-          <Accordion.Control>
-            <Text weight={500} size="md">Sub-metrics and Category</Text>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <Group w="100%" position="left" align="flex-end" spacing="xl">
-              {subMetricSelectInput}
-              {productCategorySelectInput}
-            </Group>
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
-    </Group>
-  );
-
   const overviewMetrics = returnOverviewAllProductsMetrics(
     productMetricsDocument,
-    productCategory,
+    productMetricCategory,
     selectedYYYYMMDD,
   );
 
@@ -269,11 +185,11 @@ function ProductMetrics({
         metricsView="Products"
         month={selectedYYYYMMDD.split("-")[1]}
         overviewCards={overviewCards[calendarView]}
-        productCategory={productCategory}
+        productCategory={productMetricCategory}
         productMetricsCards={cards}
         productMetricsCharts={charts}
         storeLocation={storeLocationView}
-        subMetric={subMetric}
+        subMetric={productSubMetricCategory}
         year={selectedYear}
       />
     </React.Fragment>
@@ -297,12 +213,8 @@ function ProductMetrics({
   );
 
   const productMetrics = (
-    <Stack w="100%">
+    <Stack w="100%" pos="relative">
       {loadingOverlay}
-
-      {windowWidth < MOBILE_BREAKPOINT
-        ? productMetricsHeaderAccordion
-        : productMetricsHeader}
       {revenueUnitsSold}
     </Stack>
   );

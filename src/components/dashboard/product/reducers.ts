@@ -33,11 +33,6 @@ const productMetricsReducers = new Map<
   [productMetricsAction.setCards, productMetricsReducer_setCards],
   [productMetricsAction.setCharts, productMetricsReducer_setCharts],
   [productMetricsAction.setIsGenerating, productMetricsReducer_setIsGenerating],
-  [
-    productMetricsAction.setProductCategory,
-    productMetricsReducer_setProductCategory,
-  ],
-  [productMetricsAction.setSubMetric, productMetricsReducer_setSubMetric],
 ]);
 
 function productMetricsReducer_setCalendarChartsData(
@@ -63,16 +58,6 @@ function productMetricsReducer_setCards(
   };
 }
 
-function productMetricsReducer_setSubMetric(
-  state: ProductMetricsState,
-  dispatch: ProductMetricsDispatch,
-): ProductMetricsState {
-  return {
-    ...state,
-    subMetric: dispatch.payload as ProductSubMetric,
-  };
-}
-
 function productMetricsReducer_setCharts(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
@@ -80,16 +65,6 @@ function productMetricsReducer_setCharts(
   return {
     ...state,
     charts: dispatch.payload as ProductMetricsCharts,
-  };
-}
-
-function productMetricsReducer_setProductCategory(
-  state: ProductMetricsState,
-  dispatch: ProductMetricsDispatch,
-): ProductMetricsState {
-  return {
-    ...state,
-    productCategory: dispatch.payload as ProductMetricCategory,
   };
 }
 
