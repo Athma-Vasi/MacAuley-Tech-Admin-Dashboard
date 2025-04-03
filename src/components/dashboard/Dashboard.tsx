@@ -40,9 +40,19 @@ import {
 } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
-import { MONTHS, STORE_LOCATION_VIEW_DATA } from "./constants";
+import {
+  MONTHS,
+  REPAIR_METRICS_DATA,
+  STORE_LOCATION_VIEW_DATA,
+} from "./constants";
+import { CUSTOMER_METRICS_CATEGORY_DATA } from "./customer/constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
+import { FINANCIAL_METRICS_CATEGORY_DATA } from "./financial/constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
+import {
+  PRODUCT_METRIC_CATEGORY_DATA,
+  PRODUCT_METRICS_SUB_CATEGORY_DATA,
+} from "./product/constants";
 import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
@@ -81,10 +91,15 @@ function Dashboard() {
   });
 
   const {
-    storeLocationView,
-    selectedYYYYMMDD,
+    customerMetricsCategory,
+    financialMetricCategory,
     isLoading,
     loadingMessage,
+    productMetricCategory,
+    productSubMetricCategory,
+    repairMetricCategory,
+    selectedYYYYMMDD,
+    storeLocationView,
   } = dashboardState;
 
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
@@ -324,12 +339,71 @@ function Dashboard() {
     />
   );
 
+  const repairMetricCategorySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: REPAIR_METRICS_DATA,
+        name: "repairs",
+        parentDispatch: dashboardDispatch,
+        validValueAction: dashboardAction.setRepairMetricCategory,
+        value: repairMetricCategory,
+      }}
+    />
+  );
+
+  const productSubMetricCategorySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
+        name: "product sub-metrics",
+        parentDispatch: dashboardDispatch,
+        validValueAction: dashboardAction.setProductSubMetricCategory,
+        value: productSubMetricCategory,
+      }}
+    />
+  );
+
+  const productMetricCategorySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: PRODUCT_METRIC_CATEGORY_DATA,
+        name: "product metrics",
+        parentDispatch: dashboardDispatch,
+        validValueAction: dashboardAction.setProductMetricCategory,
+        value: productMetricCategory,
+      }}
+    />
+  );
+
+  const financialMetricCategorySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: FINANCIAL_METRICS_CATEGORY_DATA,
+        name: "financial metrics",
+        parentDispatch: dashboardDispatch,
+        validValueAction: dashboardAction.setFinancialMetricCategory,
+        value: financialMetricCategory,
+      }}
+    />
+  );
+
+  const customerMetricCategorySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: CUSTOMER_METRICS_CATEGORY_DATA,
+        name: "customer metrics",
+        parentDispatch: dashboardDispatch,
+        validValueAction: dashboardAction.setCustomerMetricsCategory,
+        value: customerMetricsCategory,
+      }}
+    />
+  );
+
   const dashboardHeader = (
-    <Group
+    <Stack
       align="flex-end"
       h={DASHBOARD_HEADER_HEIGHT}
-      py="sm"
-      position="left"
+      p="md"
       style={{
         backgroundColor,
         position: "sticky",
@@ -339,9 +413,25 @@ function Dashboard() {
       spacing="xl"
       opacity={0.97}
     >
-      {storeLocationSelectInput}
-      {createdYYYYMMDDInput}
-    </Group>
+      <Group w="100%" position="left" align="flex-end" spacing="xl">
+        {storeLocationSelectInput}
+        {createdYYYYMMDDInput}
+      </Group>
+
+      <Group w="100%" position="left" align="flex-end" spacing="xl">
+        {metricsView === "products"
+          ? [
+            productMetricCategorySelectInput,
+            productSubMetricCategorySelectInput,
+          ]
+          : null}
+        {metricsView === "customers" ? customerMetricCategorySelectInput : null}
+        {metricsView === "financials"
+          ? financialMetricCategorySelectInput
+          : null}
+        {metricsView === "repairs" ? repairMetricCategorySelectInput : null}
+      </Group>
+    </Stack>
   );
 
   const dashboardHeaderAccordion = (

@@ -11,7 +11,11 @@ import type { DashboardState, Year } from "./types";
 // const initialSelectedYear = new Date().getFullYear().toString() as Year;
 
 const initialDashboardState: DashboardState = {
-  businessMetricsDocument: null,
+  productMetricCategory: "All Products",
+  productSubMetricCategory: "revenue",
+  repairMetricCategory: "All Repairs",
+  financialMetricCategory: "profit",
+  customerMetricsCategory: "new",
   storeLocationView: "All Locations",
   // selectedYYYYMMDD:
   //   `${initialSelectedYear}-${initialSelectedMonth}-${initialSelectedDate}`,

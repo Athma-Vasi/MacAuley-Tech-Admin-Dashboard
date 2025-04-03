@@ -164,18 +164,6 @@ function RepairMetrics({
     return null;
   }
 
-  const repairCategorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: REPAIR_METRICS_DATA,
-        name: "Repairs",
-        parentDispatch: repairMetricsDispatch,
-        validValueAction: repairMetricsAction.setRepairCategory,
-        value: repairCategory,
-      }}
-    />
-  );
-
   const repairMetricsHeader = (
     <Group
       h={windowWidth < MOBILE_BREAKPOINT
@@ -192,7 +180,6 @@ function RepairMetrics({
         backgroundColor,
       }}
     >
-      {repairCategorySelectInput}
     </Group>
   );
 

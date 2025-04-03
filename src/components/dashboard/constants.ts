@@ -1,4 +1,5 @@
 import type { CheckboxRadioSelectData } from "../../types";
+import { RepairMetricCategory } from "./repair/types";
 import type {
   BusinessMetricStoreLocation,
   ChartKindSegment,
@@ -97,7 +98,7 @@ const PRODUCT_METRICS_DATA: CheckboxRadioSelectData<DashboardProductMetric> = [
   })),
 ];
 
-const REPAIR_METRICS_DATA: CheckboxRadioSelectData<DashboardRepairMetric> = [
+const REPAIR_METRICS_DATA: CheckboxRadioSelectData<RepairMetricCategory> = [
   { label: "All Repairs", value: "All Repairs" },
   ...REPAIR_CATEGORIES.map((category) => ({
     label: category,
