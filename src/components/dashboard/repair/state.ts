@@ -8,7 +8,6 @@ const initialRepairMetricsState: RepairMetricsState = {
   cards: null,
   charts: null,
   isGenerating: false,
-  repairCategory: "All Repairs",
 };
 
 export { initialRepairMetricsState };

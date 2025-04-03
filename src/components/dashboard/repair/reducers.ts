@@ -5,7 +5,6 @@ import {
   RepairMetricCategory,
   RepairMetricsDispatch,
   RepairMetricsState,
-  RepairSubMetric,
 } from "./types";
 
 function repairMetricsReducer(
@@ -30,10 +29,6 @@ const repairMetricsReducers = new Map<
   [repairMetricsAction.setCards, repairMetricsReducer_setCards],
   [repairMetricsAction.setCharts, repairMetricsReducer_setCharts],
   [repairMetricsAction.setIsGenerating, repairMetricsReducer_setIsGenerating],
-  [
-    repairMetricsAction.setRepairCategory,
-    repairMetricsReducer_setRepairCategory,
-  ],
 ]);
 
 function repairMetricsReducer_setCalendarChartsData(
@@ -66,16 +61,6 @@ function repairMetricsReducer_setCharts(
   return {
     ...state,
     charts: dispatch.payload as RepairMetricsCharts,
-  };
-}
-
-function repairMetricsReducer_setRepairCategory(
-  state: RepairMetricsState,
-  dispatch: RepairMetricsDispatch,
-): RepairMetricsState {
-  return {
-    ...state,
-    repairCategory: dispatch.payload as RepairMetricCategory,
   };
 }
 

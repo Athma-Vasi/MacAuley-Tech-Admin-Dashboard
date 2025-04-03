@@ -14,7 +14,6 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
 import { RepairMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type { BusinessMetricStoreLocation, Month, Year } from "../types";
 import { repairMetricsAction } from "./actions";
@@ -24,16 +23,17 @@ import {
   createRepairMetricsCharts,
   returnSelectedDateRepairMetrics,
 } from "./chartsData";
-import { REPAIR_METRICS_DATA } from "./constants";
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
+import { RepairMetricCategory } from "./types";
 import {
   createOverviewRepairMetricsCards,
   returnOverviewRepairMetrics,
 } from "./utils";
 
 type RepairMetricsProps = {
+  repairMetricCategory: RepairMetricCategory;
   repairMetricsDocument: RepairMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
@@ -43,6 +43,7 @@ type RepairMetricsProps = {
 };
 
 function RepairMetrics({
+  repairMetricCategory,
   repairMetricsDocument,
   selectedDate,
   selectedMonth,
@@ -59,7 +60,6 @@ function RepairMetrics({
     cards,
     charts,
     isGenerating,
-    repairCategory,
   } = repairMetricsState;
 
   const {
@@ -95,7 +95,7 @@ function RepairMetrics({
           day: selectedDate,
           month: selectedMonth,
           months: MONTHS,
-          selectedRepairCategory: repairCategory,
+          selectedRepairCategory: repairMetricCategory,
           year: selectedYear,
         });
 
@@ -105,7 +105,7 @@ function RepairMetrics({
         const repairMetricsCharts = await createRepairMetricsCharts({
           repairMetricsDocument,
           months: MONTHS,
-          selectedRepairCategory: repairCategory,
+          selectedRepairCategory: repairMetricCategory,
           selectedDateRepairMetrics,
         });
 
@@ -158,7 +158,7 @@ function RepairMetrics({
       isComponentMountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYYYYMMDD, storeLocationView, repairCategory]);
+  }, [selectedYYYYMMDD, storeLocationView, repairMetricCategory]);
 
   if (!repairMetricsDocument || !cards || !charts) {
     return null;
@@ -186,7 +186,7 @@ function RepairMetrics({
   const overviewMetrics = returnOverviewRepairMetrics(
     repairMetricsDocument,
     selectedYYYYMMDD,
-    repairCategory,
+    repairMetricCategory,
   );
 
   const overviewCards = createOverviewRepairMetricsCards({
@@ -203,7 +203,7 @@ function RepairMetrics({
         day={selectedDate}
         metricsView="Repairs"
         month={selectedYYYYMMDD.split("-")[1]}
-        repairCategory={repairCategory}
+        repairCategory={repairMetricCategory}
         repairMetricsCards={cards}
         repairMetricsCharts={charts}
         repairOverviewCards={overviewCards[calendarView]}
