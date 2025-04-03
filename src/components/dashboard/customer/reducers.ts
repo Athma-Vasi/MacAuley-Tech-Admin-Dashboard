@@ -30,7 +30,6 @@ const customerMetricsReducers = new Map<
     customerMetricsReducer_setCalendarChartsData,
   ],
   [customerMetricsAction.setCards, customerMetricsReducer_setCards],
-  [customerMetricsAction.setCategory, customerMetricsReducer_setCategory],
   [customerMetricsAction.setCharts, customerMetricsReducer_setCharts],
   [
     customerMetricsAction.setIsGenerating,
@@ -58,16 +57,6 @@ function customerMetricsReducer_setCards(
   return {
     ...state,
     cards: dispatch.payload as CustomerMetricsCards,
-  };
-}
-
-function customerMetricsReducer_setCategory(
-  state: CustomerMetricsState,
-  dispatch: CustomerMetricsDispatch,
-): CustomerMetricsState {
-  return {
-    ...state,
-    category: dispatch.payload as CustomerMetricsCategory,
   };
 }
 

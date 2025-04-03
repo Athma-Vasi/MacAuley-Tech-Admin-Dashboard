@@ -1,7 +1,6 @@
 type CustomerMetricsAction = {
   setCalendarChartsData: "setCalendarChartsData";
   setCards: "setCards";
-  setCategory: "setCategory";
   setCharts: "setCharts";
   setIsGenerating: "setIsGenerating";
 };
@@ -9,7 +8,6 @@ type CustomerMetricsAction = {
 const customerMetricsAction: CustomerMetricsAction = {
   setCalendarChartsData: "setCalendarChartsData",
   setCards: "setCards",
-  setCategory: "setCategory",
   setCharts: "setCharts",
   setIsGenerating: "setIsGenerating",
 };

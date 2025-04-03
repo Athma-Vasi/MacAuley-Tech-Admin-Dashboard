@@ -1,20 +1,12 @@
-import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import {
-  COLORS_SWATCHES,
-  DASHBOARD_HEADER_HEIGHT,
-  DASHBOARD_HEADER_HEIGHT_MOBILE,
-  METRICS_HEADER_HEIGHT,
-  METRICS_HEADER_HEIGHT_MOBILE,
-  MOBILE_BREAKPOINT,
-} from "../../../constants";
+import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
 import { CustomerMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type { BusinessMetricStoreLocation, Month, Year } from "../types";
 import { customerMetricsAction } from "./actions";
@@ -25,17 +17,18 @@ import {
   returnSelectedDateCustomerMetrics,
 } from "./chartsData";
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
-import { CUSTOMER_METRICS_CATEGORY_DATA } from "./constants";
 import New from "./new/New";
 import { customerMetricsReducer } from "./reducers";
 import Returning from "./returning/Returning";
 import { initialCustomerMetricsState } from "./state";
+import { CustomerMetricsCategory } from "./types";
 import {
   returnCustomerMetricsOverviewCards,
   returnOverviewCustomerMetrics,
 } from "./utils";
 
 type CustomerMetricsProps = {
+  customerMetricsCategory: CustomerMetricsCategory;
   customerMetricsDocument: CustomerMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
@@ -44,19 +37,22 @@ type CustomerMetricsProps = {
   selectedYYYYMMDD: string;
 };
 
-function CustomerMetrics({
-  customerMetricsDocument,
-  selectedDate,
-  selectedMonth,
-  selectedYYYYMMDD,
-  selectedYear,
-  storeLocationView,
-}: CustomerMetricsProps) {
+function CustomerMetrics(
+  {
+    customerMetricsCategory,
+    customerMetricsDocument,
+    selectedDate,
+    selectedMonth,
+    selectedYYYYMMDD,
+    selectedYear,
+    storeLocationView,
+  }: CustomerMetricsProps,
+) {
   const [customerMetricsState, customerMetricsDispatch] = useReducer(
     customerMetricsReducer,
     initialCustomerMetricsState,
   );
-  const { calendarChartsData, cards, category, charts, isGenerating } =
+  const { calendarChartsData, cards, charts, isGenerating } =
     customerMetricsState;
 
   const {
@@ -161,41 +157,6 @@ function CustomerMetrics({
     return null;
   }
 
-  const categorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: CUSTOMER_METRICS_CATEGORY_DATA,
-        name: "Sub-metric",
-        parentDispatch: customerMetricsDispatch,
-        validValueAction: customerMetricsAction.setCategory,
-        value: category,
-      }}
-    />
-  );
-
-  const customerMetricsHeader = (
-    <Group
-      h={windowWidth < MOBILE_BREAKPOINT
-        ? METRICS_HEADER_HEIGHT_MOBILE
-        : METRICS_HEADER_HEIGHT}
-      opacity={0.97}
-      position="apart"
-      px="md"
-      style={{
-        position: "sticky",
-        top: windowWidth < MOBILE_BREAKPOINT
-          ? DASHBOARD_HEADER_HEIGHT_MOBILE
-          : DASHBOARD_HEADER_HEIGHT,
-        zIndex: 3,
-        backgroundColor,
-        // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
-        outline: "1px solid blue",
-      }}
-    >
-      {categorySelectInput}
-    </Group>
-  );
-
   const overviewMetrics = returnOverviewCustomerMetrics(
     customerMetricsDocument,
     selectedYYYYMMDD,
@@ -217,7 +178,7 @@ function CustomerMetrics({
         customerMetricsCharts={charts}
         day={selectedDate}
         month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={category}
+        metricCategory={customerMetricsCategory}
         metricsView="Customers"
         newOverviewCards={newOverviewCards[calendarView]}
         storeLocation={storeLocationView}
@@ -238,7 +199,7 @@ function CustomerMetrics({
         customerMetricsCharts={charts}
         day={selectedDate}
         month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={category}
+        metricCategory={customerMetricsCategory}
         metricsView="Customers"
         returningOverviewCards={returningOverviewCards[calendarView]}
         storeLocation={storeLocationView}
@@ -257,7 +218,7 @@ function CustomerMetrics({
         customerMetricsCharts={charts}
         day={selectedDate}
         month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={category}
+        metricCategory={customerMetricsCategory}
         metricsView="Customers"
         storeLocation={storeLocationView}
         year={selectedYear}
@@ -283,12 +244,11 @@ function CustomerMetrics({
   );
 
   const customerMetrics = (
-    <Stack w="100%">
+    <Stack w="100%" pos="relative">
       {loadingOverlay}
-      {customerMetricsHeader}
-      {category === "new"
+      {customerMetricsCategory === "new"
         ? newCustomers
-        : category === "returning"
+        : customerMetricsCategory === "returning"
         ? returningCustomers
         : churnRetention}
     </Stack>

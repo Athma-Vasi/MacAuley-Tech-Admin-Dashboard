@@ -6,7 +6,6 @@ const initialCustomerMetricsState: CustomerMetricsState = {
     previousYear: null,
   },
   cards: null,
-  category: "new",
   charts: null,
   isGenerating: false,
 };

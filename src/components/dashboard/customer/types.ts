@@ -13,7 +13,6 @@ type CustomerMetricsState = {
     previousYear: CustomerMetricsCalendarCharts | null;
   };
   cards: CustomerMetricsCards | null;
-  category: CustomerMetricsCategory;
   charts: CustomerMetricsCharts | null;
   isGenerating: boolean;
 };
@@ -29,10 +28,6 @@ type CustomerMetricsDispatch =
   | {
     action: CustomerMetricsAction["setCards"];
     payload: CustomerMetricsCards;
-  }
-  | {
-    action: CustomerMetricsAction["setCategory"];
-    payload: CustomerMetricsCategory;
   }
   | {
     action: CustomerMetricsAction["setCharts"];
