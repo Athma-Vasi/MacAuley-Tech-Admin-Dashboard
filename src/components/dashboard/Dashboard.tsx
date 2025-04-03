@@ -21,23 +21,15 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { useParams } from "react-router-dom";
-import { authAction } from "../../context/authProvider";
 import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import {
-  BusinessMetricsDocument,
   CustomerMetricsDocument,
   FinancialMetricsDocument,
-  HttpServerResponse,
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
-import {
-  decodeJWTSafe,
-  fetchSafe,
-  responseToJSONSafe,
-  returnThemeColors,
-} from "../../utils";
+import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
@@ -106,157 +98,16 @@ function Dashboard() {
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
-    fetchAbortControllerRef.current?.abort("Previous request cancelled");
-    fetchAbortControllerRef.current = new AbortController();
-    const fetchAbortController = fetchAbortControllerRef.current;
-
-    isComponentMountedRef.current = true;
-    const isComponentMounted = isComponentMountedRef.current;
-
-    async function fetchMetrics() {
-      const url =
-        `http://localhost:5000/api/v1/metrics/${metricsView}/?&storeLocation[$eq]=${storeLocationView}`;
-
-      const requestInit: RequestInit = {
-        method: "GET",
-        signal: fetchAbortController.signal,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-
-      dashboardDispatch({
-        action: dashboardAction.setIsLoading,
-        payload: true,
-      });
-
-      try {
-        const responseResult = await fetchSafe(url, requestInit);
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (responseResult.err) {
-          showBoundary(responseResult.val.data);
-          return;
-        }
-
-        const responseUnwrapped = responseResult.safeUnwrap().data;
-
-        if (responseUnwrapped === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        const jsonResult = await responseToJSONSafe<
-          HttpServerResponse<BusinessMetricsDocument>
-        >(
-          responseUnwrapped,
-        );
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (jsonResult.err) {
-          showBoundary(jsonResult.val.data);
-          return;
-        }
-
-        const serverResponse = jsonResult.safeUnwrap().data;
-
-        if (serverResponse === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        const { accessToken } = serverResponse;
-
-        const decodedTokenResult = await decodeJWTSafe(accessToken);
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (decodedTokenResult.err) {
-          showBoundary(decodedTokenResult.val.data);
-          return;
-        }
-
-        const decodedToken = decodedTokenResult.safeUnwrap().data;
-        if (decodedToken === undefined) {
-          showBoundary(new Error("Invalid token"));
-          return;
-        }
-
-        authDispatch({
-          action: authAction.setAccessToken,
-          payload: accessToken,
-        });
-        authDispatch({
-          action: authAction.setDecodedToken,
-          payload: decodedToken,
-        });
-
-        if (metricsView === "financials") {
-          globalDispatch({
-            action: globalAction.setFinancialMetricsDocument,
-            payload: serverResponse.data[0] as FinancialMetricsDocument,
-          });
-        }
-
-        if (metricsView === "products") {
-          globalDispatch({
-            action: globalAction.setProductMetricsDocument,
-            payload: serverResponse.data[0] as ProductMetricsDocument,
-          });
-        }
-
-        if (metricsView === "customers") {
-          globalDispatch({
-            action: globalAction.setCustomerMetricsDocument,
-            payload: serverResponse.data[0] as CustomerMetricsDocument,
-          });
-        }
-
-        if (metricsView === "repairs") {
-          globalDispatch({
-            action: globalAction.setRepairMetricsDocument,
-            payload: serverResponse.data[0] as RepairMetricsDocument,
-          });
-        }
-
-        console.group("fetchMetrics");
-        console.log("serverResponse", serverResponse);
-        console.groupEnd();
-
-        dashboardDispatch({
-          action: dashboardAction.setIsLoading,
-          payload: false,
-        });
-      } catch (error: unknown) {
-        if (
-          !isComponentMounted || fetchAbortController?.signal.aborted
-        ) {
-          return;
-        }
-        showBoundary(error);
-      }
-    }
-
-    fetchMetrics();
-
     const timerId = setTimeout(() => {
-      fetchAbortController?.abort("Request timed out");
+      fetchAbortControllerRef?.current?.abort("Request timed out");
     }, FETCH_REQUEST_TIMEOUT);
 
     return () => {
       clearTimeout(timerId);
-      fetchAbortController?.abort("Component unmounted");
+      fetchAbortControllerRef?.current?.abort("Component unmounted");
       isComponentMountedRef.current = false;
     };
-  }, [storeLocationView, metricsView]);
+  }, []);
 
   const displayLoadingOverlay = (
     <LoadingOverlay
@@ -466,6 +317,7 @@ function Dashboard() {
   const displayMetricsView = metricsView === "financials"
     ? (
       <FinancialMetrics
+        financialMetricCategory={financialMetricCategory}
         financialMetricsDocument={financialMetricsDocument as FinancialMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
@@ -477,6 +329,7 @@ function Dashboard() {
     : metricsView === "customers"
     ? (
       <CustomerMetrics
+        customerMetricsCategory={customerMetricsCategory}
         customerMetricsDocument={customerMetricsDocument as CustomerMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
@@ -488,7 +341,9 @@ function Dashboard() {
     : metricsView === "products"
     ? (
       <ProductMetrics
+        productMetricCategory={productMetricCategory}
         productMetricsDocument={productMetricsDocument as ProductMetricsDocument}
+        productSubMetricCategory={productSubMetricCategory}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         selectedYYYYMMDD={selectedYYYYMMDD}
@@ -498,6 +353,7 @@ function Dashboard() {
     )
     : (
       <RepairMetrics
+        repairMetricCategory={repairMetricCategory}
         repairMetricsDocument={repairMetricsDocument as RepairMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}

@@ -6,15 +6,34 @@ import {
   standardDeviation,
 } from "simple-statistics";
 
-import type { StoreLocation } from "../../types";
-import { splitCamelCase, toFixedFloat } from "../../utils";
+import { authAction } from "../../context/authProvider";
+import { AuthDispatch } from "../../context/authProvider/types";
+import { globalAction } from "../../context/globalProvider/actions";
+import { GlobalDispatch } from "../../context/globalProvider/types";
+import type {
+  BusinessMetricsDocument,
+  CustomerMetricsDocument,
+  FinancialMetricsDocument,
+  HttpServerResponse,
+  ProductMetricsDocument,
+  RepairMetricsDocument,
+  StoreLocation,
+} from "../../types";
+import {
+  decodeJWTSafe,
+  fetchSafe,
+  responseToJSONSafe,
+  splitCamelCase,
+  toFixedFloat,
+} from "../../utils";
 import type { BarChartData } from "../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
+import { dashboardAction } from "./actions";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
 import { FinancialMetricCategory } from "./financial/types";
-import { ProductSubMetric } from "./product/types";
-import { RepairSubMetric } from "./repair/types";
+import { ProductMetricCategory, ProductSubMetric } from "./product/types";
+import { RepairMetricCategory, RepairSubMetric } from "./repair/types";
 import type {
   BusinessMetric,
   BusinessMetricStoreLocation,
@@ -24,6 +43,7 @@ import type {
   CustomerYearlyMetric,
   DailyFinancialMetric,
   DashboardCalendarView,
+  DashboardDispatch,
   DashboardMetricsView,
   DaysInMonthsInYears,
   FinancialMetricCategories,
@@ -3863,6 +3883,177 @@ function returnSelectedCalendarCharts<
     : defaultValue;
 }
 
+async function handleMetricCategorySelectInputClick(
+  {
+    accessToken,
+    authDispatch,
+    dashboardDispatch,
+    fetchAbortControllerRef,
+    globalDispatch,
+    isComponentMountedRef,
+    metricCategory,
+    metricsView,
+    showBoundary,
+    storeLocationView,
+    url,
+  }: {
+    accessToken: string;
+    authDispatch: React.Dispatch<AuthDispatch>;
+    dashboardDispatch: React.Dispatch<DashboardDispatch>;
+    fetchAbortControllerRef: React.RefObject<AbortController | null>;
+    globalDispatch: React.Dispatch<GlobalDispatch>;
+    isComponentMountedRef: React.RefObject<boolean>;
+    metricCategory:
+      | ProductMetricCategory
+      | FinancialMetricCategory
+      | RepairMetricCategory
+      | CustomerMetricsCategory;
+    metricsView: Lowercase<DashboardMetricsView>;
+    showBoundary: (error: any) => void;
+    storeLocationView: BusinessMetricStoreLocation;
+    url: URL;
+  },
+) {
+  fetchAbortControllerRef.current?.abort("Previous request cancelled");
+  fetchAbortControllerRef.current = new AbortController();
+  const fetchAbortController = fetchAbortControllerRef.current;
+
+  isComponentMountedRef.current = true;
+  const isComponentMounted = isComponentMountedRef.current;
+
+  const requestInit: RequestInit = {
+    method: "GET",
+    signal: fetchAbortController.signal,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  dashboardDispatch({
+    action: dashboardAction.setIsLoading,
+    payload: true,
+  });
+
+  dashboardDispatch({
+    action: dashboardAction.setIsLoading,
+    payload: true,
+  });
+
+  try {
+    const responseResult = await fetchSafe(url, requestInit);
+    if (!isComponentMounted) {
+      return;
+    }
+
+    if (responseResult.err) {
+      showBoundary(responseResult.val.data);
+      return;
+    }
+
+    const responseUnwrapped = responseResult.safeUnwrap().data;
+
+    if (responseUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return;
+    }
+
+    const jsonResult = await responseToJSONSafe<
+      HttpServerResponse<BusinessMetricsDocument>
+    >(
+      responseUnwrapped,
+    );
+
+    if (!isComponentMounted) {
+      return;
+    }
+
+    if (jsonResult.err) {
+      showBoundary(jsonResult.val.data);
+      return;
+    }
+
+    const serverResponse = jsonResult.safeUnwrap().data;
+
+    if (serverResponse === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return;
+    }
+
+    const { accessToken } = serverResponse;
+
+    const decodedTokenResult = await decodeJWTSafe(accessToken);
+
+    if (!isComponentMounted) {
+      return;
+    }
+
+    if (decodedTokenResult.err) {
+      showBoundary(decodedTokenResult.val.data);
+      return;
+    }
+
+    const decodedToken = decodedTokenResult.safeUnwrap().data;
+    if (decodedToken === undefined) {
+      showBoundary(new Error("Invalid token"));
+      return;
+    }
+
+    authDispatch({
+      action: authAction.setAccessToken,
+      payload: accessToken,
+    });
+    authDispatch({
+      action: authAction.setDecodedToken,
+      payload: decodedToken,
+    });
+
+    if (metricsView === "financials") {
+      globalDispatch({
+        action: globalAction.setFinancialMetricsDocument,
+        payload: serverResponse.data[0] as FinancialMetricsDocument,
+      });
+    }
+
+    if (metricsView === "products") {
+      globalDispatch({
+        action: globalAction.setProductMetricsDocument,
+        payload: serverResponse.data[0] as ProductMetricsDocument,
+      });
+    }
+
+    if (metricsView === "customers") {
+      globalDispatch({
+        action: globalAction.setCustomerMetricsDocument,
+        payload: serverResponse.data[0] as CustomerMetricsDocument,
+      });
+    }
+
+    if (metricsView === "repairs") {
+      globalDispatch({
+        action: globalAction.setRepairMetricsDocument,
+        payload: serverResponse.data[0] as RepairMetricsDocument,
+      });
+    }
+
+    console.group("fetchMetrics");
+    console.log("serverResponse", serverResponse);
+    console.groupEnd();
+
+    dashboardDispatch({
+      action: dashboardAction.setIsLoading,
+      payload: false,
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMounted || fetchAbortController?.signal.aborted
+    ) {
+      return;
+    }
+    showBoundary(error);
+  }
+}
+
 export {
   createAggregatedProductMetrics,
   createAggregatedRepairMetrics,
@@ -3880,6 +4071,7 @@ export {
   createRandomRepairMetrics,
   createRepairCategoryUnitsRepairedRevenueTuple,
   excludeTodayFromCalendarView,
+  handleMetricCategorySelectInputClick,
   returnChartTitleNavigateLinks,
   returnChartTitles,
   returnDaysInMonthsInYears,
