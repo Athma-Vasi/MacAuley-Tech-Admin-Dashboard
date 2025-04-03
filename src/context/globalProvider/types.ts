@@ -14,15 +14,21 @@ import type { PieChartData } from "../../components/charts/responsivePieChart/ty
 import type { RadialBarChartData } from "../../components/charts/responsiveRadialBarChart/types";
 import type { SunburstChartData } from "../../components/charts/responsiveSunburstChart/types";
 import type { ChartUnitKind } from "../../components/charts/types";
-import { DashboardCalendarView } from "../../components/dashboard/types";
-import type { GlobalAction } from "./actions";
+import { CustomerMetricsCategory } from "../../components/dashboard/customer/types";
+import { FinancialMetricCategory } from "../../components/dashboard/financial/types";
+import { ProductSubMetric } from "../../components/dashboard/product/types";
+import { RepairMetricCategory } from "../../components/dashboard/repair/types";
 import {
-  BusinessMetricsDocument,
+  DashboardCalendarView,
+  ProductCategory,
+} from "../../components/dashboard/types";
+import {
   CustomerMetricsDocument,
   FinancialMetricsDocument,
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
+import type { GlobalAction } from "./actions";
 
 type ColorScheme = "light" | "dark";
 type Shade = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -130,6 +136,11 @@ type ExpandSunburstChartData = CustomizeChartsData & {
 type ChartKind = "bar" | "calendar" | "line" | "pie" | "radial" | "sunburst";
 
 type GlobalState = {
+  productMetricCategory: ProductCategory | "All Products";
+  productSubMetricCategory: ProductSubMetric;
+  repairMetricCategory: RepairMetricCategory;
+  financialMetricCategory: FinancialMetricCategory;
+  customerMetricsCategory: CustomerMetricsCategory;
   financialMetricsDocument: FinancialMetricsDocument | null;
   productMetricsDocument: ProductMetricsDocument | null;
   customerMetricsDocument: CustomerMetricsDocument | null;
@@ -148,6 +159,26 @@ type GlobalState = {
 };
 
 type GlobalDispatch =
+  | {
+    action: GlobalAction["setProductMetricCategory"];
+    payload: ProductCategory | "All Products";
+  }
+  | {
+    action: GlobalAction["setProductSubMetricCategory"];
+    payload: ProductSubMetric;
+  }
+  | {
+    action: GlobalAction["setRepairMetricCategory"];
+    payload: RepairMetricCategory;
+  }
+  | {
+    action: GlobalAction["setFinancialMetricCategory"];
+    payload: FinancialMetricCategory;
+  }
+  | {
+    action: GlobalAction["setCustomerMetricsCategory"];
+    payload: CustomerMetricsCategory;
+  }
   | {
     action: GlobalAction["setFinancialMetricsDocument"];
     payload: FinancialMetricsDocument;

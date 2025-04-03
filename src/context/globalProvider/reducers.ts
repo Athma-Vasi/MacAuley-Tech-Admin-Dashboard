@@ -1,4 +1,11 @@
 import { MantineColor } from "@mantine/core";
+import { CustomerMetricsCategory } from "../../components/dashboard/customer/types";
+import { FinancialMetricCategory } from "../../components/dashboard/financial/types";
+import {
+  ProductMetricCategory,
+  ProductSubMetric,
+} from "../../components/dashboard/product/types";
+import { RepairMetricCategory } from "../../components/dashboard/repair/types";
 import {
   CustomerMetricsDocument,
   FinancialMetricsDocument,
@@ -32,6 +39,26 @@ const globalReducersMap = new Map<
   GlobalAction[keyof GlobalAction],
   (state: GlobalState, dispatch: GlobalDispatch) => GlobalState
 >([
+  [
+    globalAction.setProductMetricCategory,
+    globalReducer_setProductMetricCategory,
+  ],
+  [
+    globalAction.setProductSubMetricCategory,
+    globalReducer_setProductSubMetricCategory,
+  ],
+  [
+    globalAction.setRepairMetricCategory,
+    globalReducer_setRepairMetricCategory,
+  ],
+  [
+    globalAction.setFinancialMetricCategory,
+    globalReducer_setFinancialMetricCategory,
+  ],
+  [
+    globalAction.setCustomerMetricsCategory,
+    globalReducer_setCustomerMetricsCategory,
+  ],
   [
     globalAction.setFinancialMetricsDocument,
     globalReducer_setFinancialMetricsDocument,
@@ -84,6 +111,56 @@ const globalReducersMap = new Map<
   ],
   [globalAction.setSelectedChartKind, globalReducer_setSelectedChartKind],
 ]);
+
+function globalReducer_setProductMetricCategory(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    productMetricCategory: dispatch.payload as ProductMetricCategory,
+  };
+}
+
+function globalReducer_setProductSubMetricCategory(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    productSubMetricCategory: dispatch.payload as ProductSubMetric,
+  };
+}
+
+function globalReducer_setRepairMetricCategory(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    repairMetricCategory: dispatch.payload as RepairMetricCategory,
+  };
+}
+
+function globalReducer_setFinancialMetricCategory(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    financialMetricCategory: dispatch.payload as FinancialMetricCategory,
+  };
+}
+
+function globalReducer_setCustomerMetricsCategory(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    customerMetricsCategory: dispatch.payload as CustomerMetricsCategory,
+  };
+}
 
 function globalReducer_setFinancialMetricsDocument(
   state: GlobalState,

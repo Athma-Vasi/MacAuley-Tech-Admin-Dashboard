@@ -1,4 +1,4 @@
-import type { DashboardState, Year } from "./types";
+import type { DashboardState } from "./types";
 
 // const initialSelectedDate = (new Date().getDate()).toString().padStart(
 //   2,
@@ -11,11 +11,6 @@ import type { DashboardState, Year } from "./types";
 // const initialSelectedYear = new Date().getFullYear().toString() as Year;
 
 const initialDashboardState: DashboardState = {
-  productMetricCategory: "All Products",
-  productSubMetricCategory: "revenue",
-  repairMetricCategory: "All Repairs",
-  financialMetricCategory: "profit",
-  customerMetricsCategory: "new",
   storeLocationView: "All Locations",
   // selectedYYYYMMDD:
   //   `${initialSelectedYear}-${initialSelectedMonth}-${initialSelectedDate}`,

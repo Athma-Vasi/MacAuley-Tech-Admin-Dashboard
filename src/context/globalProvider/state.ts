@@ -33,6 +33,11 @@ const initialThemeObject: ThemeObject = {
 };
 
 const initialGlobalState: GlobalState = {
+  productMetricCategory: "All Products",
+  productSubMetricCategory: "revenue",
+  repairMetricCategory: "All Repairs",
+  financialMetricCategory: "profit",
+  customerMetricsCategory: "new",
   financialMetricsDocument: null,
   productMetricsDocument: null,
   customerMetricsDocument: null,

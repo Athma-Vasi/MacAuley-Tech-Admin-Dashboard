@@ -1,9 +1,4 @@
 type DashboardAction = {
-  setProductMetricCategory: "setProductMetricCategory";
-  setProductSubMetricCategory: "setProductSubMetricCategory";
-  setRepairMetricCategory: "setRepairMetricCategory";
-  setFinancialMetricCategory: "setFinancialMetricCategory";
-  setCustomerMetricsCategory: "setCustomerMetricsCategory";
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
   setStoreLocationView: "setStoreLocationView";
   setIsLoading: "setIsLoading";
@@ -11,11 +6,6 @@ type DashboardAction = {
 };
 
 const dashboardAction: DashboardAction = {
-  setProductMetricCategory: "setProductMetricCategory",
-  setProductSubMetricCategory: "setProductSubMetricCategory",
-  setRepairMetricCategory: "setRepairMetricCategory",
-  setFinancialMetricCategory: "setFinancialMetricCategory",
-  setCustomerMetricsCategory: "setCustomerMetricsCategory",
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
   setStoreLocationView: "setStoreLocationView",
   setIsLoading: "setIsLoading",

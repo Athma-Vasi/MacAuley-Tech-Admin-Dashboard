@@ -1,4 +1,9 @@
 type GlobalAction = {
+  setProductMetricCategory: "setProductMetricCategory";
+  setProductSubMetricCategory: "setProductSubMetricCategory";
+  setRepairMetricCategory: "setRepairMetricCategory";
+  setFinancialMetricCategory: "setFinancialMetricCategory";
+  setCustomerMetricsCategory: "setCustomerMetricsCategory";
   setFinancialMetricsDocument: "setFinancialMetricsDocument";
   setProductMetricsDocument: "setProductMetricsDocument";
   setCustomerMetricsDocument: "setCustomerMetricsDocument";
@@ -23,6 +28,11 @@ type GlobalAction = {
 };
 
 const globalAction: GlobalAction = {
+  setProductMetricCategory: "setProductMetricCategory",
+  setProductSubMetricCategory: "setProductSubMetricCategory",
+  setRepairMetricCategory: "setRepairMetricCategory",
+  setFinancialMetricCategory: "setFinancialMetricCategory",
+  setCustomerMetricsCategory: "setCustomerMetricsCategory",
   setFinancialMetricsDocument: "setFinancialMetricsDocument",
   setProductMetricsDocument: "setProductMetricsDocument",
   setCustomerMetricsDocument: "setCustomerMetricsDocument",

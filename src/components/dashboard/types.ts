@@ -1,9 +1,5 @@
 import type { StoreLocation } from "../../types";
 import type { DashboardAction } from "./actions";
-import { CustomerMetricsCategory } from "./customer/types";
-import { FinancialMetricCategory } from "./financial/types";
-import { ProductSubMetric } from "./product/types";
-import { RepairMetricCategory } from "./repair/types";
 
 type DashboardCalendarView = "Daily" | "Monthly" | "Yearly";
 type DashboardMetricsView = "Financials" | "Customers" | "Products" | "Repairs";
@@ -22,11 +18,6 @@ type DashboardProductMetric = ProductCategory | "All Products";
 type DashboardRepairMetric = RepairCategory | "All Repairs";
 
 type DashboardState = {
-  productMetricCategory: ProductCategory | "All Products";
-  productSubMetricCategory: ProductSubMetric;
-  repairMetricCategory: RepairMetricCategory;
-  financialMetricCategory: FinancialMetricCategory;
-  customerMetricsCategory: CustomerMetricsCategory;
   selectedYYYYMMDD: string;
   storeLocationView: BusinessMetricStoreLocation;
   isLoading: boolean;
@@ -34,26 +25,6 @@ type DashboardState = {
 };
 
 type DashboardDispatch =
-  | {
-    action: DashboardAction["setProductMetricCategory"];
-    payload: ProductCategory | "All Products";
-  }
-  | {
-    action: DashboardAction["setProductSubMetricCategory"];
-    payload: ProductSubMetric;
-  }
-  | {
-    action: DashboardAction["setRepairMetricCategory"];
-    payload: RepairMetricCategory;
-  }
-  | {
-    action: DashboardAction["setFinancialMetricCategory"];
-    payload: FinancialMetricCategory;
-  }
-  | {
-    action: DashboardAction["setCustomerMetricsCategory"];
-    payload: CustomerMetricsCategory;
-  }
   | {
     action: DashboardAction["setStoreLocationView"];
     payload: BusinessMetricStoreLocation;

@@ -19,13 +19,13 @@ import {
   COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
   INPUT_WIDTH,
+  LOGIN_URL,
 } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
-import { LOGIN_URL } from "./constants";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
 import { handleLoginButtonClick } from "./utils";

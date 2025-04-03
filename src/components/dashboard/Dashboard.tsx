@@ -15,6 +15,7 @@ import {
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
   FETCH_REQUEST_TIMEOUT,
+  METRICS_URL,
   MOBILE_BREAKPOINT,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
@@ -49,7 +50,11 @@ import { ProductMetrics } from "./product/ProductMetrics";
 import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
-import { splitSelectedCalendarDate } from "./utils";
+import { DashboardMetricsView } from "./types";
+import {
+  handleMetricCategorySelectInputClick,
+  splitSelectedCalendarDate,
+} from "./utils";
 
 function Dashboard() {
   const [dashboardState, dashboardDispatch] = useReducer(
@@ -61,6 +66,11 @@ function Dashboard() {
 
   const {
     globalState: {
+      customerMetricsCategory,
+      financialMetricCategory,
+      productMetricCategory,
+      productSubMetricCategory,
+      repairMetricCategory,
       customerMetricsDocument,
       financialMetricsDocument,
       productMetricsDocument,
@@ -83,13 +93,8 @@ function Dashboard() {
   });
 
   const {
-    customerMetricsCategory,
-    financialMetricCategory,
     isLoading,
     loadingMessage,
-    productMetricCategory,
-    productSubMetricCategory,
-    repairMetricCategory,
     selectedYYYYMMDD,
     storeLocationView,
   } = dashboardState;
@@ -132,6 +137,12 @@ function Dashboard() {
   console.group("Dashboard");
   console.log("storeLocationView", storeLocationView);
   console.log("metricsView", metricsView);
+  console.log("productMetricCategory", productMetricCategory);
+  console.log("productSubMetricCategory", productSubMetricCategory);
+  console.log("repairMetricCategory", repairMetricCategory);
+  console.log("financialMetricCategory", financialMetricCategory);
+  console.log("customerMetricsCategory", customerMetricsCategory);
+  console.log("selectedYYYYMMDD", selectedYYYYMMDD);
   console.log("financialMetricsDocument", financialMetricsDocument);
   console.log("productMetricsDocument", productMetricsDocument);
   console.log("customerMetricsDocument", customerMetricsDocument);
@@ -183,6 +194,40 @@ function Dashboard() {
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
         name: "storeLocation",
+        onChange: (event: React.ChangeEvent<HTMLSelectElement>) => {
+          event.preventDefault();
+          const metricCategory = metricsView === "products"
+            ? productMetricCategory
+            : metricsView === "customers"
+            ? customerMetricsCategory
+            : metricsView === "financials"
+            ? financialMetricCategory
+            : repairMetricCategory;
+
+          const url = new URL(
+            `${METRICS_URL}/${metricsView}/?&storeLocation[$eq]=${event.currentTarget.value}&productMetricCategory[$eq]=${metricCategory}&year[$eq]=${
+              selectedYYYYMMDD.split("-")[0]
+            }${
+              productSubMetricCategory
+                ? `&productSubMetricCategory[$eq]=${productSubMetricCategory}`
+                : ""
+            }`,
+          );
+
+          handleMetricCategorySelectInputClick({
+            accessToken,
+            authDispatch,
+            dashboardDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            metricCategory,
+            metricsView: metricsView as Lowercase<DashboardMetricsView>,
+            showBoundary,
+            storeLocationView,
+            url,
+          });
+        },
         parentDispatch: dashboardDispatch,
         validValueAction: dashboardAction.setStoreLocationView,
         value: storeLocationView,
@@ -195,8 +240,8 @@ function Dashboard() {
       attributes={{
         data: REPAIR_METRICS_DATA,
         name: "repairs",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setRepairMetricCategory,
+        parentDispatch: globalDispatch,
+        validValueAction: globalAction.setRepairMetricCategory,
         value: repairMetricCategory,
       }}
     />
@@ -207,8 +252,8 @@ function Dashboard() {
       attributes={{
         data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
         name: "product sub-metrics",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setProductSubMetricCategory,
+        parentDispatch: globalDispatch,
+        validValueAction: globalAction.setProductSubMetricCategory,
         value: productSubMetricCategory,
       }}
     />
@@ -219,8 +264,8 @@ function Dashboard() {
       attributes={{
         data: PRODUCT_METRIC_CATEGORY_DATA,
         name: "product metrics",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setProductMetricCategory,
+        parentDispatch: globalDispatch,
+        validValueAction: globalAction.setProductMetricCategory,
         value: productMetricCategory,
       }}
     />
@@ -231,8 +276,8 @@ function Dashboard() {
       attributes={{
         data: FINANCIAL_METRICS_CATEGORY_DATA,
         name: "financial metrics",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setFinancialMetricCategory,
+        parentDispatch: globalDispatch,
+        validValueAction: globalAction.setFinancialMetricCategory,
         value: financialMetricCategory,
       }}
     />
@@ -243,8 +288,8 @@ function Dashboard() {
       attributes={{
         data: CUSTOMER_METRICS_CATEGORY_DATA,
         name: "customer metrics",
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setCustomerMetricsCategory,
+        parentDispatch: globalDispatch,
+        validValueAction: globalAction.setCustomerMetricsCategory,
         value: customerMetricsCategory,
       }}
     />
