@@ -30,7 +30,6 @@ const financialMetricsReducers = new Map<
     financialMetricsReducer_setCalendarCharts,
   ],
   [financialMetricsAction.setCards, financialMetricsReducer_setCards],
-  [financialMetricsAction.setCategory, financialMetricsReducer_setCategory],
   [financialMetricsAction.setCharts, financialMetricsReducer_setCharts],
   [
     financialMetricsAction.setIsGenerating,
@@ -58,16 +57,6 @@ function financialMetricsReducer_setCards(
   return {
     ...state,
     cards: dispatch.payload as FinancialMetricsCards,
-  };
-}
-
-function financialMetricsReducer_setCategory(
-  state: FinancialMetricsState,
-  dispatch: FinancialMetricsDispatch,
-): FinancialMetricsState {
-  return {
-    ...state,
-    category: dispatch.payload as FinancialMetricCategory,
   };
 }
 

@@ -6,7 +6,6 @@ const initialFinancialMetricsState: FinancialMetricsState = {
     previousYear: null,
   },
   cards: null,
-  category: "profit",
   charts: null,
   isGenerating: false,
 };

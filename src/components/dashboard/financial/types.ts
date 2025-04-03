@@ -18,7 +18,6 @@ type FinancialMetricsState = {
     previousYear: FinancialMetricsCalendarCharts | null;
   };
   cards: FinancialMetricsCards | null;
-  category: FinancialMetricCategory;
   charts: FinancialMetricsCharts | null;
   isGenerating: boolean;
 };
@@ -34,10 +33,6 @@ type FinancialMetricsDispatch =
   | {
     action: FinancialMetricsAction["setCards"];
     payload: FinancialMetricsCards;
-  }
-  | {
-    action: FinancialMetricsAction["setCategory"];
-    payload: FinancialMetricCategory;
   }
   | {
     action: FinancialMetricsAction["setCharts"];

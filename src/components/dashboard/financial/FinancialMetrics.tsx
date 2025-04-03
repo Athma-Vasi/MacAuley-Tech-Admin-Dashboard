@@ -1,21 +1,13 @@
-import { Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import React from "react";
-import {
-  COLORS_SWATCHES,
-  DASHBOARD_HEADER_HEIGHT,
-  DASHBOARD_HEADER_HEIGHT_MOBILE,
-  METRICS_HEADER_HEIGHT,
-  METRICS_HEADER_HEIGHT_MOBILE,
-  MOBILE_BREAKPOINT,
-} from "../../../constants";
+import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
 import type { BusinessMetricStoreLocation, Month, Year } from "../types";
 import { financialMetricsAction } from "./actions";
@@ -25,17 +17,19 @@ import {
   createFinancialMetricsCharts,
   returnSelectedDateFinancialMetrics,
 } from "./chartsData";
-import { FINANCIAL_METRICS_CATEGORY_DATA, PERT_SET } from "./constants";
+import { PERT_SET } from "./constants";
 import OtherMetrics from "./otherMetrics/OtherMetrics";
 import PERT from "./pert/PERT";
 import { financialMetricsReducer } from "./reducers";
 import { initialFinancialMetricsState } from "./state";
+import { FinancialMetricCategory } from "./types";
 import {
   returnFinancialMetricsOverviewCards,
   returnOverviewFinancialMetrics,
 } from "./utils";
 
 type FinancialMetricsProps = {
+  financialMetricCategory: FinancialMetricCategory;
   financialMetricsDocument: FinancialMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
@@ -44,19 +38,22 @@ type FinancialMetricsProps = {
   selectedYYYYMMDD: string;
 };
 
-function FinancialMetrics({
-  financialMetricsDocument,
-  selectedDate,
-  selectedMonth,
-  selectedYYYYMMDD,
-  selectedYear,
-  storeLocationView,
-}: FinancialMetricsProps) {
+function FinancialMetrics(
+  {
+    financialMetricCategory,
+    financialMetricsDocument,
+    selectedDate,
+    selectedMonth,
+    selectedYYYYMMDD,
+    selectedYear,
+    storeLocationView,
+  }: FinancialMetricsProps,
+) {
   const [financialMetricsState, financialMetricsDispatch] = useReducer(
     financialMetricsReducer,
     initialFinancialMetricsState,
   );
-  const { cards, category, charts, calendarChartsData, isGenerating } =
+  const { cards, charts, calendarChartsData, isGenerating } =
     financialMetricsState;
 
   const {
@@ -166,40 +163,6 @@ function FinancialMetrics({
     return null;
   }
 
-  const categorySelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIAL_METRICS_CATEGORY_DATA,
-        name: "category",
-        parentDispatch: financialMetricsDispatch,
-        validValueAction: financialMetricsAction.setCategory,
-        value: category,
-      }}
-    />
-  );
-
-  const financialMetricsHeader = (
-    <Group
-      align="center"
-      h={windowWidth < MOBILE_BREAKPOINT
-        ? METRICS_HEADER_HEIGHT_MOBILE
-        : METRICS_HEADER_HEIGHT}
-      px="md"
-      style={{
-        position: "sticky",
-        top: windowWidth < MOBILE_BREAKPOINT
-          ? DASHBOARD_HEADER_HEIGHT_MOBILE
-          : DASHBOARD_HEADER_HEIGHT,
-        zIndex: 3,
-        backgroundColor,
-        // boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
-      }}
-      opacity={0.97}
-    >
-      {categorySelectInput}
-    </Group>
-  );
-
   const overviewMetrics = returnOverviewFinancialMetrics(
     financialMetricsDocument,
     storeLocationView,
@@ -213,7 +176,7 @@ function FinancialMetrics({
       storeLocationView,
     });
 
-  const subCategoryPage = PERT_SET.has(category)
+  const subCategoryPage = PERT_SET.has(financialMetricCategory)
     ? (
       CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
         <React.Fragment key={idx}>
@@ -224,7 +187,7 @@ function FinancialMetrics({
             financialMetricsCharts={charts}
             day={selectedDate}
             month={selectedYYYYMMDD.split("-")[1]}
-            metricCategory={category}
+            metricCategory={financialMetricCategory}
             metricsView="Financials"
             pertOverviewCards={pertOverviewCards[calendarView]}
             storeLocation={storeLocationView}
@@ -243,7 +206,7 @@ function FinancialMetrics({
             financialMetricsCharts={charts}
             day={selectedDate}
             month={selectedYYYYMMDD.split("-")[1]}
-            metricCategory={category}
+            metricCategory={financialMetricCategory}
             metricsView="Financials"
             otherMetricsOverviewCards={otherMetricsOverviewCards[calendarView]}
             storeLocation={storeLocationView}
@@ -271,9 +234,8 @@ function FinancialMetrics({
   );
 
   const financialMetrics = (
-    <Stack>
+    <Stack w="100%" pos="relative">
       {loadingOverlay}
-      {financialMetricsHeader}
       {subCategoryPage}
     </Stack>
   );
