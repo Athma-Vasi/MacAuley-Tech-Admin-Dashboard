@@ -14,12 +14,14 @@ import {
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
+  FETCH_REQUEST_TIMEOUT,
   MOBILE_BREAKPOINT,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { useParams } from "react-router-dom";
+import { authAction } from "../../context/authProvider";
 import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import {
@@ -30,7 +32,12 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
-import { fetchSafe, responseToJSONSafe, returnThemeColors } from "../../utils";
+import {
+  decodeJWTSafe,
+  fetchSafe,
+  responseToJSONSafe,
+  returnThemeColors,
+} from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import { MONTHS, STORE_LOCATION_VIEW_DATA } from "./constants";
@@ -51,11 +58,17 @@ function Dashboard() {
   const { windowWidth } = useWindowSize();
 
   const {
-    globalState: { themeObject },
+    globalState: {
+      customerMetricsDocument,
+      financialMetricsDocument,
+      productMetricsDocument,
+      repairMetricsDocument,
+      themeObject,
+    },
     globalDispatch,
   } = useGlobalState();
 
-  const { authState: { accessToken } } = useAuth();
+  const { authState: { accessToken }, authDispatch } = useAuth();
 
   const { metricsView } = useParams();
 
@@ -68,20 +81,19 @@ function Dashboard() {
   });
 
   const {
-    businessMetricsDocument,
     storeLocationView,
     selectedYYYYMMDD,
     isLoading,
     loadingMessage,
   } = dashboardState;
 
-  // const fetchAbortControllerRef = useRef<AbortController | null>(null);
+  const fetchAbortControllerRef = useRef<AbortController | null>(null);
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
-    // fetchAbortControllerRef.current?.abort("Previous request cancelled");
-    // fetchAbortControllerRef.current = new AbortController();
-    // const fetchAbortController = fetchAbortControllerRef.current;
+    fetchAbortControllerRef.current?.abort("Previous request cancelled");
+    fetchAbortControllerRef.current = new AbortController();
+    const fetchAbortController = fetchAbortControllerRef.current;
 
     isComponentMountedRef.current = true;
     const isComponentMounted = isComponentMountedRef.current;
@@ -92,12 +104,17 @@ function Dashboard() {
 
       const requestInit: RequestInit = {
         method: "GET",
-        // signal: fetchAbortController.signal,
+        signal: fetchAbortController.signal,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
       };
+
+      dashboardDispatch({
+        action: dashboardAction.setIsLoading,
+        payload: true,
+      });
 
       try {
         const responseResult = await fetchSafe(url, requestInit);
@@ -139,128 +156,92 @@ function Dashboard() {
           return;
         }
 
-        dashboardDispatch({
-          action: dashboardAction.setBusinessMetricsDocument,
-          payload: serverResponse.data[0],
+        const { accessToken } = serverResponse;
+
+        const decodedTokenResult = await decodeJWTSafe(accessToken);
+
+        if (!isComponentMounted) {
+          return;
+        }
+
+        if (decodedTokenResult.err) {
+          showBoundary(decodedTokenResult.val.data);
+          return;
+        }
+
+        const decodedToken = decodedTokenResult.safeUnwrap().data;
+        if (decodedToken === undefined) {
+          showBoundary(new Error("Invalid token"));
+          return;
+        }
+
+        authDispatch({
+          action: authAction.setAccessToken,
+          payload: accessToken,
         });
+        authDispatch({
+          action: authAction.setDecodedToken,
+          payload: decodedToken,
+        });
+
+        if (metricsView === "financials") {
+          globalDispatch({
+            action: globalAction.setFinancialMetricsDocument,
+            payload: serverResponse.data[0] as FinancialMetricsDocument,
+          });
+        }
+
+        if (metricsView === "products") {
+          globalDispatch({
+            action: globalAction.setProductMetricsDocument,
+            payload: serverResponse.data[0] as ProductMetricsDocument,
+          });
+        }
+
+        if (metricsView === "customers") {
+          globalDispatch({
+            action: globalAction.setCustomerMetricsDocument,
+            payload: serverResponse.data[0] as CustomerMetricsDocument,
+          });
+        }
+
+        if (metricsView === "repairs") {
+          globalDispatch({
+            action: globalAction.setRepairMetricsDocument,
+            payload: serverResponse.data[0] as RepairMetricsDocument,
+          });
+        }
 
         console.group("fetchMetrics");
         console.log("serverResponse", serverResponse);
         console.groupEnd();
+
+        dashboardDispatch({
+          action: dashboardAction.setIsLoading,
+          payload: false,
+        });
       } catch (error: unknown) {
-        // if (
-        //   !isComponentMounted || fetchAbortController?.signal.aborted
-        // ) {
-        //   return;
-        // }
+        if (
+          !isComponentMounted || fetchAbortController?.signal.aborted
+        ) {
+          return;
+        }
         showBoundary(error);
       }
     }
 
     fetchMetrics();
 
-    // const timerId = setTimeout(() => {
-    //   fetchAbortController?.abort("Request timed out");
-    // }, FETCH_REQUEST_TIMEOUT);
+    const timerId = setTimeout(() => {
+      fetchAbortController?.abort("Request timed out");
+    }, FETCH_REQUEST_TIMEOUT);
 
     return () => {
-      // clearTimeout(timerId);
-      // fetchAbortController?.abort("Component unmounted");
+      clearTimeout(timerId);
+      fetchAbortController?.abort("Component unmounted");
       isComponentMountedRef.current = false;
     };
-  }, []);
-
-  useEffect(() => {
-    // fetchAbortControllerRef.current?.abort("Previous request cancelled");
-    // fetchAbortControllerRef.current = new AbortController();
-    // const fetchAbortController = fetchAbortControllerRef.current;
-
-    isComponentMountedRef.current = true;
-    const isComponentMounted = isComponentMountedRef.current;
-
-    async function fetchMetrics() {
-      const url =
-        `http://localhost:5000/api/v1/metrics/${metricsView}/?&storeLocation[$eq]=${storeLocationView}`;
-
-      const requestInit: RequestInit = {
-        method: "GET",
-        // signal: fetchAbortController.signal,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-
-      try {
-        const responseResult = await fetchSafe(url, requestInit);
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (responseResult.err) {
-          showBoundary(responseResult.val.data);
-          return;
-        }
-
-        const responseUnwrapped = responseResult.safeUnwrap().data;
-
-        if (responseUnwrapped === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        const jsonResult = await responseToJSONSafe<
-          HttpServerResponse<BusinessMetricsDocument>
-        >(
-          responseUnwrapped,
-        );
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (jsonResult.err) {
-          showBoundary(jsonResult.val.data);
-          return;
-        }
-
-        const serverResponse = jsonResult.safeUnwrap().data;
-
-        if (serverResponse === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        dashboardDispatch({
-          action: dashboardAction.setBusinessMetricsDocument,
-          payload: serverResponse.data[0],
-        });
-
-        console.group("fetchMetrics");
-        console.log("serverResponse", serverResponse);
-        console.groupEnd();
-      } catch (error: unknown) {
-        // if (
-        //   !isComponentMounted || fetchAbortController?.signal.aborted
-        // ) {
-        //   return;
-        // }
-        showBoundary(error);
-      }
-    }
-
-    fetchMetrics();
-
-    // const timerId = setTimeout(() => {
-    //   fetchAbortController?.abort("Request timed out");
-    // }, FETCH_REQUEST_TIMEOUT);
-
-    return () => {
-      // clearTimeout(timerId);
-      // fetchAbortController?.abort("Component unmounted");
-      isComponentMountedRef.current = false;
-    };
-  }, [storeLocationView]);
+  }, [storeLocationView, metricsView]);
 
   const displayLoadingOverlay = (
     <LoadingOverlay
@@ -273,14 +254,22 @@ function Dashboard() {
     />
   );
 
-  if (
-    businessMetricsDocument === null || businessMetricsDocument === undefined
-  ) {
-    return displayLoadingOverlay;
-  }
+  // if (
+  //   (metricsView === "financials" && financialMetricsDocument === null) ||
+  //   (metricsView === "products" && productMetricsDocument === null) ||
+  //   (metricsView === "customers" && customerMetricsDocument === null) ||
+  //   (metricsView === "repairs" && repairMetricsDocument === null)
+  // ) {
+  //   return displayLoadingOverlay;
+  // }
 
   console.group("Dashboard");
-  console.log("businessMetricsDocument", businessMetricsDocument);
+  console.log("storeLocationView", storeLocationView);
+  console.log("metricsView", metricsView);
+  console.log("financialMetricsDocument", financialMetricsDocument);
+  console.log("productMetricsDocument", productMetricsDocument);
+  console.log("customerMetricsDocument", customerMetricsDocument);
+  console.log("repairMetricsDocument", repairMetricsDocument);
   console.groupEnd();
 
   const { selectedDate, selectedMonth, selectedYear } =
@@ -387,7 +376,7 @@ function Dashboard() {
   const displayMetricsView = metricsView === "financials"
     ? (
       <FinancialMetrics
-        financialMetricsDocument={businessMetricsDocument as FinancialMetricsDocument}
+        financialMetricsDocument={financialMetricsDocument as FinancialMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         storeLocationView={storeLocationView}
@@ -398,7 +387,7 @@ function Dashboard() {
     : metricsView === "customers"
     ? (
       <CustomerMetrics
-        customerMetricsDocument={businessMetricsDocument as CustomerMetricsDocument}
+        customerMetricsDocument={customerMetricsDocument as CustomerMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         storeLocationView={storeLocationView}
@@ -409,7 +398,7 @@ function Dashboard() {
     : metricsView === "products"
     ? (
       <ProductMetrics
-        productMetricsDocument={businessMetricsDocument as ProductMetricsDocument}
+        productMetricsDocument={productMetricsDocument as ProductMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         selectedYYYYMMDD={selectedYYYYMMDD}
@@ -419,7 +408,7 @@ function Dashboard() {
     )
     : (
       <RepairMetrics
-        repairMetricsDocument={businessMetricsDocument as RepairMetricsDocument}
+        repairMetricsDocument={repairMetricsDocument as RepairMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
         selectedYYYYMMDD={selectedYYYYMMDD}
@@ -429,7 +418,7 @@ function Dashboard() {
     );
 
   const dashboard = (
-    <Stack w="100%" py="sm">
+    <Stack w="100%" py="sm" pos="relative">
       {displayLoadingOverlay}
       <Stack align="flex-start" spacing={2} bg={backgroundColor} px="md">
         <Title order={1}>DASHBOARD</Title>

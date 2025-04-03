@@ -1,15 +1,3 @@
-import type {
-  Country,
-  Department,
-  JobPosition,
-  PhoneNumber,
-  PostalCode,
-  PreferredPronouns,
-  Province,
-  SetPageInErrorPayload,
-  StatesUS,
-  StoreLocation,
-} from "../../types";
 import { registerAction } from "./actions";
 import type { RegisterAction, RegisterDispatch, RegisterState } from "./types";
 
@@ -32,7 +20,6 @@ const registerReducers = new Map<
   [registerAction.setIsSubmitting, registerReducer_setIsSubmitting],
   [registerAction.setIsSuccessful, registerReducer_setIsSuccessful],
   [registerAction.setPassword, registerReducer_setPassword],
-  [registerAction.setTriggerFormSubmit, registerReducer_setTriggerFormSubmit],
   [registerAction.setUsername, registerReducer_setUsername],
 ]);
 
@@ -82,13 +69,6 @@ function registerReducer_setPassword(
   dispatch: RegisterDispatch,
 ): RegisterState {
   return { ...state, password: dispatch.payload as string };
-}
-
-function registerReducer_setTriggerFormSubmit(
-  state: RegisterState,
-  dispatch: RegisterDispatch,
-): RegisterState {
-  return { ...state, triggerFormSubmit: dispatch.payload as boolean };
 }
 
 function registerReducer_setUsername(

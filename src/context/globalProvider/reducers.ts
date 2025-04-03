@@ -1,4 +1,10 @@
 import { MantineColor } from "@mantine/core";
+import {
+  CustomerMetricsDocument,
+  FinancialMetricsDocument,
+  ProductMetricsDocument,
+  RepairMetricsDocument,
+} from "../../types";
 import { type GlobalAction, globalAction } from "./actions";
 import type {
   ChartKind,
@@ -26,6 +32,22 @@ const globalReducersMap = new Map<
   GlobalAction[keyof GlobalAction],
   (state: GlobalState, dispatch: GlobalDispatch) => GlobalState
 >([
+  [
+    globalAction.setFinancialMetricsDocument,
+    globalReducer_setFinancialMetricsDocument,
+  ],
+  [
+    globalAction.setProductMetricsDocument,
+    globalReducer_setProductMetricsDocument,
+  ],
+  [
+    globalAction.setCustomerMetricsDocument,
+    globalReducer_setCustomerMetricsDocument,
+  ],
+  [
+    globalAction.setRepairMetricsDocument,
+    globalReducer_setRepairMetricsDocument,
+  ],
   [globalAction.setColorScheme, globalReducer_setColorScheme],
   [
     globalAction.setSelectedYYYYMMDD,
@@ -62,6 +84,46 @@ const globalReducersMap = new Map<
   ],
   [globalAction.setSelectedChartKind, globalReducer_setSelectedChartKind],
 ]);
+
+function globalReducer_setFinancialMetricsDocument(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    financialMetricsDocument: dispatch.payload as FinancialMetricsDocument,
+  };
+}
+
+function globalReducer_setProductMetricsDocument(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    productMetricsDocument: dispatch.payload as ProductMetricsDocument,
+  };
+}
+
+function globalReducer_setCustomerMetricsDocument(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    customerMetricsDocument: dispatch.payload as CustomerMetricsDocument,
+  };
+}
+
+function globalReducer_setRepairMetricsDocument(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    repairMetricsDocument: dispatch.payload as RepairMetricsDocument,
+  };
+}
 
 function globalReducer_setColorScheme(
   state: GlobalState,

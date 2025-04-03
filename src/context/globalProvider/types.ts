@@ -16,6 +16,13 @@ import type { SunburstChartData } from "../../components/charts/responsiveSunbur
 import type { ChartUnitKind } from "../../components/charts/types";
 import { DashboardCalendarView } from "../../components/dashboard/types";
 import type { GlobalAction } from "./actions";
+import {
+  BusinessMetricsDocument,
+  CustomerMetricsDocument,
+  FinancialMetricsDocument,
+  ProductMetricsDocument,
+  RepairMetricsDocument,
+} from "../../types";
 
 type ColorScheme = "light" | "dark";
 type Shade = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -123,6 +130,10 @@ type ExpandSunburstChartData = CustomizeChartsData & {
 type ChartKind = "bar" | "calendar" | "line" | "pie" | "radial" | "sunburst";
 
 type GlobalState = {
+  financialMetricsDocument: FinancialMetricsDocument | null;
+  productMetricsDocument: ProductMetricsDocument | null;
+  customerMetricsDocument: CustomerMetricsDocument | null;
+  repairMetricsDocument: RepairMetricsDocument | null;
   expandBarChartData: ExpandBarChartData | null;
   expandCalendarChartData: ExpandCalendarChartData | null;
   expandLineChartData: ExpandLineChartData | null;
@@ -137,6 +148,22 @@ type GlobalState = {
 };
 
 type GlobalDispatch =
+  | {
+    action: GlobalAction["setFinancialMetricsDocument"];
+    payload: FinancialMetricsDocument;
+  }
+  | {
+    action: GlobalAction["setProductMetricsDocument"];
+    payload: ProductMetricsDocument;
+  }
+  | {
+    action: GlobalAction["setCustomerMetricsDocument"];
+    payload: CustomerMetricsDocument;
+  }
+  | {
+    action: GlobalAction["setRepairMetricsDocument"];
+    payload: RepairMetricsDocument;
+  }
   | {
     action: GlobalAction["setPrefersReducedMotion"];
     payload: boolean;

@@ -15,8 +15,7 @@ import { useErrorBoundary } from "react-error-boundary";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { HttpServerResponse, UserDocument, UserSchema } from "../../types";
-import { fetchSafe, responseToJSONSafe, returnThemeColors } from "../../utils";
+import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordInput";
 import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
@@ -24,6 +23,7 @@ import { registerAction } from "./actions";
 import { REGISTER_URL } from "./constants";
 import { registerReducer } from "./reducers";
 import { initialRegisterState } from "./state";
+import { handleRegisterButtonClick } from "./utils";
 
 function Register() {
   const [registerState, registerDispatch] = useReducer(
@@ -39,7 +39,6 @@ function Register() {
     isSubmitting,
     isSuccessful,
     password,
-    triggerFormSubmit,
     username,
   } = registerState;
 
@@ -49,157 +48,22 @@ function Register() {
 
   const { showBoundary } = useErrorBoundary();
 
-  // const [
-  //   openedSubmitFormModal,
-  //   { open: openSubmitFormModal, close: closeSubmitFormModal },
-  // ] = useDisclosure(false);
-
-  // const [openedErrorModal, { open: openErrorModal, close: closeErrorModal }] =
-  //   useDisclosure(false);
-
   const navigateFn = useNavigate();
 
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
-    fetchAbortControllerRef.current?.abort("Previous request cancelled");
-    fetchAbortControllerRef.current = new AbortController();
-    const fetchAbortController = fetchAbortControllerRef.current;
-
-    isComponentMountedRef.current = true;
-    const isComponentMounted = isComponentMountedRef.current;
-
-    async function handleRegisterFormSubmit() {
-      const schema: UserSchema = {
-        email,
-        password,
-        roles: ["Employee"],
-        username,
-      };
-
-      const url = REGISTER_URL;
-
-      const requestInit: RequestInit = {
-        body: JSON.stringify({ schema }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        mode: "cors",
-        signal: fetchAbortController.signal,
-      };
-
-      registerDispatch({
-        action: registerAction.setIsSubmitting,
-        payload: true,
-      });
-
-      try {
-        const responseResult = await fetchSafe(url, requestInit);
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (responseResult.err) {
-          showBoundary(responseResult.val.data);
-          return;
-        }
-
-        const responseUnwrapped = responseResult.safeUnwrap().data;
-
-        if (responseUnwrapped === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        const jsonResult = await responseToJSONSafe<
-          HttpServerResponse<UserDocument>
-        >(
-          responseUnwrapped,
-        );
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (jsonResult.err) {
-          showBoundary(jsonResult.val.data);
-          return;
-        }
-
-        const serverResponse = jsonResult.safeUnwrap().data;
-
-        if (serverResponse === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        if (serverResponse.kind === "error") {
-          registerDispatch({
-            action: registerAction.setIsSubmitting,
-            payload: false,
-          });
-          registerDispatch({
-            action: registerAction.setIsError,
-            payload: true,
-          });
-          registerDispatch({
-            action: registerAction.setErrorMessage,
-            payload: serverResponse.message,
-          });
-          navigateFn("/register");
-          return;
-        }
-
-        registerDispatch({
-          action: registerAction.setIsSubmitting,
-          payload: false,
-        });
-        registerDispatch({
-          action: registerAction.setIsSuccessful,
-          payload: true,
-        });
-        registerDispatch({
-          action: registerAction.setIsError,
-          payload: false,
-        });
-        registerDispatch({
-          action: registerAction.setErrorMessage,
-          payload: "",
-        });
-        registerDispatch({
-          action: registerAction.setTriggerFormSubmit,
-          payload: false,
-        });
-
-        navigateFn("/");
-      } catch (error: unknown) {
-        if (
-          !isComponentMounted || fetchAbortController.signal.aborted
-        ) {
-          return;
-        }
-        showBoundary(error);
-      }
-    }
-
-    if (triggerFormSubmit) {
-      handleRegisterFormSubmit();
-    }
-
     const timerId = setTimeout(() => {
-      fetchAbortController?.abort("Request timed out");
+      fetchAbortControllerRef?.current?.abort("Request timed out");
     }, FETCH_REQUEST_TIMEOUT);
 
     return () => {
       clearTimeout(timerId);
-      fetchAbortController?.abort("Component unmounted");
+      fetchAbortControllerRef?.current?.abort("Component unmounted");
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [triggerFormSubmit]);
+  }, []);
 
   const usernameTextInput = (
     <AccessibleTextInput
@@ -253,11 +117,7 @@ function Register() {
 
   const isButtonDisabled = !username || !email || !password ||
     !confirmPassword ||
-    isError || triggerFormSubmit;
-
-  console.log("registerState", registerState);
-
-  console.log("isButtonDisabled", isButtonDisabled);
+    isError;
 
   const submitButton = (
     <AccessibleButton
@@ -269,9 +129,9 @@ function Register() {
           : "Please fix errors before registering.",
         disabled: isButtonDisabled,
         kind: "submit",
-        leftIcon: isSubmitting ? <Loader /> : null,
+        leftIcon: isSubmitting ? <Loader size="xs" /> : null,
         name: "submit",
-        onClick: (_event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
           if (password !== confirmPassword) {
             registerDispatch({
               action: registerAction.setIsError,
@@ -284,9 +144,20 @@ function Register() {
             return;
           }
 
-          registerDispatch({
-            action: registerAction.setTriggerFormSubmit,
-            payload: true,
+          await handleRegisterButtonClick({
+            fetchAbortControllerRef,
+            isComponentMountedRef,
+            navigateFn,
+            navigateTo: "/login",
+            registerDispatch,
+            schema: {
+              username,
+              email,
+              password,
+              roles: ["Employee"],
+            },
+            showBoundary,
+            url: REGISTER_URL,
           });
         },
       }}
@@ -299,23 +170,6 @@ function Register() {
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
-
-  // const submitSuccessModal = (
-  //   <NotificationModal
-  //     onCloseCallbacks={[closeSubmitFormModal]}
-  //     opened={openedSubmitFormModal}
-  //     notificationProps={{ isLoading: isSubmitting }}
-  //     withCloseButton={false}
-  //   />
-  // );
-
-  // const errorNotificationModal = (
-  //   <NotificationModal
-  //     onCloseCallbacks={[closeErrorModal]}
-  //     opened={openedErrorModal}
-  //     notificationProps={{ isLoading: isError, text: errorMessage }}
-  //   />
-  // );
 
   const linkToLogin = (
     <Flex align="center" justify="center" columnGap="sm">
@@ -392,9 +246,6 @@ function Register() {
     >
       {displayTitle}
       {card}
-
-      {/* {submitSuccessModal} */}
-      {/* {errorNotificationModal} */}
     </Stack>
   );
 }

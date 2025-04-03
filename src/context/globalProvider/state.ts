@@ -33,6 +33,10 @@ const initialThemeObject: ThemeObject = {
 };
 
 const initialGlobalState: GlobalState = {
+  financialMetricsDocument: null,
+  productMetricsDocument: null,
+  customerMetricsDocument: null,
+  repairMetricsDocument: null,
   expandBarChartData: null,
   expandCalendarChartData: null,
   expandLineChartData: null,

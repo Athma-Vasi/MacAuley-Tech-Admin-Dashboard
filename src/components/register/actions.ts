@@ -6,7 +6,6 @@ type RegisterAction = {
   setIsSubmitting: "setIsSubmitting";
   setIsSuccessful: "setIsSuccessful";
   setPassword: "setPassword";
-  setTriggerFormSubmit: "setTriggerFormSubmit";
   setUsername: "setUsername";
 };
 
@@ -18,7 +17,6 @@ const registerAction: RegisterAction = {
   setIsSubmitting: "setIsSubmitting",
   setIsSuccessful: "setIsSuccessful",
   setPassword: "setPassword",
-  setTriggerFormSubmit: "setTriggerFormSubmit",
   setUsername: "setUsername",
 };
 

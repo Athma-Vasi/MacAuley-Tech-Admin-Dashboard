@@ -4,6 +4,7 @@ import {
   Flex,
   Group,
   Image,
+  Loader,
   PasswordInput,
   Stack,
   Text,
@@ -19,21 +20,15 @@ import {
   FETCH_REQUEST_TIMEOUT,
   INPUT_WIDTH,
 } from "../../constants";
-import { authAction } from "../../context/authProvider";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import type { HttpServerResponse, UserDocument } from "../../types";
-import {
-  decodeJWTSafe,
-  fetchSafe,
-  responseToJSONSafe,
-  returnThemeColors,
-} from "../../utils";
+import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
 import { LOGIN_URL } from "./constants";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
+import { handleLoginButtonClick } from "./utils";
 
 function Login() {
   const [loginState, loginDispatch] = useReducer(
@@ -45,24 +40,16 @@ function Login() {
     isSubmitting,
     isSuccessful,
     password,
-    triggerFormSubmit,
     username,
   } = loginState;
 
   const { authDispatch } = useAuth();
   const {
     globalState: { themeObject },
+    globalDispatch,
   } = useGlobalState();
-  const navigate = useNavigate();
+  const navigateFn = useNavigate();
   const { showBoundary } = useErrorBoundary();
-
-  // const [
-  //   openedSubmitFormModal,
-  //   {
-  //     open: openSubmitFormModal,
-  //     close: closeSubmitFormModal,
-  //   },
-  // ] = useDisclosure(false);
 
   const usernameRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -73,148 +60,16 @@ function Login() {
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
-    fetchAbortControllerRef.current?.abort("Previous request cancelled");
-    fetchAbortControllerRef.current = new AbortController();
-    const fetchAbortController = fetchAbortControllerRef.current;
-
-    isComponentMountedRef.current = true;
-    const isComponentMounted = isComponentMountedRef.current;
-
-    async function loginFormSubmit() {
-      const schema = { username, password };
-
-      const url = LOGIN_URL;
-
-      const requestInit: RequestInit = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-        body: JSON.stringify({ schema }),
-        signal: fetchAbortController.signal,
-      };
-
-      loginDispatch({
-        action: loginAction.setIsSubmitting,
-        payload: true,
-      });
-
-      try {
-        const responseResult = await fetchSafe(url, requestInit);
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (responseResult.err) {
-          showBoundary(responseResult.val.data);
-          return;
-        }
-
-        const responseUnwrapped = responseResult.safeUnwrap().data;
-
-        if (responseUnwrapped === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        const jsonResult = await responseToJSONSafe<
-          HttpServerResponse<UserDocument>
-        >(
-          responseUnwrapped,
-        );
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (jsonResult.err) {
-          showBoundary(jsonResult.val.data);
-          return;
-        }
-
-        const serverResponse = jsonResult.safeUnwrap().data;
-
-        if (serverResponse === undefined) {
-          showBoundary(new Error("No data returned from server"));
-          return;
-        }
-
-        const { accessToken } = serverResponse;
-
-        const decodedTokenResult = await decodeJWTSafe(accessToken);
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (decodedTokenResult.err) {
-          showBoundary(decodedTokenResult.val.data);
-          return;
-        }
-
-        const decodedToken = decodedTokenResult.safeUnwrap().data;
-        if (decodedToken === undefined) {
-          showBoundary(new Error("Invalid token"));
-          return;
-        }
-
-        authDispatch({
-          action: authAction.setAccessToken,
-          payload: accessToken,
-        });
-        authDispatch({
-          action: authAction.setDecodedToken,
-          payload: decodedToken,
-        });
-        authDispatch({
-          action: authAction.setIsLoggedIn,
-          payload: true,
-        });
-        authDispatch({
-          action: authAction.setUserDocument,
-          payload: serverResponse.data[0],
-        });
-
-        loginDispatch({
-          action: loginAction.setIsSubmitting,
-          payload: false,
-        });
-        loginDispatch({
-          action: loginAction.setIsSuccessful,
-          payload: true,
-        });
-        loginDispatch({
-          action: loginAction.setTriggerFormSubmit,
-          payload: false,
-        });
-
-        navigate("/dashboard/repairs");
-      } catch (error: unknown) {
-        if (
-          !isComponentMounted || fetchAbortController?.signal.aborted
-        ) {
-          return;
-        }
-        showBoundary(error);
-      }
-    }
-
-    if (triggerFormSubmit) {
-      loginFormSubmit();
-    }
-
     const timerId = setTimeout(() => {
-      fetchAbortController?.abort("Request timed out");
+      fetchAbortControllerRef?.current?.abort("Request timed out");
     }, FETCH_REQUEST_TIMEOUT);
 
     return () => {
       clearTimeout(timerId);
-      fetchAbortController?.abort("Component unmounted");
+      fetchAbortControllerRef?.current?.abort("Component unmounted");
       isComponentMountedRef.current = false;
     };
-  }, [triggerFormSubmit]);
+  }, []);
 
   const usernameTextInput = (
     <TextInput
@@ -252,11 +107,26 @@ function Login() {
     <AccessibleButton
       attributes={{
         kind: "submit",
+        leftIcon: isSubmitting ? <Loader size="xs" /> : null,
         name: "login",
-        onClick: () => {
-          loginDispatch({
-            action: loginAction.setTriggerFormSubmit,
-            payload: true,
+        onClick: async (
+          event:
+            | React.MouseEvent<HTMLButtonElement, MouseEvent>
+            | React.PointerEvent<HTMLButtonElement>,
+        ) => {
+          event.preventDefault();
+
+          await handleLoginButtonClick({
+            authDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            loginDispatch,
+            navigateFn,
+            navigateTo: "/dashboard/financials",
+            schema: { username, password },
+            showBoundary,
+            url: LOGIN_URL,
           });
         },
       }}
@@ -322,19 +192,6 @@ function Login() {
     </Flex>
   );
 
-  // const displaySubmitSuccessNotificationModal = (
-  //   <NotificationModal
-  //     onCloseCallbacks={[closeSubmitFormModal]}
-  //     opened={openedSubmitFormModal}
-  //     notificationProps={{
-  //       isLoading: isSubmitting,
-  //       text: "Login successful!",
-  //     }}
-  //     title={<Title order={4}>Submitting ...</Title>}
-  //     withCloseButton={false}
-  //   />
-  // );
-
   const card = (
     <Center h="62%">
       <Card
@@ -365,7 +222,6 @@ function Login() {
       p="md"
       w="100%"
     >
-      {/* {displaySubmitSuccessNotificationModal} */}
       {displayTitle}
       {card}
     </Stack>

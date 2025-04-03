@@ -1,7 +1,12 @@
 import { ProductMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
-import { BusinessMetricStoreLocation, DashboardCalendarView } from "../types";
+import {
+  BusinessMetricStoreLocation,
+  DashboardCalendarView,
+  ProductCategory,
+} from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
+import { ProductMetricCategory } from "./types";
 
 type OverviewAllProductsMetrics = Record<
   DashboardCalendarView,
@@ -10,6 +15,7 @@ type OverviewAllProductsMetrics = Record<
 
 function returnOverviewAllProductsMetrics(
   productMetricsDocument: ProductMetricsDocument,
+  productCategory: ProductMetricCategory,
   selectedYYYYMMDD: string,
 ) {
   const defaultValue: OverviewAllProductsMetrics = {
@@ -34,7 +40,7 @@ function returnOverviewAllProductsMetrics(
   ];
 
   const allProductsYearlyMetrics = productMetricsDocument.productMetrics.find(
-    (productMetric) => productMetric.name === "All Products",
+    (productMetric) => productMetric.name === productCategory,
   )?.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === year,
   );

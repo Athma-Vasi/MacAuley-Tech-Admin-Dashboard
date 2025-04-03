@@ -8,7 +8,6 @@ type RegisterState = {
   isSubmitting: boolean;
   isSuccessful: boolean;
   password: string;
-  triggerFormSubmit: boolean;
   username: string;
 };
 
@@ -40,10 +39,6 @@ type RegisterDispatch =
   | {
     action: RegisterAction["setPassword"];
     payload: string;
-  }
-  | {
-    action: RegisterAction["setTriggerFormSubmit"];
-    payload: boolean;
   }
   | {
     action: RegisterAction["setUsername"];

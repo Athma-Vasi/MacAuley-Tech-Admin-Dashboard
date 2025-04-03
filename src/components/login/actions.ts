@@ -4,7 +4,6 @@ type LoginAction = {
   setIsSuccessful: "setIsSuccessful";
   setPageInError: "setPageInError";
   setPassword: "setPassword";
-  setTriggerFormSubmit: "setTriggerFormSubmit";
   setUsername: "setUsername";
 };
 
@@ -14,7 +13,6 @@ const loginAction: LoginAction = {
   setIsSuccessful: "setIsSuccessful",
   setPageInError: "setPageInError",
   setPassword: "setPassword",
-  setTriggerFormSubmit: "setTriggerFormSubmit",
   setUsername: "setUsername",
 };
 

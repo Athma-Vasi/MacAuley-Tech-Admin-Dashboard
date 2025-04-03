@@ -250,6 +250,7 @@ function ProductMetrics({
 
   const overviewMetrics = returnOverviewAllProductsMetrics(
     productMetricsDocument,
+    productCategory,
     selectedYYYYMMDD,
   );
 

@@ -1,4 +1,8 @@
 type GlobalAction = {
+  setFinancialMetricsDocument: "setFinancialMetricsDocument";
+  setProductMetricsDocument: "setProductMetricsDocument";
+  setCustomerMetricsDocument: "setCustomerMetricsDocument";
+  setRepairMetricsDocument: "setRepairMetricsDocument";
   setColorScheme: "setColorScheme";
   setDefaultGradient: "setDefaultGradient";
   setExpandBarChartData: "setExpandBarChartData";
@@ -19,6 +23,10 @@ type GlobalAction = {
 };
 
 const globalAction: GlobalAction = {
+  setFinancialMetricsDocument: "setFinancialMetricsDocument",
+  setProductMetricsDocument: "setProductMetricsDocument",
+  setCustomerMetricsDocument: "setCustomerMetricsDocument",
+  setRepairMetricsDocument: "setRepairMetricsDocument",
   setColorScheme: "setColorScheme",
   setDefaultGradient: "setDefaultGradient",
   setExpandBarChartData: "setExpandBarChartData",

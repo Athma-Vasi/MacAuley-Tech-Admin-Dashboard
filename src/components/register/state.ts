@@ -8,7 +8,6 @@ const initialRegisterState: RegisterState = {
   isSubmitting: false,
   isSuccessful: false,
   password: "",
-  triggerFormSubmit: false,
   username: "",
 };
 

@@ -7,7 +7,6 @@ type LoginState = {
   isSuccessful: boolean;
   pagesInError: Set<number>;
   password: string;
-  triggerFormSubmit: boolean;
   username: string;
 };
 
@@ -26,9 +25,6 @@ type LoginDispatch = {
 } | {
   action: LoginAction["setPassword"];
   payload: string;
-} | {
-  action: LoginAction["setTriggerFormSubmit"];
-  payload: boolean;
 } | {
   action: LoginAction["setUsername"];
   payload: string;
