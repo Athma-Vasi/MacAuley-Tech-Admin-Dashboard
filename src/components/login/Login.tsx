@@ -68,17 +68,17 @@ function Login() {
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
-    (async function wrapper() {
-      const businessMetrics = await createRandomBusinessMetrics({
-        daysPerMonth: DAYS_PER_MONTH,
-        months: MONTHS,
-        productCategories: PRODUCT_CATEGORIES,
-        repairCategories: REPAIR_CATEGORIES,
-        storeLocations: STORE_LOCATION_DATA.map((location) => location.value),
-      });
+    // (async function wrapper() {
+    //   const businessMetrics = await createRandomBusinessMetrics({
+    //     daysPerMonth: DAYS_PER_MONTH,
+    //     months: MONTHS,
+    //     productCategories: PRODUCT_CATEGORIES,
+    //     repairCategories: REPAIR_CATEGORIES,
+    //     storeLocations: STORE_LOCATION_DATA.map((location) => location.value),
+    //   });
 
-      console.log("Business Metrics: ", businessMetrics);
-    })();
+    //   console.log("Business Metrics: ", businessMetrics);
+    // })();
 
     const timerId = setTimeout(() => {
       fetchAbortControllerRef?.current?.abort("Request timed out");

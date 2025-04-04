@@ -10,85 +10,47 @@ import {
   TbUser,
 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import { FETCH_REQUEST_TIMEOUT } from "../../constants";
+import {
+  FETCH_REQUEST_TIMEOUT,
+  LOGOUT_URL,
+  METRICS_URL,
+} from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { fetchSafe } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
+import {
+  handleLogoutButtonClick,
+  handleMetricCategoryNavlinkClick,
+} from "./utils";
 
 type SidebarProps = {
   setOpened: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function Sidebar({ setOpened }: SidebarProps) {
-  const { authState: { accessToken } } = useAuth();
-  const { globalState: { themeObject } } = useGlobalState();
-  const navigate = useNavigate();
+  const { authState: { accessToken }, authDispatch } = useAuth();
+  const {
+    globalState: { themeObject, productMetricCategory, repairMetricCategory },
+    globalDispatch,
+  } = useGlobalState();
+  const navigateFn = useNavigate();
   const { showBoundary } = useErrorBoundary();
-  const [triggerFormSubmit, setTriggerFormSubmit] = React.useState(false);
+
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
-    fetchAbortControllerRef.current?.abort("Previous request cancelled");
-    fetchAbortControllerRef.current = new AbortController();
-    const fetchAbortController = fetchAbortControllerRef.current;
-
-    isComponentMountedRef.current = true;
-    const isComponentMounted = isComponentMountedRef.current;
-
-    async function logoutFormSubmit() {
-      const LOGOUT_URL = "http://localhost:5000/auth/logout";
-
-      const requestInit: RequestInit = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        mode: "cors",
-        signal: fetchAbortController.signal,
-      };
-
-      try {
-        const responseResult = await fetchSafe(LOGOUT_URL, requestInit);
-
-        if (!isComponentMounted) {
-          return;
-        }
-
-        if (responseResult.err) {
-          showBoundary(responseResult.val.data);
-          return;
-        }
-
-        setTriggerFormSubmit(false);
-        navigate("/");
-      } catch (error: unknown) {
-        if (
-          !isComponentMounted || fetchAbortController?.signal.aborted
-        ) {
-          return;
-        }
-        showBoundary(error);
-      }
-    }
-
-    if (triggerFormSubmit) {
-      logoutFormSubmit();
-    }
-
     const timerId = setTimeout(() => {
-      fetchAbortController?.abort("Request timed out");
+      fetchAbortControllerRef?.current?.abort("Request timed out");
     }, FETCH_REQUEST_TIMEOUT);
 
     return () => {
       clearTimeout(timerId);
-      fetchAbortController?.abort("Component unmounted");
+      fetchAbortControllerRef?.current?.abort("Component unmounted");
       isComponentMountedRef.current = false;
     };
-  }, [triggerFormSubmit]);
+  }, []);
 
   const productsNavlink = (
     <AccessibleNavLink
@@ -96,8 +58,22 @@ function Sidebar({ setOpened }: SidebarProps) {
         description: "Products",
         icon: <TbAffiliate />,
         name: "Products",
-        onClick: () => {
-          navigate("/dashboard/products");
+        onClick: async () => {
+          await handleMetricCategoryNavlinkClick({
+            accessToken,
+            authDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl: METRICS_URL,
+            metricsView: "products",
+            navigateFn,
+            navigateTo: "/dashboard/products",
+            productMetricCategory,
+            repairMetricCategory,
+            showBoundary,
+            storeLocationView: "All Locations",
+          });
           setOpened(false);
         },
       }}
@@ -110,8 +86,22 @@ function Sidebar({ setOpened }: SidebarProps) {
         description: "Financials",
         icon: <TbReportMoney />,
         name: "Financials",
-        onClick: () => {
-          navigate("/dashboard/financials");
+        onClick: async () => {
+          await handleMetricCategoryNavlinkClick({
+            accessToken,
+            authDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl: METRICS_URL,
+            metricsView: "financials",
+            navigateFn,
+            navigateTo: "/dashboard/financials",
+            productMetricCategory,
+            repairMetricCategory,
+            showBoundary,
+            storeLocationView: "All Locations",
+          });
           setOpened(false);
         },
       }}
@@ -124,8 +114,22 @@ function Sidebar({ setOpened }: SidebarProps) {
         description: "Customers",
         icon: <TbUser />,
         name: "Customers",
-        onClick: () => {
-          navigate("/dashboard/customers");
+        onClick: async () => {
+          await handleMetricCategoryNavlinkClick({
+            accessToken,
+            authDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl: METRICS_URL,
+            metricsView: "customers",
+            navigateFn,
+            navigateTo: "/dashboard/customers",
+            productMetricCategory,
+            repairMetricCategory,
+            showBoundary,
+            storeLocationView: "All Locations",
+          });
           setOpened(false);
         },
       }}
@@ -138,8 +142,22 @@ function Sidebar({ setOpened }: SidebarProps) {
         description: "Repairs",
         icon: <TbTools />,
         name: "Repairs",
-        onClick: () => {
-          navigate("/dashboard/repairs");
+        onClick: async () => {
+          await handleMetricCategoryNavlinkClick({
+            accessToken,
+            authDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl: METRICS_URL,
+            metricsView: "repairs",
+            navigateFn,
+            navigateTo: "/dashboard/repairs",
+            productMetricCategory,
+            repairMetricCategory,
+            showBoundary,
+            storeLocationView: "All Locations",
+          });
           setOpened(false);
         },
       }}
@@ -153,7 +171,7 @@ function Sidebar({ setOpened }: SidebarProps) {
         icon: <TbFileDatabase />,
         name: "Directory",
         onClick: () => {
-          navigate("/dashboard/directory");
+          navigateFn("/dashboard/directory");
           setOpened(false);
         },
       }}
@@ -167,7 +185,14 @@ function Sidebar({ setOpened }: SidebarProps) {
         kind: "logout",
         name: "logout",
         onClick: async () => {
-          setTriggerFormSubmit(true);
+          await handleLogoutButtonClick({
+            accessToken,
+            fetchAbortControllerRef,
+            isComponentMountedRef,
+            logoutUrl: LOGOUT_URL,
+            navigateFn,
+            showBoundary,
+          });
           localforage.removeItem("businessMetrics");
         },
       }}

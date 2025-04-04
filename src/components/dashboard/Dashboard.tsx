@@ -51,10 +51,7 @@ import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { initialDashboardState } from "./state";
 import { DashboardMetricsView } from "./types";
-import {
-  handleMetricCategorySelectInputClick,
-  splitSelectedCalendarDate,
-} from "./utils";
+import { handleStoreCategoryClick, splitSelectedCalendarDate } from "./utils";
 
 function Dashboard() {
   const [dashboardState, dashboardDispatch] = useReducer(
@@ -194,38 +191,20 @@ function Dashboard() {
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
         name: "storeLocation",
-        onChange: (event: React.ChangeEvent<HTMLSelectElement>) => {
-          event.preventDefault();
-          const metricCategory = metricsView === "products"
-            ? productMetricCategory
-            : metricsView === "customers"
-            ? customerMetricsCategory
-            : metricsView === "financials"
-            ? financialMetricCategory
-            : repairMetricCategory;
-
-          const url = new URL(
-            `${METRICS_URL}/${metricsView}/?&storeLocation[$eq]=${event.currentTarget.value}&metricCategory[$eq]=${metricCategory}&year[$eq]=${
-              selectedYYYYMMDD.split("-")[0]
-            }${
-              productSubMetricCategory
-                ? `&productSubMetricCategory[$eq]=${productSubMetricCategory}`
-                : ""
-            }`,
-          );
-
-          handleMetricCategorySelectInputClick({
+        onChange: async (_event: React.ChangeEvent<HTMLSelectElement>) => {
+          await handleStoreCategoryClick({
             accessToken,
             authDispatch,
             dashboardDispatch,
             fetchAbortControllerRef,
             globalDispatch,
             isComponentMountedRef,
-            metricCategory,
+            metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
+            productMetricCategory,
+            repairMetricCategory,
             showBoundary,
             storeLocationView,
-            url,
           });
         },
         parentDispatch: dashboardDispatch,

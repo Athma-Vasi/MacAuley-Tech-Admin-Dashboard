@@ -3883,7 +3883,7 @@ function returnSelectedCalendarCharts<
     : defaultValue;
 }
 
-async function handleMetricCategorySelectInputClick(
+async function handleStoreCategoryClick(
   {
     accessToken,
     authDispatch,
@@ -3891,11 +3891,12 @@ async function handleMetricCategorySelectInputClick(
     fetchAbortControllerRef,
     globalDispatch,
     isComponentMountedRef,
-    metricCategory,
+    metricsUrl,
     metricsView,
+    productMetricCategory,
+    repairMetricCategory,
     showBoundary,
     storeLocationView,
-    url,
   }: {
     accessToken: string;
     authDispatch: React.Dispatch<AuthDispatch>;
@@ -3903,15 +3904,12 @@ async function handleMetricCategorySelectInputClick(
     fetchAbortControllerRef: React.RefObject<AbortController | null>;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
-    metricCategory:
-      | ProductMetricCategory
-      | FinancialMetricCategory
-      | RepairMetricCategory
-      | CustomerMetricsCategory;
+    metricsUrl: string;
     metricsView: Lowercase<DashboardMetricsView>;
+    productMetricCategory: ProductMetricCategory;
+    repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: any) => void;
     storeLocationView: BusinessMetricStoreLocation;
-    url: URL;
   },
 ) {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
@@ -3930,6 +3928,18 @@ async function handleMetricCategorySelectInputClick(
     },
   };
 
+  const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+
+  const metricCategoryQuery = metricsView === "products"
+    ? `&metricCategory[$eq]=${productMetricCategory}`
+    : metricsView === "repairs"
+    ? `&metricCategory[$eq]=${repairMetricCategory}`
+    : "";
+
+  const urlWithQuery = new URL(
+    `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
+  );
+
   dashboardDispatch({
     action: dashboardAction.setIsLoading,
     payload: true,
@@ -3941,7 +3951,7 @@ async function handleMetricCategorySelectInputClick(
   });
 
   try {
-    const responseResult = await fetchSafe(url, requestInit);
+    const responseResult = await fetchSafe(urlWithQuery, requestInit);
     if (!isComponentMounted) {
       return;
     }
@@ -4071,7 +4081,7 @@ export {
   createRandomRepairMetrics,
   createRepairCategoryUnitsRepairedRevenueTuple,
   excludeTodayFromCalendarView,
-  handleMetricCategorySelectInputClick,
+  handleStoreCategoryClick,
   returnChartTitleNavigateLinks,
   returnChartTitles,
   returnDaysInMonthsInYears,
