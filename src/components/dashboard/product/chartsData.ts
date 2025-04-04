@@ -5,10 +5,7 @@ import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
 import { MONTHS } from "../constants";
 import {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
   Month,
-  ProductCategory,
   ProductDailyMetric,
   ProductMonthlyMetric,
   ProductYearlyMetric,
@@ -35,7 +32,6 @@ type CreateSelectedDateProductMetricsInput = {
   day: string;
   month: Month;
   months: Month[];
-  selectedProductCategory: ProductCategory | "All Products";
   year: Year;
 };
 
@@ -44,28 +40,19 @@ function returnSelectedDateProductMetrics({
   day,
   month,
   months,
-  selectedProductCategory,
   year,
 }: CreateSelectedDateProductMetricsInput): SelectedDateProductMetrics {
-  // const currentStoreMetrics = businessMetrics.find(
-  //   (businessMetric) => businessMetric.storeLocation === storeLocation,
-  // );
-
-  const selectedDateProductMetrics = productMetricsDocument.productMetrics.find(
-    (productMetric) => productMetric.name === selectedProductCategory,
-  );
-
-  const selectedYearMetrics = selectedDateProductMetrics?.yearlyMetrics.find(
+  const selectedYearMetrics = productMetricsDocument.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === year,
   );
-  const prevYearMetrics = selectedDateProductMetrics?.yearlyMetrics.find(
+  const prevYearMetrics = productMetricsDocument.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
   );
 
   const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
     (monthlyMetric) => monthlyMetric.month === month,
   );
-  const prevPrevYearMetrics = selectedDateProductMetrics?.yearlyMetrics.find(
+  const prevPrevYearMetrics = productMetricsDocument.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
   );
   const prevMonthMetrics = month === "January"
@@ -114,7 +101,6 @@ function returnSelectedDateProductMetrics({
 type CreateProductMetricsChartsInput = {
   productMetricsDocument: ProductMetricsDocument;
   months: Month[];
-  selectedProductCategory: ProductCategory | "All Products";
   selectedDateProductMetrics: SelectedDateProductMetrics;
 };
 
@@ -207,7 +193,6 @@ type ProductMetricsCharts = {
 async function createProductMetricsCharts({
   productMetricsDocument,
   months,
-  selectedProductCategory,
   selectedDateProductMetrics,
 }: CreateProductMetricsChartsInput): Promise<ProductMetricsCharts> {
   const {
@@ -250,14 +235,6 @@ async function createProductMetricsCharts({
     { id: "Online", label: "Online", value: 0 },
   ];
 
-  // const currentStoreMetrics = businessMetrics.find(
-  //   (businessMetric) => businessMetric.storeLocation === storeLocation,
-  // );
-
-  const productMetrics = productMetricsDocument?.productMetrics.find(
-    (productMetric) => productMetric.name === selectedProductCategory,
-  );
-
   const [dailyProductCharts, monthlyProductCharts, yearlyProductCharts] =
     await Promise.all([
       createDailyProductCharts({
@@ -282,7 +259,7 @@ async function createProductMetricsCharts({
         lineChartsTemplate: LINE_CHART_OBJ_TEMPLATE,
         pieChartsTemplate: PIE_CHART_OBJ_TEMPLATE,
         selectedYearMetrics,
-        yearlyMetrics: productMetrics?.yearlyMetrics,
+        yearlyMetrics: productMetricsDocument.yearlyMetrics,
       }),
     ]);
 

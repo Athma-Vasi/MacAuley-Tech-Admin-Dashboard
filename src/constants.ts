@@ -218,7 +218,7 @@ const METRICS_HEADER_HEIGHT_MOBILE = 70;
 
 const MOBILE_BREAKPOINT = 1024;
 
-const PROTOCOL = "https";
+const PROTOCOL = "http";
 const DOMAIN_NAME = "://localhost";
 const PORT = 5000;
 

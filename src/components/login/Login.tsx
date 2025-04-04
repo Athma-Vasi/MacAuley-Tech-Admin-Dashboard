@@ -20,11 +20,19 @@ import {
   FETCH_REQUEST_TIMEOUT,
   INPUT_WIDTH,
   LOGIN_URL,
+  STORE_LOCATION_DATA,
 } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
+import {
+  DAYS_PER_MONTH,
+  MONTHS,
+  PRODUCT_CATEGORIES,
+  REPAIR_CATEGORIES,
+} from "../dashboard/constants";
+import { createRandomBusinessMetrics } from "../dashboard/utils";
 import { loginAction } from "./actions";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
@@ -60,6 +68,18 @@ function Login() {
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
+    (async function wrapper() {
+      const businessMetrics = await createRandomBusinessMetrics({
+        daysPerMonth: DAYS_PER_MONTH,
+        months: MONTHS,
+        productCategories: PRODUCT_CATEGORIES,
+        repairCategories: REPAIR_CATEGORIES,
+        storeLocations: STORE_LOCATION_DATA.map((location) => location.value),
+      });
+
+      console.log("Business Metrics: ", businessMetrics);
+    })();
+
     const timerId = setTimeout(() => {
       fetchAbortControllerRef?.current?.abort("Request timed out");
     }, FETCH_REQUEST_TIMEOUT);

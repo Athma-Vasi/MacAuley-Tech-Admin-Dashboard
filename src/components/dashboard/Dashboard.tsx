@@ -205,7 +205,7 @@ function Dashboard() {
             : repairMetricCategory;
 
           const url = new URL(
-            `${METRICS_URL}/${metricsView}/?&storeLocation[$eq]=${event.currentTarget.value}&productMetricCategory[$eq]=${metricCategory}&year[$eq]=${
+            `${METRICS_URL}/${metricsView}/?&storeLocation[$eq]=${event.currentTarget.value}&metricCategory[$eq]=${metricCategory}&year[$eq]=${
               selectedYYYYMMDD.split("-")[0]
             }${
               productSubMetricCategory

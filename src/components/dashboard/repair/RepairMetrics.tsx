@@ -1,15 +1,8 @@
-import { Box, Group, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Box, Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import {
-  COLORS_SWATCHES,
-  DASHBOARD_HEADER_HEIGHT,
-  DASHBOARD_HEADER_HEIGHT_MOBILE,
-  METRICS_HEADER_HEIGHT,
-  METRICS_HEADER_HEIGHT_MOBILE,
-  MOBILE_BREAKPOINT,
-} from "../../../constants";
+import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useWindowSize } from "../../../hooks/useWindowSize";
 import { RepairMetricsDocument } from "../../../types";
@@ -95,7 +88,6 @@ function RepairMetrics({
           day: selectedDate,
           month: selectedMonth,
           months: MONTHS,
-          selectedRepairCategory: repairMetricCategory,
           year: selectedYear,
         });
 
@@ -105,7 +97,6 @@ function RepairMetrics({
         const repairMetricsCharts = await createRepairMetricsCharts({
           repairMetricsDocument,
           months: MONTHS,
-          selectedRepairCategory: repairMetricCategory,
           selectedDateRepairMetrics,
         });
 

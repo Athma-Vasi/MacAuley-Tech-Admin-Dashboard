@@ -4,11 +4,8 @@ import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { MONTHS } from "../constants";
 import {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
   DashboardCalendarView,
   Month,
-  RepairCategory,
   RepairDailyMetric,
   RepairMonthlyMetric,
   RepairYearlyMetric,
@@ -28,7 +25,6 @@ type CreateSelectedDateRepairMetricsInput = {
   day: string;
   month: Month;
   months: Month[];
-  selectedRepairCategory: RepairCategory | "All Repairs";
   year: Year;
 };
 
@@ -52,24 +48,19 @@ function returnSelectedDateRepairMetrics({
   day,
   month,
   months,
-  selectedRepairCategory,
   year,
 }: CreateSelectedDateRepairMetricsInput): SelectedDateRepairMetrics {
-  const selectedRepairMetrics = repairMetricsDocument.repairMetrics.find(
-    (repairMetric) => repairMetric.name === selectedRepairCategory,
-  );
-
-  const selectedYearMetrics = selectedRepairMetrics?.yearlyMetrics.find(
+  const selectedYearMetrics = repairMetricsDocument.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === year,
   );
-  const prevYearMetrics = selectedRepairMetrics?.yearlyMetrics.find(
+  const prevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
   );
 
   const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
     (monthlyMetric) => monthlyMetric.month === month,
   );
-  const prevPrevYearMetrics = selectedRepairMetrics?.yearlyMetrics.find(
+  const prevPrevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
   );
 
@@ -119,7 +110,6 @@ function returnSelectedDateRepairMetrics({
 type ReturnRepairChartsInput = {
   repairMetricsDocument: RepairMetricsDocument;
   months: Month[];
-  selectedRepairCategory: RepairCategory | "All Repairs";
   selectedDateRepairMetrics: SelectedDateRepairMetrics;
 };
 
@@ -165,7 +155,6 @@ async function createRepairMetricsCharts({
   repairMetricsDocument,
   months,
   selectedDateRepairMetrics,
-  selectedRepairCategory,
 }: ReturnRepairChartsInput): Promise<RepairMetricsCharts> {
   const {
     yearRepairMetrics: { selectedYearMetrics },
@@ -180,10 +169,6 @@ async function createRepairMetricsCharts({
   const monthNumber = (months.indexOf(selectedMonth) + 1).toString().padStart(
     2,
     "0",
-  );
-
-  const repairMetrics = repairMetricsDocument.repairMetrics.find(
-    (repairMetric) => repairMetric.name === selectedRepairCategory,
   );
 
   const BAR_CHART_DATA_TEMPLATE: RepairMetricBarCharts = {
@@ -214,7 +199,7 @@ async function createRepairMetricsCharts({
       createYearlyRepairCharts({
         barChartsTemplate: BAR_CHART_DATA_TEMPLATE,
         lineChartsTemplate: LINE_CHART_DATA_TEMPLATE,
-        yearlyMetrics: repairMetrics?.yearlyMetrics,
+        yearlyMetrics: repairMetricsDocument.yearlyMetrics,
       }),
     ]);
 

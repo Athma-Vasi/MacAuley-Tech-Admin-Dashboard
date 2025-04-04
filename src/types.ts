@@ -9,8 +9,10 @@ import type { Result } from "ts-results";
 import {
   BusinessMetricStoreLocation,
   CustomerMetrics,
-  ProductMetric,
-  RepairMetric,
+  ProductCategory,
+  ProductYearlyMetric,
+  RepairCategory,
+  RepairYearlyMetric,
   YearlyFinancialMetric,
 } from "./components/dashboard/types";
 import { ValidationKey } from "./validations";
@@ -161,8 +163,9 @@ type UserDocument = UserSchema & {
 };
 
 type RepairMetricsSchema = {
+  metricCategory: RepairCategory | "All Repairs";
   storeLocation: BusinessMetricStoreLocation;
-  repairMetrics: RepairMetric[];
+  yearlyMetrics: RepairYearlyMetric[];
 };
 
 type RepairMetricsDocument = RepairMetricsSchema & {
@@ -173,8 +176,9 @@ type RepairMetricsDocument = RepairMetricsSchema & {
 };
 
 type ProductMetricsSchema = {
+  metricCategory: ProductCategory | "All Products";
   storeLocation: BusinessMetricStoreLocation;
-  productMetrics: ProductMetric[];
+  yearlyMetrics: ProductYearlyMetric[];
 };
 
 type ProductMetricsDocument = ProductMetricsSchema & {

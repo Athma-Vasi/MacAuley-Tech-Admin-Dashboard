@@ -93,7 +93,6 @@ function ProductMetrics(
           day: selectedDate,
           month: selectedMonth,
           months: MONTHS,
-          selectedProductCategory: productMetricCategory,
           year: selectedYear,
         });
 
@@ -105,7 +104,6 @@ function ProductMetrics(
         const productMetricsCharts = await createProductMetricsCharts({
           productMetricsDocument,
           months: MONTHS,
-          selectedProductCategory: productMetricCategory,
           selectedDateProductMetrics,
         });
 
