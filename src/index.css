@@ -265,7 +265,6 @@
   .overview-summary-with-pie, .overview-summary-without-pie {
     outline: 1px solid rebeccapurple;
     display: flex;
-    flex-direction: column;
     width: clamp(
       var(--min-summary-card-width),
       var(--ideal-summary-card-width),
@@ -274,15 +273,9 @@
     row-gap: var(--row-gap);
   }
 
-  .overview-cards-without-pie {
+  .overview-cards-without-pie, .overview-cards-with-pie {
     display: flex;
     column-gap: var(--column-gap);
-  }
-
-  .overview-cards-with-pie {
-    display: flex;
-    flex-direction: column;
-    row-gap: var(--row-gap);
   }
 
   .statistics-elements-container {

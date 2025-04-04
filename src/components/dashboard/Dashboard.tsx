@@ -305,6 +305,24 @@ function Dashboard() {
     />
   );
 
+  const headerInputs = (
+    <>
+      {storeLocationSelectInput}
+      {createdYYYYMMDDInput}
+      {metricsView === "products"
+        ? (
+          <>
+            {productMetricCategorySelectInput}
+            {productSubMetricCategorySelectInput}
+          </>
+        )
+        : null}
+      {metricsView === "customers" ? customerMetricCategorySelectInput : null}
+      {metricsView === "financials" ? financialMetricCategorySelectInput : null}
+      {metricsView === "repairs" ? repairMetricCategorySelectInput : null}
+    </>
+  );
+
   const dashboardHeader = (
     <Stack
       align="flex-end"
@@ -320,21 +338,7 @@ function Dashboard() {
       opacity={0.97}
     >
       <Group w="100%" position="left" align="flex-end" spacing="xl">
-        {storeLocationSelectInput}
-        {createdYYYYMMDDInput}
-        {metricsView === "products"
-          ? (
-            <>
-              {productMetricCategorySelectInput}
-              {productSubMetricCategorySelectInput}
-            </>
-          )
-          : null}
-        {metricsView === "customers" ? customerMetricCategorySelectInput : null}
-        {metricsView === "financials"
-          ? financialMetricCategorySelectInput
-          : null}
-        {metricsView === "repairs" ? repairMetricCategorySelectInput : null}
+        {headerInputs}
       </Group>
     </Stack>
   );
@@ -359,25 +363,7 @@ function Dashboard() {
           </Accordion.Control>
           <Accordion.Panel>
             <Group w="100%" position="left" align="flex-end" spacing="xl">
-              {storeLocationSelectInput}
-              {createdYYYYMMDDInput}
-              {metricsView === "products"
-                ? (
-                  <>
-                    {productMetricCategorySelectInput}
-                    {productSubMetricCategorySelectInput}
-                  </>
-                )
-                : null}
-              {metricsView === "customers"
-                ? customerMetricCategorySelectInput
-                : null}
-              {metricsView === "financials"
-                ? financialMetricCategorySelectInput
-                : null}
-              {metricsView === "repairs"
-                ? repairMetricCategorySelectInput
-                : null}
+              {headerInputs}
             </Group>
           </Accordion.Panel>
         </Accordion.Item>
