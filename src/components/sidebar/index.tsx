@@ -193,7 +193,6 @@ function Sidebar({ setOpened }: SidebarProps) {
             navigateFn,
             showBoundary,
           });
-          localforage.removeItem("businessMetrics");
         },
       }}
     />

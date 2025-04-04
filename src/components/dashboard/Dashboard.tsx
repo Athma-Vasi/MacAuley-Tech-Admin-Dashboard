@@ -12,7 +12,6 @@ import { useErrorBoundary } from "react-error-boundary";
 
 import {
   COLORS_SWATCHES,
-  DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
   FETCH_REQUEST_TIMEOUT,
   METRICS_URL,
@@ -219,6 +218,22 @@ function Dashboard() {
       attributes={{
         data: REPAIR_METRICS_DATA,
         name: "repairs",
+        onChange: async (_event: React.ChangeEvent<HTMLSelectElement>) => {
+          await handleStoreCategoryClick({
+            accessToken,
+            authDispatch,
+            dashboardDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl: METRICS_URL,
+            metricsView: metricsView as Lowercase<DashboardMetricsView>,
+            productMetricCategory,
+            repairMetricCategory,
+            showBoundary,
+            storeLocationView,
+          });
+        },
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setRepairMetricCategory,
         value: repairMetricCategory,
@@ -243,6 +258,22 @@ function Dashboard() {
       attributes={{
         data: PRODUCT_METRIC_CATEGORY_DATA,
         name: "product metrics",
+        onChange: async (_event: React.ChangeEvent<HTMLSelectElement>) => {
+          await handleStoreCategoryClick({
+            accessToken,
+            authDispatch,
+            dashboardDispatch,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl: METRICS_URL,
+            metricsView: metricsView as Lowercase<DashboardMetricsView>,
+            productMetricCategory,
+            repairMetricCategory,
+            showBoundary,
+            storeLocationView,
+          });
+        },
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setProductMetricCategory,
         value: productMetricCategory,
@@ -277,7 +308,7 @@ function Dashboard() {
   const dashboardHeader = (
     <Stack
       align="flex-end"
-      h={DASHBOARD_HEADER_HEIGHT}
+      // h={DASHBOARD_HEADER_HEIGHT}
       p="md"
       style={{
         backgroundColor,
@@ -291,14 +322,13 @@ function Dashboard() {
       <Group w="100%" position="left" align="flex-end" spacing="xl">
         {storeLocationSelectInput}
         {createdYYYYMMDDInput}
-      </Group>
-
-      <Group w="100%" position="left" align="flex-end" spacing="xl">
         {metricsView === "products"
-          ? [
-            productMetricCategorySelectInput,
-            productSubMetricCategorySelectInput,
-          ]
+          ? (
+            <>
+              {productMetricCategorySelectInput}
+              {productSubMetricCategorySelectInput}
+            </>
+          )
           : null}
         {metricsView === "customers" ? customerMetricCategorySelectInput : null}
         {metricsView === "financials"
@@ -323,14 +353,31 @@ function Dashboard() {
       w="100%"
     >
       <Accordion bg={backgroundColor} w="100%">
-        <Accordion.Item value="Location and Date">
+        <Accordion.Item value="Parameters">
           <Accordion.Control>
-            <Text weight={500} size="md">Location and Date</Text>
+            <Text weight={500} size="md">Parameters</Text>
           </Accordion.Control>
           <Accordion.Panel>
             <Group w="100%" position="left" align="flex-end" spacing="xl">
               {storeLocationSelectInput}
               {createdYYYYMMDDInput}
+              {metricsView === "products"
+                ? (
+                  <>
+                    {productMetricCategorySelectInput}
+                    {productSubMetricCategorySelectInput}
+                  </>
+                )
+                : null}
+              {metricsView === "customers"
+                ? customerMetricCategorySelectInput
+                : null}
+              {metricsView === "financials"
+                ? financialMetricCategorySelectInput
+                : null}
+              {metricsView === "repairs"
+                ? repairMetricCategorySelectInput
+                : null}
             </Group>
           </Accordion.Panel>
         </Accordion.Item>
@@ -390,13 +437,15 @@ function Dashboard() {
   const dashboard = (
     <Stack w="100%" py="sm" pos="relative">
       {displayLoadingOverlay}
+
+      {windowWidth < MOBILE_BREAKPOINT
+        ? dashboardHeaderAccordion
+        : dashboardHeader}
+
       <Stack align="flex-start" spacing={2} bg={backgroundColor} px="md">
         <Title order={1}>DASHBOARD</Title>
         <Text size="sm">Welcome to your dashboard</Text>
       </Stack>
-      {windowWidth < MOBILE_BREAKPOINT
-        ? dashboardHeaderAccordion
-        : dashboardHeader}
       {displayMetricsView}
     </Stack>
   );

@@ -1,10 +1,6 @@
 import { RepairMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
-import {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
-  DashboardCalendarView,
-} from "../types";
+import { BusinessMetricStoreLocation, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
 import { RepairMetricCategory } from "./types";
 
@@ -39,16 +35,9 @@ function returnOverviewRepairMetrics(
     string,
   ];
 
-  const subMetrics = repairMetricsDocument.repairMetrics.find(
-    (repairMetric) => repairMetric.name === category,
-  );
-  if (subMetrics === null || subMetrics === undefined) {
-    return defaultValue;
-  }
-
-  const yearlyMetrics = subMetrics.yearlyMetrics.find((repairMetric) =>
-    repairMetric.year === year
-  );
+  const yearlyMetrics = repairMetricsDocument.yearlyMetrics.find((
+    repairMetric,
+  ) => repairMetric.year === year);
   if (yearlyMetrics === null || yearlyMetrics === undefined) {
     return defaultValue;
   }

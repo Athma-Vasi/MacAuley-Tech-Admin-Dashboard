@@ -3945,11 +3945,6 @@ async function handleStoreCategoryClick(
     payload: true,
   });
 
-  dashboardDispatch({
-    action: dashboardAction.setIsLoading,
-    payload: true,
-  });
-
   try {
     const responseResult = await fetchSafe(urlWithQuery, requestInit);
     if (!isComponentMounted) {

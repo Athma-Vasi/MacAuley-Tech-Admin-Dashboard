@@ -39,9 +39,7 @@ function returnOverviewAllProductsMetrics(
     string,
   ];
 
-  const allProductsYearlyMetrics = productMetricsDocument.productMetrics.find(
-    (productMetric) => productMetric.name === productCategory,
-  )?.yearlyMetrics.find(
+  const allProductsYearlyMetrics = productMetricsDocument.yearlyMetrics.find(
     (yearlyMetric) => yearlyMetric.year === year,
   );
   if (
