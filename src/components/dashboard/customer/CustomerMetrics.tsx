@@ -1,10 +1,9 @@
-import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Overlay, Stack } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
-import { useWindowSize } from "../../../hooks/useWindowSize";
 import { CustomerMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
@@ -58,14 +57,12 @@ function CustomerMetrics(
   const {
     globalState: { themeObject },
   } = useGlobalState();
-  const { windowWidth } = useWindowSize();
 
   const { showBoundary } = useErrorBoundary();
 
   const {
     redColorShade,
     greenColorShade,
-    backgroundColor,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -226,26 +223,9 @@ function CustomerMetrics(
     </React.Fragment>
   ));
 
-  const loadingOverlay = (
-    <LoadingOverlay
-      visible={isGenerating}
-      zIndex={2}
-      overlayBlur={9}
-      overlayOpacity={0.99}
-      radius={4}
-      loader={
-        <Stack align="center">
-          <Loader />
-          <Text>Generating charts ... Please wait ...</Text>
-        </Stack>
-      }
-      transitionDuration={500}
-    />
-  );
-
   const customerMetrics = (
     <Stack w="100%" pos="relative">
-      {loadingOverlay}
+      {isGenerating ? <Overlay opacity={0.10} /> : null}
       {customerMetricsCategory === "new"
         ? newCustomers
         : customerMetricsCategory === "returning"

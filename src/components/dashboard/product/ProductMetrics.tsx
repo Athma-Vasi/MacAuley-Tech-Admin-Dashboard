@@ -1,4 +1,4 @@
-import { Loader, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { Overlay, Stack } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -62,15 +62,12 @@ function ProductMetrics(
   const {
     globalState: { themeObject },
   } = useGlobalState();
-  const { windowWidth } = useWindowSize();
 
   const { showBoundary } = useErrorBoundary();
 
   const {
     redColorShade,
     greenColorShade,
-    backgroundColor,
-    grayColorShade,
   } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -193,26 +190,9 @@ function ProductMetrics(
     </React.Fragment>
   ));
 
-  const loadingOverlay = (
-    <LoadingOverlay
-      visible={isGenerating}
-      zIndex={2}
-      overlayBlur={9}
-      overlayOpacity={0.99}
-      radius={4}
-      loader={
-        <Stack align="center">
-          <Loader />
-          <Text>Generating charts ... Please wait ...</Text>
-        </Stack>
-      }
-      transitionDuration={500}
-    />
-  );
-
   const productMetrics = (
     <Stack w="100%" pos="relative">
-      {loadingOverlay}
+      {isGenerating ? <Overlay opacity={0.10} /> : null}
       {revenueUnitsSold}
     </Stack>
   );

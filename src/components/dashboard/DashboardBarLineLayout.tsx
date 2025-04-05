@@ -1,13 +1,4 @@
-import {
-  Card,
-  Center,
-  Flex,
-  Group,
-  Space,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Card, Center, Group, Space, Stack, Text, Title } from "@mantine/core";
 import React from "react";
 import { DashboardCalendarView } from "./types";
 
@@ -82,8 +73,12 @@ function DashboardBarLineLayout(
   );
 
   const pieSectionMaybe = (
-    <div className={`overview-${pieChart ? "with" : "without"}-pie`}>
-      <Flex
+    <div
+      className={`overview-${
+        pieChart === null || pieChart === undefined ? "without" : "with"
+      }-pie`}
+    >
+      <div
         className={`overview-summary-${pieChart ? "with" : "without"}-pie`}
       >
         <Title order={5} size={20}>Summary</Title>
@@ -92,7 +87,7 @@ function DashboardBarLineLayout(
         >
           {overviewCards}
         </div>
-      </Flex>
+      </div>
 
       {pieChart && pieChartHeading && expandPieChartButton
         ? pieChartCard

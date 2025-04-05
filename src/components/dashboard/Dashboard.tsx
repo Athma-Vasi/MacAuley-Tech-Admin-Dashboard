@@ -1,7 +1,7 @@
 import {
   Accordion,
   Group,
-  LoadingOverlay,
+  Overlay,
   Stack,
   Text,
   TextInput,
@@ -46,10 +46,12 @@ import {
   PRODUCT_METRICS_SUB_CATEGORY_DATA,
 } from "./product/constants";
 import { ProductMetrics } from "./product/ProductMetrics";
+import { ProductMetricCategory } from "./product/types";
 import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
+import { RepairMetricCategory } from "./repair/types";
 import { initialDashboardState } from "./state";
-import { DashboardMetricsView } from "./types";
+import { BusinessMetricStoreLocation, DashboardMetricsView } from "./types";
 import { handleStoreCategoryClick, splitSelectedCalendarDate } from "./utils";
 
 function Dashboard() {
@@ -181,7 +183,7 @@ function Dashboard() {
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
         name: "storeLocation",
-        onChange: async (_event: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           await handleStoreCategoryClick({
             accessToken,
             authDispatch,
@@ -194,7 +196,8 @@ function Dashboard() {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView,
+            storeLocationView: event.currentTarget
+              .value as BusinessMetricStoreLocation,
           });
         },
         parentDispatch: dashboardDispatch,
@@ -209,7 +212,7 @@ function Dashboard() {
       attributes={{
         data: REPAIR_METRICS_DATA,
         name: "repairs",
-        onChange: async (_event: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           await handleStoreCategoryClick({
             accessToken,
             authDispatch,
@@ -220,7 +223,8 @@ function Dashboard() {
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
             productMetricCategory,
-            repairMetricCategory,
+            repairMetricCategory: event.currentTarget
+              .value as RepairMetricCategory,
             showBoundary,
             storeLocationView,
           });
@@ -249,7 +253,7 @@ function Dashboard() {
       attributes={{
         data: PRODUCT_METRIC_CATEGORY_DATA,
         name: "product metrics",
-        onChange: async (_event: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           await handleStoreCategoryClick({
             accessToken,
             authDispatch,
@@ -259,7 +263,8 @@ function Dashboard() {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
-            productMetricCategory,
+            productMetricCategory: event.currentTarget
+              .value as ProductMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocationView,
@@ -411,20 +416,9 @@ function Dashboard() {
       />
     );
 
-  const displayLoadingOverlay = (
-    <LoadingOverlay
-      visible={isLoading}
-      zIndex={4}
-      overlayBlur={2}
-      overlayOpacity={0.99}
-      radius={4}
-      transitionDuration={250}
-    />
-  );
-
   const dashboard = (
     <Stack w="100%" pos="relative" bg={bgGradient}>
-      {displayLoadingOverlay}
+      {isLoading ? <Overlay opacity={0.10} blur={2} /> : null}
 
       {windowWidth < MOBILE_BREAKPOINT
         ? dashboardHeaderAccordion

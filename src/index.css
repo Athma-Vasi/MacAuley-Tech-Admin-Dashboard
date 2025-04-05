@@ -255,25 +255,44 @@
 }
 
 @media screen and (min-width: 1300px) {
-  .overview-with-pie .overview-without-pie {
+  .overview-with-pie {
     display: grid;
     grid-template-columns: 3fr 7fr;
-
+    /* display: flex; */
     width: 100%;
     column-gap: var(--column-gap);
+    outline: 1px solid salmon;
   }
 
-  .overview-summary-with-pie, .overview-summary-without-pie {
+  .overview-summary-without-pie {
     display: flex;
-    width: auto;
+    flex-direction: column;
+    width: clamp(375px, 100%, 768px);
     outline: 1px solid teal;
   }
 
-  .overview-cards-without-pie, .overview-cards-with-pie {
+  .overview-summary-with-pie {
+    display: flex;
+    flex-direction: column;
+    width: clamp(325px, 100%, 400px);
+    outline: 1px solid rebeccapurple;
+  }
+
+  .overview-cards-with-pie {
     display: flex;
     flex-direction: column;
     row-gap: var(--row-gap);
     column-gap: var(--column-gap);
+    outline: 1px solid violet;
+  }
+
+  .overview-cards-without-pie {
+    display: flex;
+  }
+
+  .pie-chart-card {
+    width: clamp(350px, 100%, 1024px);
+    outline: 1px solid green;
   }
 
   .statistics-elements-container {
