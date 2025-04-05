@@ -142,6 +142,7 @@ function AccessibleTextInput<
     greenColorShade,
     grayColorShade,
     redColorShade,
+    cardBgGradient,
   } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
   const rightIcon = rightSection

@@ -4,6 +4,7 @@ import {
   type ButtonProps,
   Group,
   type MantineSize,
+  Text,
   Tooltip,
 } from "@mantine/core";
 import type {
@@ -42,8 +43,9 @@ import {
 import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 
 import { VscCollapseAll, VscExpandAll } from "react-icons/vsc";
+import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { splitCamelCase } from "../../utils";
+import { returnThemeColors, splitCamelCase } from "../../utils";
 import { createAccessibleButtonScreenreaderTextElements } from "./utils";
 
 type AccessibleButtonKind =
@@ -118,10 +120,14 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
   const {
     globalState: { themeObject },
   } = useGlobalState();
-  const { defaultGradient, colorScheme, primaryColor } = themeObject;
+  const { colorScheme } = themeObject;
+  const { themeColorShade, textColor, grayColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
 
   const {
-    color = primaryColor,
+    color = themeColorShade,
     compact = false,
     disabled = false,
     disabledScreenreaderText,
@@ -136,50 +142,58 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     rightIcon = null,
     setIconAsLabel = false,
     size = "sm",
-    style = {},
+    style,
     type = "button",
-    variant = colorScheme === "dark" ? "outline" : "subtle",
+    variant = colorScheme === "dark" ? "outline" : "filled",
   } = attributes;
 
+  const iconColor = colorScheme === "dark"
+    ? themeColorShade
+    : COLORS_SWATCHES.gray[1];
   const leftIconTable: Record<AccessibleButtonKind, ReactNode> = {
-    add: <TbPlus />,
-    collapse: <VscCollapseAll />,
+    add: <TbPlus color={iconColor} size={22} />,
+    collapse: <VscCollapseAll color={iconColor} size={22} />,
     default: null,
-    delete: <TbTrash />,
-    dislike: <BiDislike />,
-    down: <TbCircleArrowDown />,
-    download: <TbDownload />,
-    edit: <TbEdit />,
-    expand: <VscExpandAll />,
-    filter: <TbFilter />,
-    insert: <TbRowInsertTop />,
-    help: <TbHelp />,
-    hide: <TbArrowDown />,
-    like: <BiLike />,
-    logout: <TbLogout />,
-    next: <TiArrowRightThick />,
-    pause: <TbPlayerPauseFilled />,
-    play: <TbPlayerPlayFilled />,
-    previous: <TiArrowLeftThick />,
-    quote: <TbQuote />,
-    rate: <TbStar />,
-    refresh: <TbRefresh />,
-    reply: <TbMessageCirclePlus />,
-    report: <TbMessageReport />,
-    reset: <TbClearAll />,
-    search: <TbSearch />,
-    show: <TbArrowUp />,
-    star: <TbStar />,
-    submit: <TbUpload />,
-    up: <TbCircleArrowUp />,
+    delete: <TbTrash color={iconColor} size={22} />,
+    dislike: <BiDislike color={iconColor} size={22} />,
+    down: <TbCircleArrowDown color={iconColor} size={22} />,
+    download: <TbDownload color={iconColor} size={22} />,
+    edit: <TbEdit color={iconColor} size={22} />,
+    expand: <VscExpandAll color={iconColor} size={22} />,
+    filter: <TbFilter color={iconColor} size={22} />,
+    insert: <TbRowInsertTop color={iconColor} size={22} />,
+    help: <TbHelp color={iconColor} size={22} />,
+    hide: <TbArrowDown color={iconColor} size={22} />,
+    like: <BiLike color={iconColor} size={22} />,
+    logout: <TbLogout color={iconColor} size={22} />,
+    next: <TiArrowRightThick color={iconColor} size={22} />,
+    pause: <TbPlayerPauseFilled color={iconColor} size={22} />,
+    play: <TbPlayerPlayFilled color={iconColor} size={22} />,
+    previous: <TiArrowLeftThick color={iconColor} size={22} />,
+    quote: <TbQuote color={iconColor} size={22} />,
+    rate: <TbStar color={iconColor} size={22} />,
+    refresh: <TbRefresh color={iconColor} size={22} />,
+    reply: <TbMessageCirclePlus color={iconColor} size={22} />,
+    report: <TbMessageReport color={iconColor} size={22} />,
+    reset: <TbClearAll color={iconColor} size={22} />,
+    search: <TbSearch color={iconColor} size={22} />,
+    show: <TbArrowUp color={iconColor} size={22} />,
+    star: <TbStar color={iconColor} size={22} />,
+    submit: <TbUpload color={iconColor} size={22} />,
+    up: <TbCircleArrowUp color={iconColor} size={22} />,
   };
 
   const leftIcon = setIconAsLabel
     ? null
     : attributes.leftIcon ?? leftIconTable[kind];
-  const label = setIconAsLabel
-    ? leftIconTable[kind]
-    : attributes.label ?? splitCamelCase(name);
+  const label = setIconAsLabel ? leftIconTable[kind] : (
+    <Text
+      size="sm"
+      color={colorScheme === "dark" ? themeColorShade : "white"}
+    >
+      {attributes.label ?? splitCamelCase(name)}
+    </Text>
+  );
   // const label = setIconAsLabel
   //   ? leftIconTable[kind]
   //   : attributes.label ?? splitCamelCase(name);
@@ -204,7 +218,6 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
       color={color}
       compact={compact}
       disabled={disabled}
-      gradient={variant === "gradient" ? defaultGradient : void 0}
       leftIcon={leftIcon}
       name={name}
       onClick={onClick}

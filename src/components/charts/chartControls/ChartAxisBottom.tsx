@@ -68,7 +68,7 @@ type ChartAxisBottomProps = {
 
 function ChartAxisBottom(props: ChartAxisBottomProps) {
   const { globalState: { themeObject } } = useGlobalState();
-  const { backgroundColor } = returnThemeColors({
+  const { bgGradient } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -221,7 +221,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
 
   const displayAxisBottomHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5}>
@@ -303,7 +303,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const displayAxisBottomSection = (
     <Stack w="100%">
       {displayAxisBottomHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayToggleAxisBottomSwitchInput}
         {displayAxisBottomTickSizeSliderInput}
         {displayAxisBottomTickPaddingSliderInput}

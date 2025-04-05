@@ -209,7 +209,36 @@ function returnThemeColors({
 
   const textColor = colorScheme === "light" ? gray[8] : gray[5];
   const textColorSliderLabel = gray[3];
-  const backgroundColor = colorScheme === "light" ? "#f5f5f5" : dark[8];
+
+  const ANGLE = "45deg";
+
+  const headerBgColor = colorScheme === "light"
+    ? (themeColorShades?.[0] ?? "#f5f5f5")
+    : dark[6];
+  const headerBgGradient = colorScheme === "light"
+    ? `linear-gradient(${ANGLE},  #f5f5f5, ${headerBgColor})`
+    : `linear-gradient(${ANGLE}, ${headerBgColor}, ${headerBgColor})`;
+
+  const stickyHeaderBackgroundColor = colorScheme === "light"
+    ? (themeColorShades?.[1] ?? "#f5f5f5")
+    : dark[6];
+  const stickyHeaderBgGradient = colorScheme === "light"
+    ? `linear-gradient(${ANGLE}, ${stickyHeaderBackgroundColor}, #f5f5f5)`
+    : `linear-gradient(${ANGLE}, ${stickyHeaderBackgroundColor}, ${dark[7]})`;
+
+  const backgroundColorLight = colorScheme === "light"
+    ? (themeColorShades?.[0] ?? "#f5f5f5")
+    : dark[7];
+  const bgGradient = colorScheme === "light"
+    ? `linear-gradient(${ANGLE}, ${backgroundColorLight}, #f5f5f5)`
+    : `linear-gradient(${ANGLE}, ${backgroundColorLight}, ${dark[8]})`;
+
+  const cardBackgroundColor = colorScheme === "light"
+    ? (themeColorShades?.[0] ?? "#f5f5f5")
+    : dark[8];
+  const cardBgGradient = colorScheme === "light"
+    ? `linear-gradient(${ANGLE},  #f5f5f5, ${cardBackgroundColor})`
+    : `linear-gradient(${ANGLE}, ${cardBackgroundColor}, ${dark[9]})`;
 
   // for ScrollArea styles
   const scrollBarStyle = {
@@ -234,7 +263,10 @@ function returnThemeColors({
   };
 
   return {
-    backgroundColor,
+    stickyHeaderBgGradient,
+    cardBgGradient,
+    headerBgGradient,
+    bgGradient,
     blueColorShade,
     cyanColorShade,
     darkColorShade,

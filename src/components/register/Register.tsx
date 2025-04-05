@@ -3,7 +3,6 @@ import {
   Center,
   Flex,
   Group,
-  Image,
   Loader,
   Stack,
   Text,
@@ -12,6 +11,7 @@ import {
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
+import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -119,6 +119,11 @@ function Register() {
     !confirmPassword ||
     isError;
 
+  const { bgGradient, themeColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const submitButton = (
     <AccessibleButton
       attributes={{
@@ -129,7 +134,11 @@ function Register() {
           : "Please fix errors before registering.",
         disabled: isButtonDisabled,
         kind: "submit",
-        leftIcon: isSubmitting ? <Loader size="xs" /> : null,
+        leftIcon: isSubmitting
+          ? <Loader size="xs" />
+          : isSuccessful
+          ? <TbCheck color={themeColorShade} />
+          : null,
         name: "submit",
         onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
           if (password !== confirmPassword) {
@@ -164,13 +173,6 @@ function Register() {
     />
   );
 
-  const {
-    themeColorShade,
-  } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
-
   const linkToLogin = (
     <Flex align="center" justify="center" columnGap="sm">
       <Text color="dark">Already have an account?</Text>
@@ -182,21 +184,21 @@ function Register() {
     </Flex>
   );
 
-  const logo = (
-    <Image
-      alt="Macaulay Tech Logo"
-      aria-label="Macaulay Tech Logo"
-      src="src/assets/macauley-tech-logo.png"
-      height={50}
-      width={50}
-      fit="cover"
-    />
-  );
+  // const logo = (
+  //   <Image
+  //     alt="Macaulay Tech Logo"
+  //     aria-label="Macaulay Tech Logo"
+  //     src="src/assets/macauley-tech-logo.png"
+  //     height={50}
+  //     width={50}
+  //     fit="cover"
+  //   />
+  // );
 
   const displayTitle = (
     <Group w="100%" position="apart">
       <Group align="flex-start">
-        {logo}
+        {/* {logo} */}
         <Title order={1} style={{ letterSpacing: "0.30rem" }}>
           MACAULEY
         </Title>
@@ -217,7 +219,7 @@ function Register() {
         p="lg"
         radius="md"
         withBorder
-        w="clamp(300px, 400px, 500px)"
+        className="register-card"
       >
         <Stack>
           <Title order={2}>Register</Title>
@@ -241,8 +243,8 @@ function Register() {
   return (
     <Stack
       p="md"
-      bg="white"
       h="100vh"
+      bg={bgGradient}
     >
       {displayTitle}
       {card}

@@ -1,12 +1,4 @@
-import {
-  ColorInput,
-  Flex,
-  Group,
-  Stack,
-  Text,
-  Title,
-  Tooltip,
-} from "@mantine/core";
+import { ColorInput, Group, Stack, Text, Title, Tooltip } from "@mantine/core";
 import { ResponsiveCalendar } from "@nivo/calendar";
 import { useEffect, useReducer, useRef } from "react";
 
@@ -49,7 +41,7 @@ function ResponsiveCalendarChart({
     globalState: { themeObject },
   } = useGlobalState();
 
-  const { grayColorShade, textColor, scrollBarStyle, backgroundColor } =
+  const { grayColorShade, textColor, scrollBarStyle, bgGradient } =
     returnThemeColors({
       themeObject,
       colorsSwatches: COLORS_SWATCHES,
@@ -460,7 +452,7 @@ function ResponsiveCalendarChart({
   // base
   const displayBaseHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -490,7 +482,7 @@ function ResponsiveCalendarChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayCalendarDirectionSelectInput}
         {displayCalendarAlignSelectInput}
       </Group>
@@ -513,7 +505,7 @@ function ResponsiveCalendarChart({
   // style
   const displayStyleHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -540,15 +532,17 @@ function ResponsiveCalendarChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      {displayEnableDefaultColorsSwitchInput}
-      {displayEmptyColorInput}
+      <Group w="100%" align="baseline" px="md">
+        {displayEnableDefaultColorsSwitchInput}
+        {displayEmptyColorInput}
+      </Group>
     </Stack>
   );
 
   // years
   const displayYearsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -589,7 +583,7 @@ function ResponsiveCalendarChart({
   const displayYearsSection = (
     <Stack w="100%">
       {displayYearsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayYearSpacingSliderInput}
         {displayYearLegendPositionSelectInput}
         {displayYearLegendOffsetSliderInput}
@@ -600,7 +594,7 @@ function ResponsiveCalendarChart({
   // months
   const displayMonthsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -660,7 +654,7 @@ function ResponsiveCalendarChart({
   const displayMonthsSection = (
     <Stack w="100%">
       {displayMonthsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayMonthSpacingSliderInput}
         {displayMonthBorderWidthSliderInput}
         {displayMonthBorderColorInput}
@@ -673,7 +667,7 @@ function ResponsiveCalendarChart({
   // days
   const displayDaysHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={4} color={textColor}>
@@ -714,7 +708,7 @@ function ResponsiveCalendarChart({
   const displayDaysSection = (
     <Stack w="100%">
       {displayDaysHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayDaySpacingSliderInput}
         {displayDayBorderWidthSliderInput}
         {displayDayBorderColorInput}
@@ -747,7 +741,7 @@ function ResponsiveCalendarChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%" pt="md">
+    <Stack w="100%" p="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={stateWithChartTitle}
         input={displayResetAllButton}
@@ -759,7 +753,7 @@ function ResponsiveCalendarChart({
 
   // display
   const calendarChartControlsStack = (
-    <Flex w="100%" direction="column">
+    <Stack w="100%" spacing="xl">
       {displayBaseSection}
       {displayChartMargin}
       {displayStyleSection}
@@ -768,7 +762,7 @@ function ResponsiveCalendarChart({
       {displayDaysSection}
       {displayChartOptions}
       {displayResetAll}
-    </Flex>
+    </Stack>
   );
 
   const displayChartAndControls = (

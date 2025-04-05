@@ -65,7 +65,7 @@ function ResponsiveLineChart({
     globalState: { isPrefersReducedMotion, themeObject },
   } = useGlobalState();
 
-  const { grayColorShade, textColor, scrollBarStyle, backgroundColor } =
+  const { grayColorShade, textColor, scrollBarStyle, bgGradient } =
     returnThemeColors({
       themeObject,
       colorsSwatches: COLORS_SWATCHES,
@@ -766,7 +766,7 @@ function ResponsiveLineChart({
   // base
   const displayBaseHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -808,7 +808,7 @@ function ResponsiveLineChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayXScaleSelectInput}
         {displayYScaleSelectInput}
         {displayEnableYScaleStackedSwitchInput}
@@ -833,7 +833,7 @@ function ResponsiveLineChart({
   // style
   const displayStyleHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -899,7 +899,7 @@ function ResponsiveLineChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayLineCurveSelectInput}
         {displayChartColorsSelectInput}
         {displayLineWidthSliderInput}
@@ -913,7 +913,7 @@ function ResponsiveLineChart({
   // points
   const displayPointsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -990,7 +990,7 @@ function ResponsiveLineChart({
   const displayPointsSection = (
     <Stack w="100%">
       {displayPointsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnablePointsSwitchInput}
         {displayPointSizeSliderInput}
         {displayPointColorInput}
@@ -1005,7 +1005,7 @@ function ResponsiveLineChart({
   // grids
   const displayGridsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1029,8 +1029,10 @@ function ResponsiveLineChart({
   const displayGridsSection = (
     <Stack w="100%">
       {displayGridsHeading}
-      {displayEnableGridXSwitchInput}
-      {displayEnableGridYSwitchInput}
+      <Group w="100%" align="baseline" px="md">
+        {displayEnableGridXSwitchInput}
+        {displayEnableGridYSwitchInput}
+      </Group>
     </Stack>
   );
 
@@ -1098,7 +1100,7 @@ function ResponsiveLineChart({
   // interactivity
   const displayInteractivityHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1126,8 +1128,10 @@ function ResponsiveLineChart({
   const displayInteractivitySection = (
     <Stack w="100%">
       {displayInteractivityHeading}
-      {displayEnableCrosshairSwitchInput}
-      {displayCrosshairTypeSelectInput}
+      <Group w="100%" align="baseline" px="md">
+        {displayEnableCrosshairSwitchInput}
+        {displayCrosshairTypeSelectInput}
+      </Group>
     </Stack>
   );
 
@@ -1161,7 +1165,7 @@ function ResponsiveLineChart({
   // motion
   const displayMotionHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1189,8 +1193,10 @@ function ResponsiveLineChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      {displayEnableAnimateSwitchInput}
-      {displayMotionConfigSelectInput}
+      <Group w="100%" align="baseline" px="md">
+        {displayEnableAnimateSwitchInput}
+        {displayMotionConfigSelectInput}
+      </Group>
     </Stack>
   );
 
@@ -1219,7 +1225,7 @@ function ResponsiveLineChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%" pt="md">
+    <Stack w="100%" p="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={stateWithChartTitle}
         input={displayResetAllButton}

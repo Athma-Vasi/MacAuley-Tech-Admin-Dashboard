@@ -89,7 +89,7 @@ type ChartOptionsProps = {
 
 function ChartOptions(props: ChartOptionsProps) {
   const { globalState: { themeObject } } = useGlobalState();
-  const { backgroundColor } = returnThemeColors({
+  const { bgGradient } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -204,6 +204,7 @@ function ChartOptions(props: ChartOptionsProps) {
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
+      align="flex-start"
     >
       <Text pt="xl">{screenshotFilename}</Text>
       <AccessibleTextInput
@@ -277,7 +278,7 @@ function ChartOptions(props: ChartOptionsProps) {
 
   const displayOptionsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5}>
@@ -368,7 +369,7 @@ function ChartOptions(props: ChartOptionsProps) {
   const displayOptionsSection = (
     <Stack w="100%">
       {displayOptionsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayChartTitleTextInput}
         {displayChartTitleColorInput}
         {displayChartTitleSizeSliderInput}

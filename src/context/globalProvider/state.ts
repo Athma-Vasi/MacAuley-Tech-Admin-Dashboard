@@ -8,10 +8,10 @@ const initialThemeObject: ThemeObject = {
   // black: '#212529', // gray.9
   // black: "#25262b",
   black: "#121212",
-  primaryColor: "violet",
-  primaryShade: { light: 5, dark: 7 },
+  primaryColor: "dark",
+  primaryShade: { light: 7, dark: 7 },
   defaultGradient: { deg: 45, from: "blue", to: "cyan" },
-  fontFamily: "sans-serif",
+  fontFamily: "Work Sans",
   components: {
     Button: {
       defaultProps: {

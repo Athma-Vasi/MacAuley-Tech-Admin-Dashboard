@@ -51,9 +51,10 @@ function ResponsivePieChart({
 
   const {
     darkColorShade,
-    backgroundColor,
+    bgGradient,
     textColor,
     grayColorShade,
+    stickyHeaderBgGradient,
     scrollBarStyle,
   } = returnThemeColors({
     themeObject,
@@ -684,7 +685,7 @@ function ResponsivePieChart({
 
   const displayBaseHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -752,7 +753,7 @@ function ResponsivePieChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayStartAngleSliderInput}
         {displayEndAngleSliderInput}
         {displayInnerRadiusSliderInput}
@@ -767,7 +768,7 @@ function ResponsivePieChart({
   const displayStyleHeading = (
     <Group
       w="100%"
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
     >
       <Title order={5} color={textColor}>
         Style
@@ -814,7 +815,7 @@ function ResponsivePieChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableFillPatternsSwitchInput}
         {displayColorSchemeSelectInput}
         {displayBorderColorInput}
@@ -840,7 +841,7 @@ function ResponsivePieChart({
   /** arc link labels */
   const displayArcLinkLabelsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -934,7 +935,7 @@ function ResponsivePieChart({
   const displayArcLinkLabelsSection = (
     <Stack w="100%">
       {displayArcLinkLabelsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableArcLinkLabelsSwitchInput}
         {displayArcLinkLabelsSkipAngleSliderInput}
         {displayArcLinkLabelsOffsetSliderInput}
@@ -951,7 +952,7 @@ function ResponsivePieChart({
   const displayInteractivityHeading = (
     <Group
       w="100%"
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
     >
       <Title order={5} color={textColor}>
         Interactivity
@@ -982,7 +983,7 @@ function ResponsivePieChart({
   const displayInteractivitySection = (
     <Stack w="100%">
       {displayInteractivityHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayActiveInnerRadiusOffsetSliderInput}
         {displayActiveOuterRadiusOffsetSliderInput}
       </Group>
@@ -992,7 +993,7 @@ function ResponsivePieChart({
   /** motion */
   const displayMotionHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1002,7 +1003,7 @@ function ResponsivePieChart({
   );
 
   const displayAnimateMotionSwitchInput = (
-    <Group w="100%" style={{ borderBottom: arcBorderColor }}>
+    <Group w="100%">
       {enableAnimateSwitchInput}
     </Group>
   );
@@ -1030,7 +1031,7 @@ function ResponsivePieChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayAnimateMotionSwitchInput}
         {displayMotionConfigSelectInput}
         {displayTransitionModeSelectInput}
@@ -1103,7 +1104,7 @@ function ResponsivePieChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%" pt="md">
+    <Stack w="100%" p="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={stateWithChartTitle}
         input={displayResetAllButton}

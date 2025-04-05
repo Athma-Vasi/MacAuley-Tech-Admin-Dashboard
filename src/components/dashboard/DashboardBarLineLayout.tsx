@@ -1,16 +1,14 @@
-import { Card, Center, Group, Space, Stack, Text, Title } from "@mantine/core";
-import React from "react";
 import {
-  COLORS_SWATCHES,
-  DASHBOARD_HEADER_HEIGHT,
-  DASHBOARD_HEADER_HEIGHT_MOBILE,
-  METRICS_HEADER_HEIGHT,
-  METRICS_HEADER_HEIGHT_MOBILE,
-  MOBILE_BREAKPOINT,
-} from "../../constants";
-import { useGlobalState } from "../../hooks/useGlobalState";
-import { useWindowSize } from "../../hooks/useWindowSize";
-import { returnThemeColors } from "../../utils";
+  Card,
+  Center,
+  Flex,
+  Group,
+  Space,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import React from "react";
 import { DashboardCalendarView } from "./types";
 
 type DashboardBarLineLayoutProps = {
@@ -58,23 +56,15 @@ function DashboardBarLineLayout(
     semanticLabel,
   }: DashboardBarLineLayoutProps,
 ) {
-  const { globalState: { themeObject } } = useGlobalState();
-  const { windowWidth } = useWindowSize();
-
-  const { backgroundColor } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
-
   const pieChartCard = (
     <Card
       shadow="sm"
       padding="md"
       radius="md"
       withBorder
-      className="chart-card pie-chart-card"
+      className="pie-chart-card"
     >
-      <Stack px="md" w="100%">
+      <Stack w="100%" spacing="xl">
         <Group
           position={pieChartYAxisSelectInput ? "apart" : "right"}
           w="100%"
@@ -92,19 +82,17 @@ function DashboardBarLineLayout(
   );
 
   const pieSectionMaybe = (
-    <div className={`overview-${pieChart ? "with" : "without"}-pie `}>
-      <Card
+    <div className={`overview-${pieChart ? "with" : "without"}-pie`}>
+      <Flex
         className={`overview-summary-${pieChart ? "with" : "without"}-pie`}
-        shadow="sm"
-        padding="md"
-        radius="md"
-        withBorder
       >
-        <Title order={3}>Summary</Title>
-        <div className={`overview-cards-${pieChart ? "with" : "without"}-pie`}>
+        <Title order={5} size={20}>Summary</Title>
+        <div
+          className={`overview-cards-${pieChart ? "with" : "without"}-pie`}
+        >
           {overviewCards}
         </div>
-      </Card>
+      </Flex>
 
       {pieChart && pieChartHeading && expandPieChartButton
         ? pieChartCard
@@ -120,17 +108,14 @@ function DashboardBarLineLayout(
       radius="md"
       withBorder
     >
-      <Stack w="100%">
-        <Group position="apart" w="100%">
+      <Stack w="100%" spacing="xl">
+        <Group position="apart" w="100%" align="flex-end">
           {barLineRadialChartYAxisSelectInput}
           {barLineRadialChartKindSegmentedControl}
           {expandBarLineRadialChartButton}
         </Group>
 
-        <div
-          className="statistics-elements-container"
-          style={{ outline: "1px solid maroon" }}
-        >
+        <div className="statistics-elements-container">
           {cardsWithStatisticsElements}
         </div>
         <Text size={20} weight={500}>{barLineRadialChartHeading}</Text>
@@ -149,16 +134,14 @@ function DashboardBarLineLayout(
           radius="md"
           withBorder
         >
-          <Stack px="md">
+          <Stack w="100%" spacing="xl">
             <Group position="apart" w="100%">
               {calendarChartYAxisSelectInput}
               {expandCalendarChartButton}
             </Group>
 
             <Text size={20} weight={500}>{calendarChartHeading}</Text>
-            <Center>
-              {calendarChart}
-            </Center>
+            <Center w="100%">{calendarChart}</Center>
           </Stack>
         </Card>
       )
@@ -169,26 +152,25 @@ function DashboardBarLineLayout(
       align="flex-start"
       className="dashboard-bar-line-layout"
       w="100%"
-      bg={backgroundColor}
       spacing="xl"
     >
       <Space h="md" />
       <Group
         w="100%"
         py="md"
-        style={{
-          position: "sticky",
-          top: windowWidth < MOBILE_BREAKPOINT
-            ? DASHBOARD_HEADER_HEIGHT_MOBILE +
-              METRICS_HEADER_HEIGHT_MOBILE
-            : DASHBOARD_HEADER_HEIGHT +
-              METRICS_HEADER_HEIGHT,
-          backgroundColor,
-          zIndex: 2,
-          boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
-        }}
+        // style={{
+        //   position: "sticky",
+        //   top: windowWidth < MOBILE_BREAKPOINT
+        //     ? DASHBOARD_HEADER_HEIGHT_MOBILE +
+        //       METRICS_HEADER_HEIGHT_MOBILE
+        //     : DASHBOARD_HEADER_HEIGHT +
+        //       METRICS_HEADER_HEIGHT,
+        //   backgroundColor,
+        //   zIndex: 2,
+        //   boxShadow: "0px 4px 6px -2px rgba(0, 0, 0, 0.1)",
+        // }}
       >
-        <Title order={3}>
+        <Title order={5} size={24}>
           {calendarView}{"  "}{sectionHeading}
         </Title>
       </Group>

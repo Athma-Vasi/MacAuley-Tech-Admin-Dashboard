@@ -1,4 +1,7 @@
 import { Card, Group, Stack, Title, TitleOrder } from "@mantine/core";
+import { COLORS_SWATCHES } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
 import { NivoChartTitlePosition } from "../types";
 
 type ChartAndControlsDisplayProps = {
@@ -16,6 +19,12 @@ type ChartAndControlsDisplayProps = {
 function ChartAndControlsDisplay(
   props: ChartAndControlsDisplayProps,
 ): React.JSX.Element {
+  const { globalState: { themeObject } } = useGlobalState();
+  const { bgGradient } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const {
     chartControlsStack,
     chartRef,
@@ -28,29 +37,13 @@ function ChartAndControlsDisplay(
   } = props;
 
   return (
-    // <Stack w="100%">
-    //   <Title order={2}>Chart Controls</Title>
-    //   <Group h="38%">{chartControlsStack}</Group>
-    //   <Group
-    //     w="100%"
-    //     ref={chartRef}
-    //     position="center"
-    //     py="xl"
-    //     style={{
-    //       // width: "clamp(350px, 100%, 618px)",
-    //       height: "clamp(250px, 400px, 500px)",
-    //     }}
-    //   >
-    //     <Group w="100%" position={chartTitlePosition} px="xl">
-    //       <Title order={chartTitleSize} color={chartTitleColor}>
-    //         {chartTitle}
-    //       </Title>
-    //     </Group>
-    //     {responsiveChart}
-    //   </Group>
-    // </Stack>
     <div className="chart-and-controls">
-      <Card shadow="md" radius="md" withBorder className="chart-controls">
+      <Card
+        shadow="md"
+        className="chart-controls"
+        style={{ background: bgGradient, borderRadius: "0px 0px 0.5em 0.5em" }}
+        px={0}
+      >
         <Title order={2}>Chart Controls</Title>
         {chartControlsStack}
       </Card>

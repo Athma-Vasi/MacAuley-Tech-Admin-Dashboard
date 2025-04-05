@@ -48,7 +48,7 @@ function ResponsiveRadialBarChart(
 
   const {
     darkColorShade,
-    backgroundColor,
+    bgGradient,
     grayColorShade,
     textColor,
     scrollBarStyle,
@@ -981,7 +981,7 @@ function ResponsiveRadialBarChart(
 
   const displayBaseHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1052,7 +1052,7 @@ function ResponsiveRadialBarChart(
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayStartAngleSliderInput}
         {displayEndAngleSliderInput}
         {displayInnerRadiusSliderInput}
@@ -1078,7 +1078,7 @@ function ResponsiveRadialBarChart(
   // style
   const displayStyleHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1121,7 +1121,7 @@ function ResponsiveRadialBarChart(
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayChartColorsSelectInput}
         {displayRingBorderColorsInput}
         {displayRingBorderWidthSliderInput}
@@ -1132,7 +1132,7 @@ function ResponsiveRadialBarChart(
   // tracks
   const displayTracksHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1168,7 +1168,7 @@ function ResponsiveRadialBarChart(
   // grids
   const displayGridsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1192,8 +1192,10 @@ function ResponsiveRadialBarChart(
   const displayGridsSection = (
     <Stack w="100%">
       {displayGridsHeading}
-      {displayEnableRadialGridSwitchInput}
-      {displayEnableCircularGridSwitchInput}
+      <Group w="100%" align="baseline" px="md">
+        {displayEnableRadialGridSwitchInput}
+        {displayEnableCircularGridSwitchInput}
+      </Group>
     </Stack>
   );
 
@@ -1201,7 +1203,7 @@ function ResponsiveRadialBarChart(
   // radial axis start
   const displayRadialAxisStartHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1252,7 +1254,7 @@ function ResponsiveRadialBarChart(
   const displayRadialAxisStartSection = (
     <Stack w="100%">
       {displayRadialAxisStartHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableRadialAxisStartSwitchInput}
         {displayRadialAxisStartTickSizeSliderInput}
         {displayRadialAxisStartTickPaddingSliderInput}
@@ -1264,7 +1266,7 @@ function ResponsiveRadialBarChart(
   // radial axis end
   const displayRadialAxisEndHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1315,7 +1317,7 @@ function ResponsiveRadialBarChart(
   const displayRadialAxisEndSection = (
     <Stack w="100%">
       {displayRadialAxisEndHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableRadialAxisEndSwitchInput}
         {displayRadialAxisEndTickSizeSliderInput}
         {displayRadialAxisEndTickPaddingSliderInput}
@@ -1327,7 +1329,7 @@ function ResponsiveRadialBarChart(
   // circular axis inner
   const displayCircularAxisInnerHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1378,7 +1380,7 @@ function ResponsiveRadialBarChart(
   const displayCircularAxisInnerSection = (
     <Stack w="100%">
       {displayCircularAxisInnerHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableCircularAxisInnerSwitchInput}
         {displayCircularAxisInnerTickSizeSliderInput}
         {displayCircularAxisInnerTickPaddingSliderInput}
@@ -1390,7 +1392,7 @@ function ResponsiveRadialBarChart(
   // circular axis outer
   const displayCircularAxisOuterHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1441,7 +1443,7 @@ function ResponsiveRadialBarChart(
   const displayCircularAxisOuterSection = (
     <Stack w="100%">
       {displayCircularAxisOuterHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableCircularAxisOuterSwitchInput}
         {displayCircularAxisOuterTickSizeSliderInput}
         {displayCircularAxisOuterTickPaddingSliderInput}
@@ -1453,7 +1455,7 @@ function ResponsiveRadialBarChart(
   // labels
   const displayLabelsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1503,7 +1505,7 @@ function ResponsiveRadialBarChart(
   const displayLabelsSection = (
     <Stack w="100%">
       {displayLabelsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableLabelsSwitchInput}
         {displayLabelsSkipAngleSliderInput}
         {displayLabelsRadiusOffsetSliderInput}
@@ -1541,7 +1543,7 @@ function ResponsiveRadialBarChart(
   // motion
   const displayMotionHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1579,7 +1581,7 @@ function ResponsiveRadialBarChart(
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableAnimateSwitchInput}
         {displayMotionConfigSelectInput}
         {displayTransitionModeSelectInput}
@@ -1612,7 +1614,7 @@ function ResponsiveRadialBarChart(
   );
 
   const displayResetAll = (
-    <Stack w="100%" pt="md">
+    <Stack w="100%" p="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={stateWithChartTitle}
         input={displayResetAllButton}

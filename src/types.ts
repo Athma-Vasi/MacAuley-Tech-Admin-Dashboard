@@ -239,6 +239,8 @@ type SafeBox<Data = unknown> = {
 
 type SafeBoxResult<Data = unknown> = Result<SafeBox<Data>, SafeBox>;
 
+type FontFamily = "Work Sans" | "serif" | "Open-Dyslexic";
+
 export type {
   BusinessMetricsDocument,
   CheckboxRadioSelectData,
@@ -246,6 +248,7 @@ export type {
   CustomerMetricsDocument,
   DecodedToken,
   FinancialMetricsDocument,
+  FontFamily,
   HttpServerResponse,
   InputType,
   ProductMetricsDocument,

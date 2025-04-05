@@ -10,12 +10,11 @@
   --min-card-width: 300px;
   --ideal-card-width: calc(100% - var(--padding-xTotal));
   --max-card-width: 350px;
+  --max-login-card-width: 500px;
 
-  --min-summary-card-width: calc(100% - var(--padding-xTotal));
+  --min-summary-card-width: calc(100% - var(--padding));
   --ideal-summary-card-width: calc(100% - var(--padding));
-  --max-summary-card-width: calc(
-    var(--max-card-width) + var(--max-card-width) + var(--padding)
-  );
+  --max-summary-card-width: calc(var(--max-card-width) + var(--max-card-width));
 
   --min-chart-controls-card-width: 300px;
   --ideal-chart-controls-card-width: calc(100% - var(--padding));
@@ -50,6 +49,14 @@
   padding: var(--padding);
 }
 
+.login-card {
+  width: clamp(var(--min-card-width), fit-content, var(--max-login-card-width));
+}
+
+.register-card {
+  width: clamp(var(--min-card-width), fit-content, var(--max-login-card-width));
+}
+
 .chart-card {
   width: 100%;
 }
@@ -60,7 +67,6 @@
     var(--ideal-card-width),
     var(--max-card-width)
   );
-  outline: 1px solid salmon;
 }
 
 .statistics-card {
@@ -69,7 +75,6 @@
     var(--ideal-card-width),
     var(--max-card-width)
   );
-  outline: 1px solid tomato;
 }
 
 .chart-and-controls {
@@ -79,14 +84,14 @@
   grid-template-rows: 7fr 3fr; */
   display: flex;
   flex-direction: column;
-  row-gap: var(--row-gap);
-  outline: 1px solid rebeccapurple;
+  /* row-gap: var(--row-gap); */
 }
 
 .chart-controls {
   /* height: calc(62vh - var(--dashboard-header-height)); */
   height: 50vh;
-  overflow: scroll;
+  overflow-y: scroll;
+  width: calc(100% - 1em);
 }
 
 .chart-controls-card {
@@ -100,7 +105,6 @@
 .chart-container {
   height: 50vh;
   width: 100%;
-  outline: 1px solid salmon;
 }
 
 .chart-display {
@@ -161,7 +165,6 @@
     display: flex;
     flex-direction: column;
     row-gap: var(--row-gap);
-    outline: 1px solid gold;
   }
 
   .overview-summary-with-pie, .overview-summary-without-pie {
@@ -173,7 +176,6 @@
       var(--ideal-summary-card-width),
       var(--max-summary-card-width)
     );
-    outline: 1px solid teal;
   }
 
   .overview-cards-with-pie, .overview-cards-without-pie {
@@ -224,7 +226,7 @@
   .overview-summary-with-pie, .overview-summary-without-pie {
     display: flex;
     flex-direction: column;
-    outline: 1px solid maroon;
+
     row-gap: var(--row-gap);
     width: clamp(
       var(--min-summary-card-width),
@@ -240,7 +242,6 @@
 
   .pie-chart-card {
     width: 100%;
-    outline: 1px solid gold;
   }
 
   .statistics-elements-container {
@@ -257,24 +258,21 @@
   .overview-with-pie .overview-without-pie {
     display: grid;
     grid-template-columns: 3fr 7fr;
-    outline: 1px solid teal;
+
     width: 100%;
     column-gap: var(--column-gap);
   }
 
   .overview-summary-with-pie, .overview-summary-without-pie {
-    outline: 1px solid rebeccapurple;
     display: flex;
-    width: clamp(
-      var(--min-summary-card-width),
-      var(--ideal-summary-card-width),
-      var(--max-summary-card-width)
-    );
-    row-gap: var(--row-gap);
+    width: auto;
+    outline: 1px solid teal;
   }
 
   .overview-cards-without-pie, .overview-cards-with-pie {
     display: flex;
+    flex-direction: column;
+    row-gap: var(--row-gap);
     column-gap: var(--column-gap);
   }
 

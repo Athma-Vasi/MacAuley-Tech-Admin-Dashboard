@@ -4,7 +4,7 @@ import { MdCalendarMonth, MdDateRange } from "react-icons/md";
 import { RiCalendarLine } from "react-icons/ri";
 
 import React from "react";
-import { INPUT_WIDTH } from "../../constants";
+import { INPUT_WIDTH, TEXT_SHADOW } from "../../constants";
 import {
   addCommaSeparator,
   formatDate,
@@ -44,8 +44,7 @@ function returnDashboardCardElement({
     <Group position="left">
       <Text
         size={24}
-        weight={500}
-        style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
+        weight={400}
       >
         {heading}
       </Text>
@@ -57,7 +56,7 @@ function returnDashboardCardElement({
       <Text
         size={26}
         weight={600}
-        style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.05)" }}
+        style={{ textShadow: TEXT_SHADOW }}
       >
         {value}
       </Text>
@@ -80,7 +79,7 @@ function returnDashboardCardElement({
   const createdChartCard = (
     <Card
       className="statistics-card"
-      shadow="md"
+      shadow="xs"
       radius="md"
       withBorder
     >
@@ -636,18 +635,28 @@ function createOverviewMetricCard(
       padding="lg"
       radius="md"
       withBorder
+      shadow="md"
       w={INPUT_WIDTH}
       h={185}
     >
       <Stack align="flex-start" spacing={2}>
-        <Text size={24} weight={600}>{splitCamelCase(subMetric)}</Text>
+        <Text
+          size={24}
+          weight={500}
+        >
+          {splitCamelCase(subMetric)}
+        </Text>
         <Text size={20} mb={5}>
           {storeLocationView}
         </Text>
         <Text size={16} mb={5}>
           {date}
         </Text>
-        <Text size={26} weight={600}>
+        <Text
+          size={26}
+          weight={600}
+          style={{ textShadow: TEXT_SHADOW }}
+        >
           {addCommaSeparator(value)} {unit}
         </Text>
       </Stack>

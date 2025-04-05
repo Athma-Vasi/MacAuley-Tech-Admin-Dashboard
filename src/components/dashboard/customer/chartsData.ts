@@ -6,7 +6,6 @@ import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
 import { MONTHS } from "../constants";
 import {
-  BusinessMetricStoreLocation,
   CustomerDailyMetric,
   CustomerMonthlyMetric,
   CustomerYearlyMetric,

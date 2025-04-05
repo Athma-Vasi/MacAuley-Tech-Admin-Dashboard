@@ -68,7 +68,7 @@ type ChartAxisTopProps = {
 
 function ChartAxisTop(props: ChartAxisTopProps) {
   const { globalState: { themeObject } } = useGlobalState();
-  const { backgroundColor } = returnThemeColors({
+  const { bgGradient } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -183,7 +183,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   const axisTopLegendOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
-        disabled: !enableAxisTop,
+        disabled: !enableAxisTop || !axisTopLegend,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -221,7 +221,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
 
   const displayAxisTopHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5}>
@@ -303,7 +303,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   const displayAxisTopSection = (
     <Stack w="100%">
       {displayAxisTopHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayToggleAxisTopSwitchInput}
         {displayAxisTopTickSizeSliderInput}
         {displayAxisTopTickPaddingSliderInput}

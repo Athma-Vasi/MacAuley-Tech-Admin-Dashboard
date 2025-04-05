@@ -121,7 +121,7 @@ type ChartLegendProps = {
 
 function ChartLegend(props: ChartLegendProps) {
   const { globalState: { themeObject } } = useGlobalState();
-  const { backgroundColor } = returnThemeColors({
+  const { bgGradient } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -462,7 +462,7 @@ function ChartLegend(props: ChartLegendProps) {
 
   const displayLegendHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5}>
@@ -662,7 +662,7 @@ function ChartLegend(props: ChartLegendProps) {
   const displayLegendSection = (
     <Stack w="100%">
       {displayLegendHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayToggleLegendSwitchInput}
         {displayLegendAnchorSelectInput}
         {displayLegendDirectionSelectInput}

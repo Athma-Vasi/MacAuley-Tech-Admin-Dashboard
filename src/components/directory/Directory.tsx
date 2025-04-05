@@ -1,4 +1,4 @@
-import { Group, Stack } from "@mantine/core";
+import { Box, Group, Stack } from "@mantine/core";
 import { useReducer } from "react";
 
 import { COLORS_SWATCHES, STORE_LOCATION_DATA } from "../../constants";
@@ -97,11 +97,11 @@ function Directory() {
 
   return (
     <Stack w="100%" align="center">
-      <Group w="100%" position="center">
+      <Group w="100%" position="center" py="md" align="baseline">
         {departmentSelectInput}
         {storeLocationSelectInput}
       </Group>
-      {d3Tree}
+      <Box>{d3Tree}</Box>
     </Stack>
   );
 }

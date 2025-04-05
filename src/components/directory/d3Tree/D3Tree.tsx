@@ -136,7 +136,10 @@ function D3Tree({ data }: { data: Array<D3TreeInput> }) {
     x: 15,
     y: 15,
   };
-  const containerStyles = { width: "100vw", height: "100vh" };
+  const containerStyles = {
+    width: "calc(99.5vw - 225px)",
+    height: "100vh",
+  };
 
   return (
     <div style={containerStyles} ref={containerRef as any}>

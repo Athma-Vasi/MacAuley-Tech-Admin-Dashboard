@@ -6,6 +6,7 @@ import {
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
 } from "../../../utils";
+import { GoldenGrid } from "../../goldenGrid";
 
 type ChartsAndGraphsControlsStackerProps = {
   initialChartState?: Record<string, any>;
@@ -25,8 +26,12 @@ function ChartsAndGraphsControlsStacker({
   value,
 }: ChartsAndGraphsControlsStackerProps): React.JSX.Element {
   const { globalState: { themeObject } } = useGlobalState();
+  const { colorScheme } = themeObject;
   const {
     grayColorShade,
+    darkColorShade,
+    cardBgGradient,
+    textColor,
   } = returnThemeColors({
     themeObject,
     colorsSwatches: COLORS_SWATCHES,
@@ -38,42 +43,67 @@ function ChartsAndGraphsControlsStacker({
         splitCamelCase(label).toLowerCase(),
   )?.[1] ?? "";
 
+  const sectionTextColor = isInputDisabled
+    ? colorScheme === "dark" ? grayColorShade : "grey"
+    : defaultValue === value
+    ? colorScheme === "dark" ? textColor : "grey"
+    : textColor;
+
   const displayDefaultValue = defaultValue === "" ? null : (
-    <Text
-      weight={300}
-      color={isInputDisabled
-        ? grayColorShade
-        : defaultValue === value
-        ? grayColorShade
-        : ""}
+    <Group
+      spacing="xs"
+      align="center"
     >
-      Default: {splitWordIntoUpperCasedSentence(
-        splitCamelCase(defaultValue.toString()),
-      )} {symbol}
-    </Text>
-  );
-
-  const displayTopSection = (
-    <Group w="100%" position="apart">
-      <Text weight={500} color={isInputDisabled ? grayColorShade : ""}>
-        {splitWordIntoUpperCasedSentence(label)}
+      <Text
+        weight={300}
+        color={sectionTextColor}
+      >
+        Default:
       </Text>
-
-      {displayDefaultValue}
+      <Text
+        weight={300}
+        color={sectionTextColor}
+      >
+        {splitWordIntoUpperCasedSentence(
+          splitCamelCase(defaultValue.toString()),
+        )} {symbol}
+      </Text>
     </Group>
   );
 
+  const displayTopSection = (
+    <GoldenGrid w="100%">
+      <Group position="left" spacing={4}>
+        {splitWordIntoUpperCasedSentence(label).split(" ").map((
+          word,
+          idx,
+        ) => (
+          <Text
+            size={16}
+            color={isInputDisabled
+              ? colorScheme === "dark" ? grayColorShade : "grey"
+              : ""}
+            key={idx}
+            span
+          >
+            {word}
+          </Text>
+        ))}
+      </Group>
+
+      <Group position="right">
+        {displayDefaultValue}
+      </Group>
+    </GoldenGrid>
+  );
+
   const displayBottomSection = (
-    <Group position="apart" w="100%">
+    <Group w="100%" align="center" position="apart">
       <Text
         aria-live="polite"
-        color={isInputDisabled ? grayColorShade : ""}
-        // style={value === "" ? {} : {
-        //   border: borderColor,
-        //   borderRadius: 4,
-        //   padding: "0.5rem 0.75rem",
-        //   width: "fit-content",
-        // }}
+        color={isInputDisabled
+          ? colorScheme === "dark" ? grayColorShade : "grey"
+          : ""}
       >
         {splitWordIntoUpperCasedSentence(
           splitCamelCase(value.toString()),
@@ -86,13 +116,9 @@ function ChartsAndGraphsControlsStacker({
   return (
     <Card
       className="chart-controls-card"
-      p="sm"
-      withBorder
       radius="md"
-      // style={{
-      //   // outline: "1px solid rebeccapurple",
-      //   width: "clamp(350px, 100vw, 425px)",
-      // }}
+      bg={cardBgGradient}
+      withBorder
     >
       {displayTopSection}
       <Space h="sm" />

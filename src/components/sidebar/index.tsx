@@ -1,5 +1,4 @@
 import { Space, Stack, Text } from "@mantine/core";
-import localforage from "localforage";
 import React, { useEffect, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -200,6 +199,7 @@ function Sidebar({ setOpened }: SidebarProps) {
 
   return (
     <Stack
+      pt="xl"
       w="100%"
       style={{
         position: "sticky",
@@ -207,7 +207,6 @@ function Sidebar({ setOpened }: SidebarProps) {
         height: "100vh",
         zIndex: 2,
       }}
-      pt="xl"
     >
       <Text size={18} weight={400}>
         Metrics

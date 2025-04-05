@@ -83,10 +83,12 @@ function Dashboard() {
   const { showBoundary } = useErrorBoundary();
 
   const { primaryColor } = themeObject;
-  const { backgroundColor } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
+  const { bgGradient, stickyHeaderBgGradient } = returnThemeColors(
+    {
+      colorsSwatches: COLORS_SWATCHES,
+      themeObject,
+    },
+  );
 
   const {
     isLoading,
@@ -109,17 +111,6 @@ function Dashboard() {
       isComponentMountedRef.current = false;
     };
   }, []);
-
-  const displayLoadingOverlay = (
-    <LoadingOverlay
-      visible={isLoading}
-      zIndex={2}
-      overlayBlur={9}
-      overlayOpacity={0.99}
-      radius={4}
-      transitionDuration={500}
-    />
-  );
 
   // if (
   //   (metricsView === "financials" && financialMetricsDocument === null) ||
@@ -326,13 +317,13 @@ function Dashboard() {
   const dashboardHeader = (
     <Stack
       align="flex-end"
-      // h={DASHBOARD_HEADER_HEIGHT}
       p="md"
       style={{
-        backgroundColor,
+        background: stickyHeaderBgGradient,
         position: "sticky",
         top: 0,
         zIndex: 3,
+        borderRadius: "0px 0px 0.5em 0.5em",
       }}
       spacing="xl"
       opacity={0.97}
@@ -348,7 +339,7 @@ function Dashboard() {
       h={DASHBOARD_HEADER_HEIGHT_MOBILE}
       py="sm"
       style={{
-        backgroundColor: backgroundColor,
+        background: stickyHeaderBgGradient,
         position: "sticky",
         top: 0,
         zIndex: 4,
@@ -356,7 +347,7 @@ function Dashboard() {
       opacity={0.97}
       w="100%"
     >
-      <Accordion bg={backgroundColor} w="100%">
+      <Accordion w="100%">
         <Accordion.Item value="Parameters">
           <Accordion.Control>
             <Text weight={500} size="md">Parameters</Text>
@@ -420,17 +411,28 @@ function Dashboard() {
       />
     );
 
+  const displayLoadingOverlay = (
+    <LoadingOverlay
+      visible={isLoading}
+      zIndex={4}
+      overlayBlur={2}
+      overlayOpacity={0.99}
+      radius={4}
+      transitionDuration={250}
+    />
+  );
+
   const dashboard = (
-    <Stack w="100%" py="sm" pos="relative">
+    <Stack w="100%" pos="relative" bg={bgGradient}>
       {displayLoadingOverlay}
 
       {windowWidth < MOBILE_BREAKPOINT
         ? dashboardHeaderAccordion
         : dashboardHeader}
 
-      <Stack align="flex-start" spacing={2} bg={backgroundColor} px="md">
-        <Title order={1}>DASHBOARD</Title>
-        <Text size="sm">Welcome to your dashboard</Text>
+      <Stack align="flex-start" px="md">
+        <Title order={2} size={32}>DASHBOARD</Title>
+        <Text size="md">Welcome to your dashboard</Text>
       </Stack>
       {displayMetricsView}
     </Stack>

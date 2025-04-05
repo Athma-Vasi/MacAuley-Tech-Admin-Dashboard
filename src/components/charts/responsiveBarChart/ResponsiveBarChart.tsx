@@ -65,7 +65,7 @@ function ResponsiveBarChart({
     textColor,
     scrollBarStyle,
     grayColorShade,
-    backgroundColor,
+    bgGradient,
   } = returnThemeColors({
     themeObject,
     colorsSwatches: COLORS_SWATCHES,
@@ -703,7 +703,7 @@ function ResponsiveBarChart({
 
   const displayBaseHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -767,7 +767,7 @@ function ResponsiveBarChart({
   const displayBaseSection = (
     <Stack w="100%">
       {displayBaseHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayGroupModeSelectInput}
         {displayLayoutSelectInput}
         {displayValueScaleSelectInput}
@@ -794,7 +794,7 @@ function ResponsiveBarChart({
   // display style
   const displayStyleHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -850,7 +850,7 @@ function ResponsiveBarChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayColorsSelectInput}
         {displayBorderRadiusSliderInput}
         {displayBorderWidthSliderInput}
@@ -923,7 +923,7 @@ function ResponsiveBarChart({
   // display labels
   const displayLabelsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -973,7 +973,7 @@ function ResponsiveBarChart({
   const displayLabelsSection = (
     <Stack w="100%">
       {displayLabelsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayToggleLabelsSwitchInput}
         {displayLabelSkipWidthSliderInput}
         {displayLabelSkipHeightSliderInput}
@@ -985,7 +985,7 @@ function ResponsiveBarChart({
   // display grid
   const displayGridHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -1009,7 +1009,7 @@ function ResponsiveBarChart({
   const displayGridSection = (
     <Stack w="100%">
       {displayGridHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayToggleGridXSwitchInput}
         {displayToggleGridYSwitchInput}
       </Group>
@@ -1019,7 +1019,7 @@ function ResponsiveBarChart({
   // display motion
   const displayMotionHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
     >
       <Title order={5} color={textColor}>
         Motion
@@ -1046,7 +1046,7 @@ function ResponsiveBarChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayToggleAnimateSwitchInput}
         {displayMotionConfigSelectInput}
       </Group>
@@ -1104,7 +1104,7 @@ function ResponsiveBarChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%" pt="md">
+    <Stack w="100%" p="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={stateWithChartTitle}
         input={displayResetAllButton}

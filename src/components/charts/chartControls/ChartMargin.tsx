@@ -36,7 +36,7 @@ type ChartMarginProps = {
 
 function ChartMargin(props: ChartMarginProps) {
   const { globalState: { themeObject } } = useGlobalState();
-  const { backgroundColor } = returnThemeColors({
+  const { bgGradient } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -125,7 +125,7 @@ function ChartMargin(props: ChartMarginProps) {
 
   const displayMarginHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5}>
@@ -177,7 +177,7 @@ function ChartMargin(props: ChartMarginProps) {
   const displayMarginSection = (
     <Stack w="100%">
       {displayMarginHeading}
-      <Group w="100%">
+      <Group w="100%" align="baseline" px="md">
         {displayMarginTopSliderInput}
         {displayMarginRightSliderInput}
         {displayMarginBottomSliderInput}

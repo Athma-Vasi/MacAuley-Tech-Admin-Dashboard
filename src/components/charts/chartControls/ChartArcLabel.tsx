@@ -59,7 +59,7 @@ type ChartArcLabelProps = {
 
 function ChartArcLabel(props: ChartArcLabelProps) {
   const { globalState: { themeObject } } = useGlobalState();
-  const { backgroundColor } = returnThemeColors({
+  const { bgGradient } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -161,7 +161,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
 
   const displayArcLabelsHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5}>
@@ -220,7 +220,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
   const displayArcLabelsSection = (
     <Stack w="100%">
       {displayArcLabelsHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableArcLabelsSwitchInput}
         {displayArcLabelSelectInput}
         {displayArcLabelsRadiusOffsetSliderInput}

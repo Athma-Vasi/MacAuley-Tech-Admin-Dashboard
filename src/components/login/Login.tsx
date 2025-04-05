@@ -3,7 +3,6 @@ import {
   Center,
   Flex,
   Group,
-  Image,
   Loader,
   PasswordInput,
   Stack,
@@ -15,24 +14,17 @@ import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { Link, useNavigate } from "react-router-dom";
 
+import { TbCheck } from "react-icons/tb";
 import {
   COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
   INPUT_WIDTH,
   LOGIN_URL,
-  STORE_LOCATION_DATA,
 } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import {
-  DAYS_PER_MONTH,
-  MONTHS,
-  PRODUCT_CATEGORIES,
-  REPAIR_CATEGORIES,
-} from "../dashboard/constants";
-import { createRandomBusinessMetrics } from "../dashboard/utils";
 import { loginAction } from "./actions";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
@@ -123,11 +115,20 @@ function Login() {
     />
   );
 
+  const { bgGradient, themeColorShade, grayColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const loginButton = (
     <AccessibleButton
       attributes={{
         kind: "submit",
-        leftIcon: isSubmitting ? <Loader size="xs" /> : null,
+        leftIcon: isSubmitting
+          ? <Loader size="xs" color="white" />
+          : isSuccessful
+          ? <TbCheck color="white" />
+          : null,
         name: "login",
         onClick: async (
           event:
@@ -153,28 +154,10 @@ function Login() {
     />
   );
 
-  const {
-    themeColorShade,
-  } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
-
-  const logo = (
-    <Image
-      alt="Macaulay Tech Logo"
-      aria-label="Macaulay Tech Logo"
-      src="src/assets/macauley-tech-logo.png"
-      height={50}
-      width={50}
-      fit="cover"
-    />
-  );
-
   const displayTitle = (
     <Group w="100%" position="apart">
       <Group align="flex-start">
-        {logo}
+        {/* {logo} */}
         <Title order={1} style={{ letterSpacing: "0.30rem" }}>
           MACAULEY
         </Title>
@@ -219,7 +202,7 @@ function Login() {
         p="lg"
         radius="md"
         withBorder
-        w="clamp(300px, 400px, 500px)"
+        className="login-card"
       >
         <Stack>
           <Title order={2}>Sign in</Title>
@@ -237,7 +220,7 @@ function Login() {
 
   const login = (
     <Stack
-      bg="white"
+      bg={bgGradient}
       h="100vh"
       p="md"
       w="100%"

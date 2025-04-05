@@ -252,10 +252,11 @@ function returnPieRadialChartDimensions(
 function createChartHeaderStyles(
   backgroundColor: string,
   top = -16,
-  zIndex = 3,
+  zIndex = 5,
 ): React.CSSProperties {
   return {
-    backgroundColor,
+    background: backgroundColor,
+    borderRadius: "0px 0px 0.5em 0.5em",
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.05)",
     height: CHART_CONTROLS_HEADER_HEIGHT,
     marginTop: "1em",

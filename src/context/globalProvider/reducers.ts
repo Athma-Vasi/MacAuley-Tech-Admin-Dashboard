@@ -1,7 +1,15 @@
 import { MantineColor } from "@mantine/core";
+import { CustomerMetricsCategory } from "../../components/dashboard/customer/types";
+import { FinancialMetricCategory } from "../../components/dashboard/financial/types";
+import {
+  ProductMetricCategory,
+  ProductSubMetric,
+} from "../../components/dashboard/product/types";
+import { RepairMetricCategory } from "../../components/dashboard/repair/types";
 import {
   CustomerMetricsDocument,
   FinancialMetricsDocument,
+  FontFamily,
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
@@ -19,13 +27,6 @@ import type {
   GlobalState,
   Shade,
 } from "./types";
-import { CustomerMetricsCategory } from "../../components/dashboard/customer/types";
-import { FinancialMetricCategory } from "../../components/dashboard/financial/types";
-import {
-  ProductMetricCategory,
-  ProductSubMetric,
-} from "../../components/dashboard/product/types";
-import { RepairMetricCategory } from "../../components/dashboard/repair/types";
 
 function globalReducer(
   state: GlobalState,
@@ -290,7 +291,7 @@ function globalReducer_setFontFamily(
     ...state,
     themeObject: {
       ...state.themeObject,
-      fontFamily: dispatch.payload as string,
+      fontFamily: dispatch.payload as FontFamily,
     },
   };
 }

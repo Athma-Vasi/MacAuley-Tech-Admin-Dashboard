@@ -51,7 +51,7 @@ function ResponsiveSunburstChart({
     },
   } = useGlobalState();
 
-  const { backgroundColor, grayColorShade, textColor, scrollBarStyle } =
+  const { bgGradient, grayColorShade, textColor, scrollBarStyle } =
     returnThemeColors({
       themeObject,
       colorsSwatches: COLORS_SWATCHES,
@@ -337,7 +337,7 @@ function ResponsiveSunburstChart({
   // base
   const displayBaseHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -379,7 +379,7 @@ function ResponsiveSunburstChart({
   // style
   const displayStyleHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -431,7 +431,7 @@ function ResponsiveSunburstChart({
   const displayStyleSection = (
     <Stack w="100%">
       {displayStyleHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayChartColorsSelectInput}
         {displayInheritColorFromParentSwitchInput}
         {displayChartBorderWidthSliderInput}
@@ -458,7 +458,7 @@ function ResponsiveSunburstChart({
   // motion
   const displayMotionHeading = (
     <Group
-      style={createChartHeaderStyles(backgroundColor)}
+      style={createChartHeaderStyles(bgGradient)}
       w="100%"
     >
       <Title order={5} color={textColor}>
@@ -496,7 +496,7 @@ function ResponsiveSunburstChart({
   const displayMotionSection = (
     <Stack w="100%">
       {displayMotionHeading}
-      <Group w="100%" align="baseline">
+      <Group w="100%" align="baseline" px="md">
         {displayEnableAnimateSwitchInput}
         {displayMotionConfigSelectInput}
         {displayTransitionModeSelectInput}
@@ -529,7 +529,7 @@ function ResponsiveSunburstChart({
   );
 
   const displayResetAll = (
-    <Stack w="100%" pt="md">
+    <Stack w="100%" p="md">
       <ChartsAndGraphsControlsStacker
         initialChartState={modifiedResponsiveSunburstChartState}
         input={displayResetAllButton}

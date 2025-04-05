@@ -1,4 +1,10 @@
-import { CheckboxRadioSelectData, StoreLocation } from "./types";
+import { CheckboxRadioSelectData, FontFamily, StoreLocation } from "./types";
+
+const FONT_FAMILY_DATA: CheckboxRadioSelectData<FontFamily> = [
+  { value: "Work Sans", label: "Sans" },
+  { value: "serif", label: "Serif" },
+  { value: "Open-Dyslexic", label: "Dyslexic" },
+];
 
 type ColorsSwatches = {
   dark: string[];
@@ -209,6 +215,7 @@ const STORE_LOCATION_DATA: CheckboxRadioSelectData<StoreLocation> = [
 ];
 
 const INPUT_WIDTH = 310;
+const TEXT_SHADOW = "0 2px 4px rgba(0, 0, 0, 0.15)";
 
 const APP_HEADER_HEIGHT = 70;
 const DASHBOARD_HEADER_HEIGHT = 170;
@@ -244,6 +251,7 @@ export {
   DOMAIN_NAME,
   FETCH_REQUEST_TIMEOUT,
   FINANCIAL_URL,
+  FONT_FAMILY_DATA,
   INPUT_WIDTH,
   LOGIN_URL,
   LOGOUT_URL,
@@ -258,5 +266,6 @@ export {
   REPAIR_URL,
   SCREENSHOT_IMAGE_TYPE_DATA,
   STORE_LOCATION_DATA,
+  TEXT_SHADOW,
 };
 export type { ColorsSwatches };

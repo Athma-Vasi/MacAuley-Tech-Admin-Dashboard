@@ -25,6 +25,7 @@ import {
 import {
   CustomerMetricsDocument,
   FinancialMetricsDocument,
+  FontFamily,
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
@@ -84,7 +85,7 @@ interface ThemeObject extends MantineThemeOverride {
   // Default gradient used in components that support `variant="gradient"` (Button, ThemeIcon, etc.)
   defaultGradient: { deg: number; from: MantineColor; to: MantineColor };
 
-  fontFamily: string;
+  fontFamily: FontFamily;
 
   components: {
     [x: string]: ThemeComponent;
@@ -221,7 +222,7 @@ type GlobalDispatch =
   }
   | {
     action: GlobalAction["setFontFamily"];
-    payload: string;
+    payload: FontFamily;
   }
   | {
     action: GlobalAction["setSelectedChartKind"];
