@@ -83,6 +83,33 @@ function Register() {
       themeObject,
     });
 
+  const usernameInputRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    usernameInputRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    handleCheckUsernameExists({
+      fetchAbortControllerRef,
+      isComponentMountedRef,
+      registerDispatch,
+      showBoundary,
+      url: AUTH_URL,
+      username,
+    });
+  }, [username]);
+
+  useEffect(() => {
+    handleCheckEmailExists({
+      fetchAbortControllerRef,
+      isComponentMountedRef,
+      registerDispatch,
+      showBoundary,
+      url: AUTH_URL,
+      email,
+    });
+  }, [email]);
+
   const usernameTextInput = (
     <AccessibleTextInput
       attributes={{
@@ -94,16 +121,17 @@ function Register() {
         invalidValueAction: registerAction.setIsError,
         name: "username",
         onChange: async (event) => {
-          await handleCheckUsernameExists({
-            fetchAbortControllerRef,
-            isComponentMountedRef,
-            registerDispatch,
-            showBoundary,
-            url: AUTH_URL,
-            username: event.currentTarget.value,
-          });
+          // await handleCheckUsernameExists({
+          //   fetchAbortControllerRef,
+          //   isComponentMountedRef,
+          //   registerDispatch,
+          //   showBoundary,
+          //   url: AUTH_URL,
+          //   username: event.currentTarget.value,
+          // });
         },
         parentDispatch: registerDispatch,
+        ref: usernameInputRef as React.RefObject<HTMLInputElement>,
         validValueAction: registerAction.setUsername,
         value: username,
       }}
@@ -121,14 +149,14 @@ function Register() {
         invalidValueAction: registerAction.setIsError,
         name: "email",
         onChange: async (event) => {
-          await handleCheckEmailExists({
-            fetchAbortControllerRef,
-            email: event.currentTarget.value,
-            isComponentMountedRef,
-            registerDispatch,
-            showBoundary,
-            url: AUTH_URL,
-          });
+          // await handleCheckEmailExists({
+          //   fetchAbortControllerRef,
+          //   email: event.currentTarget.value,
+          //   isComponentMountedRef,
+          //   registerDispatch,
+          //   showBoundary,
+          //   url: AUTH_URL,
+          // });
         },
         parentDispatch: registerDispatch,
         validValueAction: registerAction.setEmail,
@@ -226,17 +254,6 @@ function Register() {
       </Text>
     </Flex>
   );
-
-  // const logo = (
-  //   <Image
-  //     alt="Macaulay Tech Logo"
-  //     aria-label="Macaulay Tech Logo"
-  //     src="src/assets/macauley-tech-logo.png"
-  //     height={50}
-  //     width={50}
-  //     fit="cover"
-  //   />
-  // );
 
   const displayTitle = (
     <Group w="100%" position="apart">

@@ -648,12 +648,74 @@ function hexToHSL(
   return returnKind === "string" ? `hsl(${h}, ${s}%, ${l}%)` : { h, s, l };
 }
 
+function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  delay: number,
+): T {
+  let timer: ReturnType<typeof setTimeout>;
+
+  return function (this: any, ...args: any[]) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  } as T;
+}
+
+// function throttle<T extends (...args: any[]) => void>(
+//   func: T,
+//   limit: number,
+// ): T {
+//   let lastCall = 0;
+
+//   return function (this: any, ...args: any[]) {
+//     const now = Date.now();
+
+//     if (now - lastCall >= limit) {
+//       lastCall = now;
+//       func.apply(this, args);
+//     }
+//   } as T;
+// }
+
+function throttle<T extends (...args: any[]) => void>(
+  func: T,
+  limit: number,
+): (...args: Parameters<T>) => void {
+  let lastCall = 0;
+  let lastRan: number | null = null;
+  let lastArgs: Parameters<T> | null = null;
+  let lastThis: any = null;
+
+  return function (this: any, ...args: Parameters<T>) {
+    const now = Date.now();
+    const remaining = limit - (now - lastCall);
+
+    lastArgs = args;
+    lastThis = this;
+
+    if (remaining <= 0) {
+      lastCall = now;
+      func.apply(this, args);
+      lastRan = now;
+    } else if (!lastRan) {
+      setTimeout(() => {
+        if (now - lastCall >= limit) {
+          lastCall = Date.now();
+          func.apply(lastThis, lastArgs!);
+          lastRan = Date.now();
+        }
+      }, remaining);
+      lastRan = now;
+    }
+  };
+}
+
 export {
   addCommaSeparator,
   addTokenDetailsToBody,
   capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
+  debounce,
   decodeJWTSafe,
   fetchRequestPOSTSafe,
   fetchSafe,
@@ -668,6 +730,7 @@ export {
   returnTimeToRead,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
+  throttle,
   toFixedFloat,
   urlBuilder,
 };

@@ -94,6 +94,7 @@ function Login() {
           payload: event.currentTarget.value,
         });
       }}
+      ref={usernameRef}
       required
       w={INPUT_WIDTH}
     />
