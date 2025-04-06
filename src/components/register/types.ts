@@ -4,9 +4,13 @@ type RegisterState = {
   confirmPassword: string;
   email: string;
   errorMessage: string;
+  isEmailExists: boolean;
+  isEmailExistsSubmitting: boolean;
   isError: boolean;
   isSubmitting: boolean;
   isSuccessful: boolean;
+  isUsernameExists: boolean;
+  isUsernameExistsSubmitting: boolean;
   password: string;
   username: string;
 };
@@ -25,6 +29,14 @@ type RegisterDispatch =
     payload: string;
   }
   | {
+    action: RegisterAction["setIsEmailExists"];
+    payload: boolean;
+  }
+  | {
+    action: RegisterAction["setIsEmailExistsSubmitting"];
+    payload: boolean;
+  }
+  | {
     action: RegisterAction["setIsError"];
     payload: boolean;
   }
@@ -34,6 +46,14 @@ type RegisterDispatch =
   }
   | {
     action: RegisterAction["setIsSuccessful"];
+    payload: boolean;
+  }
+  | {
+    action: RegisterAction["setIsUsernameExists"];
+    payload: boolean;
+  }
+  | {
+    action: RegisterAction["setIsUsernameExistsSubmitting"];
     payload: boolean;
   }
   | {

@@ -11,9 +11,13 @@ import {
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { TbCheck } from "react-icons/tb";
+import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
-import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
+import {
+  AUTH_URL,
+  COLORS_SWATCHES,
+  FETCH_REQUEST_TIMEOUT,
+} from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
@@ -23,7 +27,11 @@ import { registerAction } from "./actions";
 import { REGISTER_URL } from "./constants";
 import { registerReducer } from "./reducers";
 import { initialRegisterState } from "./state";
-import { handleRegisterButtonClick } from "./utils";
+import {
+  handleCheckEmailExists,
+  handleCheckUsernameExists,
+  handleRegisterButtonClick,
+} from "./utils";
 
 function Register() {
   const [registerState, registerDispatch] = useReducer(
@@ -35,9 +43,13 @@ function Register() {
     confirmPassword,
     email,
     errorMessage,
+    isEmailExists,
+    isEmailExistsSubmitting,
     isError,
     isSubmitting,
     isSuccessful,
+    isUsernameExists,
+    isUsernameExistsSubmitting,
     password,
     username,
   } = registerState;
@@ -46,7 +58,7 @@ function Register() {
     globalState: { themeObject },
   } = useGlobalState();
 
-  const { showBoundary } = useErrorBoundary();
+  const { showBoundary, resetBoundary } = useErrorBoundary();
 
   const navigateFn = useNavigate();
 
@@ -65,11 +77,32 @@ function Register() {
     };
   }, []);
 
+  const { bgGradient, redColorShade, greenColorShade, themeColorShade } =
+    returnThemeColors({
+      colorsSwatches: COLORS_SWATCHES,
+      themeObject,
+    });
+
   const usernameTextInput = (
     <AccessibleTextInput
       attributes={{
+        icon: isUsernameExistsSubmitting
+          ? <Loader size="xs" />
+          : isUsernameExists
+          ? <TbExclamationCircle color={redColorShade} />
+          : null,
         invalidValueAction: registerAction.setIsError,
         name: "username",
+        onChange: async (event) => {
+          await handleCheckUsernameExists({
+            fetchAbortControllerRef,
+            isComponentMountedRef,
+            registerDispatch,
+            showBoundary,
+            url: AUTH_URL,
+            username: event.currentTarget.value,
+          });
+        },
         parentDispatch: registerDispatch,
         validValueAction: registerAction.setUsername,
         value: username,
@@ -80,8 +113,23 @@ function Register() {
   const emailTextInput = (
     <AccessibleTextInput
       attributes={{
+        icon: isEmailExistsSubmitting
+          ? <Loader size="xs" />
+          : isEmailExists
+          ? <TbExclamationCircle color={redColorShade} />
+          : null,
         invalidValueAction: registerAction.setIsError,
         name: "email",
+        onChange: async (event) => {
+          await handleCheckEmailExists({
+            fetchAbortControllerRef,
+            email: event.currentTarget.value,
+            isComponentMountedRef,
+            registerDispatch,
+            showBoundary,
+            url: AUTH_URL,
+          });
+        },
         parentDispatch: registerDispatch,
         validValueAction: registerAction.setEmail,
         value: email,
@@ -116,13 +164,8 @@ function Register() {
   );
 
   const isButtonDisabled = !username || !email || !password ||
-    !confirmPassword ||
+    !confirmPassword || isUsernameExists || isEmailExists ||
     isError;
-
-  const { bgGradient, themeColorShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
 
   const submitButton = (
     <AccessibleButton
@@ -229,7 +272,13 @@ function Register() {
 
           <Stack w="100%" align="center">
             {usernameTextInput}
+            {isUsernameExists
+              ? <Text color={redColorShade}>Username already exists!</Text>
+              : null}
             {emailTextInput}
+            {isEmailExists
+              ? <Text color={redColorShade}>Email already exists!</Text>
+              : null}
             {passwordTextInput}
             {confirmPasswordTextInput}
             {submitButton}
@@ -239,6 +288,10 @@ function Register() {
       </Card>
     </Center>
   );
+
+  console.log("Register");
+  console.log("registerState", registerState);
+  console.groupEnd();
 
   return (
     <Stack

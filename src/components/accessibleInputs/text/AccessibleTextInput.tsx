@@ -251,6 +251,7 @@ function AccessibleTextInput<
             }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               setValueBuffer(event.currentTarget.value);
+
               onChange?.(event);
             }}
             onFocus={() => {

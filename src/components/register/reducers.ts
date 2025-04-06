@@ -16,9 +16,19 @@ const registerReducers = new Map<
   [registerAction.setConfirmPassword, registerReducer_setConfirmPassword],
   [registerAction.setEmail, registerReducer_setEmail],
   [registerAction.setErrorMessage, registerReducer_setErrorMessage],
+  [registerAction.setIsEmailExists, registerReducer_setIsEmailExists],
+  [
+    registerAction.setIsEmailExistsSubmitting,
+    registerReducer_setIsEmailExistsSubmitting,
+  ],
   [registerAction.setIsError, registerReducer_setIsError],
   [registerAction.setIsSubmitting, registerReducer_setIsSubmitting],
   [registerAction.setIsSuccessful, registerReducer_setIsSuccessful],
+  [registerAction.setIsUsernameExists, registerReducer_setIsUsernameExists],
+  [
+    registerAction.setIsUsernameExistsSubmitting,
+    registerReducer_setIsUsernameExistsSubmitting,
+  ],
   [registerAction.setPassword, registerReducer_setPassword],
   [registerAction.setUsername, registerReducer_setUsername],
 ]);
@@ -43,6 +53,20 @@ function registerReducer_setErrorMessage(
   return { ...state, errorMessage: dispatch.payload as string };
 }
 
+function registerReducer_setIsEmailExists(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, isEmailExists: dispatch.payload as boolean };
+}
+
+function registerReducer_setIsEmailExistsSubmitting(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, isEmailExistsSubmitting: dispatch.payload as boolean };
+}
+
 function registerReducer_setIsError(
   state: RegisterState,
   dispatch: RegisterDispatch,
@@ -62,6 +86,20 @@ function registerReducer_setIsSuccessful(
   dispatch: RegisterDispatch,
 ): RegisterState {
   return { ...state, isSuccessful: dispatch.payload as boolean };
+}
+
+function registerReducer_setIsUsernameExists(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, isUsernameExists: dispatch.payload as boolean };
+}
+
+function registerReducer_setIsUsernameExistsSubmitting(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, isUsernameExistsSubmitting: dispatch.payload as boolean };
 }
 
 function registerReducer_setPassword(
