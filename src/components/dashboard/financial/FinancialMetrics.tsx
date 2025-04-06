@@ -64,10 +64,7 @@ function FinancialMetrics(
   } = useGlobalState();
   const { showBoundary } = useErrorBoundary();
 
-  const {
-    redColorShade,
-    greenColorShade,
-  } = returnThemeColors({
+  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -110,6 +107,7 @@ function FinancialMetrics(
         });
 
         const financialMetricsCards = await createFinancialMetricsCards({
+          cardBgGradient,
           greenColorShade,
           redColorShade,
           selectedDateFinancialMetrics,

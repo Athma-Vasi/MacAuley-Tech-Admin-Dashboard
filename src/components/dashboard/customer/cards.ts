@@ -7,6 +7,7 @@ import {
 import type { SelectedDateCustomerMetrics } from "./chartsData";
 
 type CreateCustomerMetricsCardsInput = {
+  cardBgGradient: string;
   greenColorShade: string;
   redColorShade: string;
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics;
@@ -36,11 +37,14 @@ type CustomerMetricsCards = {
   };
 };
 
-function createCustomerMetricsCards({
-  greenColorShade,
-  redColorShade,
-  selectedDateCustomerMetrics,
-}: CreateCustomerMetricsCardsInput): Promise<CustomerMetricsCards> {
+function createCustomerMetricsCards(
+  {
+    cardBgGradient,
+    greenColorShade,
+    redColorShade,
+    selectedDateCustomerMetrics,
+  }: CreateCustomerMetricsCardsInput,
+): Promise<CustomerMetricsCards> {
   const {
     dayCustomerMetrics: { prevDayMetrics, selectedDayMetrics },
     monthCustomerMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -92,6 +96,7 @@ function createCustomerMetricsCards({
 
       const DASHBOARD_CARD_INFO_INPUT_TEMPLATE:
         CreateDashboardMetricsCardsInput = {
+          cardBgGradient,
           currentMonth,
           currentYear,
           greenColorShade,

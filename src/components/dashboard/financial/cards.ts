@@ -13,6 +13,7 @@ import {
 } from "./types";
 
 type CreateFinancialMetricsCardsInput = {
+  cardBgGradient: string;
   greenColorShade: string;
   redColorShade: string;
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
@@ -42,11 +43,14 @@ type FinancialMetricsCards = {
   };
 };
 
-function createFinancialMetricsCards({
-  greenColorShade,
-  redColorShade,
-  selectedDateFinancialMetrics,
-}: CreateFinancialMetricsCardsInput): Promise<FinancialMetricsCards> {
+function createFinancialMetricsCards(
+  {
+    cardBgGradient,
+    greenColorShade,
+    redColorShade,
+    selectedDateFinancialMetrics,
+  }: CreateFinancialMetricsCardsInput,
+): Promise<FinancialMetricsCards> {
   const {
     dayFinancialMetrics: { prevDayMetrics, selectedDayMetrics },
     monthFinancialMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -97,6 +101,7 @@ function createFinancialMetricsCards({
       const prevDay = prevDayMetrics.day;
 
       const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
+        cardBgGradient,
         currentMonth,
         currentYear,
         greenColorShade,

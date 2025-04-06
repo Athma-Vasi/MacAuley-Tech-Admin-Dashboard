@@ -7,6 +7,7 @@ import {
 import type { SelectedDateRepairMetrics } from "./chartsData";
 
 type createRepairMetricsCardsInput = {
+  cardBgGradient: string;
   greenColorShade: string;
   redColorShade: string;
   selectedDateRepairMetrics: SelectedDateRepairMetrics;
@@ -18,11 +19,10 @@ type RepairMetricsCards = {
   yearlyCards: DashboardCardInfo[];
 };
 
-function createRepairMetricsCards({
-  greenColorShade,
-  redColorShade,
-  selectedDateRepairMetrics,
-}: createRepairMetricsCardsInput): Promise<RepairMetricsCards> {
+function createRepairMetricsCards(
+  { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
+    createRepairMetricsCardsInput,
+): Promise<RepairMetricsCards> {
   const {
     dayRepairMetrics: { prevDayMetrics, selectedDayMetrics },
     monthRepairMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -55,6 +55,7 @@ function createRepairMetricsCards({
       const prevDay = prevDayMetrics.day;
 
       const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
+        cardBgGradient,
         currentMonth,
         currentYear,
         greenColorShade,

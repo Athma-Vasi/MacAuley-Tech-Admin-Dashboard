@@ -80,14 +80,11 @@ function renderForeignObjectNode({
 
   const foreignCard = (
     <Card
+      className="directory-card"
       shadow="sm"
       padding="md"
       radius="md"
       withBorder
-      miw={250}
-      maw={325}
-      mih={250}
-      mah={350}
     >
       <Stack w="100%">
         <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 50%)" }}>
@@ -137,7 +134,7 @@ function D3Tree({ data }: { data: Array<D3TreeInput> }) {
     y: 15,
   };
   const containerStyles = {
-    width: "calc(99.5vw - 225px)",
+    width: "calc(100vw - 225px)",
     height: "100vh",
   };
 

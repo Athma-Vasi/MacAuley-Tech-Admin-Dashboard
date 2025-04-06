@@ -64,10 +64,7 @@ function CustomerMetrics(
 
   const { showBoundary } = useErrorBoundary();
 
-  const {
-    redColorShade,
-    greenColorShade,
-  } = returnThemeColors({
+  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -104,6 +101,7 @@ function CustomerMetrics(
         });
 
         const customerMetricsCards = await createCustomerMetricsCards({
+          cardBgGradient,
           greenColorShade,
           redColorShade,
           selectedDateCustomerMetrics,

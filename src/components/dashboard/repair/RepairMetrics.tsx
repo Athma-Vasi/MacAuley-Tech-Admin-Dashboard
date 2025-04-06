@@ -64,13 +64,11 @@ function RepairMetrics({
 
   const { showBoundary } = useErrorBoundary();
 
-  const {
-    redColorShade,
-    greenColorShade,
-  } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
+  const { bgGradient, cardBgGradient, redColorShade, greenColorShade } =
+    returnThemeColors({
+      colorsSwatches: COLORS_SWATCHES,
+      themeObject,
+    });
 
   const isComponentMountedRef = useRef(false);
   useEffect(() => {
@@ -102,6 +100,7 @@ function RepairMetrics({
         });
 
         const repairMetricsCards = await createRepairMetricsCards({
+          cardBgGradient,
           greenColorShade,
           redColorShade,
           selectedDateRepairMetrics,

@@ -44,7 +44,7 @@ function ChartAndControlsDisplay(
         style={{ background: bgGradient, borderRadius: "0px 0px 0.5em 0.5em" }}
         px={0}
       >
-        <Title order={2}>Chart Controls</Title>
+        <Title order={2} pl="md">Chart Controls</Title>
         {chartControlsStack}
       </Card>
 

@@ -25,6 +25,7 @@ import { BusinessMetricStoreLocation, DashboardCalendarView } from "./types";
 import { StatisticsObject } from "./utils";
 
 type DashboardCardInfo = {
+  cardBgGradient: string;
   date?: string;
   heading?: string;
   icon: ReactNode;
@@ -32,14 +33,10 @@ type DashboardCardInfo = {
   deltaTextColor?: string;
   value: string | number;
 };
-function returnDashboardCardElement({
-  date,
-  heading,
-  icon,
-  percentage,
-  deltaTextColor,
-  value,
-}: DashboardCardInfo): React.JSX.Element {
+function returnDashboardCardElement(
+  { cardBgGradient, date, heading, icon, percentage, deltaTextColor, value }:
+    DashboardCardInfo,
+): React.JSX.Element {
   const cardHeading = (
     <Group position="left">
       <Text
@@ -78,8 +75,9 @@ function returnDashboardCardElement({
 
   const createdChartCard = (
     <Card
+      bg={cardBgGradient}
       className="statistics-card"
-      shadow="xs"
+      // shadow="xs"
       radius="md"
       withBorder
     >
@@ -94,6 +92,7 @@ function returnDashboardCardElement({
 }
 
 type CreateDashboardMetricsCardsInput = {
+  cardBgGradient: string;
   currentMonth: string;
   currentYear: string;
   greenColorShade: string;
@@ -111,6 +110,7 @@ type CreateDashboardMetricsCardsInput = {
 };
 
 function createDashboardMetricsCards({
+  cardBgGradient,
   currentMonth,
   currentYear,
   greenColorShade,
@@ -173,6 +173,7 @@ function createDashboardMetricsCards({
     } ${isDisplayValueAsCurrency ? "CAD" : ""}`;
 
   return {
+    cardBgGradient,
     date,
     heading,
     icon,
@@ -485,7 +486,7 @@ function createFinancialStatisticsElements(
 
       const statisticsElement = (
         <Stack
-          key={`${idx}-${key}`}
+          key={`${idx}-${cardsKey}`}
         >
           {heading}
           {minSection}
@@ -516,11 +517,11 @@ function consolidateCustomerCardsAndStatistics(
   console.log("statisticsElements", statisticsElements);
   console.groupEnd();
 
-  return Array.from(cards).reduce((acc, [key, cards]) => {
+  return Array.from(cards).reduce((acc, [key, cards], idx) => {
     const statisticElement = statisticsElements.get(key) ?? <></>;
     const statisticsAccordion = (
-      <Accordion>
-        <Accordion.Item value={key}>
+      <Accordion key={`${key}-${idx}`}>
+        <Accordion.Item value={`${key}-${idx}`}>
           <Accordion.Control>
             <Text size={18} weight={500}>
               Statistics
@@ -555,11 +556,11 @@ function consolidateCardsAndStatistics(
   cards: Map<string, DashboardCardInfo>,
   statisticsElements: Map<string, React.JSX.Element>,
 ): Map<string, React.JSX.Element> {
-  return Array.from(cards).reduce((acc, [key, card]) => {
+  return Array.from(cards).reduce((acc, [key, card], idx) => {
     const statisticElement = statisticsElements.get(key) ?? <></>;
     const statisticsAccordion = (
-      <Accordion>
-        <Accordion.Item value={key}>
+      <Accordion key={`${key}-${idx}`}>
+        <Accordion.Item value={`${key}-${idx}`}>
           <Accordion.Control>
             <Text size="sm" weight={500}>
               Statistics

@@ -242,7 +242,7 @@ const PRODUCT_URL = `${METRICS_URL}/products`;
 const REPAIR_URL = `${METRICS_URL}/repairs`;
 
 const OVERLAY_OPACITY = 0.05;
-const OVERLAY_BLUR = 2;
+const OVERLAY_BLUR = 3;
 
 export {
   API_URL,

@@ -68,10 +68,7 @@ function ProductMetrics(
 
   const { showBoundary } = useErrorBoundary();
 
-  const {
-    redColorShade,
-    greenColorShade,
-  } = returnThemeColors({
+  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -108,6 +105,7 @@ function ProductMetrics(
         });
 
         const productMetricsCards = await createProductMetricsCards({
+          cardBgGradient,
           greenColorShade,
           redColorShade,
           selectedDateProductMetrics,

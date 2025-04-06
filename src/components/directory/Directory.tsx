@@ -31,6 +31,7 @@ function Directory() {
   } = useGlobalState();
   const {
     themeColorShade,
+    cardBgGradient,
   } = returnThemeColors({ colorsSwatches: COLORS_SWATCHES, themeObject });
 
   const departmentData = [
@@ -88,15 +89,12 @@ function Directory() {
     storeLocation,
   });
 
-  const builtD3Tree = buildD3Tree(filteredEmployees, themeColorShade);
-  console.log("builtD3Tree", builtD3Tree);
-
   const d3Tree = (
     <D3Tree data={buildD3Tree(filteredEmployees, themeColorShade)} />
   );
 
   return (
-    <Stack w="100%" align="center">
+    <Stack w="100%" align="center" bg={cardBgGradient}>
       <Group w="100%" position="center" py="md" align="baseline">
         {departmentSelectInput}
         {storeLocationSelectInput}
