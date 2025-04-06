@@ -90,7 +90,6 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableAxisLeft,
-        invalidValueAction: parentChartAction.setIsError,
         name: "enableAxisLeft",
         offLabel: "Off",
         onLabel: "On",

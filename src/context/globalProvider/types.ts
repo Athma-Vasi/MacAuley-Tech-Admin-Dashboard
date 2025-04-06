@@ -137,29 +137,34 @@ type ExpandSunburstChartData = CustomizeChartsData & {
 type ChartKind = "bar" | "calendar" | "line" | "pie" | "radial" | "sunburst";
 
 type GlobalState = {
-  productMetricCategory: ProductCategory | "All Products";
-  productSubMetricCategory: ProductSubMetric;
-  repairMetricCategory: RepairMetricCategory;
-  financialMetricCategory: FinancialMetricCategory;
   customerMetricsCategory: CustomerMetricsCategory;
-  financialMetricsDocument: FinancialMetricsDocument | null;
-  productMetricsDocument: ProductMetricsDocument | null;
   customerMetricsDocument: CustomerMetricsDocument | null;
-  repairMetricsDocument: RepairMetricsDocument | null;
   expandBarChartData: ExpandBarChartData | null;
   expandCalendarChartData: ExpandCalendarChartData | null;
   expandLineChartData: ExpandLineChartData | null;
   expandPieChartData: ExpandPieChartData | null;
   expandRadialBarChartData: ExpandRadialBarChartData | null;
   expandSunburstChartData: ExpandSunburstChartData | null;
+  financialMetricCategory: FinancialMetricCategory;
+  financialMetricsDocument: FinancialMetricsDocument | null;
   isError: boolean;
+  isFetching: boolean;
   isPrefersReducedMotion: boolean;
+  productMetricCategory: ProductCategory | "All Products";
+  productMetricsDocument: ProductMetricsDocument | null;
+  productSubMetricCategory: ProductSubMetric;
+  repairMetricCategory: RepairMetricCategory;
+  repairMetricsDocument: RepairMetricsDocument | null;
   selectedChartKind: ChartKind;
   selectedYYYYMMDD: string;
   themeObject: ThemeObject;
 };
 
 type GlobalDispatch =
+  | {
+    action: GlobalAction["setIsFetching"];
+    payload: CustomerMetricsCategory;
+  }
   | {
     action: GlobalAction["setProductMetricCategory"];
     payload: ProductCategory | "All Products";

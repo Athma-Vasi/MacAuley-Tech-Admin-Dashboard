@@ -154,7 +154,6 @@ function ChartLegend(props: ChartLegendProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableLegend,
-        invalidValueAction: parentChartAction.setIsError,
         name: "enableLegend",
         offLabel: "Off",
         onLabel: "On",
@@ -232,7 +231,6 @@ function ChartLegend(props: ChartLegendProps) {
       attributes={{
         checked: enableLegendJustify,
         disabled: !enableLegend,
-        invalidValueAction: parentChartAction.setIsError,
         name: "enableLegendJustify",
         offLabel: "Off",
         onLabel: "On",

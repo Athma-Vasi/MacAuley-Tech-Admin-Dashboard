@@ -216,7 +216,6 @@ function ResponsiveSunburstChart({
     <AccessibleSwitchInput
       attributes={{
         checked: inheritColorFromParent,
-        invalidValueAction: responsiveSunburstChartAction.setIsError,
         name: "inheritColorFromParent",
         offLabel: "Off",
         onLabel: "On",
@@ -262,7 +261,6 @@ function ResponsiveSunburstChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableFillPatterns,
-        invalidValueAction: responsiveSunburstChartAction.setIsError,
         name: "enableFillPatterns",
         offLabel: "Off",
         onLabel: "On",
@@ -279,7 +277,6 @@ function ResponsiveSunburstChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableAnimate,
-        invalidValueAction: responsiveSunburstChartAction.setIsError,
         name: "enableAnimate",
         offLabel: "Off",
         onLabel: "On",

@@ -15,7 +15,6 @@ import {
   type ResponsivePieChartAction,
   responsivePieChartAction,
 } from "./actions";
-import { initialResponsivePieChartState } from "./state";
 import type {
   ResponsivePieChartDispatch,
   ResponsivePieChartState,
@@ -443,7 +442,7 @@ function responsivePieChartReducer_setEnableArcLabels(
 ): ResponsivePieChartState {
   return {
     ...state,
-    enableArcLinkLabels: dispatch.payload as boolean,
+    enableArcLabels: dispatch.payload as boolean,
   };
 }
 

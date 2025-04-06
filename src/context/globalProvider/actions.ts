@@ -1,14 +1,7 @@
 type GlobalAction = {
-  setProductMetricCategory: "setProductMetricCategory";
-  setProductSubMetricCategory: "setProductSubMetricCategory";
-  setRepairMetricCategory: "setRepairMetricCategory";
-  setFinancialMetricCategory: "setFinancialMetricCategory";
-  setCustomerMetricsCategory: "setCustomerMetricsCategory";
-  setFinancialMetricsDocument: "setFinancialMetricsDocument";
-  setProductMetricsDocument: "setProductMetricsDocument";
-  setCustomerMetricsDocument: "setCustomerMetricsDocument";
-  setRepairMetricsDocument: "setRepairMetricsDocument";
   setColorScheme: "setColorScheme";
+  setCustomerMetricsCategory: "setCustomerMetricsCategory";
+  setCustomerMetricsDocument: "setCustomerMetricsDocument";
   setDefaultGradient: "setDefaultGradient";
   setExpandBarChartData: "setExpandBarChartData";
   setExpandCalendarChartData: "setExpandCalendarChartData";
@@ -16,44 +9,53 @@ type GlobalAction = {
   setExpandPieChartData: "setExpandPieChartData";
   setExpandRadialBarChartData: "setExpandRadialBarChartData";
   setExpandSunburstChartData: "setExpandSunburstChartData";
+  setFinancialMetricCategory: "setFinancialMetricCategory";
+  setFinancialMetricsDocument: "setFinancialMetricsDocument";
   setFontFamily: "setFontFamily";
   setIsError: "setIsError";
+  setIsFetching: "setIsFetching";
   setPrefersReducedMotion: "setPrefersReducedMotion";
   setPrimaryColor: "setPrimaryColor";
   setPrimaryShadeDark: "setPrimaryShadeDark";
   setPrimaryShadeLight: "setPrimaryShadeLight";
+  setProductMetricCategory: "setProductMetricCategory";
+  setProductMetricsDocument: "setProductMetricsDocument";
+  setProductSubMetricCategory: "setProductSubMetricCategory";
+  setRepairMetricCategory: "setRepairMetricCategory";
+  setRepairMetricsDocument: "setRepairMetricsDocument";
   setRespectReducedMotion: "setRespectReducedMotion";
   setSelectedChartKind: "setSelectedChartKind";
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
 };
 
 const globalAction: GlobalAction = {
-  setProductMetricCategory: "setProductMetricCategory",
-  setProductSubMetricCategory: "setProductSubMetricCategory",
-  setRepairMetricCategory: "setRepairMetricCategory",
-  setFinancialMetricCategory: "setFinancialMetricCategory",
-  setCustomerMetricsCategory: "setCustomerMetricsCategory",
-  setFinancialMetricsDocument: "setFinancialMetricsDocument",
-  setProductMetricsDocument: "setProductMetricsDocument",
-  setCustomerMetricsDocument: "setCustomerMetricsDocument",
-  setRepairMetricsDocument: "setRepairMetricsDocument",
   setColorScheme: "setColorScheme",
+  setCustomerMetricsCategory: "setCustomerMetricsCategory",
+  setCustomerMetricsDocument: "setCustomerMetricsDocument",
   setDefaultGradient: "setDefaultGradient",
   setExpandBarChartData: "setExpandBarChartData",
-  setFontFamily: "setFontFamily",
-  setIsError: "setIsError",
-  setPrefersReducedMotion: "setPrefersReducedMotion",
-  setPrimaryColor: "setPrimaryColor",
-  setPrimaryShadeDark: "setPrimaryShadeDark",
-  setPrimaryShadeLight: "setPrimaryShadeLight",
-  setRespectReducedMotion: "setRespectReducedMotion",
-  setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
   setExpandCalendarChartData: "setExpandCalendarChartData",
   setExpandLineChartData: "setExpandLineChartData",
   setExpandPieChartData: "setExpandPieChartData",
   setExpandRadialBarChartData: "setExpandRadialBarChartData",
-  setSelectedChartKind: "setSelectedChartKind",
   setExpandSunburstChartData: "setExpandSunburstChartData",
+  setFinancialMetricCategory: "setFinancialMetricCategory",
+  setFinancialMetricsDocument: "setFinancialMetricsDocument",
+  setFontFamily: "setFontFamily",
+  setIsError: "setIsError",
+  setIsFetching: "setIsFetching",
+  setPrefersReducedMotion: "setPrefersReducedMotion",
+  setPrimaryColor: "setPrimaryColor",
+  setPrimaryShadeDark: "setPrimaryShadeDark",
+  setPrimaryShadeLight: "setPrimaryShadeLight",
+  setProductMetricCategory: "setProductMetricCategory",
+  setProductMetricsDocument: "setProductMetricsDocument",
+  setProductSubMetricCategory: "setProductSubMetricCategory",
+  setRepairMetricCategory: "setRepairMetricCategory",
+  setRepairMetricsDocument: "setRepairMetricsDocument",
+  setRespectReducedMotion: "setRespectReducedMotion",
+  setSelectedChartKind: "setSelectedChartKind",
+  setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
 };
 
 export { globalAction };

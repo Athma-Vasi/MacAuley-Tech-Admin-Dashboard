@@ -95,6 +95,7 @@ const globalReducersMap = new Map<
     globalReducer_setRespectReducedMotion,
   ],
   [globalAction.setIsError, globalReducer_setIsError],
+  [globalAction.setIsFetching, globalReducer_setIsFetching],
   [globalAction.setExpandBarChartData, globalReducer_setExpandBarChartData],
   [
     globalAction.setExpandCalendarChartData,
@@ -371,6 +372,16 @@ function globalReducer_setIsError(
   return {
     ...state,
     isError: dispatch.payload as boolean,
+  };
+}
+
+function globalReducer_setIsFetching(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    isFetching: dispatch.payload as boolean,
   };
 }
 

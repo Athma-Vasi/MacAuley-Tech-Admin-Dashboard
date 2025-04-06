@@ -404,7 +404,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableYScaleStacked,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enableYScaleStacked",
         offLabel: "Off",
         onLabel: "On",
@@ -419,7 +418,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: reverseScale,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "reverseScale",
         offLabel: "Off",
         onLabel: "On",
@@ -482,7 +480,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableArea,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enableArea",
         offLabel: "Off",
         onLabel: "On",
@@ -533,7 +530,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enablePoints,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enablePoints",
         offLabel: "Off",
         onLabel: "On",
@@ -602,7 +598,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enablePointLabel,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enablePointLabel",
         offLabel: "Off",
         onLabel: "On",
@@ -653,7 +648,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableGridX,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enableGridX",
         offLabel: "Off",
         onLabel: "On",
@@ -668,7 +662,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableGridY,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enableGridY",
         offLabel: "Off",
         onLabel: "On",
@@ -685,7 +678,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableCrosshair,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enableCrosshair",
         offLabel: "Off",
         onLabel: "On",
@@ -717,7 +709,6 @@ function ResponsiveLineChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableAnimate,
-        invalidValueAction: responsiveLineChartAction.setIsError,
         name: "enableAnimate",
         offLabel: "Off",
         onLabel: "On",

@@ -16,6 +16,8 @@ import {
   FETCH_REQUEST_TIMEOUT,
   METRICS_URL,
   MOBILE_BREAKPOINT,
+  OVERLAY_BLUR,
+  OVERLAY_OPACITY,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -65,13 +67,14 @@ function Dashboard() {
   const {
     globalState: {
       customerMetricsCategory,
+      customerMetricsDocument,
       financialMetricCategory,
+      financialMetricsDocument,
+      isFetching,
       productMetricCategory,
+      productMetricsDocument,
       productSubMetricCategory,
       repairMetricCategory,
-      customerMetricsDocument,
-      financialMetricsDocument,
-      productMetricsDocument,
       repairMetricsDocument,
       themeObject,
     },
@@ -113,15 +116,6 @@ function Dashboard() {
       isComponentMountedRef.current = false;
     };
   }, []);
-
-  // if (
-  //   (metricsView === "financials" && financialMetricsDocument === null) ||
-  //   (metricsView === "products" && productMetricsDocument === null) ||
-  //   (metricsView === "customers" && customerMetricsDocument === null) ||
-  //   (metricsView === "repairs" && repairMetricsDocument === null)
-  // ) {
-  //   return displayLoadingOverlay;
-  // }
 
   console.group("Dashboard");
   console.log("storeLocationView", storeLocationView);
@@ -418,7 +412,9 @@ function Dashboard() {
 
   const dashboard = (
     <Stack w="100%" pos="relative" bg={bgGradient}>
-      {isLoading ? <Overlay opacity={0.10} blur={2} /> : null}
+      {isLoading || isFetching
+        ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
+        : null}
 
       {windowWidth < MOBILE_BREAKPOINT
         ? dashboardHeaderAccordion

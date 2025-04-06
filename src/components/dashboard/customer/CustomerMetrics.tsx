@@ -2,7 +2,11 @@ import { Overlay, Stack } from "@mantine/core";
 import React, { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { COLORS_SWATCHES } from "../../../constants";
+import {
+  COLORS_SWATCHES,
+  OVERLAY_BLUR,
+  OVERLAY_OPACITY,
+} from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { CustomerMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
@@ -225,7 +229,9 @@ function CustomerMetrics(
 
   const customerMetrics = (
     <Stack w="100%" pos="relative">
-      {isGenerating ? <Overlay opacity={0.10} /> : null}
+      {isGenerating
+        ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
+        : null}
       {customerMetricsCategory === "new"
         ? newCustomers
         : customerMetricsCategory === "returning"

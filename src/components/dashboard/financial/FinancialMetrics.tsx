@@ -3,9 +3,12 @@ import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import React from "react";
-import { COLORS_SWATCHES } from "../../../constants";
+import {
+  COLORS_SWATCHES,
+  OVERLAY_BLUR,
+  OVERLAY_OPACITY,
+} from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
-import { useWindowSize } from "../../../hooks/useWindowSize";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
@@ -216,7 +219,9 @@ function FinancialMetrics(
 
   const financialMetrics = (
     <Stack w="100%" pos="relative">
-      {isGenerating ? <Overlay opacity={0.10} /> : null}
+      {isGenerating
+        ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
+        : null}
       {subCategoryPage}
     </Stack>
   );

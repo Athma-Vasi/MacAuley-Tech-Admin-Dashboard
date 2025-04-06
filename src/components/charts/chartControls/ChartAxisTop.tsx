@@ -90,7 +90,6 @@ function ChartAxisTop(props: ChartAxisTopProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableAxisTop,
-        invalidValueAction: parentChartAction.setIsError,
         name: "enableAxisTop",
         offLabel: "Off",
         onLabel: "On",

@@ -90,7 +90,6 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableAxisBottom,
-        invalidValueAction: parentChartAction.setIsError,
         name: "enableAxisBottom",
         offLabel: "Off",
         onLabel: "On",

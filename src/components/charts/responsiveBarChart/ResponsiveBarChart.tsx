@@ -414,7 +414,6 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: reverse,
-        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "reverse",
         offLabel: "Off",
         onLabel: "On",
@@ -535,7 +534,6 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableFillPatterns,
-        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableFillPatterns",
         offLabel: "Off",
         onLabel: "On",
@@ -552,7 +550,6 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableLabels,
-        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableLabels",
         offLabel: "Off",
         onLabel: "On",
@@ -623,7 +620,6 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableGridX,
-        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableGridX",
         offLabel: "Off",
         onLabel: "On",
@@ -638,7 +634,6 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableGridY,
-        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableGridY",
         offLabel: "Off",
         onLabel: "On",
@@ -655,7 +650,6 @@ function ResponsiveBarChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableAnimate,
-        invalidValueAction: responsiveBarChartAction.setIsError,
         name: "enableAnimate",
         offLabel: "Off",
         onLabel: "On",

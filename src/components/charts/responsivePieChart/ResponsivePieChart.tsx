@@ -362,7 +362,6 @@ function ResponsivePieChart({
     <AccessibleSwitchInput
       attributes={{
         checked: sortByValue,
-        invalidValueAction: responsivePieChartAction.setIsError,
         name: "sortByValue",
         parentDispatch: responsivePieChartDispatch,
         offLabel: "Off",
@@ -406,7 +405,6 @@ function ResponsivePieChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableFillPatterns,
-        invalidValueAction: responsivePieChartAction.setIsError,
         name: "enableFillPatterns",
         offLabel: "Off",
         onLabel: "On",
@@ -439,12 +437,11 @@ function ResponsivePieChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableArcLinkLabels,
-        invalidValueAction: responsivePieChartAction.setIsError,
         name: "enableArcLinkLabels",
         offLabel: "Off",
         onLabel: "On",
         parentDispatch: responsivePieChartDispatch,
-        validValueAction: responsivePieChartAction.setEnableArcLabels,
+        validValueAction: responsivePieChartAction.setEnableArcLinkLabels,
         value: enableArcLinkLabels,
       }}
     />
@@ -622,7 +619,6 @@ function ResponsivePieChart({
     <AccessibleSwitchInput
       attributes={{
         checked: enableAnimate,
-        invalidValueAction: responsivePieChartAction.setIsError,
         name: "enableAnimate",
         offLabel: "Off",
         onLabel: "On",

@@ -79,7 +79,6 @@ function ChartArcLabel(props: ChartArcLabelProps) {
     <AccessibleSwitchInput
       attributes={{
         checked: enableArcLabels,
-        invalidValueAction: parentChartAction.setIsError,
         name: "enableArcLabels",
         offLabel: "Off",
         onLabel: "On",

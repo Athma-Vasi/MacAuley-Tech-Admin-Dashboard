@@ -8,12 +8,10 @@ import { createAccessibleSwitchOnOffTextElements } from "./utils";
 
 type AccessibleSwitchInputAttributes<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
 > = {
   checked: boolean;
   color?: string;
   disabled?: boolean;
-  invalidValueAction: InvalidValueAction;
   label?: ReactNode;
   labelPosition?: "left" | "right";
   name: string;
@@ -21,12 +19,8 @@ type AccessibleSwitchInputAttributes<
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onLabel: ReactNode;
   parentDispatch: React.Dispatch<
-    | {
+    {
       action: ValidValueAction;
-      payload: boolean;
-    }
-    | {
-      action: InvalidValueAction;
       payload: boolean;
     }
   >;
@@ -50,19 +44,16 @@ type AccessibleSwitchInputProps<
   InvalidValueAction extends string = string,
 > = {
   attributes: AccessibleSwitchInputAttributes<
-    ValidValueAction,
-    InvalidValueAction
+    ValidValueAction
   >;
   uniqueId?: string;
 };
 
 function AccessibleSwitchInput<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
 >(
   { attributes, uniqueId }: AccessibleSwitchInputProps<
-    ValidValueAction,
-    InvalidValueAction
+    ValidValueAction
   >,
 ) {
   const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
@@ -71,7 +62,6 @@ function AccessibleSwitchInput<
     checked,
     color = primaryColor,
     disabled = false,
-    invalidValueAction,
     labelPosition = "right",
     name,
     onChange,
@@ -141,13 +131,6 @@ function AccessibleSwitchInput<
             payload: checked,
           });
 
-          if (!preventErrorStateWhenOff) {
-            parentDispatch({
-              action: invalidValueAction,
-              payload: !checked,
-            });
-          }
-
           onChange?.(event);
         }}
         onLabel={onLabel}
@@ -156,7 +139,7 @@ function AccessibleSwitchInput<
         required={required}
         size={size}
         thumbIcon={thumbIcon}
-        value={value ? "Yes" : "No"}
+        value={value.toString()}
       />
 
       <Box
