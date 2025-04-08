@@ -520,7 +520,7 @@ function consolidateCustomerCardsAndStatistics(
   return Array.from(cards).reduce((acc, [key, cards], idx) => {
     const statisticElement = statisticsElements.get(key) ?? <></>;
     const statisticsAccordion = (
-      <Accordion key={`${key}-${idx}`}>
+      <Accordion>
         <Accordion.Item value={`${key}-${idx}`}>
           <Accordion.Control>
             <Text size={18} weight={500}>
@@ -537,10 +537,17 @@ function consolidateCustomerCardsAndStatistics(
       </Accordion>
     );
 
-    cards.forEach((card) => {
+    cards.forEach((card, idx) => {
       card.icon = statisticsAccordion;
       const cardElement = returnDashboardCardElement(card);
-      acc.set(key, cardElement);
+      acc.set(
+        key,
+        <React.Fragment
+          key={`${idx}-${key}-${card.value}-${card.percentage}-${card.date}`}
+        >
+          {cardElement}
+        </React.Fragment>,
+      );
     });
 
     // card.icon = statisticsAccordion;
@@ -559,7 +566,7 @@ function consolidateCardsAndStatistics(
   return Array.from(cards).reduce((acc, [key, card], idx) => {
     const statisticElement = statisticsElements.get(key) ?? <></>;
     const statisticsAccordion = (
-      <Accordion key={`${key}-${idx}`}>
+      <Accordion>
         <Accordion.Item value={`${key}-${idx}`}>
           <Accordion.Control>
             <Text size="sm" weight={500}>
