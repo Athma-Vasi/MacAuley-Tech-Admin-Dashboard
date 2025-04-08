@@ -11,7 +11,7 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { ProductMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type { BusinessMetricStoreLocation, Month, Year } from "../types";
+import type { AllStoreLocations, Month, Year } from "../types";
 import { productMetricsAction } from "./actions";
 import { createProductMetricsCards } from "./cards";
 import {
@@ -36,7 +36,7 @@ type ProductMetricsProps = {
   selectedMonth: Month;
   selectedYYYYMMDD: string;
   selectedYear: Year;
-  storeLocationView: BusinessMetricStoreLocation;
+  storeLocationView: AllStoreLocations;
 };
 
 function ProductMetrics(

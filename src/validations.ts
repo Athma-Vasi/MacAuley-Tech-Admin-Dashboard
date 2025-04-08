@@ -26,10 +26,12 @@ type ValidationKey =
   | "email"
   | "exclusion"
   | "filterValue"
+  | "firstName"
   | "frequencyResponse"
   | "fullName"
   | "inclusion"
   | "largeInteger"
+  | "lastName"
   | "mediumInteger"
   | "money"
   | "name"
@@ -40,6 +42,7 @@ type ValidationKey =
   | "postalCodeCanada"
   | "postalCodeUS"
   | "privacyConsent"
+  | "profilePictureUrl"
   | "ramTiming"
   | "ramVoltage"
   | "screenshotFilename"
@@ -299,6 +302,14 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
 
   filterValue: [],
 
+  firstName: [
+    [
+      /^[A-Za-z\s.\-']+$/,
+      "Must contain only letters, spaces, periods, hyphens, and apostrophes.",
+    ],
+    [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
+  ],
+
   frequencyResponse: [
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [
@@ -327,6 +338,14 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [/^[0-9]+$/, "Must contain only numbers."],
     [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
+  ],
+
+  lastName: [
+    [
+      /^[A-Za-z\s.\-']+$/,
+      "Must contain only letters, spaces, periods, hyphens, and apostrophes.",
+    ],
+    [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
   ],
 
   mediumInteger: [
@@ -396,6 +415,15 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
   ],
 
   privacyConsent: [[/^(true)$/, "Must consent to share details."]],
+
+  profilePictureUrl: [
+    [/^https?:\/\//, "Must start with 'http://' or 'https://'."],
+    [/^.{1,256}/, "Must be between 1 and 256 characters length."],
+    [
+      /^[-a-zA-Z0-9()@:%_+.~#?&//=]*$/,
+      "Must contain only letters, numbers, and special characters.",
+    ],
+  ],
 
   ramTiming: [
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],

@@ -1,15 +1,11 @@
-import {
-  BusinessMetricsDocument,
-  FinancialMetricsDocument,
-} from "../../../types";
+import { FinancialMetricsDocument } from "../../../types";
 import { toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
 import { MONTHS } from "../constants";
 import {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
+  AllStoreLocations,
   DailyFinancialMetric,
   DashboardCalendarView,
   Month,
@@ -45,7 +41,7 @@ function returnSelectedDateFinancialMetrics({
   day: string;
   month: Month;
   months: Month[];
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   year: Year;
 }): SelectedDateFinancialMetrics {
   // const currentStoreMetrics = businessMetrics.find(
@@ -307,7 +303,7 @@ type ReturnFinancialMetricsChartsInput = {
   financialMetricsDocument: FinancialMetricsDocument;
   months: Month[];
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
 };
 
 async function createFinancialMetricsCharts({

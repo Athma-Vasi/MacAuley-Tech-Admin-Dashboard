@@ -1,14 +1,13 @@
 import type { CheckboxRadioSelectData } from "../../types";
 import { RepairMetricCategory } from "./repair/types";
 import type {
-  BusinessMetricStoreLocation,
+  AllStoreLocations,
   ChartKindSegment,
   DashboardCalendarView,
   DashboardCustomerMetric,
   DashboardFinancialMetric,
   DashboardMetricsView,
   DashboardProductMetric,
-  DashboardRepairMetric,
   Month,
   ProductCategory,
   RepairCategory,
@@ -114,7 +113,7 @@ const METRICS_VIEW_TABS_DATA: DashboardMetricsView[] = [
 ];
 
 const STORE_LOCATION_VIEW_DATA: CheckboxRadioSelectData<
-  BusinessMetricStoreLocation
+  AllStoreLocations
 > = [
   { label: "All Locations", value: "All Locations" },
   { label: "Edmonton", value: "Edmonton" },
@@ -122,7 +121,7 @@ const STORE_LOCATION_VIEW_DATA: CheckboxRadioSelectData<
   { label: "Vancouver", value: "Vancouver" },
 ];
 
-const BUSINESS_METRIC_STORE_LOCATIONS: BusinessMetricStoreLocation[] = [
+const BUSINESS_METRIC_STORE_LOCATIONS: AllStoreLocations[] = [
   "All Locations",
   "Edmonton",
   "Calgary",

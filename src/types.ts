@@ -7,7 +7,7 @@ import {
 } from "@mantine/core";
 import type { Result } from "ts-results";
 import {
-  BusinessMetricStoreLocation,
+  AllStoreLocations,
   CustomerMetrics,
   ProductCategory,
   ProductYearlyMetric,
@@ -164,7 +164,7 @@ type UserDocument = UserSchema & {
 
 type RepairMetricsSchema = {
   metricCategory: RepairCategory | "All Repairs";
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   yearlyMetrics: RepairYearlyMetric[];
 };
 
@@ -177,7 +177,7 @@ type RepairMetricsDocument = RepairMetricsSchema & {
 
 type ProductMetricsSchema = {
   metricCategory: ProductCategory | "All Products";
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   yearlyMetrics: ProductYearlyMetric[];
 };
 
@@ -189,7 +189,7 @@ type ProductMetricsDocument = ProductMetricsSchema & {
 };
 
 type FinancialMetricsSchema = {
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   financialMetrics: YearlyFinancialMetric[];
 };
 
@@ -201,7 +201,7 @@ type FinancialMetricsDocument = FinancialMetricsSchema & {
 };
 
 type CustomerMetricsSchema = {
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   customerMetrics: CustomerMetrics;
 };
 

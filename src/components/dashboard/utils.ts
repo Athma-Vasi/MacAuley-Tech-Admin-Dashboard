@@ -35,8 +35,8 @@ import { FinancialMetricCategory } from "./financial/types";
 import { ProductMetricCategory, ProductSubMetric } from "./product/types";
 import { RepairMetricCategory, RepairSubMetric } from "./repair/types";
 import type {
+  AllStoreLocations,
   BusinessMetric,
-  BusinessMetricStoreLocation,
   CustomerDailyMetric,
   CustomerMetrics,
   CustomerMonthlyMetric,
@@ -3436,7 +3436,7 @@ type ReturnChartTitleNavigateLinksInput = {
   month?: string;
   months?: Month[];
   productMetric?: ProductCategory | "All Products";
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   yAxisBarChartVariable: string;
   yAxisCalendarChartVariable?: string;
   yAxisLineChartVariable: string;
@@ -3724,7 +3724,7 @@ function splitSelectedCalendarDate({
 }
 
 function returnIsTabDisabled(
-  storeLocationView: BusinessMetricStoreLocation,
+  storeLocationView: AllStoreLocations,
   selectedYear: Year,
 ) {
   const yearNumber = isNaN(Number(selectedYear)) ? 0 : Number(selectedYear);
@@ -3815,7 +3815,7 @@ function returnChartTitles(
     calendarView: DashboardCalendarView;
     metricCategory: string;
     pieChartYAxis?: string;
-    storeLocation: BusinessMetricStoreLocation;
+    storeLocation: AllStoreLocations;
     subMetric?: string;
   },
 ) {
@@ -3909,7 +3909,7 @@ async function handleStoreCategoryClick(
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: any) => void;
-    storeLocationView: BusinessMetricStoreLocation;
+    storeLocationView: AllStoreLocations;
   },
 ) {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");

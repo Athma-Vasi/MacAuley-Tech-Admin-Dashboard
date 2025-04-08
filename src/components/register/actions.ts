@@ -3,8 +3,10 @@ type RegisterAction = {
   setCity: "setCity";
   setConfirmPassword: "setConfirmPassword";
   setCountry: "setCountry";
+  setDepartment: "setDepartment";
   setEmail: "setEmail";
   setErrorMessage: "setErrorMessage";
+  setFirstName: "setFirstName";
   setIsEmailExists: "setIsEmailExists";
   setIsEmailExistsSubmitting: "setIsEmailExistsSubmitting";
   setIsError: "setIsError";
@@ -12,10 +14,14 @@ type RegisterAction = {
   setIsSuccessful: "setIsSuccessful";
   setIsUsernameExists: "setIsUsernameExists";
   setIsUsernameExistsSubmitting: "setIsUsernameExistsSubmitting";
+  setJobPosition: "setJobPosition";
+  setLastName: "setLastName";
   setPassword: "setPassword";
   setPostalCode: "setPostalCode";
+  setProfilePictureUrl: "setProfilePictureUrl";
   setProvince: "setProvince";
   setState: "setState";
+  setStoreLocation: "setStoreLocation";
   setUsername: "setUsername";
 };
 
@@ -24,8 +30,10 @@ const registerAction: RegisterAction = {
   setCity: "setCity",
   setConfirmPassword: "setConfirmPassword",
   setCountry: "setCountry",
+  setDepartment: "setDepartment",
   setEmail: "setEmail",
   setErrorMessage: "setErrorMessage",
+  setFirstName: "setFirstName",
   setIsEmailExists: "setIsEmailExists",
   setIsEmailExistsSubmitting: "setIsEmailExistsSubmitting",
   setIsError: "setIsError",
@@ -33,10 +41,14 @@ const registerAction: RegisterAction = {
   setIsSuccessful: "setIsSuccessful",
   setIsUsernameExists: "setIsUsernameExists",
   setIsUsernameExistsSubmitting: "setIsUsernameExistsSubmitting",
+  setJobPosition: "setJobPosition",
+  setLastName: "setLastName",
   setPassword: "setPassword",
   setPostalCode: "setPostalCode",
+  setProfilePictureUrl: "setProfilePictureUrl",
   setProvince: "setProvince",
   setState: "setState",
+  setStoreLocation: "setStoreLocation",
   setUsername: "setUsername",
 };
 

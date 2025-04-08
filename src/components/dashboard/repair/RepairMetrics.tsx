@@ -11,7 +11,7 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { RepairMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type { BusinessMetricStoreLocation, Month, Year } from "../types";
+import type { AllStoreLocations, Month, Year } from "../types";
 import { repairMetricsAction } from "./actions";
 import { createRepairMetricsCards } from "./cards";
 import {
@@ -33,7 +33,7 @@ type RepairMetricsProps = {
   repairMetricsDocument: RepairMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
-  storeLocationView: BusinessMetricStoreLocation;
+  storeLocationView: AllStoreLocations;
   selectedYear: Year;
   selectedYYYYMMDD: string;
 };

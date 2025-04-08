@@ -1,6 +1,6 @@
 import { RepairMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
-import { BusinessMetricStoreLocation, DashboardCalendarView } from "../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
 import { RepairMetricCategory } from "./types";
 
@@ -78,7 +78,7 @@ function createOverviewRepairMetricsCards(
   { overviewMetrics, selectedYYYYMMDD, storeLocationView }: {
     overviewMetrics: OverviewRevenueMetrics;
     selectedYYYYMMDD: string;
-    storeLocationView: BusinessMetricStoreLocation;
+    storeLocationView: AllStoreLocations;
   },
 ) {
   const initialAcc: Record<DashboardCalendarView, React.JSX.Element> = {

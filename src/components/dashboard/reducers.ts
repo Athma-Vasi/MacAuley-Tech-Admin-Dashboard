@@ -1,10 +1,6 @@
 import { dashboardAction } from "./actions";
-import { CustomerMetricsCategory } from "./customer/types";
-import { FinancialMetricCategory } from "./financial/types";
-import { ProductMetricCategory, ProductSubMetric } from "./product/types";
-import { RepairMetricCategory } from "./repair/types";
 import type {
-  BusinessMetricStoreLocation,
+  AllStoreLocations,
   DashboardAction,
   DashboardDispatch,
   DashboardState,
@@ -47,7 +43,7 @@ function dashboardReducer_setStoreLocationView(
 ): DashboardState {
   return {
     ...state,
-    storeLocationView: dispatch.payload as BusinessMetricStoreLocation,
+    storeLocationView: dispatch.payload as AllStoreLocations,
   };
 }
 

@@ -12,7 +12,7 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type { BusinessMetricStoreLocation, Month, Year } from "../types";
+import type { AllStoreLocations, Month, Year } from "../types";
 import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
@@ -36,7 +36,7 @@ type FinancialMetricsProps = {
   financialMetricsDocument: FinancialMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
-  storeLocationView: BusinessMetricStoreLocation;
+  storeLocationView: AllStoreLocations;
   selectedYear: Year;
   selectedYYYYMMDD: string;
 };

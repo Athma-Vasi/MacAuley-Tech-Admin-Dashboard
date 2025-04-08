@@ -1,3 +1,4 @@
+import { AllStoreLocations } from "./components/dashboard/types";
 import {
   CheckboxRadioSelectData,
   Country,
@@ -209,6 +210,13 @@ const COLORS_SWATCHES: ColorsSwatches = {
   ],
 };
 
+const ALL_STORE_LOCATIONS_DATA: CheckboxRadioSelectData<AllStoreLocations> = [
+  { label: "All Locations", value: "All Locations" },
+  { label: "Edmonton", value: "Edmonton" },
+  { label: "Calgary", value: "Calgary" },
+  { label: "Vancouver", value: "Vancouver" },
+];
+
 const SCREENSHOT_IMAGE_TYPE_DATA = [
   { value: "image/png", label: "Image/png" },
   { value: "image/jpeg", label: "Image/jpeg" },
@@ -223,7 +231,7 @@ const STORE_LOCATIONS: CheckboxRadioSelectData<StoreLocation> = [
   { label: "Vancouver", value: "Vancouver" },
 ];
 
-const DEPARTMENTS: CheckboxRadioSelectData<Department> = [
+const DEPARTMENTS_DATA: CheckboxRadioSelectData<Department> = [
   { value: "Executive Management", label: "Executive Management" },
   { value: "Human Resources", label: "Human Resources" },
   { value: "Store Administration", label: "Store Administration" },
@@ -239,7 +247,7 @@ const DEPARTMENTS: CheckboxRadioSelectData<Department> = [
   { value: "Maintenance", label: "Maintenance" },
 ];
 
-const JOB_POSITIONS: CheckboxRadioSelectData<JobPosition> = [
+const JOB_POSITIONS_DATA: CheckboxRadioSelectData<JobPosition> = [
   // executive management
   { value: "Chief Executive Officer", label: "Chief Executive Officer" },
   { value: "Chief Operations Officer", label: "Chief Operations Officer" },
@@ -589,6 +597,7 @@ const OVERLAY_OPACITY = 0.05;
 const OVERLAY_BLUR = 3;
 
 export {
+  ALL_STORE_LOCATIONS_DATA,
   API_URL,
   APP_HEADER_HEIGHT,
   AUTH_URL,
@@ -598,13 +607,13 @@ export {
   DASHBOARD_HEADER_HEIGHT,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
   DEPARTMENT_JOB_POSITION_MAP,
-  DEPARTMENTS,
+  DEPARTMENTS_DATA,
   DOMAIN_NAME,
   FETCH_REQUEST_TIMEOUT,
   FINANCIAL_URL,
   FONT_FAMILY_DATA,
   INPUT_WIDTH,
-  JOB_POSITIONS,
+  JOB_POSITIONS_DATA,
   LOGIN_URL,
   LOGOUT_URL,
   METRICS_HEADER_HEIGHT,

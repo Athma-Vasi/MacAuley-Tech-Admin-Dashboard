@@ -1,10 +1,6 @@
 import { ProductMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
-import {
-  BusinessMetricStoreLocation,
-  DashboardCalendarView,
-  ProductCategory,
-} from "../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
 import { ProductMetricCategory } from "./types";
 
@@ -90,7 +86,7 @@ function returnProductMetricsOverviewCards(
   { overviewMetrics, selectedYYYYMMDD, storeLocationView }: {
     overviewMetrics: OverviewAllProductsMetrics;
     selectedYYYYMMDD: string;
-    storeLocationView: BusinessMetricStoreLocation;
+    storeLocationView: AllStoreLocations;
   },
 ) {
   const initialAcc: Record<DashboardCalendarView, React.JSX.Element> = {

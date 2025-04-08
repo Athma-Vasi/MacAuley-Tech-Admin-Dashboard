@@ -19,7 +19,7 @@ type DashboardRepairMetric = RepairCategory | "All Repairs";
 
 type DashboardState = {
   selectedYYYYMMDD: string;
-  storeLocationView: BusinessMetricStoreLocation;
+  storeLocationView: AllStoreLocations;
   isLoading: boolean;
   loadingMessage: string;
 };
@@ -27,7 +27,7 @@ type DashboardState = {
 type DashboardDispatch =
   | {
     action: DashboardAction["setStoreLocationView"];
-    payload: BusinessMetricStoreLocation;
+    payload: AllStoreLocations;
   }
   | {
     action: DashboardAction["setSelectedYYYYMMDD"];
@@ -268,10 +268,10 @@ type RepairDailyMetric = {
   unitsRepaired: number;
 };
 
-type BusinessMetricStoreLocation = "All Locations" | StoreLocation;
+type AllStoreLocations = "All Locations" | StoreLocation;
 
 type BusinessMetric = {
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   customerMetrics: CustomerMetrics;
   financialMetrics: YearlyFinancialMetric[];
   productMetrics: ProductMetric[];
@@ -279,8 +279,8 @@ type BusinessMetric = {
 };
 
 export type {
+  AllStoreLocations,
   BusinessMetric,
-  BusinessMetricStoreLocation,
   ChartKindSegment,
   CustomerDailyMetric,
   CustomerMetrics,

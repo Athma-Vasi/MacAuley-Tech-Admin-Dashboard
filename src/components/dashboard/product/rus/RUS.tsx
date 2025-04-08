@@ -27,7 +27,7 @@ import type {
   ProductMetricsCharts,
 } from "../../product/chartsData";
 import type {
-  BusinessMetricStoreLocation,
+  AllStoreLocations,
   DashboardCalendarView,
   DashboardMetricsView,
   Year,
@@ -67,7 +67,7 @@ type RUSProps = {
   productCategory: ProductMetricCategory;
   productMetricsCards: ProductMetricsCards;
   productMetricsCharts: ProductMetricsCharts;
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   year: Year;
 };
 

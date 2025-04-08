@@ -1,10 +1,6 @@
 import { FinancialMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
-import {
-  BusinessMetric,
-  BusinessMetricStoreLocation,
-  DashboardCalendarView,
-} from "../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
 
 type OverviewFinancialMetrics = {
@@ -17,7 +13,7 @@ type OverviewFinancialMetrics = {
 
 function returnOverviewFinancialMetrics(
   financialMetricsDocument: FinancialMetricsDocument,
-  storeLocationView: BusinessMetricStoreLocation,
+  storeLocationView: AllStoreLocations,
   selectedYYYYMMDD: string,
 ) {
   const defaultValue: OverviewFinancialMetrics = {
@@ -122,7 +118,7 @@ function returnFinancialMetricsOverviewCards(
   }: {
     overviewMetrics: OverviewFinancialMetrics;
     selectedYYYYMMDD: string;
-    storeLocationView: BusinessMetricStoreLocation;
+    storeLocationView: AllStoreLocations;
   },
 ) {
   const initialAcc: {

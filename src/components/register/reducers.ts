@@ -1,4 +1,12 @@
-import { Country, PostalCode, Province, StatesUS } from "../../types";
+import {
+  Country,
+  Department,
+  JobPosition,
+  PostalCode,
+  Province,
+  StatesUS,
+} from "../../types";
+import { AllStoreLocations } from "../dashboard/types";
 import { registerAction } from "./actions";
 import type { RegisterAction, RegisterDispatch, RegisterState } from "./types";
 
@@ -14,6 +22,12 @@ const registerReducers = new Map<
   RegisterAction[keyof RegisterAction],
   (state: RegisterState, dispatch: RegisterDispatch) => RegisterState
 >([
+  [registerAction.setDepartment, registerReducer_setDepartment],
+  [registerAction.setFirstName, registerReducer_setFirstName],
+  [registerAction.setJobPosition, registerReducer_setJobPosition],
+  [registerAction.setLastName, registerReducer_setLastName],
+  [registerAction.setProfilePictureUrl, registerReducer_setProfilePictureUrl],
+  [registerAction.setStoreLocation, registerReducer_setStoreLocation],
   [registerAction.setAddressLine, registerReducer_setAddressLine],
   [registerAction.setCity, registerReducer_setCity],
   [registerAction.setCountry, registerReducer_setCountry],
@@ -39,6 +53,48 @@ const registerReducers = new Map<
   [registerAction.setPassword, registerReducer_setPassword],
   [registerAction.setUsername, registerReducer_setUsername],
 ]);
+
+function registerReducer_setDepartment(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, department: dispatch.payload as Department };
+}
+
+function registerReducer_setFirstName(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, firstName: dispatch.payload as string };
+}
+
+function registerReducer_setJobPosition(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, jobPosition: dispatch.payload as JobPosition };
+}
+
+function registerReducer_setLastName(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, lastName: dispatch.payload as string };
+}
+
+function registerReducer_setProfilePictureUrl(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, profilePictureUrl: dispatch.payload as string };
+}
+
+function registerReducer_setStoreLocation(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, storeLocation: dispatch.payload as AllStoreLocations };
+}
 
 function registerReducer_setAddressLine(
   state: RegisterState,

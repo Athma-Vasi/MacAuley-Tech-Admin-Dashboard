@@ -7,7 +7,7 @@ import type { CheckboxRadioSelectData } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { type DirectoryAction, directoryAction } from "./actions";
-import { DEPARTMENTS } from "./constants";
+import { DEPARTMENTS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
 import { DIRECTORY_EMPLOYEE_DATA } from "./data";
@@ -36,7 +36,7 @@ function Directory() {
 
   const departmentData = [
     { label: "All Departments", value: "All Departments" },
-    ...DEPARTMENTS,
+    ...DEPARTMENTS_DATA,
   ] as CheckboxRadioSelectData<DepartmentsWithDefaultKey>;
 
   const departmentSelectInput = (

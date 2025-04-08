@@ -1,6 +1,6 @@
 import { CustomerMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
-import { BusinessMetricStoreLocation, DashboardCalendarView } from "../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
 
 type OverviewCustomerMetrics = {
@@ -137,7 +137,7 @@ function returnCustomerMetricsOverviewCards(
   { overviewMetrics, selectedYYYYMMDD, storeLocationView }: {
     overviewMetrics: OverviewCustomerMetrics;
     selectedYYYYMMDD: string;
-    storeLocationView: BusinessMetricStoreLocation;
+    storeLocationView: AllStoreLocations;
   },
 ) {
   const initialAcc: {

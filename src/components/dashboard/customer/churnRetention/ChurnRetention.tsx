@@ -20,7 +20,7 @@ import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import type {
-  BusinessMetricStoreLocation,
+  AllStoreLocations,
   DashboardCalendarView,
   DashboardMetricsView,
   Year,
@@ -69,7 +69,7 @@ type ChurnRetentionProps = {
   metricCategory: CustomerMetricsCategory;
   metricsView: DashboardMetricsView;
   month: string;
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   year: Year;
 };
 

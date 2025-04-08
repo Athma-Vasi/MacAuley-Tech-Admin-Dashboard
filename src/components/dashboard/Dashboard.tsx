@@ -53,7 +53,7 @@ import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { RepairMetricCategory } from "./repair/types";
 import { initialDashboardState } from "./state";
-import { BusinessMetricStoreLocation, DashboardMetricsView } from "./types";
+import { AllStoreLocations, DashboardMetricsView } from "./types";
 import { handleStoreCategoryClick, splitSelectedCalendarDate } from "./utils";
 
 function Dashboard() {
@@ -191,7 +191,7 @@ function Dashboard() {
             repairMetricCategory,
             showBoundary,
             storeLocationView: event.currentTarget
-              .value as BusinessMetricStoreLocation,
+              .value as AllStoreLocations,
           });
         },
         parentDispatch: dashboardDispatch,

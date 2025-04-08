@@ -21,7 +21,7 @@ import {
   FinancialCardsAndStatisticsKeyPERT,
   FinancialMetricCategory,
 } from "./financial/types";
-import { BusinessMetricStoreLocation, DashboardCalendarView } from "./types";
+import { AllStoreLocations, DashboardCalendarView } from "./types";
 import { StatisticsObject } from "./utils";
 
 type DashboardCardInfo = {
@@ -272,7 +272,7 @@ function createStatisticsElements(
   calendarView: DashboardCalendarView,
   metricCategory: string,
   statisticsMap: Map<string, StatisticsObject>,
-  storeLocation: BusinessMetricStoreLocation,
+  storeLocation: AllStoreLocations,
 ) {
   const NEW_STATISTICS_KEY_TO_CARDS_KEY_MAP = new Map<string, string>([
     ["Total", "Total New"],
@@ -398,7 +398,7 @@ function createFinancialStatisticsElements(
   metricCategory: FinancialMetricCategory,
   metricsKind: "pert" | "otherMetrics",
   statisticsMap: Map<string, StatisticsObject>,
-  storeLocation: BusinessMetricStoreLocation,
+  storeLocation: AllStoreLocations,
 ): Map<FinancialCardsAndStatisticsKeyPERT, React.JSX.Element> {
   const statisticsKeyToCardsKeyMapPERT = new Map<
     string,
@@ -614,7 +614,7 @@ function createOverviewMetricCard(
     {
       calendarView: DashboardCalendarView;
       selectedYYYYMMDD: string;
-      storeLocationView: BusinessMetricStoreLocation;
+      storeLocationView: AllStoreLocations;
       subMetric: string;
       unit: "CAD" | "%" | "Units" | "";
       value: number;

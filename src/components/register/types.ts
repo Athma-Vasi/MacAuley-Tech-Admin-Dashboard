@@ -1,4 +1,12 @@
-import { Country, PostalCode, Province, StatesUS } from "../../types";
+import {
+  Country,
+  Department,
+  JobPosition,
+  PostalCode,
+  Province,
+  StatesUS,
+} from "../../types";
+import { AllStoreLocations } from "../dashboard/types";
 import type { RegisterAction } from "./actions";
 
 type RegisterState = {
@@ -11,7 +19,7 @@ type RegisterState = {
   isUsernameExistsSubmitting: boolean;
   password: string;
   username: string;
-  
+
   // register address
   addressLine: string;
   city: string;
@@ -21,7 +29,13 @@ type RegisterState = {
   state: StatesUS;
 
   // register additional
-  
+  department: Department;
+  firstName: string;
+  jobPosition: JobPosition;
+  lastName: string;
+  profilePictureUrl: string;
+  storeLocation: AllStoreLocations;
+
   errorMessage: string;
   isError: boolean;
   isSubmitting: boolean;
@@ -29,6 +43,30 @@ type RegisterState = {
 };
 
 type RegisterDispatch =
+  | {
+    action: RegisterAction["setDepartment"];
+    payload: Department;
+  }
+  | {
+    action: RegisterAction["setFirstName"];
+    payload: string;
+  }
+  | {
+    action: RegisterAction["setJobPosition"];
+    payload: JobPosition;
+  }
+  | {
+    action: RegisterAction["setLastName"];
+    payload: string;
+  }
+  | {
+    action: RegisterAction["setProfilePictureUrl"];
+    payload: string;
+  }
+  | {
+    action: RegisterAction["setStoreLocation"];
+    payload: AllStoreLocations;
+  }
   | {
     action: RegisterAction["setAddressLine"];
     payload: string;

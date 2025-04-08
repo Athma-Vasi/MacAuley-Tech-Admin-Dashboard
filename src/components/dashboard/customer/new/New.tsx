@@ -19,7 +19,7 @@ import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardBarLineLayout";
 import {
-  BusinessMetricStoreLocation,
+  AllStoreLocations,
   DashboardCalendarView,
   DashboardMetricsView,
   Year,
@@ -66,7 +66,7 @@ type NewProps = {
   metricsView: DashboardMetricsView;
   month: string;
   newOverviewCards: React.JSX.Element;
-  storeLocation: BusinessMetricStoreLocation;
+  storeLocation: AllStoreLocations;
   year: Year;
 };
 

@@ -14,10 +14,7 @@ import {
 import { decodeJWTSafe, fetchSafe, responseToJSONSafe } from "../../utils";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { RepairMetricCategory } from "../dashboard/repair/types";
-import {
-  BusinessMetricStoreLocation,
-  DashboardMetricsView,
-} from "../dashboard/types";
+import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 
 async function handleMetricCategoryNavlinkClick(
   {
@@ -47,7 +44,7 @@ async function handleMetricCategoryNavlinkClick(
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: any) => void;
-    storeLocationView: BusinessMetricStoreLocation;
+    storeLocationView: AllStoreLocations;
   },
 ) {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
