@@ -341,7 +341,7 @@ function Dashboard() {
         background: stickyHeaderBgGradient,
         position: "sticky",
         top: 0,
-        zIndex: 4,
+        zIndex: 5,
       }}
       opacity={0.97}
       w="100%"
@@ -351,7 +351,7 @@ function Dashboard() {
           <Accordion.Control>
             <Text weight={500} size="md">Parameters</Text>
           </Accordion.Control>
-          <Accordion.Panel>
+          <Accordion.Panel bg={bgGradient}>
             <Group w="100%" position="left" align="flex-end" spacing="xl">
               {headerInputs}
             </Group>
@@ -473,7 +473,7 @@ export default Dashboard;
 //         months: MONTHS,
 //         productCategories: PRODUCT_CATEGORIES,
 //         repairCategories: REPAIR_CATEGORIES,
-//         storeLocations: STORE_LOCATION_DATA.map((obj) => obj.value),
+//         storeLocations: STORE_LOCATIONS.map((obj) => obj.value),
 //       });
 
 //       console.timeEnd("createRandomBusinessMetrics");

@@ -9,7 +9,7 @@ import {
 
 function directoryReducer(
   state: DirectoryState,
-  dispatch: DirectoryDispatch
+  dispatch: DirectoryDispatch,
 ): DirectoryState {
   const reducer = directoryReducers.get(dispatch.action);
   return reducer ? reducer(state, dispatch) : state;
@@ -25,7 +25,7 @@ const directoryReducers = new Map<
 
 function directoryReducer_setDepartment(
   state: DirectoryState,
-  dispatch: DirectoryDispatch
+  dispatch: DirectoryDispatch,
 ): DirectoryState {
   return {
     ...state,
@@ -35,7 +35,7 @@ function directoryReducer_setDepartment(
 
 function directoryReducer_setStoreLocation(
   state: DirectoryState,
-  dispatch: DirectoryDispatch
+  dispatch: DirectoryDispatch,
 ): DirectoryState {
   return {
     ...state,

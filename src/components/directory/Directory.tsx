@@ -1,13 +1,13 @@
 import { Box, Group, Stack } from "@mantine/core";
 import { useReducer } from "react";
 
-import { COLORS_SWATCHES, STORE_LOCATION_DATA } from "../../constants";
+import { COLORS_SWATCHES, STORE_LOCATIONS } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { type DirectoryAction, directoryAction } from "./actions";
-import { DEPARTMENT_DATA } from "./constants";
+import { DEPARTMENTS } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
 import { DIRECTORY_EMPLOYEE_DATA } from "./data";
@@ -36,7 +36,7 @@ function Directory() {
 
   const departmentData = [
     { label: "All Departments", value: "All Departments" },
-    ...DEPARTMENT_DATA,
+    ...DEPARTMENTS,
   ] as CheckboxRadioSelectData<DepartmentsWithDefaultKey>;
 
   const departmentSelectInput = (
@@ -62,7 +62,7 @@ function Directory() {
         value: "All Locations",
       },
     ] as CheckboxRadioSelectData<StoreLocationsWithDefaultKey>)
-    : (STORE_LOCATION_DATA as CheckboxRadioSelectData<
+    : (STORE_LOCATIONS as CheckboxRadioSelectData<
       StoreLocationsWithDefaultKey
     >);
 

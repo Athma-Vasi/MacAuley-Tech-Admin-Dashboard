@@ -50,7 +50,7 @@ function Header({ opened, setOpened }: HeaderProps) {
       bg={headerBgGradient}
       // style={{ borderBottom: "1px solid hsl(0, 0%, 50%)" }}
     >
-      <Flex align="flex-end" style={{ outline: "1px solid red" }} w="62%">
+      <Flex align="flex-end" w="62%">
         {burger}
         {displayTitle}
       </Flex>

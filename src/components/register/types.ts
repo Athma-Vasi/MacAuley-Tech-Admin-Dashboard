@@ -1,21 +1,62 @@
+import { Country, PostalCode, Province, StatesUS } from "../../types";
 import type { RegisterAction } from "./actions";
 
 type RegisterState = {
+  // register personal
   confirmPassword: string;
   email: string;
-  errorMessage: string;
   isEmailExists: boolean;
   isEmailExistsSubmitting: boolean;
-  isError: boolean;
-  isSubmitting: boolean;
-  isSuccessful: boolean;
   isUsernameExists: boolean;
   isUsernameExistsSubmitting: boolean;
   password: string;
   username: string;
+  
+  // register address
+  addressLine: string;
+  city: string;
+  country: Country;
+  postalCode: PostalCode;
+  province: Province;
+  state: StatesUS;
+
+  // register additional
+  
+  errorMessage: string;
+  isError: boolean;
+  isSubmitting: boolean;
+  isSuccessful: boolean;
 };
 
 type RegisterDispatch =
+  | {
+    action: RegisterAction["setAddressLine"];
+    payload: string;
+  }
+  | {
+    action: RegisterAction["setCity"];
+    payload: string;
+  }
+  | {
+    action: RegisterAction["setCountry"];
+    payload: Country;
+  }
+  | {
+    action: RegisterAction["setPostalCode"];
+    payload: PostalCode;
+  }
+  | {
+    action: RegisterAction["setProvince"];
+    payload: Province;
+  }
+  | {
+    action: RegisterAction["setState"];
+    payload: StatesUS;
+  }
+  | {
+    action: RegisterAction["setCountry"];
+    payload: Country;
+  }
   | {
     action: RegisterAction["setConfirmPassword"];
     payload: string;

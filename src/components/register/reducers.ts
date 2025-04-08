@@ -1,3 +1,4 @@
+import { Country, PostalCode, Province, StatesUS } from "../../types";
 import { registerAction } from "./actions";
 import type { RegisterAction, RegisterDispatch, RegisterState } from "./types";
 
@@ -13,6 +14,12 @@ const registerReducers = new Map<
   RegisterAction[keyof RegisterAction],
   (state: RegisterState, dispatch: RegisterDispatch) => RegisterState
 >([
+  [registerAction.setAddressLine, registerReducer_setAddressLine],
+  [registerAction.setCity, registerReducer_setCity],
+  [registerAction.setCountry, registerReducer_setCountry],
+  [registerAction.setPostalCode, registerReducer_setPostalCode],
+  [registerAction.setProvince, registerReducer_setProvince],
+  [registerAction.setState, registerReducer_setState],
   [registerAction.setConfirmPassword, registerReducer_setConfirmPassword],
   [registerAction.setEmail, registerReducer_setEmail],
   [registerAction.setErrorMessage, registerReducer_setErrorMessage],
@@ -32,6 +39,48 @@ const registerReducers = new Map<
   [registerAction.setPassword, registerReducer_setPassword],
   [registerAction.setUsername, registerReducer_setUsername],
 ]);
+
+function registerReducer_setAddressLine(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, addressLine: dispatch.payload as string };
+}
+
+function registerReducer_setCity(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, city: dispatch.payload as string };
+}
+
+function registerReducer_setCountry(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, country: dispatch.payload as Country };
+}
+
+function registerReducer_setPostalCode(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, postalCode: dispatch.payload as PostalCode };
+}
+
+function registerReducer_setProvince(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, province: dispatch.payload as Province };
+}
+
+function registerReducer_setState(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, state: dispatch.payload as StatesUS };
+}
 
 function registerReducer_setConfirmPassword(
   state: RegisterState,

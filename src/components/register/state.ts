@@ -1,7 +1,10 @@
 import type { RegisterState } from "./types";
 
 const initialRegisterState: RegisterState = {
+  addressLine: "",
+  city: "",
   confirmPassword: "",
+  country: "Canada",
   email: "",
   errorMessage: "",
   isEmailExists: false,
@@ -12,6 +15,9 @@ const initialRegisterState: RegisterState = {
   isUsernameExists: false,
   isUsernameExistsSubmitting: false,
   password: "",
+  postalCode: "",
+  province:"Alberta",
+  state:"Alabama", 
   username: "",
 };
 

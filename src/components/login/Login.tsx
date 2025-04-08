@@ -66,7 +66,7 @@ function Login() {
     //     months: MONTHS,
     //     productCategories: PRODUCT_CATEGORIES,
     //     repairCategories: REPAIR_CATEGORIES,
-    //     storeLocations: STORE_LOCATION_DATA.map((location) => location.value),
+    //     storeLocations: STORE_LOCATIONS.map((location) => location.value),
     //   });
 
     //   console.log("Business Metrics: ", businessMetrics);
