@@ -5,6 +5,7 @@ import {
   Group,
   Loader,
   PasswordInput,
+  Space,
   Stack,
   Text,
   TextInput,
@@ -18,7 +19,6 @@ import { TbCheck } from "react-icons/tb";
 import {
   COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
-  INPUT_WIDTH,
   LOGIN_URL,
 } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
@@ -85,6 +85,7 @@ function Login() {
 
   const usernameTextInput = (
     <TextInput
+      className="accessible-input"
       label="Username"
       placeholder="Enter your username"
       value={username}
@@ -96,12 +97,12 @@ function Login() {
       }}
       ref={usernameRef}
       required
-      w={INPUT_WIDTH}
     />
   );
 
   const passwordTextInput = (
     <PasswordInput
+      className="accessible-input"
       label="Password"
       placeholder="Enter your password"
       value={password}
@@ -112,7 +113,6 @@ function Login() {
         });
       }}
       required
-      w={INPUT_WIDTH}
     />
   );
 
@@ -138,6 +138,10 @@ function Login() {
         ) => {
           event.preventDefault();
 
+          if (isLoading || isSubmitting || isSuccessful) {
+            return;
+          }
+
           await handleLoginButtonClick({
             authDispatch,
             fetchAbortControllerRef,
@@ -150,6 +154,11 @@ function Login() {
             showBoundary,
             url: LOGIN_URL,
           });
+        },
+        style: {
+          cursor: isLoading || isSubmitting || isSuccessful
+            ? "not-allowed"
+            : "pointer",
         },
       }}
     />
@@ -197,26 +206,24 @@ function Login() {
   );
 
   const card = (
-    <Center h="62%">
-      <Card
-        shadow="sm"
-        p="lg"
-        radius="md"
-        withBorder
-        className="login-card"
-      >
-        <Stack>
-          <Title order={2}>Sign in</Title>
-          <Text size="sm" color="dimmed">
-            to continue to MacAuley Tech Dashboard
-          </Text>
+    <Card
+      shadow="sm"
+      p="lg"
+      radius="md"
+      withBorder
+      className="login-card"
+    >
+      <Stack w="100%">
+        <Title order={2}>Sign in</Title>
+        <Text size="sm" color="dimmed">
+          to continue to MacAuley Tech Dashboard
+        </Text>
 
-          {displayInputs}
-          {displayLoginButton}
-          {displayLinkToRegister}
-        </Stack>
-      </Card>
-    </Center>
+        {displayInputs}
+        {displayLoginButton}
+        {displayLinkToRegister}
+      </Stack>
+    </Card>
   );
 
   const login = (
@@ -225,8 +232,12 @@ function Login() {
       h="100vh"
       p="md"
       w="100%"
+      align="center"
     >
       {displayTitle}
+      <Space h="xl" />
+      <Space h="xl" />
+      <Space h="xl" />
       {card}
     </Stack>
   );

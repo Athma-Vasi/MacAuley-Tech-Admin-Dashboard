@@ -228,9 +228,11 @@ function Register() {
 
   const formFooter = (
     <section className="register-form-footer">
-      {prevStepButton}
       {linkToLogin}
-      {activeStep + 1 === MAX_REGISTER_STEPS ? submitButton : nextStepButton}
+      <div className="register-form-footer__buttons">
+        {prevStepButton}
+        {activeStep + 1 === MAX_REGISTER_STEPS ? submitButton : nextStepButton}
+      </div>
     </section>
   );
 
@@ -350,6 +352,7 @@ function Register() {
       align="center"
     >
       {displayTitle}
+      <Space h="xl" />
       <Space h="xl" />
       <Space h="xl" />
       {registerCard}

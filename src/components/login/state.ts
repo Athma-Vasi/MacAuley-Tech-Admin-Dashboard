@@ -1,7 +1,7 @@
 import type { LoginState } from "./types";
 
 const initialLoginState: LoginState = {
-  isLoading: true,
+  isLoading: false,
   isSubmitting: false,
   isSuccessful: false,
   pagesInError: new Set(),

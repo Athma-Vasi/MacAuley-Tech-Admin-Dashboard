@@ -7,22 +7,41 @@
   --min-app-width: 375px;
   --max-app-width: 1650px;
 
-  --min-card-width: 300px;
-  --ideal-card-width: calc(100% - var(--padding-xTotal));
-  --max-card-width: 350px;
-  --max-login-card-width: 500px;
+  --min-input-width: 300px;
+  --ideal-input-width: calc(100% - var(--padding));
+  --max-input-width: 400px;
 
-  --min-summary-card-width: calc(100% - var(--padding));
+  --min-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
+  --ideal-card-width: calc(100% - var(--padding-xTotal));
+  --max-card-width: 375px;
+
+  --min-summary-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
   --ideal-summary-card-width: calc(100% - var(--padding));
   --max-summary-card-width: calc(var(--max-card-width) + var(--max-card-width));
 
-  --min-register-card-width: 350px;
-  --ideal-register-card-width: calc(100% - var(var(--padding)));
-  --max-register-card-width: 1024px;
+  --min-register-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
+  --ideal-register-card-width: calc(100% - var(--padding));
+  --max-register-card-width: 900px;
 
-  --min-chart-controls-card-width: 300px;
+  --min-login-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
+  --ideal-login-card-width: calc(100% - var(--padding));
+  --max-login-card-width: calc(var(--max-input-width) + var(--padding));
+
+  --min-stepper-card-width: 200px;
+  --ideal-stepper-card-width: calc(100% - var(--padding));
+  --max-stepper-card-width: 350px;
+
+  --min-chart-controls-card-width: calc(
+    var(--min-app-width) - var(--padding-xTotal)
+  );
   --ideal-chart-controls-card-width: calc(100% - var(--padding));
-  --max-chart-controls-card-width: 425px;
+  --max-chart-controls-card-width: calc(
+    var(--max-input-width) + var(--padding)
+  );
+
+  --min-directory-card-width: 250px;
+  --ideal-directory-card-width: calc(100% - var(--padding));
+  --max-directory-card-width: 350px;
 
   --app-header-height: 70px;
   --dashboard-header-height: 130px;
@@ -49,16 +68,42 @@
   display: none;
 }
 
+.accessible-input {
+  width: clamp(
+    var(--min-input-width),
+    var(--ideal-input-width),
+    var(--max-input-width)
+  );
+}
+
 .dashboard-bar-line-layout {
   padding: var(--padding);
 }
 
 .login-card {
-  width: clamp(var(--min-card-width), fit-content, var(--max-login-card-width));
+  width: clamp(
+    var(--min-login-card-width),
+    var(--ideal-login-card-width),
+    var(--max-login-card-width)
+  );
+}
+
+.directory-card {
+  width: clamp(
+    var(--min-directory-card-width),
+    var(--ideal-directory-card-width),
+    var(--max-directory-card-width)
+  );
 }
 
 .register-card {
-  width: clamp(var(--min-card-width), fit-content, var(--max-login-card-width));
+  width: clamp(
+    var(--min-register-card-width),
+    var(--ideal-register-card-width),
+    var(--max-register-card-width)
+  );
+  display: flex;
+  outline: 1px solid blueviolet;
 }
 
 .chart-card {
@@ -116,19 +161,6 @@
   width: 100%;
 }
 
-.directory-card {
-  width: clamp(250px, 100%, 350px);
-}
-
-.register-card {
-  width: clamp(
-    --min-register-card-width,
-    --ideal-register-card-width,
-    --max-register-card-width
-  );
-  outline: 1px solid teal;
-}
-
 .register-card-form-container {
   width: 100%;
   height: 100%;
@@ -137,9 +169,11 @@
   justify-content: space-between;
   align-items: center;
   row-gap: var(--row-gap);
+  padding-top: var(--padding);
 }
 
 .register-card-form {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -148,44 +182,64 @@
 
 .register-form-footer {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   width: 100%;
   column-gap: var(--column-gap);
   row-gap: var(--row-gap);
-  outline: 1px solid magenta;
   justify-content: space-between;
 }
 
+.register-form-footer__buttons {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .stepper-sidebar-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  width: clamp(350px, 100%, 450px);
+  justify-content: flex-start;
+  align-items: center;
+  row-gap: var(--row-gap);
+}
+
+.stepper-sidebar-header {
+  width: 100%;
+}
+
+.stepper-sidebar-cards {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   row-gap: var(--row-gap);
   column-gap: var(--column-gap);
+  align-items: center;
 }
 
 .stepper-card {
-  width: clamp(200px, 100%, 350px);
+  width: clamp(
+    var(--min-stepper-card-width),
+    var(--ideal-stepper-card-width),
+    var(--max-stepper-card-width)
+  );
   border-radius: 1em;
   transition: box-shadow 0.17s ease-in-out;
 }
 
 .stepper-card.active {
-  width: clamp(200px, 100%, 350px);
   border-radius: 1em;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-  /* outline: 1px solid maroon; */
 }
 
 .form-review {
-  outline: 1px solid teal;
   width: 100%;
   height: 480px;
   overflow-y: scroll;
 }
 
 .review-section-container {
-  outline: 1px solid maroon;
   display: flex;
   flex-direction: column;
 }
@@ -195,7 +249,6 @@
   display: flex;
   flex-direction: column;
   row-gap: 0.25em;
-  outline: 1px solid rebeccapurple;
 }
 
 .input-section {
@@ -227,11 +280,7 @@
   }
 }
 
-@media screen and (max-width: 1024px) {
-  .stepper-card.hidden {
-    display: none;
-  }
-
+@media screen and (max-width: 768px) {
   .register-card {
     display: flex;
     flex-direction: column;
@@ -239,6 +288,13 @@
     align-items: center;
     row-gap: var(--padding-xTotal);
   }
+
+  .stepper-card.hidden {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1024px) {
   .app-shell {
     width: 100vw;
     display: flex;
@@ -380,7 +436,7 @@
     grid-template-columns: 3fr 7fr;
     /* display: flex; */
     width: 100%;
-    column-gap: var(--column-gap);
+    column-gap: 2em;
   }
 
   .overview-summary-without-pie {

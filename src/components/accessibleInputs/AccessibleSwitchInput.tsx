@@ -1,7 +1,6 @@
 import { Box, type MantineSize, Switch } from "@mantine/core";
 import type { ChangeEvent, ReactNode, RefObject } from "react";
 
-import { INPUT_WIDTH } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { splitCamelCase } from "../../utils";
 import { createAccessibleSwitchOnOffTextElements } from "./utils";
@@ -99,7 +98,7 @@ function AccessibleSwitchInput<
   return (
     <Box
       key={`${name}-${value}-${uniqueId}`}
-      w={INPUT_WIDTH}
+      className="accessible-input"
     >
       <Switch
         aria-label={name}

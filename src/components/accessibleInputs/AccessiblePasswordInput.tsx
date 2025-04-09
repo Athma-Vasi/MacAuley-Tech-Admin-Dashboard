@@ -161,7 +161,8 @@ function AccessiblePasswordInput<
 
   return (
     <Box
-      w={310}
+      key={`${name}-${value}`}
+      className="accessible-input"
     >
       <Popover
         opened={isPopoverOpened}

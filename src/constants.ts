@@ -11,7 +11,8 @@ import {
 } from "./types";
 
 const FONT_FAMILY_DATA: CheckboxRadioSelectData<FontFamily> = [
-  { value: "Work Sans", label: "Sans" },
+  { value: "Work Sans", label: "App" },
+  { value: "sans-serif", label: "Sans" },
   { value: "serif", label: "Serif" },
   { value: "Open-Dyslexic", label: "Dyslexic" },
 ];

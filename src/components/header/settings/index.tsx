@@ -165,7 +165,7 @@ function Settings() {
         parentDispatch: globalDispatch as any,
         validValueAction: globalAction.setFontFamily,
         value: fontFamily,
-        defaultValue: "sans-serif",
+        defaultValue: "Work Sans",
       }}
     />
   );

@@ -232,7 +232,7 @@ type SafeBox<Data = unknown> = {
 
 type SafeBoxResult<Data = unknown> = Result<SafeBox<Data>, SafeBox>;
 
-type FontFamily = "Work Sans" | "serif" | "Open-Dyslexic";
+type FontFamily = "Work Sans" | "sans-serif" | "serif" | "Open-Dyslexic";
 
 type Province =
   | "Alberta"

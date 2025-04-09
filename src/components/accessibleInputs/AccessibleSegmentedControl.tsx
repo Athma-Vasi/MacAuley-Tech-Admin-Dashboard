@@ -1,6 +1,5 @@
 import {
   Box,
-  Group,
   type MantineColor,
   type MantineNumberSize,
   type MantineSize,
@@ -85,7 +84,7 @@ function AccessibleSegmentedControl<
   //     });
 
   return (
-    <Group>
+    <Box className="accessible-input">
       {hideName ? null : <Text>{splitCamelCase(name)}</Text>}
       <SegmentedControl
         aria-label={name}
@@ -125,7 +124,7 @@ function AccessibleSegmentedControl<
         {switchOffTextElement} */
         }
       </Box>
-    </Group>
+    </Box>
   );
 }
 

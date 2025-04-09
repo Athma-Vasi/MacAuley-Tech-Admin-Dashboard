@@ -567,7 +567,7 @@ function consolidateCardsAndStatistics(
     const statisticElement = statisticsElements.get(key) ?? <></>;
     const statisticsAccordion = (
       <Accordion>
-        <Accordion.Item value={`${key}-${idx}`}>
+        <Accordion.Item value={key}>
           <Accordion.Control>
             <Text size="sm" weight={500}>
               Statistics

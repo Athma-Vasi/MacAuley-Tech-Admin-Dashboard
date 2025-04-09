@@ -5,7 +5,6 @@ import {
   NativeSelect,
 } from "@mantine/core";
 
-import { INPUT_WIDTH } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { splitCamelCase } from "../../utils";
@@ -78,7 +77,7 @@ function AccessibleSelectInput<
   return (
     <Box
       key={`container-${name}-${uniqueId}`}
-      w={INPUT_WIDTH}
+      className="accessible-input"
     >
       <NativeSelect
         aria-describedby={describedBy}
@@ -102,6 +101,7 @@ function AccessibleSelectInput<
         size={size}
         value={value}
         withAsterisk={withAsterisk}
+        w="100%"
       />
     </Box>
   );
