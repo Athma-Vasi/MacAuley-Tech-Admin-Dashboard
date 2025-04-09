@@ -1,4 +1,4 @@
-import { Text, Title } from "@mantine/core";
+import { Text } from "@mantine/core";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { FormReview } from "../../types";
@@ -26,14 +26,13 @@ function StepperFormReview(
             const isStepInError = stepsInError.has(sectionIdx);
 
             const sectionTitle = (
-                <Title
-                    order={3}
+                <Text
                     size={20}
                     color={isStepInError ? redColorShade : textColor}
                     key={`${sectionKey}-${sectionIdx}-title`}
                 >
                     {sectionKey}
-                </Title>
+                </Text>
             );
 
             const stepInputsSection = (
@@ -103,6 +102,7 @@ function StepperFormReview(
 
     return (
         <div className="form-review">
+            <Text size={24}>Review</Text>
             {formReviewElem}
         </div>
     );

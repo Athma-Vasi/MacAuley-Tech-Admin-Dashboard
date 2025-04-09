@@ -1,4 +1,4 @@
-import { Card, Stack, Text } from "@mantine/core";
+import { Card, Text } from "@mantine/core";
 
 import React, { useEffect, useRef } from "react";
 import { COUNTRIES, PROVINCES, STATES_US } from "../../constants";
@@ -131,19 +131,13 @@ function RegisterAddress({
     );
 
   return (
-    <Card
-      p="lg"
-      radius="md"
-      className="register-card-form"
-    >
-      <Stack w="100%" align="center">
-        <Text size={22}>Address</Text>
-        {addressLineTextInput}
-        {cityTextInput}
-        {countrySelectInput}
-        {provinceOrStateSelectInput}
-        {postalCodeTextInput}
-      </Stack>
+    <Card className="register-card-form">
+      <Text size={24}>Address</Text>
+      {addressLineTextInput}
+      {cityTextInput}
+      {countrySelectInput}
+      {provinceOrStateSelectInput}
+      {postalCodeTextInput}
     </Card>
   );
 }

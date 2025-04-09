@@ -15,21 +15,27 @@
   --ideal-card-width: calc(100% - var(--padding-xTotal));
   --max-card-width: 375px;
 
-  --min-summary-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
+  --min-summary-card-width: calc(250px - var(--padding-xTotal));
   --ideal-summary-card-width: calc(100% - var(--padding));
-  --max-summary-card-width: calc(var(--max-card-width) + var(--max-card-width));
+  --max-summary-card-width: calc(300px + var(--max-card-width));
 
+  --min-register-card-height: 500px;
+  --ideal-register-card-height: calc(100% - var(--padding));
+  --max-register-card-height: 640px;
   --min-register-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
   --ideal-register-card-width: calc(100% - var(--padding));
   --max-register-card-width: 900px;
 
+  --min-login-card-height: calc(100% - var(--padding));
+  --ideal-login-card-height: calc(fit-content - var(--padding));
+  --max-login-card-height: 450px;
   --min-login-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
   --ideal-login-card-width: calc(100% - var(--padding));
   --max-login-card-width: calc(var(--max-input-width) + var(--padding));
 
   --min-stepper-card-width: 200px;
   --ideal-stepper-card-width: calc(100% - var(--padding));
-  --max-stepper-card-width: 350px;
+  --max-stepper-card-width: 300px;
 
   --min-chart-controls-card-width: calc(
     var(--min-app-width) - var(--padding-xTotal)
@@ -57,6 +63,7 @@
 .app-shell {
   width: clamp(var(--min-app-width), 100vw, var(--max-app-width));
   display: flex;
+  height: 100%;
 }
 
 .main {
@@ -86,6 +93,11 @@
     var(--ideal-login-card-width),
     var(--max-login-card-width)
   );
+  height: clamp(
+    var(--min-login-card-height),
+    var(--ideal-login-card-height),
+    var(--max-login-card-height)
+  );
 }
 
 .directory-card {
@@ -102,8 +114,13 @@
     var(--ideal-register-card-width),
     var(--max-register-card-width)
   );
+  height: clamp(
+    var(--min-register-card-height),
+    var(--ideal-register-card-height),
+    var(--max-register-card-height)
+  );
   display: flex;
-  outline: 1px solid blueviolet;
+  overflow-y: auto;
 }
 
 .chart-card {
@@ -124,6 +141,21 @@
     var(--ideal-card-width),
     var(--max-card-width)
   );
+}
+
+.stepper-card {
+  width: clamp(
+    var(--min-stepper-card-width),
+    var(--ideal-stepper-card-width),
+    var(--max-stepper-card-width)
+  );
+  border-radius: 1em;
+  transition: box-shadow 0.17s ease-in-out;
+}
+
+.stepper-card.active {
+  border-radius: 1em;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .chart-and-controls {
@@ -161,12 +193,20 @@
   width: 100%;
 }
 
-.register-card-form-container {
+.register-container, .login-container {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.register-card-form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   row-gap: var(--row-gap);
   padding-top: var(--padding);
@@ -178,6 +218,13 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.register-form-header {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .register-form-footer {
@@ -201,7 +248,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   row-gap: var(--row-gap);
 }
 
@@ -215,33 +262,22 @@
   width: 100%;
   row-gap: var(--row-gap);
   column-gap: var(--column-gap);
-  align-items: center;
-}
-
-.stepper-card {
-  width: clamp(
-    var(--min-stepper-card-width),
-    var(--ideal-stepper-card-width),
-    var(--max-stepper-card-width)
-  );
-  border-radius: 1em;
-  transition: box-shadow 0.17s ease-in-out;
-}
-
-.stepper-card.active {
-  border-radius: 1em;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  align-items: flex-start;
 }
 
 .form-review {
   width: 100%;
-  height: 480px;
-  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: var(--row-gap);
+  padding-top: var(--padding);
 }
 
 .review-section-container {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .step-inputs-container {
@@ -261,7 +297,7 @@
 }
 
 .input-section.isEven {
-  background: hsla(0, 0%, 0%, 0.04);
+  background: hsla(0, 0%, 0%, 0.03);
 }
 
 @media screen and (max-width: 640px) {
@@ -284,11 +320,14 @@
   .register-card {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     row-gap: var(--padding-xTotal);
   }
 
+  .stepper-sidebar-cards {
+    align-items: center;
+  }
   .stepper-card.hidden {
     display: none;
   }

@@ -1,4 +1,4 @@
-import { Card, Stack, Text } from "@mantine/core";
+import { Card, Text } from "@mantine/core";
 
 import React, { useEffect, useRef } from "react";
 import {
@@ -114,20 +114,14 @@ function RegisterPersonal({
     );
 
     return (
-        <Card
-            p="lg"
-            radius="md"
-            className="register-card-form"
-        >
-            <Stack w="100%" align="center">
-                <Text size={20}>Personal</Text>
-                {firstNameTextInput}
-                {lastNameTextInput}
-                {profilePictureUrlTextInput}
-                {jobPositionSelectInput}
-                {departmentSelectInput}
-                {storeLocationSelectInput}
-            </Stack>
+        <Card className="register-card-form">
+            <Text size={24}>Personal</Text>
+            {firstNameTextInput}
+            {lastNameTextInput}
+            {profilePictureUrlTextInput}
+            {jobPositionSelectInput}
+            {departmentSelectInput}
+            {storeLocationSelectInput}
         </Card>
     );
 }

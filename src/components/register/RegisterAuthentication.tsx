@@ -1,4 +1,4 @@
-import { Card, Loader, Stack, Text } from "@mantine/core";
+import { Card, Loader, Text } from "@mantine/core";
 import { useEffect, useRef } from "react";
 import { TbExclamationCircle } from "react-icons/tb";
 import { AUTH_URL, COLORS_SWATCHES } from "../../constants";
@@ -160,32 +160,26 @@ function RegisterAuthentication({
     );
 
     const registerAuthentication = (
-        <Card
-            p="lg"
-            radius="md"
-            className="register-card-form"
-        >
-            <Stack w="100%" align="center">
-                <Text size={22}>Authentication</Text>
-                {usernameTextInput}
-                {isUsernameExists
-                    ? (
-                        <Text color={redColorShade}>
-                            Username already exists!
-                        </Text>
-                    )
-                    : null}
-                {emailTextInput}
-                {isEmailExists
-                    ? (
-                        <Text color={redColorShade}>
-                            Email already exists!
-                        </Text>
-                    )
-                    : null}
-                {passwordTextInput}
-                {confirmPasswordTextInput}
-            </Stack>
+        <Card className="register-card-form">
+            <Text size={24}>Authentication</Text>
+            {usernameTextInput}
+            {isUsernameExists
+                ? (
+                    <Text color={redColorShade}>
+                        Username already exists!
+                    </Text>
+                )
+                : null}
+            {emailTextInput}
+            {isEmailExists
+                ? (
+                    <Text color={redColorShade}>
+                        Email already exists!
+                    </Text>
+                )
+                : null}
+            {passwordTextInput}
+            {confirmPasswordTextInput}
         </Card>
     );
 

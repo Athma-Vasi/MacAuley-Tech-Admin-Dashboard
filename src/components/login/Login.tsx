@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   Center,
   Flex,
@@ -227,19 +228,16 @@ function Login() {
   );
 
   const login = (
-    <Stack
+    <Box
       bg={bgGradient}
-      h="100vh"
-      p="md"
-      w="100%"
-      align="center"
+      className="login-container"
     >
       {displayTitle}
       <Space h="xl" />
       <Space h="xl" />
       <Space h="xl" />
       {card}
-    </Stack>
+    </Box>
   );
 
   return login;

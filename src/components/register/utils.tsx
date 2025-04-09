@@ -1,4 +1,4 @@
-import { Card, Center, Flex, Stack, Text, Title } from "@mantine/core";
+import { Card, Flex, Stack, Text, Title } from "@mantine/core";
 import { TbAlertCircle, TbX } from "react-icons/tb";
 import { TEXT_SHADOW } from "../../constants";
 import { REGISTER_STEPS } from "./constants";
@@ -103,7 +103,7 @@ function returnRegisterStepperCard(
                                 columnGap="md"
                             >
                                 {icon}
-                                <Stack>
+                                <Stack spacing={2}>
                                     {title}
                                     {stepName}
                                 </Stack>

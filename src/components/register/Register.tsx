@@ -1,10 +1,10 @@
 import {
+  Box,
   Card,
   Flex,
   Group,
   Loader,
   Space,
-  Stack,
   Text,
   Title,
 } from "@mantine/core";
@@ -19,7 +19,7 @@ import { FormReview } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { registerAction } from "./actions";
-import { MAX_REGISTER_STEPS, REGISTER_URL } from "./constants";
+import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
 import { handlePrevNextStepClick, handleRegisterButtonClick } from "./handlers";
 import { registerReducer } from "./reducers";
 import { RegisterAddress } from "./RegisterAddress";
@@ -106,7 +106,9 @@ function Register() {
   const nextStepButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: `Click to proceed to step ${activeStep + 2}`,
+        enabledScreenreaderText: `Click to proceed to ${
+          REGISTER_STEPS[activeStep + 1]
+        }`,
         disabled: activeStep + 1 === MAX_REGISTER_STEPS,
         disabledScreenreaderText: activeStep === MAX_REGISTER_STEPS
           ? "You are at the last step"
@@ -127,7 +129,9 @@ function Register() {
   const prevStepButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: `Click to go back to step ${activeStep}`,
+        enabledScreenreaderText: `Click to go back to ${
+          REGISTER_STEPS[activeStep - 1]
+        }`,
         disabled: activeStep === 0,
         disabledScreenreaderText: activeStep === 0
           ? "You are at the first step"
@@ -226,13 +230,16 @@ function Register() {
     </Group>
   );
 
+  const formHeader = (
+    <section className="register-form-header">
+      {prevStepButton}
+      {activeStep + 1 === MAX_REGISTER_STEPS ? submitButton : nextStepButton}
+    </section>
+  );
+
   const formFooter = (
     <section className="register-form-footer">
       {linkToLogin}
-      <div className="register-form-footer__buttons">
-        {prevStepButton}
-        {activeStep + 1 === MAX_REGISTER_STEPS ? submitButton : nextStepButton}
-      </div>
     </section>
   );
 
@@ -251,15 +258,21 @@ function Register() {
       department,
       storeLocation,
     },
-    "Address": {
-      addressLine,
-      city,
-      province,
-      state,
-      country,
-      postalCodeCanada,
-      postalCodeUS,
-    },
+    "Address": country === "Canada"
+      ? {
+        addressLine,
+        city,
+        province,
+        country,
+        postalCodeCanada,
+      }
+      : {
+        addressLine,
+        city,
+        state,
+        country,
+        postalCodeUS,
+      },
   };
 
   const reviewStep = (
@@ -332,6 +345,7 @@ function Register() {
     <Card shadow="sm" p="lg" radius="md" withBorder className="register-card">
       {stepperCard}
       <div className="register-card-form-container">
+        {formHeader}
         {registerStep}
         {formFooter}
       </div>
@@ -343,20 +357,16 @@ function Register() {
   console.groupEnd();
 
   return (
-    <Stack
-      p="md"
-      h="100vh"
+    <Box
+      className="register-container"
       bg={bgGradient}
-      w="100%"
-      spacing="xl"
-      align="center"
     >
       {displayTitle}
       <Space h="xl" />
       <Space h="xl" />
       <Space h="xl" />
       {registerCard}
-    </Stack>
+    </Box>
   );
 }
 
