@@ -50,7 +50,7 @@ function returnRegisterStepperCard(
                                     <TbAlertCircle
                                         color={activeStep === idx
                                             ? themeColorShade
-                                            : grayColorShade}
+                                            : "gray"}
                                         size={24}
                                     />
                                 )
