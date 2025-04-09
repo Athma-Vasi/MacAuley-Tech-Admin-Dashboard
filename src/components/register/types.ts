@@ -1,11 +1,16 @@
 import {
+  CanadianPostalCode,
   Country,
   Department,
   JobPosition,
-  PostalCode,
   Province,
+  SetInputsInErrorPayload,
+  SetStepInErrorPayload,
+  SetStepWithEmptyInputsPayload,
   StatesUS,
+  USPostalCode,
 } from "../../types";
+import { ValidationKey } from "../../validations";
 import { AllStoreLocations } from "../dashboard/types";
 import type { RegisterAction } from "./actions";
 
@@ -24,7 +29,8 @@ type RegisterState = {
   addressLine: string;
   city: string;
   country: Country;
-  postalCode: PostalCode;
+  postalCodeCanada: CanadianPostalCode;
+  postalCodeUS: USPostalCode;
   province: Province;
   state: StatesUS;
 
@@ -40,9 +46,29 @@ type RegisterState = {
   isError: boolean;
   isSubmitting: boolean;
   isSuccessful: boolean;
+  activeStep: number;
+  stepsInError: Set<number>;
+  stepsWithEmptyInputs: Set<number>;
+  inputsInError: Set<ValidationKey>;
 };
 
 type RegisterDispatch =
+  | {
+    action: RegisterAction["setInputsInError"];
+    payload: SetInputsInErrorPayload;
+  }
+  | {
+    action: RegisterAction["setStepsWithEmptyInputs"];
+    payload: SetStepWithEmptyInputsPayload;
+  }
+  | {
+    action: RegisterAction["setActiveStep"];
+    payload: number;
+  }
+  | {
+    action: RegisterAction["setStepsInError"];
+    payload: SetStepInErrorPayload;
+  }
   | {
     action: RegisterAction["setDepartment"];
     payload: Department;
@@ -80,8 +106,12 @@ type RegisterDispatch =
     payload: Country;
   }
   | {
-    action: RegisterAction["setPostalCode"];
-    payload: PostalCode;
+    action: RegisterAction["setPostalCodeCanada"];
+    payload: CanadianPostalCode;
+  }
+  | {
+    action: RegisterAction["setPostalCodeUS"];
+    payload: USPostalCode;
   }
   | {
     action: RegisterAction["setProvince"];

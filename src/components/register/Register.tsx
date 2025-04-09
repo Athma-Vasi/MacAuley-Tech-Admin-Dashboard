@@ -1,9 +1,9 @@
 import {
   Card,
-  Center,
   Flex,
   Group,
   Loader,
+  Space,
   Stack,
   Text,
   Title,
@@ -11,27 +11,23 @@ import {
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { TbCheck, TbExclamationCircle } from "react-icons/tb";
+import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  AUTH_URL,
-  COLORS_SWATCHES,
-  FETCH_REQUEST_TIMEOUT,
-} from "../../constants";
+import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { FormReview } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordInput";
-import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
 import { registerAction } from "./actions";
-import { REGISTER_URL } from "./constants";
+import { MAX_REGISTER_STEPS, REGISTER_URL } from "./constants";
+import { handlePrevNextStepClick, handleRegisterButtonClick } from "./handlers";
 import { registerReducer } from "./reducers";
+import { RegisterAddress } from "./RegisterAddress";
+import { RegisterAuthentication } from "./RegisterAuthentication";
+import { RegisterPersonal } from "./RegisterPersonal";
 import { initialRegisterState } from "./state";
-import {
-  handleCheckEmailExists,
-  handleCheckUsernameExists,
-  handleRegisterButtonClick,
-} from "./utils";
+import { StepperFormReview } from "./StepperFormReview";
+import { returnRegisterStepperCard } from "./utils";
 
 function Register() {
   const [registerState, registerDispatch] = useReducer(
@@ -40,9 +36,16 @@ function Register() {
   );
 
   const {
+    activeStep,
+    addressLine,
+    city,
     confirmPassword,
+    country,
+    department,
     email,
     errorMessage,
+    firstName,
+    inputsInError,
     isEmailExists,
     isEmailExistsSubmitting,
     isError,
@@ -50,7 +53,17 @@ function Register() {
     isSuccessful,
     isUsernameExists,
     isUsernameExistsSubmitting,
+    jobPosition,
+    lastName,
     password,
+    postalCodeCanada,
+    postalCodeUS,
+    profilePictureUrl,
+    province,
+    state,
+    stepsInError,
+    stepsWithEmptyInputs,
+    storeLocation,
     username,
   } = registerState;
 
@@ -77,123 +90,64 @@ function Register() {
     };
   }, []);
 
-  const { bgGradient, redColorShade, greenColorShade, themeColorShade } =
-    returnThemeColors({
-      colorsSwatches: COLORS_SWATCHES,
-      themeObject,
-    });
+  const {
+    bgGradient,
+    cardBgGradient,
+    redColorShade,
+    grayColorShade,
+    greenColorShade,
+    themeColorShade,
+    textColor,
+  } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
 
-  const usernameInputRef = useRef<HTMLInputElement | null>(null);
-  useEffect(() => {
-    usernameInputRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    handleCheckUsernameExists({
-      fetchAbortControllerRef,
-      isComponentMountedRef,
-      registerDispatch,
-      showBoundary,
-      url: AUTH_URL,
-      username,
-    });
-  }, [username]);
-
-  useEffect(() => {
-    handleCheckEmailExists({
-      fetchAbortControllerRef,
-      isComponentMountedRef,
-      registerDispatch,
-      showBoundary,
-      url: AUTH_URL,
-      email,
-    });
-  }, [email]);
-
-  const usernameTextInput = (
-    <AccessibleTextInput
+  const nextStepButton = (
+    <AccessibleButton
       attributes={{
-        icon: isUsernameExistsSubmitting
-          ? <Loader size="xs" />
-          : isUsernameExists
-          ? <TbExclamationCircle color={redColorShade} />
-          : null,
-        invalidValueAction: registerAction.setIsError,
-        name: "username",
-        onChange: async (event) => {
-          // await handleCheckUsernameExists({
-          //   fetchAbortControllerRef,
-          //   isComponentMountedRef,
-          //   registerDispatch,
-          //   showBoundary,
-          //   url: AUTH_URL,
-          //   username: event.currentTarget.value,
-          // });
+        enabledScreenreaderText: `Click to proceed to step ${activeStep + 2}`,
+        disabled: activeStep + 1 === MAX_REGISTER_STEPS,
+        disabledScreenreaderText: activeStep === MAX_REGISTER_STEPS
+          ? "You are at the last step"
+          : "",
+        kind: "next",
+        onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
+          handlePrevNextStepClick({
+            activeStep,
+            kind: "next",
+            registerDispatch,
+            registerState,
+          });
         },
-        parentDispatch: registerDispatch,
-        ref: usernameInputRef as React.RefObject<HTMLInputElement>,
-        validValueAction: registerAction.setUsername,
-        value: username,
       }}
     />
   );
 
-  const emailTextInput = (
-    <AccessibleTextInput
+  const prevStepButton = (
+    <AccessibleButton
       attributes={{
-        icon: isEmailExistsSubmitting
-          ? <Loader size="xs" />
-          : isEmailExists
-          ? <TbExclamationCircle color={redColorShade} />
-          : null,
-        invalidValueAction: registerAction.setIsError,
-        name: "email",
-        onChange: async (event) => {
-          // await handleCheckEmailExists({
-          //   fetchAbortControllerRef,
-          //   email: event.currentTarget.value,
-          //   isComponentMountedRef,
-          //   registerDispatch,
-          //   showBoundary,
-          //   url: AUTH_URL,
-          // });
+        enabledScreenreaderText: `Click to go back to step ${activeStep}`,
+        disabled: activeStep === 0,
+        disabledScreenreaderText: activeStep === 0
+          ? "You are at the first step"
+          : "",
+        kind: "previous",
+        onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
+          handlePrevNextStepClick({
+            activeStep,
+            kind: "previous",
+            registerDispatch,
+            registerState,
+          });
         },
-        parentDispatch: registerDispatch,
-        validValueAction: registerAction.setEmail,
-        value: email,
       }}
     />
   );
 
-  const passwordTextInput = (
-    <AccessiblePasswordInput
-      attributes={{
-        invalidValueAction: registerAction.setIsError,
-        name: "password",
-        parentDispatch: registerDispatch,
-        passwordValue: confirmPassword,
-        validValueAction: registerAction.setPassword,
-        value: password,
-      }}
-    />
-  );
-
-  const confirmPasswordTextInput = (
-    <AccessiblePasswordInput
-      attributes={{
-        invalidValueAction: registerAction.setIsError,
-        name: "confirmPassword",
-        parentDispatch: registerDispatch,
-        passwordValue: password,
-        validValueAction: registerAction.setConfirmPassword,
-        value: confirmPassword,
-      }}
-    />
-  );
-
-  const isButtonDisabled = !username || !email || !password ||
+  const isSubmitButtonDisabled = !username || !email || !password ||
     !confirmPassword || isUsernameExists || isEmailExists ||
-    isError;
+    isError || stepsInError.size > 0 || inputsInError.size > 0;
 
   const submitButton = (
     <AccessibleButton
@@ -203,7 +157,7 @@ function Register() {
             !confirmPassword
           ? "Fields cannot be empty"
           : "Please fix errors before registering.",
-        disabled: isButtonDisabled,
+        disabled: isSubmitButtonDisabled,
         kind: "submit",
         leftIcon: isSubmitting
           ? <Loader size="xs" />
@@ -272,38 +226,114 @@ function Register() {
     </Group>
   );
 
-  const card = (
-    <Center h="62%">
-      <Card
-        shadow="sm"
-        p="lg"
-        radius="md"
-        withBorder
-        className="register-card"
-      >
-        <Stack>
-          <Title order={2}>Register</Title>
-          <Text size="sm" color="dimmed">
-            to continue to MacAuley Tech Dashboard
-          </Text>
+  const formFooter = (
+    <section className="register-form-footer">
+      {prevStepButton}
+      {linkToLogin}
+      {activeStep + 1 === MAX_REGISTER_STEPS ? submitButton : nextStepButton}
+    </section>
+  );
 
-          <Stack w="100%" align="center">
-            {usernameTextInput}
-            {isUsernameExists
-              ? <Text color={redColorShade}>Username already exists!</Text>
-              : null}
-            {emailTextInput}
-            {isEmailExists
-              ? <Text color={redColorShade}>Email already exists!</Text>
-              : null}
-            {passwordTextInput}
-            {confirmPasswordTextInput}
-            {submitButton}
-            {linkToLogin}
-          </Stack>
-        </Stack>
-      </Card>
-    </Center>
+  const registerFormReview: FormReview = {
+    "Authentication": {
+      username,
+      email,
+      password,
+      confirmPassword,
+    },
+    "Personal": {
+      firstName,
+      lastName,
+      profilePictureUrl,
+      jobPosition,
+      department,
+      storeLocation,
+    },
+    "Address": {
+      addressLine,
+      city,
+      province,
+      state,
+      country,
+      postalCodeCanada,
+      postalCodeUS,
+    },
+  };
+
+  const reviewStep = (
+    <StepperFormReview
+      formReview={registerFormReview}
+      inputsInError={inputsInError}
+      stepsInError={stepsInError}
+    />
+  );
+
+  const registerStep = activeStep === 0
+    ? (
+      <RegisterAuthentication
+        confirmPassword={confirmPassword}
+        email={email}
+        fetchAbortControllerRef={fetchAbortControllerRef}
+        isComponentMountedRef={isComponentMountedRef}
+        isEmailExists={isEmailExists}
+        isEmailExistsSubmitting={isEmailExistsSubmitting}
+        isError={isError}
+        isUsernameExists={isUsernameExists}
+        isUsernameExistsSubmitting={isUsernameExistsSubmitting}
+        password={password}
+        registerDispatch={registerDispatch}
+        showBoundary={showBoundary}
+        username={username}
+      />
+    )
+    : activeStep === 1
+    ? (
+      <RegisterPersonal
+        department={department}
+        firstName={firstName}
+        jobPosition={jobPosition}
+        lastName={lastName}
+        parentAction={registerAction}
+        parentDispatch={registerDispatch}
+        profilePictureUrl={profilePictureUrl}
+        storeLocation={storeLocation}
+      />
+    )
+    : activeStep === 2
+    ? (
+      <RegisterAddress
+        addressLine={addressLine}
+        city={city}
+        country={country}
+        parentAction={registerAction}
+        parentDispatch={registerDispatch}
+        postalCodeCanada={postalCodeCanada}
+        postalCodeUS={postalCodeUS}
+        province={province}
+        state={state}
+      />
+    )
+    : reviewStep;
+
+  const stepperCard = returnRegisterStepperCard({
+    activeStep,
+    cardBgGradient,
+    grayColorShade,
+    redColorShade,
+    stepsInError,
+    stepsWithEmptyInputs,
+    textColor,
+    themeColorShade,
+  });
+
+  const registerCard = (
+    <Card shadow="sm" p="lg" radius="md" withBorder className="register-card">
+      {stepperCard}
+      <div className="register-card-form-container">
+        {registerStep}
+        {formFooter}
+      </div>
+    </Card>
   );
 
   console.log("Register");
@@ -315,9 +345,14 @@ function Register() {
       p="md"
       h="100vh"
       bg={bgGradient}
+      w="100%"
+      spacing="xl"
+      align="center"
     >
       {displayTitle}
-      {card}
+      <Space h="xl" />
+      <Space h="xl" />
+      {registerCard}
     </Stack>
   );
 }

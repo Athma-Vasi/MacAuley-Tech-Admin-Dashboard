@@ -1,6 +1,7 @@
 import type { RegisterState } from "./types";
 
 const initialRegisterState: RegisterState = {
+  activeStep: 0,
   addressLine: "",
   city: "",
   confirmPassword: "",
@@ -9,6 +10,7 @@ const initialRegisterState: RegisterState = {
   email: "",
   errorMessage: "",
   firstName: "",
+  inputsInError: new Set(),
   isEmailExists: false,
   isEmailExistsSubmitting: false,
   isError: false,
@@ -19,10 +21,13 @@ const initialRegisterState: RegisterState = {
   jobPosition: "Accounting Manager",
   lastName: "",
   password: "",
-  postalCode: "",
+  postalCodeCanada: "O1O 1O1",
+  postalCodeUS: "12345",
   profilePictureUrl: "",
   province: "Alberta",
   state: "Alabama",
+  stepsInError: new Set(),
+  stepsWithEmptyInputs: new Set(),
   storeLocation: "All Locations",
   username: "",
 };

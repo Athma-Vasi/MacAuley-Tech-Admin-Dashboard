@@ -1,4 +1,5 @@
 type RegisterAction = {
+  setActiveStep: "setActiveStep";
   setAddressLine: "setAddressLine";
   setCity: "setCity";
   setConfirmPassword: "setConfirmPassword";
@@ -7,6 +8,7 @@ type RegisterAction = {
   setEmail: "setEmail";
   setErrorMessage: "setErrorMessage";
   setFirstName: "setFirstName";
+  setInputsInError: "setInputsInError";
   setIsEmailExists: "setIsEmailExists";
   setIsEmailExistsSubmitting: "setIsEmailExistsSubmitting";
   setIsError: "setIsError";
@@ -17,15 +19,19 @@ type RegisterAction = {
   setJobPosition: "setJobPosition";
   setLastName: "setLastName";
   setPassword: "setPassword";
-  setPostalCode: "setPostalCode";
+  setPostalCodeCanada: "setPostalCodeCanada";
+  setPostalCodeUS: "setPostalCodeUS";
   setProfilePictureUrl: "setProfilePictureUrl";
   setProvince: "setProvince";
   setState: "setState";
+  setStepsInError: "setStepsInError";
+  setStepsWithEmptyInputs: "setStepsWithEmptyInputs";
   setStoreLocation: "setStoreLocation";
   setUsername: "setUsername";
 };
 
 const registerAction: RegisterAction = {
+  setActiveStep: "setActiveStep",
   setAddressLine: "setAddressLine",
   setCity: "setCity",
   setConfirmPassword: "setConfirmPassword",
@@ -34,6 +40,7 @@ const registerAction: RegisterAction = {
   setEmail: "setEmail",
   setErrorMessage: "setErrorMessage",
   setFirstName: "setFirstName",
+  setInputsInError: "setInputsInError", // This is the new action
   setIsEmailExists: "setIsEmailExists",
   setIsEmailExistsSubmitting: "setIsEmailExistsSubmitting",
   setIsError: "setIsError",
@@ -44,10 +51,13 @@ const registerAction: RegisterAction = {
   setJobPosition: "setJobPosition",
   setLastName: "setLastName",
   setPassword: "setPassword",
-  setPostalCode: "setPostalCode",
+  setPostalCodeCanada: "setPostalCodeCanada",
+  setPostalCodeUS: "setPostalCodeUS",
   setProfilePictureUrl: "setProfilePictureUrl",
   setProvince: "setProvince",
   setState: "setState",
+  setStepsInError: "setStepsInError",
+  setStepsWithEmptyInputs: "setStepsWithEmptyInputs",
   setStoreLocation: "setStoreLocation",
   setUsername: "setUsername",
 };

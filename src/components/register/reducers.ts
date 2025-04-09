@@ -1,10 +1,14 @@
 import {
+  CanadianPostalCode,
   Country,
   Department,
   JobPosition,
-  PostalCode,
   Province,
+  SetInputsInErrorPayload,
+  SetStepInErrorPayload,
+  SetStepWithEmptyInputsPayload,
   StatesUS,
+  USPostalCode,
 } from "../../types";
 import { AllStoreLocations } from "../dashboard/types";
 import { registerAction } from "./actions";
@@ -22,6 +26,13 @@ const registerReducers = new Map<
   RegisterAction[keyof RegisterAction],
   (state: RegisterState, dispatch: RegisterDispatch) => RegisterState
 >([
+  [registerAction.setInputsInError, registerReducer_setInputsInError],
+  [
+    registerAction.setStepsWithEmptyInputs,
+    registerReducer_setStepsWithEmptyInputs,
+  ],
+  [registerAction.setActiveStep, registerReducer_setActiveStep],
+  [registerAction.setStepsInError, registerReducer_setStepsInError],
   [registerAction.setDepartment, registerReducer_setDepartment],
   [registerAction.setFirstName, registerReducer_setFirstName],
   [registerAction.setJobPosition, registerReducer_setJobPosition],
@@ -31,7 +42,8 @@ const registerReducers = new Map<
   [registerAction.setAddressLine, registerReducer_setAddressLine],
   [registerAction.setCity, registerReducer_setCity],
   [registerAction.setCountry, registerReducer_setCountry],
-  [registerAction.setPostalCode, registerReducer_setPostalCode],
+  [registerAction.setPostalCodeCanada, registerReducer_setPostalCodeCanada],
+  [registerAction.setPostalCodeUS, registerReducer_setPostalCode],
   [registerAction.setProvince, registerReducer_setProvince],
   [registerAction.setState, registerReducer_setState],
   [registerAction.setConfirmPassword, registerReducer_setConfirmPassword],
@@ -53,6 +65,59 @@ const registerReducers = new Map<
   [registerAction.setPassword, registerReducer_setPassword],
   [registerAction.setUsername, registerReducer_setUsername],
 ]);
+
+function registerReducer_setInputsInError(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const { kind, name } = dispatch.payload as SetInputsInErrorPayload;
+  const inputsInError = new Set(state.inputsInError);
+  if (kind === "add") {
+    inputsInError.add(name);
+  }
+  if (kind === "delete") {
+    inputsInError.delete(name);
+  }
+  return { ...state, inputsInError };
+}
+
+function registerReducer_setStepsWithEmptyInputs(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const { kind, step } = dispatch.payload as SetStepWithEmptyInputsPayload;
+  const stepsWithEmptyInputs = new Set(state.stepsWithEmptyInputs);
+  if (kind === "add") {
+    stepsWithEmptyInputs.add(step);
+  }
+  if (kind === "delete") {
+    stepsWithEmptyInputs.delete(step);
+  }
+  return { ...state, stepsWithEmptyInputs };
+}
+
+function registerReducer_setActiveStep(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, activeStep: dispatch.payload as number };
+}
+
+function registerReducer_setStepsInError(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const { kind, step } = dispatch.payload as SetStepInErrorPayload;
+  const stepsInError = new Set(state.stepsInError);
+  if (kind === "add") {
+    stepsInError.add(step);
+  }
+  if (kind === "delete") {
+    stepsInError.delete(step);
+  }
+
+  return { ...state, stepsInError };
+}
 
 function registerReducer_setDepartment(
   state: RegisterState,
@@ -117,11 +182,18 @@ function registerReducer_setCountry(
   return { ...state, country: dispatch.payload as Country };
 }
 
+function registerReducer_setPostalCodeCanada(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  return { ...state, postalCodeCanada: dispatch.payload as CanadianPostalCode };
+}
+
 function registerReducer_setPostalCode(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  return { ...state, postalCode: dispatch.payload as PostalCode };
+  return { ...state, postalCodeUS: dispatch.payload as USPostalCode };
 }
 
 function registerReducer_setProvince(

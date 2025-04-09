@@ -1,8 +1,14 @@
-import { Stack } from "@mantine/core";
+import { Card, Stack, Text } from "@mantine/core";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { COUNTRIES, PROVINCES, STATES_US } from "../../constants";
-import type { Country, PostalCode, Province, StatesUS } from "../../types";
+import type {
+  CanadianPostalCode,
+  Country,
+  PostalCode,
+  Province,
+  StatesUS,
+} from "../../types";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
 import type { RegisterAction } from "./actions";
@@ -11,12 +17,13 @@ import { RegisterDispatch } from "./types";
 type RegisterAddressProps = {
   addressLine: string;
   city: string;
-  province: Province;
-  state: StatesUS;
-  postalCode: PostalCode;
   country: Country;
   parentAction: RegisterAction;
   parentDispatch: React.Dispatch<RegisterDispatch>;
+  postalCodeCanada: CanadianPostalCode;
+  postalCodeUS: PostalCode;
+  province: Province;
+  state: StatesUS;
 };
 
 function RegisterAddress({
@@ -25,16 +32,24 @@ function RegisterAddress({
   country,
   parentAction,
   parentDispatch,
-  postalCode,
+  postalCodeCanada,
+  postalCodeUS,
   province,
   state,
 }: RegisterAddressProps) {
+  const addressLineInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    addressLineInputRef.current?.focus();
+  }, []);
+
   const addressLineTextInput = (
     <AccessibleTextInput
       attributes={{
         invalidValueAction: parentAction.setIsError,
         name: "addressLine",
         parentDispatch,
+        ref: addressLineInputRef,
         validValueAction: parentAction.setAddressLine,
         value: addressLine,
       }}
@@ -89,26 +104,47 @@ function RegisterAddress({
       />
     );
 
-  const postalCodeTextInput = (
-    <AccessibleTextInput
-      attributes={{
-        invalidValueAction: parentAction.setIsError,
-        name: country === "Canada" ? "postalCodeCanada" : "postalCodeUS",
-        parentDispatch,
-        validValueAction: parentAction.setPostalCode,
-        value: postalCode,
-      }}
-    />
-  );
+  const postalCodeTextInput = country === "Canada"
+    ? (
+      <AccessibleTextInput<
+        RegisterAction["setPostalCodeCanada"]
+      >
+        attributes={{
+          invalidValueAction: parentAction.setIsError,
+          name: "postalCodeCanada",
+          parentDispatch: parentDispatch as any,
+          validValueAction: parentAction.setPostalCodeCanada,
+          value: postalCodeCanada as CanadianPostalCode,
+        }}
+      />
+    )
+    : (
+      <AccessibleTextInput
+        attributes={{
+          invalidValueAction: parentAction.setIsError,
+          name: "postalCodeUS",
+          parentDispatch,
+          validValueAction: parentAction.setPostalCodeUS,
+          value: postalCodeUS as PostalCode,
+        }}
+      />
+    );
 
   return (
-    <Stack>
-      {countrySelectInput}
-      {addressLineTextInput}
-      {cityTextInput}
-      {provinceOrStateSelectInput}
-      {postalCodeTextInput}
-    </Stack>
+    <Card
+      p="lg"
+      radius="md"
+      className="register-card-form"
+    >
+      <Stack w="100%" align="center">
+        <Text size={22}>Address</Text>
+        {addressLineTextInput}
+        {cityTextInput}
+        {countrySelectInput}
+        {provinceOrStateSelectInput}
+        {postalCodeTextInput}
+      </Stack>
+    </Card>
   );
 }
 

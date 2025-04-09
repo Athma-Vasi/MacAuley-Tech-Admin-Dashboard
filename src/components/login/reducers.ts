@@ -1,4 +1,4 @@
-import type { SetPageInErrorPayload } from "../../types";
+import type { SetStepInErrorPayload } from "../../types";
 import { type LoginAction, loginAction } from "./actions";
 import type { LoginDispatch, LoginState } from "./types";
 
@@ -56,7 +56,7 @@ function loginReducer_setPageInError(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const { kind, page } = dispatch.payload as SetPageInErrorPayload;
+  const { kind, page } = dispatch.payload as SetStepInErrorPayload;
   const pagesInError = new Set(state.pagesInError);
   kind === "add" ? pagesInError.add(page) : pagesInError.delete(page);
 

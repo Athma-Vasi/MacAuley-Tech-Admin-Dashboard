@@ -1,6 +1,6 @@
-import { Stack } from "@mantine/core";
+import { Card, Stack, Text } from "@mantine/core";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
     ALL_STORE_LOCATIONS_DATA,
     DEPARTMENTS_DATA,
@@ -34,12 +34,19 @@ function RegisterPersonal({
     profilePictureUrl,
     storeLocation,
 }: RegisterPersonalProps) {
+    const firstNameInputRef = useRef<HTMLInputElement | null>(null);
+
+    useEffect(() => {
+        firstNameInputRef.current?.focus();
+    }, []);
+
     const firstNameTextInput = (
         <AccessibleTextInput
             attributes={{
                 invalidValueAction: parentAction.setIsError,
                 name: "firstName",
                 parentDispatch,
+                ref: firstNameInputRef,
                 validValueAction: parentAction.setFirstName,
                 value: firstName,
             }}
@@ -107,14 +114,21 @@ function RegisterPersonal({
     );
 
     return (
-        <Stack>
-            {firstNameTextInput}
-            {lastNameTextInput}
-            {profilePictureUrlTextInput}
-            {jobPositionSelectInput}
-            {departmentSelectInput}
-            {storeLocationSelectInput}
-        </Stack>
+        <Card
+            p="lg"
+            radius="md"
+            className="register-card-form"
+        >
+            <Stack w="100%" align="center">
+                <Text size={20}>Personal</Text>
+                {firstNameTextInput}
+                {lastNameTextInput}
+                {profilePictureUrlTextInput}
+                {jobPositionSelectInput}
+                {departmentSelectInput}
+                {storeLocationSelectInput}
+            </Stack>
+        </Card>
     );
 }
 

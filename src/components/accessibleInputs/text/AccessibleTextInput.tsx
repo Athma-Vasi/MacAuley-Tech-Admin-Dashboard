@@ -63,7 +63,7 @@ type AccessibleTextInputAttributes<
     }
   >;
   placeholder?: string;
-  ref?: RefObject<HTMLInputElement> | null;
+  ref?: RefObject<HTMLInputElement | null> | null;
   required?: boolean;
   rightSection?: boolean;
   rightSectionIcon?: ReactNode;

@@ -16,6 +16,10 @@
   --ideal-summary-card-width: calc(100% - var(--padding));
   --max-summary-card-width: calc(var(--max-card-width) + var(--max-card-width));
 
+  --min-register-card-width: 350px;
+  --ideal-register-card-width: calc(100% - var(var(--padding)));
+  --max-register-card-width: 1024px;
+
   --min-chart-controls-card-width: 300px;
   --ideal-chart-controls-card-width: calc(100% - var(--padding));
   --max-chart-controls-card-width: 425px;
@@ -116,6 +120,97 @@
   width: clamp(250px, 100%, 350px);
 }
 
+.register-card {
+  width: clamp(
+    --min-register-card-width,
+    --ideal-register-card-width,
+    --max-register-card-width
+  );
+  outline: 1px solid teal;
+}
+
+.register-card-form-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  row-gap: var(--row-gap);
+}
+
+.register-card-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-form-footer {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  column-gap: var(--column-gap);
+  row-gap: var(--row-gap);
+  outline: 1px solid magenta;
+  justify-content: space-between;
+}
+
+.stepper-sidebar-container {
+  display: flex;
+  flex-direction: column;
+  width: clamp(350px, 100%, 450px);
+  row-gap: var(--row-gap);
+  column-gap: var(--column-gap);
+}
+
+.stepper-card {
+  width: clamp(200px, 100%, 350px);
+  border-radius: 1em;
+  transition: box-shadow 0.17s ease-in-out;
+}
+
+.stepper-card.active {
+  width: clamp(200px, 100%, 350px);
+  border-radius: 1em;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  /* outline: 1px solid maroon; */
+}
+
+.form-review {
+  outline: 1px solid teal;
+  width: 100%;
+  height: 480px;
+  overflow-y: scroll;
+}
+
+.review-section-container {
+  outline: 1px solid maroon;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-inputs-container {
+  padding: var(--padding);
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.25em;
+  outline: 1px solid rebeccapurple;
+}
+
+.input-section {
+  padding: 0.25em 0px;
+  display: grid;
+  grid-template-columns: 3fr 8fr;
+  column-gap: 2em;
+  border-radius: 0.38em;
+  padding: 0.38em;
+}
+
+.input-section.isEven {
+  background: hsla(0, 0%, 0%, 0.04);
+}
+
 @media screen and (max-width: 640px) {
   .overview-cards-with-pie, .overview-cards-without-pie {
     display: flex;
@@ -133,6 +228,17 @@
 }
 
 @media screen and (max-width: 1024px) {
+  .stepper-card.hidden {
+    display: none;
+  }
+
+  .register-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: var(--padding-xTotal);
+  }
   .app-shell {
     width: 100vw;
     display: flex;
@@ -198,6 +304,11 @@
 }
 
 @media screen and (min-width: 1025px) {
+  .register-card {
+    display: flex;
+    column-gap: var(--column-gap);
+  }
+
   .app-shell {
     display: grid;
     grid-template-areas:
@@ -259,27 +370,29 @@
 }
 
 @media screen and (min-width: 1300px) {
+  .register-card {
+    display: flex;
+    column-gap: var(--column-gap);
+  }
+
   .overview-with-pie {
     display: grid;
     grid-template-columns: 3fr 7fr;
     /* display: flex; */
     width: 100%;
     column-gap: var(--column-gap);
-    outline: 1px solid salmon;
   }
 
   .overview-summary-without-pie {
     display: flex;
     flex-direction: column;
     width: clamp(375px, 100%, 768px);
-    outline: 1px solid teal;
   }
 
   .overview-summary-with-pie {
     display: flex;
     flex-direction: column;
     width: clamp(325px, 100%, 400px);
-    outline: 1px solid rebeccapurple;
   }
 
   .overview-cards-with-pie {
@@ -287,7 +400,6 @@
     flex-direction: column;
     row-gap: var(--row-gap);
     column-gap: var(--column-gap);
-    outline: 1px solid violet;
   }
 
   .overview-cards-without-pie {
@@ -296,7 +408,6 @@
 
   .pie-chart-card {
     width: clamp(350px, 100%, 1024px);
-    outline: 1px solid green;
   }
 
   .statistics-elements-container {

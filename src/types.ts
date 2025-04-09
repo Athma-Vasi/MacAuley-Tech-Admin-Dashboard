@@ -47,26 +47,19 @@ type SliderInputData = {
   min: number;
 };
 
-type StepperChild = {
-  inputType: InputType;
-  isRequired?: boolean;
-  name: string;
-  validationKey?: ValidationKey;
-  selectInputData?: CheckboxRadioSelectData;
-  checkboxInputData?: CheckboxRadioSelectData;
-  sliderInputData?: SliderInputData;
-};
-
-type StepperPage = {
-  kind?: "form" | "review";
-  preventErrorStateDisplay?: boolean;
-  description: string;
-  children: Array<StepperChild>;
-};
-
-type SetPageInErrorPayload = {
+type SetStepInErrorPayload = {
   kind: "add" | "delete";
-  page: number;
+  step: number;
+};
+
+type SetStepWithEmptyInputsPayload = {
+  kind: "add" | "delete";
+  step: number;
+};
+
+type SetInputsInErrorPayload = {
+  kind: "add" | "delete";
+  name: ValidationKey;
 };
 
 type ColorScheme = "light" | "dark";
@@ -429,6 +422,10 @@ type JobPosition =
   | Accounting
   | Maintenance;
 
+type FormReview<
+  State extends Record<string, unknown> = Record<string, unknown>,
+> = Record<string, Record<keyof State, State[keyof State]>>;
+
 export type {
   Accounting,
   BusinessMetricsDocument,
@@ -444,6 +441,7 @@ export type {
   FieldServiceTechnicians,
   FinancialMetricsDocument,
   FontFamily,
+  FormReview,
   HttpServerResponse,
   HumanResources,
   InformationTechnology,
@@ -462,13 +460,13 @@ export type {
   SafeBoxResult,
   Sales,
   ScreenshotImageType,
-  SetPageInErrorPayload,
+  SetInputsInErrorPayload,
+  SetStepInErrorPayload,
+  SetStepWithEmptyInputsPayload,
   Shade,
   SliderInputData,
   SliderMarksData,
   StatesUS,
-  StepperChild,
-  StepperPage,
   StoreAdministration,
   StoreLocation,
   ThemeComponent,

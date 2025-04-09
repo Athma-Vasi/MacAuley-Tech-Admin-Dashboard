@@ -1,9 +1,10 @@
 import { NavigateFunction } from "react-router-dom";
 import { HttpServerResponse, UserDocument, UserSchema } from "../../types";
 import { fetchSafe, responseToJSONSafe } from "../../utils";
-import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
+import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { registerAction } from "./actions";
-import { RegisterDispatch } from "./types";
+import { MAX_REGISTER_STEPS, STEPS_INPUTNAMES_MAP } from "./constants";
+import { RegisterDispatch, RegisterState } from "./types";
 
 async function handleCheckEmailExists(
   {
@@ -398,8 +399,117 @@ async function handleRegisterButtonClick(
   }
 }
 
+function handlePrevNextStepClick(
+  {
+    activeStep,
+    kind,
+    registerDispatch,
+    registerState,
+  }: {
+    activeStep: number;
+    kind: "previous" | "next";
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    registerState: RegisterState;
+  },
+) {
+  if (activeStep === MAX_REGISTER_STEPS) {
+    return;
+  }
+
+  const stepInputNames = STEPS_INPUTNAMES_MAP.get(activeStep) ??
+    [];
+
+  const [stepInError, isStepWithEmptyInputs, inputsInError, inputsNotInError] =
+    stepInputNames
+      .reduce(
+        (acc, inputName) => {
+          const inputValidation = VALIDATION_FUNCTIONS_TABLE[inputName];
+
+          const isInputValid = inputValidation.every((validation) => {
+            const [regExpOrFunc, _] = validation;
+            const stateValue = Object.entries(registerState).find(([key]) =>
+              key === inputName
+            )?.[1] ?? "";
+            if (stateValue === null || stateValue === undefined) {
+              return acc;
+            }
+
+            if (
+              typeof stateValue === "string" && stateValue?.length === 0
+            ) {
+              acc[1].add(true);
+
+              // ignore empty inputs from validation error
+              return acc;
+            }
+
+            return typeof regExpOrFunc === "function"
+              ? regExpOrFunc(stateValue as string)
+              : regExpOrFunc.test(stateValue as string);
+          });
+
+          if (!isInputValid) {
+            acc[0].add(!isInputValid);
+            acc[2].add(inputName);
+          } else {
+            acc[3].add(inputName);
+          }
+
+          return acc;
+        },
+        [
+          new Set<boolean>(),
+          new Set<boolean>(),
+          new Set<ValidationKey>(),
+          new Set<ValidationKey>(),
+        ],
+      );
+
+  inputsInError.forEach((inputName) => {
+    registerDispatch({
+      action: registerAction.setInputsInError,
+      payload: {
+        kind: "add",
+        name: inputName,
+      },
+    });
+  });
+
+  inputsNotInError.forEach((inputName) => {
+    registerDispatch({
+      action: registerAction.setInputsInError,
+      payload: {
+        kind: "delete",
+        name: inputName,
+      },
+    });
+  });
+
+  registerDispatch({
+    action: registerAction.setStepsInError,
+    payload: {
+      kind: stepInError.has(true) ? "add" : "delete",
+      step: activeStep,
+    },
+  });
+
+  registerDispatch({
+    action: registerAction.setStepsWithEmptyInputs,
+    payload: {
+      kind: isStepWithEmptyInputs.has(true) ? "add" : "delete",
+      step: activeStep,
+    },
+  });
+
+  registerDispatch({
+    action: registerAction.setActiveStep,
+    payload: kind === "next" ? activeStep + 1 : activeStep - 1,
+  });
+}
+
 export {
   handleCheckEmailExists,
   handleCheckUsernameExists,
+  handlePrevNextStepClick,
   handleRegisterButtonClick,
 };

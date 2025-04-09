@@ -1,4 +1,4 @@
-import type { SetPageInErrorPayload } from "../../types";
+import type { SetStepInErrorPayload } from "../../types";
 import type { LoginAction } from "./actions";
 
 type LoginState = {
@@ -21,7 +21,7 @@ type LoginDispatch = {
   payload: boolean;
 } | {
   action: LoginAction["setPageInError"];
-  payload: SetPageInErrorPayload;
+  payload: SetStepInErrorPayload;
 } | {
   action: LoginAction["setPassword"];
   payload: string;
