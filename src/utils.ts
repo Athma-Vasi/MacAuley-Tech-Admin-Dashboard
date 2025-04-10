@@ -238,7 +238,7 @@ function returnThemeColors({
     : dark[8];
   const cardBgGradient = colorScheme === "light"
     ? `linear-gradient(${ANGLE},  #f5f5f5, ${cardBackgroundColor})`
-    : `linear-gradient(${ANGLE}, ${cardBackgroundColor}, ${dark[9]})`;
+    : `linear-gradient(${ANGLE}, ${cardBackgroundColor}, ${dark[8]})`;
 
   // for ScrollArea styles
   const scrollBarStyle = {

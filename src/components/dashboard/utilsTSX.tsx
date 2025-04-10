@@ -1,9 +1,18 @@
-import { Accordion, Card, Center, Group, Stack, Text } from "@mantine/core";
+import {
+  Accordion,
+  Card,
+  Center,
+  Divider,
+  Group,
+  Stack,
+  Text,
+} from "@mantine/core";
 import type { ReactNode } from "react";
 import { MdCalendarMonth, MdDateRange } from "react-icons/md";
 import { RiCalendarLine } from "react-icons/ri";
 
 import React from "react";
+import { TbFolderCancel, TbFolderOpen } from "react-icons/tb";
 import { INPUT_WIDTH, TEXT_SHADOW } from "../../constants";
 import {
   addCommaSeparator,
@@ -11,6 +20,7 @@ import {
   splitCamelCase,
   toFixedFloat,
 } from "../../utils";
+import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { GoldenGrid } from "../goldenGrid";
 import { MONTHS } from "./constants";
 import {
@@ -38,13 +48,14 @@ function returnDashboardCardElement(
     DashboardCardInfo,
 ): React.JSX.Element {
   const cardHeading = (
-    <Group position="left">
+    <Group position="apart">
       <Text
         size={24}
         weight={400}
       >
         {heading}
       </Text>
+      {icon}
     </Group>
   );
 
@@ -84,7 +95,6 @@ function returnDashboardCardElement(
       {cardHeading}
       {cardBody}
       {cardFooter}
-      {icon}
     </Card>
   );
 
@@ -184,12 +194,19 @@ function createDashboardMetricsCards({
 }
 
 function returnMinMaxSectionElement(
-  kind: "Min" | "Max",
-  data: { value: number; occurred: string },
-  unitSymbol: "$" | "%" | "",
+  { data, kind, style = {}, unitSymbol }: {
+    data: { value: number; occurred: string };
+    kind: "Min" | "Max";
+    style?: React.CSSProperties;
+    unitSymbol: "$" | "%" | "";
+  },
 ) {
   return (
-    <Stack style={{ borderBottom: "1px solid hsl(0, 0%, 33%)" }}>
+    <Stack
+      style={{ ...style }}
+      w="100%"
+      px={0}
+    >
       <GoldenGrid>
         <Group position="right">
           <Text>{kind}:</Text>
@@ -216,12 +233,17 @@ function returnMinMaxSectionElement(
 }
 
 function returnMedianModeSection(
-  kind: "Mode" | "Median",
-  value: number,
-  unitSymbol: "$" | "%" | "",
+  { kind, style = {}, unitSymbol, value }: {
+    kind: "Mode" | "Median";
+    style?: React.CSSProperties;
+    unitSymbol: "$" | "%" | "";
+    value: number;
+  },
 ) {
   return (
-    <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 33%)" }}>
+    <GoldenGrid
+      style={{ ...style }}
+    >
       <Group position="right">
         <Text>{kind}:</Text>
       </Group>
@@ -237,17 +259,18 @@ function returnMedianModeSection(
 }
 
 function returnMeanRangeSDSection(
-  kind: "Arithmetic Mean" | "Interquartile Range" | "Standard Deviation",
-  value: number,
-  unitSymbol: "$" | "%" | "",
+  { kind, style = {}, unitSymbol, value }: {
+    kind: "Arithmetic Mean" | "Interquartile Range" | "Standard Deviation";
+    style?: React.CSSProperties;
+    unitSymbol: "$" | "%" | "";
+    value: number;
+  },
 ) {
   const [firstWord, lastWord] = kind.split(" ");
 
   return (
     <GoldenGrid
-      style={kind === "Standard Deviation"
-        ? {}
-        : { borderBottom: "1px solid hsl(0, 0%, 33%)" }}
+      style={{ ...style }}
     >
       <Stack spacing={0}>
         <Group position="right">
@@ -328,60 +351,88 @@ function createStatisticsElements(
         </Center>
       );
 
+      const borderBottomStyle: React.CSSProperties = {
+        borderBottom: "1px solid hsla(0, 0%, 0%, 0.3)",
+      };
+
       const minSection = returnMinMaxSectionElement(
-        "Min",
-        min,
-        unitSymbol,
+        {
+          kind: "Min",
+          data: min,
+          style: borderBottomStyle,
+          unitSymbol,
+        },
       );
 
       const maxSection = returnMinMaxSectionElement(
-        "Max",
-        max,
-        unitSymbol,
+        {
+          kind: "Max",
+          data: max,
+          unitSymbol,
+        },
       );
 
       const medianSection = returnMedianModeSection(
-        "Median",
-        median,
-        unitSymbol,
+        {
+          kind: "Median",
+          value: median,
+          style: borderBottomStyle,
+          unitSymbol,
+        },
       );
 
       const modeSection = returnMedianModeSection(
-        "Mode",
-        mode,
-        unitSymbol,
+        {
+          kind: "Mode",
+          value: mode,
+          unitSymbol,
+        },
       );
 
       const meanSection = returnMeanRangeSDSection(
-        "Arithmetic Mean",
-        mean,
-        unitSymbol,
+        {
+          kind: "Arithmetic Mean",
+          value: mean,
+          style: borderBottomStyle,
+          unitSymbol,
+        },
       );
 
       const iqRangeSection = returnMeanRangeSDSection(
-        "Interquartile Range",
-        interquartileRange,
-        unitSymbol,
+        {
+          kind: "Interquartile Range",
+          value: interquartileRange,
+          unitSymbol,
+        },
       );
 
       const stdDeviationSection = returnMeanRangeSDSection(
-        "Standard Deviation",
-        standardDeviation,
-        unitSymbol,
+        {
+          kind: "Standard Deviation",
+          value: standardDeviation,
+          style: borderBottomStyle,
+          unitSymbol,
+        },
       );
 
       const statisticsElement = (
         <Stack
-          key={`${idx}-${cardsKey}`}
+          key={`${idx}-${cardsKey}-${calendarView}`}
           w="100%"
         >
           {heading}
           {minSection}
+          <Divider size="sm" />
           {maxSection}
+          <Divider size="sm" />
           {medianSection}
+          <Divider size="sm" />
           {modeSection}
+          <Divider size="sm" />
           {meanSection}
+          <Divider size="sm" />
           {iqRangeSection}
+          <Divider size="sm" />
           {stdDeviationSection}
         </Stack>
       );
@@ -443,58 +494,79 @@ function createFinancialStatisticsElements(
       );
 
       const minSection = returnMinMaxSectionElement(
-        "Min",
-        min,
-        unitSymbol,
+        {
+          kind: "Min",
+          data: min,
+          unitSymbol,
+        },
       );
 
       const maxSection = returnMinMaxSectionElement(
-        "Max",
-        max,
-        unitSymbol,
+        {
+          kind: "Max",
+          data: max,
+          unitSymbol,
+        },
       );
 
       const medianSection = returnMedianModeSection(
-        "Median",
-        median,
-        unitSymbol,
+        {
+          kind: "Median",
+          value: median,
+          unitSymbol,
+        },
       );
 
       const modeSection = returnMedianModeSection(
-        "Mode",
-        mode,
-        unitSymbol,
+        {
+          kind: "Mode",
+          value: mode,
+          unitSymbol,
+        },
       );
 
       const meanSection = returnMeanRangeSDSection(
-        "Arithmetic Mean",
-        mean,
-        unitSymbol,
+        {
+          kind: "Arithmetic Mean",
+          value: mean,
+          unitSymbol,
+        },
       );
 
       const iqRangeSection = returnMeanRangeSDSection(
-        "Interquartile Range",
-        interquartileRange,
-        unitSymbol,
+        {
+          kind: "Interquartile Range",
+          value: interquartileRange,
+          unitSymbol,
+        },
       );
 
       const stdDeviationSection = returnMeanRangeSDSection(
-        "Standard Deviation",
-        standardDeviation,
-        unitSymbol,
+        {
+          kind: "Standard Deviation",
+          value: standardDeviation,
+          unitSymbol,
+        },
       );
 
       const statisticsElement = (
         <Stack
-          key={`${idx}-${cardsKey}`}
+          key={`${idx}-${cardsKey}-${calendarView}`}
+          w="100%"
         >
           {heading}
           {minSection}
+          <Divider size="sm" />
           {maxSection}
+          <Divider size="sm" />
           {medianSection}
+          <Divider size="sm" />
           {modeSection}
+          <Divider size="sm" />
           {meanSection}
+          <Divider size="sm" />
           {iqRangeSection}
+          <Divider size="sm" />
           {stdDeviationSection}
         </Stack>
       );
@@ -592,14 +664,55 @@ function consolidateCardsAndStatistics(
   }, new Map());
 }
 
+function consolidateCardsAndStatisticsModals(
+  {
+    modalsOpenedState,
+    selectedCards,
+    setModalsOpenedState,
+  }: {
+    selectedCards: Map<string, DashboardCardInfo>;
+    modalsOpenedState: boolean[];
+    setModalsOpenedState: React.Dispatch<React.SetStateAction<boolean[]>>;
+  },
+): Map<string, React.JSX.Element> {
+  return Array.from(selectedCards).reduce((acc, [key, card], idx) => {
+    const statisticsAccordion = (
+      <AccessibleButton
+        attributes={{
+          kind: "open",
+          leftIcon: modalsOpenedState[idx]
+            ? <TbFolderCancel size={20} />
+            : <TbFolderOpen size={20} />,
+          label: "Statistics",
+          onClick: () => {
+            setModalsOpenedState((prev) => {
+              const newStates = [...prev];
+              newStates[idx] = !newStates[idx];
+              return newStates;
+            });
+          },
+        }}
+      />
+    );
+
+    card.icon = statisticsAccordion;
+    const cardElement = returnDashboardCardElement(card);
+
+    acc.set(key, cardElement);
+
+    return acc;
+  }, new Map());
+}
+
 function returnCardElementsForYAxisVariable(
   consolidatedCards: Map<string, React.JSX.Element>,
   yAxisVariable: string,
   yAxisKeyMap: Map<string, Set<string>>,
 ) {
   return (
-    <>
-      {Array.from(consolidatedCards).map(([key, card], idx) => {
+    <div className="statistics-elements">
+      {
+        /* {Array.from(consolidatedCards).map(([key, card], idx) => {
         const cardsSet = yAxisKeyMap.get(
           yAxisVariable,
         );
@@ -611,8 +724,26 @@ function returnCardElementsForYAxisVariable(
             </React.Fragment>
           )
           : null;
-      })}
-    </>
+      })} */
+      }
+      {Array.from(consolidatedCards).reduce((acc, [key, card], idx) => {
+        const cardsSet = yAxisKeyMap.get(
+          yAxisVariable,
+        );
+
+        if (cardsSet?.has(key)) {
+          acc.push(
+            <React.Fragment
+              key={`${idx}-${key}`}
+            >
+              {card}
+            </React.Fragment>,
+          );
+        }
+
+        return acc;
+      }, [] as React.JSX.Element[])}
+    </div>
   );
 }
 
@@ -674,6 +805,7 @@ function createOverviewMetricCard(
 
 export {
   consolidateCardsAndStatistics,
+  consolidateCardsAndStatisticsModals,
   consolidateCustomerCardsAndStatistics,
   createDashboardMetricsCards,
   createFinancialStatisticsElements,

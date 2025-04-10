@@ -156,7 +156,7 @@ function FinancialMetrics(
       isComponentMountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYYYYMMDD, storeLocationView]);
+  }, [selectedYYYYMMDD, storeLocationView, themeObject]);
 
   if (!financialMetricsDocument || !cards || !charts) {
     return null;

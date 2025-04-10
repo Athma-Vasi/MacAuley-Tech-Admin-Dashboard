@@ -101,7 +101,7 @@ function createFinancialMetricsCards(
       const prevDay = prevDayMetrics.day;
 
       const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
-        cardBgGradient,
+        cardBgGradient: "",
         currentMonth,
         currentYear,
         greenColorShade,

@@ -16,7 +16,7 @@ import {
 } from "../../../charts";
 import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
-import DashboardBarLineLayout from "../../DashboardBarLineLayout";
+import DashboardBarLineLayout from "../../DashboardLayoutContainer";
 import type {
   AllStoreLocations,
   DashboardCalendarView,

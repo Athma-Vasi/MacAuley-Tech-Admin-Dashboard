@@ -25,6 +25,7 @@ import {
   TbDownload,
   TbEdit,
   TbFilter,
+  TbFolderOpen,
   TbHelp,
   TbLogout,
   TbMessageCirclePlus,
@@ -65,6 +66,7 @@ type AccessibleButtonKind =
   | "like"
   | "logout"
   | "next"
+  | "open"
   | "pause"
   | "play"
   | "previous"
@@ -167,6 +169,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     like: <BiLike color={iconColor} size={22} />,
     logout: <TbLogout color={iconColor} size={22} />,
     next: <TiArrowRightThick color={iconColor} size={22} />,
+    open: <TbFolderOpen color={iconColor} size={22} />,
     pause: <TbPlayerPauseFilled color={iconColor} size={22} />,
     play: <TbPlayerPlayFilled color={iconColor} size={22} />,
     previous: <TiArrowLeftThick color={iconColor} size={22} />,

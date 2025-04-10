@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Stack } from "@mantine/core";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator, splitCamelCase } from "../../../../utils";
@@ -17,7 +18,8 @@ import {
 import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
-import DashboardBarLineLayout from "../../DashboardBarLineLayout";
+import DashboardBarLineLayout from "../../DashboardLayoutContainer";
+import { StatisticsCards } from "../../StatisticsCards";
 import type {
   AllStoreLocations,
   DashboardCalendarView,
@@ -457,39 +459,53 @@ function PERT({
     storeLocation,
   );
 
+  console.group("PERT Statistics Elements Map");
+  console.log(statisticsElementsMap);
+  console.groupEnd();
+
   const consolidatedCards = consolidateCardsAndStatistics(
     selectedCards,
     statisticsElementsMap,
   );
 
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    barLineRadialChartYAxis,
-    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+  //   consolidatedCards,
+  //   barLineRadialChartYAxis,
+  //   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  // );
+  const cardsWithStatisticsElements = (
+    <StatisticsCards
+      barLineRadialChartYAxis={barLineRadialChartYAxis}
+      keyMap={FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP}
+      selectedCards={selectedCards}
+      statisticsElementsMap={statisticsElementsMap}
+    />
   );
 
   return (
-    <DashboardBarLineLayout
-      barLineRadialChart={barLineRadialChart}
-      barLineRadialChartHeading={barLineRadialChartHeading}
-      barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
-      barLineRadialChartYAxis={barLineRadialChartYAxis}
-      calendarChart={calendarChart}
-      calendarChartHeading={calendarChartHeading}
-      calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
-      calendarView={calendarView}
-      cardsWithStatisticsElements={cardsWithStatisticsElements}
-      expandBarLineRadialChartButton={expandBarLineRadialChartButton}
-      expandCalendarChartButton={expandCalendarChartButton}
-      expandPieChartButton={expandPieChartButton}
-      overviewCards={pertOverviewCards}
-      pieChart={pieChart}
-      pieChartHeading={pieChartHeading}
-      pieChartYAxisSelectInput={pieChartYAxisSelectInput}
-      sectionHeading={splitCamelCase(metricsView)}
-      semanticLabel="TODO"
-    />
+    <Stack>
+      <DashboardBarLineLayout
+        barLineRadialChart={barLineRadialChart}
+        barLineRadialChartHeading={barLineRadialChartHeading}
+        barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
+        barLineRadialChartYAxis={barLineRadialChartYAxis}
+        calendarChart={calendarChart}
+        calendarChartHeading={calendarChartHeading}
+        calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
+        calendarView={calendarView}
+        cardsWithStatisticsElements={cardsWithStatisticsElements}
+        expandBarLineRadialChartButton={expandBarLineRadialChartButton}
+        expandCalendarChartButton={expandCalendarChartButton}
+        expandPieChartButton={expandPieChartButton}
+        overviewCards={pertOverviewCards}
+        pieChart={pieChart}
+        pieChartHeading={pieChartHeading}
+        pieChartYAxisSelectInput={pieChartYAxisSelectInput}
+        sectionHeading={splitCamelCase(metricsView)}
+        semanticLabel="TODO"
+      />
+    </Stack>
   );
 }
 
