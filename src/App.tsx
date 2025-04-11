@@ -29,10 +29,10 @@ function App() {
           />
         </Route>
 
-        <Route path="*" element={<div>404 Not Found</div>} />
-
         <Route path="/login" element={<LoginWrapper />} />
         <Route path="/register" element={<RegisterWrapper />} />
+
+        <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </MantineProvider>
   );

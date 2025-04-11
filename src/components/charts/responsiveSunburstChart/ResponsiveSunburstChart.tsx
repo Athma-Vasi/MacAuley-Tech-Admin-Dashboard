@@ -1,4 +1,5 @@
 import {
+  Box,
   ColorInput,
   Flex,
   Group,
@@ -173,9 +174,9 @@ function ResponsiveSunburstChart({
 
   if (hideControls) {
     return (
-      <Group>
+      <Box className="chart">
         {displayResponsiveSunburst}
-      </Group>
+      </Box>
     );
   }
 

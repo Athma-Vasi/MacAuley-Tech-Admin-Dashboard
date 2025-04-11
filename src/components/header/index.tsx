@@ -44,6 +44,7 @@ function Header({ opened, setOpened }: HeaderProps) {
 
   return (
     <Group
+      className="header"
       position="apart"
       p="md"
       w="100%"

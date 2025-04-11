@@ -1,144 +1,271 @@
 :root {
   --padding: 1em;
-  --padding-xTotal: 2em;
+  --padding-x2: 2em;
   --row-gap: 1em;
   --column-gap: 1em;
-
-  --min-app-width: 375px;
-  --max-app-width: 1650px;
-
-  --min-input-width: 300px;
-  --ideal-input-width: calc(100% - var(--padding));
-  --max-input-width: 400px;
-
-  --min-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
-  --ideal-card-width: calc(100% - var(--padding-xTotal));
-  --max-card-width: 375px;
-
-  --min-summary-card-width: calc(250px - var(--padding-xTotal));
-  --ideal-summary-card-width: calc(100% - var(--padding));
-  --max-summary-card-width: calc(300px + var(--max-card-width));
-
-  --min-register-card-height: 500px;
-  --ideal-register-card-height: calc(100% - var(--padding));
-  --max-register-card-height: 640px;
-  --min-register-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
-  --ideal-register-card-width: calc(100% - var(--padding));
-  --max-register-card-width: 900px;
-
-  --min-login-card-height: calc(100% - var(--padding));
-  --ideal-login-card-height: calc(fit-content - var(--padding));
-  --max-login-card-height: 450px;
-  --min-login-card-width: calc(var(--min-app-width) - var(--padding-xTotal));
-  --ideal-login-card-width: calc(100% - var(--padding));
-  --max-login-card-width: calc(var(--max-input-width) + var(--padding));
-
-  --min-stepper-card-width: 200px;
-  --ideal-stepper-card-width: calc(100% - var(--padding));
-  --max-stepper-card-width: 300px;
-
-  --min-chart-controls-card-width: calc(
-    var(--min-app-width) - var(--padding-xTotal)
-  );
-  --ideal-chart-controls-card-width: calc(100% - var(--padding));
-  --max-chart-controls-card-width: calc(
-    var(--max-input-width) + var(--padding)
-  );
-
-  --min-directory-card-width: 250px;
-  --ideal-directory-card-width: calc(100% - var(--padding));
-  --max-directory-card-width: 350px;
 
   --app-header-height: 70px;
   --dashboard-header-height: 130px;
   --dashboard-header-height-mobile: 70px;
-  --metrics-header-height: 100px;
-  --metrics-header-height-mobile: 70px;
   --chart-controls-header-height: 70px;
 
   --sidebar-width: 225px;
   --sidebar-padding: 2em;
+
+  --min-app-width: 350px;
+  --ideal-app-width: 100vw;
+  --max-app-width: 1650px;
+  --app-width: clamp(
+    var(--min-app-width),
+    var(--ideal-app-width),
+    var(--max-app-width)
+  );
+
+  --min-main-width: calc(var(--min-app-width) - var(--padding-x2));
+  --ideal-main-width: calc(100% - var(--padding-x2));
+  --max-main-width: calc(var(--max-card-width) * 3 + var(--padding-x2));
+  --main-width: clamp(
+    var(--min-main-width),
+    var(--ideal-main-width),
+    var(--max-main-width)
+  );
+
+  --min-input-width: calc(var(--min-app-width) - var(--padding-x2));
+  --ideal-input-width: calc(100% - var(--padding-x2));
+  --max-input-width: 375px;
+  --input-width: clamp(
+    var(--min-input-width),
+    var(--ideal-input-width),
+    var(--max-input-width)
+  );
+
+  --min-card-width: calc(var(--min-app-width) - var(--padding-x2));
+  --ideal-card-width: calc(100% - var(--padding-x2));
+  --max-card-width: calc(var(--max-input-width) + var(--padding-x2));
+  --card-width: clamp(
+    var(--min-card-width),
+    var(--ideal-card-width),
+    var(--max-card-width)
+  );
+
+  --min-chart-width: calc(var(--min-app-width) - var(--padding-x2));
+  --ideal-chart-width: calc(100% - var(--padding-x2));
+  --max-chart-width: calc(
+    var(--max-app-width) - var(--sidebar-width) - var(--padding-x2)
+  );
+  --chart-width: clamp(
+    var(--min-chart-width),
+    var(--ideal-chart-width),
+    var(--max-chart-width)
+  );
+  --max-pie-chart-width: --min-summary-card-width: calc(250px -
+    var(--padding-x2));
+  --ideal-summary-card-width: calc(100% - var(--padding-x2));
+  --max-summary-card-width: calc(300px + var(--padding-x2));
+  --summary-card-width: clamp(
+    var(--min-summary-card-width),
+    var(--ideal-summary-card-width),
+    var(--max-summary-card-width)
+  );
+
+  --min-register-card-width: calc(var(--min-app-width) - var(--padding-x2));
+  --ideal-register-card-width: calc(100% - var(--padding-x2));
+  --max-register-card-width: 900px;
+  --register-card-width: clamp(
+    var(--min-register-card-width),
+    var(--ideal-register-card-width),
+    var(--max-register-card-width)
+  );
+
+  --min-stepper-card-width: calc(var(--min-app-width) - var(--padding-x2));
+  --ideal-stepper-card-width: calc(100% - var(--padding-x2));
+  --max-stepper-card-width: calc(var(--max-input-width) + var(--padding-x2));
+  --stepper-card-width: clamp(
+    var(--min-stepper-card-width),
+    var(--ideal-stepper-card-width),
+    var(--max-stepper-card-width)
+  );
+
+  --min-chart-controls-card-width: calc(
+    var(--min-app-width) - var(--padding-x2)
+  );
+  --ideal-chart-controls-card-width: calc(100% - var(--padding-x2));
+  --max-chart-controls-card-width: calc(
+    var(--max-input-width) + var(--padding-x2)
+  );
+  --chart-controls-card-width: clamp(
+    var(--min-chart-controls-card-width),
+    var(--ideal-chart-controls-card-width),
+    var(--max-chart-controls-card-width)
+  );
+
+  --min-directory-card-width: calc(var(--min-app-width) - var(--padding-x2));
+  --ideal-directory-card-width: calc(100% - var(--padding-x2));
+  --max-directory-card-width: calc(var(--max-input-width) + var(--padding-x2));
+  --directory-card-width: clamp(
+    var(--min-directory-card-width),
+    var(--ideal-directory-card-width),
+    var(--max-directory-card-width)
+  );
 }
 
-/* dashboard layout */
-.dashboard-layout-container {
-  width: 100%;
+.burger {
+  display: none;
+}
 
-  .header {
-    outline: 1px solid hotpink;
+.login-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: flex-start;
+  outline: 1px solid teal;
+  padding: var(--padding);
+  width: var(--app-width);
+
+  .login-card {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding);
+    justify-content: flex-start;
+    padding: var(--padding);
+    width: var(--card-width);
   }
+}
+.register-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: flex-start;
+  outline: 1px solid teal;
+  padding: var(--padding);
+  width: var(--app-width);
 
-  .bar-line-radial-chart-section {
-    .chart-card {}
+  .register-card {
+    display: flex;
+    height: clamp(
+      var(--min-register-card-height),
+      var(--ideal-register-card-height),
+      var(--max-register-card-height)
+    );
+    overflow-y: auto;
+    width: clamp(
+      var(--min-register-card-width),
+      var(--ideal-register-card-width),
+      var(--max-register-card-width)
+    );
 
-    .chart-controls-card {}
+    .register-stepper-container {
+      align-items: flex-start;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      row-gap: var(--row-gap);
+      width: 100%;
 
-    .chart-titles {}
+      .register-stepper-header {
+        width: 100%;
+      }
 
-    .statistics-elements-container {}
-  }
+      .register-stepper-cards {
+        align-items: flex-start;
+        column-gap: var(--column-gap);
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--row-gap);
+        width: 100%;
 
-  .calendar-chart-section {
-    .chart-card {}
+        .stepper-card {
+          width: clamp(
+            var(--min-stepper-card-width),
+            var(--ideal-stepper-card-width),
+            var(--max-stepper-card-width)
+          );
+          border-radius: 1em;
+          transition: box-shadow 0.17s ease-in-out;
+        }
 
-    .chart-controls-card {}
-
-    .chart-titles {}
-  }
-
-  .pie-chart-section {
-    display: grid;
-    /* grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(12, 1fr); */
-    grid-template-areas:
-      "title title title . . controls controls controls controls controls controls controls"
-      "title title title . . controls controls controls controls controls controls controls"
-      "title title title . . controls controls controls controls controls controls controls"
-      "title title title . . controls controls controls controls controls controls controls"
-      "title title title . . . . . . . . ."
-      "title title title . . . . . . . . ."
-      "title title title . . chart chart chart chart chart chart chart"
-      "title title title . . chart chart chart chart chart chart chart"
-      "..... ..... ..... . . chart chart chart chart chart chart chart"
-      "..... ..... ..... . . chart chart chart chart chart chart chart"
-      "..... ..... ..... . . chart chart chart chart chart chart chart"
-      "..... ..... ..... . . chart chart chart chart chart chart chart";
-
-    column-gap: var(--column-gap);
-    grid-auto-flow: dense;
-    row-gap: var(--row-gap);
-    outline: 1px solid pink;
-
-    .chart-card {
-      grid-area: chart;
-      outline: 1px solid cadetblue;
+        .stepper-card.active {
+          border-radius: 1em;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
     }
 
-    .chart-controls-card {
-      grid-area: controls;
-      outline: 1px solid chartreuse;
-    }
+    .register-form-container {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: var(--padding);
+      row-gap: var(--row-gap);
+      width: 100%;
 
-    .chart-titles {
-      grid-area: title;
-      outline: 1px solid tan;
+      .register-form-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .register-form-card {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .register-form-footer {
+        column-gap: var(--column-gap);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        row-gap: var(--row-gap);
+        width: 100%;
+      }
     }
   }
 }
 
 .app-shell {
-  width: clamp(var(--min-app-width), 100vw, var(--max-app-width));
   display: flex;
+  width: var(--app-width);
   height: 100%;
+
+  .header {}
+
+  .main.opened {}
+  .main {
+    width: var(--main-width);
+    display: flex;
+    flex-direction: column;
+    padding: var(--padding);
+
+    .dashboard-layout-container {}
+  }
+
+  .sidebar.opened {}
+  .sidebar {}
 }
 
-.main {
+/* .main {
   display: flex;
-  width: 100%;
+  width: var(--main-width);
+} */
+
+.chart-card {
+  width: var(--chart-width);
+  height: clamp(350px * 0.62, calc(350px - 2em), 700px);
 }
 
-.burger {
-  display: none;
+.chart {
+  /* min-width: 350px;
+  max-width: var(--max-chart-width); */
+  width: var(--chart-width);
+  height: clamp(350px * 0.62, calc(350px - 2em), 700px);
 }
 
 .accessible-input {
@@ -153,19 +280,6 @@
   padding: var(--padding);
 }
 
-.login-card {
-  width: clamp(
-    var(--min-login-card-width),
-    var(--ideal-login-card-width),
-    var(--max-login-card-width)
-  );
-  height: clamp(
-    var(--min-login-card-height),
-    var(--ideal-login-card-height),
-    var(--max-login-card-height)
-  );
-}
-
 .directory-card {
   width: clamp(
     var(--min-directory-card-width),
@@ -174,54 +288,12 @@
   );
 }
 
-.register-card {
-  width: clamp(
-    var(--min-register-card-width),
-    var(--ideal-register-card-width),
-    var(--max-register-card-width)
-  );
-  height: clamp(
-    var(--min-register-card-height),
-    var(--ideal-register-card-height),
-    var(--max-register-card-height)
-  );
-  display: flex;
-  overflow-y: auto;
-}
-
-.chart-card {
-  width: 100%;
-}
-
 .overview-card {
   width: clamp(
     var(--min-card-width),
     var(--ideal-card-width),
     var(--max-card-width)
   );
-}
-
-.statistics-card {
-  width: clamp(
-    var(--min-card-width),
-    var(--ideal-card-width),
-    var(--max-card-width)
-  );
-}
-
-.stepper-card {
-  width: clamp(
-    var(--min-stepper-card-width),
-    var(--ideal-stepper-card-width),
-    var(--max-stepper-card-width)
-  );
-  border-radius: 1em;
-  transition: box-shadow 0.17s ease-in-out;
-}
-
-.stepper-card.active {
-  border-radius: 1em;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .chart-and-controls {
@@ -257,79 +329,6 @@
 .chart-display {
   height: 80%;
   width: 100%;
-}
-
-.register-container, .login-container {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: var(--padding);
-}
-
-.register-card-form-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  row-gap: var(--row-gap);
-  padding-top: var(--padding);
-}
-
-.register-card-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.register-form-header {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.register-form-footer {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  column-gap: var(--column-gap);
-  row-gap: var(--row-gap);
-  justify-content: space-between;
-}
-
-.register-form-footer__buttons {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.stepper-sidebar-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  row-gap: var(--row-gap);
-}
-
-.stepper-sidebar-header {
-  width: 100%;
-}
-
-.stepper-sidebar-cards {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  row-gap: var(--row-gap);
-  column-gap: var(--column-gap);
-  align-items: flex-start;
 }
 
 .form-review {
@@ -383,7 +382,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    row-gap: var(--padding-xTotal);
+    row-gap: var(--padding-x2);
   }
 
   .stepper-sidebar-cards {

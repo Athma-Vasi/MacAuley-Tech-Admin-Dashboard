@@ -1,13 +1,8 @@
-import { Overlay, Stack } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import React from "react";
-import {
-  COLORS_SWATCHES,
-  OVERLAY_BLUR,
-  OVERLAY_OPACITY,
-} from "../../../constants";
+import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
@@ -178,7 +173,7 @@ function FinancialMetrics(
   const subCategoryPage = PERT_SET.has(financialMetricCategory)
     ? (
       CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-        <React.Fragment key={idx}>
+        <React.Fragment key={`${idx}-${calendarView}`}>
           <PERT
             calendarChartsData={calendarChartsData}
             calendarView={calendarView}
@@ -197,7 +192,7 @@ function FinancialMetrics(
     )
     : (
       CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-        <React.Fragment key={idx}>
+        <React.Fragment key={`${idx}-${calendarView}`}>
           <OtherMetrics
             calendarChartsData={calendarChartsData}
             calendarView={calendarView}
@@ -215,16 +210,7 @@ function FinancialMetrics(
       ))
     );
 
-  const financialMetrics = (
-    <Stack w="100%" pos="relative">
-      {isGenerating
-        ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
-        : null}
-      {subCategoryPage}
-    </Stack>
-  );
-
-  return financialMetrics;
+  return subCategoryPage;
 }
 
 export { FinancialMetrics };

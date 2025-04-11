@@ -25,14 +25,14 @@ function returnRegisterStepperCard(
     },
 ) {
     return (
-        <div className="stepper-sidebar-container">
-            <div className="stepper-sidebar-header">
+        <div className="register-stepper-container">
+            <div className="register-stepper-header">
                 <Title order={2}>Register</Title>
                 <Text size="sm" color="dimmed">
                     to continue to MacAuley Tech Dashboard
                 </Text>
             </div>
-            <div className="stepper-sidebar-cards">
+            <div className="register-stepper-cards">
                 {REGISTER_STEPS.map((value, idx) => {
                     const isStepInError = stepsInError.has(idx);
                     const isStepWithEmptyInputs = stepsWithEmptyInputs.has(idx);

@@ -1,4 +1,5 @@
 import {
+  Box,
   ColorInput,
   Flex,
   Group,
@@ -353,18 +354,9 @@ function ResponsiveBarChart({
 
   if (hideControls) {
     return (
-      <Group
-        // h={chartHeight}
-        // w={chartWidth}
-        w="100%"
-        style={{
-          outline: "1px solid goldenrod",
-          // width: "clamp(350px, 100%, 618px)",
-          height: "clamp(250px, 400px, 500px)",
-        }}
-      >
+      <Box className="chart">
         {displayResponsiveBar}
-      </Group>
+      </Box>
     );
   }
 

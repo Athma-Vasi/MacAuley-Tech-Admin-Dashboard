@@ -42,10 +42,10 @@ const initialResponsivePieChartState: ResponsivePieChartState = {
   transitionMode: "innerRadius",
 
   /** margin */
-  marginTop: 90,
-  marginRight: 60,
-  marginBottom: 90,
-  marginLeft: 60,
+  marginTop: 45,
+  marginRight: 30,
+  marginBottom: 60,
+  marginLeft: 30,
 
   /** legend */
   enableLegend: true,

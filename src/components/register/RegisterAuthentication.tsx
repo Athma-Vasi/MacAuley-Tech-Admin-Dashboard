@@ -160,7 +160,7 @@ function RegisterAuthentication({
     );
 
     const registerAuthentication = (
-        <Card className="register-card-form">
+        <Card className="register-form-card">
             <Text size={24}>Authentication</Text>
             {usernameTextInput}
             {isUsernameExists

@@ -84,7 +84,7 @@ function AccessibleSegmentedControl<
   //     });
 
   return (
-    <Box className="accessible-input">
+    <Box>
       {hideName ? null : <Text>{splitCamelCase(name)}</Text>}
       <SegmentedControl
         aria-label={name}

@@ -1,4 +1,5 @@
 import {
+  Box,
   ColorInput,
   Flex,
   Group,
@@ -308,9 +309,9 @@ function ResponsiveRadialBarChart(
 
   if (hideControls) {
     return (
-      <Group w={618} h={382}>
+      <Box className="chart">
         {displayResponsiveRadialBar}
-      </Group>
+      </Box>
     );
   }
 

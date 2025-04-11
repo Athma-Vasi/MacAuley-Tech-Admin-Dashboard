@@ -344,7 +344,7 @@ function Register() {
   const registerCard = (
     <Card shadow="sm" p="lg" radius="md" withBorder className="register-card">
       {stepperCard}
-      <div className="register-card-form-container">
+      <div className="register-form-container">
         {formHeader}
         {registerStep}
         {formFooter}

@@ -214,16 +214,15 @@ function Login() {
       withBorder
       className="login-card"
     >
-      <Stack w="100%">
-        <Title order={2}>Sign in</Title>
-        <Text size="sm" color="dimmed">
-          to continue to MacAuley Tech Dashboard
-        </Text>
+      <Title order={2}>Sign in</Title>
+      <Text size="sm" color="dimmed">
+        to continue to MacAuley Tech Dashboard
+      </Text>
 
-        {displayInputs}
-        {displayLoginButton}
-        {displayLinkToRegister}
-      </Stack>
+      {displayInputs}
+
+      <Group w="100%" position="center">{displayLoginButton}</Group>
+      <Group w="100%" position="center">{displayLinkToRegister}</Group>
     </Card>
   );
 

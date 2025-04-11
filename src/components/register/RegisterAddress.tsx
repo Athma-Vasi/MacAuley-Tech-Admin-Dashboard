@@ -131,7 +131,7 @@ function RegisterAddress({
     );
 
   return (
-    <Card className="register-card-form">
+    <Card className="register-form-card">
       <Text size={24}>Address</Text>
       {addressLineTextInput}
       {cityTextInput}

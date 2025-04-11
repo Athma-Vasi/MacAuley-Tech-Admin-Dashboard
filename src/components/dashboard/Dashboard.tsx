@@ -1,7 +1,7 @@
 import {
   Accordion,
+  Box,
   Group,
-  Overlay,
   Stack,
   Text,
   TextInput,
@@ -16,8 +16,6 @@ import {
   FETCH_REQUEST_TIMEOUT,
   METRICS_URL,
   MOBILE_BREAKPOINT,
-  OVERLAY_BLUR,
-  OVERLAY_OPACITY,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -412,11 +410,7 @@ function Dashboard() {
     );
 
   const dashboard = (
-    <Stack w="100%" pos="relative" bg={bgGradient}>
-      {isLoading || isFetching
-        ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
-        : null}
-
+    <Box className="main" bg={bgGradient}>
       {windowWidth < MOBILE_BREAKPOINT
         ? dashboardHeaderAccordion
         : dashboardHeader}
@@ -426,7 +420,7 @@ function Dashboard() {
         <Text size="md">Welcome to your dashboard</Text>
       </Stack>
       {displayMetricsView}
-    </Stack>
+    </Box>
   );
 
   return dashboard;

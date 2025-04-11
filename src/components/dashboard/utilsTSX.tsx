@@ -4,6 +4,7 @@ import {
   Center,
   Divider,
   Group,
+  Modal,
   Stack,
   Text,
 } from "@mantine/core";
@@ -39,13 +40,22 @@ type DashboardCardInfo = {
   date?: string;
   heading?: string;
   icon: ReactNode;
+  idx?: number;
   percentage?: string;
   deltaTextColor?: string;
   value: string | number;
 };
 function returnDashboardCardElement(
-  { cardBgGradient, date, heading, icon, percentage, deltaTextColor, value }:
-    DashboardCardInfo,
+  {
+    cardBgGradient,
+    date,
+    heading,
+    icon,
+    idx,
+    percentage,
+    deltaTextColor,
+    value,
+  }: DashboardCardInfo,
 ): React.JSX.Element {
   const cardHeading = (
     <Group position="apart">
@@ -87,7 +97,7 @@ function returnDashboardCardElement(
   const createdChartCard = (
     <Card
       bg={cardBgGradient}
-      className="statistics-card"
+      className={`statistics-card i${idx ?? 0}`}
       // shadow="xs"
       radius="md"
       withBorder
@@ -696,7 +706,7 @@ function consolidateCardsAndStatisticsModals(
     );
 
     card.icon = statisticsAccordion;
-    const cardElement = returnDashboardCardElement(card);
+    const cardElement = returnDashboardCardElement({ ...card, idx });
 
     acc.set(key, cardElement);
 
@@ -709,10 +719,7 @@ function returnCardElementsForYAxisVariable(
   yAxisVariable: string,
   yAxisKeyMap: Map<string, Set<string>>,
 ) {
-  return (
-    <div className="statistics-elements">
-      {
-        /* {Array.from(consolidatedCards).map(([key, card], idx) => {
+  /* {Array.from(consolidatedCards).map(([key, card], idx) => {
         const cardsSet = yAxisKeyMap.get(
           yAxisVariable,
         );
@@ -725,25 +732,72 @@ function returnCardElementsForYAxisVariable(
           )
           : null;
       })} */
-      }
-      {Array.from(consolidatedCards).reduce((acc, [key, card], idx) => {
-        const cardsSet = yAxisKeyMap.get(
-          yAxisVariable,
-        );
 
-        if (cardsSet?.has(key)) {
-          acc.push(
-            <React.Fragment
-              key={`${idx}-${key}`}
-            >
-              {card}
-            </React.Fragment>,
-          );
-        }
+  return Array.from(consolidatedCards).reduce((acc, [key, card], idx) => {
+    const cardsSet = yAxisKeyMap.get(
+      yAxisVariable,
+    );
 
-        return acc;
-      }, [] as React.JSX.Element[])}
-    </div>
+    if (cardsSet?.has(key)) {
+      acc.push(
+        // <React.Fragment
+        //   key={`${idx}-${key}`}
+        // >
+        //   {card}
+        // </React.Fragment>,
+        card,
+      );
+    }
+
+    return acc;
+  }, [] as React.JSX.Element[]);
+}
+
+function returnStatisticsModals(
+  {
+    modalsOpenedState,
+    setModalsOpenedState,
+    statisticsElementsMap,
+    themeColorShade,
+  }: {
+    modalsOpenedState: boolean[];
+    setModalsOpenedState: React.Dispatch<React.SetStateAction<boolean[]>>;
+    statisticsElementsMap: Map<string, React.JSX.Element>;
+    themeColorShade: string;
+  },
+) {
+  return Array.from(statisticsElementsMap).reduce(
+    (acc, entry, idx) => {
+      const [key, element] = entry;
+
+      const modal = (
+        <Modal
+          centered
+          closeButtonProps={{ color: themeColorShade }}
+          key={`${key}-${idx}-modal`}
+          opened={modalsOpenedState[idx]}
+          onClose={() =>
+            setModalsOpenedState((prev) => {
+              const newStates = [...prev];
+              newStates[idx] = !newStates[idx];
+              return newStates;
+            })}
+          transitionProps={{
+            transition: "fade",
+            duration: 200,
+            timingFunction: "ease-in-out",
+          }}
+          maw={400}
+          miw={250}
+        >
+          <Group>{element}</Group>
+        </Modal>
+      );
+      acc.push(modal);
+
+      return acc;
+    },
+    [] as React.JSX.Element[],
   );
 }
 
@@ -813,5 +867,6 @@ export {
   createStatisticsElements,
   returnCardElementsForYAxisVariable,
   returnDashboardCardElement,
+  returnStatisticsModals,
 };
 export type { CreateDashboardMetricsCardsInput, DashboardCardInfo };

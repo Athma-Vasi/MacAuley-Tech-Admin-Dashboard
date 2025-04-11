@@ -24,10 +24,11 @@ import {
 } from "./utils";
 
 type SidebarProps = {
+  opened: boolean;
   setOpened: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function Sidebar({ setOpened }: SidebarProps) {
+function Sidebar({ opened, setOpened }: SidebarProps) {
   const { authState: { accessToken }, authDispatch } = useAuth();
   const {
     globalState: { themeObject, productMetricCategory, repairMetricCategory },
@@ -199,6 +200,7 @@ function Sidebar({ setOpened }: SidebarProps) {
 
   return (
     <Stack
+      className={`sidebar ${opened ? "opened" : ""}`}
       pt="xl"
       w="100%"
       style={{
