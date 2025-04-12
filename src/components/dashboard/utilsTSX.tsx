@@ -361,15 +361,10 @@ function createStatisticsElements(
         </Center>
       );
 
-      const borderBottomStyle: React.CSSProperties = {
-        borderBottom: "1px solid hsla(0, 0%, 0%, 0.3)",
-      };
-
       const minSection = returnMinMaxSectionElement(
         {
           kind: "Min",
           data: min,
-          style: borderBottomStyle,
           unitSymbol,
         },
       );
@@ -386,7 +381,6 @@ function createStatisticsElements(
         {
           kind: "Median",
           value: median,
-          style: borderBottomStyle,
           unitSymbol,
         },
       );
@@ -403,7 +397,6 @@ function createStatisticsElements(
         {
           kind: "Arithmetic Mean",
           value: mean,
-          style: borderBottomStyle,
           unitSymbol,
         },
       );
@@ -420,7 +413,6 @@ function createStatisticsElements(
         {
           kind: "Standard Deviation",
           value: standardDeviation,
-          style: borderBottomStyle,
           unitSymbol,
         },
       );

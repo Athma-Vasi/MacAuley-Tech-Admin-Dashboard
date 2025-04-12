@@ -1,9 +1,10 @@
 import { Stack } from "@mantine/core";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator } from "../../../../utils";
+import { addCommaSeparator, returnThemeColors } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -31,9 +32,10 @@ import {
   returnStatistics,
 } from "../../utils";
 import {
-  consolidateCardsAndStatistics,
+  consolidateCardsAndStatisticsModals,
   createStatisticsElements,
   returnCardElementsForYAxisVariable,
+  returnStatisticsModals,
 } from "../../utilsTSX";
 import { CustomerMetricsCards, returnCustomerMetricsCardsMap } from "../cards";
 import {
@@ -85,7 +87,7 @@ function Returning(
     year,
   }: ReturningProps,
 ) {
-  const { globalDispatch } = useGlobalState();
+  const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
 
   const [returningState, returningDispatch] = React.useReducer(
@@ -444,9 +446,30 @@ function Returning(
     storeLocation,
   );
 
-  const consolidatedCards = consolidateCardsAndStatistics(
-    cardsMap.get(metricCategory) ?? new Map(),
-    statisticsElementsMap,
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Array<boolean>
+  >(
+    Array.from({ length: statisticsElementsMap.size }, () => false),
+  );
+
+  const consolidatedCards = consolidateCardsAndStatisticsModals({
+    modalsOpenedState,
+    selectedCards: cardsMap.get(metricCategory) ?? new Map(),
+    setModalsOpenedState,
+  });
+
+  const { themeColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
+  const statisticsModals = returnStatisticsModals(
+    {
+      modalsOpenedState,
+      setModalsOpenedState,
+      statisticsElementsMap,
+      themeColorShade,
+    },
   );
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
@@ -477,6 +500,7 @@ function Returning(
         pieChartYAxisSelectInput={pieChartYAxisSelectInput}
         sectionHeading="Returning Customers"
         semanticLabel="TODO"
+        statisticsModals={statisticsModals}
       />
     </Stack>
   );

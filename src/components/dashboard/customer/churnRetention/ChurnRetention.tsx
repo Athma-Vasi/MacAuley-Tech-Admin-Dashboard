@@ -2,9 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Stack } from "@mantine/core";
+import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator } from "../../../../utils";
+import { addCommaSeparator, returnThemeColors } from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -32,9 +33,10 @@ import {
   returnStatistics,
 } from "../../utils";
 import {
-  consolidateCardsAndStatistics,
+  consolidateCardsAndStatisticsModals,
   createStatisticsElements,
   returnCardElementsForYAxisVariable,
+  returnStatisticsModals,
 } from "../../utilsTSX";
 import {
   type CustomerMetricsCards,
@@ -88,7 +90,7 @@ function ChurnRetention(
     year,
   }: ChurnRetentionProps,
 ) {
-  const { globalDispatch } = useGlobalState();
+  const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
 
   const [churnRetentionState, churnRetentionDispatch] = React.useReducer(
@@ -427,9 +429,30 @@ function ChurnRetention(
     storeLocation,
   );
 
-  const consolidatedCards = consolidateCardsAndStatistics(
-    cardsMap.get(metricCategory) ?? new Map(),
-    statisticsElementsMap,
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Array<boolean>
+  >(
+    Array.from({ length: statisticsElementsMap.size }, () => false),
+  );
+
+  const consolidatedCards = consolidateCardsAndStatisticsModals({
+    modalsOpenedState,
+    selectedCards: cardsMap.get(metricCategory) ?? new Map(),
+    setModalsOpenedState,
+  });
+
+  const { themeColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
+  const statisticsModals = returnStatisticsModals(
+    {
+      modalsOpenedState,
+      setModalsOpenedState,
+      statisticsElementsMap,
+      themeColorShade,
+    },
   );
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
@@ -459,6 +482,7 @@ function ChurnRetention(
         pieChartHeading={pieChartHeading}
         sectionHeading="Customers Churn"
         semanticLabel="TODO"
+        statisticsModals={statisticsModals}
       />
     </Stack>
   );
