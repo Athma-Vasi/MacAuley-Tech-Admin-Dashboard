@@ -1,9 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator, splitCamelCase } from "../../../../utils";
+import {
+  addCommaSeparator,
+  returnThemeColors,
+  splitCamelCase,
+} from "../../../../utils";
 import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
@@ -28,9 +33,10 @@ import {
   returnStatistics,
 } from "../../utils";
 import {
-  consolidateCardsAndStatistics,
+  consolidateCardsAndStatisticsModals,
   createStatisticsElements,
   returnCardElementsForYAxisVariable,
+  returnStatisticsModals,
 } from "../../utilsTSX";
 import { type RepairMetricsCards, returnRepairMetricsCards } from "../cards";
 import {
@@ -81,7 +87,7 @@ function RepairRUS(
     year,
   }: RepairRUSProps,
 ) {
-  const { globalDispatch } = useGlobalState();
+  const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
   const [repairRUSState, repairRUSDispatch] = React.useReducer(
     repairRUSReducer,
@@ -376,9 +382,30 @@ function RepairRUS(
     storeLocation,
   );
 
-  const consolidatedCards = consolidateCardsAndStatistics(
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Array<boolean>
+  >(
+    Array.from({ length: statisticsElementsMap.size }, () => false),
+  );
+
+  const consolidatedCards = consolidateCardsAndStatisticsModals({
+    modalsOpenedState,
     selectedCards,
-    statisticsElementsMap,
+    setModalsOpenedState,
+  });
+
+  const { themeColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
+  const statisticsModals = returnStatisticsModals(
+    {
+      modalsOpenedState,
+      setModalsOpenedState,
+      statisticsElementsMap,
+      themeColorShade,
+    },
   );
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
@@ -404,6 +431,7 @@ function RepairRUS(
       overviewCards={repairOverviewCards}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
+      statisticsModals={statisticsModals}
     />
   );
 }
