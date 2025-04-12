@@ -154,8 +154,8 @@ function DashboardLayoutContainer(
     <div className="chart-controls-card">
       {barLineRadialChartYAxisSelectInput}
       <div className="footer">
-        {barLineRadialChartKindSegmentedControl}
         {expandBarLineRadialChartButton}
+        {barLineRadialChartKindSegmentedControl}
       </div>
     </div>
   );
