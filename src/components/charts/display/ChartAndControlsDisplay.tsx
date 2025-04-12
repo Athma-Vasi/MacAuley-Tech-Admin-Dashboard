@@ -52,6 +52,7 @@ function ChartAndControlsDisplay(
             {chartTitle}
           </Title>
         </Stack>
+
         {responsiveChart}
       </Box>
     </Box>

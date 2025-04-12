@@ -1152,8 +1152,10 @@ function ResponsiveRadialBarChart(
   const displayTracksSection = (
     <Stack w="100%">
       {displayTracksHeading}
-      {displayEnableTracksSwitchInput}
-      {displayTracksColorInput}
+      <Group w="100%" align="baseline" px="md">
+        {displayEnableTracksSwitchInput}
+        {displayTracksColorInput}
+      </Group>
     </Stack>
   );
 

@@ -301,6 +301,7 @@
     .chart-container {
       height: 62vh;
       width: 100%;
+      padding: var(--padding-x2);
     }
   }
 
@@ -321,6 +322,7 @@
         .chart-section-blr {
           .chart-titles {
             grid-area: ti;
+            border-right: var(--border);
           }
 
           .chart-controls-card {
@@ -333,8 +335,6 @@
             row-gap: var(--padding);
             justify-self: flex-start;
             padding: var(--padding);
-            border: var(--border);
-            border-radius: var(--border-radius);
 
             .footer {
               width: var(--input-width);
@@ -347,8 +347,6 @@
 
           .chart-card {
             grid-area: ch;
-            border: var(--border);
-            border-radius: var(--border-radius);
 
             .chart {}
           }
@@ -368,7 +366,6 @@
           }
 
           .chart-controls-card {
-            /* outline: 1px solid cadetblue; */
             width: var(--card-width);
             grid-area: co;
             padding: var(--padding);
@@ -376,8 +373,7 @@
             flex-direction: column;
             row-gap: var(--padding);
             justify-self: flex-start;
-            border: var(--border);
-            border-radius: var(--border-radius);
+            border-left: var(--border);
             align-items: center;
 
             .footer {
@@ -391,8 +387,7 @@
 
           .chart-card {
             grid-area: ch;
-            border: var(--border);
-            border-radius: var(--border-radius);
+            border-top: var(--border);
 
             .chart {}
           }
