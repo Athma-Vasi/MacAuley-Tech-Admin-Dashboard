@@ -255,15 +255,7 @@ function ResponsivePieChart({
 
   if (hideControls) {
     return (
-      <Box className="chart" // h={chartHeight}
-        // w={chartWidth}
-        // w="100%"
-        // style={{
-        //   outline: "1px solid red",
-        //   width: "clamp(350px, 100%, 618px)",
-        //   height: "clamp(250px, 400px, 500px)",
-        // }}
-      >
+      <Box className="chart">
         {displayResponsivePie}
       </Box>
     );

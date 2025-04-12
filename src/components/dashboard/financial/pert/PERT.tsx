@@ -519,6 +519,7 @@ function PERT({
       pieChartYAxisSelectInput={pieChartYAxisSelectInput}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
+      statisticsModals={statisticsModals}
     />
   );
 }

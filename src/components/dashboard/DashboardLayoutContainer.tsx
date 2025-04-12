@@ -26,6 +26,7 @@ type DashboardLayoutContainerProps = {
   pieChartYAxisSelectInput?: React.JSX.Element;
   sectionHeading: string;
   semanticLabel?: string;
+  statisticsModals?: React.JSX.Element[];
 };
 
 function DashboardLayoutContainer(
@@ -49,6 +50,7 @@ function DashboardLayoutContainer(
     pieChartYAxisSelectInput,
     sectionHeading,
     semanticLabel,
+    statisticsModals,
   }: DashboardLayoutContainerProps,
 ) {
   const { globalState: { themeObject } } = useGlobalState();
@@ -259,6 +261,7 @@ function DashboardLayoutContainer(
 
       <Space h="xl" />
       <Space h="xl" />
+      {statisticsModals}
       {barLineRadialSection}
 
       <Space h="xl" />

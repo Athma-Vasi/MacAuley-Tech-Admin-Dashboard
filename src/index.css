@@ -11,7 +11,7 @@
   --dashboard-header-height-mobile: 70px;
   --chart-controls-header-height: 70px;
 
-  --sidebar-width: clamp(175px, 100%, 250px);
+  --sidebar-width: clamp(175px, 100%, 200px);
   --sidebar-padding: 2em;
 
   --min-app-width: 375px;
@@ -23,7 +23,7 @@
     var(--max-app-width)
   );
 
-  --min-input-width: calc(343px - var(--padding-x2));
+  --min-input-width: calc(275px - var(--padding-x2));
   --ideal-input-width: calc(100% - var(--padding-x2));
   --max-input-width: 430px;
   --input-width: clamp(
@@ -52,7 +52,8 @@
   --min-chart-width: calc(343px - var(--padding-x2));
   --ideal-chart-width: 100%;
   --max-chart-width: calc(
-    var(--max-app-width) - var(--sidebar-width) - var(--padding-x2)
+    var(--app-width) - var(--sidebar-width) - var(--card-width)
+      - var(--padding-x2)
   );
   --chart-width: clamp(
     var(--min-chart-width),
@@ -80,12 +81,7 @@
   );
 }
 
-/* .chart-card {
-  width: var(--chart-width);
-  height: clamp(350px * 0.62, calc(350px - 2em), 700px);
-} */
-
-.chart {
+.chart-card .chart {
   width: var(--chart-width);
   height: clamp(350px * 0.38, calc(350px - 2em), 700px);
 }
