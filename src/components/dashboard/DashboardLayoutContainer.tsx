@@ -257,7 +257,7 @@ function DashboardLayoutContainer(
       </Box>
 
       <Space h="xl" />
-      {pieChartSectionMaybe}
+      {pieChart === undefined ? null : pieChartSectionMaybe}
 
       <Space h="xl" />
       <Space h="xl" />

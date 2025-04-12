@@ -468,21 +468,11 @@ function PERT({
     Array.from({ length: statisticsElementsMap.size }, () => false),
   );
 
-  console.group("PERT Statistics Elements Map");
-  console.log(statisticsElementsMap);
-  console.groupEnd();
-
   const consolidatedCards = consolidateCardsAndStatisticsModals({
     modalsOpenedState,
     selectedCards,
     setModalsOpenedState,
   });
-
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    barLineRadialChartYAxis,
-    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
 
   const { themeColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
@@ -496,6 +486,12 @@ function PERT({
       statisticsElementsMap,
       themeColorShade,
     },
+  );
+
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    barLineRadialChartYAxis,
+    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
   return (

@@ -339,6 +339,8 @@
             .footer {
               width: var(--input-width);
               display: flex;
+              flex-wrap: wrap;
+              gap: var(--padding);
               justify-content: space-between;
             }
           }
@@ -382,6 +384,8 @@
               width: var(--input-width);
               display: flex;
               justify-content: flex-end;
+              gap: var(--padding);
+              flex-wrap: wrap;
             }
           }
 
