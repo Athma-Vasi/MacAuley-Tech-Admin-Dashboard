@@ -1,7 +1,7 @@
 import { PERTState } from "./types";
 
 const initialPERTState: PERTState = {
-  barLineRadialChartYAxis: "total",
+  barLineRadialChartYAxis: "overview",
   barLineRadialChartKind: "bar",
   calendarChartYAxis: "total",
   pieChartYAxis: "overview",

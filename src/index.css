@@ -3,16 +3,18 @@
   --padding-x2: 2em;
   --row-gap: 1em;
   --column-gap: 1em;
+  --border: 1px solid hsla(0, 0%, 0%, 0.17);
+  --border-radius: 0.38em;
 
   --app-header-height: 70px;
   --dashboard-header-height: 130px;
   --dashboard-header-height-mobile: 70px;
   --chart-controls-header-height: 70px;
 
-  --sidebar-width: 225px;
+  --sidebar-width: clamp(175px, 100%, 250px);
   --sidebar-padding: 2em;
 
-  --min-app-width: 350px;
+  --min-app-width: 375px;
   --ideal-app-width: 100vw;
   --max-app-width: 1650px;
   --app-width: clamp(
@@ -21,35 +23,34 @@
     var(--max-app-width)
   );
 
-  --min-main-width: calc(var(--min-app-width) - var(--padding-x2));
-  --ideal-main-width: calc(100% - var(--padding-x2));
-  --max-main-width: calc(var(--max-card-width) * 3 + var(--padding-x2));
-  --main-width: clamp(
-    var(--min-main-width),
-    var(--ideal-main-width),
-    var(--max-main-width)
-  );
-
-  --min-input-width: calc(var(--min-app-width) - var(--padding-x2));
+  --min-input-width: calc(343px - var(--padding-x2));
   --ideal-input-width: calc(100% - var(--padding-x2));
-  --max-input-width: 375px;
+  --max-input-width: 430px;
   --input-width: clamp(
     var(--min-input-width),
     var(--ideal-input-width),
     var(--max-input-width)
   );
 
-  --min-card-width: calc(var(--min-app-width) - var(--padding-x2));
-  --ideal-card-width: calc(100% - var(--padding-x2));
-  --max-card-width: calc(var(--max-input-width) + var(--padding-x2));
+  --min-card-width: calc(343px - var(--padding-x2));
+  --ideal-card-width: 100%;
+  --max-card-width: 430px;
   --card-width: clamp(
     var(--min-card-width),
     var(--ideal-card-width),
     var(--max-card-width)
   );
 
-  --min-chart-width: calc(var(--min-app-width) - var(--padding-x2));
-  --ideal-chart-width: calc(100% - var(--padding-x2));
+  --statistics-card-width: clamp(
+    var(--min-card-width),
+    var(--ideal-card-width),
+    430px
+  );
+
+  --title-card-width: clamp(150px, 100%, 250px);
+
+  --min-chart-width: calc(343px - var(--padding-x2));
+  --ideal-chart-width: 100%;
   --max-chart-width: calc(
     var(--max-app-width) - var(--sidebar-width) - var(--padding-x2)
   );
@@ -60,6 +61,7 @@
   );
   --max-pie-chart-width: --min-summary-card-width: calc(250px -
     var(--padding-x2));
+
   --ideal-summary-card-width: calc(100% - var(--padding-x2));
   --max-summary-card-width: calc(300px + var(--padding-x2));
   --summary-card-width: clamp(
@@ -70,43 +72,30 @@
 
   --min-register-card-width: calc(var(--min-app-width) - var(--padding-x2));
   --ideal-register-card-width: calc(100% - var(--padding-x2));
-  --max-register-card-width: 900px;
+  --max-register-card-width: 1024px;
   --register-card-width: clamp(
     var(--min-register-card-width),
     var(--ideal-register-card-width),
     var(--max-register-card-width)
   );
+}
 
-  --min-stepper-card-width: calc(var(--min-app-width) - var(--padding-x2));
-  --ideal-stepper-card-width: calc(100% - var(--padding-x2));
-  --max-stepper-card-width: calc(var(--max-input-width) + var(--padding-x2));
-  --stepper-card-width: clamp(
-    var(--min-stepper-card-width),
-    var(--ideal-stepper-card-width),
-    var(--max-stepper-card-width)
-  );
+/* .chart-card {
+  width: var(--chart-width);
+  height: clamp(350px * 0.62, calc(350px - 2em), 700px);
+} */
 
-  --min-chart-controls-card-width: calc(
-    var(--min-app-width) - var(--padding-x2)
-  );
-  --ideal-chart-controls-card-width: calc(100% - var(--padding-x2));
-  --max-chart-controls-card-width: calc(
-    var(--max-input-width) + var(--padding-x2)
-  );
-  --chart-controls-card-width: clamp(
-    var(--min-chart-controls-card-width),
-    var(--ideal-chart-controls-card-width),
-    var(--max-chart-controls-card-width)
-  );
+.chart {
+  width: var(--chart-width);
+  height: clamp(350px * 0.38, calc(350px - 2em), 700px);
+}
 
-  --min-directory-card-width: calc(var(--min-app-width) - var(--padding-x2));
-  --ideal-directory-card-width: calc(100% - var(--padding-x2));
-  --max-directory-card-width: calc(var(--max-input-width) + var(--padding-x2));
-  --directory-card-width: clamp(
-    var(--min-directory-card-width),
-    var(--ideal-directory-card-width),
-    var(--max-directory-card-width)
-  );
+.accessible-input {
+  width: var(--input-width);
+}
+
+.directory-card {
+  width: var(--card-width);
 }
 
 .burger {
@@ -178,17 +167,12 @@
         width: 100%;
 
         .stepper-card {
-          width: clamp(
-            var(--min-stepper-card-width),
-            var(--ideal-stepper-card-width),
-            var(--max-stepper-card-width)
-          );
+          width: var(--card-width);
           border-radius: 1em;
           transition: box-shadow 0.17s ease-in-out;
         }
 
         .stepper-card.active {
-          border-radius: 1em;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
       }
@@ -199,9 +183,9 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      padding: var(--padding);
       row-gap: var(--row-gap);
       width: 100%;
+      padding: var(--padding);
 
       .register-form-header {
         display: flex;
@@ -226,8 +210,74 @@
         row-gap: var(--row-gap);
         width: 100%;
       }
+
+      .form-review {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: var(--row-gap);
+        padding-top: var(--padding);
+
+        .review-section-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+
+          .step-inputs-container {
+            padding: var(--padding) 0px;
+            display: flex;
+            flex-direction: column;
+            row-gap: 0.25em;
+
+            .input-section {
+              padding: 0.25em 0px;
+              display: grid;
+              grid-template-columns: 3fr 8fr;
+              column-gap: 2em;
+              border-radius: 0.38em;
+              padding: 0.38em;
+            }
+
+            .input-section.isEven {
+              background: hsla(0, 0%, 0%, 0.03);
+            }
+          }
+        }
+      }
     }
   }
+}
+
+.statistics-card {
+  width: var(--statistics-card-width);
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding);
+  align-items: flex-start;
+  justify-content: center;
+  row-gap: var(--padding);
+  border-radius: var(--border-radius);
+  border: var(--border);
+}
+
+.statistics-card.c0 {
+  grid-area: c0;
+  justify-self: flex-start;
+}
+.statistics-card.c1 {
+  grid-area: c1;
+}
+.statistics-card.c2 {
+  grid-area: c2;
+}
+.statistics-card.c3 {
+  grid-area: c3;
+  justify-self: flex-start;
+}
+.statistics-card.c4 {
+  grid-area: c4;
+  justify-self: flex-start;
 }
 
 .app-shell {
@@ -237,163 +287,129 @@
 
   .header {}
 
-  .main.opened {}
-  .main {
-    width: var(--main-width);
-    display: flex;
-    flex-direction: column;
-    padding: var(--padding);
-
-    .dashboard-layout-container {}
-  }
-
-  .sidebar.opened {}
-  .sidebar {}
-}
-
-/* .main {
-  display: flex;
-  width: var(--main-width);
-} */
-
-.chart-card {
-  width: var(--chart-width);
-  height: clamp(350px * 0.62, calc(350px - 2em), 700px);
-}
-
-.chart {
-  /* min-width: 350px;
-  max-width: var(--max-chart-width); */
-  width: var(--chart-width);
-  height: clamp(350px * 0.62, calc(350px - 2em), 700px);
-}
-
-.accessible-input {
-  width: clamp(
-    var(--min-input-width),
-    var(--ideal-input-width),
-    var(--max-input-width)
-  );
-}
-
-.dashboard-bar-line-layout {
-  padding: var(--padding);
-}
-
-.directory-card {
-  width: clamp(
-    var(--min-directory-card-width),
-    var(--ideal-directory-card-width),
-    var(--max-directory-card-width)
-  );
-}
-
-.overview-card {
-  width: clamp(
-    var(--min-card-width),
-    var(--ideal-card-width),
-    var(--max-card-width)
-  );
-}
-
-.chart-and-controls {
-  width: 100%;
-  height: calc(100vh - var(--dashboard-header-height));
-  /* display: grid;
-  grid-template-rows: 7fr 3fr; */
-  display: flex;
-  flex-direction: column;
-  /* row-gap: var(--row-gap); */
-}
-
-.chart-controls {
-  /* height: calc(62vh - var(--dashboard-header-height)); */
-  height: 50vh;
-  overflow-y: scroll;
-  width: calc(100% - 1em);
-}
-
-.chart-controls-card {
-  width: clamp(
-    var(--min-chart-controls-card-width),
-    var(--ideal-chart-controls-card-width),
-    var(--max-chart-controls-card-width)
-  );
-}
-
-.chart-container {
-  height: 50vh;
-  width: 100%;
-}
-
-.chart-display {
-  height: 80%;
-  width: 100%;
-}
-
-.form-review {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: var(--row-gap);
-  padding-top: var(--padding);
-}
-
-.review-section-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.step-inputs-container {
-  padding: var(--padding);
-  display: flex;
-  flex-direction: column;
-  row-gap: 0.25em;
-}
-
-.input-section {
-  padding: 0.25em 0px;
-  display: grid;
-  grid-template-columns: 3fr 8fr;
-  column-gap: 2em;
-  border-radius: 0.38em;
-  padding: 0.38em;
-}
-
-.input-section.isEven {
-  background: hsla(0, 0%, 0%, 0.03);
-}
-
-@media screen and (max-width: 640px) {
-  .statistics-elements-container {
+  .chart-controls-container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    row-gap: var(--row-gap);
-    justify-content: center;
+
+    .controls-container {
+      height: 38vh;
+      overflow-y: scroll;
+      width: calc(100% - 1em);
+
+      .controls-card {
+        width: var(--card-width);
+      }
+    }
+
+    .chart-container {
+      height: 62vh;
+      width: 100%;
+    }
   }
+
+  .main.opened {}
+  .main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .dashboard-layout-container {
+      padding: var(--padding);
+      .header {}
+
+      .chart-section-container {
+        border-bottom: var(--border);
+        padding: var(--padding) 0px;
+
+        .chart-section-blr {
+          .chart-titles {
+            grid-area: ti;
+          }
+
+          .chart-controls-card {
+            width: var(--card-width);
+            grid-area: co;
+            padding: var(--padding) 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            row-gap: var(--padding);
+            justify-self: flex-start;
+            padding: var(--padding);
+            border: var(--border);
+            border-radius: var(--border-radius);
+
+            .footer {
+              width: var(--input-width);
+              display: flex;
+              justify-content: space-between;
+            }
+          }
+
+          .chart-card {
+            grid-area: ch;
+            border: var(--border);
+            border-radius: var(--border-radius);
+
+            .chart {}
+          }
+        }
+
+        .mobile-air {
+          display: flex;
+          flex-wrap: wrap;
+          row-gap: var(--padding);
+          column-gap: var(--column-gap);
+          padding-top: var(--padding);
+        }
+
+        .chart-section {
+          .chart-titles {
+            grid-area: ti;
+          }
+
+          .chart-controls-card {
+            /* outline: 1px solid cadetblue; */
+            width: var(--card-width);
+            grid-area: co;
+            padding: var(--padding);
+            display: flex;
+            flex-direction: column;
+            row-gap: var(--padding);
+            justify-self: flex-start;
+            border: var(--border);
+            border-radius: var(--border-radius);
+            align-items: center;
+
+            .footer {
+              width: var(--input-width);
+              display: flex;
+              justify-content: flex-end;
+            }
+          }
+
+          .chart-card {
+            grid-area: ch;
+            border: var(--border);
+            border-radius: var(--border-radius);
+
+            .chart {}
+          }
+        }
+      }
+    }
+  }
+
+  .sidebar.opened {
+    display: flex;
+    flex-direction: column;
+    padding: var(--sidebar-padding);
+  }
+  .sidebar {}
 }
 
 @media screen and (max-width: 768px) {
-  .register-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    row-gap: var(--padding-x2);
-  }
-
-  .stepper-sidebar-cards {
-    align-items: center;
-  }
-  .stepper-card.hidden {
-    display: none;
-  }
-}
-
-@media screen and (max-width: 1024px) {
   .app-shell {
     width: 100vw;
     display: flex;
@@ -420,9 +436,149 @@
   .main-sidebar-opened {
     display: none;
   }
+
+  /** register */
+  .register-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    row-gap: var(--padding-x2);
+  }
+
+  .stepper-sidebar-cards {
+    align-items: center;
+  }
+  .stepper-card.hidden {
+    display: none;
+  }
+
+  /** charts layout */
+  .chart-section {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch";
+
+    row-gap: var(--padding);
+  }
+
+  .chart-section-blr {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch";
+    /* display: flex;
+    flex-wrap: wrap; */
+    column-gap: var(--column-gap);
+    /* grid-auto-flow: column; */
+    row-gap: var(--padding);
+    width: 100%;
+  }
+
+  .chart-section {
+    /* display: flex;
+    flex-direction: column;
+    row-gap: var(--padding); */
+    /* outline: 1px solid cadetblue; */
+    display: flex;
+    flex-direction: column;
+  }
 }
 
-@media screen and (min-width: 1025px) {
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  .app-shell {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .sidebar-opened {
+    display: flex;
+    padding: var(--sidebar-padding);
+  }
+
+  .main-sidebar-opened {
+    display: none;
+  }
+
+  /** charts layout */
+  .chart-section {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch";
+    gap: var(--padding);
+    width: 100%;
+  }
+
+  .chart-section-blr {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch";
+    gap: var(--padding);
+    width: 100%;
+
+    .chart-controls-card {
+      justify-self: flex-start;
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1299px) {
   .register-card {
     display: flex;
     column-gap: var(--column-gap);
@@ -449,11 +605,114 @@
     grid-area: main;
     width: 100%;
   }
+
+  /** charts layout */
+  .chart-section {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch";
+
+    gap: var(--padding);
+  }
+
+  .chart-section-blr {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ch ch ch ch ch ch ch ch ch"
+      "ti ti ti ch ch ch ch ch ch ch ch ch"
+      "ti ti ti ch ch ch ch ch ch ch ch ch"
+      "ti ti ti ch ch ch ch ch ch ch ch ch"
+      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
+      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
+      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
+      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4";
+    /* display: flex;
+    flex-wrap: wrap; */
+    column-gap: var(--column-gap);
+    /* grid-auto-flow: column; */
+    row-gap: var(--padding);
+    width: 100%;
+  }
 }
 
 @media screen and (min-width: 1300px) {
-  .register-card {
-    display: flex;
+  .app-shell {
+    display: grid;
+    grid-template-areas:
+      "header header"
+      "sidebar main";
+  }
+
+  .header {
+    grid-area: header;
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+    width: var(--sidebar-width);
+    padding: var(--sidebar-padding);
+  }
+
+  .main {
+    grid-area: main;
+    width: 100%;
+  }
+
+  /** charts layout */
+  .chart-section {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti co co co co co co co co"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch"
+      "ti ti ti ti ch ch ch ch ch ch ch ch";
+
+    gap: var(--padding);
+  }
+
+  .chart-section-blr {
+    display: grid;
+    grid-template-areas:
+      "ti ti ti ti co co co co c0 c0 c0 c0"
+      "ti ti ti ti co co co co c0 c0 c0 c0"
+      "ti ti ti ti co co co co c0 c0 c0 c0"
+      "ti ti ti ti co co co co c0 c0 c0 c0"
+      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
+      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
+      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
+      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
+      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4";
+    /* display: flex;
+    flex-wrap: wrap; */
     column-gap: var(--column-gap);
+    /* grid-auto-flow: column; */
+    row-gap: var(--padding);
+    width: 100%;
   }
 }

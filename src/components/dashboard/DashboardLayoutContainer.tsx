@@ -1,7 +1,8 @@
-import { Box, Card, Group, Space, Title } from "@mantine/core";
+import { Box, Space, Title } from "@mantine/core";
 import React from "react";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
 import { DashboardCalendarView } from "./types";
 
@@ -55,6 +56,7 @@ function DashboardLayoutContainer(
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
+  const { windowWidth } = useWindowSize();
 
   const pieChartTitle = (
     <div className="chart-titles">
@@ -67,21 +69,21 @@ function DashboardLayoutContainer(
   );
 
   const pieChartControlsCard = (
-    <Card className="chart-controls-card">
+    <div className="chart-controls-card">
       {pieChartYAxisSelectInput}
-      {expandPieChartButton}
-    </Card>
+      <div className="footer">{expandPieChartButton}</div>
+    </div>
   );
 
   const pieChartCard = (
-    <Card className="chart-card">
-      <Card.Section>{pieChart}</Card.Section>
-    </Card>
+    <div className="chart-card">
+      {pieChart}
+    </div>
   );
 
   const pieChartSectionMaybe = (
     <div className="chart-section-container">
-      <section className="pie-chart-section">
+      <section className="chart-section">
         {pieChartTitle}
         {pieChartControlsCard}
         {pieChartCard}
@@ -147,58 +149,69 @@ function DashboardLayoutContainer(
   );
 
   const barLineRadialChartControlsCard = (
-    <Card className="chart-controls-card">
+    <div className="chart-controls-card">
       {barLineRadialChartYAxisSelectInput}
-      <Group w="100%" position="apart">
+      <div className="footer">
         {barLineRadialChartKindSegmentedControl}
         {expandBarLineRadialChartButton}
-      </Group>
-    </Card>
+      </div>
+    </div>
   );
 
   const barLineRadialChartCard = (
-    <Card className="chart-card">
-      <Card.Section>{barLineRadialChart}</Card.Section>
-    </Card>
-  );
-
-  const barLineRadialSection = (
-    <div className="chart-section-container">
-      <section className="bar-line-radial-chart-section">
-        {barLineRadialChartTitle}
-        {barLineRadialChartControlsCard}
-        {cardsWithStatisticsElements}
-        {barLineRadialChartCard}
-      </section>
+    <div className="chart-card">
+      {barLineRadialChart}
     </div>
   );
+
+  const barLineRadialSection = windowWidth < 1024
+    ? (
+      <div className="chart-section-container">
+        <section className="chart-section-blr">
+          {barLineRadialChartTitle}
+          {barLineRadialChartControlsCard}
+          {barLineRadialChartCard}
+        </section>
+        <div className="mobile-air">{cardsWithStatisticsElements}</div>
+      </div>
+    )
+    : (
+      <div className="chart-section-container">
+        <section className="chart-section-blr">
+          {barLineRadialChartTitle}
+          {barLineRadialChartControlsCard}
+          {barLineRadialChartCard}
+          {cardsWithStatisticsElements}
+        </section>
+      </div>
+    );
 
   const calendarChartTitle = (
     <div className="chart-titles">
       {calendarChartHeading
-        ? calendarChartHeading.split(" ").map((word) => (
-          <Title order={3} size={24}>{word}</Title>
+        ? calendarChartHeading.split(" ").map((word, idx) => (
+          <Title order={3} size={24} key={`${idx}-${word}`}>{word}</Title>
         ))
         : null}
     </div>
   );
 
   const calendarChartControlsCard = (
-    <Card className="chart-controls-card">
+    <div className="chart-controls-card">
       {calendarChartYAxisSelectInput}
-      {expandCalendarChartButton}
-    </Card>
+      <div className="footer">{expandCalendarChartButton}</div>
+    </div>
   );
 
   const calendarChartCard = (
-    <Card className="chart-card">
-      <Card.Section>{calendarChart}</Card.Section>
-    </Card>
+    <div className="chart-card">
+      {calendarChart}
+    </div>
   );
 
   const calendarSection = (
     <div className="chart-section-container">
-      <section className="calendar-chart-section">
+      <section className="chart-section">
         {calendarChartTitle}
         {calendarChartControlsCard}
         {calendarChartCard}
@@ -245,10 +258,14 @@ function DashboardLayoutContainer(
       {pieChartSectionMaybe}
 
       <Space h="xl" />
+      <Space h="xl" />
       {barLineRadialSection}
 
       <Space h="xl" />
       {calendarSection}
+      <Space h="xl" />
+      <Space h="xl" />
+      <Space h="xl" />
     </div>
   );
 

@@ -58,7 +58,7 @@ function returnDashboardCardElement(
   }: DashboardCardInfo,
 ): React.JSX.Element {
   const cardHeading = (
-    <Group position="apart">
+    <Group position="apart" w="100%">
       <Text
         size={24}
         weight={400}
@@ -95,17 +95,17 @@ function returnDashboardCardElement(
   );
 
   const createdChartCard = (
-    <Card
-      bg={cardBgGradient}
-      className={`statistics-card i${idx ?? 0}`}
+    <div
+      // bg={cardBgGradient}
+      className={`statistics-card c${idx ?? 0}`}
       // shadow="xs"
-      radius="md"
-      withBorder
+      // radius="md"
+      // withBorder
     >
       {cardHeading}
       {cardBody}
       {cardFooter}
-    </Card>
+    </div>
   );
 
   return createdChartCard;

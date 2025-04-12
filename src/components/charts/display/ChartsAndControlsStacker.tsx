@@ -115,7 +115,7 @@ function ChartsAndGraphsControlsStacker({
 
   return (
     <Card
-      className="chart-controls-card"
+      className="controls-card"
       radius="md"
       bg={cardBgGradient}
       withBorder

@@ -1,4 +1,4 @@
-import { Card, Group, Stack, Title, TitleOrder } from "@mantine/core";
+import { Box, Card, Stack, Title, TitleOrder } from "@mantine/core";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
@@ -37,29 +37,24 @@ function ChartAndControlsDisplay(
   } = props;
 
   return (
-    <div className="chart-and-controls">
-      <Card
-        shadow="md"
-        className="chart-controls"
-        style={{ background: bgGradient, borderRadius: "0px 0px 0.5em 0.5em" }}
-        px={0}
-      >
+    <Box className="chart-controls-container">
+      <Card bg={bgGradient} className="controls-container" shadow="md" px={0}>
         <Title order={2} pl="md">Chart Controls</Title>
         {chartControlsStack}
       </Card>
 
-      <Group
+      <Box
         className="chart-container"
         ref={chartRef}
       >
-        <Stack w="100%" align={chartTitlePosition} px="xl">
+        <Stack w="100%" align={chartTitlePosition} p="xl">
           <Title order={chartTitleSize} color={chartTitleColor}>
             {chartTitle}
           </Title>
         </Stack>
-        <div className="chart-display">{responsiveChart}</div>
-      </Group>
-    </div>
+        {responsiveChart}
+      </Box>
+    </Box>
   );
 }
 

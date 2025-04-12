@@ -54,25 +54,23 @@ function DisplayResponsiveChart() {
     console.log("inside bar");
 
     return (
-      <Stack w="100%">
-        <ResponsiveBarChart
-          barChartData={chartData}
-          chartUnitKind={chartUnitKind}
-          dashboardChartTitle={chartTitle}
-          indexBy={indexBy}
-          keys={keys}
-          tooltip={(arg) =>
-            createChartTooltipElement({
-              arg,
-              kind: "bar",
-              chartUnitKind,
-              calendarView,
-              day,
-              month,
-              year,
-            })}
-        />
-      </Stack>
+      <ResponsiveBarChart
+        barChartData={chartData}
+        chartUnitKind={chartUnitKind}
+        dashboardChartTitle={chartTitle}
+        indexBy={indexBy}
+        keys={keys}
+        tooltip={(arg) =>
+          createChartTooltipElement({
+            arg,
+            kind: "bar",
+            chartUnitKind,
+            calendarView,
+            day,
+            month,
+            year,
+          })}
+      />
     );
   }
 

@@ -1,4 +1,12 @@
-import { ColorInput, Group, Stack, Text, Title, Tooltip } from "@mantine/core";
+import {
+  Box,
+  ColorInput,
+  Group,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import { ResponsiveCalendar } from "@nivo/calendar";
 import { useEffect, useReducer, useRef } from "react";
 
@@ -170,18 +178,9 @@ function ResponsiveCalendarChart({
 
   if (hideControls) {
     return (
-      <Group
-        // h={chartHeight}
-        // w={chartWidth}
-        w="100%"
-        style={{
-          outline: "1px solid aqua",
-          // width: "clamp(350px, 100%, 618px)",
-          height: "clamp(250px, 400px, 500px)",
-        }}
-      >
+      <Box className="chart">
         {displayCalendarChart}
-      </Group>
+      </Box>
     );
   }
 

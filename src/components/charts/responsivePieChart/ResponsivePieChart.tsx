@@ -51,6 +51,7 @@ function ResponsivePieChart({
   } = useGlobalState();
 
   const {
+    cardBgGradient,
     darkColorShade,
     bgGradient,
     textColor,
@@ -254,7 +255,7 @@ function ResponsivePieChart({
 
   if (hideControls) {
     return (
-      <Box className="chart"// h={chartHeight}
+      <Box className="chart" // h={chartHeight}
         // w={chartWidth}
         // w="100%"
         // style={{
