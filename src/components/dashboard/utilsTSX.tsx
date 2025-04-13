@@ -708,37 +708,16 @@ function consolidateCardsAndStatisticsModals(
 
 function returnCardElementsForYAxisVariable(
   consolidatedCards: Map<string, React.JSX.Element>,
-  yAxisVariable: string,
+  yAxisKey: string,
   yAxisKeyMap: Map<string, Set<string>>,
 ) {
-  /* {Array.from(consolidatedCards).map(([key, card], idx) => {
-        const cardsSet = yAxisKeyMap.get(
-          yAxisVariable,
-        );
-
-        return cardsSet?.has(key)
-          ? (
-            <React.Fragment key={`${idx}-${key}`}>
-              {card}
-            </React.Fragment>
-          )
-          : null;
-      })} */
-
-  return Array.from(consolidatedCards).reduce((acc, [key, card], idx) => {
+  return Array.from(consolidatedCards).reduce((acc, [key, card]) => {
     const cardsSet = yAxisKeyMap.get(
-      yAxisVariable,
+      yAxisKey,
     );
 
     if (cardsSet?.has(key)) {
-      acc.push(
-        // <React.Fragment
-        //   key={`${idx}-${key}`}
-        // >
-        //   {card}
-        // </React.Fragment>,
-        card,
-      );
+      acc.push(card);
     }
 
     return acc;

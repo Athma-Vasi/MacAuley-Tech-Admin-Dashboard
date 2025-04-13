@@ -1,15 +1,11 @@
 type PERTAction = {
-  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis";
   setBarLineRadialChartKind: "setBarLineRadialChartKind";
-  setCalendarChartYAxis: "setCalendarChartYAxis";
-  setPieChartYAxisVariable: "setPieChartYAxisVariable";
+  setYAxisKey: "setYAxisKey";
 };
 
 const pertAction: PERTAction = {
-  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis",
   setBarLineRadialChartKind: "setBarLineRadialChartKind",
-  setCalendarChartYAxis: "setCalendarChartYAxis",
-  setPieChartYAxisVariable: "setPieChartYAxisVariable",
+  setYAxisKey: "setYAxisKey",
 };
 
 export { pertAction };

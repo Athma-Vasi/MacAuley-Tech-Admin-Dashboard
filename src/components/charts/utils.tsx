@@ -34,7 +34,7 @@ type CreateChartTooltipElementInput = ChartKindTooltipValue & {
   calendarView?: DashboardCalendarView; // only for radial chart
   day?: string; // only for pie chart
   month?: string; // only for pie chart
-  calendarChartYAxis?: string; // only for calendar chart
+  yAxisKey?: string; // only for calendar chart
   chartUnitKind: ChartUnitKind;
   year?: string; // only for pie chart
 };
@@ -42,7 +42,7 @@ type CreateChartTooltipElementInput = ChartKindTooltipValue & {
 function createChartTooltipElement(
   {
     calendarView,
-    calendarChartYAxis,
+    yAxisKey,
     arg,
     day,
     month,
@@ -74,7 +74,7 @@ function createChartTooltipElement(
         formattedValue: addCommaSeparator(value),
         xAxis: {
           kind: "calendar",
-          calendarChartYAxis: splitCamelCase(calendarChartYAxis ?? ""),
+          calendarChartYAxis: splitCamelCase(yAxisKey ?? ""),
           day: day_,
           month,
           year,

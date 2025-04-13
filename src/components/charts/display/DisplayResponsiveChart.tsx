@@ -1,4 +1,3 @@
-import { Stack } from "@mantine/core";
 import {
   ResponsiveBarChart,
   ResponsiveCalendarChart,
@@ -42,7 +41,7 @@ function DisplayResponsiveChart() {
     const {
       calendarView,
       chartData,
-      chartTitle,
+      yAxisKeyChartHeading,
       chartUnitKind,
       day,
       indexBy,
@@ -57,7 +56,7 @@ function DisplayResponsiveChart() {
       <ResponsiveBarChart
         barChartData={chartData}
         chartUnitKind={chartUnitKind}
-        dashboardChartTitle={chartTitle}
+        dashboardChartTitle={yAxisKeyChartHeading}
         indexBy={indexBy}
         keys={keys}
         tooltip={(arg) =>
@@ -80,19 +79,19 @@ function DisplayResponsiveChart() {
     }
 
     const {
-      calendarChartYAxis,
+      yAxisKeyChartHeading,
       chartData,
-      chartTitle,
       chartUnitKind,
       day,
       month,
       year,
+      yAxisKey,
     } = expandCalendarChartData;
 
     return (
       <ResponsiveCalendarChart
         calendarChartData={chartData}
-        dashboardChartTitle={chartTitle}
+        dashboardChartTitle={yAxisKeyChartHeading}
         from={`${year}-01-01`}
         to={`${year}-12-31`}
         tooltip={(arg) =>
@@ -100,7 +99,7 @@ function DisplayResponsiveChart() {
             arg,
             kind: "calendar",
             chartUnitKind,
-            calendarChartYAxis,
+            yAxisKey,
             day,
             month,
             year,
@@ -114,13 +113,13 @@ function DisplayResponsiveChart() {
       return null;
     }
 
-    const { calendarView, chartData, chartTitle, chartUnitKind } =
+    const { calendarView, chartData, yAxisKeyChartHeading, chartUnitKind } =
       expandLineChartData;
 
     return (
       <ResponsiveLineChart
         chartUnitKind={chartUnitKind}
-        dashboardChartTitle={chartTitle}
+        dashboardChartTitle={yAxisKeyChartHeading}
         lineChartData={chartData}
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -146,13 +145,13 @@ function DisplayResponsiveChart() {
       return null;
     }
 
-    const { chartData, chartTitle, chartUnitKind, day, month, year } =
+    const { chartData, yAxisKeyChartHeading, chartUnitKind, day, month, year } =
       expandPieChartData;
 
     return (
       <ResponsivePieChart
         chartUnitKind={chartUnitKind}
-        dashboardChartTitle={chartTitle}
+        dashboardChartTitle={yAxisKeyChartHeading}
         pieChartData={chartData}
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -172,11 +171,12 @@ function DisplayResponsiveChart() {
       return null;
     }
 
-    const { chartData, chartTitle, chartUnitKind } = expandRadialBarChartData;
+    const { chartData, yAxisKeyChartHeading, chartUnitKind } =
+      expandRadialBarChartData;
 
     return (
       <ResponsiveRadialBarChart
-        dashboardChartTitle={chartTitle}
+        dashboardChartTitle={yAxisKeyChartHeading}
         radialBarChartData={chartData}
         tooltip={(arg) =>
           createChartTooltipElement({

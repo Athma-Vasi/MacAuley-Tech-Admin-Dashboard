@@ -1,4 +1,5 @@
 import { CheckboxRadioSelectData } from "../../../types";
+import { ChartsToYAxisKeysMap } from "../types";
 import {
   FinancialMetricsBarLineChartsKey,
   FinancialMetricsCalendarChartsKeyPERT,
@@ -35,6 +36,20 @@ const FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA: CheckboxRadioSelectData<
   { label: "Sales", value: "sales" },
   { label: "In-Store", value: "inStore" },
   { label: "Online", value: "online" },
+];
+
+const FINANCIAL_PERT_Y_AXIS_DATA: CheckboxRadioSelectData<
+  | FinancialMetricsPieChartsKey
+  | FinancialMetricsBarLineChartsKey
+  | FinancialMetricsCalendarChartsKeyPERT
+> = [
+  { label: "Total", value: "total" }, // blr, calendar
+  { label: "All", value: "all" }, // pie, blr
+  { label: "Overview", value: "overview" }, // pie, blr
+  { label: "Repair", value: "repair" }, // blr, calendar
+  { label: "Sales", value: "sales" }, // blr, calendar
+  { label: "In-Store", value: "inStore" }, // blr, calendar
+  { label: "Online", value: "online" }, // blr, calendar
 ];
 
 const FINANCIAL_OTHERS_Y_AXIS_DATA: CheckboxRadioSelectData<
@@ -100,12 +115,56 @@ const FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
   ["conversionRate", new Set(["Conversion Rate"])],
 ]);
 
+const FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
+  bar: new Set([
+    "total",
+    "all",
+    "overview",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+  ]),
+  line: new Set([
+    "total",
+    "all",
+    "overview",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+  ]),
+  radial: new Set([
+    "total",
+    "all",
+    "overview",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+  ]),
+  pie: new Set([
+    "overview",
+    "all",
+    "sales",
+  ]),
+  calendar: new Set([
+    "total",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+  ]),
+};
+
 export {
+  FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP,
   FINANCIAL_METRICS_CATEGORY_DATA,
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
   FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
   FINANCIAL_PERT_PIE_Y_AXIS_DATA,
+  FINANCIAL_PERT_Y_AXIS_DATA,
   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   MONEY_SYMBOL_CATEGORIES,
   PERCENTAGE_SYMBOL_CATEGORIES,

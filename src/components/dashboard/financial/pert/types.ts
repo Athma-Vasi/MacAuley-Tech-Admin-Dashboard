@@ -1,34 +1,19 @@
-import { ChartKindSegment } from "../../types";
-import {
-  FinancialMetricsBarLineChartsKey,
-  FinancialMetricsCalendarChartsKeyPERT,
-  FinancialMetricsPieChartsKey,
-} from "../chartsData";
+import { ChartKindSegment, FinancialYAxisKey } from "../../types";
 import { PERTAction } from "./actions";
 
 type PERTState = {
-  barLineRadialChartYAxis: FinancialMetricsBarLineChartsKey;
   barLineRadialChartKind: ChartKindSegment;
-  calendarChartYAxis: FinancialMetricsCalendarChartsKeyPERT;
-  pieChartYAxis: FinancialMetricsPieChartsKey;
+  yAxisKey: FinancialYAxisKey;
 };
 
 type PERTDispatch =
-  | {
-    action: PERTAction["setBarLineRadialChartYAxis"];
-    payload: FinancialMetricsBarLineChartsKey;
-  }
   | {
     action: PERTAction["setBarLineRadialChartKind"];
     payload: ChartKindSegment;
   }
   | {
-    action: PERTAction["setCalendarChartYAxis"];
-    payload: FinancialMetricsCalendarChartsKeyPERT;
-  }
-  | {
-    action: PERTAction["setPieChartYAxisVariable"];
-    payload: FinancialMetricsPieChartsKey;
+    action: PERTAction["setYAxisKey"];
+    payload: FinancialYAxisKey;
   };
 
 export type { PERTDispatch, PERTState };

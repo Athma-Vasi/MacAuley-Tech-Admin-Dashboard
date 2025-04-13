@@ -48,12 +48,13 @@ import {
 import {
   FinancialMetricsCalendarCharts,
   type FinancialMetricsCharts,
+  FinancialMetricsPieChartsKey,
   returnCalendarViewFinancialCharts,
 } from "../chartsData";
 import {
+  FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP,
   FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
-  FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
-  FINANCIAL_PERT_PIE_Y_AXIS_DATA,
+  FINANCIAL_PERT_Y_AXIS_DATA,
   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   PERT_SET,
 } from "../constants";
@@ -101,10 +102,8 @@ function PERT({
   );
 
   const {
-    barLineRadialChartYAxis,
     barLineRadialChartKind,
-    calendarChartYAxis,
-    pieChartYAxis,
+    yAxisKey,
   } = pertState;
 
   const charts = returnCalendarViewFinancialCharts(
@@ -129,32 +128,29 @@ function PERT({
     expandPieChartNavigateLink,
     expandRadialBarChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineRadialChartYAxis,
-    calendarChartYAxis,
     calendarView,
     metricCategory,
     metricsView,
-    pieChartYAxis,
+    yAxisKey,
   });
 
-  const { barLineRadialChartHeading, calendarChartHeading, pieChartHeading } =
-    returnChartTitles({
-      barLineRadialChartYAxis,
-      calendarView,
-      metricCategory,
-      storeLocation,
-      calendarChartYAxis,
-      pieChartYAxis,
-    });
+  const {
+    yAxisKeyChartHeading,
+  } = returnChartTitles({
+    calendarView,
+    metricCategory,
+    storeLocation,
+    yAxisKey,
+  });
 
-  const pieChartYAxisSelectInput = (
+  const yAxisSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: FINANCIAL_PERT_PIE_Y_AXIS_DATA,
+        data: FINANCIAL_PERT_Y_AXIS_DATA,
         name: "Y-Axis",
         parentDispatch: pertDispatch,
-        validValueAction: pertAction.setPieChartYAxisVariable,
-        value: pieChartYAxis,
+        validValueAction: pertAction.setYAxisKey,
+        value: yAxisKey,
       }}
     />
   );
@@ -167,6 +163,8 @@ function PERT({
     chartUnitKind,
     day,
     month,
+    yAxisKey,
+    yAxisKeyChartHeading,
     year,
   };
 
@@ -184,9 +182,8 @@ function PERT({
             action: globalAction.setExpandPieChartData,
             payload: {
               ...commonPayload,
-              chartData: pieCharts[pieChartYAxis],
+              chartData: pieCharts[yAxisKey as FinancialMetricsPieChartsKey],
               chartKind: "pie",
-              chartTitle: pieChartHeading,
             },
           });
 
@@ -205,7 +202,7 @@ function PERT({
     <ResponsivePieChart
       chartUnitKind={chartUnitKind}
       hideControls
-      pieChartData={pieCharts[pieChartYAxis]}
+      pieChartData={pieCharts[yAxisKey as FinancialMetricsPieChartsKey]}
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
@@ -255,9 +252,8 @@ function PERT({
               action: globalAction.setExpandBarChartData,
               payload: {
                 ...commonPayload,
-                chartData: barCharts[barLineRadialChartYAxis],
+                chartData: barCharts[yAxisKey],
                 chartKind: "bar",
-                chartTitle: barLineRadialChartHeading,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
               },
@@ -274,9 +270,8 @@ function PERT({
               action: globalAction.setExpandLineChartData,
               payload: {
                 ...commonPayload,
-                chartData: lineCharts[barLineRadialChartYAxis],
+                chartData: lineCharts[yAxisKey],
                 chartKind: "line",
-                chartTitle: barLineRadialChartHeading,
               },
             });
 
@@ -291,9 +286,8 @@ function PERT({
               action: globalAction.setExpandRadialBarChartData,
               payload: {
                 ...commonPayload,
-                chartData: lineCharts[barLineRadialChartYAxis],
+                chartData: lineCharts[yAxisKey],
                 chartKind: "radial",
-                chartTitle: barLineRadialChartHeading,
               },
             });
 
@@ -315,22 +309,10 @@ function PERT({
     />
   );
 
-  const barLineRadialChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: pertDispatch,
-        validValueAction: pertAction.setBarLineRadialChartYAxis,
-        value: barLineRadialChartYAxis,
-      }}
-    />
-  );
-
   const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineRadialChartYAxis]}
+        barChartData={barCharts[yAxisKey]}
         chartUnitKind={chartUnitKind}
         hideControls
         indexBy={barChartIndexBy}
@@ -348,7 +330,7 @@ function PERT({
       <ResponsiveLineChart
         chartUnitKind={chartUnitKind}
         hideControls
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        lineChartData={lineCharts[yAxisKey]}
         xFormat={(x) =>
           `${
             calendarView === "Daily"
@@ -369,7 +351,7 @@ function PERT({
     )
     : (
       <ResponsiveRadialBarChart
-        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        radialBarChartData={lineCharts[yAxisKey]}
         hideControls
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -382,7 +364,7 @@ function PERT({
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxis,
+    yAxisKey,
     metricCategory,
   );
 
@@ -400,10 +382,8 @@ function PERT({
             action: globalAction.setExpandCalendarChartData,
             payload: {
               ...commonPayload,
-              calendarChartYAxis,
               chartData: calendarChartData,
               chartKind: "calendar",
-              chartTitle: calendarChartHeading,
             },
           });
 
@@ -418,18 +398,6 @@ function PERT({
     />
   );
 
-  const calendarChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIAL_PERT_CALENDAR_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: pertDispatch,
-        validValueAction: pertAction.setCalendarChartYAxis,
-        value: calendarChartYAxis,
-      }}
-    />
-  );
-
   const calendarChart = (
     <ResponsiveCalendarChart
       calendarChartData={calendarChartData}
@@ -439,9 +407,9 @@ function PERT({
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
-          calendarChartYAxis,
           chartUnitKind,
           kind: "calendar",
+          yAxisKey,
         })}
     />
   );
@@ -490,32 +458,28 @@ function PERT({
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineRadialChartYAxis,
+    yAxisKey,
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
   return (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
-      barLineRadialChartHeading={barLineRadialChartHeading}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
-      barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
-      calendarChartHeading={calendarChartHeading}
-      calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
+      chartsToYAxisKeysMap={FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}
-      overviewCards={pertOverviewCards}
       pieChart={pieChart}
-      pieChartHeading={pieChartHeading}
-      pieChartYAxisSelectInput={pieChartYAxisSelectInput}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
       statisticsModals={statisticsModals}
+      yAxisKey={yAxisKey}
+      yAxisKeyChartHeading={yAxisKeyChartHeading}
+      yAxisKeySelectInput={yAxisSelectInput}
     />
   );
 }

@@ -47,6 +47,7 @@ import type {
   DashboardMetricsView,
   DaysInMonthsInYears,
   FinancialMetricCategories,
+  FinancialYAxisKey,
   LocationYearSpread,
   Month,
   MonthlyFinancialMetric,
@@ -3752,21 +3753,17 @@ function excludeTodayFromCalendarView() {
 
 function createExpandChartNavigateLinks(
   {
-    barLineRadialChartYAxis,
     calendarView,
     metricCategory,
     metricsView,
-    calendarChartYAxis,
-    pieChartYAxis,
     subMetric,
+    yAxisKey,
   }: {
-    barLineRadialChartYAxis: string;
-    calendarChartYAxis?: string;
     calendarView: DashboardCalendarView;
     metricCategory?: string;
     metricsView: DashboardMetricsView;
-    pieChartYAxis?: string;
     subMetric?: string;
+    yAxisKey: FinancialYAxisKey;
   },
 ) {
   const genericLink = `/dashboard/chart/${calendarView.toLowerCase()}${
@@ -3783,54 +3780,49 @@ function createExpandChartNavigateLinks(
       : ""
   }`;
 
-  const barLineRadialVariable = splitCamelCase(
-    barLineRadialChartYAxis,
+  const yAxisKeySplit = splitCamelCase(
+    yAxisKey,
   ).toLowerCase().split(" ").join("-");
 
   return {
-    expandBarChartNavigateLink: `${genericLink}-${barLineRadialVariable}-bar`,
-    expandCalendarChartNavigateLink:
-      `${genericLink}-${calendarChartYAxis}-calendar`,
-    expandLineChartNavigateLink: `${genericLink}-${barLineRadialVariable}-line`,
-    expandPieChartNavigateLink: `${genericLink}${
-      pieChartYAxis ? `-${pieChartYAxis}` : ""
-    }-pie`,
-    expandRadialBarChartNavigateLink:
-      `${genericLink}-${barLineRadialVariable}-radial-bar`,
+    expandBarChartNavigateLink: `${genericLink}-${yAxisKeySplit}-bar`,
+    expandCalendarChartNavigateLink: `${genericLink}-${yAxisKeySplit}-calendar`,
+    expandLineChartNavigateLink: `${genericLink}-${yAxisKeySplit}-line`,
+    expandPieChartNavigateLink: `${genericLink}${yAxisKeySplit}-pie`,
+    expandRadialBarChartNavigateLink: `${genericLink}-${yAxisKeySplit}-radial`,
   };
 }
 
 function returnChartTitles(
   {
-    barLineRadialChartYAxis,
-    calendarChartYAxis,
     calendarView,
     metricCategory,
-    pieChartYAxis,
     storeLocation,
     subMetric = "",
+    yAxisKey,
   }: {
-    barLineRadialChartYAxis: string;
-    calendarChartYAxis?: string;
     calendarView: DashboardCalendarView;
     metricCategory: string;
-    pieChartYAxis?: string;
     storeLocation: AllStoreLocations;
     subMetric?: string;
+    yAxisKey?: FinancialYAxisKey;
   },
 ) {
   return {
-    barLineRadialChartHeading: `${calendarView} ${
-      splitCamelCase(metricCategory)
-    } ${splitCamelCase(subMetric)} ${
-      splitCamelCase(barLineRadialChartYAxis)
-    } for ${storeLocation}`,
-    calendarChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
+    // barLineRadialChartHeading: `${calendarView} ${
+    //   splitCamelCase(metricCategory)
+    // } ${splitCamelCase(subMetric)} ${
+    //   splitCamelCase(barLineRadialChartYAxis)
+    // } for ${storeLocation}`,
+    // calendarChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
+    //   splitCamelCase(subMetric)
+    // } ${splitCamelCase(calendarChartYAxis ?? "")} for ${storeLocation}`,
+    // pieChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
+    //   splitCamelCase(subMetric)
+    // } ${splitCamelCase(pieChartYAxis ?? "")} for ${storeLocation}`,
+    yAxisKeyChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
       splitCamelCase(subMetric)
-    } ${splitCamelCase(calendarChartYAxis ?? "")} for ${storeLocation}`,
-    pieChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
-      splitCamelCase(subMetric)
-    } ${splitCamelCase(pieChartYAxis ?? "")} for ${storeLocation}`,
+    } ${splitCamelCase(yAxisKey ?? "")} for ${storeLocation}`,
   };
 }
 

@@ -94,10 +94,11 @@ interface ThemeObject extends MantineThemeOverride {
 
 type CustomizeChartsData = {
   calendarView: DashboardCalendarView;
-  chartTitle: string;
   chartUnitKind: ChartUnitKind;
   day: string;
   month: string;
+  yAxisKey: string;
+  yAxisKeyChartHeading: string;
   year: string;
 };
 
@@ -109,7 +110,6 @@ type ExpandBarChartData = CustomizeChartsData & {
 };
 
 type ExpandCalendarChartData = CustomizeChartsData & {
-  calendarChartYAxis: string;
   chartKind: "calendar";
   chartData: CalendarChartData[];
 };

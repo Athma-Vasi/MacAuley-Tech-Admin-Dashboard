@@ -1,5 +1,10 @@
 import type { StoreLocation } from "../../types";
 import type { DashboardAction } from "./actions";
+import {
+  FinancialMetricsBarLineChartsKey,
+  FinancialMetricsCalendarChartsKeyPERT,
+  FinancialMetricsPieChartsKey,
+} from "./financial/chartsData";
 
 type DashboardCalendarView = "Daily" | "Monthly" | "Yearly";
 type DashboardMetricsView = "Financials" | "Customers" | "Products" | "Repairs";
@@ -278,10 +283,21 @@ type BusinessMetric = {
   repairMetrics: RepairMetric[];
 };
 
+type FinancialYAxisKey =
+  | FinancialMetricsBarLineChartsKey
+  | FinancialMetricsCalendarChartsKeyPERT
+  | FinancialMetricsPieChartsKey;
+
+type ChartsToYAxisKeysMap = Record<
+  ChartKindSegment | "pie" | "calendar",
+  Set<FinancialYAxisKey>
+>;
+
 export type {
   AllStoreLocations,
   BusinessMetric,
   ChartKindSegment,
+  ChartsToYAxisKeysMap,
   CustomerDailyMetric,
   CustomerMetrics,
   CustomerMonthlyMetric,
@@ -298,6 +314,7 @@ export type {
   DashboardState,
   DaysInMonthsInYears,
   FinancialMetricCategories,
+  FinancialYAxisKey,
   LocationYearSpread,
   Month,
   MonthlyFinancialMetric,
