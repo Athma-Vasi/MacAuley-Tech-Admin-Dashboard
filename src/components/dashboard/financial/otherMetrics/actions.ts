@@ -1,13 +1,11 @@
 type OtherMetricsAction = {
-  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis";
   setBarLineRadialChartKind: "setBarLineRadialChartKind";
-  setCalendarChartYAxis: "setCalendarChartYAxis";
+  setYAxisKey: "setYAxisKey";
 };
 
 const otherMetricsAction: OtherMetricsAction = {
-  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis",
   setBarLineRadialChartKind: "setBarLineRadialChartKind",
-  setCalendarChartYAxis: "setCalendarChartYAxis",
+  setYAxisKey: "setYAxisKey",
 };
 
 export { otherMetricsAction };

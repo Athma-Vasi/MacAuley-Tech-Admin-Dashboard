@@ -3763,7 +3763,7 @@ function createExpandChartNavigateLinks(
     metricCategory?: string;
     metricsView: DashboardMetricsView;
     subMetric?: string;
-    yAxisKey: FinancialYAxisKey;
+    yAxisKey: string;
   },
 ) {
   const genericLink = `/dashboard/chart/${calendarView.toLowerCase()}${
@@ -3805,7 +3805,7 @@ function returnChartTitles(
     metricCategory: string;
     storeLocation: AllStoreLocations;
     subMetric?: string;
-    yAxisKey?: FinancialYAxisKey;
+    yAxisKey: string;
   },
 ) {
   return {

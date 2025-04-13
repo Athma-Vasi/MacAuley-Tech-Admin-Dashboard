@@ -25,8 +25,8 @@ type DashboardLayoutContainerProps = {
   semanticLabel?: string;
   statisticsModals: React.JSX.Element[];
   yAxisKey: string;
-  yAxisKeySelectInput: React.JSX.Element;
   yAxisKeyChartHeading: string;
+  yAxisKeySelectInput: React.JSX.Element;
 };
 
 function DashboardLayoutContainer(

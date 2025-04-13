@@ -143,7 +143,7 @@ function PERT({
     yAxisKey,
   });
 
-  const yAxisSelectInput = (
+  const yAxisKeySelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: FINANCIAL_PERT_Y_AXIS_DATA,
@@ -479,7 +479,7 @@ function PERT({
       statisticsModals={statisticsModals}
       yAxisKey={yAxisKey}
       yAxisKeyChartHeading={yAxisKeyChartHeading}
-      yAxisKeySelectInput={yAxisSelectInput}
+      yAxisKeySelectInput={yAxisKeySelectInput}
     />
   );
 }

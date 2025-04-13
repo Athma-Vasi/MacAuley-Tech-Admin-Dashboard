@@ -49,6 +49,7 @@ import {
   type FinancialMetricsCharts,
 } from "../chartsData";
 import {
+  FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP,
   FINANCIAL_OTHERS_Y_AXIS_DATA,
   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
@@ -96,9 +97,8 @@ function OtherMetrics({
   );
 
   const {
-    barLineRadialChartYAxis,
     barLineRadialChartKind,
-    calendarChartYAxis,
+    yAxisKey,
   } = otherMetricsState;
 
   const charts = calendarView === "Daily"
@@ -116,21 +116,31 @@ function OtherMetrics({
     expandLineChartNavigateLink,
     expandRadialBarChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineRadialChartYAxis,
-    calendarChartYAxis,
     calendarView,
     metricCategory,
     metricsView,
+    yAxisKey,
   });
 
-  const { barLineRadialChartHeading, calendarChartHeading } = returnChartTitles(
+  const { yAxisKeyChartHeading } = returnChartTitles(
     {
-      barLineRadialChartYAxis,
       calendarView,
       metricCategory,
       storeLocation,
-      calendarChartYAxis,
+      yAxisKey,
     },
+  );
+
+  const yAxisKeySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: FINANCIAL_OTHERS_Y_AXIS_DATA,
+        name: "Y-Axis",
+        parentDispatch: otherMetricsDispatch,
+        validValueAction: otherMetricsAction.setYAxisKey,
+        value: yAxisKey,
+      }}
+    />
   );
 
   const barLineRadialChartKindSegmentedControl = (
@@ -146,9 +156,7 @@ function OtherMetrics({
     />
   );
 
-  const barLineRadialUnit = barLineRadialChartYAxis === "averageOrderValue"
-    ? "CAD"
-    : "%";
+  const barLineRadialUnit = yAxisKey === "averageOrderValue" ? "CAD" : "%";
   const barChartIndexBy = calendarView === "Daily"
     ? "Days"
     : calendarView === "Monthly"
@@ -160,6 +168,8 @@ function OtherMetrics({
     day,
     month,
     year,
+    yAxisKey,
+    yAxisKeyChartHeading,
   };
 
   const expandBarLineRadialChartButton = (
@@ -178,8 +188,7 @@ function OtherMetrics({
               payload: {
                 ...commonPayload,
                 chartKind: "bar",
-                chartData: barCharts[barLineRadialChartYAxis],
-                chartTitle: barLineRadialChartHeading,
+                chartData: barCharts[yAxisKey],
                 chartUnitKind: barLineRadialUnit,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
@@ -198,8 +207,7 @@ function OtherMetrics({
               payload: {
                 ...commonPayload,
                 chartKind: "line",
-                chartData: lineCharts[barLineRadialChartYAxis],
-                chartTitle: barLineRadialChartHeading,
+                chartData: lineCharts[yAxisKey],
                 chartUnitKind: barLineRadialUnit,
               },
             });
@@ -216,8 +224,7 @@ function OtherMetrics({
               payload: {
                 ...commonPayload,
                 chartKind: "radial",
-                chartData: lineCharts[barLineRadialChartYAxis],
-                chartTitle: barLineRadialChartHeading,
+                chartData: lineCharts[yAxisKey],
                 chartUnitKind: barLineRadialUnit,
               },
             });
@@ -240,22 +247,10 @@ function OtherMetrics({
     />
   );
 
-  const barLineRadialChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIAL_OTHERS_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: otherMetricsDispatch,
-        validValueAction: otherMetricsAction.setBarLineRadialChartYAxis,
-        value: barLineRadialChartYAxis,
-      }}
-    />
-  );
-
   const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineRadialChartYAxis]}
+        barChartData={barCharts[yAxisKey]}
         chartUnitKind={barLineRadialUnit}
         hideControls
         indexBy={barChartIndexBy}
@@ -272,7 +267,7 @@ function OtherMetrics({
     ? (
       <ResponsiveLineChart
         chartUnitKind={barLineRadialUnit}
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        lineChartData={lineCharts[yAxisKey]}
         hideControls
         xFormat={(x) =>
           `${
@@ -294,7 +289,7 @@ function OtherMetrics({
     )
     : (
       <ResponsiveRadialBarChart
-        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        radialBarChartData={lineCharts[yAxisKey]}
         hideControls
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -307,11 +302,11 @@ function OtherMetrics({
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxis,
+    yAxisKey,
     metricCategory,
   );
 
-  const calendarUnit = calendarChartYAxis === "averageOrderValue" ? "CAD" : "%";
+  const calendarUnit = yAxisKey === "averageOrderValue" ? "CAD" : "%";
 
   const expandCalendarChartButton = (
     <AccessibleButton
@@ -327,10 +322,8 @@ function OtherMetrics({
             action: globalAction.setExpandCalendarChartData,
             payload: {
               ...commonPayload,
-              calendarChartYAxis,
               chartKind: "calendar",
               chartData: calendarChartData,
-              chartTitle: calendarChartHeading,
               chartUnitKind: calendarUnit,
             },
           });
@@ -346,18 +339,6 @@ function OtherMetrics({
     />
   );
 
-  const calendarChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: FINANCIAL_OTHERS_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: otherMetricsDispatch,
-        validValueAction: otherMetricsAction.setCalendarChartYAxis,
-        value: calendarChartYAxis,
-      }}
-    />
-  );
-
   const calendarChart = (
     <ResponsiveCalendarChart
       calendarChartData={calendarChartData}
@@ -367,9 +348,9 @@ function OtherMetrics({
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
-          calendarChartYAxis,
           chartUnitKind: calendarUnit,
           kind: "calendar",
+          yAxisKey,
         })}
     />
   );
@@ -418,28 +399,26 @@ function OtherMetrics({
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineRadialChartYAxis,
+    yAxisKey,
     FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
   const otherMetrics = (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
-      barLineRadialChartHeading={barLineRadialChartHeading}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
-      barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
-      calendarChartHeading={calendarChartHeading}
-      calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
-      overviewCards={otherMetricsOverviewCards}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
       statisticsModals={statisticsModals}
+      yAxisKey={yAxisKey}
+      yAxisKeyChartHeading={yAxisKeyChartHeading}
+      yAxisKeySelectInput={yAxisKeySelectInput}
+      chartsToYAxisKeysMap={FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP}
     />
   );
 

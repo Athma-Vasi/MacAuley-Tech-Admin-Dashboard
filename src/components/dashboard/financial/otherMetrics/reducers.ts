@@ -22,29 +22,14 @@ const otherMetricsReducers = new Map<
   ) => OtherMetricsState
 >([
   [
-    otherMetricsAction.setBarLineRadialChartYAxis,
-    otherMetricsReducer_setBarLineRadialChartYAxis,
-  ],
-  [
     otherMetricsAction.setBarLineRadialChartKind,
     otherMetricsReducer_setBarLineRadialChartKind,
   ],
   [
-    otherMetricsAction.setCalendarChartYAxis,
-    otherMetricsReducer_setCalendarChartYAxis,
+    otherMetricsAction.setYAxisKey,
+    otherMetricsReducer_setYAxisKey,
   ],
 ]);
-
-function otherMetricsReducer_setBarLineRadialChartYAxis(
-  state: OtherMetricsState,
-  dispatch: OtherMetricsDispatch,
-): OtherMetricsState {
-  return {
-    ...state,
-    barLineRadialChartYAxis: dispatch
-      .payload as FinancialMetricsOtherMetricsChartsKey,
-  };
-}
 
 function otherMetricsReducer_setBarLineRadialChartKind(
   state: OtherMetricsState,
@@ -56,14 +41,13 @@ function otherMetricsReducer_setBarLineRadialChartKind(
   };
 }
 
-function otherMetricsReducer_setCalendarChartYAxis(
+function otherMetricsReducer_setYAxisKey(
   state: OtherMetricsState,
   dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
   return {
     ...state,
-    calendarChartYAxis: dispatch
-      .payload as FinancialMetricsCalendarChartsKeyOtherMetrics,
+    yAxisKey: dispatch.payload as FinancialMetricsOtherMetricsChartsKey,
   };
 }
 

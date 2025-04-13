@@ -124,6 +124,9 @@ const FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
+    "netProfitMargin",
+    "averageOrderValue",
+    "conversionRate",
   ]),
   line: new Set([
     "total",
@@ -133,6 +136,9 @@ const FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
+    "netProfitMargin",
+    "averageOrderValue",
+    "conversionRate",
   ]),
   radial: new Set([
     "total",
@@ -142,6 +148,9 @@ const FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
+    "netProfitMargin",
+    "averageOrderValue",
+    "conversionRate",
   ]),
   pie: new Set([
     "overview",
@@ -154,6 +163,9 @@ const FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
+    "netProfitMargin",
+    "averageOrderValue",
+    "conversionRate",
   ]),
 };
 
