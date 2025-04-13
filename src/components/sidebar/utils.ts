@@ -75,6 +75,11 @@ async function handleMetricCategoryNavlinkClick(
     `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
   );
 
+  globalDispatch({
+    action: globalAction.setIsFetching,
+    payload: true,
+  });
+
   try {
     const responseResult = await fetchSafe(urlWithQuery, requestInit);
     if (!isComponentMounted) {
@@ -175,6 +180,11 @@ async function handleMetricCategoryNavlinkClick(
     console.log("serverResponse", serverResponse);
     console.groupEnd();
 
+    globalDispatch({
+      action: globalAction.setIsFetching,
+      payload: false,
+    });
+
     navigateFn(navigateTo);
   } catch (error: unknown) {
     if (
@@ -189,6 +199,7 @@ async function handleMetricCategoryNavlinkClick(
 async function handleLogoutButtonClick({
   accessToken,
   fetchAbortControllerRef,
+  globalDispatch,
   isComponentMountedRef,
   logoutUrl,
   navigateFn,
@@ -196,6 +207,7 @@ async function handleLogoutButtonClick({
 }: {
   accessToken: string;
   fetchAbortControllerRef: React.RefObject<AbortController | null>;
+  globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   logoutUrl: string;
   navigateFn: NavigateFunction;
@@ -218,6 +230,11 @@ async function handleLogoutButtonClick({
     signal: fetchAbortController.signal,
   };
 
+  globalDispatch({
+    action: globalAction.setIsFetching,
+    payload: true,
+  });
+
   try {
     const responseResult = await fetchSafe(logoutUrl, requestInit);
 
@@ -229,6 +246,11 @@ async function handleLogoutButtonClick({
       showBoundary(responseResult.val.data);
       return;
     }
+
+    globalDispatch({
+      action: globalAction.setIsFetching,
+      payload: false,
+    });
 
     navigateFn("/");
   } catch (error: unknown) {

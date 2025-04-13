@@ -1,4 +1,4 @@
-import { Space, Stack, Text } from "@mantine/core";
+import { Group, Loader, Space, Stack, Text } from "@mantine/core";
 import React, { useEffect, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -31,7 +31,12 @@ type SidebarProps = {
 function Sidebar({ opened, setOpened }: SidebarProps) {
   const { authState: { accessToken }, authDispatch } = useAuth();
   const {
-    globalState: { themeObject, productMetricCategory, repairMetricCategory },
+    globalState: {
+      themeObject,
+      productMetricCategory,
+      repairMetricCategory,
+      isFetching,
+    },
     globalDispatch,
   } = useGlobalState();
   const navigateFn = useNavigate();
@@ -188,6 +193,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           await handleLogoutButtonClick({
             accessToken,
             fetchAbortControllerRef,
+            globalDispatch,
             isComponentMountedRef,
             logoutUrl: LOGOUT_URL,
             navigateFn,
@@ -210,9 +216,12 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         zIndex: 2,
       }}
     >
-      <Text size={18} weight={400}>
-        Metrics
-      </Text>
+      <Group w="100%" px="md" position="left">
+        <Text size={18} weight={400}>
+          Metrics
+        </Text>
+        {isFetching ? <Loader size="xs" /> : null}
+      </Group>
       {financialsNavlink}
       {productsNavlink}
       {customersNavlink}

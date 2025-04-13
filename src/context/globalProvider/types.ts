@@ -163,7 +163,7 @@ type GlobalState = {
 type GlobalDispatch =
   | {
     action: GlobalAction["setIsFetching"];
-    payload: CustomerMetricsCategory;
+    payload: boolean;
   }
   | {
     action: GlobalAction["setProductMetricCategory"];
