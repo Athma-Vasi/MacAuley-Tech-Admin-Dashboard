@@ -4,8 +4,6 @@ import {
   CustomerChurnRetentionCalendarChartsKey,
   CustomerMetricsChurnRetentionChartsKey,
   CustomerMetricsNewReturningChartsKey,
-  CustomerMetricsNewReturningPieChartsKey,
-  CustomerNewReturningCalendarChartsKey,
 } from "./chartsData";
 import { CustomerMetricsCategory, CustomerNewReturningYAxisKey } from "./types";
 
@@ -17,46 +15,10 @@ const CUSTOMER_METRICS_CATEGORY_DATA: CheckboxRadioSelectData<
   { label: "Churn", value: "churn" },
 ];
 
-const CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA: CheckboxRadioSelectData<
-  CustomerMetricsNewReturningChartsKey
-> = [
-  { label: "Total", value: "total" },
-  { label: "All", value: "all" },
-  { label: "Overview", value: "overview" },
-  { label: "Sales", value: "sales" },
-  { label: "Online", value: "online" },
-  { label: "In Store", value: "inStore" },
-  { label: "Repair", value: "repair" },
-];
-
-const CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA: CheckboxRadioSelectData<
-  CustomerChurnRetentionCalendarChartsKey
-> = [
-  { label: "Churn Rate", value: "churnRate" },
-  { label: "Retention Rate", value: "retentionRate" },
-];
-
-const CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA: CheckboxRadioSelectData<
-  CustomerNewReturningCalendarChartsKey
-> = [
-  { label: "Total", value: "total" },
-  { label: "Sales", value: "sales" },
-  { label: "Online", value: "online" },
-  { label: "In Store", value: "inStore" },
-  { label: "Repair", value: "repair" },
-];
-
-const CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA: CheckboxRadioSelectData<
-  CustomerMetricsNewReturningPieChartsKey
-> = [
-  { label: "Overview", value: "overview" },
-  { label: "All", value: "all" },
-  { label: "Sales", value: "sales" },
-];
-
 const CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA: CheckboxRadioSelectData<
   CustomerMetricsChurnRetentionChartsKey
 > = [
+  { label: "Overview", value: "overview" },
   { label: "Churn Rate", value: "churnRate" },
   { label: "Retention Rate", value: "retentionRate" },
 ];
@@ -106,6 +68,29 @@ const CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
   ["inStore", new Set(["Sales In-Store"])],
   ["repair", new Set(["Repair"])],
 ]);
+
+const CUSTOMER_CHARTS_CHURN_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
+  bar: new Set([
+    "churnRate",
+    "retentionRate",
+    "overview",
+  ]),
+  line: new Set([
+    "churnRate",
+    "retentionRate",
+    "overview",
+  ]),
+  radial: new Set([
+    "churnRate",
+    "retentionRate",
+    "overview",
+  ]),
+  pie: new Set([]),
+  calendar: new Set([
+    "churnRate",
+    "retentionRate",
+  ]),
+};
 
 const CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
   bar: new Set([
@@ -170,14 +155,11 @@ const CUSTOMER_NEW_RETURNING_Y_AXIS_DATA: CheckboxRadioSelectData<
 ];
 
 export {
+  CUSTOMER_CHARTS_CHURN_TO_Y_AXIS_KEYS_MAP,
   CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP,
-  CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
   CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
   CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
   CUSTOMER_METRICS_CATEGORY_DATA,
-  CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
-  CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
-  CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_Y_AXIS_DATA,
   CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
   CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,

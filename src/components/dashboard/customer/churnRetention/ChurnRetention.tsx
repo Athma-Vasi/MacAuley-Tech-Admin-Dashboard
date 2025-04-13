@@ -49,7 +49,7 @@ import {
   returnCalendarViewCustomerCharts,
 } from "../chartsData";
 import {
-  CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
+  CUSTOMER_CHARTS_CHURN_TO_Y_AXIS_KEYS_MAP,
   CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
   CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
@@ -100,8 +100,7 @@ function ChurnRetention(
 
   const {
     barLineRadialChartKind,
-    barLineRadialChartYAxis,
-    calendarChartYAxis,
+    yAxisKey,
   } = churnRetentionState;
 
   const charts = returnCalendarViewCustomerCharts(
@@ -119,20 +118,17 @@ function ChurnRetention(
     expandPieChartNavigateLink,
     expandRadialBarChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineRadialChartYAxis,
     calendarView,
     metricsView,
-    calendarChartYAxis,
+    yAxisKey,
   });
 
-  const { barLineRadialChartHeading, calendarChartHeading, pieChartHeading } =
-    returnChartTitles({
-      barLineRadialChartYAxis,
-      calendarView,
-      metricCategory,
-      storeLocation,
-      calendarChartYAxis,
-    });
+  const { yAxisKeyChartHeading } = returnChartTitles({
+    calendarView,
+    metricCategory,
+    storeLocation,
+    yAxisKey,
+  });
 
   const chartUnitKind = "%" as ChartUnitKind;
   const commonPayload = {
@@ -140,8 +136,22 @@ function ChurnRetention(
     chartUnitKind,
     day,
     month,
+    yAxisKey,
+    yAxisKeyChartHeading,
     year,
   };
+
+  const yAxisKeySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
+        name: "Y-Axis",
+        parentDispatch: churnRetentionDispatch,
+        validValueAction: churnRetentionAction.setYAxisKey,
+        value: yAxisKey,
+      }}
+    />
+  );
 
   const expandPieChartButton = (
     <AccessibleButton
@@ -159,7 +169,6 @@ function ChurnRetention(
               ...commonPayload,
               chartData: pieCharts,
               chartKind: "pie",
-              chartTitle: pieChartHeading,
             },
           });
 
@@ -228,9 +237,8 @@ function ChurnRetention(
               action: globalAction.setExpandBarChartData,
               payload: {
                 ...commonPayload,
-                chartData: barCharts[barLineRadialChartYAxis],
+                chartData: barCharts[yAxisKey],
                 chartKind: "bar",
-                chartTitle: barLineRadialChartHeading,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
               },
@@ -247,9 +255,8 @@ function ChurnRetention(
               action: globalAction.setExpandLineChartData,
               payload: {
                 ...commonPayload,
-                chartData: lineCharts[barLineRadialChartYAxis],
+                chartData: lineCharts[yAxisKey],
                 chartKind: "line",
-                chartTitle: barLineRadialChartHeading,
               },
             });
 
@@ -264,9 +271,8 @@ function ChurnRetention(
               action: globalAction.setExpandRadialBarChartData,
               payload: {
                 ...commonPayload,
-                chartData: lineCharts[barLineRadialChartYAxis],
+                chartData: lineCharts[yAxisKey],
                 chartKind: "radial",
-                chartTitle: barLineRadialChartHeading,
               },
             });
 
@@ -288,22 +294,10 @@ function ChurnRetention(
     />
   );
 
-  const barLineRadialChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: churnRetentionDispatch,
-        validValueAction: churnRetentionAction.setBarLineRadialChartYAxis,
-        value: barLineRadialChartYAxis,
-      }}
-    />
-  );
-
   const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineRadialChartYAxis]}
+        barChartData={barCharts[yAxisKey]}
         chartUnitKind={chartUnitKind}
         hideControls
         indexBy={barChartIndexBy}
@@ -317,7 +311,7 @@ function ChurnRetention(
       <ResponsiveLineChart
         chartUnitKind={chartUnitKind}
         hideControls
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        lineChartData={lineCharts[yAxisKey]}
         xFormat={(x) =>
           `${
             calendarView === "Daily"
@@ -333,7 +327,7 @@ function ChurnRetention(
     )
     : (
       <ResponsiveRadialBarChart
-        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        radialBarChartData={lineCharts[yAxisKey]}
         hideControls
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -347,7 +341,7 @@ function ChurnRetention(
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxis,
+    yAxisKey,
     metricCategory,
   );
 
@@ -365,10 +359,8 @@ function ChurnRetention(
             action: globalAction.setExpandCalendarChartData,
             payload: {
               ...commonPayload,
-              calendarChartYAxis,
               chartData: calendarChartData,
               chartKind: "calendar",
-              chartTitle: calendarChartHeading,
             },
           });
 
@@ -383,18 +375,6 @@ function ChurnRetention(
     />
   );
 
-  const calendarChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: churnRetentionDispatch,
-        validValueAction: churnRetentionAction.setCalendarChartYAxis,
-        value: calendarChartYAxis,
-      }}
-    />
-  );
-
   const calendarChart = (
     <ResponsiveCalendarChart
       calendarChartData={calendarChartData}
@@ -404,9 +384,9 @@ function ChurnRetention(
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
-          calendarChartYAxis,
           chartUnitKind,
           kind: "calendar",
+          yAxisKey,
         })}
     />
   );
@@ -457,7 +437,7 @@ function ChurnRetention(
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineRadialChartYAxis,
+    yAxisKey,
     CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
@@ -465,24 +445,21 @@ function ChurnRetention(
     <Stack>
       <DashboardBarLineLayout
         barLineRadialChart={barLineRadialChart}
-        barLineRadialChartHeading={barLineRadialChartHeading}
         barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
-        barLineRadialChartYAxis={barLineRadialChartYAxis}
         calendarChart={calendarChart}
-        calendarChartHeading={calendarChartHeading}
-        calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
         calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
-        overviewCards={churnOverviewCards}
         pieChart={pieChart}
-        pieChartHeading={pieChartHeading}
         sectionHeading="Customers Churn"
         semanticLabel="TODO"
         statisticsModals={statisticsModals}
+        yAxisKey={yAxisKey}
+        yAxisKeyChartHeading={yAxisKeyChartHeading}
+        yAxisKeySelectInput={yAxisKeySelectInput}
+        chartsToYAxisKeysMap={CUSTOMER_CHARTS_CHURN_TO_Y_AXIS_KEYS_MAP}
       />
     </Stack>
   );

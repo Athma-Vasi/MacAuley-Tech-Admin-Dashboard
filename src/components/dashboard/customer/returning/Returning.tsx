@@ -47,7 +47,6 @@ import {
 } from "../chartsData";
 import {
   CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP,
-  CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_Y_AXIS_DATA,
   CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
@@ -222,7 +221,7 @@ function Returning(
     : calendarView === "Monthly"
     ? "Months"
     : "Years";
-  const barChartKeys = CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA.map((obj) =>
+  const barChartKeys = CUSTOMER_NEW_RETURNING_Y_AXIS_DATA.map((obj) =>
     obj.label
   );
 

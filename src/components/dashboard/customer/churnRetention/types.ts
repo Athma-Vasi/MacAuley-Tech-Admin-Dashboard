@@ -1,24 +1,19 @@
 import { ChartKindSegment } from "../../types";
-import {
-  CustomerChurnRetentionCalendarChartsKey,
-  CustomerMetricsChurnRetentionChartsKey,
-} from "../chartsData";
+import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
 
 type ChurnRetentionState = {
-  barLineRadialChartYAxis: CustomerMetricsChurnRetentionChartsKey;
   barLineRadialChartKind: ChartKindSegment;
-  calendarChartYAxis: CustomerChurnRetentionCalendarChartsKey;
+  yAxisKey: CustomerMetricsChurnRetentionChartsKey;
 };
 
-type ChurnRetentionDispatch = {
-  action: "setBarLineRadialChartYAxis";
-  payload: CustomerMetricsChurnRetentionChartsKey;
-} | {
-  action: "setBarLineRadialChartKind";
-  payload: ChartKindSegment;
-} | {
-  action: "setCalendarChartYAxis";
-  payload: CustomerChurnRetentionCalendarChartsKey;
-};
+type ChurnRetentionDispatch =
+  | {
+    action: "setBarLineRadialChartKind";
+    payload: ChartKindSegment;
+  }
+  | {
+    action: "setYAxisKey";
+    payload: CustomerMetricsChurnRetentionChartsKey;
+  };
 
 export type { ChurnRetentionDispatch, ChurnRetentionState };

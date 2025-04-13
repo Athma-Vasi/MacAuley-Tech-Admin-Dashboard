@@ -1,8 +1,5 @@
 import { ChartKindSegment } from "../../types";
-import {
-  CustomerChurnRetentionCalendarChartsKey,
-  CustomerMetricsChurnRetentionChartsKey,
-} from "../chartsData";
+import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
 import { ChurnRetentionAction, churnRetentionAction } from "./actions";
 import { ChurnRetentionDispatch, ChurnRetentionState } from "./types";
 
@@ -25,14 +22,7 @@ const churnRetentionReducers = new Map<
     churnRetentionAction.setBarLineRadialChartKind,
     churnRetentionReducer_setBarLineRadialChartKind,
   ],
-  [
-    churnRetentionAction.setBarLineRadialChartYAxis,
-    churnRetentionReducer_setBarLineRadialChartYAxis,
-  ],
-  [
-    churnRetentionAction.setCalendarChartYAxis,
-    churnRetentionReducer_setCalendarChartYAxis,
-  ],
+  [churnRetentionAction.setYAxisKey, churnRetentionReducer_setYAxisKey],
 ]);
 
 function churnRetentionReducer_setBarLineRadialChartKind(
@@ -45,25 +35,13 @@ function churnRetentionReducer_setBarLineRadialChartKind(
   };
 }
 
-function churnRetentionReducer_setBarLineRadialChartYAxis(
+function churnRetentionReducer_setYAxisKey(
   state: ChurnRetentionState,
   dispatch: ChurnRetentionDispatch,
 ): ChurnRetentionState {
   return {
     ...state,
-    barLineRadialChartYAxis: dispatch
-      .payload as CustomerMetricsChurnRetentionChartsKey,
-  };
-}
-
-function churnRetentionReducer_setCalendarChartYAxis(
-  state: ChurnRetentionState,
-  dispatch: ChurnRetentionDispatch,
-): ChurnRetentionState {
-  return {
-    ...state,
-    calendarChartYAxis: dispatch
-      .payload as CustomerChurnRetentionCalendarChartsKey,
+    yAxisKey: dispatch.payload as CustomerMetricsChurnRetentionChartsKey,
   };
 }
 
