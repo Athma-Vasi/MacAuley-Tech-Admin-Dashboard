@@ -1,4 +1,5 @@
 import { CheckboxRadioSelectData } from "../../../types";
+import { ChartsToYAxisKeysMap } from "../types";
 import {
   ProductMetricsCalendarChartsKey,
   ProductMetricsChartKey,
@@ -66,8 +67,36 @@ const PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
   ["online", new Set(["Online"])],
 ]);
 
+const PRODUCT_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
+  bar: new Set([
+    "total",
+    "overview",
+    "inStore",
+    "online",
+  ]),
+  line: new Set([
+    "total",
+    "overview",
+    "inStore",
+    "online",
+  ]),
+  radial: new Set([
+    "total",
+    "overview",
+    "inStore",
+    "online",
+  ]),
+  calendar: new Set([
+    "total",
+    "inStore",
+    "online",
+  ]),
+  pie: new Set([]),
+};
+
 export {
   PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  PRODUCT_CHARTS_TO_Y_AXIS_KEYS_MAP,
   PRODUCT_METRIC_CATEGORY_DATA,
   PRODUCT_METRICS_BAR_LINE_Y_AXIS_DATA,
   PRODUCT_METRICS_CALENDAR_Y_AXIS_DATA,

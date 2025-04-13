@@ -1,8 +1,5 @@
 import { ChartKindSegment } from "../../types";
-import {
-  ProductMetricsCalendarChartsKey,
-  ProductMetricsChartKey,
-} from "../chartsData";
+import { ProductMetricsChartKey } from "../chartsData";
 import { RUSAction, rusAction } from "./actions";
 import { RUSDispatch, RUSState } from "./types";
 
@@ -16,14 +13,7 @@ const rusReducers = new Map<
   (state: RUSState, dispatch: RUSDispatch) => RUSState
 >([
   [rusAction.setBarLineRadialChartKind, rusReducer_setBarLineChartKind],
-  [
-    rusAction.setBarLineRadialChartYAxis,
-    rusReducer_setBarLineChartYAxisVariable,
-  ],
-  [
-    rusAction.setCalendarChartYAxis,
-    rusReducer_setCalendarChartYAxisVariable,
-  ],
+  [rusAction.setYAxisKey, rusReducer_setYAxisKey],
 ]);
 
 function rusReducer_setBarLineChartKind(
@@ -36,24 +26,13 @@ function rusReducer_setBarLineChartKind(
   };
 }
 
-function rusReducer_setBarLineChartYAxisVariable(
+function rusReducer_setYAxisKey(
   state: RUSState,
   dispatch: RUSDispatch,
 ): RUSState {
   return {
     ...state,
-    barLineRadialChartYAxis: dispatch.payload as ProductMetricsChartKey,
-  };
-}
-
-function rusReducer_setCalendarChartYAxisVariable(
-  state: RUSState,
-  dispatch: RUSDispatch,
-): RUSState {
-  return {
-    ...state,
-    calendarChartYAxis: dispatch
-      .payload as ProductMetricsCalendarChartsKey,
+    yAxisKey: dispatch.payload as ProductMetricsChartKey,
   };
 }
 

@@ -101,8 +101,6 @@ const CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
-    "churnRate",
-    "retentionRate",
   ]),
   line: new Set([
     "total",
@@ -112,8 +110,6 @@ const CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
-    "churnRate",
-    "retentionRate",
   ]),
   radial: new Set([
     "total",
@@ -123,8 +119,6 @@ const CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
-    "churnRate",
-    "retentionRate",
   ]),
   pie: new Set([
     "overview",
@@ -137,8 +131,6 @@ const CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "sales",
     "inStore",
     "online",
-    "churnRate",
-    "retentionRate",
   ]),
 };
 
