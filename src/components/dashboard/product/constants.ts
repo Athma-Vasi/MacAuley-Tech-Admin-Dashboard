@@ -91,7 +91,7 @@ const PRODUCT_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
     "inStore",
     "online",
   ]),
-  pie: new Set([]),
+  pie: new Set(["overview"]),
 };
 
 export {

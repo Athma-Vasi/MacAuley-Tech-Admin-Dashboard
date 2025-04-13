@@ -116,6 +116,8 @@ function RUS(
     pie: pieCharts,
   } = subMetric === "revenue" ? charts.revenue : charts.unitsSold;
 
+  console.log("RUS pieCharts", pieCharts);
+
   const {
     expandBarChartNavigateLink,
     expandCalendarChartNavigateLink,

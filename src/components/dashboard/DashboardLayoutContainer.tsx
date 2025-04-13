@@ -16,7 +16,7 @@ type DashboardLayoutContainerProps = {
   calendarChart?: React.JSX.Element | null;
   calendarView: DashboardCalendarView;
   cardsWithStatisticsElements: React.JSX.Element[];
-  chartsToYAxisKeysMap?: ChartsToYAxisKeysMap;
+  chartsToYAxisKeysMap: ChartsToYAxisKeysMap;
   expandBarLineRadialChartButton: React.JSX.Element;
   expandCalendarChartButton?: React.JSX.Element | null;
   expandPieChartButton?: React.JSX.Element;
@@ -56,16 +56,16 @@ function DashboardLayoutContainer(
   });
   const { windowWidth } = useWindowSize();
 
-  const isPieChartSafe = chartsToYAxisKeysMap?.pie.has(
+  const isPieChartSafe = chartsToYAxisKeysMap.pie.has(
     yAxisKey as FinancialYAxisKey,
   );
-  const isCalendarChartSafe = chartsToYAxisKeysMap?.calendar.has(
+  const isCalendarChartSafe = chartsToYAxisKeysMap.calendar.has(
     yAxisKey as FinancialYAxisKey,
   );
   const isBarLineRadialChartSafe =
-    chartsToYAxisKeysMap?.bar.has(yAxisKey as FinancialYAxisKey) ||
-    chartsToYAxisKeysMap?.line.has(yAxisKey as FinancialYAxisKey) ||
-    chartsToYAxisKeysMap?.radial.has(yAxisKey as FinancialYAxisKey);
+    chartsToYAxisKeysMap.bar.has(yAxisKey as FinancialYAxisKey) ||
+    chartsToYAxisKeysMap.line.has(yAxisKey as FinancialYAxisKey) ||
+    chartsToYAxisKeysMap.radial.has(yAxisKey as FinancialYAxisKey);
 
   const pieChartWithButton = (
     <div className="chart-card pie">
