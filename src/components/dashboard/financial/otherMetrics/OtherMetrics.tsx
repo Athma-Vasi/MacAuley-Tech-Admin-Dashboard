@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Stack } from "@mantine/core";
 import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
@@ -422,11 +421,7 @@ function OtherMetrics({
     />
   );
 
-  return (
-    <Stack>
-      {otherMetrics}
-    </Stack>
-  );
+  return otherMetrics;
 }
 
 export default OtherMetrics;

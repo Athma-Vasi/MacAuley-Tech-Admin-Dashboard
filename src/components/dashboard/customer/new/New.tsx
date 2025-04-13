@@ -19,6 +19,7 @@ import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
 import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardLayoutContainer";
+import { FinancialMetricsPieChartsKey } from "../../financial/chartsData";
 import {
   AllStoreLocations,
   DashboardCalendarView,
@@ -41,16 +42,18 @@ import { CustomerMetricsCards, returnCustomerMetricsCardsMap } from "../cards";
 import {
   CustomerMetricsCalendarCharts,
   CustomerMetricsCharts,
-  CustomerMetricsNewReturningChartsKey,
   returnCalendarViewCustomerCharts,
 } from "../chartsData";
 import {
-  CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
+  CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP,
   CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
-  CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
+  CUSTOMER_NEW_RETURNING_Y_AXIS_DATA,
   CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
-import { CustomerMetricsCategory } from "../types";
+import {
+  CustomerMetricsCategory,
+  CustomerNewReturningYAxisKey,
+} from "../types";
 import { newAction } from "./actions";
 import { newReducer } from "./reducers";
 import { initialNewState } from "./state";
@@ -97,9 +100,7 @@ function New(
 
   const {
     barLineRadialChartKind,
-    barLineRadialChartYAxis,
-    calendarChartYAxis,
-    pieChartYAxis,
+    yAxisKey,
   } = newState;
 
   const charts = returnCalendarViewCustomerCharts(
@@ -119,25 +120,20 @@ function New(
     expandRadialBarChartNavigateLink,
   } = createExpandChartNavigateLinks(
     {
-      barLineRadialChartYAxis,
-      calendarChartYAxis,
       calendarView,
       metricCategory,
       metricsView,
-      pieChartYAxis,
+      yAxisKey,
     },
   );
 
-  const { barLineRadialChartHeading, calendarChartHeading, pieChartHeading } =
-    returnChartTitles({
-      barLineRadialChartYAxis,
-      calendarView,
-      metricCategory,
-      pieChartYAxis,
-      storeLocation,
-      subMetric: "Customers",
-      calendarChartYAxis,
-    });
+  const { yAxisKeyChartHeading } = returnChartTitles({
+    calendarView,
+    metricCategory,
+    storeLocation,
+    subMetric: "Customers",
+    yAxisKey,
+  });
 
   const chartUnitKind = "" as ChartUnitKind;
   const commonPayload = {
@@ -146,7 +142,21 @@ function New(
     day,
     month,
     year,
+    yAxisKey,
+    yAxisKeyChartHeading,
   };
+
+  const yAxisKeySelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: CUSTOMER_NEW_RETURNING_Y_AXIS_DATA,
+        name: "Y-Axis",
+        parentDispatch: newDispatch,
+        validValueAction: newAction.setYAxisKey,
+        value: yAxisKey,
+      }}
+    />
+  );
 
   const expandPieChartButton = (
     <AccessibleButton
@@ -162,9 +172,9 @@ function New(
             action: globalAction.setExpandPieChartData,
             payload: {
               ...commonPayload,
+              chartData: pieCharts[yAxisKey as FinancialMetricsPieChartsKey],
               chartKind: "pie",
-              chartData: pieCharts[pieChartYAxis],
-              chartTitle: pieChartHeading,
+              chartUnitKind,
             },
           });
 
@@ -179,23 +189,11 @@ function New(
     />
   );
 
-  const pieChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: newDispatch,
-        validValueAction: newAction.setPieChartYAxis,
-        value: pieChartYAxis,
-      }}
-    />
-  );
-
   const pieChart = (
     <ResponsivePieChart
       chartUnitKind={chartUnitKind}
       hideControls
-      pieChartData={pieCharts[pieChartYAxis]}
+      pieChartData={pieCharts[yAxisKey as FinancialMetricsPieChartsKey]}
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
@@ -245,9 +243,8 @@ function New(
               action: globalAction.setExpandBarChartData,
               payload: {
                 ...commonPayload,
+                chartData: barCharts[yAxisKey],
                 chartKind: "bar",
-                chartData: barCharts[barLineRadialChartYAxis],
-                chartTitle: barLineRadialChartHeading,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
               },
@@ -264,9 +261,8 @@ function New(
               action: globalAction.setExpandLineChartData,
               payload: {
                 ...commonPayload,
+                chartData: lineCharts[yAxisKey],
                 chartKind: "line",
-                chartData: lineCharts[barLineRadialChartYAxis],
-                chartTitle: barLineRadialChartHeading,
               },
             });
 
@@ -281,9 +277,8 @@ function New(
               action: globalAction.setExpandRadialBarChartData,
               payload: {
                 ...commonPayload,
+                chartData: lineCharts[yAxisKey],
                 chartKind: "radial",
-                chartData: lineCharts[barLineRadialChartYAxis],
-                chartTitle: barLineRadialChartHeading,
               },
             });
 
@@ -305,22 +300,10 @@ function New(
     />
   );
 
-  const barLineRadialChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: newDispatch,
-        validValueAction: newAction.setBarLineRadialChartYAxis,
-        value: barLineRadialChartYAxis,
-      }}
-    />
-  );
-
   const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineRadialChartYAxis]}
+        barChartData={barCharts[yAxisKey]}
         chartUnitKind={chartUnitKind}
         hideControls
         indexBy={barChartIndexBy}
@@ -334,7 +317,7 @@ function New(
       <ResponsiveLineChart
         chartUnitKind={chartUnitKind}
         hideControls
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        lineChartData={lineCharts[yAxisKey]}
         xFormat={(x) =>
           `${
             calendarView === "Daily"
@@ -350,7 +333,7 @@ function New(
     )
     : (
       <ResponsiveRadialBarChart
-        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        radialBarChartData={lineCharts[yAxisKey]}
         hideControls
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -364,7 +347,7 @@ function New(
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
-    calendarChartYAxis,
+    yAxisKey,
     metricCategory,
   );
 
@@ -382,10 +365,8 @@ function New(
             action: globalAction.setExpandCalendarChartData,
             payload: {
               ...commonPayload,
-              calendarChartYAxis,
               chartData: calendarChartData,
               chartKind: "calendar",
-              chartTitle: calendarChartHeading,
             },
           });
 
@@ -400,18 +381,6 @@ function New(
     />
   );
 
-  const calendarChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
-        name: "Y-Axis",
-        parentDispatch: newDispatch,
-        validValueAction: newAction.setCalendarChartYAxis,
-        value: calendarChartYAxis,
-      }}
-    />
-  );
-
   const calendarChart = (
     <ResponsiveCalendarChart
       calendarChartData={calendarChartData}
@@ -421,15 +390,15 @@ function New(
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
-          calendarChartYAxis,
           chartUnitKind,
           kind: "calendar",
+          yAxisKey,
         })}
     />
   );
 
   const statisticsMap = returnStatistics<
-    CustomerMetricsNewReturningChartsKey
+    CustomerNewReturningYAxisKey
   >(
     barCharts,
   );
@@ -474,7 +443,7 @@ function New(
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineRadialChartYAxis,
+    yAxisKey,
     CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
@@ -482,25 +451,21 @@ function New(
     <Stack>
       <DashboardBarLineLayout
         barLineRadialChart={barLineRadialChart}
-        barLineRadialChartHeading={barLineRadialChartHeading}
         barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-        barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
-        barLineRadialChartYAxis={barLineRadialChartYAxis}
         calendarChart={calendarChart}
-        calendarChartHeading={calendarChartHeading}
-        calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
         calendarView={calendarView}
         cardsWithStatisticsElements={cardsWithStatisticsElements}
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
-        overviewCards={newOverviewCards}
         pieChart={pieChart}
-        pieChartHeading={pieChartHeading}
-        pieChartYAxisSelectInput={pieChartYAxisSelectInput}
         sectionHeading="New Customers"
-        semanticLabel="Churn Retention"
+        semanticLabel="TODO"
         statisticsModals={statisticsModals}
+        yAxisKey={yAxisKey}
+        yAxisKeyChartHeading={yAxisKeyChartHeading}
+        yAxisKeySelectInput={yAxisKeySelectInput}
+        chartsToYAxisKeysMap={CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP}
       />
     </Stack>
   );

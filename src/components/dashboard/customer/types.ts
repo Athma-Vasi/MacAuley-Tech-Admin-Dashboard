@@ -3,9 +3,17 @@ import { CustomerMetricsCards } from "./cards";
 import {
   CustomerMetricsCalendarCharts,
   CustomerMetricsCharts,
+  CustomerMetricsNewReturningChartsKey,
+  CustomerMetricsNewReturningPieChartsKey,
+  CustomerNewReturningCalendarChartsKey,
 } from "./chartsData";
 
 type CustomerMetricsCategory = "new" | "returning" | "churn";
+
+type CustomerNewReturningYAxisKey =
+  | CustomerMetricsNewReturningChartsKey
+  | CustomerNewReturningCalendarChartsKey
+  | CustomerMetricsNewReturningPieChartsKey;
 
 type CustomerMetricsState = {
   calendarChartsData: {
@@ -42,4 +50,5 @@ export type {
   CustomerMetricsCategory,
   CustomerMetricsDispatch,
   CustomerMetricsState,
+  CustomerNewReturningYAxisKey,
 };

@@ -1,15 +1,11 @@
 type ReturningAction = {
-  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis";
   setBarLineRadialChartKind: "setBarLineRadialChartKind";
-  setCalendarChartYAxis: "setCalendarChartYAxis";
-  setPieChartYAxis: "setPieChartYAxis";
+  setYAxisKey: "setYAxisKey";
 };
 
 const returningAction: ReturningAction = {
-  setBarLineRadialChartYAxis: "setBarLineRadialChartYAxis",
   setBarLineRadialChartKind: "setBarLineRadialChartKind",
-  setCalendarChartYAxis: "setCalendarChartYAxis",
-  setPieChartYAxis: "setPieChartYAxis",
+  setYAxisKey: "setYAxisKey",
 };
 
 export { returningAction };

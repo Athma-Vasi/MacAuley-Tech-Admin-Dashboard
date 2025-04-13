@@ -1,9 +1,5 @@
 import { ChartKindSegment } from "../../types";
-import {
-  CustomerMetricsNewReturningChartsKey,
-  CustomerMetricsNewReturningPieChartsKey,
-  CustomerNewReturningCalendarChartsKey,
-} from "../chartsData";
+import { CustomerNewReturningYAxisKey } from "../types";
 import { NewAction, newAction } from "./actions";
 import { NewDispatch, NewState } from "./types";
 
@@ -16,16 +12,11 @@ const newReducers = new Map<
   NewAction[keyof NewAction],
   (state: NewState, dispatch: NewDispatch) => NewState
 >([
-  [newAction.setBarLineRadialChartKind, newReducer_setBarLineRadialChartKind],
   [
-    newAction.setBarLineRadialChartYAxis,
-    newReducer_setBarLineRadialChartYAxis,
+    newAction.setBarLineRadialChartKind,
+    newReducer_setBarLineRadialChartKind,
   ],
-  [
-    newAction.setCalendarChartYAxis,
-    newReducer_setCalendarChartYAxis,
-  ],
-  [newAction.setPieChartYAxis, newReducer_setPieChartYAxis],
+  [newAction.setYAxisKey, newReducer_setYAxisKey],
 ]);
 
 function newReducer_setBarLineRadialChartKind(
@@ -38,36 +29,13 @@ function newReducer_setBarLineRadialChartKind(
   };
 }
 
-function newReducer_setBarLineRadialChartYAxis(
+function newReducer_setYAxisKey(
   state: NewState,
   dispatch: NewDispatch,
 ): NewState {
   return {
     ...state,
-    barLineRadialChartYAxis: dispatch
-      .payload as CustomerMetricsNewReturningChartsKey,
-  };
-}
-
-function newReducer_setCalendarChartYAxis(
-  state: NewState,
-  dispatch: NewDispatch,
-): NewState {
-  return {
-    ...state,
-    calendarChartYAxis: dispatch
-      .payload as CustomerNewReturningCalendarChartsKey,
-  };
-}
-
-function newReducer_setPieChartYAxis(
-  state: NewState,
-  dispatch: NewDispatch,
-): NewState {
-  return {
-    ...state,
-    pieChartYAxis: dispatch
-      .payload as CustomerMetricsNewReturningPieChartsKey,
+    yAxisKey: dispatch.payload as CustomerNewReturningYAxisKey,
   };
 }
 

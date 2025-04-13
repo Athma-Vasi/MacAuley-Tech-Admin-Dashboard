@@ -1,4 +1,5 @@
 import { CheckboxRadioSelectData } from "../../../types";
+import { ChartsToYAxisKeysMap } from "../types";
 import {
   CustomerChurnRetentionCalendarChartsKey,
   CustomerMetricsChurnRetentionChartsKey,
@@ -6,7 +7,7 @@ import {
   CustomerMetricsNewReturningPieChartsKey,
   CustomerNewReturningCalendarChartsKey,
 } from "./chartsData";
-import { CustomerMetricsCategory } from "./types";
+import { CustomerMetricsCategory, CustomerNewReturningYAxisKey } from "./types";
 
 const CUSTOMER_METRICS_CATEGORY_DATA: CheckboxRadioSelectData<
   CustomerMetricsCategory
@@ -106,7 +107,70 @@ const CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
   ["repair", new Set(["Repair"])],
 ]);
 
+const CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
+  bar: new Set([
+    "total",
+    "all",
+    "overview",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+    "churnRate",
+    "retentionRate",
+  ]),
+  line: new Set([
+    "total",
+    "all",
+    "overview",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+    "churnRate",
+    "retentionRate",
+  ]),
+  radial: new Set([
+    "total",
+    "all",
+    "overview",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+    "churnRate",
+    "retentionRate",
+  ]),
+  pie: new Set([
+    "overview",
+    "all",
+    "sales",
+  ]),
+  calendar: new Set([
+    "total",
+    "repair",
+    "sales",
+    "inStore",
+    "online",
+    "churnRate",
+    "retentionRate",
+  ]),
+};
+
+const CUSTOMER_NEW_RETURNING_Y_AXIS_DATA: CheckboxRadioSelectData<
+  CustomerNewReturningYAxisKey
+> = [
+  { label: "Total", value: "total" },
+  { label: "All", value: "all" },
+  { label: "Overview", value: "overview" },
+  { label: "Sales", value: "sales" },
+  { label: "Online", value: "online" },
+  { label: "In Store", value: "inStore" },
+  { label: "Repair", value: "repair" },
+];
+
 export {
+  CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP,
   CUSTOMER_CHURN_RETENTION_CALENDAR_Y_AXIS_DATA,
   CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA,
   CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
@@ -114,6 +178,7 @@ export {
   CUSTOMER_NEW_RETURNING_CALENDAR_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_LINE_BAR_Y_AXIS_DATA,
   CUSTOMER_NEW_RETURNING_PIE_Y_AXIS_DATA,
+  CUSTOMER_NEW_RETURNING_Y_AXIS_DATA,
   CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
   CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
 };

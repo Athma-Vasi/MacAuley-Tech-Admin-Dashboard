@@ -1,9 +1,5 @@
 import { ChartKindSegment } from "../../types";
-import {
-  CustomerMetricsNewReturningChartsKey,
-  CustomerMetricsNewReturningPieChartsKey,
-  CustomerNewReturningCalendarChartsKey,
-} from "../chartsData";
+import { CustomerNewReturningYAxisKey } from "../types";
 import { ReturningAction, returningAction } from "./actions";
 import { ReturningDispatch, ReturningState } from "./types";
 
@@ -20,18 +16,7 @@ const returningReducers = new Map<
     returningAction.setBarLineRadialChartKind,
     returningReducer_setBarLineRadialChartKind,
   ],
-  [
-    returningAction.setBarLineRadialChartYAxis,
-    returningReducer_setBarLineRadialChartYAxis,
-  ],
-  [
-    returningAction.setCalendarChartYAxis,
-    returningReducer_setCalendarChartYAxis,
-  ],
-  [
-    returningAction.setPieChartYAxis,
-    returningReducer_setPieChartYAxis,
-  ],
+  [returningAction.setYAxisKey, returningReducer_setYAxisKey],
 ]);
 
 function returningReducer_setBarLineRadialChartKind(
@@ -44,36 +29,13 @@ function returningReducer_setBarLineRadialChartKind(
   };
 }
 
-function returningReducer_setBarLineRadialChartYAxis(
+function returningReducer_setYAxisKey(
   state: ReturningState,
   dispatch: ReturningDispatch,
 ): ReturningState {
   return {
     ...state,
-    barLineRadialChartYAxis: dispatch
-      .payload as CustomerMetricsNewReturningChartsKey,
-  };
-}
-
-function returningReducer_setCalendarChartYAxis(
-  state: ReturningState,
-  dispatch: ReturningDispatch,
-): ReturningState {
-  return {
-    ...state,
-    calendarChartYAxis: dispatch
-      .payload as CustomerNewReturningCalendarChartsKey,
-  };
-}
-
-function returningReducer_setPieChartYAxis(
-  state: ReturningState,
-  dispatch: ReturningDispatch,
-): ReturningState {
-  return {
-    ...state,
-    pieChartYAxis: dispatch
-      .payload as CustomerMetricsNewReturningPieChartsKey,
+    yAxisKey: dispatch.payload as CustomerNewReturningYAxisKey,
   };
 }
 

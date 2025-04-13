@@ -3,7 +3,6 @@ import type { DashboardAction } from "./actions";
 import {
   FinancialMetricsBarLineChartsKey,
   FinancialMetricsCalendarChartsKeyPERT,
-  FinancialMetricsOtherMetricsChartsKey,
   FinancialMetricsPieChartsKey,
 } from "./financial/chartsData";
 
@@ -289,9 +288,9 @@ type FinancialYAxisKey =
   | FinancialMetricsCalendarChartsKeyPERT
   | FinancialMetricsPieChartsKey;
 
-type ChartsToYAxisKeysMap = Record<
+type ChartsToYAxisKeysMap<YAxisKey extends string = string> = Record<
   ChartKindSegment | "pie" | "calendar",
-  Set<FinancialYAxisKey | FinancialMetricsOtherMetricsChartsKey>
+  Set<YAxisKey>
 >;
 
 export type {

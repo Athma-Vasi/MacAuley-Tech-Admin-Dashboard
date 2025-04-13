@@ -1,30 +1,18 @@
 import { ChartKindSegment } from "../../types";
-import {
-  CustomerMetricsNewReturningChartsKey,
-  CustomerMetricsNewReturningPieChartsKey,
-  CustomerNewReturningCalendarChartsKey,
-} from "../chartsData";
+import { CustomerNewReturningYAxisKey } from "../types";
 import { ReturningAction } from "./actions";
 
 type ReturningState = {
-  barLineRadialChartYAxis: CustomerMetricsNewReturningChartsKey;
   barLineRadialChartKind: ChartKindSegment;
-  calendarChartYAxis: CustomerNewReturningCalendarChartsKey;
-  pieChartYAxis: CustomerMetricsNewReturningPieChartsKey;
+  yAxisKey: CustomerNewReturningYAxisKey;
 };
 
 type ReturningDispatch = {
-  action: ReturningAction["setBarLineRadialChartYAxis"];
-  payload: CustomerMetricsNewReturningChartsKey;
-} | {
   action: ReturningAction["setBarLineRadialChartKind"];
   payload: ChartKindSegment;
 } | {
-  action: ReturningAction["setCalendarChartYAxis"];
-  payload: CustomerNewReturningCalendarChartsKey;
-} | {
-  action: ReturningAction["setPieChartYAxis"];
-  payload: CustomerMetricsNewReturningPieChartsKey;
+  action: ReturningAction["setYAxisKey"];
+  payload: CustomerNewReturningYAxisKey;
 };
 
 export type { ReturningDispatch, ReturningState };
