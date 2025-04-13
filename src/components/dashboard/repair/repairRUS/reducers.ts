@@ -19,14 +19,7 @@ const repairRUSReducersMap = new Map<
     repairRUSAction.setBarLineRadialChartKind,
     repairRUSReducer_setBarLineRadialChartKind,
   ],
-  [
-    repairRUSAction.setBarLineRadialChartYAxis,
-    repairRUSReducer_setBarLineRadialChartYAxis,
-  ],
-  [
-    repairRUSAction.setCalendarChartYAxis,
-    repairRUSReducer_setCalendarChartYAxis,
-  ],
+  [repairRUSAction.setYAxisKey, repairRUSReducer_setYAxisKey],
 ]);
 
 function repairRUSReducer_setBarLineRadialChartKind(
@@ -39,23 +32,13 @@ function repairRUSReducer_setBarLineRadialChartKind(
   };
 }
 
-function repairRUSReducer_setBarLineRadialChartYAxis(
+function repairRUSReducer_setYAxisKey(
   state: RepairRUSState,
   dispatch: RepairRUSDispatch,
 ): RepairRUSState {
   return {
     ...state,
-    barLineRadialChartYAxis: dispatch.payload as RepairSubMetric,
-  };
-}
-
-function repairRUSReducer_setCalendarChartYAxis(
-  state: RepairRUSState,
-  dispatch: RepairRUSDispatch,
-): RepairRUSState {
-  return {
-    ...state,
-    calendarChartYAxis: dispatch.payload as RepairSubMetric,
+    yAxisKey: dispatch.payload as RepairSubMetric,
   };
 }
 

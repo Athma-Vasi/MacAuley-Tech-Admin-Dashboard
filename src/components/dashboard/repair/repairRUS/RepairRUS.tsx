@@ -46,6 +46,7 @@ import {
   returnSelectedRepairCalendarCharts,
 } from "../chartsData";
 import {
+  REPAIR_CHARTS_TO_Y_AXIS_KEYS_MAP,
   REPAIR_METRICS_SUB_CATEGORY_DATA,
   REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
@@ -95,8 +96,7 @@ function RepairRUS(
   );
   const {
     barLineRadialChartKind,
-    barLineRadialChartYAxis,
-    calendarChartYAxis,
+    yAxisKey,
   } = repairRUSState;
 
   const charts = returnCalendarViewRepairCharts(
@@ -111,20 +111,18 @@ function RepairRUS(
     expandLineChartNavigateLink,
     expandRadialBarChartNavigateLink,
   } = createExpandChartNavigateLinks({
-    barLineRadialChartYAxis,
     calendarView,
     metricCategory: repairCategory,
     metricsView,
-    calendarChartYAxis,
+    yAxisKey,
   });
 
-  const { barLineRadialChartHeading, calendarChartHeading } = returnChartTitles(
+  const { yAxisKeyChartHeading } = returnChartTitles(
     {
-      barLineRadialChartYAxis,
       calendarView,
       metricCategory: repairCategory,
       storeLocation,
-      calendarChartYAxis,
+      yAxisKey,
     },
   );
 
@@ -141,9 +139,7 @@ function RepairRUS(
     />
   );
 
-  const barLineRadialChartUnit = barLineRadialChartYAxis === "revenue"
-    ? "CAD"
-    : "Units";
+  const barLineRadialChartUnit = yAxisKey === "revenue" ? "CAD" : "Units";
   const barChartIndexBy = calendarView === "Daily"
     ? "Days"
     : calendarView === "Monthly"
@@ -154,6 +150,8 @@ function RepairRUS(
     calendarView,
     day,
     month,
+    yAxisKey,
+    yAxisKeyChartHeading,
     year,
   };
 
@@ -172,9 +170,8 @@ function RepairRUS(
               action: globalAction.setExpandBarChartData,
               payload: {
                 ...commonPayload,
-                chartData: barCharts[barLineRadialChartYAxis],
+                chartData: barCharts[yAxisKey],
                 chartKind: "bar",
-                chartTitle: barLineRadialChartHeading,
                 chartUnitKind: barLineRadialChartUnit,
                 indexBy: barChartIndexBy,
                 keys: barChartKeys,
@@ -192,9 +189,8 @@ function RepairRUS(
               action: globalAction.setExpandLineChartData,
               payload: {
                 ...commonPayload,
-                chartData: lineCharts[barLineRadialChartYAxis],
+                chartData: lineCharts[yAxisKey],
                 chartKind: "line",
-                chartTitle: barLineRadialChartHeading,
                 chartUnitKind: barLineRadialChartUnit,
               },
             });
@@ -210,9 +206,8 @@ function RepairRUS(
               action: globalAction.setExpandRadialBarChartData,
               payload: {
                 ...commonPayload,
-                chartData: lineCharts[barLineRadialChartYAxis],
+                chartData: lineCharts[yAxisKey],
                 chartKind: "radial",
-                chartTitle: barLineRadialChartHeading,
                 chartUnitKind: barLineRadialChartUnit,
               },
             });
@@ -235,14 +230,14 @@ function RepairRUS(
     />
   );
 
-  const barLineRadialChartYAxisSelectInput = (
+  const yAxisKeySelectInput = (
     <AccessibleSelectInput
       attributes={{
         data: REPAIR_METRICS_SUB_CATEGORY_DATA,
         name: "Y-Axis",
         parentDispatch: repairRUSDispatch,
-        validValueAction: repairRUSAction.setBarLineRadialChartYAxis,
-        value: barLineRadialChartYAxis,
+        validValueAction: repairRUSAction.setYAxisKey,
+        value: yAxisKey,
       }}
     />
   );
@@ -250,7 +245,7 @@ function RepairRUS(
   const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
-        barChartData={barCharts[barLineRadialChartYAxis]}
+        barChartData={barCharts[yAxisKey]}
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
@@ -267,7 +262,7 @@ function RepairRUS(
     ? (
       <ResponsiveLineChart
         chartUnitKind={barLineRadialChartUnit}
-        lineChartData={lineCharts[barLineRadialChartYAxis]}
+        lineChartData={lineCharts[yAxisKey]}
         hideControls
         xFormat={(x) =>
           `${
@@ -289,7 +284,7 @@ function RepairRUS(
     )
     : (
       <ResponsiveRadialBarChart
-        radialBarChartData={lineCharts[barLineRadialChartYAxis]}
+        radialBarChartData={lineCharts[yAxisKey]}
         hideControls
         tooltip={(arg) =>
           createChartTooltipElement({
@@ -302,10 +297,10 @@ function RepairRUS(
 
   const calendarChartData = returnSelectedRepairCalendarCharts(
     calendarChartsData,
-    calendarChartYAxis,
+    yAxisKey,
   );
 
-  const calendarUnitKind = calendarChartYAxis === "revenue" ? "CAD" : "Units";
+  const calendarUnitKind = yAxisKey === "revenue" ? "CAD" : "Units";
 
   const expandCalendarChartButton = (
     <AccessibleButton
@@ -321,10 +316,8 @@ function RepairRUS(
             action: globalAction.setExpandCalendarChartData,
             payload: {
               ...commonPayload,
-              calendarChartYAxis,
               chartData: calendarChartData,
               chartKind: "calendar",
-              chartTitle: calendarChartHeading,
               chartUnitKind: calendarUnitKind,
             },
           });
@@ -340,18 +333,6 @@ function RepairRUS(
     />
   );
 
-  const calendarChartYAxisSelectInput = (
-    <AccessibleSelectInput
-      attributes={{
-        data: REPAIR_METRICS_SUB_CATEGORY_DATA,
-        name: "Y-Axis",
-        parentDispatch: repairRUSDispatch,
-        validValueAction: repairRUSAction.setCalendarChartYAxis,
-        value: calendarChartYAxis,
-      }}
-    />
-  );
-
   const calendarChart = (
     <ResponsiveCalendarChart
       calendarChartData={calendarChartData}
@@ -361,9 +342,9 @@ function RepairRUS(
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
-          calendarChartYAxis,
           chartUnitKind: calendarUnitKind,
           kind: "calendar",
+          yAxisKey,
         })}
     />
   );
@@ -377,7 +358,7 @@ function RepairRUS(
 
   const statisticsElementsMap = createStatisticsElements(
     calendarView,
-    barLineRadialChartYAxis,
+    yAxisKey,
     statisticsMap,
     storeLocation,
   );
@@ -410,28 +391,26 @@ function RepairRUS(
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,
-    barLineRadialChartYAxis,
+    yAxisKey,
     REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
   );
 
   return (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
-      barLineRadialChartHeading={barLineRadialChartHeading}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-      barLineRadialChartYAxisSelectInput={barLineRadialChartYAxisSelectInput}
-      barLineRadialChartYAxis={barLineRadialChartYAxis}
       calendarChart={calendarChart}
-      calendarChartHeading={calendarChartHeading}
-      calendarChartYAxisSelectInput={calendarChartYAxisSelectInput}
       calendarView={calendarView}
       cardsWithStatisticsElements={cardsWithStatisticsElements}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
-      overviewCards={repairOverviewCards}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
       statisticsModals={statisticsModals}
+      yAxisKey={yAxisKey}
+      yAxisKeyChartHeading={yAxisKeyChartHeading}
+      yAxisKeySelectInput={yAxisKeySelectInput}
+      chartsToYAxisKeysMap={REPAIR_CHARTS_TO_Y_AXIS_KEYS_MAP}
     />
   );
 }

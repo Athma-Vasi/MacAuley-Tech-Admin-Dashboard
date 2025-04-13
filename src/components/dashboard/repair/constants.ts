@@ -1,4 +1,5 @@
 import { CheckboxRadioSelectData } from "../../../types";
+import { ChartsToYAxisKeysMap } from "../types";
 import { RepairMetricCategory, RepairSubMetric } from "./types";
 
 const REPAIR_METRICS_SUB_CATEGORY_DATA: CheckboxRadioSelectData<
@@ -26,7 +27,28 @@ const REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
   ["unitsRepaired", new Set(["Units Repaired"])],
 ]);
 
+const REPAIR_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
+  bar: new Set([
+    "revenue",
+    "unitsRepaired",
+  ]),
+  calendar: new Set([
+    "revenue",
+    "unitsRepaired",
+  ]),
+  pie: new Set([]),
+  radial: new Set([
+    "revenue",
+    "unitsRepaired",
+  ]),
+  line: new Set([
+    "revenue",
+    "unitsRepaired",
+  ]),
+};
+
 export {
+  REPAIR_CHARTS_TO_Y_AXIS_KEYS_MAP,
   REPAIR_METRICS_DATA,
   REPAIR_METRICS_SUB_CATEGORY_DATA,
   REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,

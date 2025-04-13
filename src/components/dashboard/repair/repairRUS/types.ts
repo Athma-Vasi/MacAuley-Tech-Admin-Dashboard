@@ -4,19 +4,17 @@ import { RepairRUSAction } from "./actions";
 
 type RepairRUSState = {
   barLineRadialChartKind: ChartKindSegment;
-  barLineRadialChartYAxis: RepairSubMetric;
-  calendarChartYAxis: RepairSubMetric;
+  yAxisKey: RepairSubMetric;
 };
 
-type RepairRUSDispatch = {
-  action: RepairRUSAction["setBarLineRadialChartKind"];
-  payload: ChartKindSegment;
-} | {
-  action: RepairRUSAction["setBarLineRadialChartYAxis"];
-  payload: RepairSubMetric;
-} | {
-  action: RepairRUSAction["setCalendarChartYAxis"];
-  payload: RepairSubMetric;
-};
+type RepairRUSDispatch =
+  | {
+    action: RepairRUSAction["setBarLineRadialChartKind"];
+    payload: ChartKindSegment;
+  }
+  | {
+    action: RepairRUSAction["setYAxisKey"];
+    payload: RepairSubMetric;
+  };
 
 export type { RepairRUSDispatch, RepairRUSState };
