@@ -46,7 +46,6 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
-  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -412,9 +411,13 @@ function RUS(
   );
 
   const selectedCards = returnProductMetricsCards(
-    productMetricsCards,
-    calendarView,
-    subMetric,
+    {
+      calendarView,
+      productMetricsCards,
+      productYAxisKeyToCardsKeyMap: PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
+      subMetric,
+      yAxisKey,
+    },
   );
 
   const statisticsMap = returnStatistics(barCharts);
@@ -427,9 +430,13 @@ function RUS(
   );
 
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Array<boolean>
+    Map<string, boolean>
   >(
-    Array.from({ length: statisticsElementsMap.size }, () => false),
+    new Map([
+      ["Total", false],
+      ["In-Store", false],
+      ["Online", false],
+    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({
@@ -452,11 +459,11 @@ function RUS(
     },
   );
 
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    yAxisKey,
-    PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
+  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+  //   consolidatedCards,
+  //   yAxisKey,
+  //   PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  // );
 
   return (
     <DashboardBarLineLayout
@@ -464,7 +471,7 @@ function RUS(
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      consolidatedCards={consolidatedCards}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}

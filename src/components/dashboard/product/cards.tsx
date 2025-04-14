@@ -4,7 +4,10 @@ import {
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";
-import type { SelectedDateProductMetrics } from "./chartsData";
+import type {
+  ProductMetricsChartKey,
+  SelectedDateProductMetrics,
+} from "./chartsData";
 import { ProductSubMetric } from "./types";
 
 type createProductMetricsCardsInput = {
@@ -286,9 +289,19 @@ function createProductMetricsCards(
 }
 
 function returnProductMetricsCards(
-  productMetricsCards: ProductMetricsCards,
-  calendarView: DashboardCalendarView,
-  subMetric: ProductSubMetric,
+  {
+    calendarView,
+    productMetricsCards,
+    productYAxisKeyToCardsKeyMap,
+    subMetric,
+    yAxisKey,
+  }: {
+    calendarView: DashboardCalendarView;
+    productMetricsCards: ProductMetricsCards;
+    productYAxisKeyToCardsKeyMap: Map<ProductMetricsChartKey, Set<string>>;
+    subMetric: ProductSubMetric;
+    yAxisKey: ProductMetricsChartKey;
+  },
 ) {
   const cards = calendarView === "Daily"
     ? productMetricsCards.dailyCards[subMetric]
@@ -296,8 +309,13 @@ function returnProductMetricsCards(
     ? productMetricsCards.monthlyCards[subMetric]
     : productMetricsCards.yearlyCards[subMetric];
 
+  const cardsSet = productYAxisKeyToCardsKeyMap.get(
+    yAxisKey,
+  );
+
   return cards.reduce((acc, card) => {
     const { heading = "Total" } = card;
+    card.isActive = cardsSet?.has(heading) ?? false;
 
     acc.set(heading, card);
 
