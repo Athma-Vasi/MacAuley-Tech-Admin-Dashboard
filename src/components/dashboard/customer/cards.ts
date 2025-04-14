@@ -4,7 +4,12 @@ import {
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";
-import type { SelectedDateCustomerMetrics } from "./chartsData";
+import type {
+  CustomerMetricsChurnRetentionChartsKey,
+  CustomerMetricsNewReturningChartsKey,
+  SelectedDateCustomerMetrics,
+} from "./chartsData";
+import { CustomerNewReturningYAxisKey } from "./types";
 
 type CreateCustomerMetricsCardsInput = {
   cardBgGradient: string;
@@ -576,8 +581,23 @@ function returnCalendarViewCustomerCards(
 }
 
 function returnCustomerMetricsCardsMap(
-  customerMetricsCards: CustomerMetricsCards,
-  calendarView: DashboardCalendarView,
+  {
+    calendarView,
+    customerMetricsCards,
+    customerYAxisKeyToCardsKeyMap,
+    yAxisKey,
+  }: {
+    calendarView: DashboardCalendarView;
+    customerMetricsCards: CustomerMetricsCards;
+    customerYAxisKeyToCardsKeyMap: Map<
+      | CustomerMetricsNewReturningChartsKey
+      | CustomerMetricsChurnRetentionChartsKey,
+      Set<string>
+    >;
+    yAxisKey:
+      | CustomerNewReturningYAxisKey
+      | CustomerMetricsChurnRetentionChartsKey;
+  },
 ) {
   const cards = calendarView === "Daily"
     ? customerMetricsCards.dailyCards
@@ -587,23 +607,30 @@ function returnCustomerMetricsCardsMap(
 
   return Object.entries(cards).reduce(
     (acc, [key, cards]) => {
+      const cardsSet = customerYAxisKeyToCardsKeyMap.get(
+        yAxisKey,
+      );
+
       if (key === "churnRate" || key === "retentionRate") {
         const churnRetentionMap = acc.get("churn") ?? new Map();
 
         cards.forEach((card) => {
           const heading = card.heading ?? "Churn Rate";
+          card.isActive = cardsSet?.has(heading) ?? false;
           churnRetentionMap.set(heading, card);
         });
       } else if (key === "new") {
         const newMap = acc.get("new") ?? new Map();
         cards.forEach((card) => {
           const heading = card.heading ?? "Total New";
+          card.isActive = cardsSet?.has(heading) ?? false;
           newMap.set(heading, card);
         });
       } else if (key === "returning") {
         const returningMap = acc.get("returning") ?? new Map();
         cards.forEach((card) => {
           const heading = card.heading ?? "Total Returning";
+          card.isActive = cardsSet?.has(heading) ?? false;
           returningMap.set(heading, card);
         });
       }

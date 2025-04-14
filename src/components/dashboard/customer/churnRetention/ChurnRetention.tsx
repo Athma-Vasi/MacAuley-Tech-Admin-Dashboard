@@ -35,7 +35,6 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
-  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -125,7 +124,7 @@ function ChurnRetention(
 
   const { yAxisKeyChartHeading } = returnChartTitles({
     calendarView,
-    metricCategory,
+    metricCategory: "",
     storeLocation,
     yAxisKey,
   });
@@ -398,8 +397,13 @@ function ChurnRetention(
   );
 
   const cardsMap = returnCustomerMetricsCardsMap(
-    customerMetricsCards,
-    calendarView,
+    {
+      calendarView,
+      customerMetricsCards,
+      customerYAxisKeyToCardsKeyMap:
+        CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
+      yAxisKey,
+    },
   );
 
   const statisticsElementsMap = createStatisticsElements(
@@ -410,9 +414,12 @@ function ChurnRetention(
   );
 
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Array<boolean>
+    Map<string, boolean>
   >(
-    Array.from({ length: statisticsElementsMap.size }, () => false),
+    new Map([
+      ["Churn Rate", false],
+      ["Retention Rate", false],
+    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({
@@ -435,11 +442,11 @@ function ChurnRetention(
     },
   );
 
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    yAxisKey,
-    CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
+  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+  //   consolidatedCards,
+  //   yAxisKey,
+  //   CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  // );
 
   return (
     <Stack>
@@ -448,7 +455,7 @@ function ChurnRetention(
         barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
         calendarChart={calendarChart}
         calendarView={calendarView}
-        cardsWithStatisticsElements={cardsWithStatisticsElements}
+        consolidatedCards={consolidatedCards}
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}

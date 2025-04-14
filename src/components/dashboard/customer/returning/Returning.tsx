@@ -35,7 +35,6 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
-  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import { CustomerMetricsCards, returnCustomerMetricsCardsMap } from "../cards";
@@ -401,8 +400,13 @@ function Returning(
   );
 
   const cardsMap = returnCustomerMetricsCardsMap(
-    customerMetricsCards,
-    calendarView,
+    {
+      calendarView,
+      customerMetricsCards,
+      customerYAxisKeyToCardsKeyMap:
+        CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
+      yAxisKey,
+    },
   );
 
   const statisticsElementsMap = createStatisticsElements(
@@ -413,9 +417,15 @@ function Returning(
   );
 
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Array<boolean>
+    Map<string, boolean>
   >(
-    Array.from({ length: statisticsElementsMap.size }, () => false),
+    new Map([
+      ["Total Returning", false],
+      ["Sales", false],
+      ["Sales Online", false],
+      ["Sales In-Store", false],
+      ["Repair", false],
+    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({
@@ -438,11 +448,11 @@ function Returning(
     },
   );
 
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    yAxisKey,
-    CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
+  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+  //   consolidatedCards,
+  //   yAxisKey,
+  //   CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  // );
 
   return (
     <Stack>
@@ -451,7 +461,7 @@ function Returning(
         barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
         calendarChart={calendarChart}
         calendarView={calendarView}
-        cardsWithStatisticsElements={cardsWithStatisticsElements}
+        consolidatedCards={consolidatedCards}
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
