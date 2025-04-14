@@ -83,7 +83,7 @@
 
 .chart-card .chart {
   width: var(--chart-width);
-  height: clamp(350px * 0.38, calc(350px - 2em), 700px);
+  height: clamp(350px * 0.38, calc(300px - 2em), 700px);
 }
 
 .accessible-input {
@@ -104,7 +104,7 @@
   flex-direction: column;
   height: 100vh;
   justify-content: flex-start;
-  outline: 1px solid teal;
+
   padding: var(--padding);
   width: var(--app-width);
 
@@ -124,7 +124,7 @@
   flex-direction: column;
   height: 100vh;
   justify-content: flex-start;
-  outline: 1px solid teal;
+
   padding: var(--padding);
   width: var(--app-width);
 
@@ -254,6 +254,7 @@
   row-gap: var(--padding);
   border-radius: var(--border-radius);
   border: var(--border);
+  transition: all 0.17s ease-in-out;
 }
 
 .statistics-card.c0 {
@@ -313,149 +314,7 @@
     .dashboard-layout-container {
       padding: var(--padding);
 
-      .grid-section {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        padding: var(--padding) 0px;
-        gap: var(--padding);
-
-        .chart-controls-card {
-          grid-area: co;
-          padding: var(--padding) 0px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--padding);
-          justify-content: center;
-          align-items: center;
-        }
-
-        .chart-titles {
-          grid-area: ti;
-        }
-
-        .chart-card {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-end;
-          padding: var(--padding);
-          gap: var(--padding);
-          width: 100%;
-
-          .chart {
-            width: clamp(300px, 100%, calc(860px + var(--padding-x2)));
-          }
-        }
-
-        .chart-card.bar-line-radial {}
-        .chart-card.calendar {}
-        .chart-card.pie {}
-
-        .statistics-card {
-          display: flex;
-          flex-direction: column;
-          padding: var(--padding);
-          align-items: flex-start;
-          justify-content: center;
-          row-gap: var(--padding);
-          border-radius: var(--border-radius);
-          border: var(--border);
-        }
-
-        .statistics-card.c0 {
-          justify-self: flex-start;
-        }
-        .statistics-card.c1 {}
-        .statistics-card.c2 {}
-        .statistics-card.c3 {
-          justify-self: flex-start;
-        }
-        .statistics-card.c4 {
-          justify-self: flex-start;
-        }
-      }
-
       .header {}
-
-      .chart-section-container {
-        border-bottom: var(--border);
-        padding: var(--padding) 0px;
-
-        .chart-section-blr {
-          .chart-titles {
-            grid-area: ti;
-            border-right: var(--border);
-          }
-
-          .chart-controls-card {
-            width: var(--card-width);
-            grid-area: co;
-            padding: var(--padding) 0px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            row-gap: var(--padding);
-            justify-self: flex-start;
-            padding: var(--padding);
-
-            .footer {
-              width: var(--input-width);
-              display: flex;
-              flex-wrap: wrap;
-              gap: var(--padding);
-              justify-content: space-between;
-            }
-          }
-
-          .chart-card {
-            grid-area: ch;
-
-            .chart {}
-          }
-        }
-
-        .mobile-air {
-          display: flex;
-          flex-wrap: wrap;
-          row-gap: var(--padding);
-          column-gap: var(--column-gap);
-          padding-top: var(--padding);
-        }
-
-        .chart-section {
-          .chart-titles {
-            grid-area: ti;
-          }
-
-          .chart-controls-card {
-            width: var(--card-width);
-            grid-area: co;
-            padding: var(--padding);
-            display: flex;
-            flex-direction: column;
-            row-gap: var(--padding);
-            justify-self: flex-start;
-            border-left: var(--border);
-            align-items: center;
-
-            .footer {
-              width: var(--input-width);
-              display: flex;
-              justify-content: flex-start;
-              gap: var(--padding);
-              flex-wrap: wrap;
-            }
-          }
-
-          .chart-card {
-            grid-area: ch;
-            border-top: var(--border);
-
-            .chart {}
-          }
-        }
-      }
     }
   }
 
@@ -467,9 +326,7 @@
   .sidebar {}
 }
 
-@media screen and (max-width: 640px) {}
-
-@media screen and (min-width: 641px) and (max-width: 860px) {
+@media screen and (max-width: 860px) {
   .app-shell {
     width: 100vw;
     display: flex;
@@ -497,142 +354,71 @@
     display: none;
   }
 
-  /** register */
-  .register-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    row-gap: var(--padding-x2);
-  }
-
-  .stepper-sidebar-cards {
-    align-items: center;
-  }
-  .stepper-card.hidden {
-    display: none;
+  .statistics-card {
+    width: var(--card-width);
   }
 
   .grid-section {
-    /* display: flex;
-    flex-wrap: wrap; */
-    display: grid;
-    gap: var(--padding);
-    grid-template-areas:
-      "ti ti ti co co co co co co co co co"
-      "ti ti ti co co co co co co co co co"
-      "ti ti ti co co co co co co co co co"
-      "c0 c0 c0 bc bc bc bc bc bc bc bc bc"
-      "c0 c0 c0 bc bc bc bc bc bc bc bc bc"
-      "c0 c0 c0 bc bc bc bc bc bc bc bc bc"
-      "c1 c1 c1 cc cc cc cc cc cc cc cc cc"
-      "c1 c1 c1 cc cc cc cc cc cc cc cc cc"
-      "c1 c1 c1 cc cc cc cc cc cc cc cc cc"
-      "c2 c2 c2 pc pc pc pc pc pc pc pc pc"
-      "c2 c2 c2 pc pc pc pc pc pc pc pc pc"
-      "c2 c2 c2 pc pc pc pc pc pc pc pc pc"
-      "c3 c3 c3 c4 c4 c4 c5 c5 c5 .. .. .."
-      "c3 c3 c3 c4 c4 c4 c5 c5 c5 .. .. .."
-      "c3 c3 c3 c4 c4 c4 c5 c5 c5 .. .. ..";
-    gap: var(--padding);
-    outline: 1px solid navy;
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    padding: var(--padding-x2);
+    padding: var(--padding) 0px;
+    gap: var(--padding);
 
-    .header {
-      /* grid-template-columns: repeat(auto-fi); */
-      /* grid-template-rows: 1fr; */
+    .chart-controls-card {
+      grid-area: co;
+      padding: var(--padding) 0px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--padding);
+      justify-content: center;
+      align-items: center;
+    }
 
-      .chart-controls-card {
-        grid-area: co;
-        /* width: var(--card-width); */
-        border: var(--border);
+    .chart-titles {
+      grid-area: ti;
+    }
+
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      padding: var(--padding);
+      gap: var(--padding);
+      width: 100%;
+
+      .chart {
+        width: clamp(300px, 100%, calc(860px + var(--padding-x2)));
       }
-
-      .chart-titles {
-        /* width: var(--card-width); */
-        grid-area: ti;
-        /* border: var(--border); */
-      }
     }
 
-    .chart-card.bar-line-radial {
-      grid-area: bc;
-    }
-    .chart-card.calendar {
-      grid-area: cc;
-    }
-    .chart-card.pie {
-      grid-area: pc;
+    .chart-card.bar-line-radial {}
+    .chart-card.calendar {}
+    .chart-card.pie {}
+
+    .statistics-card {
+      display: flex;
+      flex-direction: column;
+      padding: var(--padding);
+      align-items: flex-start;
+      justify-content: center;
+      row-gap: var(--padding);
+      border-radius: var(--border-radius);
+      border: var(--border);
     }
 
     .statistics-card.c0 {
-      outline: 1px solid teal;
-      grid-area: c0;
+      justify-self: flex-start;
     }
-    .statistics-card.c1 {
-      grid-area: c1;
-    }
-    .statistics-card.c2 {
-      grid-area: c2;
-    }
+    .statistics-card.c1 {}
+    .statistics-card.c2 {}
     .statistics-card.c3 {
-      grid-area: c3;
+      justify-self: flex-start;
     }
     .statistics-card.c4 {
-      grid-area: c4;
+      justify-self: flex-start;
     }
-  }
-
-  .chart-section {
-    display: grid;
-    grid-template-areas:
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch";
-
-    row-gap: var(--padding);
-  }
-
-  .chart-section-blr {
-    display: grid;
-    grid-template-areas:
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch";
-    /* display: flex;
-    flex-wrap: wrap; */
-    column-gap: var(--column-gap);
-    /* grid-auto-flow: column; */
-    row-gap: var(--padding);
-    width: 100%;
-  }
-
-  .chart-section {
-    /* display: flex;
-    flex-direction: column;
-    row-gap: var(--padding); */
-    /* outline: 1px solid cadetblue; */
-    display: flex;
-    flex-direction: column;
   }
 }
 
@@ -664,43 +450,45 @@
     display: none;
   }
 
-  /** charts layout */
-
-  /** charts layout */
-
   .grid-section {
-    display: flex;
-    flex-wrap: wrap;
     gap: var(--padding);
-    outline: 1px solid navy;
+
     width: 100%;
 
     padding: var(--padding-x2);
-    /* display: grid; */
-    /* grid-template-areas: */
-    /* "ti ti ti ti co co co co co co co co"
-    "ti ti ti ti co co co co co co co co"
-    "bc bc bc bc bc bc bc bc bc bc bc bc"
-    "bc bc bc bc bc bc bc bc bc bc bc bc"
-    "bc bc bc bc bc bc bc bc bc bc bc bc"
-    "c0 c0 c0 c0 pc pc pc pc pc pc pc pc"
-    "c0 c0 c0 c0 pc pc pc pc pc pc pc pc"
-    "c1 c1 c1 c1 pc pc pc pc pc pc pc pc"
-    "c1 c1 c1 c1 cc cc cc cc cc cc cc cc"
-    "c2 c2 c2 c2 cc cc cc cc cc cc cc cc"
-    "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
-    "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"; */
+    display: grid;
+    grid-template-areas:
+      "ti ti co co co"
+      "bc bc bc bc bc"
+      "c0 pc pc pc pc"
+      "c1 cc cc cc cc"
+      "c2 c3 c4 .. ..";
 
     .chart-controls-card {
       grid-area: co;
       width: var(--card-width);
       border: var(--border);
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
     }
 
     .chart-titles {
-      width: var(--card-width);
+      width: var(--title-card-width);
       grid-area: ti;
-      border: var(--border);
+    }
+
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-end;
+
+      .chart {
+        width: 100%;
+      }
     }
 
     .chart-card.bar-line-radial {
@@ -709,12 +497,14 @@
     .chart-card.calendar {
       grid-area: cc;
     }
+
     .chart-card.pie {
       grid-area: pc;
     }
 
+    .statistics-card.active {}
+
     .statistics-card.c0 {
-      outline: 1px solid teal;
       grid-area: c0;
     }
     .statistics-card.c1 {
@@ -728,48 +518,6 @@
     }
     .statistics-card.c4 {
       grid-area: c4;
-    }
-  }
-
-  .chart-section {
-    display: grid;
-    grid-template-areas:
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch";
-    gap: var(--padding);
-    width: 100%;
-  }
-
-  .chart-section-blr {
-    display: grid;
-    grid-template-areas:
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch";
-    gap: var(--padding);
-    width: 100%;
-
-    .chart-controls-card {
-      justify-self: flex-start;
     }
   }
 }
@@ -802,47 +550,78 @@
     width: 100%;
   }
 
-  /** charts layout */
-  .chart-section {
-    display: grid;
-    grid-template-areas:
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch";
-
+  .grid-section {
     gap: var(--padding);
-  }
 
-  .chart-section-blr {
+    width: 100%;
+
+    padding: var(--padding-x2);
     display: grid;
     grid-template-areas:
-      "ti ti ti ch ch ch ch ch ch ch ch ch"
-      "ti ti ti ch ch ch ch ch ch ch ch ch"
-      "ti ti ti ch ch ch ch ch ch ch ch ch"
-      "ti ti ti ch ch ch ch ch ch ch ch ch"
-      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
-      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
-      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
-      "co co co co c0 c0 c0 c0 c1 c1 c1 c1"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4";
-    /* display: flex;
-    flex-wrap: wrap; */
-    column-gap: var(--column-gap);
-    /* grid-auto-flow: column; */
-    row-gap: var(--padding);
-    width: 100%;
+      "ti ti co co co"
+      "bc bc bc bc bc"
+      "c0 pc pc pc pc"
+      "c1 cc cc cc cc"
+      "c2 c3 c4 .. ..";
+
+    .chart-controls-card {
+      grid-area: co;
+      width: var(--card-width);
+      border: var(--border);
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .chart-titles {
+      width: var(--title-card-width);
+      grid-area: ti;
+    }
+
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-end;
+
+      .chart {
+        width: 100%;
+      }
+    }
+
+    .chart-card.bar-line-radial {
+      grid-area: bc;
+    }
+    .chart-card.calendar {
+      grid-area: cc;
+    }
+
+    .chart-card.pie {
+      grid-area: pc;
+    }
+
+    .statistics-card {
+      width: var(--statistics-card-width);
+    }
+    .statistics-card.active {}
+
+    .statistics-card.c0 {
+      grid-area: c0;
+    }
+    .statistics-card.c1 {
+      grid-area: c1;
+    }
+    .statistics-card.c2 {
+      grid-area: c2;
+    }
+    .statistics-card.c3 {
+      grid-area: c3;
+    }
+    .statistics-card.c4 {
+      grid-area: c4;
+    }
   }
 }
 
@@ -869,46 +648,78 @@
     width: 100%;
   }
 
-  /** charts layout */
-  .chart-section {
-    display: grid;
-    grid-template-areas:
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti co co co co co co co co"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch"
-      "ti ti ti ti ch ch ch ch ch ch ch ch";
-
+  .grid-section {
     gap: var(--padding);
-  }
 
-  .chart-section-blr {
+    width: 100%;
+
+    padding: var(--padding-x2);
     display: grid;
     grid-template-areas:
-      "ti ti ti ti co co co co c0 c0 c0 c0"
-      "ti ti ti ti co co co co c0 c0 c0 c0"
-      "ti ti ti ti co co co co c0 c0 c0 c0"
-      "ti ti ti ti co co co co c0 c0 c0 c0"
-      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
-      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
-      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
-      "c1 c1 c1 c1 ch ch ch ch ch ch ch ch"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4"
-      "c2 c2 c2 c2 c3 c3 c3 c3 c4 c4 c4 c4";
-    /* display: flex;
-    flex-wrap: wrap; */
-    column-gap: var(--column-gap);
-    /* grid-auto-flow: column; */
-    row-gap: var(--padding);
-    width: 100%;
+      "ti ti co co co"
+      "bc bc bc bc bc"
+      "c0 pc pc pc pc"
+      "c1 cc cc cc cc"
+      "c2 c3 c4 .. ..";
+
+    .chart-controls-card {
+      grid-area: co;
+      width: var(--card-width);
+      border: var(--border);
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .chart-titles {
+      width: var(--title-card-width);
+      grid-area: ti;
+    }
+
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-end;
+
+      .chart {
+        width: 100%;
+      }
+    }
+
+    .chart-card.bar-line-radial {
+      grid-area: bc;
+    }
+    .chart-card.calendar {
+      grid-area: cc;
+    }
+
+    .chart-card.pie {
+      grid-area: pc;
+    }
+
+    .statistics-card {
+      width: var(--statistics-card-width);
+    }
+
+    .statistics-card.active {}
+
+    .statistics-card.c0 {
+      grid-area: c0;
+    }
+    .statistics-card.c1 {
+      grid-area: c1;
+    }
+    .statistics-card.c2 {
+      grid-area: c2;
+    }
+    .statistics-card.c3 {
+      grid-area: c3;
+    }
+    .statistics-card.c4 {
+      grid-area: c4;
+    }
   }
 }

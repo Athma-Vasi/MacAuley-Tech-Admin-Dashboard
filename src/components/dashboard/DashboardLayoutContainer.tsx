@@ -4,11 +4,7 @@ import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
-import {
-  ChartsToYAxisKeysMap,
-  DashboardCalendarView,
-  FinancialYAxisKey,
-} from "./types";
+import { ChartsToYAxisKeysMap, DashboardCalendarView } from "./types";
 
 type DashboardLayoutContainerProps = {
   barLineRadialChart: React.JSX.Element;
@@ -57,31 +53,36 @@ function DashboardLayoutContainer(
   const { windowWidth } = useWindowSize();
 
   const isPieChartSafe = chartsToYAxisKeysMap.pie.has(
-    yAxisKey as FinancialYAxisKey,
+    yAxisKey,
   );
   const isCalendarChartSafe = chartsToYAxisKeysMap.calendar.has(
-    yAxisKey as FinancialYAxisKey,
+    yAxisKey,
   );
-  const isBarLineRadialChartSafe =
-    chartsToYAxisKeysMap.bar.has(yAxisKey as FinancialYAxisKey) ||
-    chartsToYAxisKeysMap.line.has(yAxisKey as FinancialYAxisKey) ||
-    chartsToYAxisKeysMap.radial.has(yAxisKey as FinancialYAxisKey);
+  const isBarLineRadialChartSafe = chartsToYAxisKeysMap.bar.has(yAxisKey) ||
+    chartsToYAxisKeysMap.line.has(yAxisKey) ||
+    chartsToYAxisKeysMap.radial.has(yAxisKey);
 
   const pieChartWithButton = (
-    <div className="chart-card pie">
+    <div className={`chart-card pie ${isPieChartSafe ? "" : "inactive"}`}>
       {expandPieChartButton}
       {pieChart}
     </div>
   );
 
   const calendarChartWithButton = (
-    <div className="chart-card calendar">
+    <div
+      className={`chart-card calendar ${isCalendarChartSafe ? "" : "inactive"}`}
+    >
       {expandCalendarChartButton}
       {calendarChart}
     </div>
   );
   const barLineRadialChartWithButton = (
-    <div className="chart-card bar-line-radial">
+    <div
+      className={`chart-card bar-line-radial ${
+        isBarLineRadialChartSafe ? "" : "inactive"
+      }`}
+    >
       {expandBarLineRadialChartButton}
       {barLineRadialChart}
     </div>
@@ -90,7 +91,9 @@ function DashboardLayoutContainer(
   const yAxisKeyChartHeadingTitle = (
     <div className="chart-titles">
       {yAxisKeyChartHeading?.split(" ").map((word, idx) => (
-        <Title order={3} size={24} key={`${idx}-${word}`}>{word}</Title>
+        <Title order={3} size={24} key={`${idx}-${word}-${calendarView}`}>
+          {word}
+        </Title>
       ))}
     </div>
   );
