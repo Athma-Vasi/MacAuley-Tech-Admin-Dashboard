@@ -1,10 +1,13 @@
-import { DashboardCalendarView } from "../types";
+import { DashboardCalendarView, FinancialYAxisKey } from "../types";
 import {
   createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";
-import type { SelectedDateFinancialMetrics } from "./chartsData";
+import type {
+  FinancialMetricsOtherMetricsChartsKey,
+  SelectedDateFinancialMetrics,
+} from "./chartsData";
 import { PERT_SET } from "./constants";
 import {
   FinancialCardsAndStatisticsKeyOtherMetrics,
@@ -887,9 +890,22 @@ function createFinancialMetricsCards(
 }
 
 function returnFinancialMetricsCards(
-  financialMetricsCards: FinancialMetricsCards,
-  calendarView: DashboardCalendarView,
-  metricCategory: FinancialMetricCategory,
+  {
+    calendarView,
+    financialMetricsCards,
+    financialYAxisKeyToCardsKeyMap,
+    metricCategory,
+    yAxisKey,
+  }: {
+    financialMetricsCards: FinancialMetricsCards;
+    calendarView: DashboardCalendarView;
+    metricCategory: FinancialMetricCategory;
+    yAxisKey: FinancialYAxisKey | FinancialMetricsOtherMetricsChartsKey;
+    financialYAxisKeyToCardsKeyMap: Map<
+      FinancialYAxisKey | FinancialMetricsOtherMetricsChartsKey,
+      Set<string>
+    >;
+  },
 ): Map<
   | FinancialCardsAndStatisticsKeyPERT
   | FinancialCardsAndStatisticsKeyOtherMetrics,
@@ -907,9 +923,14 @@ function returnFinancialMetricsCards(
     ? cards[metricCategory]
     : cards.profit;
 
+  const cardsSet = financialYAxisKeyToCardsKeyMap.get(
+    yAxisKey,
+  );
+
   return cardsArr.reduce(
     (acc, card) => {
       const { heading = "All" } = card;
+      card.isActive = cardsSet?.has(heading) ?? false;
 
       acc.set(
         heading as

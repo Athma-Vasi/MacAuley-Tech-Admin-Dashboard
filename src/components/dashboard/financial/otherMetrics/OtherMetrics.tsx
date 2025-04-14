@@ -36,7 +36,6 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createFinancialStatisticsElements,
-  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -355,9 +354,13 @@ function OtherMetrics({
   );
 
   const selectedCards = returnFinancialMetricsCards(
-    financialMetricsCards,
-    calendarView,
-    metricCategory,
+    {
+      calendarView,
+      financialMetricsCards,
+      financialYAxisKeyToCardsKeyMap: FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+      metricCategory,
+      yAxisKey,
+    },
   );
 
   const statisticsMap = returnStatistics(barCharts);
@@ -371,9 +374,13 @@ function OtherMetrics({
   );
 
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Array<boolean>
+    Map<string, boolean>
   >(
-    Array.from({ length: statisticsElementsMap.size }, () => false),
+    new Map([
+      ["Net Profit Margin", false],
+      ["Average Order Value", false],
+      ["Conversion Rate", false],
+    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({
@@ -396,19 +403,13 @@ function OtherMetrics({
     },
   );
 
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    yAxisKey,
-    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
-
   const otherMetrics = (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      consolidatedCards={consolidatedCards}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       sectionHeading={splitCamelCase(metricsView)}

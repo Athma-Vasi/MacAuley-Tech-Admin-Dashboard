@@ -15,7 +15,7 @@ type DashboardLayoutContainerProps = {
   barLineRadialChartKindSegmentedControl: React.JSX.Element;
   calendarChart?: React.JSX.Element | null;
   calendarView: DashboardCalendarView;
-  cardsWithStatisticsElements: React.JSX.Element[];
+  consolidatedCards: React.JSX.Element[];
   chartsToYAxisKeysMap: ChartsToYAxisKeysMap;
   expandBarLineRadialChartButton: React.JSX.Element;
   expandCalendarChartButton?: React.JSX.Element | null;
@@ -35,7 +35,7 @@ function DashboardLayoutContainer(
     barLineRadialChartKindSegmentedControl,
     calendarChart,
     calendarView,
-    cardsWithStatisticsElements,
+    consolidatedCards,
     chartsToYAxisKeysMap,
     expandBarLineRadialChartButton,
     expandCalendarChartButton,
@@ -89,8 +89,8 @@ function DashboardLayoutContainer(
 
   const yAxisKeyChartHeadingTitle = (
     <div className="chart-titles">
-      {yAxisKeyChartHeading?.split(" ").map((word) => (
-        <Title order={3} size={24}>{word}</Title>
+      {yAxisKeyChartHeading?.split(" ").map((word, idx) => (
+        <Title order={3} size={24} key={`${idx}-${word}`}>{word}</Title>
       ))}
     </div>
   );
@@ -109,7 +109,7 @@ function DashboardLayoutContainer(
       {barLineRadialChartWithButton}
       {isPieChartSafe ? pieChartWithButton : null}
       {isCalendarChartSafe ? calendarChartWithButton : null}
-      {cardsWithStatisticsElements}
+      {consolidatedCards}
     </div>
   );
 
@@ -171,7 +171,7 @@ function DashboardLayoutContainer(
   //         {barLineRadialChartControlsCard}
   //         {barLineRadialChartCard}
   //       </section>
-  //       <div className="mobile-air">{cardsWithStatisticsElements}</div>
+  //       <div className="mobile-air">{consolidatedCards}</div>
   //     </div>
   //   )
   //   : (
@@ -180,7 +180,7 @@ function DashboardLayoutContainer(
   //         {barLineRadialChartTitle}
   //         {barLineRadialChartControlsCard}
   //         {barLineRadialChartCard}
-  //         {cardsWithStatisticsElements}
+  //         {consolidatedCards}
   //       </section>
   //     </div>
   //   );
@@ -233,8 +233,6 @@ function DashboardLayoutContainer(
       {newGridLayout}
     </div>
   );
-
-  const testingContainer = <div></div>;
 
   return dashboardLayoutContainer;
 }

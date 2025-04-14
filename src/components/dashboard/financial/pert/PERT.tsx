@@ -38,7 +38,6 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createFinancialStatisticsElements,
-  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -415,9 +414,13 @@ function PERT({
   );
 
   const selectedCards = returnFinancialMetricsCards(
-    financialMetricsCards,
-    calendarView,
-    metricCategory,
+    {
+      financialMetricsCards,
+      calendarView,
+      metricCategory,
+      yAxisKey,
+      financialYAxisKeyToCardsKeyMap: FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+    },
   );
 
   const statisticsMap = returnStatistics(barCharts);
@@ -431,9 +434,15 @@ function PERT({
   );
 
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Array<boolean>
+    Map<string, boolean>
   >(
-    Array.from({ length: statisticsElementsMap.size }, () => false),
+    new Map([
+      ["Total", false],
+      ["Sales Total", false],
+      ["Repair", false],
+      ["Sales In-Store", false],
+      ["Sales Online", false],
+    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({
@@ -456,11 +465,11 @@ function PERT({
     },
   );
 
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    yAxisKey,
-    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
+  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+  //   consolidatedCards,
+  //   yAxisKey,
+  //   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  // );
 
   return (
     <DashboardBarLineLayout
@@ -468,7 +477,7 @@ function PERT({
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      consolidatedCards={consolidatedCards}
       chartsToYAxisKeysMap={FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}

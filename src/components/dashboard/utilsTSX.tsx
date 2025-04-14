@@ -41,6 +41,7 @@ type DashboardCardInfo = {
   heading?: string;
   icon: ReactNode;
   idx?: number;
+  isActive?: boolean;
   percentage?: string;
   deltaTextColor?: string;
   value: string | number;
@@ -52,6 +53,7 @@ function returnDashboardCardElement(
     heading,
     icon,
     idx,
+    isActive,
     percentage,
     deltaTextColor,
     value,
@@ -97,7 +99,7 @@ function returnDashboardCardElement(
   const createdChartCard = (
     <div
       // bg={cardBgGradient}
-      className={`statistics-card c${idx ?? 0}`}
+      className={`statistics-card c${idx ?? 0} ${isActive ? "active" : ""}`}
       // shadow="xs"
       // radius="md"
       // withBorder
@@ -673,23 +675,25 @@ function consolidateCardsAndStatisticsModals(
     setModalsOpenedState,
   }: {
     selectedCards: Map<string, DashboardCardInfo>;
-    modalsOpenedState: boolean[];
-    setModalsOpenedState: React.Dispatch<React.SetStateAction<boolean[]>>;
+    modalsOpenedState: Map<string, boolean>;
+    setModalsOpenedState: React.Dispatch<
+      React.SetStateAction<Map<string, boolean>>
+    >;
   },
-): Map<string, React.JSX.Element> {
+): Array<React.JSX.Element> {
   return Array.from(selectedCards).reduce((acc, [key, card], idx) => {
     const statisticsAccordion = (
       <AccessibleButton
         attributes={{
           kind: "open",
-          leftIcon: modalsOpenedState[idx]
+          leftIcon: modalsOpenedState.get(key)
             ? <TbFolderCancel size={20} />
             : <TbFolderOpen size={20} />,
           label: "Statistics",
           onClick: () => {
             setModalsOpenedState((prev) => {
-              const newStates = [...prev];
-              newStates[idx] = !newStates[idx];
+              const newStates = new Map(prev);
+              newStates.set(key, !newStates.get(key));
               return newStates;
             });
           },
@@ -700,10 +704,10 @@ function consolidateCardsAndStatisticsModals(
     card.icon = statisticsAccordion;
     const cardElement = returnDashboardCardElement({ ...card, idx });
 
-    acc.set(key, cardElement);
+    acc.push(cardElement);
 
     return acc;
-  }, new Map());
+  }, [] as React.JSX.Element[]);
 }
 
 function returnCardElementsForYAxisVariable(
@@ -731,8 +735,10 @@ function returnStatisticsModals(
     statisticsElementsMap,
     themeColorShade,
   }: {
-    modalsOpenedState: boolean[];
-    setModalsOpenedState: React.Dispatch<React.SetStateAction<boolean[]>>;
+    modalsOpenedState: Map<string, boolean>;
+    setModalsOpenedState: React.Dispatch<
+      React.SetStateAction<Map<string, boolean>>
+    >;
     statisticsElementsMap: Map<string, React.JSX.Element>;
     themeColorShade: string;
   },
@@ -746,11 +752,11 @@ function returnStatisticsModals(
           centered
           closeButtonProps={{ color: themeColorShade }}
           key={`${key}-${idx}-modal`}
-          opened={modalsOpenedState[idx]}
+          opened={modalsOpenedState.get(key) ?? false}
           onClose={() =>
             setModalsOpenedState((prev) => {
-              const newStates = [...prev];
-              newStates[idx] = !newStates[idx];
+              const newStates = new Map(prev);
+              newStates.set(key, !newStates.get(key));
               return newStates;
             })}
           transitionProps={{

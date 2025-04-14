@@ -246,7 +246,6 @@
 }
 
 .statistics-card {
-  width: var(--statistics-card-width);
   display: flex;
   flex-direction: column;
   padding: var(--padding);
@@ -354,7 +353,6 @@
         .chart-card.pie {}
 
         .statistics-card {
-          width: var(--statistics-card-width);
           display: flex;
           flex-direction: column;
           padding: var(--padding);
@@ -469,7 +467,9 @@
   .sidebar {}
 }
 
-@media screen and (max-width: 860px) {
+@media screen and (max-width: 640px) {}
+
+@media screen and (min-width: 641px) and (max-width: 860px) {
   .app-shell {
     width: 100vw;
     display: flex;
@@ -511,6 +511,77 @@
   }
   .stepper-card.hidden {
     display: none;
+  }
+
+  .grid-section {
+    /* display: flex;
+    flex-wrap: wrap; */
+    display: grid;
+    gap: var(--padding);
+    grid-template-areas:
+      "ti ti ti co co co co co co co co co"
+      "ti ti ti co co co co co co co co co"
+      "ti ti ti co co co co co co co co co"
+      "c0 c0 c0 bc bc bc bc bc bc bc bc bc"
+      "c0 c0 c0 bc bc bc bc bc bc bc bc bc"
+      "c0 c0 c0 bc bc bc bc bc bc bc bc bc"
+      "c1 c1 c1 cc cc cc cc cc cc cc cc cc"
+      "c1 c1 c1 cc cc cc cc cc cc cc cc cc"
+      "c1 c1 c1 cc cc cc cc cc cc cc cc cc"
+      "c2 c2 c2 pc pc pc pc pc pc pc pc pc"
+      "c2 c2 c2 pc pc pc pc pc pc pc pc pc"
+      "c2 c2 c2 pc pc pc pc pc pc pc pc pc"
+      "c3 c3 c3 c4 c4 c4 c5 c5 c5 .. .. .."
+      "c3 c3 c3 c4 c4 c4 c5 c5 c5 .. .. .."
+      "c3 c3 c3 c4 c4 c4 c5 c5 c5 .. .. ..";
+    gap: var(--padding);
+    outline: 1px solid navy;
+    width: 100%;
+    padding: var(--padding-x2);
+
+    .header {
+      /* grid-template-columns: repeat(auto-fi); */
+      /* grid-template-rows: 1fr; */
+
+      .chart-controls-card {
+        grid-area: co;
+        /* width: var(--card-width); */
+        border: var(--border);
+      }
+
+      .chart-titles {
+        /* width: var(--card-width); */
+        grid-area: ti;
+        /* border: var(--border); */
+      }
+    }
+
+    .chart-card.bar-line-radial {
+      grid-area: bc;
+    }
+    .chart-card.calendar {
+      grid-area: cc;
+    }
+    .chart-card.pie {
+      grid-area: pc;
+    }
+
+    .statistics-card.c0 {
+      outline: 1px solid teal;
+      grid-area: c0;
+    }
+    .statistics-card.c1 {
+      grid-area: c1;
+    }
+    .statistics-card.c2 {
+      grid-area: c2;
+    }
+    .statistics-card.c3 {
+      grid-area: c3;
+    }
+    .statistics-card.c4 {
+      grid-area: c4;
+    }
   }
 
   .chart-section {
@@ -565,7 +636,7 @@
   }
 }
 
-@media screen and (min-width: 860px) and (max-width: 1023px) {
+@media screen and (min-width: 861px) and (max-width: 1023px) {
   .app-shell {
     width: 100vw;
     display: flex;
