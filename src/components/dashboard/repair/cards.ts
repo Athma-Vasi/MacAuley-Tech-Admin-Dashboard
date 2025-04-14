@@ -5,6 +5,7 @@ import {
   type DashboardCardInfo,
 } from "../utilsTSX";
 import type { SelectedDateRepairMetrics } from "./chartsData";
+import { RepairSubMetric } from "./types";
 
 type createRepairMetricsCardsInput = {
   cardBgGradient: string;
@@ -125,8 +126,12 @@ function createRepairMetricsCards(
 }
 
 function returnRepairMetricsCards(
-  repairMetricsCards: RepairMetricsCards,
-  calendarView: DashboardCalendarView,
+  { calendarView, repairMetricsCards, repairYAxisKeyToCardsKeyMap, yAxisKey }: {
+    calendarView: DashboardCalendarView;
+    repairMetricsCards: RepairMetricsCards;
+    repairYAxisKeyToCardsKeyMap: Map<RepairSubMetric, Set<string>>;
+    yAxisKey: RepairSubMetric;
+  },
 ) {
   const cards = calendarView === "Daily"
     ? repairMetricsCards.dailyCards
@@ -134,8 +139,13 @@ function returnRepairMetricsCards(
     ? repairMetricsCards.monthlyCards
     : repairMetricsCards.yearlyCards;
 
+  const cardsSet = repairYAxisKeyToCardsKeyMap.get(
+    yAxisKey,
+  );
+
   return cards.reduce((acc, card) => {
     const { heading = "Revenue" } = card;
+    card.isActive = cardsSet?.has(heading) ?? false;
     acc.set(heading, card);
 
     return acc;

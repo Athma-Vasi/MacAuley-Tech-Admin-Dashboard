@@ -35,7 +35,6 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
-  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import { type RepairMetricsCards, returnRepairMetricsCards } from "../cards";
@@ -350,8 +349,12 @@ function RepairRUS(
   );
 
   const selectedCards = returnRepairMetricsCards(
-    repairMetricsCards,
-    calendarView,
+    {
+      calendarView,
+      repairMetricsCards,
+      repairYAxisKeyToCardsKeyMap: REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
+      yAxisKey,
+    },
   );
 
   const statisticsMap = returnStatistics(barCharts);
@@ -364,9 +367,12 @@ function RepairRUS(
   );
 
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Array<boolean>
+    Map<string, boolean>
   >(
-    Array.from({ length: statisticsElementsMap.size }, () => false),
+    new Map([
+      ["Revenue", false],
+      ["Units Repaired", false],
+    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({
@@ -389,19 +395,13 @@ function RepairRUS(
     },
   );
 
-  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-    consolidatedCards,
-    yAxisKey,
-    REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  );
-
   return (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      cardsWithStatisticsElements={cardsWithStatisticsElements}
+      consolidatedCards={consolidatedCards}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       sectionHeading={splitCamelCase(metricsView)}
