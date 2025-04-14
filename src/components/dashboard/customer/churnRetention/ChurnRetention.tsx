@@ -442,12 +442,6 @@ function ChurnRetention(
     },
   );
 
-  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-  //   consolidatedCards,
-  //   yAxisKey,
-  //   CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  // );
-
   return (
     <Stack>
       <DashboardBarLineLayout
