@@ -123,7 +123,6 @@ const CUSTOMER_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
   pie: new Set([
     "overview",
     "all",
-    "sales",
   ]),
   calendar: new Set([
     "total",

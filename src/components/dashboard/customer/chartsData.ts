@@ -125,8 +125,7 @@ type CustomerNewReturningLineCharts = Record<
 
 type CustomerMetricsNewReturningPieChartsKey =
   | "overview" // y-axis variables: sales, repair
-  | "all" // y-axis variables: sales, in-store, repair
-  | "sales"; // y-axis variables: online, in-store
+  | "all"; // y-axis variables: online, in-store, repair
 
 type CustomerNewReturningPieCharts = Record<
   CustomerMetricsNewReturningPieChartsKey,
@@ -377,12 +376,12 @@ async function createDailyCustomerCharts({
         new: {
           bar: newBarChartsTemplate,
           line: newLineChartsTemplate,
-          pie: { overview: [], all: [], sales: [] },
+          pie: { overview: [], all: [] },
         },
         returning: {
           bar: returningBarChartsTemplate,
           line: returningLineChartsTemplate,
-          pie: { overview: [], all: [], sales: [] },
+          pie: { overview: [], all: [] },
         },
         churnRetention: {
           bar: { overview: [], churnRate: [], retentionRate: [] },
@@ -860,7 +859,6 @@ async function createDailyCustomerCharts({
           newSalesInStorePieChartData,
           newRepairPieChartData,
         ],
-        sales: [newSalesOnlinePieChartData, newSalesInStorePieChartData],
       };
 
       const returningSalesPieChartData: PieChartData = {
@@ -890,10 +888,6 @@ async function createDailyCustomerCharts({
           returningSalesOnlinePieChartData,
           returningSalesInStorePieChartData,
           returningRepairPieChartData,
-        ],
-        sales: [
-          returningSalesOnlinePieChartData,
-          returningSalesInStorePieChartData,
         ],
       };
 
@@ -966,12 +960,12 @@ async function createMonthlyCustomerCharts({
         new: {
           bar: newBarChartsTemplate,
           line: newLineChartsTemplate,
-          pie: { overview: [], all: [], sales: [] },
+          pie: { overview: [], all: [] },
         },
         returning: {
           bar: returningBarChartsTemplate,
           line: returningLineChartsTemplate,
-          pie: { overview: [], all: [], sales: [] },
+          pie: { overview: [], all: [] },
         },
         churnRetention: {
           bar: churnRetentionBarChartsTemplate,
@@ -1470,10 +1464,6 @@ async function createMonthlyCustomerCharts({
           monthlyNewSalesInStorePieChartData,
           monthlyNewRepairPieChartData,
         ],
-        sales: [
-          monthlyNewSalesOnlinePieChartData,
-          monthlyNewSalesInStorePieChartData,
-        ],
       };
 
       // monthly -> returning
@@ -1509,10 +1499,6 @@ async function createMonthlyCustomerCharts({
           monthlyReturningSalesOnlinePieChartData,
           monthlyReturningSalesInStorePieChartData,
           monthlyReturningRepairPieChartData,
-        ],
-        sales: [
-          monthlyReturningSalesOnlinePieChartData,
-          monthlyReturningSalesInStorePieChartData,
         ],
       };
 
@@ -1586,12 +1572,12 @@ async function createYearlyCustomerCharts({
         new: {
           bar: newBarChartsTemplate,
           line: newLineChartsTemplate,
-          pie: { overview: [], all: [], sales: [] },
+          pie: { overview: [], all: [] },
         },
         returning: {
           bar: returningBarChartsTemplate,
           line: returningLineChartsTemplate,
-          pie: { overview: [], all: [], sales: [] },
+          pie: { overview: [], all: [] },
         },
         churnRetention: {
           bar: churnRetentionBarChartsTemplate,
@@ -2080,10 +2066,6 @@ async function createYearlyCustomerCharts({
           yearlyNewSalesInStorePieChartData,
           yearlyNewRepairPieChartData,
         ],
-        sales: [
-          yearlyNewSalesOnlinePieChartData,
-          yearlyNewSalesInStorePieChartData,
-        ],
       };
 
       // yearly -> returning -> pie chart obj
@@ -2117,10 +2099,6 @@ async function createYearlyCustomerCharts({
           yearlyReturningSalesOnlinePieChartData,
           yearlyReturningSalesInStorePieChartData,
           yearlyReturningRepairPieChartData,
-        ],
-        sales: [
-          yearlyReturningSalesOnlinePieChartData,
-          yearlyReturningSalesInStorePieChartData,
         ],
       };
 

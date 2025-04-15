@@ -210,8 +210,7 @@ type FinancialOtherMetricsLineCharts = {
 
 type FinancialMetricsPieChartsKey =
   | "overview" // y-axis variables: repair, sales
-  | "all" // y-axis variables: repair, in-store, online
-  | "sales"; // y-axis variables: in-store, online
+  | "all"; // y-axis variables: repair, in-store, online
 
 type FinancialMetricsPieCharts = Record<
   FinancialMetricsPieChartsKey,
@@ -370,7 +369,6 @@ async function createFinancialMetricsCharts({
   const PIE_CHARTS_TEMPLATE: FinancialMetricsPieCharts = {
     overview: [],
     all: [],
-    sales: [],
   };
 
   // selected store's business metrics
@@ -3440,10 +3438,6 @@ async function createYearlyFinancialCharts({
           yearlyProfitSalesInStorePieChart,
           yearlyProfitSalesOnlinePieChart,
         ],
-        sales: [
-          yearlyProfitSalesInStorePieChart,
-          yearlyProfitSalesOnlinePieChart,
-        ],
       };
 
       // yearly -> templates -> expenses -> pie chart
@@ -3472,10 +3466,6 @@ async function createYearlyFinancialCharts({
         overview: [yearlyExpensesRepairPieChart, yearlyExpensesSalesPieChart],
         all: [
           yearlyExpensesRepairPieChart,
-          yearlyExpensesSalesInStorePieChart,
-          yearlyExpensesSalesOnlinePieChart,
-        ],
-        sales: [
           yearlyExpensesSalesInStorePieChart,
           yearlyExpensesSalesOnlinePieChart,
         ],
@@ -3510,10 +3500,6 @@ async function createYearlyFinancialCharts({
           yearlyRevenueSalesInStorePieChart,
           yearlyRevenueSalesOnlinePieChart,
         ],
-        sales: [
-          yearlyRevenueSalesInStorePieChart,
-          yearlyRevenueSalesOnlinePieChart,
-        ],
       };
 
       // yearly -> templates -> transactions -> pie chart
@@ -3545,10 +3531,6 @@ async function createYearlyFinancialCharts({
         ],
         all: [
           yearlyTransactionsRepairPieChart,
-          yearlyTransactionsSalesInStorePieChart,
-          yearlyTransactionsSalesOnlinePieChart,
-        ],
-        sales: [
           yearlyTransactionsSalesInStorePieChart,
           yearlyTransactionsSalesOnlinePieChart,
         ],
