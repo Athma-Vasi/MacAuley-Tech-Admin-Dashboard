@@ -38,6 +38,7 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createFinancialStatisticsElements,
+  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -434,6 +435,9 @@ function PERT({
     storeLocation,
   );
 
+  console.log("selectedCards", selectedCards);
+  console.log("statisticsElementsMap", statisticsElementsMap);
+
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
     Map<string, boolean>
   >(
@@ -466,11 +470,11 @@ function PERT({
     },
   );
 
-  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-  //   consolidatedCards,
-  //   yAxisKey,
-  //   FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  // );
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    yAxisKey,
+    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  );
 
   return (
     <DashboardBarLineLayout
@@ -478,7 +482,7 @@ function PERT({
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      consolidatedCards={consolidatedCards}
+      consolidatedCards={cardsWithStatisticsElements}
       chartsToYAxisKeysMap={FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}

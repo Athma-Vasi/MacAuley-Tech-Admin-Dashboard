@@ -36,6 +36,7 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createFinancialStatisticsElements,
+  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -404,13 +405,19 @@ function OtherMetrics({
     },
   );
 
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    yAxisKey,
+    FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  );
+
   const otherMetrics = (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      consolidatedCards={consolidatedCards}
+      consolidatedCards={cardsWithStatisticsElements}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       sectionHeading={splitCamelCase(metricsView)}

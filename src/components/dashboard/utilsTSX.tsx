@@ -680,7 +680,7 @@ function consolidateCardsAndStatisticsModals(
       React.SetStateAction<Map<string, boolean>>
     >;
   },
-): Array<React.JSX.Element> {
+): Map<string, React.JSX.Element> {
   return Array.from(selectedCards).reduce((acc, [key, card], idx) => {
     const statisticsAccordion = (
       <AccessibleButton
@@ -704,10 +704,10 @@ function consolidateCardsAndStatisticsModals(
     card.icon = statisticsAccordion;
     const cardElement = returnDashboardCardElement({ ...card, idx });
 
-    acc.push(cardElement);
+    acc.set(key, cardElement);
 
     return acc;
-  }, [] as React.JSX.Element[]);
+  }, new Map());
 }
 
 function returnCardElementsForYAxisVariable(

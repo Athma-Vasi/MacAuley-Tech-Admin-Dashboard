@@ -13,7 +13,6 @@ const FINANCIAL_PERT_PIE_Y_AXIS_DATA: CheckboxRadioSelectData<
 > = [
   { label: "Overview", value: "overview" },
   { label: "All", value: "all" },
-  { label: "Sales", value: "sales" },
 ];
 
 const FINANCIAL_PERT_BAR_LINE_Y_AXIS_DATA: CheckboxRadioSelectData<
@@ -105,7 +104,7 @@ const FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP = new Map<
       "Sales Online",
     ]),
   ],
-  ["sales", new Set(["Sales Total", "Sales In-Store", "Sales Online"])],
+  ["sales", new Set(["Sales Total"])],
   ["inStore", new Set(["Sales In-Store"])],
   ["online", new Set(["Sales Online"])],
   ["repair", new Set(["Repair"])],
@@ -155,7 +154,6 @@ const FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP: ChartsToYAxisKeysMap = {
   pie: new Set([
     "overview",
     "all",
-    "sales",
   ]),
   calendar: new Set([
     "total",
