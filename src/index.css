@@ -91,7 +91,7 @@
 }
 
 .directory-card {
-  width: var(--card-width);
+  width: clamp(250px, 100%, 343px);
 }
 
 .burger {
@@ -671,6 +671,7 @@
       flex-direction: column;
       justify-content: flex-start;
       align-items: center;
+      justify-self: flex-end;
     }
 
     .chart-titles {
@@ -717,9 +718,11 @@
     }
     .statistics-card.c3 {
       grid-area: c3;
+      justify-self: flex-start;
     }
     .statistics-card.c4 {
       grid-area: c4;
+      justify-self: flex-end;
     }
   }
 }

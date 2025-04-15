@@ -159,7 +159,7 @@ function New(
   const expandPieChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: "Expand and customize chart",
+        enabledScreenreaderText: "Expand and customize pie chart",
         kind: "expand",
         onClick: (
           _event:
@@ -229,7 +229,8 @@ function New(
   const expandBarLineRadialChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: "Expand and customize chart",
+        enabledScreenreaderText:
+          `Expand and customize ${barLineRadialChartKind} chart`,
         kind: "expand",
         onClick: (
           _event:
@@ -352,7 +353,7 @@ function New(
   const expandCalendarChartButton = (
     <AccessibleButton
       attributes={{
-        enabledScreenreaderText: "Expand and customize chart",
+        enabledScreenreaderText: "Expand and customize calendar chart",
         kind: "expand",
         onClick: (
           _event:
