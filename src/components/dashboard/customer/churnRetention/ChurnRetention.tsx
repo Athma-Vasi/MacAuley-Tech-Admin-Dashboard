@@ -35,6 +35,7 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
+  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -443,6 +444,12 @@ function ChurnRetention(
     },
   );
 
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    yAxisKey,
+    CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  );
+
   return (
     <Stack>
       <DashboardBarLineLayout
@@ -450,7 +457,7 @@ function ChurnRetention(
         barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
         calendarChart={calendarChart}
         calendarView={calendarView}
-        consolidatedCards={consolidatedCards}
+        consolidatedCards={cardsWithStatisticsElements}
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}

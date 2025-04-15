@@ -35,6 +35,7 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
+  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import { CustomerMetricsCards, returnCustomerMetricsCardsMap } from "../cards";
@@ -450,11 +451,11 @@ function New(
     },
   );
 
-  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-  //   consolidatedCards,
-  //   yAxisKey,
-  //   CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  // );
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    yAxisKey,
+    CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  );
 
   return (
     <Stack>
@@ -463,7 +464,7 @@ function New(
         barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
         calendarChart={calendarChart}
         calendarView={calendarView}
-        consolidatedCards={consolidatedCards}
+        consolidatedCards={cardsWithStatisticsElements}
         expandBarLineRadialChartButton={expandBarLineRadialChartButton}
         expandCalendarChartButton={expandCalendarChartButton}
         expandPieChartButton={expandPieChartButton}
