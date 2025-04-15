@@ -35,6 +35,7 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
+  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import { type RepairMetricsCards, returnRepairMetricsCards } from "../cards";
@@ -396,13 +397,19 @@ function RepairRUS(
     },
   );
 
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    yAxisKey,
+    REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  );
+
   return (
     <DashboardBarLineLayout
       barLineRadialChart={barLineRadialChart}
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      consolidatedCards={consolidatedCards}
+      consolidatedCards={cardsWithStatisticsElements}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       sectionHeading={splitCamelCase(metricsView)}

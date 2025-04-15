@@ -46,6 +46,7 @@ import {
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
+  returnCardElementsForYAxisVariable,
   returnStatisticsModals,
 } from "../../utilsTSX";
 import {
@@ -460,11 +461,11 @@ function RUS(
     },
   );
 
-  // const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
-  //   consolidatedCards,
-  //   yAxisKey,
-  //   PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
-  // );
+  const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
+    consolidatedCards,
+    yAxisKey,
+    PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP,
+  );
 
   return (
     <DashboardBarLineLayout
@@ -472,7 +473,7 @@ function RUS(
       barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
       calendarChart={calendarChart}
       calendarView={calendarView}
-      consolidatedCards={consolidatedCards}
+      consolidatedCards={cardsWithStatisticsElements}
       expandBarLineRadialChartButton={expandBarLineRadialChartButton}
       expandCalendarChartButton={expandCalendarChartButton}
       expandPieChartButton={expandPieChartButton}
