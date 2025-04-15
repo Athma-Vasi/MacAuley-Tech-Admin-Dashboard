@@ -1,5 +1,5 @@
 import { Overlay, Stack } from "@mantine/core";
-import React, { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
@@ -10,8 +10,13 @@ import {
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { ProductMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type { AllStoreLocations, Month, Year } from "../types";
+import { MONTHS } from "../constants";
+import type {
+  AllStoreLocations,
+  DashboardCalendarView,
+  Month,
+  Year,
+} from "../types";
 import { productMetricsAction } from "./actions";
 import { createProductMetricsCards } from "./cards";
 import {
@@ -29,6 +34,7 @@ import {
 } from "./utils";
 
 type ProductMetricsProps = {
+  calendarView: DashboardCalendarView;
   productMetricCategory: ProductMetricCategory;
   productMetricsDocument: ProductMetricsDocument;
   productSubMetricCategory: ProductSubMetric;
@@ -41,6 +47,7 @@ type ProductMetricsProps = {
 
 function ProductMetrics(
   {
+    calendarView,
     productMetricCategory,
     productMetricsDocument,
     productSubMetricCategory,
@@ -172,24 +179,22 @@ function ProductMetrics(
     storeLocationView,
   });
 
-  const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-    <React.Fragment key={idx}>
-      <RUS
-        calendarChartsData={calendarChartsData}
-        calendarView={calendarView}
-        day={selectedDate}
-        metricsView="Products"
-        month={selectedYYYYMMDD.split("-")[1]}
-        overviewCards={overviewCards[calendarView]}
-        productCategory={productMetricCategory}
-        productMetricsCards={cards}
-        productMetricsCharts={charts}
-        storeLocation={storeLocationView}
-        subMetric={productSubMetricCategory}
-        year={selectedYear}
-      />
-    </React.Fragment>
-  ));
+  const revenueUnitsSold = (
+    <RUS
+      calendarChartsData={calendarChartsData}
+      calendarView={calendarView}
+      day={selectedDate}
+      metricsView="Products"
+      month={selectedYYYYMMDD.split("-")[1]}
+      overviewCards={overviewCards[calendarView]}
+      productCategory={productMetricCategory}
+      productMetricsCards={cards}
+      productMetricsCharts={charts}
+      storeLocation={storeLocationView}
+      subMetric={productSubMetricCategory}
+      year={selectedYear}
+    />
+  );
 
   const productMetrics = (
     <Stack w="100%" pos="relative">

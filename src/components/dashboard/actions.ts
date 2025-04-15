@@ -3,6 +3,7 @@ type DashboardAction = {
   setStoreLocationView: "setStoreLocationView";
   setIsLoading: "setIsLoading";
   setLoadingMessage: "setLoadingMessage";
+  setCalendarView: "setCalendarView";
 };
 
 const dashboardAction: DashboardAction = {
@@ -10,6 +11,7 @@ const dashboardAction: DashboardAction = {
   setStoreLocationView: "setStoreLocationView",
   setIsLoading: "setIsLoading",
   setLoadingMessage: "setLoadingMessage",
+  setCalendarView: "setCalendarView",
 };
 
 export { dashboardAction };

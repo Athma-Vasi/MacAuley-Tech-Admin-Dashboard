@@ -1,4 +1,4 @@
-import { Box, Overlay, Stack } from "@mantine/core";
+import { Overlay, Stack } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -10,8 +10,13 @@ import {
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { RepairMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type { AllStoreLocations, Month, Year } from "../types";
+import { MONTHS } from "../constants";
+import type {
+  AllStoreLocations,
+  DashboardCalendarView,
+  Month,
+  Year,
+} from "../types";
 import { repairMetricsAction } from "./actions";
 import { createRepairMetricsCards } from "./cards";
 import {
@@ -29,6 +34,7 @@ import {
 } from "./utils";
 
 type RepairMetricsProps = {
+  calendarView: DashboardCalendarView;
   repairMetricCategory: RepairMetricCategory;
   repairMetricsDocument: RepairMetricsDocument;
   selectedDate: string;
@@ -38,15 +44,18 @@ type RepairMetricsProps = {
   selectedYYYYMMDD: string;
 };
 
-function RepairMetrics({
-  repairMetricCategory,
-  repairMetricsDocument,
-  selectedDate,
-  selectedMonth,
-  selectedYYYYMMDD,
-  selectedYear,
-  storeLocationView,
-}: RepairMetricsProps) {
+function RepairMetrics(
+  {
+    calendarView,
+    repairMetricCategory,
+    repairMetricsDocument,
+    selectedDate,
+    selectedMonth,
+    selectedYYYYMMDD,
+    selectedYear,
+    storeLocationView,
+  }: RepairMetricsProps,
+) {
   const [repairMetricsState, repairMetricsDispatch] = useReducer(
     repairMetricsReducer,
     initialRepairMetricsState,
@@ -167,23 +176,21 @@ function RepairMetrics({
     storeLocationView,
   });
 
-  const revenueUnitsSold = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-    <Box key={idx} w="100%">
-      <RepairRUS
-        calendarChartsData={calendarChartsData}
-        calendarView={calendarView}
-        day={selectedDate}
-        metricsView="Repairs"
-        month={selectedYYYYMMDD.split("-")[1]}
-        repairCategory={repairMetricCategory}
-        repairMetricsCards={cards}
-        repairMetricsCharts={charts}
-        repairOverviewCards={overviewCards[calendarView]}
-        storeLocation={storeLocationView}
-        year={selectedYear}
-      />
-    </Box>
-  ));
+  const revenueUnitsSold = (
+    <RepairRUS
+      calendarChartsData={calendarChartsData}
+      calendarView={calendarView}
+      day={selectedDate}
+      metricsView="Repairs"
+      month={selectedYYYYMMDD.split("-")[1]}
+      repairCategory={repairMetricCategory}
+      repairMetricsCards={cards}
+      repairMetricsCharts={charts}
+      repairOverviewCards={overviewCards[calendarView]}
+      storeLocation={storeLocationView}
+      year={selectedYear}
+    />
+  );
 
   const repairMetrics = (
     <Stack w="100%" pos="relative">

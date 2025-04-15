@@ -65,10 +65,10 @@ const REPAIR_CATEGORIES: RepairCategory[] = [
   "Peripheral",
 ];
 
-const CALENDAR_VIEW_TABS_DATA: DashboardCalendarView[] = [
-  "Daily",
-  "Monthly",
-  "Yearly",
+const CALENDAR_VIEW_DATA: CheckboxRadioSelectData<DashboardCalendarView> = [
+  { label: "Daily", value: "Daily" },
+  { label: "Monthly", value: "Monthly" },
+  { label: "Yearly", value: "Yearly" },
 ];
 
 const FINANCIALS_METRICS_DATA: CheckboxRadioSelectData<
@@ -159,7 +159,7 @@ const CHART_KIND_DATA: CheckboxRadioSelectData<ChartKindSegment> = [
 
 export {
   BUSINESS_METRIC_STORE_LOCATIONS,
-  CALENDAR_VIEW_TABS_DATA,
+  CALENDAR_VIEW_DATA,
   CHART_KIND_DATA,
   CUSTOMER_METRICS_DATA,
   DAYS_PER_MONTH,

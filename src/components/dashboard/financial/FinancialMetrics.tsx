@@ -1,13 +1,17 @@
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import React from "react";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type { AllStoreLocations, Month, Year } from "../types";
+import { MONTHS } from "../constants";
+import type {
+  AllStoreLocations,
+  DashboardCalendarView,
+  Month,
+  Year,
+} from "../types";
 import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
 import {
@@ -27,6 +31,7 @@ import {
 } from "./utils";
 
 type FinancialMetricsProps = {
+  calendarView: DashboardCalendarView;
   financialMetricCategory: FinancialMetricCategory;
   financialMetricsDocument: FinancialMetricsDocument;
   selectedDate: string;
@@ -38,6 +43,7 @@ type FinancialMetricsProps = {
 
 function FinancialMetrics(
   {
+    calendarView,
     financialMetricCategory,
     financialMetricsDocument,
     selectedDate,
@@ -172,42 +178,34 @@ function FinancialMetrics(
 
   const subCategoryPage = PERT_SET.has(financialMetricCategory)
     ? (
-      CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-        <React.Fragment key={`${idx}-${calendarView}`}>
-          <PERT
-            calendarChartsData={calendarChartsData}
-            calendarView={calendarView}
-            financialMetricsCards={cards}
-            financialMetricsCharts={charts}
-            day={selectedDate}
-            month={selectedYYYYMMDD.split("-")[1]}
-            metricCategory={financialMetricCategory}
-            metricsView="Financials"
-            pertOverviewCards={pertOverviewCards[calendarView]}
-            storeLocation={storeLocationView}
-            year={selectedYear}
-          />
-        </React.Fragment>
-      ))
+      <PERT
+        calendarChartsData={calendarChartsData}
+        calendarView={calendarView}
+        financialMetricsCards={cards}
+        financialMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory={financialMetricCategory}
+        metricsView="Financials"
+        pertOverviewCards={pertOverviewCards[calendarView]}
+        storeLocation={storeLocationView}
+        year={selectedYear}
+      />
     )
     : (
-      CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-        <React.Fragment key={`${idx}-${calendarView}`}>
-          <OtherMetrics
-            calendarChartsData={calendarChartsData}
-            calendarView={calendarView}
-            financialMetricsCards={cards}
-            financialMetricsCharts={charts}
-            day={selectedDate}
-            month={selectedYYYYMMDD.split("-")[1]}
-            metricCategory={financialMetricCategory}
-            metricsView="Financials"
-            otherMetricsOverviewCards={otherMetricsOverviewCards[calendarView]}
-            storeLocation={storeLocationView}
-            year={selectedYear}
-          />
-        </React.Fragment>
-      ))
+      <OtherMetrics
+        calendarChartsData={calendarChartsData}
+        calendarView={calendarView}
+        financialMetricsCards={cards}
+        financialMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory={financialMetricCategory}
+        metricsView="Financials"
+        otherMetricsOverviewCards={otherMetricsOverviewCards[calendarView]}
+        storeLocation={storeLocationView}
+        year={selectedYear}
+      />
     );
 
   return subCategoryPage;

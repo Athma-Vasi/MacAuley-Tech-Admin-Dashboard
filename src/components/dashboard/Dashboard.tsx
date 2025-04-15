@@ -33,6 +33,7 @@ import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
+  CALENDAR_VIEW_DATA,
   MONTHS,
   REPAIR_METRICS_DATA,
   STORE_LOCATION_VIEW_DATA,
@@ -94,6 +95,7 @@ function Dashboard() {
   );
 
   const {
+    calendarView,
     isLoading,
     loadingMessage,
     selectedYYYYMMDD,
@@ -294,6 +296,18 @@ function Dashboard() {
     />
   );
 
+  const calendarViewSelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: CALENDAR_VIEW_DATA,
+        name: "calendar view",
+        parentDispatch: dashboardDispatch,
+        validValueAction: dashboardAction.setCalendarView,
+        value: dashboardState.calendarView,
+      }}
+    />
+  );
+
   const headerInputs = (
     <>
       {storeLocationSelectInput}
@@ -309,6 +323,7 @@ function Dashboard() {
       {metricsView === "customers" ? customerMetricCategorySelectInput : null}
       {metricsView === "financials" ? financialMetricCategorySelectInput : null}
       {metricsView === "repairs" ? repairMetricCategorySelectInput : null}
+      {calendarViewSelectInput}
     </>
   );
 
@@ -363,6 +378,7 @@ function Dashboard() {
   const displayMetricsView = metricsView === "financials"
     ? (
       <FinancialMetrics
+        calendarView={calendarView}
         financialMetricCategory={financialMetricCategory}
         financialMetricsDocument={financialMetricsDocument as FinancialMetricsDocument}
         selectedDate={selectedDate}
@@ -375,6 +391,7 @@ function Dashboard() {
     : metricsView === "customers"
     ? (
       <CustomerMetrics
+        calendarView={calendarView}
         customerMetricsCategory={customerMetricsCategory}
         customerMetricsDocument={customerMetricsDocument as CustomerMetricsDocument}
         selectedDate={selectedDate}
@@ -387,6 +404,7 @@ function Dashboard() {
     : metricsView === "products"
     ? (
       <ProductMetrics
+        calendarView={calendarView}
         productMetricCategory={productMetricCategory}
         productMetricsDocument={productMetricsDocument as ProductMetricsDocument}
         productSubMetricCategory={productSubMetricCategory}
@@ -399,6 +417,7 @@ function Dashboard() {
     )
     : (
       <RepairMetrics
+        calendarView={calendarView}
         repairMetricCategory={repairMetricCategory}
         repairMetricsDocument={repairMetricsDocument as RepairMetricsDocument}
         selectedDate={selectedDate}

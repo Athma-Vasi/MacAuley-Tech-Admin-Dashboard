@@ -1,5 +1,5 @@
 import { Overlay, Stack } from "@mantine/core";
-import React, { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
@@ -10,8 +10,13 @@ import {
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { CustomerMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { CALENDAR_VIEW_TABS_DATA, MONTHS } from "../constants";
-import type { AllStoreLocations, Month, Year } from "../types";
+import { MONTHS } from "../constants";
+import type {
+  AllStoreLocations,
+  DashboardCalendarView,
+  Month,
+  Year,
+} from "../types";
 import { customerMetricsAction } from "./actions";
 import { createCustomerMetricsCards } from "./cards";
 import {
@@ -31,6 +36,7 @@ import {
 } from "./utils";
 
 type CustomerMetricsProps = {
+  calendarView: DashboardCalendarView;
   customerMetricsCategory: CustomerMetricsCategory;
   customerMetricsDocument: CustomerMetricsDocument;
   selectedDate: string;
@@ -42,6 +48,7 @@ type CustomerMetricsProps = {
 
 function CustomerMetrics(
   {
+    calendarView,
     customerMetricsCategory,
     customerMetricsDocument,
     selectedDate,
@@ -168,62 +175,53 @@ function CustomerMetrics(
       storeLocationView,
     });
 
-  const newCustomers = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-    <React.Fragment key={idx}>
-      <New
-        calendarChartsData={calendarChartsData}
-        calendarView={calendarView}
-        customerMetricsCards={cards}
-        customerMetricsCharts={charts}
-        day={selectedDate}
-        month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={customerMetricsCategory}
-        metricsView="Customers"
-        newOverviewCards={newOverviewCards[calendarView]}
-        storeLocation={storeLocationView}
-        year={selectedYear}
-      />
-    </React.Fragment>
-  ));
+  const newCustomers = (
+    <New
+      calendarChartsData={calendarChartsData}
+      calendarView={calendarView}
+      customerMetricsCards={cards}
+      customerMetricsCharts={charts}
+      day={selectedDate}
+      month={selectedYYYYMMDD.split("-")[1]}
+      metricCategory={customerMetricsCategory}
+      metricsView="Customers"
+      newOverviewCards={newOverviewCards[calendarView]}
+      storeLocation={storeLocationView}
+      year={selectedYear}
+    />
+  );
 
-  const returningCustomers = CALENDAR_VIEW_TABS_DATA.map((
-    calendarView,
-    idx,
-  ) => (
-    <React.Fragment key={idx}>
-      <Returning
-        calendarChartsData={calendarChartsData}
-        calendarView={calendarView}
-        customerMetricsCards={cards}
-        customerMetricsCharts={charts}
-        day={selectedDate}
-        month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={customerMetricsCategory}
-        metricsView="Customers"
-        returningOverviewCards={returningOverviewCards[calendarView]}
-        storeLocation={storeLocationView}
-        year={selectedYear}
-      />
-    </React.Fragment>
-  ));
+  const returningCustomers = (
+    <Returning
+      calendarChartsData={calendarChartsData}
+      calendarView={calendarView}
+      customerMetricsCards={cards}
+      customerMetricsCharts={charts}
+      day={selectedDate}
+      month={selectedYYYYMMDD.split("-")[1]}
+      metricCategory={customerMetricsCategory}
+      metricsView="Customers"
+      returningOverviewCards={returningOverviewCards[calendarView]}
+      storeLocation={storeLocationView}
+      year={selectedYear}
+    />
+  );
 
-  const churnRetention = CALENDAR_VIEW_TABS_DATA.map((calendarView, idx) => (
-    <React.Fragment key={idx}>
-      <ChurnRetention
-        calendarChartsData={calendarChartsData}
-        calendarView={calendarView}
-        churnOverviewCards={churnOverviewCards[calendarView]}
-        customerMetricsCards={cards}
-        customerMetricsCharts={charts}
-        day={selectedDate}
-        month={selectedYYYYMMDD.split("-")[1]}
-        metricCategory={customerMetricsCategory}
-        metricsView="Customers"
-        storeLocation={storeLocationView}
-        year={selectedYear}
-      />
-    </React.Fragment>
-  ));
+  const churnRetention = (
+    <ChurnRetention
+      calendarChartsData={calendarChartsData}
+      calendarView={calendarView}
+      churnOverviewCards={churnOverviewCards[calendarView]}
+      customerMetricsCards={cards}
+      customerMetricsCharts={charts}
+      day={selectedDate}
+      month={selectedYYYYMMDD.split("-")[1]}
+      metricCategory={customerMetricsCategory}
+      metricsView="Customers"
+      storeLocation={storeLocationView}
+      year={selectedYear}
+    />
+  );
 
   const customerMetrics = (
     <Stack w="100%" pos="relative">

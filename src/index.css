@@ -25,7 +25,7 @@
 
   --min-input-width: calc(275px - var(--padding-x2));
   --ideal-input-width: calc(100% - var(--padding-x2));
-  --max-input-width: 430px;
+  --max-input-width: 350px;
   --input-width: clamp(
     var(--min-input-width),
     var(--ideal-input-width),
@@ -34,7 +34,7 @@
 
   --min-card-width: calc(343px - var(--padding-x2));
   --ideal-card-width: 100%;
-  --max-card-width: 430px;
+  --max-card-width: 350px;
   --card-width: clamp(
     var(--min-card-width),
     var(--ideal-card-width),
@@ -44,7 +44,7 @@
   --statistics-card-width: clamp(
     var(--min-card-width),
     var(--ideal-card-width),
-    430px
+    350px
   );
 
   --title-card-width: clamp(150px, 100%, 250px);

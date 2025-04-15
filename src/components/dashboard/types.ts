@@ -27,6 +27,7 @@ type DashboardState = {
   storeLocationView: AllStoreLocations;
   isLoading: boolean;
   loadingMessage: string;
+  calendarView: DashboardCalendarView;
 };
 
 type DashboardDispatch =
@@ -45,6 +46,10 @@ type DashboardDispatch =
   | {
     action: DashboardAction["setLoadingMessage"];
     payload: string;
+  }
+  | {
+    action: DashboardAction["setCalendarView"];
+    payload: DashboardCalendarView;
   };
 
 type Month =

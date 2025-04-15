@@ -2,6 +2,7 @@ import { dashboardAction } from "./actions";
 import type {
   AllStoreLocations,
   DashboardAction,
+  DashboardCalendarView,
   DashboardDispatch,
   DashboardState,
 } from "./types";
@@ -25,6 +26,7 @@ const dashboardReducersMap = new Map<
   ],
   [dashboardAction.setIsLoading, dashboardReducer_setIsLoading],
   [dashboardAction.setLoadingMessage, dashboardReducer_setLoadingMessage],
+  [dashboardAction.setCalendarView, dashboardReducer_setCalendarView],
 ]);
 
 function dashboardReducer_setSelectedYYYYMMDD(
@@ -64,6 +66,16 @@ function dashboardReducer_setLoadingMessage(
   return {
     ...state,
     loadingMessage: dispatch.payload as string,
+  };
+}
+
+function dashboardReducer_setCalendarView(
+  state: DashboardState,
+  dispatch: DashboardDispatch,
+): DashboardState {
+  return {
+    ...state,
+    calendarView: dispatch.payload as DashboardCalendarView,
   };
 }
 
