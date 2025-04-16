@@ -1,5 +1,4 @@
 import { Card, Group, Space, Text } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import {
@@ -7,7 +6,6 @@ import {
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
 } from "../../../utils";
-import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { GoldenGrid } from "../../goldenGrid";
 
 type ChartsAndGraphsControlsStackerProps = {

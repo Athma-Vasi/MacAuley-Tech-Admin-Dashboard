@@ -205,6 +205,7 @@ function ChartOptions(props: ChartOptionsProps) {
       direction="column"
       justify="space-between"
       align="flex-start"
+      w="100%"
     >
       <Text pt="xl">{screenshotFilename}</Text>
       <AccessibleTextInput

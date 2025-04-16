@@ -162,6 +162,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
+      w="100%"
     >
       <Text pt="xl">{axisBottomLegend}</Text>
       <AccessibleTextInput

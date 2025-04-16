@@ -162,6 +162,8 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
+      align="flex-start"
+      w="100%"
     >
       <Text pt="xl">{axisLeftLegend}</Text>
       <AccessibleTextInput

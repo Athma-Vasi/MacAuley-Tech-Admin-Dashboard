@@ -567,7 +567,7 @@ const COUNTRIES: CheckboxRadioSelectData<Country> = [
   { value: "United States", label: "United States" },
 ];
 
-const INPUT_WIDTH = 310;
+const INPUT_WIDTH = 250;
 const TEXT_SHADOW = "0 2px 4px rgba(0, 0, 0, 0.15)";
 
 const APP_HEADER_HEIGHT = 70;
