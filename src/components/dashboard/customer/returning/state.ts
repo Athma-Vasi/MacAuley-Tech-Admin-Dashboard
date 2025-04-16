@@ -2,7 +2,7 @@ import { ReturningState } from "./types";
 
 const initialReturningState: ReturningState = {
   barLineRadialChartKind: "bar",
-  yAxisKey: "sales",
+  yAxisKey: "all",
 };
 
 export { initialReturningState };

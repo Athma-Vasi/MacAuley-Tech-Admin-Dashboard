@@ -83,7 +83,7 @@
 
 .chart-card .chart {
   width: var(--chart-width);
-  height: clamp(350px * 0.38, calc(300px - 2em), 700px);
+  height: clamp(350px * 0.38, calc(400px - 2em), 700px);
 }
 
 .accessible-input {
@@ -276,7 +276,7 @@
   width: 100%;
 
   .chart {
-    width: clamp(300px, 100%, calc(1024px + var(--padding-x2)));
+    width: clamp(300px, 100%, calc(1300px + var(--padding-x2)));
   }
 }
 

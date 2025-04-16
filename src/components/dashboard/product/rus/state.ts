@@ -2,7 +2,7 @@ import { RUSState } from "./types";
 
 const initialRUSState: RUSState = {
   barLineRadialChartKind: "bar",
-  yAxisKey: "total",
+  yAxisKey: "overview",
 };
 
 export { initialRUSState };
