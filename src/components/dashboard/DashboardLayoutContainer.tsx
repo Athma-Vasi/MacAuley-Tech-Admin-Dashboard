@@ -63,26 +63,20 @@ function DashboardLayoutContainer(
     chartsToYAxisKeysMap.radial.has(yAxisKey);
 
   const pieChartWithButton = (
-    <div className={`chart-card pie ${isPieChartSafe ? "" : "inactive"}`}>
+    <div className="chart-card pie">
       {expandPieChartButton}
       {pieChart}
     </div>
   );
 
   const calendarChartWithButton = (
-    <div
-      className={`chart-card calendar ${isCalendarChartSafe ? "" : "inactive"}`}
-    >
+    <div className="chart-card calendar">
       {expandCalendarChartButton}
       {calendarChart}
     </div>
   );
   const barLineRadialChartWithButton = (
-    <div
-      className={`chart-card bar-line-radial ${
-        isBarLineRadialChartSafe ? "" : "inactive"
-      }`}
-    >
+    <div className="chart-card blr">
       {expandBarLineRadialChartButton}
       {barLineRadialChart}
     </div>
@@ -105,16 +99,37 @@ function DashboardLayoutContainer(
     </div>
   );
 
-  const newGridLayout = (
-    <div className="grid-section">
-      {yAxisKeyChartHeadingTitle}
-      {yAxisKeyControlsCard}
-      {barLineRadialChartWithButton}
-      {isPieChartSafe ? pieChartWithButton : null}
-      {isCalendarChartSafe ? calendarChartWithButton : null}
-      {consolidatedCards}
-    </div>
-  );
+  const newGridLayout = windowWidth > 775 && windowWidth < 1024
+    ? (
+      <div
+        className={`grid-section ${
+          isPieChartSafe ? "pie " : isCalendarChartSafe ? "calendar" : ""
+        }`}
+      >
+        {yAxisKeyChartHeadingTitle}
+        {yAxisKeyControlsCard}
+        {barLineRadialChartWithButton}
+        {isPieChartSafe ? pieChartWithButton : null}
+        {isCalendarChartSafe ? calendarChartWithButton : null}
+        <div className="statistics-cards-container">
+          {consolidatedCards}
+        </div>
+      </div>
+    )
+    : (
+      <div
+        className={`grid-section ${
+          isPieChartSafe ? "pie " : isCalendarChartSafe ? "calendar" : ""
+        }`}
+      >
+        {yAxisKeyChartHeadingTitle}
+        {yAxisKeyControlsCard}
+        {barLineRadialChartWithButton}
+        {isPieChartSafe ? pieChartWithButton : null}
+        {isCalendarChartSafe ? calendarChartWithButton : null}
+        {consolidatedCards}
+      </div>
+    );
 
   // const pieChartSectionMaybe =
   //   chartsToYAxisKeysMap?.["pie"]?.has(yAxisKey as FinancialYAxisKey)

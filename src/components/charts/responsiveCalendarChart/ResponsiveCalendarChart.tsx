@@ -12,6 +12,7 @@ import { useEffect, useReducer, useRef } from "react";
 
 import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
+import { useWindowSize } from "../../../hooks/useWindowSize";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
@@ -49,6 +50,8 @@ function ResponsiveCalendarChart({
     globalState: { themeObject },
   } = useGlobalState();
 
+  const { windowWidth } = useWindowSize();
+
   const { grayColorShade, textColor, scrollBarStyle, bgGradient } =
     returnThemeColors({
       themeObject,
@@ -73,7 +76,17 @@ function ResponsiveCalendarChart({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeObject]);
 
-  const stateWithChartTitle = {
+  useEffect(() => {
+    const newCalendarDirection = windowWidth < 775 ? "vertical" : "horizontal";
+
+    responsiveCalendarChartDispatch({
+      action: responsiveCalendarChartAction.setCalendarDirection,
+      payload: newCalendarDirection,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [windowWidth]);
+
+  const stateWithChartTitle: ResponsiveCalendarChartState = {
     ...initialResponsiveCalendarChartState,
     chartTitle: dashboardChartTitle ?? "Calendar Chart",
   };

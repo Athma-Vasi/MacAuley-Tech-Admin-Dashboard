@@ -450,12 +450,6 @@ function PERT({
     ]),
   );
 
-  const consolidatedCards = consolidateCardsAndStatisticsModals({
-    modalsOpenedState,
-    selectedCards,
-    setModalsOpenedState,
-  });
-
   const { themeColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -469,6 +463,12 @@ function PERT({
       themeColorShade,
     },
   );
+
+  const consolidatedCards = consolidateCardsAndStatisticsModals({
+    modalsOpenedState,
+    selectedCards,
+    setModalsOpenedState,
+  });
 
   const cardsWithStatisticsElements = returnCardElementsForYAxisVariable(
     consolidatedCards,

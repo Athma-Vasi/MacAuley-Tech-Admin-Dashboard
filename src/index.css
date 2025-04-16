@@ -257,23 +257,27 @@
   transition: all 0.17s ease-in-out;
 }
 
-.statistics-card.c0 {
-  grid-area: c0;
-  justify-self: flex-start;
+.chart-controls-card {
+  padding: var(--padding) 0px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding);
+  justify-content: center;
+  align-items: center;
 }
-.statistics-card.c1 {
-  grid-area: c1;
-}
-.statistics-card.c2 {
-  grid-area: c2;
-}
-.statistics-card.c3 {
-  grid-area: c3;
-  justify-self: flex-start;
-}
-.statistics-card.c4 {
-  grid-area: c4;
-  justify-self: flex-start;
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: var(--padding);
+  gap: var(--padding);
+  width: 100%;
+
+  .chart {
+    width: clamp(300px, 100%, calc(1024px + var(--padding-x2)));
+  }
 }
 
 .app-shell {
@@ -307,7 +311,10 @@
 
   .main.opened {}
   .main {
-    width: 100%;
+    /* width: clamp(
+      var(--min-app-width, 100%, calc(var(--app-width) - var(--sidebar-width)))
+    ); */
+    max-width: calc(var(--app-width) - 200px);
     display: flex;
     flex-direction: column;
 
@@ -326,7 +333,7 @@
   .sidebar {}
 }
 
-@media screen and (max-width: 860px) {
+@media screen and (max-width: 775px) {
   .app-shell {
     width: 100vw;
     display: flex;
@@ -365,64 +372,33 @@
     padding: var(--padding) 0px;
     gap: var(--padding);
 
-    .chart-controls-card {
-      grid-area: co;
-      padding: var(--padding) 0px;
-      display: flex;
-      flex-direction: column;
-      gap: var(--padding);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .chart-titles {
-      grid-area: ti;
-    }
-
-    .chart-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-end;
-      padding: var(--padding);
-      gap: var(--padding);
-      width: 100%;
-
+    .chart-card.calendar {
       .chart {
-        width: clamp(300px, 100%, calc(860px + var(--padding-x2)));
+        height: calc(775px - var(--padding-x2));
+        width: 100%;
+        outline: 1px solid cadetblue;
       }
     }
 
-    .chart-card.bar-line-radial {}
-    .chart-card.calendar {}
-    .chart-card.pie {}
-
-    .statistics-card {
-      display: flex;
-      flex-direction: column;
-      padding: var(--padding);
-      align-items: flex-start;
-      justify-content: center;
-      row-gap: var(--padding);
-      border-radius: var(--border-radius);
-      border: var(--border);
+    .chart-card.blr {
+      .chart {
+        height: calc(775px - var(--padding-x2));
+        width: 100%;
+        outline: 1px solid burlywood;
+      }
     }
 
-    .statistics-card.c0 {
-      justify-self: flex-start;
-    }
-    .statistics-card.c1 {}
-    .statistics-card.c2 {}
-    .statistics-card.c3 {
-      justify-self: flex-start;
-    }
-    .statistics-card.c4 {
-      justify-self: flex-start;
+    .chart-card.pie {
+      .chart {
+        height: 350px;
+        width: 100%;
+        outline: 1px solid palevioletred;
+      }
     }
   }
 }
 
-@media screen and (min-width: 861px) and (max-width: 1023px) {
+@media screen and (min-width: 776px) and (max-width: 1023px) {
   .app-shell {
     width: 100vw;
     display: flex;
@@ -450,79 +426,82 @@
     display: none;
   }
 
-  .grid-section {
-    gap: var(--padding);
-
-    width: 100%;
-
-    padding: var(--padding-x2);
+  .grid-section.calendar {
     display: grid;
     grid-template-areas:
-      "ti ti co co co"
+      "ti co co co co"
       "bc bc bc bc bc"
-      "c0 pc pc pc pc"
-      "c1 cc cc cc cc"
-      "c2 c3 c4 .. ..";
+      "cc cc cc cc cc"
+      ".. .. .. .. ..";
+    width: 100%;
+    gap: var(--padding);
 
     .chart-controls-card {
       grid-area: co;
-      width: var(--card-width);
-      border: var(--border);
-      border-radius: var(--border-radius);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
     }
 
     .chart-titles {
-      width: var(--title-card-width);
       grid-area: ti;
     }
 
-    .chart-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-end;
-
-      .chart {
-        width: 100%;
-      }
-    }
-
-    .chart-card.bar-line-radial {
-      grid-area: bc;
-    }
     .chart-card.calendar {
       grid-area: cc;
+      outline: 1px solid cadetblue;
+      .chart {}
+    }
+
+    .chart-card.blr {
+      grid-area: bc;
+    }
+
+    .statistics-card {}
+    .statistics-card.active {}
+  }
+
+  .grid-section.pie {
+    display: grid;
+    grid-template-areas:
+      "ti co co co co"
+      "bc bc bc bc bc"
+      "pc pc pc pc pc"
+      ".. .. .. .. ..";
+    /* "c0 c0 c0 c1 c1 c1"
+    "c2 c2 c2 c3 c3 c3"
+    "c4 c4 c4 .. .. .."; */
+    width: 100%;
+    gap: var(--padding);
+
+    .chart-controls-card {
+      grid-area: co;
+    }
+
+    .chart-titles {
+      grid-area: ti;
     }
 
     .chart-card.pie {
       grid-area: pc;
     }
 
-    .statistics-card.active {}
+    .chart-card.blr {
+      grid-area: bc;
+    }
 
-    .statistics-card.c0 {
-      grid-area: c0;
-    }
-    .statistics-card.c1 {
-      grid-area: c1;
-    }
-    .statistics-card.c2 {
-      grid-area: c2;
-    }
-    .statistics-card.c3 {
-      grid-area: c3;
-    }
-    .statistics-card.c4 {
-      grid-area: c4;
+    .statistics-cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      gap: var(--padding);
+
+      .statistics-card {
+        width: var(--statistics-card-width);
+      }
+      .statistics-card.active {}
     }
   }
 }
 
-@media screen and (min-width: 1024px) and (max-width: 1299px) {
+@media screen and (min-width: 1024px) {
   .register-card {
     display: flex;
     column-gap: var(--column-gap);
@@ -550,179 +529,91 @@
     width: 100%;
   }
 
-  .grid-section {
-    gap: var(--padding);
-
-    width: 100%;
-
-    padding: var(--padding-x2);
+  .grid-section.calendar {
     display: grid;
     grid-template-areas:
-      "ti ti co co co"
-      "bc bc bc bc bc"
-      "c0 pc pc pc pc"
-      "c1 cc cc cc cc"
-      "c2 c3 c4 .. ..";
+      "ti co co"
+      "bc bc bc"
+      "c0 cc cc"
+      ".. cc cc";
+    width: 100%;
+    gap: var(--padding);
 
     .chart-controls-card {
       grid-area: co;
-      width: var(--card-width);
-      border: var(--border);
-      border-radius: var(--border-radius);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
     }
 
     .chart-titles {
-      width: var(--title-card-width);
       grid-area: ti;
     }
 
-    .chart-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-end;
-
-      .chart {
-        width: 100%;
-      }
-    }
-
-    .chart-card.bar-line-radial {
-      grid-area: bc;
-    }
     .chart-card.calendar {
       grid-area: cc;
+      outline: 1px solid cadetblue;
+      width: clamp(350px, 100%, 1024px);
+      .chart {}
+    }
+
+    .chart-card.blr {
+      grid-area: bc;
+    }
+
+    .statistics-card {}
+    .statistics-card.active {}
+  }
+
+  .grid-section.pie {
+    display: grid;
+    grid-template-areas:
+      "ti co co"
+      "bc bc bc"
+      "c0 pc pc"
+      "c1 pc pc"
+      "c2 c3 c4";
+
+    width: 100%;
+    gap: var(--padding);
+
+    .chart-controls-card {
+      grid-area: co;
+    }
+
+    .chart-titles {
+      grid-area: ti;
+    }
+
+    .chart-card.blr {
+      grid-area: bc;
     }
 
     .chart-card.pie {
       grid-area: pc;
+      outline: 1px solid cadetblue;
     }
 
     .statistics-card {
-      width: var(--statistics-card-width);
+      /* width: clamp(200px, 100%, 300px); */
     }
-    .statistics-card.active {}
 
     .statistics-card.c0 {
       grid-area: c0;
+      outline: 1px solid firebrick;
     }
     .statistics-card.c1 {
       grid-area: c1;
+      outline: 1px solid seagreen;
     }
     .statistics-card.c2 {
       grid-area: c2;
+      outline: 1px solid tan;
     }
     .statistics-card.c3 {
       grid-area: c3;
+      outline: 1px solid fuchsia;
     }
     .statistics-card.c4 {
       grid-area: c4;
-    }
-  }
-}
-
-@media screen and (min-width: 1300px) {
-  .app-shell {
-    display: grid;
-    grid-template-areas:
-      "header header"
-      "sidebar main";
-  }
-
-  .header {
-    grid-area: header;
-  }
-
-  .sidebar {
-    grid-area: sidebar;
-    width: var(--sidebar-width);
-    padding: var(--sidebar-padding);
-  }
-
-  .main {
-    grid-area: main;
-    width: 100%;
-  }
-
-  .grid-section {
-    gap: var(--padding);
-
-    width: 100%;
-
-    padding: var(--padding-x2);
-    display: grid;
-    grid-template-areas:
-      "ti ti co co co"
-      "bc bc bc bc bc"
-      "c0 pc pc pc pc"
-      "c1 cc cc cc cc"
-      "c2 c3 c4 .. ..";
-
-    .chart-controls-card {
-      grid-area: co;
-      width: var(--card-width);
-      border: var(--border);
-      border-radius: var(--border-radius);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      justify-self: flex-end;
-    }
-
-    .chart-titles {
-      width: var(--title-card-width);
-      grid-area: ti;
-    }
-
-    .chart-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-end;
-
-      .chart {
-        width: 100%;
-      }
-    }
-
-    .chart-card.bar-line-radial {
-      grid-area: bc;
-    }
-    .chart-card.calendar {
-      grid-area: cc;
-    }
-
-    .chart-card.pie {
-      grid-area: pc;
-    }
-
-    .statistics-card {
-      width: var(--statistics-card-width);
-    }
-
-    .statistics-card.active {}
-
-    .statistics-card.c0 {
-      grid-area: c0;
-    }
-    .statistics-card.c1 {
-      grid-area: c1;
-    }
-    .statistics-card.c2 {
-      grid-area: c2;
-    }
-    .statistics-card.c3 {
-      grid-area: c3;
-      justify-self: flex-start;
-    }
-    .statistics-card.c4 {
-      grid-area: c4;
-      justify-self: flex-end;
+      outline: 1px solid firebrick;
     }
   }
 }

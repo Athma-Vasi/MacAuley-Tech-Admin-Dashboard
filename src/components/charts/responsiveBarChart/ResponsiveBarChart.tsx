@@ -89,6 +89,15 @@ function ResponsiveBarChart({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeObject]);
 
+  useEffect(() => {
+    const layout = windowWidth < 775 ? "horizontal" : "vertical";
+
+    responsiveBarChartDispatch({
+      action: responsiveBarChartAction.setLayout,
+      payload: layout,
+    });
+  }, [windowWidth]);
+
   const stateWithChartTitle = {
     ...initialResponsiveBarChartState,
     chartTitle: dashboardChartTitle ?? "Bar Chart",
