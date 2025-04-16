@@ -280,6 +280,10 @@
   }
 }
 
+.grid-section {
+  padding: var(--padding) 0px;
+}
+
 .app-shell {
   display: flex;
   width: var(--app-width);
@@ -314,7 +318,7 @@
     /* width: clamp(
       var(--min-app-width, 100%, calc(var(--app-width) - var(--sidebar-width)))
     ); */
-    max-width: calc(var(--app-width) - 200px);
+    max-width: clamp(350px, 100%, calc(var(--app-width)));
     display: flex;
     flex-direction: column;
 
@@ -376,7 +380,6 @@
       .chart {
         height: calc(775px - var(--padding-x2));
         width: 100%;
-        outline: 1px solid cadetblue;
       }
     }
 
@@ -384,7 +387,6 @@
       .chart {
         height: calc(775px - var(--padding-x2));
         width: 100%;
-        outline: 1px solid burlywood;
       }
     }
 
@@ -392,7 +394,6 @@
       .chart {
         height: 350px;
         width: 100%;
-        outline: 1px solid palevioletred;
       }
     }
   }
@@ -446,7 +447,7 @@
 
     .chart-card.calendar {
       grid-area: cc;
-      outline: 1px solid cadetblue;
+
       .chart {}
     }
 
@@ -501,7 +502,7 @@
   }
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1024px) and (max-width: 1299px) {
   .register-card {
     display: flex;
     column-gap: var(--column-gap);
@@ -549,7 +550,7 @@
 
     .chart-card.calendar {
       grid-area: cc;
-      outline: 1px solid cadetblue;
+
       width: clamp(350px, 100%, 1024px);
       .chart {}
     }
@@ -588,7 +589,6 @@
 
     .chart-card.pie {
       grid-area: pc;
-      outline: 1px solid cadetblue;
     }
 
     .statistics-card {
@@ -597,23 +597,126 @@
 
     .statistics-card.c0 {
       grid-area: c0;
-      outline: 1px solid firebrick;
     }
     .statistics-card.c1 {
       grid-area: c1;
-      outline: 1px solid seagreen;
     }
     .statistics-card.c2 {
       grid-area: c2;
-      outline: 1px solid tan;
     }
     .statistics-card.c3 {
       grid-area: c3;
-      outline: 1px solid fuchsia;
     }
     .statistics-card.c4 {
       grid-area: c4;
-      outline: 1px solid firebrick;
+    }
+  }
+}
+
+@media screen and (min-width: 1300px) {
+  .register-card {
+    display: flex;
+    column-gap: var(--column-gap);
+  }
+
+  .app-shell {
+    display: grid;
+    grid-template-areas:
+      "header header"
+      "sidebar main";
+  }
+
+  .header {
+    grid-area: header;
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+    width: var(--sidebar-width);
+    padding: var(--sidebar-padding);
+  }
+
+  .main {
+    grid-area: main;
+    width: 100%;
+  }
+
+  .grid-section.calendar {
+    display: grid;
+    grid-template-areas:
+      "ti co co"
+      "bc bc bc"
+      "c0 cc cc"
+      ".. cc cc";
+    width: 100%;
+    gap: var(--padding);
+
+    .chart-controls-card {
+      grid-area: co;
+    }
+
+    .chart-titles {
+      grid-area: ti;
+    }
+
+    .chart-card.calendar {
+      grid-area: cc;
+
+      width: clamp(350px, 100%, 1024px);
+      .chart {}
+    }
+
+    .chart-card.blr {
+      grid-area: bc;
+    }
+  }
+
+  .grid-section.pie {
+    display: grid;
+    grid-template-areas:
+      "ti co co"
+      "bc bc bc"
+      "c0 pc pc"
+      "c1 pc pc"
+      "c2 c3 c4";
+
+    width: 100%;
+    gap: var(--padding);
+
+    .chart-controls-card {
+      grid-area: co;
+    }
+
+    .chart-titles {
+      grid-area: ti;
+    }
+
+    .chart-card.blr {
+      grid-area: bc;
+    }
+
+    .chart-card.pie {
+      grid-area: pc;
+    }
+
+    .statistics-card {
+      /* width: clamp(200px, 100%, 300px); */
+    }
+
+    .statistics-card.c0 {
+      grid-area: c0;
+    }
+    .statistics-card.c1 {
+      grid-area: c1;
+    }
+    .statistics-card.c2 {
+      grid-area: c2;
+    }
+    .statistics-card.c3 {
+      grid-area: c3;
+    }
+    .statistics-card.c4 {
+      grid-area: c4;
     }
   }
 }
