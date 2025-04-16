@@ -307,7 +307,7 @@
     }
 
     .chart-container {
-      height: 62vh;
+      height: 38vh;
       width: 100%;
       padding: var(--padding-x2);
     }
