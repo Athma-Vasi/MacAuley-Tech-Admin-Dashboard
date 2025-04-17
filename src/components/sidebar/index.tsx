@@ -5,6 +5,7 @@ import {
   TbAffiliate,
   TbFileDatabase,
   TbReportMoney,
+  TbTestPipe,
   TbTools,
   TbUser,
 } from "react-icons/tb";
@@ -183,6 +184,20 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     />
   );
 
+  const testingNavlink = (
+    <AccessibleNavLink
+      attributes={{
+        description: "Testing",
+        icon: <TbTestPipe />,
+        name: "Testing",
+        onClick: async () => {
+          navigateFn("/testing");
+          setOpened(false);
+        },
+      }}
+    />
+  );
+
   const logoutButton = (
     <AccessibleButton
       attributes={{
@@ -232,6 +247,11 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       {directoryNavlink}
       <Space h="xl" />
       {logoutButton}
+      <Space h="xl" />
+      <Text size={18} weight={400}>
+        Testing
+      </Text>
+      {testingNavlink}
     </Stack>
   );
 }

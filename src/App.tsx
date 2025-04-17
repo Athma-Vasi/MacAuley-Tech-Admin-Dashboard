@@ -9,6 +9,7 @@ import HomeWrapper from "./components/home";
 import LoginWrapper from "./components/login";
 import RegisterWrapper from "./components/register";
 import { useGlobalState } from "./hooks/useGlobalState";
+import Testing from "./components/testing";
 
 function App() {
   const {
@@ -31,6 +32,7 @@ function App() {
 
         <Route path="/login" element={<LoginWrapper />} />
         <Route path="/register" element={<RegisterWrapper />} />
+        <Route path="/testing" element={<Testing />} />
 
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>

@@ -494,6 +494,7 @@ const DEPARTMENT_JOB_POSITION_MAP = new Map<Department, string[]>([
 ]);
 
 const PROVINCES: CheckboxRadioSelectData<Province> = [
+  { value: "Not Applicable", label: "Not Applicable" },
   { value: "Alberta", label: "Alberta" },
   { value: "British Columbia", label: "British Columbia" },
   { value: "Manitoba", label: "Manitoba" },
@@ -510,6 +511,7 @@ const PROVINCES: CheckboxRadioSelectData<Province> = [
 ];
 
 const STATES_US: CheckboxRadioSelectData<StatesUS> = [
+  { value: "Not Applicable", label: "Not Applicable" },
   { value: "Alabama", label: "Alabama" },
   { value: "Alaska", label: "Alaska" },
   { value: "Arizona", label: "Arizona" },

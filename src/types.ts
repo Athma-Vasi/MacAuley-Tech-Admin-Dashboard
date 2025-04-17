@@ -142,10 +142,25 @@ type DecodedToken = {
 };
 
 type UserSchema = {
-  username: string;
-  password: string;
+  addressLine: string;
+  city: string;
+  country: Country;
+  department: Department;
   email: string;
+  firstName: string;
+  jobPosition: JobPosition;
+  lastName: string;
+  orgId: number;
+  parentOrgId: number;
+  password: string;
+  postalCodeCanada: CanadianPostalCode;
+  postalCodeUS: USPostalCode;
+  profilePictureUrl: string;
+  province: Province;
   roles: UserRoles;
+  state: StatesUS;
+  storeLocation: AllStoreLocations;
+  username: string;
 };
 
 type UserDocument = UserSchema & {
@@ -235,6 +250,7 @@ type SafeBoxResult<Data = unknown> = Result<SafeBox<Data>, SafeBox>;
 type FontFamily = "Work Sans" | "sans-serif" | "serif" | "Open-Dyslexic";
 
 type Province =
+  | "Not Applicable"
   | "Alberta"
   | "British Columbia"
   | "Manitoba"
@@ -250,6 +266,7 @@ type Province =
   | "Yukon";
 
 type StatesUS =
+  | "Not Applicable"
   | "Alabama"
   | "Alaska"
   | "Arizona"

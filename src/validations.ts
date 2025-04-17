@@ -409,7 +409,7 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [
       /^\d{5}(?:[-]\d{4})?$/,
-      "Must be a valid US zip code of the ZIP+4 format with five digits or five digits plus a hyphen, and four additional digits.",
+      "Must be a valid US zip code of the ZIP+4 format with five digits or five digits plus a hyphen and four additional digits.",
     ],
     [/^[0-9-]+$/, "Must only contain numbers and a hyphen."],
   ],

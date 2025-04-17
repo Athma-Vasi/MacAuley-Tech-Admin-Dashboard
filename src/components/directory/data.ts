@@ -2,7 +2,6 @@ import {
   Country,
   Department,
   JobPosition,
-  PhoneNumber,
   Province,
   StatesUS,
   StoreLocation,
@@ -3752,6 +3751,7 @@ const DIRECTORY_EMPLOYEE_DATA: EmployeeDoc[] = [
   },
 ];
 
+// missing password, addressline
 type EmployeeDoc = {
   username: string;
   email: string;
@@ -3761,7 +3761,7 @@ type EmployeeDoc = {
   preferredName: string;
   preferredPronouns: string;
   profilePictureUrl: string;
-  contactNumber: PhoneNumber;
+  contactNumber: string;
   city: string;
   province?: Province;
   state?: StatesUS;
