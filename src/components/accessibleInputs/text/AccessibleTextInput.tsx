@@ -39,6 +39,11 @@ type AccessibleTextInputAttributes<
   ariaAutoComplete?: "both" | "list" | "none" | "inline";
   autoComplete?: "on" | "off";
   disabled?: boolean;
+  // if different from parentDispatch which sets value
+  errorDispatch?: Dispatch<{
+    action: InvalidValueAction;
+    payload: boolean;
+  }>;
   hideLabel?: boolean;
   icon?: ReactNode;
   initialInputValue?: string;
@@ -99,6 +104,7 @@ function AccessibleTextInput<
     ariaAutoComplete = "none",
     autoComplete = "off",
     disabled = false,
+    errorDispatch,
     hideLabel = false,
     icon = null,
     initialInputValue = "",
@@ -244,6 +250,11 @@ function AccessibleTextInput<
               parentDispatch({
                 action: validValueAction,
                 payload: valueBuffer,
+              });
+
+              errorDispatch?.({
+                action: invalidValueAction,
+                payload: !isValueBufferValid,
               });
 
               onBlur?.();

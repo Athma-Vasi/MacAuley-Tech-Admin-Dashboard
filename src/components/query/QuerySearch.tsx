@@ -2,7 +2,6 @@ import { Group, Modal, Stack, Text } from "@mantine/core";
 import React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
-import type { SetPageInErrorPayload, StepperPage } from "../../types";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
@@ -12,12 +11,12 @@ import type { QueryDispatch, QueryState } from "./types";
 import { SEARCH_CHAIN_HELP_MODAL_CONTENT } from "./utils";
 
 type QuerySearchProps = {
-    parentDispatch: React.Dispatch<QueryDispatch>;
+    queryDispatch: React.Dispatch<QueryDispatch>;
     queryState: QueryState;
 };
 
 function QuerySearch({
-    parentDispatch,
+    queryDispatch,
     queryState,
 }: QuerySearchProps) {
     const {
@@ -29,36 +28,27 @@ function QuerySearch({
     type QuerySearchState = {
         exclusion: string;
         inclusion: string;
-        pagesInError: Set<number>;
     };
     const initialQuerySearchState: QuerySearchState = {
         exclusion: generalSearchExclusionValue,
         inclusion: generalSearchInclusionValue,
-        pagesInError: new Set(),
     };
 
     type QuerySearchActions = {
         setExclusion: "setExclusion";
         setInclusion: "setInclusion";
-        setPageInError: "setPageInError";
     };
     const querySearchActions: QuerySearchActions = {
         setExclusion: "setExclusion",
         setInclusion: "setInclusion",
-        setPageInError: "setPageInError",
     };
 
-    type QuerySearchDispatch =
-        | {
-            action:
-                | QuerySearchActions["setExclusion"]
-                | QuerySearchActions["setInclusion"];
-            payload: string;
-        }
-        | {
-            action: QuerySearchActions["setPageInError"];
-            payload: SetPageInErrorPayload;
-        };
+    type QuerySearchDispatch = {
+        action:
+            | QuerySearchActions["setExclusion"]
+            | QuerySearchActions["setInclusion"];
+        payload: string;
+    };
 
     function querySearchReducer(
         state: QuerySearchState,
@@ -71,20 +61,6 @@ function QuerySearch({
             case querySearchActions.setInclusion:
                 return { ...state, inclusion: dispatch.payload };
 
-            case querySearchActions.setPageInError: {
-                const { kind, page } = dispatch
-                    .payload as SetPageInErrorPayload;
-                const pagesInError = new Set(state.pagesInError);
-                kind === "add"
-                    ? pagesInError.add(page)
-                    : pagesInError.delete(page);
-
-                return {
-                    ...state,
-                    pagesInError,
-                };
-            }
-
             default:
                 return state;
         }
@@ -94,38 +70,20 @@ function QuerySearch({
         querySearchReducer,
         initialQuerySearchState,
     );
-    const { exclusion, inclusion, pagesInError } = querySearchState;
+    const { exclusion, inclusion } = querySearchState;
 
     const [
         openedSearchHelpModal,
         { open: openSearchHelpModal, close: closeSearchHelpModal },
     ] = useDisclosure(false);
 
-    const stepperPages: StepperPage[] = [
-        {
-            children: [
-                {
-                    inputType: "text",
-                    name: "inclusion",
-                    validationKey: "inclusion",
-                },
-                {
-                    inputType: "text",
-                    name: "exclusion",
-                    validationKey: "exclusion",
-                },
-            ],
-            description: "",
-        },
-    ];
-
     const generalSearchInclusionTextInput = (
         <AccessibleTextInput
             attributes={{
-                invalidValueAction: querySearchActions.setPageInError,
+                errorDispatch: queryDispatch,
+                invalidValueAction: queryAction.setIsError,
                 name: "inclusion",
-                parentDispatch: querySearchDispatch,
-                stepperPages,
+                parentDispatch: querySearchDispatch as any,
                 validValueAction: querySearchActions.setInclusion,
                 value: generalSearchInclusionValue,
             }}
@@ -135,10 +93,10 @@ function QuerySearch({
     const generalSearchExclusionTextInput = (
         <AccessibleTextInput
             attributes={{
-                invalidValueAction: querySearchActions.setPageInError,
+                errorDispatch: queryDispatch,
+                invalidValueAction: queryAction.setIsError,
                 name: "exclusion",
-                parentDispatch: querySearchDispatch,
-                stepperPages,
+                parentDispatch: querySearchDispatch as any,
                 validValueAction: querySearchActions.setExclusion,
                 value: generalSearchExclusionValue,
             }}
@@ -150,7 +108,7 @@ function QuerySearch({
             attributes={{
                 data: QUERY_SEARCH_CASE_DATA,
                 name: "case",
-                parentDispatch,
+                parentDispatch: queryDispatch,
                 validValueAction: queryAction.setGeneralSearchCase,
                 value: generalSearchCase,
             }}
@@ -163,19 +121,19 @@ function QuerySearch({
                 enabledScreenreaderText: "Add filter link to chain",
                 disabledScreenreaderText:
                     "Please fix error(s) before proceeding",
-                disabled: pagesInError.size > 0,
+                disabled: queryState.isError,
                 kind: "add",
                 onClick: (
                     _event:
                         | React.MouseEvent<HTMLButtonElement, MouseEvent>
                         | React.PointerEvent<HTMLButtonElement>,
                 ) => {
-                    parentDispatch({
+                    queryDispatch({
                         action: queryAction.setGeneralSearchExclusionValue,
                         payload: exclusion,
                     });
 
-                    parentDispatch({
+                    queryDispatch({
                         action: queryAction.setGeneralSearchInclusionValue,
                         payload: inclusion,
                     });
