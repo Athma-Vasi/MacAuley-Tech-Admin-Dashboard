@@ -1,9 +1,5 @@
-import type {
-    CheckboxInputData,
-    CheckboxRadioSelectData,
-    SetPageInErrorPayload,
-} from "../../types";
-import type { QueryAction } from "./actions";
+import { CheckboxRadioSelectData, SetStepInErrorPayload } from "../../types";
+import { QueryAction } from "./actions";
 import type { OperatorsInputType } from "./utils";
 
 type ComparisonOperator =
@@ -112,7 +108,7 @@ type ModifyQueryChainsDispatch = React.Dispatch<{
 type QueryFilterPayload = {
     fieldNamesOperatorsTypesMap: Map<string, OperatorsInputType>;
     searchFieldSelectInputData: CheckboxRadioSelectData;
-    selectInputsDataMap: Map<string, CheckboxInputData>;
+    selectInputsDataMap: Map<string, CheckboxRadioSelectData>;
     value: string;
 };
 
@@ -151,7 +147,7 @@ type QueryDispatch =
     }
     | {
         action: QueryAction["setIsError"];
-        payload: SetPageInErrorPayload;
+        payload: boolean;
     }
     | {
         action: QueryAction["setGeneralSearchCase"];
