@@ -2,13 +2,6 @@ import { Group, Modal, Stack } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
-import { VALIDATION_FUNCTIONS_TABLE } from "../../constants/validations";
-import type {
-    CheckboxRadioSelectData,
-    SetPageInErrorPayload,
-    StepperPage,
-    ValidationFunctionsTable,
-} from "../../types";
 import { splitCamelCase } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
