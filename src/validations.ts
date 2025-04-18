@@ -14,12 +14,14 @@ type ValidationKey =
   | "city"
   | "colorVariant"
   | "confirmPassword"
+  | "country"
   | "cpuFrequency"
   | "cpuSocket" // | "gpuChipset" | "motherboardSocket" | "motherboardChipset"
   | "date"
   | "dateNearFuture"
   | "dateNearPast"
   | "dateOfBirth"
+  | "department"
   | "dimensions"
   | "displayAspectRatio"
   | "editFieldValue"
@@ -30,6 +32,7 @@ type ValidationKey =
   | "frequencyResponse"
   | "fullName"
   | "inclusion"
+  | "jobPosition"
   | "largeInteger"
   | "lastName"
   | "mediumInteger"
@@ -43,12 +46,14 @@ type ValidationKey =
   | "postalCodeUS"
   | "privacyConsent"
   | "profilePictureUrl"
+  | "province"
   | "ramTiming"
   | "ramVoltage"
   | "screenshotFilename"
   | "search"
   | "searchValue"
   | "smallInteger"
+  | "state"
   | "textAreaInput"
   | "textInput"
   | "timeRailway"
@@ -183,6 +188,10 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [/^(?!.*\s)/, "Cannot contain spaces."],
   ],
 
+  country: [
+    [/^(Canada|United States)$/, "Must be either Canada or United States."],
+  ],
+
   cpuFrequency: [
     [/^(?!^$|^0*$)/, "Must not be empty or consist entirely of zeroes."],
     [/^[0-9]{1}(\.[0-9]{1,3})?$/, "Must contain only numbers."],
@@ -261,6 +270,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     ],
   ],
 
+  department: [
+    [
+      /^(Executive Management|Store Administration|Office Administration|Accounting|Human Resources|Sales|Marketing|Information Technology|Repair Technicians|Field Service Technicians|Logistics and Inventory|Customer Service|Maintenance)$/,
+      "Must be a valid department.",
+    ],
+  ],
+
   dimensions: [
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
@@ -332,6 +348,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
       "Must contain only letters, numbers, spaces, periods, commas, exclamation marks, question marks, parentheses, colons, semicolons, double quotation marks, single quotation marks, or hyphens.",
     ],
     [/^.{1,100}$/, "Must be between 1 and 100 characters length."],
+  ],
+
+  jobPosition: [
+    [
+      /^(Chief Executive Officer|Chief Operations Officer|Chief Financial Officer|Chief Technology Officer|Chief Marketing Officer|Chief Sales Officer|Chief Human Resources Officer|Human Resources Manager|Compensation and Benefits Specialist|Health and Safety Specialist|Training Specialist|Recruiting Specialist|Store Manager|Shift Supervisor|Office Manager|Office Administrator|Receptionist|Data Entry Specialist|Accounting Manager|Accounts Payable Clerk|Accounts Receivable Clerk|Financial Analyst|Sales Manager|Sales Representative|Business Development Specialist|Sales Support Specialist|Sales Operations Analyst|Marketing Manager|Digital Marketing Specialist|Graphic Designer|Public Relations Specialist|Marketing Analyst|IT Manager|Systems Administrator|IT Support Specialist|Database Administrator|Web Developer|Software Developer|Software Engineer|Repair Technicians Supervisor|Electronics Technician|Computer Technician|Smartphone Technician|Tablet Technician|Audio\/Video Equipment Technician|Field Service Supervisor|On-Site Technician|Warehouse Supervisor|Inventory Clerk|Delivery Driver|Parts and Materials Handler|Shipper\/Receiver|Customer Service Supervisor|Customer Service Representative|Technical Support Specialist|Maintenance Supervisor|Maintenance Worker|Custodian)$/,
+      "Must be a valid job position.",
+    ],
   ],
 
   largeInteger: [
@@ -425,6 +448,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     ],
   ],
 
+  province: [
+    [
+      /^(Not Applicable|Alberta|British Columbia|Manitoba|New Brunswick|Newfoundland and Labrador|Nova Scotia|Ontario|Prince Edward Island|Quebec|Saskatchewan|Northwest Territories|Nunavut|Yukon)$/,
+      "Must be a valid Canadian province or territory.",
+    ],
+  ],
+
   ramTiming: [
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [
@@ -477,6 +507,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [/^[0-9]+$/, "Must contain only numbers."],
     [/^.{1,2}$/, "Must be between 1 and 2 characters length."],
+  ],
+
+  state: [
+    [
+      /^(Not Applicable|Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode Island|South Carolina|South Dakota|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West Virginia|Wisconsin|Wyoming)$/,
+      "Must be a valid US state.",
+    ],
   ],
 
   textInput: [

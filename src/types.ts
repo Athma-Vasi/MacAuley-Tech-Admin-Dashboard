@@ -7,6 +7,7 @@ import {
 } from "@mantine/core";
 import type { Result } from "ts-results";
 import { AccessibleDateTimeInputAttributes } from "./components/accessibleInputs/AccessibleDateTimeInput";
+import { AccessibleNumberInputAttributes } from "./components/accessibleInputs/AccessibleNumberInput";
 import { AccessibleTextInputAttributes } from "./components/accessibleInputs/text/AccessibleTextInput";
 import {
   AllStoreLocations,
@@ -150,6 +151,7 @@ type QueryTemplateDateInput = QueryTemplate & {
 
 type QueryTemplateNumberInput = QueryTemplate & {
   kind: "number";
+  attributes: AccessibleNumberInputAttributes;
 };
 
 type QueryTemplateTextInput = QueryTemplate & {
@@ -157,9 +159,10 @@ type QueryTemplateTextInput = QueryTemplate & {
   attributes: AccessibleTextInputAttributes;
 };
 
-type QueryTemplateSelectInput = {
+type QueryTemplateSelectInput = QueryTemplate & {
   kind: "select";
   data: CheckboxRadioSelectData;
+  attributes: AccessibleDateTimeInputAttributes;
 };
 
 type UserSchema = {
@@ -492,6 +495,11 @@ export type {
   PostalCode,
   ProductMetricsDocument,
   Province,
+  QueryTemplate,
+  QueryTemplateDateInput,
+  QueryTemplateNumberInput,
+  QueryTemplateSelectInput,
+  QueryTemplateTextInput,
   RepairMetricsDocument,
   RepairTechnicians,
   SafeBox,
