@@ -9,14 +9,14 @@ import { PROJECTION_HELP_MODAL_CONTENT } from "./utils";
 
 type QueryProjectionProps = {
     hideProjection: boolean;
-    parentDispatch: React.Dispatch<QueryDispatch>;
+    queryDispatch: React.Dispatch<QueryDispatch>;
     projectionCheckboxData: CheckboxRadioSelectData;
     queryState: QueryState;
 };
 
 function QueryProjection({
     hideProjection = false,
-    parentDispatch,
+    queryDispatch,
     projectionCheckboxData,
     queryState,
 }: QueryProjectionProps) {
@@ -63,7 +63,7 @@ function QueryProjection({
                 attributes={{
                     inputData: projectionCheckboxData,
                     name: "exclusionFields",
-                    parentDispatch,
+                    parentDispatch: queryDispatch,
                     validValueAction: queryAction.setProjectionExclusionFields,
                     value: projectionExclusionFields,
                 }}

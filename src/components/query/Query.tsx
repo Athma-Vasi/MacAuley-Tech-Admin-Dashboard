@@ -1,68 +1,32 @@
 import { Accordion, Stack } from "@mantine/core";
-import React, { useEffect } from "react";
+import React from "react";
 
-import type { SetPageInErrorPayload, StepperPage } from "../../types";
 import { Chain, type QueryChainDispatch } from "./Chain";
-import { QueryFilter, type SetFilterInputValuesDispatch } from "./QueryFilter";
 import { QueryProjection } from "./QueryProjection";
 import { QuerySearch } from "./QuerySearch";
-import { QuerySort, type QuerySortDispatch } from "./QuerySort";
 import { queryReducer } from "./reducers";
-import { createInitialQueryState } from "./state";
 
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { LIMIT_PER_PAGE_DATA } from "../resource/constants";
 import { queryAction } from "./actions";
-import { createQueryInputsData } from "./utils";
+import { LIMIT_PER_PAGE_DATA } from "./constants";
+import { QueryFilter } from "./QueryFilter";
+import { QuerySort } from "./QuerySort";
+import { initialQueryState } from "./state";
 
-type QueryProps<
-    ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
-> = {
+type QueryProps = {
     collectionName: string;
     hideProjection?: boolean;
-    invalidValueAction: InvalidValueAction;
-    page?: number;
-    parentDispatch: React.Dispatch<
-        | {
-            action: ValidValueAction;
-            payload: string;
-        }
-        | {
-            action: InvalidValueAction;
-            payload: SetPageInErrorPayload;
-        }
-    >;
-    /** only the children steppers objs are used */
-    stepperPages: StepperPage[];
-    validValueAction: ValidValueAction;
+    parentDispatch: React.Dispatch<any>;
 };
 
-function Query<
-    ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
->({
+function Query({
     collectionName,
-    invalidValueAction,
-    page = 0,
     parentDispatch,
-    stepperPages,
-    validValueAction,
     hideProjection = false,
-}: QueryProps<ValidValueAction, InvalidValueAction>) {
-    const {
-        fieldNamesOperatorsTypesMap,
-        filterFieldSelectInputData,
-        projectionCheckboxData,
-        searchFieldSelectInputData,
-        selectInputsDataMap,
-        sortFieldSelectData,
-        inputsValidationsMap,
-    } = createQueryInputsData(stepperPages);
-
+}: QueryProps) {
     const [queryState, queryDispatch] = React.useReducer(
         queryReducer,
-        createInitialQueryState(searchFieldSelectInputData),
+        initialQueryState,
     );
 
     const {
@@ -88,43 +52,6 @@ function Query<
         sortFieldsSet,
     } = queryState;
 
-    useEffect(() => {
-        parentDispatch({
-            action: invalidValueAction,
-            payload: {
-                kind: queryState.isError ? "add" : "delete",
-                page,
-            },
-        });
-
-        parentDispatch({
-            action: validValueAction,
-            payload: queryState.queryString,
-        });
-    }, [queryState.queryString, queryState.isError]);
-
-    useEffect(() => {
-        parentDispatch({
-            action: invalidValueAction,
-            payload: {
-                kind: "delete",
-                page,
-            },
-        });
-    }, [filterField]);
-
-    console.group("Query");
-    console.log("queryState", queryState);
-    console.log("stepperPages", stepperPages);
-    console.log("fieldNamesOperatorsTypesMap", fieldNamesOperatorsTypesMap);
-    console.log("projectionCheckboxData", projectionCheckboxData);
-    console.log("filterFieldSelectInputData", filterFieldSelectInputData);
-    console.log("searchFieldSelectInputData", searchFieldSelectInputData);
-    console.log("selectInputsDataMap", selectInputsDataMap);
-    console.log("sortFieldSelectData", sortFieldSelectData);
-    console.log("inputsValidationsMap", inputsValidationsMap);
-    console.groupEnd();
-
     const queryChain = (
         <Chain
             collectionName={collectionName}
@@ -135,40 +62,31 @@ function Query<
 
     const queryFilter = (
         <QueryFilter
-            fieldNamesOperatorsTypesMap={fieldNamesOperatorsTypesMap}
-            filterFieldSelectInputData={filterFieldSelectInputData}
-            inputsValidationsMap={inputsValidationsMap}
-            modifyQueryChainsDispatch={queryDispatch}
-            parentDispatch={queryDispatch}
+            queryDispatch={queryDispatch}
             queryState={queryState}
-            searchFieldSelectInputData={searchFieldSelectInputData}
-            selectInputsDataMap={selectInputsDataMap}
-            setFilterInputValuesDispatch={queryDispatch as SetFilterInputValuesDispatch}
         />
     );
 
     const queryProjection = (
         <QueryProjection
             hideProjection={hideProjection}
-            parentDispatch={queryDispatch}
-            projectionCheckboxData={projectionCheckboxData}
+            queryDispatch={queryDispatch}
+            projectionCheckboxData={[]}
             queryState={queryState}
         />
     );
 
     const querySearch = (
         <QuerySearch
-            parentDispatch={queryDispatch}
+            queryDispatch={queryDispatch}
             queryState={queryState}
         />
     );
 
     const querySort = (
         <QuerySort
-            querySortDispatch={queryDispatch as QuerySortDispatch}
+            queryDispatch={queryDispatch}
             queryState={queryState}
-            sortChainDispatch={queryDispatch}
-            sortFieldSelectData={sortFieldSelectData}
         />
     );
 

@@ -5,21 +5,13 @@ import type {
     InputType,
     Validation,
 } from "../../types";
-import { splitCamelCase } from "../../utils";
-import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
+import { ValidationKey } from "../../validations";
 
 import {
-    BOOLEAN_OPERATOR_DATA,
-    COMPARISON_OPERATORS_DATA,
-    IN_OPERATOR_DATA,
-} from "./constants";
-import {
-    FilterInputsType,
     GeneralSearchCase,
     MongoComparisonOperator,
     QueryChains,
     QueryOperator,
-    SortInputsType,
 } from "./types";
 
 type OperatorsInputType = {

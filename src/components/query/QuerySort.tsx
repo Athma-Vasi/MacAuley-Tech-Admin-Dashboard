@@ -7,34 +7,25 @@ import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { type QueryAction, queryAction } from "./actions";
 import { MAX_LINKS_AMOUNT, SORT_DIRECTION_DATA } from "./constants";
-import type { ModifyQueryChainPayload, QueryState } from "./types";
+import type {
+    ModifyQueryChainPayload,
+    QueryDispatch,
+    QueryState,
+} from "./types";
 import {
     removeProjectionExclusionFields,
     SORT_HELP_MODAL_CONTENT,
 } from "./utils";
 
-type QuerySortDispatch<ValidValueAction extends string = string> =
-    React.Dispatch<{
-        action: ValidValueAction;
-        payload: string;
-    }>;
-
-type QuerySortProps<ValidValueAction extends string = string> = {
-    querySortDispatch: QuerySortDispatch<ValidValueAction>;
+type QuerySortProps = {
+    queryDispatch: React.Dispatch<QueryDispatch>;
     queryState: QueryState;
-    sortChainDispatch: React.Dispatch<{
-        action: QueryAction["modifyQueryChains"];
-        payload: ModifyQueryChainPayload;
-    }>;
-    sortFieldSelectData: CheckboxRadioSelectData;
 };
 
-function QuerySort<ValidValueAction extends string = string>({
-    querySortDispatch,
+function QuerySort({
+    queryDispatch,
     queryState,
-    sortChainDispatch,
-    sortFieldSelectData,
-}: QuerySortProps<ValidValueAction>) {
+}: QuerySortProps) {
     const [
         openedSortHelpModal,
         { open: openSortHelpModal, close: closeSortHelpModal },
@@ -51,61 +42,61 @@ function QuerySort<ValidValueAction extends string = string>({
         0,
     );
 
-    const data = removeProjectionExclusionFields(
-        projectionExclusionFields,
-        sortFieldSelectData,
-    );
-    const disabled = data.length === 0;
+    // const data = removeProjectionExclusionFields(
+    //     projectionExclusionFields,
+    //     sortFieldSelectData,
+    // );
+    // const disabled = data.length === 0;
 
-    const sortFieldSelectInput = (
-        <AccessibleSelectInput
-            attributes={{
-                data,
-                disabled,
-                name: "sortField",
-                parentDispatch: querySortDispatch,
-                validValueAction: queryAction.setSortField as ValidValueAction,
-                value: sortField,
-            }}
-        />
-    );
+    // const sortFieldSelectInput = (
+    //     <AccessibleSelectInput
+    //         attributes={{
+    //             data,
+    //             disabled,
+    //             name: "sortField",
+    //             parentDispatch: queryDispatch,
+    //             validValueAction: queryAction.setSortField,
+    //             value: sortField,
+    //         }}
+    //     />
+    // );
 
-    const sortDirectionSelectInput = (
-        <AccessibleSelectInput
-            attributes={{
-                data: SORT_DIRECTION_DATA,
-                disabled,
-                name: "sortDirection",
-                parentDispatch: querySortDispatch,
-                validValueAction: queryAction
-                    .setSortDirection as ValidValueAction,
-                value: sortDirection,
-            }}
-        />
-    );
+    // const sortDirectionSelectInput = (
+    //     <AccessibleSelectInput
+    //         attributes={{
+    //             data: SORT_DIRECTION_DATA,
+    //             disabled,
+    //             name: "sortDirection",
+    //             parentDispatch: queryDispatch,
+    //             validValueAction: queryAction
+    //                 .setSortDirection,
+    //             value: sortDirection,
+    //         }}
+    //     />
+    // );
 
     const addSortLinkButton = (
         <AccessibleButton
             attributes={{
                 enabledScreenreaderText: "Add sort link to chain",
                 disabledScreenreaderText: "Max query links amount reached",
-                disabled: disabled || sortChainLength === MAX_LINKS_AMOUNT,
+                // disabled: disabled || sortChainLength === MAX_LINKS_AMOUNT,
                 kind: "add",
                 onClick: (
                     _event:
                         | React.MouseEvent<HTMLButtonElement, MouseEvent>
                         | React.PointerEvent<HTMLButtonElement>,
                 ) => {
-                    sortChainDispatch({
-                        action: queryAction.modifyQueryChains,
-                        payload: {
-                            index: sortChainLength,
-                            logicalOperator: "and",
-                            queryChainActions: "insert",
-                            queryChainKind: "sort",
-                            queryLink: [sortField, "equal to", sortDirection],
-                        },
-                    });
+                    // sortChainDispatch({
+                    //     action: queryAction.modifyQueryChains,
+                    //     payload: {
+                    //         index: sortChainLength,
+                    //         logicalOperator: "and",
+                    //         queryChainActions: "insert",
+                    //         queryChainKind: "sort",
+                    //         queryLink: [sortField, "equal to", sortDirection],
+                    //     },
+                    // });
                 },
             }}
         />
@@ -141,8 +132,10 @@ function QuerySort<ValidValueAction extends string = string>({
 
     return (
         <Stack>
-            {sortFieldSelectInput}
-            {sortDirectionSelectInput}
+            {
+                /* {sortFieldSelectInput}
+            {sortDirectionSelectInput} */
+            }
             <Group>
                 {sortHelpButton}
                 {addSortLinkButton}
@@ -153,4 +146,3 @@ function QuerySort<ValidValueAction extends string = string>({
 }
 
 export { QuerySort };
-export type { QuerySortDispatch };

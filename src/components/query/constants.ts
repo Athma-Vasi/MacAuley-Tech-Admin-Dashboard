@@ -8,6 +8,12 @@ import type {
 
 const MAX_LINKS_AMOUNT = 11;
 
+const LIMIT_PER_PAGE_DATA: CheckboxRadioSelectData = [
+    { label: "10", value: "10" },
+    { label: "25", value: "25" },
+    { label: "50", value: "50" },
+];
+
 const COMPARISON_OPERATORS_DATA: CheckboxRadioSelectData<ComparisonOperator> = [
     { label: "equal to", value: "equal to" },
     { label: "not equal to", value: "not equal to" },
@@ -59,6 +65,7 @@ export {
     BOOLEAN_VALUES_DATA,
     COMPARISON_OPERATORS_DATA,
     IN_OPERATOR_DATA,
+    LIMIT_PER_PAGE_DATA,
     LOGICAL_OPERATORS_DATA,
     MAX_LINKS_AMOUNT,
     QUERY_SEARCH_CASE_DATA,
