@@ -1,11 +1,12 @@
 import { Center, Loader, Stack } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useErrorBoundary } from "react-error-boundary";
-import { Ok } from "ts-results";
+import { Err, Ok } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { CanadianPostalCode, UserSchema } from "../../types";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { DIRECTORY_EMPLOYEE_DATA } from "../directory/data";
+import { postUsersToDB } from "./handlers";
 
 function Testing() {
     const { showBoundary } = useErrorBoundary();
@@ -14,6 +15,10 @@ function Testing() {
     const isComponentMountedRef = useRef(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [schemas, setSchemas] = useState<Array<Record<string, unknown>>>(
+        [],
+    );
+    const [uploadedCount, setUploadedCount] = useState(0);
 
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -27,6 +32,197 @@ function Testing() {
         };
     }, []);
 
+    useEffect(() => {
+        const roadNames = [
+            "Ocean Avenue",
+            "Maple Street",
+            "Sunset Boulevard",
+            "Elm Drive",
+            "Cedar Lane",
+            "Pine Avenue",
+            "Willow Way",
+            "Chestnut Road",
+            "Birch Boulevard",
+            "Highland Avenue",
+            "Riverside Drive",
+            "Ash Street",
+            "Meadow Lane",
+            "Hilltop Road",
+            "Lakeview Terrace",
+            "Forest Avenue",
+            "Broadway",
+            "Main Street",
+            "Sycamore Court",
+            "Rosewood Drive",
+            "Oak Hill Road",
+            "Magnolia Avenue",
+            "Horizon Street",
+            "Valley View Road",
+            "Golden Gate Avenue",
+            "Whyte Avenue",
+            "Jasper Avenue",
+            "MacLeod Trail",
+            "Crowchild Trail",
+            "Stoney Trail",
+            "16th Avenue NW",
+            "Kingsway NW",
+            "Riverbend Road",
+            "Heritage Drive SE",
+            "Bowness Road NW",
+            "Gateway Boulevard",
+            "Calgary Trail",
+            "Saddleback Road",
+            "Spruce Meadows Way",
+            "Silver Springs Blvd",
+            "Mill Woods Road",
+            "Chinook Gate",
+            "Banff Trail NW",
+            "Yellowhead Trail",
+            "Fort Road",
+            "Glenmore Trail",
+            "Windermere Boulevard",
+            "Big Rock Trail",
+            "Prairie Winds Drive",
+        ];
+
+        const userSchemas = DIRECTORY_EMPLOYEE_DATA.map(
+            (employee) => {
+                const {
+                    city,
+                    country,
+                    department,
+                    email,
+                    firstName,
+                    jobPosition,
+                    lastName,
+                    orgId,
+                    parentOrgId,
+                    profilePictureUrl,
+                    role,
+                    storeLocation,
+                    username,
+                    province,
+                    state,
+                } = employee;
+
+                const randomRoadName = roadNames[
+                    Math.floor(Math.random() * roadNames.length)
+                ];
+
+                const randomAddressNumber = Math.floor(
+                    Math.random() * 10000,
+                );
+
+                const addressLine = `${randomAddressNumber} ${randomRoadName}`;
+
+                const randomAlphabet = () =>
+                    String.fromCharCode(
+                        Math.floor(Math.random() * 26) + 65,
+                    );
+                const randomNumber = () => Math.floor(Math.random() * 10);
+
+                const postalCodeCanada = country === "United States"
+                    ? "A0A 0A0"
+                    : `${randomAlphabet()}${randomNumber()}${randomAlphabet()} ${randomNumber()}${randomAlphabet()}${randomNumber()}`;
+
+                const coinToss = Math.random() < 0.5;
+                const postalCodeUSFormat = coinToss ? "short" : "long";
+                const postalCodeUS = country === "Canada"
+                    ? "00000"
+                    : postalCodeUSFormat === "short"
+                    ? `${randomNumber()}${randomNumber()}${randomNumber()}${randomNumber()}${randomNumber()}`
+                    : `${randomNumber()}${randomNumber()}${randomNumber()}${randomNumber()}${randomNumber()}-${randomNumber()}${randomNumber()}${randomNumber()}${randomNumber()}`;
+
+                const schema: UserSchema = {
+                    addressLine,
+                    city,
+                    country,
+                    department,
+                    email,
+                    firstName,
+                    jobPosition,
+                    lastName,
+                    orgId,
+                    parentOrgId,
+                    password: "passwordQ1!",
+                    postalCodeCanada: postalCodeCanada as CanadianPostalCode,
+                    postalCodeUS,
+                    profilePictureUrl,
+                    province: country === "Canada" && province
+                        ? province
+                        : "Not Applicable",
+                    roles: role,
+                    state: country === "United States" && state
+                        ? state
+                        : "Not Applicable",
+                    storeLocation,
+                    username,
+                };
+
+                return schema;
+            },
+        );
+
+        setSchemas(userSchemas);
+    }, []);
+
+    const BATCH = 1;
+    useEffect(() => {
+        async function submitBatch() {
+            const slicedSchemas = schemas.slice(
+                uploadedCount,
+                uploadedCount + BATCH,
+            );
+
+            const result = await postUsersToDB({
+                body: JSON.stringify({ "schemas": slicedSchemas }),
+                fetchAbortControllerRef,
+                isComponentMountedRef,
+                setIsSubmitting,
+                showBoundary,
+                url: "http://localhost:5000/api/v1/user/bulk",
+            });
+
+            if (result?.err) {
+                showBoundary(
+                    "Error occurred while posting user data",
+                );
+                return new Err(
+                    "Error occurred while posting user data",
+                );
+            }
+
+            const responseResult = result?.val;
+            return new Ok(
+                responseResult,
+            );
+        }
+
+        if (schemas.length === 0 || uploadedCount >= schemas.length) {
+            return;
+        }
+
+        // setTimeout(() => {
+        //     const submitResult = submitBatch();
+        //     console.log("submitResult", submitResult);
+        //     setUploadedCount(
+        //         (prevCount) => prevCount + BATCH,
+        //     );
+        // }, 1000);
+    }, [uploadedCount]);
+
+    console.log(
+        "maxOrgId",
+        DIRECTORY_EMPLOYEE_DATA.reduce((acc, employee) => {
+            const { orgId } = employee;
+            return orgId > acc ? orgId : acc;
+        }, 0),
+    );
+
+    console.log("schemas", schemas);
+    console.log("uploadedCount", uploadedCount);
+    console.log("isSubmitting", isSubmitting);
+
     const button = (
         <AccessibleButton
             attributes={{
@@ -36,180 +232,9 @@ function Testing() {
                         | React.MouseEvent<HTMLButtonElement, MouseEvent>
                         | React.PointerEvent<HTMLButtonElement>,
                 ) => {
-                    const roadNames = [
-                        "Ocean Avenue",
-                        "Maple Street",
-                        "Sunset Boulevard",
-                        "Elm Drive",
-                        "Cedar Lane",
-                        "Pine Avenue",
-                        "Willow Way",
-                        "Chestnut Road",
-                        "Birch Boulevard",
-                        "Highland Avenue",
-                        "Riverside Drive",
-                        "Ash Street",
-                        "Meadow Lane",
-                        "Hilltop Road",
-                        "Lakeview Terrace",
-                        "Forest Avenue",
-                        "Broadway",
-                        "Main Street",
-                        "Sycamore Court",
-                        "Rosewood Drive",
-                        "Oak Hill Road",
-                        "Magnolia Avenue",
-                        "Horizon Street",
-                        "Valley View Road",
-                        "Golden Gate Avenue",
-                        "Whyte Avenue",
-                        "Jasper Avenue",
-                        "MacLeod Trail",
-                        "Crowchild Trail",
-                        "Stoney Trail",
-                        "16th Avenue NW",
-                        "Kingsway NW",
-                        "Riverbend Road",
-                        "Heritage Drive SE",
-                        "Bowness Road NW",
-                        "Gateway Boulevard",
-                        "Calgary Trail",
-                        "Saddleback Road",
-                        "Spruce Meadows Way",
-                        "Silver Springs Blvd",
-                        "Mill Woods Road",
-                        "Chinook Gate",
-                        "Banff Trail NW",
-                        "Yellowhead Trail",
-                        "Fort Road",
-                        "Glenmore Trail",
-                        "Windermere Boulevard",
-                        "Big Rock Trail",
-                        "Prairie Winds Drive",
-                    ];
-
-                    const results = DIRECTORY_EMPLOYEE_DATA.map(
-                        async (employee) => {
-                            const {
-                                city,
-                                country,
-                                department,
-                                email,
-                                firstName,
-                                jobPosition,
-                                lastName,
-                                orgId,
-                                parentOrgId,
-                                profilePictureUrl,
-                                role,
-                                storeLocation,
-                                username,
-                                province,
-                                state,
-                            } = employee;
-
-                            const randomRoadName = roadNames[
-                                Math.floor(Math.random() * roadNames.length)
-                            ];
-
-                            const randomAddressNumber = Math.floor(
-                                Math.random() * 10000,
-                            );
-
-                            const addressLine =
-                                `${randomAddressNumber} ${randomRoadName}`;
-
-                            const randomPostalAlphabet = String.fromCharCode(
-                                Math.floor(Math.random() * 26) + 65,
-                            );
-                            const postalCodeCanada = country === "United States"
-                                ? "Not Applicable"
-                                : `${randomPostalAlphabet}${
-                                    Math.floor(
-                                        Math.random() * 10,
-                                    )
-                                }${randomPostalAlphabet} ${
-                                    Math.floor(
-                                        Math.random() * 10,
-                                    )
-                                }${randomPostalAlphabet}${
-                                    Math.floor(
-                                        Math.random() * 10,
-                                    )
-                                }`;
-
-                            const coinToss = Math.random() < 0.5;
-                            const postalCodeUSFormat = coinToss
-                                ? "short"
-                                : "long";
-                            const postalCodeUS = country === "Canada"
-                                ? "Not Applicable"
-                                : postalCodeUSFormat === "short"
-                                ? Math.floor(
-                                    Math.random() * 100000,
-                                ).toString()
-                                : `${
-                                    Math.floor(
-                                        Math.random() * 100000,
-                                    )
-                                }-${
-                                    Math.floor(
-                                        Math.random() * 10000,
-                                    )
-                                }`;
-
-                            const schema: UserSchema = {
-                                addressLine,
-                                city,
-                                country,
-                                department,
-                                email,
-                                firstName,
-                                jobPosition,
-                                lastName,
-                                orgId,
-                                parentOrgId,
-                                password: "passwordQ1!",
-                                postalCodeCanada:
-                                    postalCodeCanada as CanadianPostalCode,
-                                postalCodeUS,
-                                profilePictureUrl,
-                                province: country === "Canada" && province
-                                    ? province
-                                    : "Not Applicable",
-                                roles: role,
-                                state: country === "United States" && state
-                                    ? state
-                                    : "Not Applicable",
-                                storeLocation,
-                                username,
-                            };
-
-                            return new Ok(schema);
-
-                            // return await postUsersToDB({
-                            //     body: JSON.stringify({ schema }),
-                            //     event,
-                            //     fetchAbortControllerRef,
-                            //     isComponentMountedRef,
-                            //     setIsSubmitting,
-                            //     showBoundary,
-                            //     url: REGISTER_URL,
-                            // });
-                        },
+                    setUploadedCount(
+                        (prevCount) => prevCount + BATCH,
                     );
-
-                    results.forEach(async (result) => {
-                        const awaited = await result;
-                        if (awaited.err) {
-                            showBoundary(new Error("Error"));
-                            return;
-                        }
-
-                        const responseResult = awaited.val;
-
-                        console.log("responseResult", responseResult);
-                    });
                 },
             }}
         />

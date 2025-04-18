@@ -182,6 +182,11 @@ function Register() {
             return;
           }
 
+          const randomNum = () => Math.floor(Math.random() * 10);
+
+          const randomOrgId =
+            `${randomNum()}${randomNum()}${randomNum()}${randomNum()}${randomNum()}${randomNum()}${randomNum()}`;
+
           await handleRegisterButtonClick({
             fetchAbortControllerRef,
             isComponentMountedRef,
@@ -199,6 +204,8 @@ function Register() {
               firstName,
               jobPosition,
               lastName,
+              orgId: parseInt(randomOrgId),
+              parentOrgId: 1,
               postalCodeCanada,
               postalCodeUS,
               profilePictureUrl,

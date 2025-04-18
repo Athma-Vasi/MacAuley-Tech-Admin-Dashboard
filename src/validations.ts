@@ -540,23 +540,17 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
 
   username: [
     [
-      /^.{3,20}$/,
-      "Must be between 3 and 20 characters.",
+      /^.{3,48}$/,
+      "Must be between 3 and 48 characters.",
     ],
     [/^(?![-])/, "Cannot start with a hyphen."],
     [/^(?![_])/, "Cannot start with an underscore."],
     [/^(?![.])/, "Cannot start with a period."],
-    [/^(?!.*[-]{2})/, "Cannot contain two hyphens in a row."],
-    [/^(?!.*[_]{2})/, "Cannot contain two underscores in a row."],
-    [/^(?!.*[.]{2})/, "Cannot contain two periods in a row."],
     [
       /^[a-zA-Z0-9-_.]+$/,
       "Can only contain alphanumeric characters, hyphens, underscores, and periods.",
     ],
     [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
-    // [/^(?!.*[-]).*$/, "Cannot end with a hyphen."],
-    // [/^(?!.*[_]).*$/, "Cannot end with an underscore."],
-    // [/^(?!.*[.]).*$/, "Cannot end with a period."],
   ],
 
   weight: [

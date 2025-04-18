@@ -5,7 +5,6 @@ import { fetchSafe, responseToJSONSafe } from "../../utils";
 async function postUsersToDB(
     {
         body,
-        event,
         fetchAbortControllerRef,
         isComponentMountedRef,
         setIsSubmitting,
@@ -13,7 +12,6 @@ async function postUsersToDB(
         url,
     }: {
         body: string;
-        event: any;
         fetchAbortControllerRef: React.RefObject<AbortController | null>;
         isComponentMountedRef: React.RefObject<boolean>;
         setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,8 +19,6 @@ async function postUsersToDB(
         url: string;
     },
 ) {
-    event.preventDefault();
-
     fetchAbortControllerRef.current?.abort("Previous request cancelled");
     fetchAbortControllerRef.current = new AbortController();
     const fetchAbortController = fetchAbortControllerRef.current;
@@ -31,7 +27,7 @@ async function postUsersToDB(
     const isComponentMounted = isComponentMountedRef.current;
 
     const requestInit: RequestInit = {
-        body: JSON.stringify(body),
+        body,
         headers: {
             "Content-Type": "application/json",
         },
