@@ -6,7 +6,7 @@ import { splitCamelCase } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { AccessibleTextAreaInput } from "../accessibleInputs/AccessibleTextAreaInput";
+import { AccessibleTextAreaInput } from "../accessibleInputs/text";
 import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
 import { queryAction } from "./actions";
 import {
