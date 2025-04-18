@@ -1,18 +1,8 @@
-import {
-    Checkbox,
-    Container,
-    type MantineSize,
-    Stack,
-    Text,
-} from "@mantine/core";
+import { Box, Checkbox, type MantineSize, Stack, Text } from "@mantine/core";
 import type { ChangeEvent, ReactNode, RefObject } from "react";
 
-import { INPUT_MAX_WIDTH, INPUT_MIN_WIDTH } from "../../constants/data";
-import { useGlobalState } from "../../hooks";
-import type {
-    CheckboxRadioSelectData,
-    SetPageInErrorPayload,
-} from "../../types";
+import { useGlobalState } from "../../hooks/useGlobalState";
+import { CheckboxRadioSelectData } from "../../types";
 import { splitCamelCase } from "../../utils";
 import { createAccessibleCheckboxSelectionsTextElements } from "./utils";
 
@@ -29,20 +19,16 @@ type AccessibleCheckboxInputSingleAttributes<
     name: string;
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     parentDispatch: React.Dispatch<
-        | {
+        {
             action: ValidValueAction;
             payload: boolean;
-        }
-        | {
-            action: InvalidValueAction;
-            payload: SetPageInErrorPayload;
         }
     >;
     ref?: RefObject<HTMLInputElement> | null;
     required?: boolean;
     selectedDescription?: string;
     size?: MantineSize;
-    /** stepper page location of input. default 0 */ page?: number;
+    style?: React.CSSProperties;
     validValueAction: ValidValueAction;
     value: string;
 };
@@ -77,7 +63,7 @@ function AccessibleCheckboxInputSingle<
         required = false,
         selectedDescription,
         size = "sm",
-        page = 0,
+        style,
         validValueAction,
         value,
     } = attributes;
@@ -105,12 +91,9 @@ function AccessibleCheckboxInputSingle<
         });
 
     return (
-        <Container
+        <Box
             key={`container-${name}-${uniqueId}`}
-            style={{
-                minWidth: INPUT_MIN_WIDTH,
-                maxWidth: INPUT_MAX_WIDTH,
-            }}
+            className="accessible-input"
             w="100%"
         >
             <Checkbox
@@ -135,14 +118,6 @@ function AccessibleCheckboxInputSingle<
                         payload: event.currentTarget.checked,
                     });
 
-                    parentDispatch({
-                        action: invalidValueAction,
-                        payload: {
-                            page,
-                            kind: checked ? "add" : "delete",
-                        },
-                    });
-
                     if (onChange) {
                         onChange(event);
                     }
@@ -150,10 +125,10 @@ function AccessibleCheckboxInputSingle<
                 ref={ref}
                 required={required}
                 size={size}
-                style={{ minWidth: INPUT_MIN_WIDTH, maxWidth: INPUT_MAX_WIDTH }}
+                style={style}
                 value={value}
             />
-        </Container>
+        </Box>
     );
 }
 
@@ -177,6 +152,7 @@ type AccessibleCheckboxInputGroupAttributes<
     required?: boolean;
     name: string;
     size?: MantineSize;
+    style?: React.CSSProperties;
     validValueAction: ValidValueAction;
     value: string[];
     withAsterisk?: boolean;
@@ -212,6 +188,7 @@ function AccessibleCheckboxInputGroup<
         ref = null,
         required = false,
         size = "sm",
+        style,
         validValueAction,
         value,
         withAsterisk = required,
@@ -232,12 +209,9 @@ function AccessibleCheckboxInputGroup<
         });
 
     return (
-        <Container
+        <Box
             key={`container-${name}-${uniqueId}`}
-            style={{
-                minWidth: INPUT_MIN_WIDTH,
-                maxWidth: INPUT_MAX_WIDTH,
-            }}
+            className="accessible-input"
             w="100%"
         >
             <Checkbox.Group
@@ -264,6 +238,7 @@ function AccessibleCheckboxInputGroup<
                 ref={ref}
                 required={required}
                 size={size}
+                style={style}
                 value={value}
                 withAsterisk={withAsterisk}
             >
@@ -280,7 +255,7 @@ function AccessibleCheckboxInputGroup<
                     ))}
                 </Stack>
             </Checkbox.Group>
-        </Container>
+        </Box>
     );
 }
 
