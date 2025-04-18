@@ -1,5 +1,4 @@
-import type { SetPageInErrorPayload } from "../../types";
-import { type QueryAction, queryAction } from "./actions";
+import { QueryAction, queryAction } from "./actions";
 import type {
     GeneralSearchCase,
     LogicalOperator,
@@ -449,8 +448,8 @@ function queryReducer_setIsError(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const { kind } = dispatch.payload as SetPageInErrorPayload;
-    return { ...state, isError: kind === "add" };
+    const isError = dispatch.payload as boolean;
+    return { ...state, isError };
 }
 
 function queryReducer_setIsSearchDisabled(
