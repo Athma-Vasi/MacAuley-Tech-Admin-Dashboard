@@ -21,22 +21,18 @@ import type {
     ModifyQueryChainPayload,
     QueryChain,
     QueryChainKind,
+    QueryDispatch,
     QueryState,
 } from "./types";
 
-type QueryChainDispatch = React.Dispatch<{
-    action: QueryAction["modifyQueryChains"];
-    payload: ModifyQueryChainPayload;
-}>;
-
 type QueryChainProps = {
     collectionName: string;
-    queryChainDispatch: QueryChainDispatch;
+    queryDispatch: React.Dispatch<QueryDispatch>;
     queryState: QueryState;
 };
 
 function Chain(
-    { collectionName, queryChainDispatch, queryState }: QueryChainProps,
+    { collectionName, queryDispatch, queryState }: QueryChainProps,
 ) {
     const {
         generalSearchCase,
@@ -113,10 +109,9 @@ function Chain(
                                                             HTMLButtonElement
                                                         >,
                                                 ) => {
-                                                    queryChainDispatch({
-                                                        action:
-                                                            queryAction
-                                                                .modifyQueryChains,
+                                                    queryDispatch({
+                                                        action: queryAction
+                                                            .modifyQueryChains,
                                                         payload: {
                                                             index: linkIndex,
                                                             logicalOperator,
@@ -149,7 +144,7 @@ function Chain(
                                     //           | React.MouseEvent<HTMLButtonElement, MouseEvent>
                                     //           | React.PointerEvent<HTMLButtonElement>
                                     //       ) => {
-                                    //         queryChainDispatch({
+                                    //         queryDispatch({
                                     //           action: queryAction.modifyQueryChains,
                                     //           payload: {
                                     //             index: linkIndex,
@@ -184,10 +179,9 @@ function Chain(
                                                             HTMLButtonElement
                                                         >,
                                                 ) => {
-                                                    queryChainDispatch({
-                                                        action:
-                                                            queryAction
-                                                                .modifyQueryChains,
+                                                    queryDispatch({
+                                                        action: queryAction
+                                                            .modifyQueryChains,
                                                         payload: {
                                                             index: linkIndex,
                                                             logicalOperator,
@@ -209,9 +203,8 @@ function Chain(
                                     const slideQueryChainDownButton = (
                                         <AccessibleButton
                                             attributes={{
-                                                disabled:
-                                                    linkIndex ===
-                                                        queryChain.length - 1,
+                                                disabled: linkIndex ===
+                                                    queryChain.length - 1,
                                                 disabledScreenreaderText:
                                                     "Cannot move link down. Already at the bottom",
                                                 enabledScreenreaderText:
@@ -229,10 +222,9 @@ function Chain(
                                                             HTMLButtonElement
                                                         >,
                                                 ) => {
-                                                    queryChainDispatch({
-                                                        action:
-                                                            queryAction
-                                                                .modifyQueryChains,
+                                                    queryDispatch({
+                                                        action: queryAction
+                                                            .modifyQueryChains,
                                                         payload: {
                                                             index: linkIndex,
                                                             logicalOperator,
@@ -467,4 +459,3 @@ function createQueryLinkStatement({
 }
 
 export { Chain };
-export type { QueryChainDispatch };

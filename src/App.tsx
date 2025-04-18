@@ -8,8 +8,9 @@ import DirectoryWrapper from "./components/directory";
 import HomeWrapper from "./components/home";
 import LoginWrapper from "./components/login";
 import RegisterWrapper from "./components/register";
-import { useGlobalState } from "./hooks/useGlobalState";
 import Testing from "./components/testing";
+import UsersQueryWrapper from "./components/usersQuery";
+import { useGlobalState } from "./hooks/useGlobalState";
 
 function App() {
   const {
@@ -28,6 +29,7 @@ function App() {
             path="chart/:chartHeading"
             element={<DisplayResponsiveChartWrapper />}
           />
+          <Route path="users" element={<UsersQueryWrapper />} />
         </Route>
 
         <Route path="/login" element={<LoginWrapper />} />

@@ -1,7 +1,7 @@
 import { Accordion, Stack } from "@mantine/core";
 import React from "react";
 
-import { Chain, type QueryChainDispatch } from "./Chain";
+import { Chain } from "./Chain";
 import { QueryProjection } from "./QueryProjection";
 import { QuerySearch } from "./QuerySearch";
 import { queryReducer } from "./reducers";
@@ -55,7 +55,7 @@ function Query({
     const queryChain = (
         <Chain
             collectionName={collectionName}
-            queryChainDispatch={queryDispatch as QueryChainDispatch}
+            queryDispatch={queryDispatch}
             queryState={queryState}
         />
     );
