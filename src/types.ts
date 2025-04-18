@@ -6,6 +6,8 @@ import {
   MantineThemeOverride,
 } from "@mantine/core";
 import type { Result } from "ts-results";
+import { AccessibleDateTimeInputAttributes } from "./components/accessibleInputs/AccessibleDateTimeInput";
+import { AccessibleTextInputAttributes } from "./components/accessibleInputs/text/AccessibleTextInput";
 import {
   AllStoreLocations,
   CustomerMetrics,
@@ -15,6 +17,7 @@ import {
   RepairYearlyMetric,
   YearlyFinancialMetric,
 } from "./components/dashboard/types";
+import { QueryOperator } from "./components/query/types";
 import { ValidationKey } from "./validations";
 
 type CheckboxRadioSelectData<Payload extends string = string> = Array<{
@@ -28,18 +31,6 @@ type SliderMarksData = Array<{
 }>;
 
 type ScreenshotImageType = "image/png" | "image/jpeg" | "image/webp";
-
-type InputType =
-  | "boolean"
-  | "checkbox"
-  | "date"
-  | "file"
-  | "number"
-  | "select"
-  | "slider"
-  | "switch"
-  | "text"
-  | "time";
 
 type SliderInputData = {
   marks?: SliderMarksData;
@@ -139,6 +130,36 @@ type DecodedToken = {
   sessionId: string;
   iat: number;
   exp: number;
+};
+
+type InputType =
+  | "date"
+  | "number"
+  | "select"
+  | "text";
+
+type QueryTemplate = {
+  name: ValidationKey;
+  comparisonOperators: Set<QueryOperator>;
+};
+
+type QueryTemplateDateInput = QueryTemplate & {
+  kind: "date";
+  attributes: AccessibleDateTimeInputAttributes;
+};
+
+type QueryTemplateNumberInput = QueryTemplate & {
+  kind: "number";
+};
+
+type QueryTemplateTextInput = QueryTemplate & {
+  kind: "text";
+  attributes: AccessibleTextInputAttributes;
+};
+
+type QueryTemplateSelectInput = {
+  kind: "select";
+  data: CheckboxRadioSelectData;
 };
 
 type UserSchema = {

@@ -1,4 +1,4 @@
-import { CheckboxRadioSelectData, SetStepInErrorPayload } from "../../types";
+import { CheckboxRadioSelectData } from "../../types";
 import { QueryAction } from "./actions";
 import type { OperatorsInputType } from "./utils";
 
@@ -71,10 +71,8 @@ type SortInputsType = "date" | "number" | "time";
 
 type QueryState = {
     filterField: string;
-    filterFieldsOperatorsValuesSetsMap: FilterFieldsOperatorsValuesSetsMap;
     filterLogicalOperator: LogicalOperator;
     filterComparisonOperator: QueryOperator;
-    filterComparisonOperatorSelectData: string[];
     filterValue: string;
     generalSearchCase: GeneralSearchCase;
     generalSearchExclusionValue: string;
@@ -82,14 +80,8 @@ type QueryState = {
     isError: boolean;
     isSearchDisabled: boolean;
     limitPerPage: string;
-    logicalOperatorChainsSetsMap: LogicalOperatorChainsSetsMap;
-    projectionExclusionFields: string[];
-    queryChains: QueryChains;
-    queryString: string;
-    searchFieldsOperatorsValuesSetMap: SearchFieldsValuesSetMap;
     sortDirection: SortDirection;
     sortField: string;
-    sortFieldsSet: Set<string>;
 };
 
 type ModifyQueryChainPayload = {
@@ -119,15 +111,11 @@ type QueryDispatch =
     }
     | {
         action: QueryAction["setFilterField"];
-        payload: QueryFilterPayload;
+        payload: string;
     }
     | {
         action: QueryAction["setFilterComparisonOperator"];
         payload: QueryOperator;
-    }
-    | {
-        action: QueryAction["setFilterComparisonOperatorSelectData"];
-        payload: string[];
     }
     | {
         action: QueryAction["setFilterLogicalOperator"];
@@ -160,10 +148,6 @@ type QueryDispatch =
     | {
         action: QueryAction["setLimitPerPage"];
         payload: string;
-    }
-    | {
-        action: QueryAction["setProjectionExclusionFields"];
-        payload: string[];
     }
     | {
         action: QueryAction["setSortDirection"];

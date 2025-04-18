@@ -40,9 +40,7 @@ import type {
 const initialQueryState: QueryState = {
     // date input type is guaranteed to exist (all schemas have createdAt & updatedAt)
     filterField: "username",
-    filterFieldsOperatorsValuesSetsMap: new Map(),
     filterComparisonOperator: "in",
-    filterComparisonOperatorSelectData: [],
     filterLogicalOperator: "and",
     filterValue: "",
     generalSearchCase: "case-insensitive",
@@ -51,14 +49,8 @@ const initialQueryState: QueryState = {
     isError: false,
     isSearchDisabled: false,
     limitPerPage: "10",
-    logicalOperatorChainsSetsMap: new Map(),
-    projectionExclusionFields: [],
-    queryChains: { filter: new Map(), sort: new Map() },
-    queryString: "?",
-    searchFieldsOperatorsValuesSetMap: new Map(),
     sortDirection: "descending",
     sortField: "updatedAt",
-    sortFieldsSet: new Set(),
 };
 
 export { initialQueryState };

@@ -1,5 +1,5 @@
 import {
-    Container,
+    Box,
     type MantineSize,
     Popover,
     Stack,
@@ -22,7 +22,6 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { ValidationFunctionsTable } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
-import type { SetFilterInputValuesDispatchData } from "../query/QueryFilter";
 import {
     createAccessibleValueValidationTextElements,
     returnValidationTexts,
@@ -30,16 +29,13 @@ import {
 
 type AccessibleDateTimeInputAttributes<
     ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
 > = {
     ariaAutoComplete?: "both" | "list" | "none" | "inline";
     autoComplete?: "on" | "off";
-    dateKind?: "date near future" | "date near past" | "full date";
     disabled?: boolean;
     icon?: ReactNode;
     initialInputValue?: string;
     inputKind: "date" | "time";
-    invalidValueAction: InvalidValueAction;
     label?: ReactNode;
     max?: string;
     maxLength?: number;
@@ -49,8 +45,6 @@ type AccessibleDateTimeInputAttributes<
     onBlur?: () => void;
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     onFocus?: () => void;
-    /** stepper page location of input. default 0 = first page = step 0 */
-    page?: number;
     parentDispatch?: Dispatch<
         {
             action: ValidValueAction;
@@ -58,10 +52,6 @@ type AccessibleDateTimeInputAttributes<
         }
     >;
     placeholder?: string;
-    setFilterInputValuesDispatchData?: SetFilterInputValuesDispatchData<
-        ValidValueAction,
-        InvalidValueAction
-    >;
     ref?: RefObject<HTMLInputElement>;
     required?: boolean;
     size?: MantineSize;
@@ -74,44 +64,36 @@ type AccessibleDateTimeInputAttributes<
 
 type AccessibleDateTimeInputProps<
     ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
 > = {
     attributes: AccessibleDateTimeInputAttributes<
-        ValidValueAction,
-        InvalidValueAction
+        ValidValueAction
     >;
 };
 
 function AccessibleDateTimeInput<
     ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
 >(
     { attributes }: AccessibleDateTimeInputProps<
-        ValidValueAction,
-        InvalidValueAction
+        ValidValueAction
     >,
 ) {
     const {
         ariaAutoComplete = "none",
         autoComplete = "off",
-        dateKind = "full date",
         disabled = false,
         icon = null,
         initialInputValue = "",
         inputKind,
-        invalidValueAction,
-        max = new Date(2024, 11, 31).toISOString().split("T")[0], // 31.12.2024
+        max = new Date().toISOString().split("T")[0], // current date
         maxLength = inputKind === "date" ? 10 : 5,
-        min = new Date().toISOString().split("T")[0], // current date
+        min = new Date(2013, 0, 1).toISOString().split("T")[0], // 2013-01-01 - date of founding
         minLength = inputKind === "date" ? 10 : 5,
         name,
         onBlur,
         onChange,
         onFocus,
-        page = 0,
         parentDispatch,
         placeholder = "",
-        setFilterInputValuesDispatchData,
         ref = null,
         required = false,
         size = "sm",
@@ -179,21 +161,6 @@ function AccessibleDateTimeInput<
         valueBuffer,
     });
 
-    // const validationTexts = returnValidationTexts({
-    //     name,
-    //     stepperPages,
-    //     validationFunctionsTable,
-    //     valueBuffer,
-    // });
-
-    // console.group("AccessibleDateTimeInput");
-    // console.log("name:", name);
-    // console.log("valueBuffer:", valueBuffer);
-    // console.log("partials:", partials);
-    // console.log("stepperPages", stepperPages);
-    // console.log("validationTexts:", validationTexts);
-    // console.groupEnd();
-
     const { invalidValueTextElement } =
         createAccessibleValueValidationTextElements({
             isPopoverOpened,
@@ -208,32 +175,10 @@ function AccessibleDateTimeInput<
         inputKind === "date"
             ? "on Chromium browsers: date-date-month-month-year-year-year-year, or in other browsers year-year-year-year-month-month-date-date"
             : "hour-hour-minute-minute"
-    } ${
-        dateKind === "date near future"
-            ? " from today to 2026"
-            : dateKind === "date near past"
-            ? " from 2020 to today"
-            : " from 1900 to 2024"
     }`;
 
-    const min_ = dateKind === "full date"
-        ? new Date(1900, 0, 1).toISOString().split("T")[0]
-        : dateKind === "date near past"
-        ? new Date(2020, 0, 1).toISOString().split("T")[0]
-        : dateKind === "date near future"
-        ? new Date().toISOString().split("T")[0]
-        : min;
-
-    const max_ = dateKind === "full date"
-        ? new Date(2024, 11, 31).toISOString().split("T")[0]
-        : dateKind === "date near past"
-        ? new Date().toISOString().split("T")[0]
-        : dateKind === "date near future"
-        ? new Date(2026, 11, 31).toISOString().split("T")[0]
-        : max;
-
     return (
-        <Container w={350}>
+        <Box className="accessible-input">
             <Popover
                 opened={isPopoverOpened}
                 position="bottom"
@@ -259,13 +204,13 @@ function AccessibleDateTimeInput<
                             valueBuffer !== initialInputValue}
                         icon={leftIcon}
                         label={label}
-                        max={max_}
+                        max={max}
                         maxLength={inputKind === "date"
                             ? 10
                             : inputKind === "time"
                             ? 5
                             : maxLength}
-                        min={min_}
+                        min={min}
                         minLength={inputKind === "date"
                             ? 10
                             : inputKind === "time"
@@ -293,6 +238,7 @@ function AccessibleDateTimeInput<
                         ref={ref}
                         required={required}
                         size={size}
+                        style={style}
                         type={inputKind}
                         value={valueBuffer}
                         withAsterisk={withAsterisk}
@@ -309,7 +255,7 @@ function AccessibleDateTimeInput<
                     )
                     : null}
             </Popover>
-        </Container>
+        </Box>
     );
 }
 

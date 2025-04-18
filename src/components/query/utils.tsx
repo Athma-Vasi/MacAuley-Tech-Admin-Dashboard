@@ -79,6 +79,7 @@ function createQueryString({
         ["less than", "$lt"],
         ["less than or equal to", "$lte"],
         ["not equal to", "$ne"],
+        ["in", "$in"],
     ]);
 
     const filterAndSortQueryString = Object.entries(queryChains).reduce(
@@ -267,7 +268,7 @@ const GENERAL_SEARCH_HELP_MODAL_CONTENT = (
                 <Text>
                     Each space-delimited phrase is treated as a token, and
                     documents containing any of these tokens will be included or
-                    excluded in the searcTexth results.
+                    excluded in the search results.
                 </Text>
             </Flex>
         </Flex>

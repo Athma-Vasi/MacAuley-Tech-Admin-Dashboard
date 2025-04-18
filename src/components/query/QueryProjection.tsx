@@ -25,8 +25,6 @@ function QueryProjection({
         { open: openProjectionHelpModal, close: closeProjectionHelpModal },
     ] = useDisclosure(false);
 
-    const { projectionExclusionFields } = queryState;
-
     const projectionHelpButton = (
         <AccessibleButton
             attributes={{

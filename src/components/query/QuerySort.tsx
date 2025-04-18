@@ -2,20 +2,9 @@ import { Group, Modal, Stack } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
-import type { CheckboxRadioSelectData } from "../../types";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { type QueryAction, queryAction } from "./actions";
-import { MAX_LINKS_AMOUNT, SORT_DIRECTION_DATA } from "./constants";
-import type {
-    ModifyQueryChainPayload,
-    QueryDispatch,
-    QueryState,
-} from "./types";
-import {
-    removeProjectionExclusionFields,
-    SORT_HELP_MODAL_CONTENT,
-} from "./utils";
+import type { QueryDispatch, QueryState } from "./types";
+import { SORT_HELP_MODAL_CONTENT } from "./utils";
 
 type QuerySortProps = {
     queryDispatch: React.Dispatch<QueryDispatch>;
@@ -31,16 +20,15 @@ function QuerySort({
         { open: openSortHelpModal, close: closeSortHelpModal },
     ] = useDisclosure(false);
 
-    const { projectionExclusionFields, queryChains, sortDirection, sortField } =
-        queryState;
-    const logicalOperatorChainsMap = queryChains.sort;
-    const sortChainLength = Array.from(logicalOperatorChainsMap).reduce(
-        (acc, [_key, value]) => {
-            acc += value.length;
-            return acc;
-        },
-        0,
-    );
+    const { sortDirection, sortField } = queryState;
+    // const logicalOperatorChainsMap = queryChains.sort;
+    // const sortChainLength = Array.from(logicalOperatorChainsMap).reduce(
+    //     (acc, [_key, value]) => {
+    //         acc += value.length;
+    //         return acc;
+    //     },
+    //     0,
+    // );
 
     // const data = removeProjectionExclusionFields(
     //     projectionExclusionFields,

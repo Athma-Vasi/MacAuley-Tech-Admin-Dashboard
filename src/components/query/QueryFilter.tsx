@@ -2,35 +2,12 @@ import { Group, Modal, Stack } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
-import {
-    CheckboxRadioSelectData,
-    SetStepInErrorPayload,
-    ValidationFunctionsTable,
-} from "../../types";
-import { splitCamelCase } from "../../utils";
-import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
-import { AccessibleTextAreaInput } from "../accessibleInputs/textArea/AccessibleTextAreaInput";
 import { queryAction } from "./actions";
-import {
-    BOOLEAN_VALUES_DATA,
-    LOGICAL_OPERATORS_DATA,
-    MAX_LINKS_AMOUNT,
-} from "./constants";
-import type {
-    ModifyQueryChainsDispatch,
-    QueryDispatch,
-    QueryState,
-} from "./types";
-import {
-    FILTER_HELP_MODAL_CONTENT,
-    type InputsValidationsMap,
-    type OperatorsInputType,
-    removeProjectionExclusionFields,
-} from "./utils";
+import { LOGICAL_OPERATORS_DATA, MAX_LINKS_AMOUNT } from "./constants";
+import type { QueryDispatch, QueryState } from "./types";
+import { FILTER_HELP_MODAL_CONTENT } from "./utils";
 
 type QueryFilterProps = {
     queryDispatch: React.Dispatch<QueryDispatch>;
@@ -91,34 +68,35 @@ function QueryFilter({
     //     selectInputsDataMap,
     // };
 
-    // const fieldSelectInput = (
-    //     <AccessibleSelectInput
-    //         attributes={{
-    //             data,
-    //             disabled,
-    //             label: "Field",
-    //             name: "filterField",
-    //             validValueAction: queryAction
-    //                 .setFilterField ,
-    //             value: filterField,
-    //         }}
-    //     />
-    // );
+    const fieldSelectInput = (
+        <AccessibleSelectInput
+            attributes={{
+                data: [],
+                // disabled,
+                label: "Field",
+                name: "filterField",
+                validValueAction: queryAction
+                    .setFilterField,
+                value: filterField,
+            }}
+        />
+    );
 
-    // const filterComparisonOperatorSelectInput = (
-    //     <AccessibleSelectInput
-    //         attributes={{
-    //             data: fieldNamesOperatorsTypesMap.get(filterField)?.operators ??
-    //                 [],
-    //             disabled: disabled,
-    //             label: "Comparison Operator",
-    //             name: "filterComparisonOperator",
-    //             queryDispatch,
-    //             validValueAction: queryAction.setFilterComparisonOperator,
-    //             value: filterComparisonOperator,
-    //         }}
-    //     />
-    // );
+    const filterComparisonOperatorSelectInput = (
+        <AccessibleSelectInput
+            attributes={{
+                // data: fieldNamesOperatorsTypesMap.get(filterField)?.operators ??
+                //     [],
+                data: [],
+                // disabled: disabled,
+                label: "Comparison Operator",
+                name: "filterComparisonOperator",
+                parentDispatch: queryDispatch as any,
+                validValueAction: queryAction.setFilterComparisonOperator,
+                value: filterComparisonOperator,
+            }}
+        />
+    );
 
     // const dynamicValueInput = createDynamicValueInput({
     //     disabled,
@@ -196,7 +174,8 @@ function QueryFilter({
     return (
         <Stack>
             {logicalOperatorSelectInput}
-            {/* {fieldSelectInput} */}
+            {fieldSelectInput}
+            {filterComparisonOperatorSelectInput}
             {
                 /* {searchFieldSelectInputData.map(({ value }) => value).includes(
                     filterField,
