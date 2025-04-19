@@ -9,12 +9,11 @@ import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput
 import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
 import { QueryAction } from "./actions";
 import {
-    GeneralSearchCase,
     InputKind,
     MongoQueryOperator,
-    QueryChains,
     QueryDispatch,
     QueryOperator,
+    QueryState,
     QueryTemplate,
 } from "./types";
 
@@ -71,21 +70,16 @@ function returnSortableQueryFields(queryTemplates: QueryTemplate[]) {
     }, [] as CheckboxRadioSelectData);
 }
 
-function createQueryString({
-    generalSearchCase,
-    generalSearchExclusionValue,
-    generalSearchInclusionValue,
-    limitPerPage,
-    projectionExclusionFields,
-    queryChains,
-}: {
-    generalSearchCase: GeneralSearchCase;
-    generalSearchExclusionValue: string;
-    generalSearchInclusionValue: string;
-    limitPerPage: string;
-    projectionExclusionFields: string[];
-    queryChains: QueryChains;
-}): string {
+function createQueryString(queryState: QueryState): string {
+    const {
+        generalSearchCase,
+        generalSearchExclusionValue,
+        generalSearchInclusionValue,
+        limitPerPage,
+        projectionFields,
+        queryChains,
+    } = queryState;
+
     const comparisonOperatorsMongoTable = new Map<
         QueryOperator,
         MongoQueryOperator
@@ -143,13 +137,13 @@ function createQueryString({
         "?",
     );
 
-    const projectionQueryString = projectionExclusionFields.length > 0
-        ? `&projection=${projectionExclusionFields.join(",")}`
+    const projectionQueryString = projectionFields.length > 0
+        ? `&projection=${projectionFields.join(",")}`
         : "";
 
     const searchQueryString = generalSearchInclusionValue.length > 0 ||
             generalSearchExclusionValue.length > 0
-        ? `&$text[$search]=${generalSearchInclusionValue} ${
+        ? `&$text[$search]=${generalSearchInclusionValue}${
             generalSearchExclusionValue.length > 0
                 ? `-${generalSearchExclusionValue}`
                 : ""
@@ -260,6 +254,37 @@ function createDynamicInput(
     }
 
     return <></>;
+}
+
+function returnFilterSelectData(
+    filterField: string,
+    queryTemplates: Array<QueryTemplate>,
+) {
+    return queryTemplates
+        .reduce((acc, curr) => {
+            const { name, comparisonOperators } = curr;
+
+            acc.fieldSelectData.push({
+                label: splitCamelCase(name),
+                value: name,
+            });
+
+            if (name === filterField) {
+                Array.from(comparisonOperators).forEach(
+                    (operator) => {
+                        acc.filterComparisonOperatorData.push({
+                            label: splitCamelCase(operator),
+                            value: operator,
+                        });
+                    },
+                );
+            }
+
+            return acc;
+        }, {
+            fieldSelectData: [] as CheckboxRadioSelectData,
+            filterComparisonOperatorData: [] as CheckboxRadioSelectData,
+        });
 }
 
 const QUERY_BUILDER_HELP_MODAL_CONTENT = (
@@ -553,6 +578,7 @@ export {
     PROJECTION_HELP_MODAL_CONTENT,
     QUERY_BUILDER_HELP_MODAL_CONTENT,
     removeProjectionExclusionFields,
+    returnFilterSelectData,
     returnSortableQueryFields,
     SEARCH_CHAIN_HELP_MODAL_CONTENT,
     SORT_HELP_MODAL_CONTENT,

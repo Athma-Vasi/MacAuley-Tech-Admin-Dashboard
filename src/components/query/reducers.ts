@@ -81,14 +81,10 @@ function queryReducer_modifyQueryChains(
             const existingQueryLinks =
                 queryChains[queryChainKind][logicalOperator];
             console.log("delete::existingQueryLinks", existingQueryLinks);
-            const existingQueryLink = existingQueryLinks[index];
-            console.log("delete::existingQueryLink", existingQueryLink);
+            const newQueryLinks = existingQueryLinks.filter(
+                (_queryLink, i) => i !== index,
+            );
 
-            if (existingQueryLink === undefined) {
-                return state;
-            }
-
-            const newQueryLinks = existingQueryLinks.splice(index, 1);
             queryChains[queryChainKind][logicalOperator] = newQueryLinks;
 
             return {
@@ -104,24 +100,27 @@ function queryReducer_modifyQueryChains(
             const existingQueryLinks =
                 queryChains[queryChainKind][logicalOperator];
 
-            console.log("insert::existingQueryLinks", existingQueryLinks);
+            const { isFieldExists, isFieldValueExists } = Object.entries(
+                queryChains,
+            ).reduce((acc, curr) => {
+                const [_queryChainKind, queryChain] = curr;
 
-            const [isFieldExists, isFieldValueExists] = existingQueryLinks
-                .reduce(
-                    (acc, queryLink) => {
-                        const [qLField, qLOperator, qLValue] = queryLink;
+                Object.entries(queryChain).forEach((chain) => {
+                    const [_logOper, qchain] = chain;
 
+                    qchain.forEach((queryLink) => {
+                        const [qLField, _qLOperator, qLValue] = queryLink;
                         if (field === qLField) {
-                            acc[0] = true;
+                            acc.isFieldExists = true;
                         }
                         if (value === qLValue) {
-                            acc[1] = true;
+                            acc.isFieldValueExists = true;
                         }
+                    });
+                });
 
-                        return acc;
-                    },
-                    [false, false],
-                );
+                return acc;
+            }, { isFieldExists: false, isFieldValueExists: false });
 
             if (isFieldValueExists) {
                 return {

@@ -1,5 +1,5 @@
 import { Accordion, Stack } from "@mantine/core";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Chain } from "./Chain";
 import { QueryProjection } from "./QueryProjection";
@@ -13,14 +13,15 @@ import { QueryFilter } from "./QueryFilter";
 import { QuerySort } from "./QuerySort";
 import { initialQueryState } from "./state";
 import { QueryTemplate } from "./types";
+import { createQueryString } from "./utils";
 
-type QueryProps<ValidValueAction extends string = string> = {
+type QueryProps<ValidValueAction extends string = "setQueryString"> = {
     collectionName: string;
     hideProjection?: boolean;
     // this components output is the query string used to fetch data
     parentAction: ValidValueAction;
-    parentDispatch: React.ActionDispatch<
-        [dispatch: { action: ValidValueAction; payload: string }]
+    parentDispatch: React.Dispatch<
+        { action: ValidValueAction; payload: string }
     >;
     queryTemplates: Array<QueryTemplate>;
 };
@@ -47,11 +48,28 @@ function Query<ValidValueAction extends string = string>({
         generalSearchInclusionValue,
         isError,
         isSearchDisabled,
+        projectionFields,
         queryChains,
         limitPerPage,
         sortDirection,
         sortField,
     } = queryState;
+
+    useEffect(() => {
+        const queryString = createQueryString(queryState);
+
+        parentDispatch({
+            action: parentAction,
+            payload: queryString,
+        });
+    }, [
+        generalSearchCase,
+        generalSearchExclusionValue,
+        generalSearchInclusionValue,
+        limitPerPage,
+        projectionFields,
+        queryChains,
+    ]);
 
     console.log("QUERY STATE: ", queryState);
 

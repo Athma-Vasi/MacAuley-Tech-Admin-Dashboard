@@ -2,8 +2,6 @@ import { Group, Modal, Stack } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
-import { CheckboxRadioSelectData } from "../../types";
-import { splitCamelCase } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import {
     AccessibleSelectInput,
@@ -16,7 +14,11 @@ import {
     type QueryState,
     type QueryTemplate,
 } from "./types";
-import { createDynamicInput, FILTER_HELP_MODAL_CONTENT } from "./utils";
+import {
+    createDynamicInput,
+    FILTER_HELP_MODAL_CONTENT,
+    returnFilterSelectData,
+} from "./utils";
 
 type QueryFilterProps = {
     queryChains: QueryChains;
@@ -63,30 +65,14 @@ function QueryFilter(
         />
     );
 
-    // const data = removeProjectionExclusionFields(projectionExclusionFields, [
-    //     ...filterFieldSelectInputData,
-    //     ...searchFieldSelectInputData,
-    // ]);
-    // const disabled = data.length === 0;
-    // const setFilterInputValuesDispatchData: SetFilterInputValuesDispatchData<
-    //     ValidValueAction
-    // > = {
-    //     fieldNamesOperatorsTypesMap,
-    //     searchFieldSelectInputData,
-    //     setFilterInputValuesDispatch,
-    //     selectInputsDataMap,
-    // };
+    const { fieldSelectData, filterComparisonOperatorData } =
+        returnFilterSelectData(filterField, queryTemplates);
 
     const fieldSelectInput = (
         <AccessibleSelectInput
             attributes={{
-                data: queryTemplates.map(
-                    ({ name }) => ({
-                        label: splitCamelCase(name),
-                        value: name,
-                    }),
-                ),
-                // disabled,
+                data: fieldSelectData,
+                disabled: fieldSelectData.length === 0,
                 label: "Field",
                 name: "filterField",
                 parentDispatch: queryDispatch,
@@ -99,22 +85,8 @@ function QueryFilter(
     const filterComparisonOperatorSelectInput = (
         <AccessibleSelectInput
             attributes={{
-                data: queryTemplates.reduce((acc, curr) => {
-                    const { name, comparisonOperators } = curr;
-                    if (name === filterField) {
-                        Array.from(comparisonOperators).forEach(
-                            (operator) => {
-                                acc.push({
-                                    label: splitCamelCase(operator),
-                                    value: operator,
-                                });
-                            },
-                        );
-                    }
-
-                    return acc;
-                }, [] as CheckboxRadioSelectData),
-                // disabled: disabled,
+                data: filterComparisonOperatorData,
+                disabled: filterComparisonOperatorData.length === 0,
                 label: "Comparison Operator",
                 name: "filterComparisonOperator",
                 parentDispatch: queryDispatch as any,
@@ -141,8 +113,8 @@ function QueryFilter(
                     : isError
                     ? "Value cannot be invalid"
                     : "Value cannot be empty",
-                // disabled: disabled || isError ||
-                //     chainLength === MAX_LINKS_AMOUNT,
+                disabled: isError ||
+                    chainLength === MAX_LINKS_AMOUNT,
                 kind: "add",
                 onClick: (
                     _event:
