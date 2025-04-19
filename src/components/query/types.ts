@@ -1,7 +1,6 @@
 import { CheckboxRadioSelectData } from "../../types";
 import { ValidationKey } from "../../validations";
 import { AccessibleDateTimeInputAttributes } from "../accessibleInputs/AccessibleDateTimeInput";
-import { AccessibleNumberInputAttributes } from "../accessibleInputs/AccessibleNumberInput";
 import { AccessibleSelectInputAttributes } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInputAttributes } from "../accessibleInputs/text/AccessibleTextInput";
 import { QueryAction } from "./actions";
@@ -24,7 +23,7 @@ type QueryTemplate =
     }
     | QueryTemplateCommon & {
         kind: "number";
-        attributes: AccessibleNumberInputAttributes;
+        attributes: AccessibleTextInputAttributes;
     }
     | QueryTemplateCommon & {
         kind: "text";
@@ -100,7 +99,7 @@ type SortDirection = "ascending" | "descending";
 type SortInputsType = "date" | "number" | "time";
 
 type QueryState = {
-    filterField: string;
+    filterField: string; // almost ValidationKey
     filterLogicalOperator: LogicalOperator;
     filterComparisonOperator: QueryOperator;
     filterValue: string;

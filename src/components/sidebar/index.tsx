@@ -198,6 +198,20 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     />
   );
 
+  const usersNavlink = (
+    <AccessibleNavLink
+      attributes={{
+        description: "Users",
+        icon: <TbUser />,
+        name: "Users",
+        onClick: () => {
+          navigateFn("/dashboard/users");
+          setOpened(false);
+        },
+      }}
+    />
+  );
+
   const logoutButton = (
     <AccessibleButton
       attributes={{
@@ -245,6 +259,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         Directory
       </Text>
       {directoryNavlink}
+      {usersNavlink}
       <Space h="xl" />
       {logoutButton}
       <Space h="xl" />

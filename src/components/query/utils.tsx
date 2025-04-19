@@ -4,11 +4,16 @@ import type { CheckboxRadioSelectData, Validation } from "../../types";
 import { ValidationKey } from "../../validations";
 
 import { splitCamelCase } from "../../utils";
+import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
+import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
+import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
+import { QueryAction } from "./actions";
 import {
     GeneralSearchCase,
     InputKind,
     MongoQueryOperator,
     QueryChains,
+    QueryDispatch,
     QueryOperator,
     QueryTemplate,
 } from "./types";
@@ -154,6 +159,107 @@ function createQueryString({
     return `${
         filterAndSortQueryString + projectionQueryString + searchQueryString
     }&limit=${Number.parseInt(limitPerPage) ?? 10}`;
+}
+
+function createDynamicInput(
+    { filterField, filterValue, queryAction, queryDispatch, queryTemplates }: {
+        filterField: string;
+        filterValue: string;
+        queryAction: QueryAction;
+        queryDispatch: React.Dispatch<QueryDispatch>;
+        queryTemplates: Array<QueryTemplate>;
+    },
+): React.JSX.Element {
+    // subsets of inputs that are used in query filter
+    const FILTER_INPUTS_SET = new Set<InputKind>([
+        "date",
+        "number",
+        "text",
+        "select",
+    ]);
+    const [filteredQueryTemplate] = queryTemplates.filter(
+        ({ kind, name }) => FILTER_INPUTS_SET.has(kind) && filterField === name,
+    );
+
+    if (filteredQueryTemplate === null || filteredQueryTemplate === undefined) {
+        return <></>;
+    }
+
+    const { comparisonOperators, kind, name } = filteredQueryTemplate;
+
+    if (kind === "select") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+        const data = filteredQueryTemplate.data;
+
+        return (
+            <AccessibleSelectInput
+                attributes={{
+                    ...attributes,
+                    data,
+                    name,
+                    validValueAction: queryAction.setFilterValue,
+                    parentDispatch: queryDispatch,
+                    value: filterValue,
+                }}
+            />
+        );
+    }
+
+    if (kind === "text") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+
+        return (
+            <AccessibleTextInput
+                attributes={{
+                    ...attributes,
+                    invalidValueAction: queryAction.setIsError,
+                    name,
+                    parentDispatch: queryDispatch,
+                    validValueAction: queryAction.setFilterValue,
+                    value: filterValue,
+                }}
+            />
+        );
+    }
+
+    if (kind === "number") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+
+        return (
+            <AccessibleTextInput
+                attributes={{
+                    ...attributes,
+                    name,
+                    invalidValueAction: queryAction.setIsError,
+                    parentDispatch: queryDispatch,
+                    validValueAction: queryAction.setFilterValue,
+                    value: filterValue,
+                }}
+            />
+        );
+    }
+
+    if (kind === "date") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+
+        return (
+            <AccessibleDateTimeInput
+                attributes={{
+                    ...attributes,
+                    name,
+                    validValueAction: queryAction.setFilterValue,
+                    parentDispatch: queryDispatch as any,
+                    value: filterValue as string,
+                }}
+            />
+        );
+    }
+
+    return <></>;
 }
 
 const QUERY_BUILDER_HELP_MODAL_CONTENT = (
@@ -440,6 +546,7 @@ const PROJECTION_HELP_MODAL_CONTENT = (
 );
 
 export {
+    createDynamicInput,
     createQueryString,
     FILTER_HELP_MODAL_CONTENT,
     GENERAL_SEARCH_HELP_MODAL_CONTENT,

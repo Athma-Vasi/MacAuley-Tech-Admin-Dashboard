@@ -39,7 +39,7 @@ type ValidationKey =
   | "money"
   | "name"
   | "objectKey"
-  | "objectKey"
+  | "orgId"
   | "password"
   | "phoneNumber"
   | "postalCodeCanada"
@@ -404,6 +404,12 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
       /^.{1,75}$/,
       "Must be between 1 and 75 characters length.",
     ],
+  ],
+
+  orgId: [
+    [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
+    [/^[0-9]+$/, "Must contain only numbers."],
+    [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
   ],
 
   password: [

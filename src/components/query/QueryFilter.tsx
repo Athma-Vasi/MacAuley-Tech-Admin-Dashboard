@@ -4,26 +4,19 @@ import type React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { CheckboxRadioSelectData } from "../../types";
 import { splitCamelCase } from "../../utils";
-import { ValidationKey } from "../../validations";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
-import { AccessibleNumberInput } from "../accessibleInputs/AccessibleNumberInput";
 import {
     AccessibleSelectInput,
 } from "../accessibleInputs/AccessibleSelectInput";
-import {
-    AccessibleTextInput,
-} from "../accessibleInputs/text/AccessibleTextInput";
 import { queryAction } from "./actions";
 import { LOGICAL_OPERATORS_DATA, MAX_LINKS_AMOUNT } from "./constants";
 import {
-    InputKind,
     type QueryChains,
     type QueryDispatch,
     type QueryState,
     type QueryTemplate,
 } from "./types";
-import { FILTER_HELP_MODAL_CONTENT } from "./utils";
+import { createDynamicInput, FILTER_HELP_MODAL_CONTENT } from "./utils";
 
 type QueryFilterProps = {
     queryChains: QueryChains;
@@ -131,14 +124,13 @@ function QueryFilter(
         />
     );
 
-    // const dynamicValueInput = createDynamicValueInput({
-    //     disabled,
-    //     filterField,
-    //     filterValue,
-    //     inputsValidationsMap,
-    //     queryDispatch,
-    //     setFilterInputValuesDispatchData,
-    // });
+    const dynamicInput = createDynamicInput({
+        filterValue,
+        queryAction,
+        queryDispatch,
+        filterField,
+        queryTemplates,
+    });
 
     const addFilterLinkButton = (
         <AccessibleButton
@@ -209,14 +201,7 @@ function QueryFilter(
             {logicalOperatorSelectInput}
             {fieldSelectInput}
             {filterComparisonOperatorSelectInput}
-            {
-                /* {searchFieldSelectInputData.map(({ value }) => value).includes(
-                    filterField,
-                )
-                ? null
-                : filterComparisonOperatorSelectInput} */
-            }
-            {/* {dynamicValueInput} */}
+            {dynamicInput}
             <Group>
                 {filterHelpButton}
                 {addFilterLinkButton}
@@ -224,74 +209,6 @@ function QueryFilter(
             </Group>
         </Stack>
     );
-}
-
-function createDynamicValueInput(
-    filterField: ValidationKey,
-    queryTemplates: Array<QueryTemplate>,
-): React.JSX.Element {
-    // subsets of inputs that are used in query filter
-    const FILTER_INPUTS_SET = new Set<InputKind>([
-        "date",
-        "number",
-        "text",
-        "select",
-    ]);
-    const [filteredQueryTemplate] = queryTemplates.filter(
-        ({ kind, name }) => FILTER_INPUTS_SET.has(kind) && filterField === name,
-    );
-
-    if (filteredQueryTemplate === null || filteredQueryTemplate === undefined) {
-        return <></>;
-    }
-
-    const { comparisonOperators, kind, name } = filteredQueryTemplate;
-
-    if (kind === "select") {
-        const attributes = filteredQueryTemplate
-            .attributes;
-
-        return (
-            <AccessibleSelectInput
-                attributes={{ ...attributes, name }}
-            />
-        );
-    }
-
-    if (kind === "text") {
-        const attributes = filteredQueryTemplate
-            .attributes;
-
-        return (
-            <AccessibleTextInput
-                attributes={{ ...attributes, name }}
-            />
-        );
-    }
-
-    if (kind === "number") {
-        const attributes = filteredQueryTemplate
-            .attributes;
-
-        return (
-            <AccessibleNumberInput
-                attributes={{ ...attributes, name }}
-            />
-        );
-    }
-
-    if (kind === "date") {
-        const attributes = filteredQueryTemplate
-            .attributes;
-
-        return (
-            <AccessibleDateTimeInput
-                attributes={{ ...attributes, name }}
-            />
-        );
-    }
-
-    return <></>;
 }
 
 // function createDynamicValueInput<ValidValueAction extends string = string>({

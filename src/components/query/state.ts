@@ -1,4 +1,4 @@
-import type { QueryChains, QueryState } from "./types";
+import type { QueryState } from "./types";
 
 // function createInitialQueryState(
 //     searchFieldSelectInputData: CheckboxRadioSelectData,
@@ -44,7 +44,10 @@ const initialQueryState: QueryState = {
     isSearchDisabled: false,
     limitPerPage: "10",
     projectionFields: [],
-    queryChains: {} as QueryChains,
+    queryChains: {
+        filter: { and: [], nor: [], or: [] },
+        sort: { and: [], nor: [], or: [] },
+    },
     sortDirection: "descending",
     sortField: "updatedAt",
 };
