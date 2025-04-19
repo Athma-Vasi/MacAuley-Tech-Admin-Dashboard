@@ -1,29 +1,30 @@
 import { Modal, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import type { CheckboxRadioSelectData } from "../../types";
+import { splitCamelCase } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleCheckboxInputGroup } from "../accessibleInputs/AccessibleCheckboxInput";
 import { queryAction } from "./actions";
-import type { QueryDispatch, QueryState } from "./types";
+import type { QueryDispatch, QueryState, QueryTemplate } from "./types";
 import { PROJECTION_HELP_MODAL_CONTENT } from "./utils";
 
 type QueryProjectionProps = {
     hideProjection: boolean;
     queryDispatch: React.Dispatch<QueryDispatch>;
-    projectionCheckboxData: CheckboxRadioSelectData;
     queryState: QueryState;
+    queryTemplates: Array<QueryTemplate>;
 };
 
 function QueryProjection({
     hideProjection = false,
     queryDispatch,
-    projectionCheckboxData,
     queryState,
+    queryTemplates,
 }: QueryProjectionProps) {
     const [
         openedProjectionHelpModal,
         { open: openProjectionHelpModal, close: closeProjectionHelpModal },
     ] = useDisclosure(false);
+    const { projectionFields } = queryState;
 
     const projectionHelpButton = (
         <AccessibleButton
@@ -59,11 +60,14 @@ function QueryProjection({
         : (
             <AccessibleCheckboxInputGroup
                 attributes={{
-                    inputData: projectionCheckboxData,
+                    inputData: queryTemplates.map(({ name }) => ({
+                        label: splitCamelCase(name),
+                        value: name,
+                    })),
                     name: "exclusionFields",
                     parentDispatch: queryDispatch,
-                    validValueAction: queryAction.setProjectionExclusionFields,
-                    value: projectionExclusionFields,
+                    validValueAction: queryAction.setProjectionFields,
+                    value: projectionFields,
                 }}
             />
         );

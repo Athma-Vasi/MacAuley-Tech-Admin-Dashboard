@@ -12,18 +12,26 @@ import { LIMIT_PER_PAGE_DATA } from "./constants";
 import { QueryFilter } from "./QueryFilter";
 import { QuerySort } from "./QuerySort";
 import { initialQueryState } from "./state";
+import { QueryTemplate } from "./types";
 
-type QueryProps = {
+type QueryProps<ValidValueAction extends string = string> = {
     collectionName: string;
     hideProjection?: boolean;
-    parentDispatch: React.Dispatch<any>;
+    // this components output is the query string used to fetch data
+    parentAction: ValidValueAction;
+    parentDispatch: React.ActionDispatch<
+        [dispatch: { action: ValidValueAction; payload: string }]
+    >;
+    queryTemplates: Array<QueryTemplate>;
 };
 
-function Query({
+function Query<ValidValueAction extends string = string>({
     collectionName,
     parentDispatch,
     hideProjection = false,
-}: QueryProps) {
+    parentAction,
+    queryTemplates,
+}: QueryProps<ValidValueAction>) {
     const [queryState, queryDispatch] = React.useReducer(
         queryReducer,
         initialQueryState,
@@ -31,9 +39,7 @@ function Query({
 
     const {
         filterComparisonOperator,
-        filterComparisonOperatorSelectData,
         filterField,
-        filterFieldsOperatorsValuesSetsMap,
         filterLogicalOperator,
         filterValue,
         generalSearchCase,
@@ -41,15 +47,10 @@ function Query({
         generalSearchInclusionValue,
         isError,
         isSearchDisabled,
-        limitPerPage,
-        logicalOperatorChainsSetsMap,
-        projectionExclusionFields,
         queryChains,
-        queryString,
-        searchFieldsOperatorsValuesSetMap,
+        limitPerPage,
         sortDirection,
         sortField,
-        sortFieldsSet,
     } = queryState;
 
     const queryChain = (
@@ -62,8 +63,10 @@ function Query({
 
     const queryFilter = (
         <QueryFilter
+            queryChains={queryChains}
             queryDispatch={queryDispatch}
             queryState={queryState}
+            queryTemplates={queryTemplates}
         />
     );
 
@@ -71,8 +74,8 @@ function Query({
         <QueryProjection
             hideProjection={hideProjection}
             queryDispatch={queryDispatch}
-            projectionCheckboxData={[]}
             queryState={queryState}
+            queryTemplates={queryTemplates}
         />
     );
 
@@ -87,6 +90,7 @@ function Query({
         <QuerySort
             queryDispatch={queryDispatch}
             queryState={queryState}
+            queryTemplates={queryTemplates}
         />
     );
 

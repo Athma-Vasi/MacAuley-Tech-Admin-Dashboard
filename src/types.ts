@@ -133,38 +133,6 @@ type DecodedToken = {
   exp: number;
 };
 
-type InputType =
-  | "date"
-  | "number"
-  | "select"
-  | "text";
-
-type QueryTemplate = {
-  name: ValidationKey;
-  comparisonOperators: Set<QueryOperator>;
-};
-
-type QueryTemplateDateInput = QueryTemplate & {
-  kind: "date";
-  attributes: AccessibleDateTimeInputAttributes;
-};
-
-type QueryTemplateNumberInput = QueryTemplate & {
-  kind: "number";
-  attributes: AccessibleNumberInputAttributes;
-};
-
-type QueryTemplateTextInput = QueryTemplate & {
-  kind: "text";
-  attributes: AccessibleTextInputAttributes;
-};
-
-type QueryTemplateSelectInput = QueryTemplate & {
-  kind: "select";
-  data: CheckboxRadioSelectData;
-  attributes: AccessibleDateTimeInputAttributes;
-};
-
 type UserSchema = {
   addressLine: string;
   city: string;
@@ -486,7 +454,6 @@ export type {
   HttpServerResponse,
   HumanResources,
   InformationTechnology,
-  InputType,
   JobPosition,
   LogisticsAndInventory,
   Maintenance,
@@ -495,11 +462,6 @@ export type {
   PostalCode,
   ProductMetricsDocument,
   Province,
-  QueryTemplate,
-  QueryTemplateDateInput,
-  QueryTemplateNumberInput,
-  QueryTemplateSelectInput,
-  QueryTemplateTextInput,
   RepairMetricsDocument,
   RepairTechnicians,
   SafeBox,

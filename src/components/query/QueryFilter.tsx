@@ -2,30 +2,46 @@ import { Group, Modal, Stack } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
+import { CheckboxRadioSelectData } from "../../types";
+import { splitCamelCase } from "../../utils";
+import { ValidationKey } from "../../validations";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
+import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
+import { AccessibleNumberInput } from "../accessibleInputs/AccessibleNumberInput";
+import {
+    AccessibleSelectInput,
+} from "../accessibleInputs/AccessibleSelectInput";
+import {
+    AccessibleTextInput,
+} from "../accessibleInputs/text/AccessibleTextInput";
 import { queryAction } from "./actions";
 import { LOGICAL_OPERATORS_DATA, MAX_LINKS_AMOUNT } from "./constants";
-import type { QueryDispatch, QueryState } from "./types";
+import {
+    InputKind,
+    type QueryChains,
+    type QueryDispatch,
+    type QueryState,
+    type QueryTemplate,
+} from "./types";
 import { FILTER_HELP_MODAL_CONTENT } from "./utils";
 
 type QueryFilterProps = {
+    queryChains: QueryChains;
     queryDispatch: React.Dispatch<QueryDispatch>;
     queryState: QueryState;
+    queryTemplates: Array<QueryTemplate>;
 };
 
-function QueryFilter({
-    queryDispatch,
-    queryState,
-}: QueryFilterProps) {
+function QueryFilter(
+    { queryChains, queryDispatch, queryState, queryTemplates }:
+        QueryFilterProps,
+) {
     const {
         filterField,
         filterComparisonOperator,
         filterLogicalOperator,
         filterValue,
         isError,
-        projectionExclusionFields,
-        queryChains,
     } = queryState;
 
     const [
@@ -33,7 +49,7 @@ function QueryFilter({
         { open: openFilterHelpModal, close: closeFilterHelpModal },
     ] = useDisclosure(false);
 
-    const chainLength = Array.from(queryChains.filter).reduce(
+    const chainLength = Object.entries(queryChains.filter).reduce(
         (acc, [_key, value]) => {
             acc += value.length;
             return acc;
@@ -71,7 +87,12 @@ function QueryFilter({
     const fieldSelectInput = (
         <AccessibleSelectInput
             attributes={{
-                data: [],
+                data: queryTemplates.map(
+                    ({ name }) => ({
+                        label: splitCamelCase(name),
+                        value: name,
+                    }),
+                ),
                 // disabled,
                 label: "Field",
                 name: "filterField",
@@ -85,9 +106,21 @@ function QueryFilter({
     const filterComparisonOperatorSelectInput = (
         <AccessibleSelectInput
             attributes={{
-                // data: fieldNamesOperatorsTypesMap.get(filterField)?.operators ??
-                //     [],
-                data: [],
+                data: queryTemplates.reduce((acc, curr) => {
+                    const { name, comparisonOperators } = curr;
+                    if (name === filterField) {
+                        Array.from(comparisonOperators).forEach(
+                            (operator) => {
+                                acc.push({
+                                    label: splitCamelCase(operator),
+                                    value: operator,
+                                });
+                            },
+                        );
+                    }
+
+                    return acc;
+                }, [] as CheckboxRadioSelectData),
                 // disabled: disabled,
                 label: "Comparison Operator",
                 name: "filterComparisonOperator",
@@ -124,20 +157,20 @@ function QueryFilter({
                         | React.MouseEvent<HTMLButtonElement, MouseEvent>
                         | React.PointerEvent<HTMLButtonElement>,
                 ) => {
-                    // modifyQueryChainsDispatch({
-                    //     action: queryAction.modifyQueryChains,
-                    //     payload: {
-                    //         index: chainLength,
-                    //         logicalOperator: filterLogicalOperator,
-                    //         queryChainActions: "insert",
-                    //         queryChainKind: "filter",
-                    //         queryLink: [
-                    //             filterField,
-                    //             filterComparisonOperator,
-                    //             filterValue,
-                    //         ],
-                    //     },
-                    // });
+                    queryDispatch({
+                        action: queryAction.modifyQueryChains,
+                        payload: {
+                            index: chainLength,
+                            logicalOperator: filterLogicalOperator,
+                            queryChainActions: "insert",
+                            queryChainKind: "filter",
+                            queryLink: [
+                                filterField,
+                                filterComparisonOperator,
+                                filterValue,
+                            ],
+                        },
+                    });
                 },
             }}
         />
@@ -191,6 +224,74 @@ function QueryFilter({
             </Group>
         </Stack>
     );
+}
+
+function createDynamicValueInput(
+    filterField: ValidationKey,
+    queryTemplates: Array<QueryTemplate>,
+): React.JSX.Element {
+    // subsets of inputs that are used in query filter
+    const FILTER_INPUTS_SET = new Set<InputKind>([
+        "date",
+        "number",
+        "text",
+        "select",
+    ]);
+    const [filteredQueryTemplate] = queryTemplates.filter(
+        ({ kind, name }) => FILTER_INPUTS_SET.has(kind) && filterField === name,
+    );
+
+    if (filteredQueryTemplate === null || filteredQueryTemplate === undefined) {
+        return <></>;
+    }
+
+    const { comparisonOperators, kind, name } = filteredQueryTemplate;
+
+    if (kind === "select") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+
+        return (
+            <AccessibleSelectInput
+                attributes={{ ...attributes, name }}
+            />
+        );
+    }
+
+    if (kind === "text") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+
+        return (
+            <AccessibleTextInput
+                attributes={{ ...attributes, name }}
+            />
+        );
+    }
+
+    if (kind === "number") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+
+        return (
+            <AccessibleNumberInput
+                attributes={{ ...attributes, name }}
+            />
+        );
+    }
+
+    if (kind === "date") {
+        const attributes = filteredQueryTemplate
+            .attributes;
+
+        return (
+            <AccessibleDateTimeInput
+                attributes={{ ...attributes, name }}
+            />
+        );
+    }
+
+    return <></>;
 }
 
 // function createDynamicValueInput<ValidValueAction extends string = string>({

@@ -18,6 +18,7 @@ const queryReducers = new Map<
     QueryAction[keyof QueryAction],
     (state: QueryState, dispatch: QueryDispatch) => QueryState
 >([
+    [queryAction.setProjectionFields, queryReducer_setProjectionFields],
     [queryAction.modifyQueryChains, queryReducer_modifyQueryChains],
     [queryAction.setFilterField, queryReducer_setFilterField],
     [
@@ -44,6 +45,14 @@ const queryReducers = new Map<
     [queryAction.setSortDirection, queryReducer_setSortDirection],
     [queryAction.setSortField, queryReducer_setSortField],
 ]);
+
+function queryReducer_setProjectionFields(
+    state: QueryState,
+    dispatch: QueryDispatch,
+): QueryState {
+    const projectionFields = dispatch.payload as string[];
+    return { ...state, projectionFields };
+}
 
 function queryReducer_modifyQueryChains(
     state: QueryState,

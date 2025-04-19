@@ -1,22 +1,21 @@
 import { Flex, Stack, Text, Title } from "@mantine/core";
 
-import type {
-    CheckboxRadioSelectData,
-    InputType,
-    Validation,
-} from "../../types";
+import type { CheckboxRadioSelectData, Validation } from "../../types";
 import { ValidationKey } from "../../validations";
 
+import { splitCamelCase } from "../../utils";
 import {
     GeneralSearchCase,
-    MongoComparisonOperator,
+    InputKind,
+    MongoQueryOperator,
     QueryChains,
     QueryOperator,
+    QueryTemplate,
 } from "./types";
 
 type OperatorsInputType = {
     operators: CheckboxRadioSelectData<QueryOperator>;
-    inputType: InputType;
+    inputKind: InputKind;
 };
 
 type InputsValidationsMap = Map<
@@ -40,10 +39,10 @@ type QueryInputsData = {
 };
 
 function removeProjectionExclusionFields(
-    projectionExclusionFields: string[],
+    projectionFields: string[],
     selectData: CheckboxRadioSelectData,
 ) {
-    const exclusionFieldsSet = new Set(projectionExclusionFields);
+    const exclusionFieldsSet = new Set(projectionFields);
 
     return selectData.reduce<CheckboxRadioSelectData>((acc, field) => {
         if (!exclusionFieldsSet.has(field.value)) {
@@ -52,6 +51,19 @@ function removeProjectionExclusionFields(
 
         return acc;
     }, []);
+}
+
+function returnSortableQueryFields(queryTemplates: QueryTemplate[]) {
+    return queryTemplates.reduce((acc, curr) => {
+        const SORTABLE_INPUT_KINDS = new Set<InputKind>(["date", "number"]);
+
+        const { kind, name } = curr;
+        if (SORTABLE_INPUT_KINDS.has(kind)) {
+            acc.push({ label: splitCamelCase(name), value: name });
+        }
+
+        return acc;
+    }, [] as CheckboxRadioSelectData);
 }
 
 function createQueryString({
@@ -71,7 +83,7 @@ function createQueryString({
 }): string {
     const comparisonOperatorsMongoTable = new Map<
         QueryOperator,
-        MongoComparisonOperator
+        MongoQueryOperator
     >([
         ["equal to", "$eq"],
         ["greater than", "$gt"],
@@ -84,7 +96,7 @@ function createQueryString({
 
     const filterAndSortQueryString = Object.entries(queryChains).reduce(
         (acc, [chainKind, chainMap]) => {
-            Array.from(chainMap).forEach(([logicalOperator, chains]) => {
+            Object.entries(chainMap).forEach(([logicalOperator, chains]) => {
                 if (chainKind === "filter") {
                     const filterQueryString = chains.reduce(
                         (subAcc, [field, comparisonOperator, value]) => {
@@ -434,6 +446,7 @@ export {
     PROJECTION_HELP_MODAL_CONTENT,
     QUERY_BUILDER_HELP_MODAL_CONTENT,
     removeProjectionExclusionFields,
+    returnSortableQueryFields,
     SEARCH_CHAIN_HELP_MODAL_CONTENT,
     SORT_HELP_MODAL_CONTENT,
 };

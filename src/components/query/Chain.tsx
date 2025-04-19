@@ -38,13 +38,13 @@ function Chain(
         generalSearchCase,
         generalSearchExclusionValue,
         generalSearchInclusionValue,
-        projectionExclusionFields,
+        projectionFields,
         queryChains,
     } = queryState;
 
     const allChainsLength = Object.values(queryChains).reduce(
         (acc, logicalOperatorChainsMap) => {
-            Array.from(logicalOperatorChainsMap).forEach(
+            Object.entries(logicalOperatorChainsMap).forEach(
                 ([_logicalOperator, queryChain]) => {
                     acc += queryChain.length;
                 },
@@ -59,10 +59,10 @@ function Chain(
         (tuple, chainsIndex) => {
             const [queryChainKind, logicalOperatorChainsMap] = tuple as [
                 QueryChainKind,
-                Map<string, QueryChain>,
+                Record<LogicalOperator, QueryChain>,
             ];
 
-            const chainLength = Array.from(logicalOperatorChainsMap).reduce(
+            const chainLength = Object.entries(logicalOperatorChainsMap).reduce(
                 (acc, [_logicalOperator, queryChain]) => {
                     acc += queryChain.length;
                     return acc;
@@ -70,7 +70,7 @@ function Chain(
                 0,
             );
 
-            const timeline = Array.from(logicalOperatorChainsMap).flatMap(
+            const timeline = Object.entries(logicalOperatorChainsMap).flatMap(
                 (tuple, mapIndex) => {
                     const [logicalOperator, queryChain] = tuple as [
                         LogicalOperator,
@@ -371,23 +371,19 @@ function Chain(
     const projectionExclusionLink = (
         <Timeline.Item bullet={<TbLogicNot />}>
             <Text>
-                {`${
-                    capitalizeJoinWithAnd(projectionExclusionFields)
-                } excluded.`}
+                {`${capitalizeJoinWithAnd(projectionFields)} excluded.`}
             </Text>
         </Timeline.Item>
     );
 
-    const projectionChainElement = projectionExclusionFields.length === 0
+    const projectionChainElement = projectionFields.length === 0
         ? null
         : (
             <Stack>
                 <Text size="md">
                     {`Return selected ${
                         splitCamelCase(collectionName)
-                    } with field${
-                        projectionExclusionFields.length === 1 ? "" : "s"
-                    }:`}
+                    } with field${projectionFields.length === 1 ? "" : "s"}:`}
                 </Text>
                 <Timeline active={Number.MAX_SAFE_INTEGER}>
                     {projectionExclusionLink}
@@ -398,7 +394,7 @@ function Chain(
     return allChainsLength === 0 &&
             generalSearchExclusionValue.length === 0 &&
             generalSearchInclusionValue.length === 0 &&
-            projectionExclusionFields.length === 0
+            projectionFields.length === 0
         ? <Text>No query chain links</Text>
         : (
             <Stack>

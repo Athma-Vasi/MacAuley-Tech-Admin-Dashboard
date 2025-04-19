@@ -3,65 +3,81 @@ import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import type { QueryDispatch, QueryState } from "./types";
-import { SORT_HELP_MODAL_CONTENT } from "./utils";
+import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
+import { queryAction } from "./actions";
+import { SORT_DIRECTION_DATA } from "./constants";
+import {
+    type QueryDispatch,
+    type QueryState,
+    type QueryTemplate,
+} from "./types";
+import {
+    removeProjectionExclusionFields,
+    returnSortableQueryFields,
+    SORT_HELP_MODAL_CONTENT,
+} from "./utils";
 
 type QuerySortProps = {
     queryDispatch: React.Dispatch<QueryDispatch>;
     queryState: QueryState;
+    queryTemplates: Array<QueryTemplate>;
 };
 
 function QuerySort({
     queryDispatch,
     queryState,
+    queryTemplates,
 }: QuerySortProps) {
     const [
         openedSortHelpModal,
         { open: openSortHelpModal, close: closeSortHelpModal },
     ] = useDisclosure(false);
 
-    const { sortDirection, sortField } = queryState;
-    // const logicalOperatorChainsMap = queryChains.sort;
-    // const sortChainLength = Array.from(logicalOperatorChainsMap).reduce(
-    //     (acc, [_key, value]) => {
-    //         acc += value.length;
-    //         return acc;
-    //     },
-    //     0,
-    // );
+    const { projectionFields, queryChains, sortDirection, sortField } =
+        queryState;
+    const logicalOperatorChainsMap = queryChains.sort;
+    const sortChainLength = Object.entries(logicalOperatorChainsMap).reduce(
+        (acc, [_key, value]) => {
+            acc += value.length;
+            return acc;
+        },
+        0,
+    );
 
-    // const data = removeProjectionExclusionFields(
-    //     projectionExclusionFields,
-    //     sortFieldSelectData,
-    // );
-    // const disabled = data.length === 0;
+    const sortableQueryFields = returnSortableQueryFields(queryTemplates);
 
-    // const sortFieldSelectInput = (
-    //     <AccessibleSelectInput
-    //         attributes={{
-    //             data,
-    //             disabled,
-    //             name: "sortField",
-    //             parentDispatch: queryDispatch,
-    //             validValueAction: queryAction.setSortField,
-    //             value: sortField,
-    //         }}
-    //     />
-    // );
+    const data = removeProjectionExclusionFields(
+        projectionFields,
+        sortableQueryFields,
+    );
+    const disabled = data.length === 0;
 
-    // const sortDirectionSelectInput = (
-    //     <AccessibleSelectInput
-    //         attributes={{
-    //             data: SORT_DIRECTION_DATA,
-    //             disabled,
-    //             name: "sortDirection",
-    //             parentDispatch: queryDispatch,
-    //             validValueAction: queryAction
-    //                 .setSortDirection,
-    //             value: sortDirection,
-    //         }}
-    //     />
-    // );
+    const sortFieldSelectInput = (
+        <AccessibleSelectInput
+            attributes={{
+                data,
+                disabled,
+                name: "sortField",
+                parentDispatch: queryDispatch,
+                validValueAction: queryAction.setSortField,
+                value: sortField,
+            }}
+        />
+    );
+
+    const sortDirectionSelectInput = (
+        <AccessibleSelectInput
+            attributes={{
+                data: SORT_DIRECTION_DATA,
+                disabled,
+                name: "sortDirection",
+                parentDispatch: queryDispatch,
+                validValueAction: queryAction
+                    .setSortDirection,
+                value: sortDirection,
+            }}
+        />
+    );
 
     const addSortLinkButton = (
         <AccessibleButton
@@ -75,16 +91,16 @@ function QuerySort({
                         | React.MouseEvent<HTMLButtonElement, MouseEvent>
                         | React.PointerEvent<HTMLButtonElement>,
                 ) => {
-                    // sortChainDispatch({
-                    //     action: queryAction.modifyQueryChains,
-                    //     payload: {
-                    //         index: sortChainLength,
-                    //         logicalOperator: "and",
-                    //         queryChainActions: "insert",
-                    //         queryChainKind: "sort",
-                    //         queryLink: [sortField, "equal to", sortDirection],
-                    //     },
-                    // });
+                    queryDispatch({
+                        action: queryAction.modifyQueryChains,
+                        payload: {
+                            index: sortChainLength,
+                            logicalOperator: "and",
+                            queryChainActions: "insert",
+                            queryChainKind: "sort",
+                            queryLink: [sortField, "equal to", sortDirection],
+                        },
+                    });
                 },
             }}
         />

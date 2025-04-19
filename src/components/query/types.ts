@@ -1,6 +1,40 @@
 import { CheckboxRadioSelectData } from "../../types";
+import { ValidationKey } from "../../validations";
+import { AccessibleDateTimeInputAttributes } from "../accessibleInputs/AccessibleDateTimeInput";
+import { AccessibleNumberInputAttributes } from "../accessibleInputs/AccessibleNumberInput";
+import { AccessibleSelectInputAttributes } from "../accessibleInputs/AccessibleSelectInput";
+import { AccessibleTextInputAttributes } from "../accessibleInputs/text/AccessibleTextInput";
 import { QueryAction } from "./actions";
-import type { OperatorsInputType } from "./utils";
+
+type InputKind =
+    | "date"
+    | "number"
+    | "select"
+    | "text";
+
+type QueryTemplateCommon = {
+    name: ValidationKey;
+    comparisonOperators: Set<QueryOperator>;
+};
+
+type QueryTemplate =
+    | QueryTemplateCommon & {
+        kind: "date";
+        attributes: AccessibleDateTimeInputAttributes;
+    }
+    | QueryTemplateCommon & {
+        kind: "number";
+        attributes: AccessibleNumberInputAttributes;
+    }
+    | QueryTemplateCommon & {
+        kind: "text";
+        attributes: AccessibleTextInputAttributes;
+    }
+    | QueryTemplateCommon & {
+        kind: "select";
+        data: CheckboxRadioSelectData;
+        attributes: AccessibleSelectInputAttributes;
+    };
 
 type ComparisonOperator =
     | "equal to"
@@ -9,14 +43,6 @@ type ComparisonOperator =
     | "less than or equal to"
     | "less than"
     | "not equal to";
-
-type FilterInputsType =
-    | "boolean"
-    | "date"
-    | "number"
-    | "select"
-    | "text"
-    | "time";
 
 type FilterFieldsOperatorsValuesSetsMap = Map<
     string,
@@ -34,7 +60,7 @@ type LogicalOperator = "and" | "nor" | "or";
 
 type LogicalOperatorChainsSets = {
     fieldsSet: Set<string>;
-    comparisonOperatorsSet: Set<QueryOperator>;
+    queryOperatorsSet: Set<QueryOperator>;
     valuesSet: Set<string>;
 };
 
@@ -51,15 +77,19 @@ type MongoComparisonOperator =
     | "$lte"
     | "$ne";
 
+type MongoQueryOperator =
+    | MongoComparisonOperator
+    | "$in";
+
 type QueryChain = Array<QueryLink>;
 
 type QueryChainActions = "delete" | "insert" | "slideUp" | "slideDown";
 
 type QueryChainKind = "filter" | "sort";
 
-type QueryChains = Record<QueryChainKind, Map<LogicalOperator, QueryChain>>;
+type QueryChains = Record<QueryChainKind, Record<LogicalOperator, QueryChain>>;
 
-type QueryLink = [string, QueryOperator, string]; // [field, comparisonOperator, value]
+type QueryLink = [string, QueryOperator, string]; // [field, queryOperator, value]
 
 type QueryOperator = ComparisonOperator | "in";
 
@@ -80,6 +110,8 @@ type QueryState = {
     isError: boolean;
     isSearchDisabled: boolean;
     limitPerPage: string;
+    projectionFields: string[];
+    queryChains: QueryChains;
     sortDirection: SortDirection;
     sortField: string;
 };
@@ -92,19 +124,11 @@ type ModifyQueryChainPayload = {
     queryLink: QueryLink;
 };
 
-type ModifyQueryChainsDispatch = React.Dispatch<{
-    action: QueryAction["modifyQueryChains"];
-    payload: ModifyQueryChainPayload;
-}>;
-
-type QueryFilterPayload = {
-    fieldNamesOperatorsTypesMap: Map<string, OperatorsInputType>;
-    searchFieldSelectInputData: CheckboxRadioSelectData;
-    selectInputsDataMap: Map<string, CheckboxRadioSelectData>;
-    value: string;
-};
-
 type QueryDispatch =
+    | {
+        action: QueryAction["setProjectionFields"];
+        payload: string[];
+    }
     | {
         action: QueryAction["modifyQueryChains"];
         payload: ModifyQueryChainPayload;
@@ -161,24 +185,24 @@ type QueryDispatch =
 export type {
     ComparisonOperator,
     FilterFieldsOperatorsValuesSetsMap,
-    FilterInputsType,
     GeneralSearchCase,
     GeneralSearchKind,
+    InputKind,
     LogicalOperator,
     LogicalOperatorChainsSets,
     LogicalOperatorChainsSetsMap,
     ModifyQueryChainPayload,
-    ModifyQueryChainsDispatch,
     MongoComparisonOperator,
+    MongoQueryOperator,
     QueryChain,
     QueryChainActions,
     QueryChainKind,
     QueryChains,
     QueryDispatch,
-    QueryFilterPayload,
     QueryLink,
     QueryOperator,
     QueryState,
+    QueryTemplate,
     SearchFieldsValuesSetMap,
     SortDirection,
     SortInputsType,
