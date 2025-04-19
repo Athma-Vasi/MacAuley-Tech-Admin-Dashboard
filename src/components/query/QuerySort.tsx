@@ -136,10 +136,9 @@ function QuerySort({
 
     return (
         <Stack>
-            {
-                /* {sortFieldSelectInput}
-            {sortDirectionSelectInput} */
-            }
+            {sortFieldSelectInput}
+            {sortDirectionSelectInput}
+
             <Group>
                 {sortHelpButton}
                 {addSortLinkButton}

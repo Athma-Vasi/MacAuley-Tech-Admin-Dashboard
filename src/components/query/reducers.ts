@@ -66,11 +66,34 @@ function queryReducer_modifyQueryChains(
         queryChainKind,
     } = dispatch.payload as ModifyQueryChainPayload;
     const [field, comparisonOperator, value] = queryLink;
+    const queryChains = structuredClone(state.queryChains);
+
+    console.group("queryReducer_modifyQueryChains");
+    console.log("queryChainKind", queryChainKind);
+    console.log("queryLink", queryLink);
+    console.log("queryChainActions", queryChainActions);
+    console.log("logicalOperator", logicalOperator);
+    console.log("index", index);
+    console.groupEnd();
 
     switch (queryChainActions) {
         case "delete": {
+            const existingQueryLinks =
+                queryChains[queryChainKind][logicalOperator];
+            console.log("delete::existingQueryLinks", existingQueryLinks);
+            const existingQueryLink = existingQueryLinks[index];
+            console.log("delete::existingQueryLink", existingQueryLink);
+
+            if (existingQueryLink === undefined) {
+                return state;
+            }
+
+            const newQueryLinks = existingQueryLinks.splice(index, 1);
+            queryChains[queryChainKind][logicalOperator] = newQueryLinks;
+
             return {
                 ...state,
+                queryChains,
             };
         }
 
@@ -78,21 +101,86 @@ function queryReducer_modifyQueryChains(
             if (value.length === 0) {
                 return state;
             }
+            const existingQueryLinks =
+                queryChains[queryChainKind][logicalOperator];
+
+            console.log("insert::existingQueryLinks", existingQueryLinks);
+
+            const [isFieldExists, isFieldValueExists] = existingQueryLinks
+                .reduce(
+                    (acc, queryLink) => {
+                        const [qLField, qLOperator, qLValue] = queryLink;
+
+                        if (field === qLField) {
+                            acc[0] = true;
+                        }
+                        if (value === qLValue) {
+                            acc[1] = true;
+                        }
+
+                        return acc;
+                    },
+                    [false, false],
+                );
+
+            if (isFieldValueExists) {
+                return {
+                    ...state,
+                    queryChains,
+                };
+            }
+
+            existingQueryLinks.push([
+                field,
+                comparisonOperator,
+                value,
+            ]);
 
             return {
                 ...state,
+                queryChains,
             };
         }
 
         case "slideDown": {
+            const existingQueryLinks =
+                queryChains[queryChainKind][logicalOperator];
+            const existingQueryLink = existingQueryLinks[index];
+            const nextQueryLink = existingQueryLinks[index + 1];
+            if (existingQueryLink === undefined) {
+                return state;
+            }
+            if (nextQueryLink === undefined) {
+                return state;
+            }
+            existingQueryLinks[index] = nextQueryLink;
+            existingQueryLinks[index + 1] = existingQueryLink;
+            queryChains[queryChainKind][logicalOperator] = existingQueryLinks;
+
             return {
                 ...state,
+                queryChains,
             };
         }
 
         case "slideUp": {
+            const existingQueryLinks =
+                queryChains[queryChainKind][logicalOperator];
+            const existingQueryLink = existingQueryLinks[index];
+            const previousQueryLink = existingQueryLinks[index - 1];
+            if (existingQueryLink === undefined) {
+                return state;
+            }
+            if (previousQueryLink === undefined) {
+                return state;
+            }
+            existingQueryLinks[index] = previousQueryLink;
+            existingQueryLinks[index - 1] = existingQueryLink;
+            queryChains[queryChainKind][logicalOperator] = existingQueryLinks;
+
             return {
                 ...state,
+                queryChains,
             };
         }
 
@@ -105,6 +193,7 @@ function queryReducer_setFilterField(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    console.log("queryReducer_setFilterField", dispatch.payload);
     return {
         ...state,
         filterField: dispatch.payload as string,

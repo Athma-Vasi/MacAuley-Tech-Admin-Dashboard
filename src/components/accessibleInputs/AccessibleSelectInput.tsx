@@ -23,7 +23,7 @@ type AccessibleSelectInputAttributes<
   name: string;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   /** default generic dispatch */
-  parentDispatch?: React.Dispatch<{
+  parentDispatch: React.Dispatch<{
     action: ValidValueAction;
     payload: Payload;
   }>;

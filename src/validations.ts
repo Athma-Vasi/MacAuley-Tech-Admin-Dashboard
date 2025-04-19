@@ -17,10 +17,8 @@ type ValidationKey =
   | "country"
   | "cpuFrequency"
   | "cpuSocket" // | "gpuChipset" | "motherboardSocket" | "motherboardChipset"
+  | "createdAt"
   | "date"
-  | "dateNearFuture"
-  | "dateNearPast"
-  | "dateOfBirth"
   | "department"
   | "dimensions"
   | "displayAspectRatio"
@@ -57,6 +55,7 @@ type ValidationKey =
   | "textAreaInput"
   | "textInput"
   | "timeRailway"
+  | "updatedAt"
   | "url"
   | "userDefinedValue"
   | "userId"
@@ -210,64 +209,17 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [/^.{2,30}$/, "Must be between 2 and 30 characters length."],
   ],
 
+  createdAt: [[
+    /^(19[0-9][0-9]|20[0-2][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,
+    "Must be a valid date from 1900-01-01 to 2029-12-31.",
+  ], [/^.{10}$/, "Must be 10 characters length."]],
+
   date: [
     [
       /^(19[0-9][0-9]|20[0-2][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,
       "Must be a valid date from 1900-01-01 to 2029-12-31.",
     ],
     [/^.{10}$/, "Must be 10 characters length."],
-  ],
-
-  dateNearFuture: [
-    [/^.{10}$/, "Must be 10 characters length."],
-    [
-      (value: string) => {
-        const date = new Date(value);
-        return date > new Date();
-      },
-      "Must be a valid date in the future.",
-    ],
-  ],
-
-  dateNearPast: [
-    [/^.{10}$/, "Must be 10 characters length."],
-    [
-      (value: string) => {
-        const date = new Date(value);
-        return date < new Date();
-      },
-      "Must be a valid date in the past.",
-    ],
-  ],
-
-  dateOfBirth: [
-    [
-      /^(19[0-9][0-9]|20[0-1][0-9]|202[0-4])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,
-      `Must be a valid date in the range 1900-${
-        new Date().getFullYear() - 18
-      }.`,
-    ],
-    [/^.{10}$/, "Must be 10 characters length."],
-    [
-      (value: string) => {
-        const date = new Date(value);
-        return date < new Date();
-      },
-      "Must be a valid date in the past.",
-    ],
-    [
-      (value: string) => {
-        const date = new Date(value);
-        const now = new Date();
-        let age = now.getFullYear() - date.getFullYear();
-        const m = now.getMonth() - date.getMonth();
-        if (m < 0 || (m === 0 && now.getDate() < date.getDate())) {
-          age -= 1;
-        }
-        return age >= 18;
-      },
-      "Must be 18 years or older.",
-    ],
   ],
 
   department: [
@@ -554,6 +506,11 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     ],
     [/^.{4,5}$/i, "Must be between 4 and 5 characters long."],
   ],
+
+  updatedAt: [[
+    /^(19[0-9][0-9]|20[0-2][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,
+    "Must be a valid date from 1900-01-01 to 2029-12-31.",
+  ], [/^.{10}$/, "Must be 10 characters length."]],
 
   url: [
     [/^https?:\/\//, "Must start with 'http://' or 'https://'."],

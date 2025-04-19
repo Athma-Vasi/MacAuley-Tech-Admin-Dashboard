@@ -89,8 +89,8 @@ function QueryFilter(
                 // disabled,
                 label: "Field",
                 name: "filterField",
-                validValueAction: queryAction
-                    .setFilterField,
+                parentDispatch: queryDispatch,
+                validValueAction: queryAction.setFilterField,
                 value: filterField,
             }}
         />

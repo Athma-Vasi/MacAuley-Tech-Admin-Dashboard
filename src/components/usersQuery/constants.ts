@@ -5,6 +5,7 @@ import {
     PROVINCES,
     STATES_US,
 } from "../../constants";
+import { AccessibleDateTimeInputAttributes } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInputAttributes } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInputAttributes } from "../accessibleInputs/text/AccessibleTextInput";
 import { QueryTemplate } from "../query/types";
@@ -121,6 +122,30 @@ const USER_QUERY_TEMPLATES: QueryTemplate[] = [
         data: STATES_US,
         kind: "select",
         name: "state",
+    },
+    {
+        attributes: { inputKind: "date" } as AccessibleDateTimeInputAttributes,
+        comparisonOperators: new Set([
+            "equal to",
+            "greater than or equal to",
+            "greater than",
+            "less than or equal to",
+            "less than",
+        ]),
+        kind: "date",
+        name: "createdAt",
+    },
+    {
+        attributes: { inputKind: "date" } as AccessibleDateTimeInputAttributes,
+        comparisonOperators: new Set([
+            "equal to",
+            "greater than or equal to",
+            "greater than",
+            "less than or equal to",
+            "less than",
+        ]),
+        kind: "date",
+        name: "updatedAt",
     },
 ];
 

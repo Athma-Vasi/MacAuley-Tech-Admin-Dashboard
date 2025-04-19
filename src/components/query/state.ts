@@ -34,7 +34,7 @@ import type { QueryState } from "./types";
 const initialQueryState: QueryState = {
     // date input type is guaranteed to exist (all schemas have createdAt & updatedAt)
     filterComparisonOperator: "in",
-    filterField: "username",
+    filterField: "createdAt",
     filterLogicalOperator: "and",
     filterValue: "",
     generalSearchCase: "case-insensitive",

@@ -53,6 +53,8 @@ function Query<ValidValueAction extends string = string>({
         sortField,
     } = queryState;
 
+    console.log("QUERY STATE: ", queryState);
+
     const queryChain = (
         <Chain
             collectionName={collectionName}
