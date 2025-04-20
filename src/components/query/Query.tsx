@@ -15,24 +15,24 @@ import { initialQueryState } from "./state";
 import { QueryTemplate } from "./types";
 import { createQueryString } from "./utils";
 
-type QueryProps<ValidValueAction extends string = "setQueryString"> = {
+type QueryProps = {
     collectionName: string;
     hideProjection?: boolean;
     // this components output is the query string used to fetch data
-    parentAction: ValidValueAction;
+    parentAction: Record<string, string>;
     parentDispatch: React.Dispatch<
-        { action: ValidValueAction; payload: string }
+        any
     >;
     queryTemplates: Array<QueryTemplate>;
 };
 
-function Query<ValidValueAction extends string = string>({
+function Query({
     collectionName,
     parentDispatch,
     hideProjection = false,
     parentAction,
     queryTemplates,
-}: QueryProps<ValidValueAction>) {
+}: QueryProps) {
     const [queryState, queryDispatch] = React.useReducer(
         queryReducer,
         initialQueryState,
@@ -59,8 +59,13 @@ function Query<ValidValueAction extends string = string>({
         const queryString = createQueryString(queryState);
 
         parentDispatch({
-            action: parentAction,
+            action: parentAction.setQueryString,
             payload: queryString,
+        });
+
+        parentDispatch({
+            action: parentAction.setNewQueryFlag,
+            payload: true,
         });
     }, [
         generalSearchCase,

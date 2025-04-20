@@ -11,6 +11,8 @@ async function handleUsersQuerySubmitGET(
         dispatch,
         fetchAbortControllerRef,
         isComponentMountedRef,
+        newQueryFlag,
+        pages,
         queryString,
         showBoundary,
         totalDocuments,
@@ -23,6 +25,8 @@ async function handleUsersQuerySubmitGET(
             AbortController | null
         >;
         isComponentMountedRef: React.RefObject<boolean>;
+        newQueryFlag: boolean;
+        pages: number;
         queryString: string;
         totalDocuments: number;
         showBoundary: (error: unknown) => void;

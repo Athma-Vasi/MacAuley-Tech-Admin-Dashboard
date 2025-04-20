@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { Pagination, Stack } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { API_URL, FETCH_REQUEST_TIMEOUT } from "../../constants";
@@ -40,6 +40,8 @@ function UsersQuery({}: UsersQueryProps) {
         currentPage,
         isError,
         isLoading,
+        newQueryFlag,
+        pages,
         queryString,
         resourceData,
         totalDocuments,
@@ -63,6 +65,8 @@ function UsersQuery({}: UsersQueryProps) {
                         dispatch: usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
+                        newQueryFlag,
+                        pages,
                         queryString,
                         showBoundary,
                         totalDocuments,
@@ -76,9 +80,28 @@ function UsersQuery({}: UsersQueryProps) {
     const queryComponent = (
         <Query
             collectionName="users"
-            parentAction={usersQueryAction.setQueryString}
+            parentAction={usersQueryAction}
             parentDispatch={usersQueryDispatch}
             queryTemplates={USER_QUERY_TEMPLATES}
+        />
+    );
+
+    const pagination = (
+        <Pagination
+            value={currentPage}
+            onChange={(page) => {
+                usersQueryDispatch({
+                    action: usersQueryAction.setCurrentPage,
+                    payload: page,
+                });
+                usersQueryDispatch({
+                    action: usersQueryAction.setNewQueryFlag,
+                    payload: false,
+                });
+            }}
+            total={10}
+            withEdges
+            withControls
         />
     );
 
@@ -86,6 +109,7 @@ function UsersQuery({}: UsersQueryProps) {
         <Stack>
             {queryComponent}
             {submitButton}
+            {pagination}
         </Stack>
     );
 }
