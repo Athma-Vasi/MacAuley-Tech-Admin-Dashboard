@@ -100,7 +100,7 @@ function queryReducer_modifyQueryChains(
             const existingQueryLinks =
                 queryChains[queryChainKind][logicalOperator];
 
-            const { isFieldExists, isFieldValueExists } = Object.entries(
+            const { isFieldValueExists } = Object.entries(
                 queryChains,
             ).reduce((acc, curr) => {
                 const [_queryChainKind, queryChain] = curr;
@@ -110,17 +110,17 @@ function queryReducer_modifyQueryChains(
 
                     qchain.forEach((queryLink) => {
                         const [qLField, _qLOperator, qLValue] = queryLink;
-                        if (field === qLField) {
-                            acc.isFieldExists = true;
-                        }
-                        if (value === qLValue) {
+                        if (
+                            field === qLField &&
+                            value === qLValue
+                        ) {
                             acc.isFieldValueExists = true;
                         }
                     });
                 });
 
                 return acc;
-            }, { isFieldExists: false, isFieldValueExists: false });
+            }, { isFieldValueExists: false });
 
             if (isFieldValueExists) {
                 return {

@@ -256,6 +256,42 @@ function createDynamicInput(
     return <></>;
 }
 
+function returnDefaultFilterValue(
+    filterField: string,
+    queryTemplates: Array<QueryTemplate>,
+): string {
+    const [filteredQueryTemplate] = queryTemplates.filter(
+        ({ name }) => filterField === name,
+    );
+
+    if (
+        filteredQueryTemplate === null ||
+        filteredQueryTemplate === undefined
+    ) {
+        return "";
+    }
+
+    const { kind } = filteredQueryTemplate;
+
+    if (kind === "select") {
+        return filteredQueryTemplate.data[0]?.value;
+    }
+
+    if (kind === "date") {
+        return "2023-01-01";
+    }
+
+    if (kind === "number") {
+        return "0";
+    }
+
+    if (kind === "text") {
+        return "";
+    }
+
+    return "";
+}
+
 function returnFilterSelectData(
     filterField: string,
     queryTemplates: Array<QueryTemplate>,
@@ -578,6 +614,7 @@ export {
     PROJECTION_HELP_MODAL_CONTENT,
     QUERY_BUILDER_HELP_MODAL_CONTENT,
     removeProjectionExclusionFields,
+    returnDefaultFilterValue,
     returnFilterSelectData,
     returnSortableQueryFields,
     SEARCH_CHAIN_HELP_MODAL_CONTENT,

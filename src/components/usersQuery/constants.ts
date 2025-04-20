@@ -105,6 +105,42 @@ const USER_QUERY_TEMPLATES: QueryTemplate[] = [
     },
     {
         attributes: {} as AccessibleTextInputAttributes,
+        comparisonOperators: new Set([
+            "equal to",
+            "greater than or equal to",
+            "greater than",
+            "less than or equal to",
+            "less than",
+        ]),
+        kind: "number",
+        name: "orgId",
+    },
+    {
+        attributes: {} as AccessibleTextInputAttributes,
+        comparisonOperators: new Set([
+            "equal to",
+            "greater than or equal to",
+            "greater than",
+            "less than or equal to",
+            "less than",
+        ]),
+        kind: "number",
+        name: "parentOrgId",
+    },
+    {
+        attributes: {} as AccessibleTextInputAttributes,
+        comparisonOperators: new Set(["in"]),
+        kind: "text",
+        name: "storeLocation",
+    },
+    {
+        attributes: {} as AccessibleTextInputAttributes,
+        comparisonOperators: new Set(["in"]),
+        kind: "text",
+        name: "roles",
+    },
+    {
+        attributes: {} as AccessibleTextInputAttributes,
         comparisonOperators: new Set(["in"]),
         kind: "text",
         name: "postalCodeUS",

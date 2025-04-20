@@ -2,6 +2,7 @@ import { Group, Modal, Stack } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import {
     AccessibleSelectInput,
@@ -17,6 +18,7 @@ import {
 import {
     createDynamicInput,
     FILTER_HELP_MODAL_CONTENT,
+    returnDefaultFilterValue,
     returnFilterSelectData,
 } from "./utils";
 
@@ -103,6 +105,20 @@ function QueryFilter(
         filterField,
         queryTemplates,
     });
+
+    // to prevent stale closure
+    useEffect(() => {
+        queryDispatch({
+            action: queryAction.setFilterComparisonOperator,
+            payload: filterComparisonOperatorData[0]
+                .value as typeof filterComparisonOperator,
+        });
+
+        queryDispatch({
+            action: queryAction.setFilterValue,
+            payload: returnDefaultFilterValue(filterField, queryTemplates),
+        });
+    }, [filterField]);
 
     const addFilterLinkButton = (
         <AccessibleButton

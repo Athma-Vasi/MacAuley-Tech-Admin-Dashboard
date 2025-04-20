@@ -47,7 +47,6 @@ import type {
   DashboardMetricsView,
   DaysInMonthsInYears,
   FinancialMetricCategories,
-  FinancialYAxisKey,
   LocationYearSpread,
   Month,
   MonthlyFinancialMetric,

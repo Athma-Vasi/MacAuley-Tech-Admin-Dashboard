@@ -38,6 +38,7 @@ type ValidationKey =
   | "name"
   | "objectKey"
   | "orgId"
+  | "parentOrgId"
   | "password"
   | "phoneNumber"
   | "postalCodeCanada"
@@ -47,11 +48,13 @@ type ValidationKey =
   | "province"
   | "ramTiming"
   | "ramVoltage"
+  | "roles"
   | "screenshotFilename"
   | "search"
   | "searchValue"
   | "smallInteger"
   | "state"
+  | "storeLocation"
   | "textAreaInput"
   | "textInput"
   | "timeRailway"
@@ -364,6 +367,12 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
   ],
 
+  parentOrgId: [
+    [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
+    [/^[0-9]+$/, "Must contain only numbers."],
+    [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
+  ],
+
   password: [
     [/^.{8,32}$/i, "Must be between 8 and 32 characters."],
     [/^(?=.*[A-Z])/, "Must contain at least one uppercase letter."],
@@ -435,6 +444,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [/^.{1,5}$/, "Must be 3 to 5 characters length."],
   ],
 
+  roles: [
+    [
+      /^(Admin|Manager|Employee)$/,
+      "Must be a valid role.",
+    ],
+  ],
+
   screenshotFilename: [
     [
       /^(?!^\s*$)/,
@@ -471,6 +487,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [
       /^(Not Applicable|Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode Island|South Carolina|South Dakota|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West Virginia|Wisconsin|Wyoming)$/,
       "Must be a valid US state.",
+    ],
+  ],
+
+  storeLocation: [
+    [
+      /^(All Locations|Calgary|Edmonton|Vancouver)$/,
+      "Must be a valid store location.",
     ],
   ],
 

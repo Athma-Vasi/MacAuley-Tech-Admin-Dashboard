@@ -584,6 +584,7 @@ const PROTOCOL = "http";
 const DOMAIN_NAME = "://localhost";
 const PORT = 5000;
 
+const BASE_URL = `${PROTOCOL}${DOMAIN_NAME}:${PORT}`;
 const AUTH_URL = `${PROTOCOL}${DOMAIN_NAME}:${PORT}/auth`;
 const LOGIN_URL = `${AUTH_URL}/login`;
 const REGISTER_URL = `${AUTH_URL}/register`;
@@ -604,6 +605,7 @@ export {
   API_URL,
   APP_HEADER_HEIGHT,
   AUTH_URL,
+  BASE_URL,
   COLORS_SWATCHES,
   COUNTRIES,
   CUSTOMER_URL,
