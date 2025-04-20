@@ -16,6 +16,8 @@ const usersQueryReducers = new Map<
     [usersQueryAction.setCurrentPage, usersQueryReducer_setCurrentPage],
     [usersQueryAction.setIsError, usersQueryReducer_setIsError],
     [usersQueryAction.setIsLoading, usersQueryReducer_setIsLoading],
+    [usersQueryAction.setNewQueryFlag, usersQueryReducer_setNewQueryFlag],
+    [usersQueryAction.setPages, usersQueryReducer_setPages],
     [usersQueryAction.setQueryString, usersQueryReducer_setQueryString],
     [usersQueryAction.setResourceData, usersQueryReducer_setResourceData],
     [usersQueryAction.setTotalDocuments, usersQueryReducer_setTotalDocuments],
@@ -43,6 +45,22 @@ function usersQueryReducer_setIsLoading(
 ): UsersQueryState {
     const isLoading = dispatch.payload as boolean;
     return { ...state, isLoading };
+}
+
+function usersQueryReducer_setNewQueryFlag(
+    state: UsersQueryState,
+    dispatch: UsersQueryDispatch,
+): UsersQueryState {
+    const newQueryFlag = dispatch.payload as boolean;
+    return { ...state, newQueryFlag };
+}
+
+function usersQueryReducer_setPages(
+    state: UsersQueryState,
+    dispatch: UsersQueryDispatch,
+): UsersQueryState {
+    const pages = dispatch.payload as number;
+    return { ...state, pages };
 }
 
 function usersQueryReducer_setQueryString(

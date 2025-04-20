@@ -2,6 +2,8 @@ type UsersQueryAction = {
     setCurrentPage: "setCurrentPage";
     setIsError: "setIsError";
     setIsLoading: "setIsLoading";
+    setNewQueryFlag: "setNewQueryFlag";
+    setPages: "setPages";
     setQueryString: "setQueryString";
     setResourceData: "setResourceData";
     setTotalDocuments: "setTotalDocuments";
@@ -11,6 +13,8 @@ const usersQueryAction: UsersQueryAction = {
     setCurrentPage: "setCurrentPage",
     setIsError: "setIsError",
     setIsLoading: "setIsLoading",
+    setNewQueryFlag: "setNewQueryFlag",
+    setPages: "setPages",
     setQueryString: "setQueryString",
     setResourceData: "setResourceData",
     setTotalDocuments: "setTotalDocuments",
