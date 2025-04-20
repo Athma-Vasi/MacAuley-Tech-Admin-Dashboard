@@ -18,11 +18,8 @@ import { createQueryString } from "./utils";
 type QueryProps = {
     collectionName: string;
     hideProjection?: boolean;
-    // this components output is the query string used to fetch data
     parentAction: Record<string, string>;
-    parentDispatch: React.Dispatch<
-        any
-    >;
+    parentDispatch: React.Dispatch<{ action: string; payload: unknown }>;
     queryTemplates: Array<QueryTemplate>;
 };
 
@@ -55,6 +52,8 @@ function Query({
         sortField,
     } = queryState;
 
+    // this components output is the query string used to fetch data
+    // and the newQueryFlag is set to true whenever the query string changes
     useEffect(() => {
         const queryString = createQueryString(queryState);
 
