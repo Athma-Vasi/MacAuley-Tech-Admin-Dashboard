@@ -1,9 +1,11 @@
-import { Group, Text, Title } from "@mantine/core";
+import { Box, Group, Text, Title } from "@mantine/core";
 import {
+    COLORS_SWATCHES,
     RESOURCES_DATE_FIELDS,
     RESOURCES_IMAGE_URL_FIELDS,
 } from "../../constants";
-import { formatDate, splitCamelCase } from "../../utils";
+import { useGlobalState } from "../../hooks/useGlobalState";
+import { formatDate, returnThemeColors, splitCamelCase } from "../../utils";
 import AccessibleImage from "../accessibleInputs/AccessibleImage";
 
 type DisplayResourceProps = {
@@ -14,6 +16,13 @@ type DisplayResourceProps = {
 function DisplayResource(
     { resourceData, totalDocuments }: DisplayResourceProps,
 ) {
+    const { globalState: { themeObject } } = useGlobalState();
+
+    const { bgGradient } = returnThemeColors({
+        colorsSwatches: COLORS_SWATCHES,
+        themeObject,
+    });
+
     const resourcesCards = (
         <div className="resource-cards-container">
             {resourceData.map((resource, resourceIndex) => {
@@ -62,12 +71,12 @@ function DisplayResource(
                                                 : "odd"
                                         }`}
                                     >
-                                        <span className="resource-key">
+                                        <div className="resource-key">
                                             {splitCamelCase(key)}
-                                        </span>
-                                        <span className="resource-value">
+                                        </div>
+                                        <div className="resource-value">
                                             {resourceValue}
-                                        </span>
+                                        </div>
                                     </div>
                                 );
                             },
@@ -82,7 +91,7 @@ function DisplayResource(
     const resources = resourcesCards;
 
     return (
-        <div className="display-resource-container">
+        <Box bg={bgGradient} className="display-resource-container">
             <Group w="100%" position="apart">
                 <Title order={3} className="resource-title">
                     Resources
@@ -91,7 +100,7 @@ function DisplayResource(
                 <Text>Total Documents: {totalDocuments}</Text>
             </Group>
             <div className="resources-content">{resources}</div>
-        </div>
+        </Box>
     );
 }
 

@@ -1,8 +1,14 @@
-import { Loader, Pagination, Stack } from "@mantine/core";
+import { Box, Loader, Pagination } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
-import { API_URL, FETCH_REQUEST_TIMEOUT } from "../../constants";
+import {
+    API_URL,
+    COLORS_SWATCHES,
+    FETCH_REQUEST_TIMEOUT,
+} from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
+import { useGlobalState } from "../../hooks/useGlobalState";
+import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { Query } from "../query/Query";
 import { usersQueryAction } from "./actions";
@@ -21,6 +27,13 @@ function UsersQuery({}: UsersQueryProps) {
         usersQueryState,
         usersQueryDispatch,
     ] = useReducer(usersQueryReducer, initialUsersQueryState);
+
+    const { globalState: { themeObject } } = useGlobalState();
+
+    const { bgGradient } = returnThemeColors({
+        colorsSwatches: COLORS_SWATCHES,
+        themeObject,
+    });
 
     const fetchAbortControllerRef = useRef<AbortController | null>(null);
     const isComponentMountedRef = useRef(false);
@@ -114,13 +127,13 @@ function UsersQuery({}: UsersQueryProps) {
     );
 
     return (
-        <Stack>
+        <Box className="users-query-container" bg={bgGradient}>
             {queryComponent}
             {submitButton}
             {pagination}
             {isLoading ? <Loader size="lg" /> : null}
             {displayResource}
-        </Stack>
+        </Box>
     );
 }
 
