@@ -600,6 +600,19 @@ const REPAIR_URL = `${METRICS_URL}/repairs`;
 const OVERLAY_OPACITY = 0.05;
 const OVERLAY_BLUR = 3;
 
+// all fields of all resources that are date fields
+// used in displayResource to format date fields
+const RESOURCES_DATE_FIELDS = new Set([
+  "createdAt",
+  "updatedAt",
+]);
+
+// all fields of all resources that are image fields
+// used in displayResource to format image fields
+const RESOURCES_IMAGE_URL_FIELDS = new Set([
+  "profilePictureUrl",
+]);
+
 export {
   ALL_STORE_LOCATIONS_DATA,
   API_URL,
@@ -633,6 +646,8 @@ export {
   PROVINCES,
   REGISTER_URL,
   REPAIR_URL,
+  RESOURCES_DATE_FIELDS,
+  RESOURCES_IMAGE_URL_FIELDS,
   SCREENSHOT_IMAGE_TYPE_DATA,
   STATES_US,
   STORE_LOCATIONS,

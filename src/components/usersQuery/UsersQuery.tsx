@@ -1,4 +1,4 @@
-import { Pagination, Stack } from "@mantine/core";
+import { Loader, Pagination, Stack } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { API_URL, FETCH_REQUEST_TIMEOUT } from "../../constants";
@@ -7,6 +7,7 @@ import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { Query } from "../query/Query";
 import { usersQueryAction } from "./actions";
 import { USER_QUERY_TEMPLATES } from "./constants";
+import DisplayResource from "./DisplayResource";
 import { handleUsersQuerySubmitGET } from "./handlers";
 import { usersQueryReducer } from "./reducers";
 import { initialUsersQueryState } from "./state";
@@ -62,11 +63,11 @@ function UsersQuery({}: UsersQueryProps) {
                     await handleUsersQuerySubmitGET({
                         accessToken,
                         authDispatch,
+                        currentPage,
                         dispatch: usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
                         newQueryFlag,
-                        pages,
                         queryString,
                         showBoundary,
                         totalDocuments,
@@ -83,6 +84,13 @@ function UsersQuery({}: UsersQueryProps) {
             parentAction={usersQueryAction}
             parentDispatch={usersQueryDispatch}
             queryTemplates={USER_QUERY_TEMPLATES}
+        />
+    );
+
+    const displayResource = (
+        <DisplayResource
+            resourceData={resourceData}
+            totalDocuments={totalDocuments}
         />
     );
 
@@ -110,6 +118,8 @@ function UsersQuery({}: UsersQueryProps) {
             {queryComponent}
             {submitButton}
             {pagination}
+            {isLoading ? <Loader size="lg" /> : null}
+            {displayResource}
         </Stack>
     );
 }

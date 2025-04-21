@@ -18,8 +18,9 @@ import { createQueryString } from "./utils";
 type QueryProps = {
     collectionName: string;
     hideProjection?: boolean;
+    /** must have keys setQueryString and setNewQueryFlag */
     parentAction: Record<string, string>;
-    parentDispatch: React.Dispatch<{ action: string; payload: unknown }>;
+    parentDispatch: React.Dispatch<any>;
     queryTemplates: Array<QueryTemplate>;
 };
 

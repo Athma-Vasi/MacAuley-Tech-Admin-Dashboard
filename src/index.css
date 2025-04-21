@@ -5,6 +5,7 @@
   --column-gap: 1em;
   --border: 1px solid hsla(0, 0%, 0%, 0.17);
   --border-radius: 0.38em;
+  --entry-odd-background: hsla(0, 0%, 0%, 0.04);
 
   --app-header-height: 70px;
   --dashboard-header-height: 130px;
@@ -39,6 +40,15 @@
     var(--min-card-width),
     var(--ideal-card-width),
     var(--max-card-width)
+  );
+
+  --min-resource-card-width: calc(275px - var(--padding-x2));
+  --ideal-resource-card-width: calc(100% - var(--padding-x2));
+  --max-resource-card-width: 640px;
+  --resource-card-width: clamp(
+    var(--min-resource-card-width),
+    var(--ideal-resource-card-width),
+    var(--max-resource-card-width)
   );
 
   --statistics-card-width: clamp(
@@ -335,6 +345,51 @@
     padding: var(--sidebar-padding);
   }
   .sidebar {}
+}
+
+.display-resource-container {
+  .resources-content {
+    .resource-cards-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: var(--padding);
+      gap: var(--padding);
+
+      .resource {
+        width: var(--resource-card-width);
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        border-radius: var(--border-radius);
+        border: var(--border);
+        transition: all 0.17s ease-in-out;
+
+        .resource-item.odd {
+          background: var(--entry-odd-background);
+        }
+
+        .resource-item {
+          display: grid;
+          grid-template-columns: 4fr 7fr;
+          padding: 0.25em var(--padding);
+          gap: 1em;
+          width: 100%;
+          border-radius: var(--border-radius);
+          transition: all 0.17s ease-in-out;
+
+          .resource-key {}
+
+          .resource-value {
+            text-wrap: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+          }
+        }
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 775px) {

@@ -8,11 +8,11 @@ async function handleUsersQuerySubmitGET(
     {
         accessToken,
         authDispatch,
+        currentPage,
         dispatch,
         fetchAbortControllerRef,
         isComponentMountedRef,
         newQueryFlag,
-        pages,
         queryString,
         showBoundary,
         totalDocuments,
@@ -20,13 +20,13 @@ async function handleUsersQuerySubmitGET(
     }: {
         accessToken: string;
         authDispatch: React.Dispatch<AuthDispatch>;
+        currentPage: number;
         dispatch: React.Dispatch<any>;
         fetchAbortControllerRef: React.RefObject<
             AbortController | null
         >;
         isComponentMountedRef: React.RefObject<boolean>;
         newQueryFlag: boolean;
-        pages: number;
         queryString: string;
         totalDocuments: number;
         showBoundary: (error: unknown) => void;
@@ -53,7 +53,7 @@ async function handleUsersQuerySubmitGET(
     };
 
     const urlWithQuery = new URL(
-        `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=true`,
+        `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}`,
     );
 
     dispatch({
@@ -148,18 +148,11 @@ async function handleUsersQuerySubmitGET(
             payload: decodedToken,
         });
 
-        const [userDocument] = serverResponse.data;
-
-        if (userDocument === undefined) {
-            showBoundary(
-                new Error("No data returned from server"),
-            );
-            return;
-        }
+        const userDocuments = serverResponse.data;
 
         dispatch({
             action: usersQueryAction.setResourceData,
-            payload: [userDocument],
+            payload: userDocuments,
         });
 
         dispatch({
