@@ -6,6 +6,7 @@ import { QuerySearch } from "./QuerySearch";
 import { queryReducer } from "./reducers";
 
 import { Group } from "@mantine/core";
+import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { queryAction } from "./actions";
 import { LIMIT_PER_PAGE_DATA, QUERY_KIND_DATA } from "./constants";
@@ -181,11 +182,27 @@ function Query({
         />
     );
 
+    const refreshButton = (
+        <AccessibleButton
+            attributes={{
+                kind: "refresh",
+                enabledScreenreaderText: "Reset query to initial",
+                onClick: async () => {
+                    queryDispatch({
+                        action: queryAction.resetToInitial,
+                        payload: initialQueryState,
+                    });
+                },
+            }}
+        />
+    );
+
     return (
         <div className="query-container">
-            <Group w="100%" position="left" p="md">
+            <Group w="100%" position="left" p="md" align="flex-end">
                 {limitPerPageSelectInput}
                 {queryKindSelectInput}
+                {refreshButton}
             </Group>
 
             {queryChain}

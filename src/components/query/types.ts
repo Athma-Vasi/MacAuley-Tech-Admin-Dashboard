@@ -128,6 +128,10 @@ type ModifyQueryChainPayload = {
 
 type QueryDispatch =
     | {
+        action: QueryAction["resetToInitial"];
+        payload: QueryState;
+    }
+    | {
         action: QueryAction["setProjectionFields"];
         payload: string[];
     }

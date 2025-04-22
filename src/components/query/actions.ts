@@ -1,4 +1,5 @@
 type QueryAction = {
+    resetToInitial: "resetToInitial";
     setSortField: "setSortField";
     setSortDirection: "setSortDirection";
     setProjectionFields: "setProjectionFields";
@@ -17,6 +18,7 @@ type QueryAction = {
 };
 
 const queryAction: QueryAction = {
+    resetToInitial: "resetToInitial",
     setSortField: "setSortField",
     setSortDirection: "setSortDirection",
     setProjectionFields: "setProjectionFields",

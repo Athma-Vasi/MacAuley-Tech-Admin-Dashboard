@@ -65,21 +65,6 @@ function UsersQuery({}: UsersQueryProps) {
 
     console.log("UsersQuery State", usersQueryState);
 
-    const refreshButton = (
-        <AccessibleButton
-            attributes={{
-                kind: "refresh",
-                enabledScreenreaderText: "Refresh query",
-                onClick: async () => {
-                    usersQueryDispatch({
-                        action: usersQueryAction.resetToInitial,
-                        payload: initialUsersQueryState,
-                    });
-                },
-            }}
-        />
-    );
-
     const submitButton = (
         <AccessibleButton
             attributes={{
@@ -109,8 +94,7 @@ function UsersQuery({}: UsersQueryProps) {
     );
 
     const buttons = (
-        <Group w="100%" position="apart" px="md">
-            {refreshButton}
+        <Group w="100%" position="center" px="md">
             {submitButton}
         </Group>
     );
@@ -218,9 +202,11 @@ function UsersQuery({}: UsersQueryProps) {
             </Text>
             {queryComponent}
             {buttons}
-            <Space h="xl" />
+            <Space h="md" />
             {pagination}
+            <Space h="md" />
             {displayResource}
+            <Space h="md" />
             {pagination}
         </Box>
     );

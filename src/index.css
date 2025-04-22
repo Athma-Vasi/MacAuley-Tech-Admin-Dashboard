@@ -73,6 +73,7 @@
   --max-pie-chart-width: --min-summary-card-width: calc(250px -
     var(--padding-x2));
 
+  --min-summary-card-width: calc(250px - var(--padding-x2));
   --ideal-summary-card-width: calc(100% - var(--padding-x2));
   --max-summary-card-width: calc(300px + var(--padding-x2));
   --summary-card-width: clamp(
@@ -986,6 +987,40 @@
 
       .display-resource-container {
         width: 100%;
+
+        .resource-table-container {
+          width: min(var(--app-width), calc(100vw - var(--padding-x2)));
+          overflow-x: scroll;
+          outline: 1px solid teal;
+
+          .table-header {
+            .header-item {
+              .resource-key-icons {
+                display: flex;
+                flex-direction: column;
+                width: fit-content;
+              }
+
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: flex-start;
+              align-items: center;
+              /* width: clamp(150px, 100%, 250px); */
+              min-width: 175px;
+              max-width: 275px;
+              gap: var(--padding);
+
+              outline: 1px solid salmon;
+            }
+          }
+
+          .table-body {
+            .table-value {
+              /* outline: 1px solid forestgreen; */
+              padding: 0px var(--padding);
+            }
+          }
+        }
 
         .resource-cards-container {
           display: flex;

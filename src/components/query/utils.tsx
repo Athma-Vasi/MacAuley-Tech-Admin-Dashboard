@@ -1,8 +1,9 @@
-import { Flex, Stack, Text, Title } from "@mantine/core";
+import { Flex, Group, Stack, Text, Title, Tooltip } from "@mantine/core";
 
 import type { CheckboxRadioSelectData, Validation } from "../../types";
 import { ValidationKey } from "../../validations";
 
+import { TbLogicAnd, TbLogicNor, TbLogicOr } from "react-icons/tb";
 import { splitCamelCase } from "../../utils";
 import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
@@ -10,7 +11,9 @@ import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInpu
 import { QueryAction } from "./actions";
 import {
     InputKind,
+    LogicalOperator,
     MongoQueryOperator,
+    QueryChainKind,
     QueryDispatch,
     QueryOperator,
     QueryState,
@@ -606,6 +609,90 @@ const PROJECTION_HELP_MODAL_CONTENT = (
     </Flex>
 );
 
+function returnTimelineBullet(
+    {
+        linkIndex,
+        logicalOperator,
+        queryAction,
+        queryChainKind,
+        queryDispatch,
+        queryLinkStatement,
+        textColorSliderLabel,
+    }: {
+        linkIndex: number;
+        logicalOperator: LogicalOperator;
+        queryAction: QueryAction;
+        queryChainKind: QueryChainKind;
+        queryDispatch: React.Dispatch<
+            QueryDispatch
+        >;
+        queryLinkStatement: string;
+        textColorSliderLabel: string;
+    },
+) {
+    function handleIconClick() {
+        queryDispatch({
+            action: queryAction
+                .modifyQueryChains,
+            payload: {
+                index: linkIndex,
+                logicalOperator,
+                queryChainActions: "delete",
+                queryChainKind,
+                queryLink: [
+                    "",
+                    "equal to",
+                    "",
+                ],
+            },
+        });
+    }
+
+    const tooltipLabel = (
+        <Text color={textColorSliderLabel}>
+            Delete link: {queryLinkStatement}
+        </Text>
+    );
+
+    return logicalOperator === "and"
+        ? (
+            <Tooltip label={tooltipLabel}>
+                <Group>
+                    <TbLogicAnd
+                        onClick={() => handleIconClick()}
+                        size={20}
+                        style={{
+                            cursor: "pointer",
+                        }}
+                    />
+                </Group>
+            </Tooltip>
+        )
+        : logicalOperator === "nor"
+        ? (
+            <Tooltip label={tooltipLabel}>
+                <TbLogicNor
+                    onClick={() => handleIconClick()}
+                    size={20}
+                    style={{
+                        cursor: "pointer",
+                    }}
+                />
+            </Tooltip>
+        )
+        : (
+            <Tooltip label={tooltipLabel}>
+                <TbLogicOr
+                    onClick={() => handleIconClick()}
+                    size={20}
+                    style={{
+                        cursor: "pointer",
+                    }}
+                />
+            </Tooltip>
+        );
+}
+
 export {
     createDynamicInput,
     createQueryString,
@@ -617,6 +704,7 @@ export {
     returnDefaultFilterValue,
     returnFilterSelectData,
     returnSortableQueryFields,
+    returnTimelineBullet,
     SEARCH_CHAIN_HELP_MODAL_CONTENT,
     SORT_HELP_MODAL_CONTENT,
 };

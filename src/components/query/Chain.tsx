@@ -1,20 +1,16 @@
 import { Group, Stack, Text, Timeline } from "@mantine/core";
 import type React from "react";
-import {
-    TbLink,
-    TbLogicAnd,
-    TbLogicNor,
-    TbLogicNot,
-    TbLogicOr,
-} from "react-icons/tb";
+import { TbLink, TbLogicNot } from "react-icons/tb";
 
+import { COLORS_SWATCHES } from "../../constants";
+import { useGlobalState } from "../../hooks/useGlobalState";
 import {
     addCommaSeparator,
     capitalizeJoinWithAnd,
     replaceLastCommaWithAnd,
+    returnThemeColors,
     splitCamelCase,
 } from "../../utils";
-import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { queryAction } from "./actions";
 import type {
     LogicalOperator,
@@ -23,6 +19,7 @@ import type {
     QueryDispatch,
     QueryState,
 } from "./types";
+import { returnTimelineBullet } from "./utils";
 
 type QueryChainProps = {
     collectionName: string;
@@ -33,6 +30,7 @@ type QueryChainProps = {
 function Chain(
     { collectionName, queryDispatch, queryState }: QueryChainProps,
 ) {
+    const { globalState: { themeObject } } = useGlobalState();
     const {
         generalSearchCase,
         generalSearchExclusionValue,
@@ -40,6 +38,11 @@ function Chain(
         projectionFields,
         queryChains,
     } = queryState;
+
+    const { textColorSliderLabel } = returnThemeColors({
+        colorsSwatches: COLORS_SWATCHES,
+        themeObject,
+    });
 
     const allChainsLength = Object.values(queryChains).reduce(
         (acc, logicalOperatorChainsMap) => {
@@ -90,181 +93,25 @@ function Chain(
                                             value,
                                         });
 
-                                    const deleteQueryLinkButton = (
-                                        <AccessibleButton
-                                            attributes={{
-                                                enabledScreenreaderText:
-                                                    `Delete link ${queryLinkStatement}`,
-                                                index: linkIndex,
-                                                kind: "delete",
-                                                setIconAsLabel: true,
-                                                onClick: (
-                                                    _event:
-                                                        | React.MouseEvent<
-                                                            HTMLButtonElement,
-                                                            MouseEvent
-                                                        >
-                                                        | React.PointerEvent<
-                                                            HTMLButtonElement
-                                                        >,
-                                                ) => {
-                                                    queryDispatch({
-                                                        action: queryAction
-                                                            .modifyQueryChains,
-                                                        payload: {
-                                                            index: linkIndex,
-                                                            logicalOperator,
-                                                            queryChainActions:
-                                                                "delete",
-                                                            queryChainKind,
-                                                            queryLink: [
-                                                                "",
-                                                                "equal to",
-                                                                "",
-                                                            ],
-                                                        },
-                                                    });
-                                                },
-                                            }}
-                                        />
+                                    const timelineBullet = returnTimelineBullet(
+                                        {
+                                            queryChainKind,
+                                            linkIndex,
+                                            logicalOperator,
+                                            queryAction,
+                                            queryDispatch,
+                                            queryLinkStatement,
+                                            textColorSliderLabel,
+                                        },
                                     );
-
-                                    // const insertQueryLinkButton = (
-                                    //   <AccessibleButton
-                                    //     attributes={{
-                                    //       disabled: linkIndex === MAX_LINKS_AMOUNT - 1,
-                                    //       disabledScreenreaderText: "Max query links amount reached",
-                                    //       enabledScreenreaderText: `Insert link before ${queryLinkStatement}`,
-                                    //       index: linkIndex,
-                                    //       kind: "insert",
-                                    //       setIconAsLabel: true,
-                                    //       onClick: (
-                                    //         _event:
-                                    //           | React.MouseEvent<HTMLButtonElement, MouseEvent>
-                                    //           | React.PointerEvent<HTMLButtonElement>
-                                    //       ) => {
-                                    //         queryDispatch({
-                                    //           action: queryAction.modifyQueryChains,
-                                    //           payload: {
-                                    //             index: linkIndex,
-                                    //             queryChainActions: "insert",
-                                    //             queryChainKind,
-                                    //             value: ["", "", ""],
-                                    //           },
-                                    //         });
-                                    //       },
-                                    //     }}
-                                    //   />
-                                    // );
-
-                                    const slideQueryChainUpButton = (
-                                        <AccessibleButton
-                                            attributes={{
-                                                disabled: linkIndex === 0,
-                                                disabledScreenreaderText:
-                                                    "Cannot move up. Already at the top",
-                                                enabledScreenreaderText:
-                                                    `Move link ${queryLinkStatement} up`,
-                                                index: linkIndex,
-                                                kind: "up",
-                                                setIconAsLabel: true,
-                                                onClick: (
-                                                    _event:
-                                                        | React.MouseEvent<
-                                                            HTMLButtonElement,
-                                                            MouseEvent
-                                                        >
-                                                        | React.PointerEvent<
-                                                            HTMLButtonElement
-                                                        >,
-                                                ) => {
-                                                    queryDispatch({
-                                                        action: queryAction
-                                                            .modifyQueryChains,
-                                                        payload: {
-                                                            index: linkIndex,
-                                                            logicalOperator,
-                                                            queryChainActions:
-                                                                "slideUp",
-                                                            queryChainKind,
-                                                            queryLink: [
-                                                                "",
-                                                                "equal to",
-                                                                "",
-                                                            ],
-                                                        },
-                                                    });
-                                                },
-                                            }}
-                                        />
-                                    );
-
-                                    const slideQueryChainDownButton = (
-                                        <AccessibleButton
-                                            attributes={{
-                                                disabled: linkIndex ===
-                                                    queryChain.length - 1,
-                                                disabledScreenreaderText:
-                                                    "Cannot move link down. Already at the bottom",
-                                                enabledScreenreaderText:
-                                                    `Move link ${queryLinkStatement} down`,
-                                                index: linkIndex,
-                                                kind: "down",
-                                                setIconAsLabel: true,
-                                                onClick: (
-                                                    _event:
-                                                        | React.MouseEvent<
-                                                            HTMLButtonElement,
-                                                            MouseEvent
-                                                        >
-                                                        | React.PointerEvent<
-                                                            HTMLButtonElement
-                                                        >,
-                                                ) => {
-                                                    queryDispatch({
-                                                        action: queryAction
-                                                            .modifyQueryChains,
-                                                        payload: {
-                                                            index: linkIndex,
-                                                            logicalOperator,
-                                                            queryChainActions:
-                                                                "slideDown",
-                                                            queryChainKind,
-                                                            queryLink: [
-                                                                "",
-                                                                "equal to",
-                                                                "",
-                                                            ],
-                                                        },
-                                                    });
-                                                },
-                                            }}
-                                        />
-                                    );
-
-                                    const buttons = (
-                                        <Group>
-                                            {deleteQueryLinkButton}
-                                            {/* {insertQueryLinkButton} */}
-                                            {slideQueryChainUpButton}
-                                            {slideQueryChainDownButton}
-                                        </Group>
-                                    );
-
-                                    const timelineBullet =
-                                        logicalOperator === "and"
-                                            ? <TbLogicAnd />
-                                            : logicalOperator === "nor"
-                                            ? <TbLogicNor />
-                                            : <TbLogicOr />;
 
                                     const timelineText = (
-                                        <Text>
-                                            {`${queryLinkStatement} ${
+                                        <Text size="md">
+                                            {`${queryLinkStatement}${
                                                 linkIndex ===
                                                         queryChain.length - 1
                                                     ? "."
-                                                    : logicalOperator
+                                                    : ` ${logicalOperator}`
                                             }`}
                                         </Text>
                                     );
@@ -273,9 +120,10 @@ function Chain(
                                         <Timeline.Item
                                             key={`chain-${chainsIndex}-map-${mapIndex}-link-${linkIndex.toString()}`}
                                             bullet={timelineBullet}
+                                            bulletSize={28}
                                         >
                                             {timelineText}
-                                            {buttons}
+                                            {/* {buttons} */}
                                         </Timeline.Item>
                                     );
                                 },
@@ -327,7 +175,7 @@ function Chain(
     const generalSearchExclusionLink = generalSearchExclusionValue.length === 0
         ? null
         : (
-            <Timeline.Item bullet={<TbLink />}>
+            <Timeline.Item bullet={<TbLink size={20} />} bulletSize={28}>
                 <Text>
                     {`${splitAndJoinedGeneralSearchExclusionValue} ${
                         generalSearchExclusionValue.split(" ").length > 1
@@ -341,7 +189,7 @@ function Chain(
     const generalSearchInclusionLink = generalSearchInclusionValue.length === 0
         ? null
         : (
-            <Timeline.Item bullet={<TbLink />}>
+            <Timeline.Item bullet={<TbLink size={20} />} bulletSize={28}>
                 <Text>
                     {`${splitAndJoinedGeneralSearchInclusionValue} ${
                         generalSearchInclusionValue.split(" ").length > 1
@@ -375,7 +223,7 @@ function Chain(
             );
 
     const projectionExclusionLink = (
-        <Timeline.Item bullet={<TbLogicNot />}>
+        <Timeline.Item bullet={<TbLogicNot size={20} />} bulletSize={28}>
             <Text>
                 {`${capitalizeJoinWithAnd(projectionFields)} excluded.`}
             </Text>
@@ -465,3 +313,167 @@ function createQueryLinkStatement({
 }
 
 export { Chain };
+
+// const deleteQueryLinkButton = (
+//     <AccessibleButton
+//         attributes={{
+//             enabledScreenreaderText:
+//                 `Delete link ${queryLinkStatement}`,
+//             index: linkIndex,
+//             kind: "delete",
+//             setIconAsLabel: true,
+//             onClick: (
+//                 _event:
+//                     | React.MouseEvent<
+//                         HTMLButtonElement,
+//                         MouseEvent
+//                     >
+//                     | React.PointerEvent<
+//                         HTMLButtonElement
+//                     >,
+//             ) => {
+//                 queryDispatch({
+//                     action: queryAction
+//                         .modifyQueryChains,
+//                     payload: {
+//                         index: linkIndex,
+//                         logicalOperator,
+//                         queryChainActions:
+//                             "delete",
+//                         queryChainKind,
+//                         queryLink: [
+//                             "",
+//                             "equal to",
+//                             "",
+//                         ],
+//                     },
+//                 });
+//             },
+//             size: "xs",
+//         }}
+//     />
+// );
+
+// const insertQueryLinkButton = (
+//   <AccessibleButton
+//     attributes={{
+//       disabled: linkIndex === MAX_LINKS_AMOUNT - 1,
+//       disabledScreenreaderText: "Max query links amount reached",
+//       enabledScreenreaderText: `Insert link before ${queryLinkStatement}`,
+//       index: linkIndex,
+//       kind: "insert",
+//       setIconAsLabel: true,
+//       onClick: (
+//         _event:
+//           | React.MouseEvent<HTMLButtonElement, MouseEvent>
+//           | React.PointerEvent<HTMLButtonElement>
+//       ) => {
+//         queryDispatch({
+//           action: queryAction.modifyQueryChains,
+//           payload: {
+//             index: linkIndex,
+//             queryChainActions: "insert",
+//             queryChainKind,
+//             value: ["", "", ""],
+//           },
+//         });
+//       },
+//     }}
+//   />
+// );
+
+// const slideQueryChainUpButton = (
+//     <AccessibleButton
+//         attributes={{
+//             disabled: linkIndex === 0,
+//             disabledScreenreaderText:
+//                 "Cannot move up. Already at the top",
+//             enabledScreenreaderText:
+//                 `Move link ${queryLinkStatement} up`,
+//             index: linkIndex,
+//             kind: "up",
+//             setIconAsLabel: true,
+//             onClick: (
+//                 _event:
+//                     | React.MouseEvent<
+//                         HTMLButtonElement,
+//                         MouseEvent
+//                     >
+//                     | React.PointerEvent<
+//                         HTMLButtonElement
+//                     >,
+//             ) => {
+//                 queryDispatch({
+//                     action: queryAction
+//                         .modifyQueryChains,
+//                     payload: {
+//                         index: linkIndex,
+//                         logicalOperator,
+//                         queryChainActions:
+//                             "slideUp",
+//                         queryChainKind,
+//                         queryLink: [
+//                             "",
+//                             "equal to",
+//                             "",
+//                         ],
+//                     },
+//                 });
+//             },
+//             size: "xs",
+//         }}
+//     />
+// );
+
+// const slideQueryChainDownButton = (
+//     <AccessibleButton
+//         attributes={{
+//             disabled: linkIndex ===
+//                 queryChain.length - 1,
+//             disabledScreenreaderText:
+//                 "Cannot move link down. Already at the bottom",
+//             enabledScreenreaderText:
+//                 `Move link ${queryLinkStatement} down`,
+//             index: linkIndex,
+//             kind: "down",
+//             setIconAsLabel: true,
+//             onClick: (
+//                 _event:
+//                     | React.MouseEvent<
+//                         HTMLButtonElement,
+//                         MouseEvent
+//                     >
+//                     | React.PointerEvent<
+//                         HTMLButtonElement
+//                     >,
+//             ) => {
+//                 queryDispatch({
+//                     action: queryAction
+//                         .modifyQueryChains,
+//                     payload: {
+//                         index: linkIndex,
+//                         logicalOperator,
+//                         queryChainActions:
+//                             "slideDown",
+//                         queryChainKind,
+//                         queryLink: [
+//                             "",
+//                             "equal to",
+//                             "",
+//                         ],
+//                     },
+//                 });
+//             },
+//             size: "xs",
+//         }}
+//     />
+// );
+
+// const buttons = (
+//     <Group>
+//         {deleteQueryLinkButton}
+//         {/* {insertQueryLinkButton} */}
+//         {slideQueryChainUpButton}
+//         {slideQueryChainDownButton}
+//     </Group>
+// );

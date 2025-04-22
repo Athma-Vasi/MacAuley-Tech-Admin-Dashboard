@@ -1,10 +1,4 @@
-import { Box, Group, Image, Overlay, Text, Title } from "@mantine/core";
-import {
-    TbArrowDown,
-    TbArrowUp,
-    TbChevronDown,
-    TbChevronUp,
-} from "react-icons/tb";
+import { Box, Group, Overlay, Table, Text, Title } from "@mantine/core";
 import {
     COLORS_SWATCHES,
     OVERLAY_BLUR,
@@ -13,8 +7,10 @@ import {
     RESOURCES_IMAGE_URL_FIELDS,
 } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import { formatDate, returnThemeColors, splitCamelCase } from "../../utils";
 import { SortDirection } from "../query/types";
+import { returnArrangeByIconsElement, returnImageDropdown } from "./utils";
 
 type DisplayResourceProps = {
     arrangeByDirection: SortDirection;
@@ -37,6 +33,7 @@ function DisplayResource(
         totalDocuments,
     }: DisplayResourceProps,
 ) {
+    const { windowWidth } = useWindowSize();
     const { globalState: { themeObject } } = useGlobalState();
 
     const { themeColorShade, bgGradient, textColor } = returnThemeColors({
@@ -51,24 +48,24 @@ function DisplayResource(
                     <div className="resource">
                         {Object.entries(resource).map(
                             ([key, value], entryIndex) => {
-                                const isFieldAnUrl = RESOURCES_IMAGE_URL_FIELDS
-                                    .has(key);
+                                const isFieldAnImageUrl =
+                                    RESOURCES_IMAGE_URL_FIELDS
+                                        .has(key);
                                 const isFieldADate = RESOURCES_DATE_FIELDS.has(
                                     key,
                                 );
 
-                                const resourceValue = isFieldAnUrl
-                                    ? (
-                                        <Image
-                                            alt="Resource Photo"
-                                            fit="cover"
-                                            height={96}
-                                            aria-label="Resource Photo"
-                                            radius={9999}
-                                            src={value?.toString() ?? ""}
-                                            width={96}
-                                        />
-                                    )
+                                const imageDropdown = returnImageDropdown({
+                                    alt: "Resource Photo",
+                                    fit: "cover",
+                                    height: 96,
+                                    radius: 9999,
+                                    src: value?.toString() ?? "",
+                                    width: 96,
+                                });
+
+                                const resourceValue = isFieldAnImageUrl
+                                    ? imageDropdown
                                     : isFieldADate
                                     ? formatDate({
                                         date: value?.toString() ?? "",
@@ -76,99 +73,16 @@ function DisplayResource(
                                     : value?.toString() ??
                                         "Unknown";
 
-                                const isAscActive = key === arrangeByField &&
-                                    arrangeByDirection ===
-                                        "ascending";
-                                const isDescActive = key === arrangeByField &&
-                                    arrangeByDirection ===
-                                        "descending";
-
-                                function handleAscUpIconClick(
-                                    _event: React.MouseEvent<
-                                        SVGElement,
-                                        MouseEvent
-                                    >,
-                                ) {
-                                    parentDispatch({
-                                        action: parentAction.setArrangeByField,
-                                        payload: key,
+                                const arrangeByIconsElement =
+                                    returnArrangeByIconsElement({
+                                        arrangeByDirection,
+                                        arrangeByField,
+                                        key,
+                                        parentAction,
+                                        parentDispatch,
+                                        textColor,
+                                        themeColorShade,
                                     });
-
-                                    parentDispatch({
-                                        action:
-                                            parentAction.setArrangeByDirection,
-                                        payload: "ascending",
-                                    });
-                                }
-                                function handleDescDownIconClick(
-                                    _event: React.MouseEvent<
-                                        SVGElement,
-                                        MouseEvent
-                                    >,
-                                ) {
-                                    parentDispatch({
-                                        action: parentAction.setArrangeByField,
-                                        payload: key,
-                                    });
-
-                                    parentDispatch({
-                                        action:
-                                            parentAction.setArrangeByDirection,
-                                        payload: "descending",
-                                    });
-                                }
-
-                                const arrangeByIcons = (
-                                    <div className="resource-key-icons">
-                                        {isAscActive
-                                            ? (
-                                                <TbArrowUp
-                                                    color={isAscActive
-                                                        ? themeColorShade
-                                                        : textColor}
-                                                    onClick={handleAscUpIconClick}
-                                                    size={20}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                    }}
-                                                />
-                                            )
-                                            : (
-                                                <TbChevronUp
-                                                    color={textColor}
-                                                    onClick={handleAscUpIconClick}
-                                                    size={20}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                    }}
-                                                />
-                                            )}
-
-                                        {isDescActive
-                                            ? (
-                                                <TbArrowDown
-                                                    color={isDescActive
-                                                        ? themeColorShade
-                                                        : textColor}
-                                                    onClick={handleDescDownIconClick}
-                                                    size={20}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                    }}
-                                                />
-                                            )
-                                            : (
-                                                <TbChevronDown
-                                                    color={textColor}
-                                                    onClick={handleDescDownIconClick}
-                                                    size={20}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                    }}
-                                                />
-                                            )}
-                                    </div>
-                                );
 
                                 return (
                                     <div
@@ -180,8 +94,14 @@ function DisplayResource(
                                         }`}
                                     >
                                         <div className="resource-key">
-                                            {arrangeByIcons}
-                                            {splitCamelCase(key)}
+                                            {arrangeByIconsElement}
+                                            <Text
+                                                color={key === arrangeByField
+                                                    ? themeColorShade
+                                                    : textColor}
+                                            >
+                                                {splitCamelCase(key)}
+                                            </Text>
                                         </div>
                                         <div className="resource-value">
                                             {resourceValue}
@@ -195,9 +115,180 @@ function DisplayResource(
             })}
         </div>
     );
-    const resourcesTable = <></>;
 
-    const resources = resourcesCards;
+    const tableHeaderRow = resourceData.length === 0
+        ? null
+        : (
+            <thead className="table-header">
+                <tr>
+                    {Object.keys(resourceData[0]).map((key, index) => {
+                        const arrangeByIconsElement =
+                            returnArrangeByIconsElement({
+                                arrangeByDirection,
+                                arrangeByField,
+                                key,
+                                parentAction,
+                                parentDispatch,
+                                textColor,
+                                themeColorShade,
+                            });
+
+                        return (
+                            <th key={`${key}-${index}`}>
+                                <div className="header-item">
+                                    {arrangeByIconsElement}
+                                    <Text
+                                        color={key === arrangeByField
+                                            ? themeColorShade
+                                            : textColor}
+                                    >
+                                        {splitCamelCase(key)}
+                                    </Text>
+                                </div>
+                            </th>
+                        );
+                    })}
+                </tr>
+            </thead>
+        );
+
+    const tableDataRows = resourceData.length === 0
+        ? []
+        : resourceData.map((resource, resourceIndex) => {
+            return (
+                <tbody className="table-body" key={`${resourceIndex}`}>
+                    <tr>
+                        {Object.entries(resource).map(
+                            ([key, value], entryIndex) => {
+                                const isFieldAnImageUrl =
+                                    RESOURCES_IMAGE_URL_FIELDS
+                                        .has(key);
+                                const isFieldADate = RESOURCES_DATE_FIELDS.has(
+                                    key,
+                                );
+
+                                const imageDropdown = returnImageDropdown({
+                                    alt: "Resource Photo",
+                                    fit: "cover",
+                                    height: 48,
+                                    radius: 9999,
+                                    src: value?.toString() ?? "",
+                                    width: 48,
+                                });
+
+                                const resourceValue = isFieldAnImageUrl
+                                    ? imageDropdown
+                                    : isFieldADate
+                                    ? formatDate({
+                                        date: value?.toString() ?? "",
+                                    })
+                                    : value?.toString() ??
+                                        "Unknown";
+
+                                return (
+                                    <td
+                                        key={`${resourceIndex}-${entryIndex}-${key}`}
+                                    >
+                                        <div className="table-value">
+                                            <Text>{resourceValue}</Text>
+                                        </div>
+                                    </td>
+                                );
+                            },
+                        )}
+                    </tr>
+                </tbody>
+            );
+        });
+
+    const resourcesTable = resourceData.length === 0
+        ? []
+        : (
+            <div className="resource-table-container">
+                <Table
+                    striped
+                    highlightOnHover
+                    className="resource-table"
+                >
+                    {tableHeaderRow}
+                    {tableDataRows}
+                </Table>
+            </div>
+        );
+
+    // const tableHeaderRow = resourceData.length === 0
+    //     ? null
+    //     : (
+    //         <div className="table-header">
+    //             {Object.keys(resourceData[0]).map((key, index) => (
+    //                 <div
+    //                     key={`${key}-${index}`}
+    //                     className="resource-item"
+    //                 >
+    //                     {splitCamelCase(key)}
+    //                 </div>
+    //             ))}
+    //         </div>
+    //     );
+
+    // const tableDataRows = resourceData.length === 0
+    //     ? []
+    //     : resourceData.map((resource, resourceIndex) => {
+    //         return (
+    //             <div
+    //                 className="table-body"
+    //                 key={`${resourceIndex}`}
+    //             >
+    //                 {Object.entries(resource).map(
+    //                     ([key, value], entryIndex) => {
+    //                         const isFieldAnImageUrl = RESOURCES_IMAGE_URL_FIELDS
+    //                             .has(key);
+    //                         const isFieldADate = RESOURCES_DATE_FIELDS.has(
+    //                             key,
+    //                         );
+
+    //                         const resourceValue = isFieldAnImageUrl
+    //                             ? (
+    //                                 <Image
+    //                                     alt="Resource Photo"
+    //                                     fit="cover"
+    //                                     height={96}
+    //                                     aria-label="Resource Photo"
+    //                                     radius={9999}
+    //                                     src={value?.toString() ?? ""}
+    //                                     width={96}
+    //                                 />
+    //                             )
+    //                             : isFieldADate
+    //                             ? formatDate({
+    //                                 date: value?.toString() ?? "",
+    //                             })
+    //                             : value?.toString() ??
+    //                                 "Unknown";
+
+    //                         return (
+    //                             <div
+    //                                 key={`${resourceIndex}-${entryIndex}-${key}`}
+    //                                 className={`resource-item ${
+    //                                     entryIndex % 2 === 0 ? "even" : "odd"
+    //                                 }`}
+    //                             >
+    //                                 {resourceValue}
+    //                             </div>
+    //                         );
+    //                     },
+    //                 )}
+    //             </div>
+    //         );
+    //     });
+    // const resourcesTable = (
+    //     <div className="resource-table">
+    //         {tableHeaderRow}
+    //         {tableDataRows}
+    //     </div>
+    // );
+
+    const resources = windowWidth < 1300 ? resourcesCards : resourcesTable;
 
     return (
         <Box
@@ -215,6 +306,7 @@ function DisplayResource(
             {isLoading
                 ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
                 : null}
+
             {resourceData.length === 0
                 ? <Text pl="md">No documents found</Text>
                 : resources}
