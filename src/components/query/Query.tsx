@@ -146,30 +146,6 @@ function Query({
         ? queryProjection
         : querySort;
 
-    // const queryAccordion = (
-    //     <Accordion>
-    //         <Accordion.Item value="Filter">
-    //             <Accordion.Control>Filter</Accordion.Control>
-    //             <Accordion.Panel>{queryFilter}</Accordion.Panel>
-    //         </Accordion.Item>
-
-    //         <Accordion.Item value="Search">
-    //             <Accordion.Control>Search</Accordion.Control>
-    //             <Accordion.Panel>{querySearch}</Accordion.Panel>
-    //         </Accordion.Item>
-
-    //         <Accordion.Item value="Projection">
-    //             <Accordion.Control>Projection</Accordion.Control>
-    //             <Accordion.Panel>{queryProjection}</Accordion.Panel>
-    //         </Accordion.Item>
-
-    //         <Accordion.Item value="Sort">
-    //             <Accordion.Control>Sort</Accordion.Control>
-    //             <Accordion.Panel>{querySort}</Accordion.Panel>
-    //         </Accordion.Item>
-    //     </Accordion>
-    // );
-
     const limitPerPageSelectInput = (
         <AccessibleSelectInput
             attributes={{
@@ -197,7 +173,7 @@ function Query({
         />
     );
 
-    return (
+    const query = (
         <div className="query-container">
             <Group w="100%" position="left" p="md" align="flex-end">
                 {limitPerPageSelectInput}
@@ -210,6 +186,8 @@ function Query({
             {querySection}
         </div>
     );
+
+    return query;
 }
 
 export { Query };

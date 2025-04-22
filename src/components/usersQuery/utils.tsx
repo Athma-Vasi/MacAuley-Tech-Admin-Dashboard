@@ -1,10 +1,15 @@
-import { Image, ImageProps, Tooltip } from "@mantine/core";
+import { Image, ImageProps, Text, Tooltip } from "@mantine/core";
 import {
     TbArrowDown,
     TbArrowUp,
     TbChevronDown,
     TbChevronUp,
 } from "react-icons/tb";
+import {
+    RESOURCES_DATE_FIELDS,
+    RESOURCES_IMAGE_URL_FIELDS,
+} from "../../constants";
+import { formatDate, splitCamelCase } from "../../utils";
 import { SortDirection } from "../query/types";
 
 function returnArrangeByIconsElement(
@@ -155,4 +160,107 @@ function returnImageDropdown(
     );
 }
 
-export { returnArrangeByIconsElement, returnImageDropdown };
+function returnResourceCardElement(
+    {
+        arrangeByDirection,
+        arrangeByField,
+        hideIcons = false,
+        keyToHighlight,
+        parentAction,
+        parentDispatch,
+        resource,
+        resourceIndex,
+        textColor,
+        themeColorShade,
+    }: {
+        arrangeByDirection: SortDirection;
+        arrangeByField: string;
+        hideIcons?: boolean;
+        keyToHighlight?: string;
+        parentAction: Record<string, string>;
+        parentDispatch: React.Dispatch<any>;
+        resource: Record<string, unknown>;
+        resourceIndex: number;
+        textColor: string;
+        themeColorShade: string;
+    },
+) {
+    return (
+        <div className="resource">
+            {Object.entries(resource).map(
+                ([key, value], entryIndex) => {
+                    const isFieldAnImageUrl = RESOURCES_IMAGE_URL_FIELDS
+                        .has(key);
+                    const isFieldADate = RESOURCES_DATE_FIELDS.has(
+                        key,
+                    );
+
+                    const imageDropdown = returnImageDropdown({
+                        alt: "Resource Photo",
+                        fit: "cover",
+                        height: 96,
+                        radius: 9999,
+                        src: value?.toString() ?? "",
+                        width: 96,
+                    });
+
+                    const resourceValue = isFieldAnImageUrl
+                        ? imageDropdown
+                        : isFieldADate
+                        ? formatDate({
+                            date: value?.toString() ?? "",
+                        })
+                        : value?.toString() ??
+                            "Unknown";
+
+                    const arrangeByIconsElement = hideIcons
+                        ? null
+                        : returnArrangeByIconsElement({
+                            arrangeByDirection,
+                            arrangeByField,
+                            key,
+                            parentAction,
+                            parentDispatch,
+                            textColor,
+                            themeColorShade,
+                        });
+
+                    return (
+                        <div
+                            key={`${resourceIndex}-${entryIndex}-${key}`}
+                            className={`resource-item ${
+                                entryIndex % 2 === 0 ? "even" : "odd"
+                            }`}
+                        >
+                            <div className="resource-key">
+                                {arrangeByIconsElement}
+                                <Text
+                                    color={key === arrangeByField
+                                        ? themeColorShade
+                                        : textColor}
+                                >
+                                    {splitCamelCase(key)}
+                                </Text>
+                            </div>
+                            <div className="resource-value">
+                                <Text
+                                    color={key === keyToHighlight
+                                        ? themeColorShade
+                                        : textColor}
+                                >
+                                    {resourceValue}
+                                </Text>
+                            </div>
+                        </div>
+                    );
+                },
+            )}
+        </div>
+    );
+}
+
+export {
+    returnArrangeByIconsElement,
+    returnImageDropdown,
+    returnResourceCardElement,
+};

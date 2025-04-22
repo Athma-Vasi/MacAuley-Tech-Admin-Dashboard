@@ -1,4 +1,4 @@
-import { Box, Group, Pagination, Space, Text } from "@mantine/core";
+import { Accordion, Box, Group, Pagination, Space, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -99,51 +99,6 @@ function UsersQuery({}: UsersQueryProps) {
         </Group>
     );
 
-    // const arrangeByDirectionSelectInput = (
-    //     <AccessibleSelectInput
-    //         attributes={{
-    //             data: SORT_DIRECTION_DATA,
-    //             disabled: resourceData.length === 0,
-    //             name: "arrangeByDirection",
-    //             parentDispatch: usersQueryDispatch,
-    //             validValueAction: usersQueryAction
-    //                 .setArrangeByDirection,
-    //             value: arrangeByDirection,
-    //         }}
-    //     />
-    // );
-
-    // const userDocumentFields = USER_QUERY_TEMPLATES.reduce(
-    //     (acc, { name }) => {
-    //         acc.push(
-    //             {
-    //                 label: splitCamelCase(name),
-    //                 value: name as keyof UserDocument,
-    //             },
-    //         );
-    //         return acc;
-    //     },
-    //     [
-    //         { label: "Created At", value: "createdAt" },
-    //         { label: "Updated At", value: "updatedAt" },
-    //         { label: "_id", value: "_id" },
-    //         { label: "__v", value: "__v" },
-    //     ] as CheckboxRadioSelectData<keyof UserDocument>,
-    // );
-
-    // const arrangeByFieldSelectInput = (
-    //     <AccessibleSelectInput
-    //         attributes={{
-    //             data: userDocumentFields,
-    //             disabled: resourceData.length === 0,
-    //             name: "arrangeByField",
-    //             parentDispatch: usersQueryDispatch,
-    //             validValueAction: usersQueryAction.setArrangeByField,
-    //             value: arrangeByField,
-    //         }}
-    //     />
-    // );
-
     const queryComponent = (
         <Query
             collectionName="users"
@@ -151,6 +106,15 @@ function UsersQuery({}: UsersQueryProps) {
             parentDispatch={usersQueryDispatch}
             queryTemplates={USER_QUERY_TEMPLATES}
         />
+    );
+
+    const queryAccordion = (
+        <Accordion w="100%" defaultValue={"Query"}>
+            <Accordion.Item value="Query">
+                <Accordion.Control>Query</Accordion.Control>
+                <Accordion.Panel>{queryComponent}{buttons}</Accordion.Panel>
+            </Accordion.Item>
+        </Accordion>
     );
 
     const displayResource = (
@@ -161,6 +125,7 @@ function UsersQuery({}: UsersQueryProps) {
             parentAction={usersQueryAction}
             parentDispatch={usersQueryDispatch}
             resourceData={resourceData}
+            resourceName="User"
             totalDocuments={totalDocuments}
         />
     );
@@ -200,8 +165,7 @@ function UsersQuery({}: UsersQueryProps) {
             <Text size="lg" weight={500} mb="md">
                 Users Query
             </Text>
-            {queryComponent}
-            {buttons}
+            {queryAccordion}
             <Space h="md" />
             {pagination}
             <Space h="md" />

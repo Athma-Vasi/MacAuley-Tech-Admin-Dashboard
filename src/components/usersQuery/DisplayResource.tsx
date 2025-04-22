@@ -1,4 +1,5 @@
-import { Box, Group, Overlay, Table, Text, Title } from "@mantine/core";
+import { Box, Group, Modal, Overlay, Table, Text, Title } from "@mantine/core";
+import { useState } from "react";
 import {
     COLORS_SWATCHES,
     OVERLAY_BLUR,
@@ -10,7 +11,11 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { formatDate, returnThemeColors, splitCamelCase } from "../../utils";
 import { SortDirection } from "../query/types";
-import { returnArrangeByIconsElement, returnImageDropdown } from "./utils";
+import {
+    returnArrangeByIconsElement,
+    returnImageDropdown,
+    returnResourceCardElement,
+} from "./utils";
 
 type DisplayResourceProps = {
     arrangeByDirection: SortDirection;
@@ -19,6 +24,7 @@ type DisplayResourceProps = {
     parentAction: Record<string, string>;
     parentDispatch: React.Dispatch<any>;
     resourceData: Array<Record<string, unknown>>;
+    resourceName: string;
     totalDocuments: number;
 };
 
@@ -30,11 +36,19 @@ function DisplayResource(
         parentAction,
         parentDispatch,
         resourceData,
+        resourceName,
         totalDocuments,
     }: DisplayResourceProps,
 ) {
     const { windowWidth } = useWindowSize();
     const { globalState: { themeObject } } = useGlobalState();
+    const [modalState, setModalState] = useState(
+        false,
+    );
+    const [selectedDocument, setSelectedDocument] = useState<
+        Record<string, unknown>
+    >({});
+    const [keyToHighlight, setKeyToHighlight] = useState<string>("");
 
     const { themeColorShade, bgGradient, textColor } = returnThemeColors({
         colorsSwatches: COLORS_SWATCHES,
@@ -43,77 +57,51 @@ function DisplayResource(
 
     const resourcesCards = (
         <div className="resource-cards-container">
-            {resourceData.map((resource, resourceIndex) => {
-                return (
-                    <div className="resource">
-                        {Object.entries(resource).map(
-                            ([key, value], entryIndex) => {
-                                const isFieldAnImageUrl =
-                                    RESOURCES_IMAGE_URL_FIELDS
-                                        .has(key);
-                                const isFieldADate = RESOURCES_DATE_FIELDS.has(
-                                    key,
-                                );
-
-                                const imageDropdown = returnImageDropdown({
-                                    alt: "Resource Photo",
-                                    fit: "cover",
-                                    height: 96,
-                                    radius: 9999,
-                                    src: value?.toString() ?? "",
-                                    width: 96,
-                                });
-
-                                const resourceValue = isFieldAnImageUrl
-                                    ? imageDropdown
-                                    : isFieldADate
-                                    ? formatDate({
-                                        date: value?.toString() ?? "",
-                                    })
-                                    : value?.toString() ??
-                                        "Unknown";
-
-                                const arrangeByIconsElement =
-                                    returnArrangeByIconsElement({
-                                        arrangeByDirection,
-                                        arrangeByField,
-                                        key,
-                                        parentAction,
-                                        parentDispatch,
-                                        textColor,
-                                        themeColorShade,
-                                    });
-
-                                return (
-                                    <div
-                                        key={`${resourceIndex}-${entryIndex}-${key}`}
-                                        className={`resource-item ${
-                                            entryIndex % 2 === 0
-                                                ? "even"
-                                                : "odd"
-                                        }`}
-                                    >
-                                        <div className="resource-key">
-                                            {arrangeByIconsElement}
-                                            <Text
-                                                color={key === arrangeByField
-                                                    ? themeColorShade
-                                                    : textColor}
-                                            >
-                                                {splitCamelCase(key)}
-                                            </Text>
-                                        </div>
-                                        <div className="resource-value">
-                                            {resourceValue}
-                                        </div>
-                                    </div>
-                                );
-                            },
-                        )}
-                    </div>
-                );
-            })}
+            {resourceData.map((resource, resourceIndex) =>
+                returnResourceCardElement({
+                    resource,
+                    arrangeByDirection,
+                    arrangeByField,
+                    parentAction,
+                    parentDispatch,
+                    resourceIndex,
+                    textColor,
+                    themeColorShade,
+                })
+            )}
         </div>
+    );
+
+    const resourceModal = (
+        <Modal
+            centered
+            closeButtonProps={{ color: themeColorShade }}
+            opened={modalState}
+            onClose={() => setModalState((prevState) => !prevState)}
+            transitionProps={{
+                transition: "fade",
+                duration: 200,
+                timingFunction: "ease-in-out",
+            }}
+            maw={640}
+            miw={350}
+            title={<Title order={3}>{resourceName}</Title>}
+        >
+            <div className="resource-cards-container">
+                {returnResourceCardElement({
+                    resource: selectedDocument,
+                    arrangeByDirection,
+                    arrangeByField,
+                    hideIcons: true,
+                    keyToHighlight,
+                    parentAction,
+                    parentDispatch,
+                    resourceIndex: 0,
+                    textColor,
+                    themeColorShade,
+                })}
+            </div>
+        </Modal>
     );
 
     const tableHeaderRow = resourceData.length === 0
@@ -189,7 +177,16 @@ function DisplayResource(
                                     <td
                                         key={`${resourceIndex}-${entryIndex}-${key}`}
                                     >
-                                        <div className="table-value">
+                                        <div
+                                            className="table-value"
+                                            onClick={() => {
+                                                setModalState((prevState) =>
+                                                    !prevState
+                                                );
+                                                setSelectedDocument(resource);
+                                                setKeyToHighlight(key);
+                                            }}
+                                        >
                                             <Text>{resourceValue}</Text>
                                         </div>
                                     </td>
@@ -205,6 +202,7 @@ function DisplayResource(
         ? []
         : (
             <div className="resource-table-container">
+                {resourceModal}
                 <Table
                     striped
                     highlightOnHover

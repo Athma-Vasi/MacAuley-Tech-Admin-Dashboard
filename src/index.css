@@ -977,7 +977,7 @@
     width: 100%;
 
     .users-query-container {
-      width: 100%;
+      width: var(--app-width);
       display: flex;
       flex-direction: column;
       padding: var(--padding);
@@ -991,7 +991,6 @@
         .resource-table-container {
           width: min(var(--app-width), calc(100vw - var(--padding-x2)));
           overflow-x: scroll;
-          outline: 1px solid teal;
 
           .table-header {
             .header-item {
@@ -1009,8 +1008,6 @@
               min-width: 175px;
               max-width: 275px;
               gap: var(--padding);
-
-              outline: 1px solid salmon;
             }
           }
 
@@ -1018,6 +1015,7 @@
             .table-value {
               /* outline: 1px solid forestgreen; */
               padding: 0px var(--padding);
+              cursor: pointer;
             }
           }
         }
@@ -1194,6 +1192,68 @@
     }
     .statistics-card.c4 {
       grid-area: c4;
+    }
+  }
+}
+
+.resource-cards-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--padding);
+  gap: var(--padding);
+
+  .resource {
+    width: var(--resource-card-width);
+    display: flex;
+    flex-direction: column;
+    padding: var(--padding);
+    gap: var(--padding);
+    border-radius: var(--border-radius);
+    border: var(--border);
+    transition: all 0.17s ease-in-out;
+
+    .resource-item.odd {
+      background: var(--entry-odd-background);
+    }
+
+    .resource-item.highlighted {
+      border: var(--border);
+      border-radius: var(--border-radius);
+    }
+
+    .resource-item {
+      display: grid;
+      grid-template-columns: 4fr 7fr;
+      padding: 0.25em var(--padding);
+      gap: 1em;
+      width: 100%;
+      border-radius: var(--border-radius);
+      transition: all 0.17s ease-in-out;
+
+      .resource-key {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: left;
+        width: 100%;
+        gap: var(--padding);
+
+        .resource-key-icons {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+
+      .resource-value {
+        text-wrap: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        width: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
   }
 }
