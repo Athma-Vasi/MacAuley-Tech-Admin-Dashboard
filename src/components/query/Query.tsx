@@ -18,7 +18,7 @@ import { createQueryString } from "./utils";
 type QueryProps = {
     collectionName: string;
     hideProjection?: boolean;
-    /** must have keys setQueryString and setNewQueryFlag */
+    /** parentAction must have keys: setCurrentPage, setQueryString and setNewQueryFlag */
     parentAction: Record<string, string>;
     parentDispatch: React.Dispatch<any>;
     queryTemplates: Array<QueryTemplate>;
@@ -62,6 +62,11 @@ function Query({
         parentDispatch({
             action: parentAction.setQueryString,
             payload: queryString,
+        });
+
+        parentDispatch({
+            action: parentAction.setCurrentPage,
+            payload: 1,
         });
 
         parentDispatch({

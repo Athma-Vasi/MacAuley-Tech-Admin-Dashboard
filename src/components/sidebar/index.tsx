@@ -262,11 +262,13 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       {usersNavlink}
       <Space h="xl" />
       {logoutButton}
-      <Space h="xl" />
-      <Text size={18} weight={400}>
+
+      {
+        /* <Text size={18} weight={400}>
         Testing
-      </Text>
-      {testingNavlink}
+      </Text> */
+      }
+      {/* {testingNavlink} */}
     </Stack>
   );
 }

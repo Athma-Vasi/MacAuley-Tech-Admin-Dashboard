@@ -1,4 +1,4 @@
-import { Box, Group, Pagination, Text } from "@mantine/core";
+import { Box, Group, Pagination, Space, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -218,6 +218,7 @@ function UsersQuery({}: UsersQueryProps) {
             </Text>
             {queryComponent}
             {buttons}
+            <Space h="xl" />
             {pagination}
             {displayResource}
             {pagination}
