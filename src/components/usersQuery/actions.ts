@@ -1,4 +1,7 @@
 type UsersQueryAction = {
+    resetToInitial: "resetToInitial";
+    setArrangeByDirection: "setArrangeByDirection";
+    setArrangeByField: "setArrangeByField";
     setCurrentPage: "setCurrentPage";
     setIsError: "setIsError";
     setIsLoading: "setIsLoading";
@@ -10,6 +13,9 @@ type UsersQueryAction = {
 };
 
 const usersQueryAction: UsersQueryAction = {
+    resetToInitial: "resetToInitial",
+    setArrangeByDirection: "setArrangeByDirection",
+    setArrangeByField: "setArrangeByField",
     setCurrentPage: "setCurrentPage",
     setIsError: "setIsError",
     setIsLoading: "setIsLoading",

@@ -46,6 +46,7 @@ type ValidationKey =
   | "privacyConsent"
   | "profilePictureUrl"
   | "province"
+  | "queryKind"
   | "ramTiming"
   | "ramVoltage"
   | "roles"
@@ -362,13 +363,11 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
   ],
 
   orgId: [
-    [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [/^[0-9]+$/, "Must contain only numbers."],
     [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
   ],
 
   parentOrgId: [
-    [/^(?!^0*\.?0*$)/, "Must not consist entirely of zeroes."],
     [/^[0-9]+$/, "Must contain only numbers."],
     [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
   ],
@@ -419,6 +418,13 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     [
       /^(Not Applicable|Alberta|British Columbia|Manitoba|New Brunswick|Newfoundland and Labrador|Nova Scotia|Ontario|Prince Edward Island|Quebec|Saskatchewan|Northwest Territories|Nunavut|Yukon)$/,
       "Must be a valid Canadian province or territory.",
+    ],
+  ],
+
+  queryKind: [
+    [
+      /^(filter|sort|search|projection)$/,
+      "Must be a valid query kind.",
     ],
   ],
 

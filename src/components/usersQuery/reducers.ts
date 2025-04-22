@@ -1,3 +1,5 @@
+import { UserDocument } from "../../types";
+import { SortDirection } from "../query/types";
 import { UsersQueryAction, usersQueryAction } from "./actions";
 import { UsersQueryDispatch, UsersQueryState } from "./types";
 
@@ -13,6 +15,16 @@ const usersQueryReducers = new Map<
     UsersQueryAction[keyof UsersQueryAction],
     (state: UsersQueryState, dispatch: UsersQueryDispatch) => UsersQueryState
 >([
+    [usersQueryAction.resetToInitial, usersQueryReducer_resetToInitial],
+    [
+        usersQueryAction.setArrangeByDirection,
+        usersQueryReducer_setArrangeByDirection,
+    ],
+    [
+        usersQueryAction.setArrangeByDirection,
+        usersQueryReducer_setArrangeByDirection,
+    ],
+    [usersQueryAction.setArrangeByField, usersQueryReducer_setArrangeByField],
     [usersQueryAction.setCurrentPage, usersQueryReducer_setCurrentPage],
     [usersQueryAction.setIsError, usersQueryReducer_setIsError],
     [usersQueryAction.setIsLoading, usersQueryReducer_setIsLoading],
@@ -22,6 +34,50 @@ const usersQueryReducers = new Map<
     [usersQueryAction.setResourceData, usersQueryReducer_setResourceData],
     [usersQueryAction.setTotalDocuments, usersQueryReducer_setTotalDocuments],
 ]);
+
+function usersQueryReducer_resetToInitial(
+    state: UsersQueryState,
+    dispatch: UsersQueryDispatch,
+): UsersQueryState {
+    const initialState = dispatch.payload as UsersQueryState;
+    return { ...state, ...initialState };
+}
+
+function usersQueryReducer_setArrangeByDirection(
+    state: UsersQueryState,
+    dispatch: UsersQueryDispatch,
+): UsersQueryState {
+    const { arrangeByField, resourceData } = state;
+    const arrangeByDirection = dispatch.payload as SortDirection;
+    const cloned = structuredClone(resourceData);
+
+    const sorted = cloned.sort((a, b) => {
+        if (arrangeByDirection === "ascending") {
+            return a[arrangeByField] > b[arrangeByField] ? 1 : -1;
+        }
+        return a[arrangeByField] < b[arrangeByField] ? 1 : -1;
+    });
+
+    return { ...state, arrangeByDirection, resourceData: sorted };
+}
+
+function usersQueryReducer_setArrangeByField(
+    state: UsersQueryState,
+    dispatch: UsersQueryDispatch,
+): UsersQueryState {
+    const { arrangeByDirection, resourceData } = state;
+    const arrangeByField = dispatch.payload as keyof UserDocument;
+    const cloned = structuredClone(resourceData);
+
+    const sorted = cloned.sort((a, b) => {
+        if (arrangeByDirection === "ascending") {
+            return a[arrangeByField] > b[arrangeByField] ? 1 : -1;
+        }
+        return a[arrangeByField] < b[arrangeByField] ? 1 : -1;
+    });
+
+    return { ...state, arrangeByField, resourceData: sorted };
+}
 
 function usersQueryReducer_setCurrentPage(
     state: UsersQueryState,

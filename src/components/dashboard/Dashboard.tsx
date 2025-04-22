@@ -429,7 +429,7 @@ function Dashboard() {
     );
 
   const dashboard = (
-    <Box className="main" bg={bgGradient}>
+    <Box bg={bgGradient}>
       {windowWidth < MOBILE_BREAKPOINT
         ? dashboardHeaderAccordion
         : dashboardHeader}

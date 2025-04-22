@@ -1,4 +1,3 @@
-import { Accordion, Stack } from "@mantine/core";
 import React, { useEffect } from "react";
 
 import { Chain } from "./Chain";
@@ -6,9 +5,10 @@ import { QueryProjection } from "./QueryProjection";
 import { QuerySearch } from "./QuerySearch";
 import { queryReducer } from "./reducers";
 
+import { Group } from "@mantine/core";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { queryAction } from "./actions";
-import { LIMIT_PER_PAGE_DATA } from "./constants";
+import { LIMIT_PER_PAGE_DATA, QUERY_KIND_DATA } from "./constants";
 import { QueryFilter } from "./QueryFilter";
 import { QuerySort } from "./QuerySort";
 import { initialQueryState } from "./state";
@@ -48,6 +48,7 @@ function Query({
         isSearchDisabled,
         projectionFields,
         queryChains,
+        queryKind,
         limitPerPage,
         sortDirection,
         sortField,
@@ -119,29 +120,49 @@ function Query({
         />
     );
 
-    const queryAccordion = (
-        <Accordion>
-            <Accordion.Item value="Filter">
-                <Accordion.Control>Filter</Accordion.Control>
-                <Accordion.Panel>{queryFilter}</Accordion.Panel>
-            </Accordion.Item>
-
-            <Accordion.Item value="Search">
-                <Accordion.Control>Search</Accordion.Control>
-                <Accordion.Panel>{querySearch}</Accordion.Panel>
-            </Accordion.Item>
-
-            <Accordion.Item value="Projection">
-                <Accordion.Control>Projection</Accordion.Control>
-                <Accordion.Panel>{queryProjection}</Accordion.Panel>
-            </Accordion.Item>
-
-            <Accordion.Item value="Sort">
-                <Accordion.Control>Sort</Accordion.Control>
-                <Accordion.Panel>{querySort}</Accordion.Panel>
-            </Accordion.Item>
-        </Accordion>
+    const queryKindSelectInput = (
+        <AccessibleSelectInput
+            attributes={{
+                data: QUERY_KIND_DATA,
+                name: "queryKind",
+                parentDispatch: queryDispatch,
+                validValueAction: queryAction.setQueryKind,
+                value: queryKind,
+            }}
+        />
     );
+
+    const querySection = queryKind === "filter"
+        ? queryFilter
+        : queryKind === "search"
+        ? querySearch
+        : queryKind === "projection"
+        ? queryProjection
+        : querySort;
+
+    // const queryAccordion = (
+    //     <Accordion>
+    //         <Accordion.Item value="Filter">
+    //             <Accordion.Control>Filter</Accordion.Control>
+    //             <Accordion.Panel>{queryFilter}</Accordion.Panel>
+    //         </Accordion.Item>
+
+    //         <Accordion.Item value="Search">
+    //             <Accordion.Control>Search</Accordion.Control>
+    //             <Accordion.Panel>{querySearch}</Accordion.Panel>
+    //         </Accordion.Item>
+
+    //         <Accordion.Item value="Projection">
+    //             <Accordion.Control>Projection</Accordion.Control>
+    //             <Accordion.Panel>{queryProjection}</Accordion.Panel>
+    //         </Accordion.Item>
+
+    //         <Accordion.Item value="Sort">
+    //             <Accordion.Control>Sort</Accordion.Control>
+    //             <Accordion.Panel>{querySort}</Accordion.Panel>
+    //         </Accordion.Item>
+    //     </Accordion>
+    // );
 
     const limitPerPageSelectInput = (
         <AccessibleSelectInput
@@ -156,11 +177,16 @@ function Query({
     );
 
     return (
-        <Stack>
+        <div className="query-container">
+            <Group w="100%" position="left" p="md">
+                {limitPerPageSelectInput}
+                {queryKindSelectInput}
+            </Group>
+
             {queryChain}
-            {limitPerPageSelectInput}
-            {queryAccordion}
-        </Stack>
+
+            {querySection}
+        </div>
     );
 }
 

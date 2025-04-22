@@ -1,4 +1,4 @@
-import { Group, Modal, Stack, Text } from "@mantine/core";
+import { Group, Modal, Text } from "@mantine/core";
 import React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
@@ -171,17 +171,19 @@ function QuerySearch({
     );
 
     const generalSearchSection = (
-        <Stack>
+        <div className="query-search">
             <Text size="md">Search</Text>
             {caseSensitiveSegmentedControl}
-            {generalSearchInclusionTextInput}
-            {generalSearchExclusionTextInput}
-            <Group>
+            <Group w="100%" position="left">
+                {generalSearchInclusionTextInput}
+                {generalSearchExclusionTextInput}
+            </Group>
+            <Group w="100%" position="center">
                 {searchHelpButton}
                 {addSearchLinkButton}
                 {searchHelpModal}
             </Group>
-        </Stack>
+        </div>
     );
 
     return generalSearchSection;

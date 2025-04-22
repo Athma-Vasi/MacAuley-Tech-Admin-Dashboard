@@ -4,6 +4,7 @@ import type {
     LogicalOperator,
     ModifyQueryChainPayload,
     QueryDispatch,
+    QueryKind,
     QueryOperator,
     QueryState,
     SortDirection,
@@ -44,6 +45,7 @@ const queryReducers = new Map<
     [queryAction.setLimitPerPage, queryReducer_setLimitPerPage],
     [queryAction.setSortDirection, queryReducer_setSortDirection],
     [queryAction.setSortField, queryReducer_setSortField],
+    [queryAction.setQueryKind, queryReducer_setQueryKind],
 ]);
 
 function queryReducer_setProjectionFields(
@@ -290,6 +292,13 @@ function queryReducer_setSortField(
     dispatch: QueryDispatch,
 ): QueryState {
     return { ...state, sortField: dispatch.payload as string };
+}
+
+function queryReducer_setQueryKind(
+    state: QueryState,
+    dispatch: QueryDispatch,
+): QueryState {
+    return { ...state, queryKind: dispatch.payload as QueryKind };
 }
 
 export { queryReducer };

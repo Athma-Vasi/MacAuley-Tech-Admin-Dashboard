@@ -1,24 +1,45 @@
-import { Box, Group, Text, Title } from "@mantine/core";
+import { Box, Group, Image, Overlay, Text, Title } from "@mantine/core";
+import {
+    TbArrowDown,
+    TbArrowUp,
+    TbChevronDown,
+    TbChevronUp,
+} from "react-icons/tb";
 import {
     COLORS_SWATCHES,
+    OVERLAY_BLUR,
+    OVERLAY_OPACITY,
     RESOURCES_DATE_FIELDS,
     RESOURCES_IMAGE_URL_FIELDS,
 } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { formatDate, returnThemeColors, splitCamelCase } from "../../utils";
-import AccessibleImage from "../accessibleInputs/AccessibleImage";
+import { SortDirection } from "../query/types";
 
 type DisplayResourceProps = {
+    arrangeByDirection: SortDirection;
+    arrangeByField: string;
+    isLoading: boolean;
+    parentAction: Record<string, string>;
+    parentDispatch: React.Dispatch<any>;
     resourceData: Array<Record<string, unknown>>;
     totalDocuments: number;
 };
 
 function DisplayResource(
-    { resourceData, totalDocuments }: DisplayResourceProps,
+    {
+        arrangeByDirection,
+        arrangeByField,
+        isLoading,
+        parentAction,
+        parentDispatch,
+        resourceData,
+        totalDocuments,
+    }: DisplayResourceProps,
 ) {
     const { globalState: { themeObject } } = useGlobalState();
 
-    const { bgGradient } = returnThemeColors({
+    const { themeColorShade, bgGradient, textColor } = returnThemeColors({
         colorsSwatches: COLORS_SWATCHES,
         themeObject,
     });
@@ -30,37 +51,124 @@ function DisplayResource(
                     <div className="resource">
                         {Object.entries(resource).map(
                             ([key, value], entryIndex) => {
-                                const resourceValue =
-                                    RESOURCES_IMAGE_URL_FIELDS.has(key)
-                                        ? (
-                                            <AccessibleImage
-                                                attributes={{
-                                                    alt: "Resource Photo",
-                                                    fit: "cover",
-                                                    height: 96,
-                                                    name: "Resource Photo",
-                                                    radius: 9999,
-                                                    src: value
-                                                        ?.toString() ??
-                                                        "",
-                                                    width: 96,
-                                                }}
-                                            />
-                                        )
-                                        : RESOURCES_DATE_FIELDS.has(key)
-                                        ? formatDate({
-                                            date: value?.toString() ?? "",
-                                            formatOptions: {
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "2-digit",
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                                second: "2-digit",
-                                            },
-                                        })
-                                        : value?.toString() ??
-                                            "Unknown";
+                                const isFieldAnUrl = RESOURCES_IMAGE_URL_FIELDS
+                                    .has(key);
+                                const isFieldADate = RESOURCES_DATE_FIELDS.has(
+                                    key,
+                                );
+
+                                const resourceValue = isFieldAnUrl
+                                    ? (
+                                        <Image
+                                            alt="Resource Photo"
+                                            fit="cover"
+                                            height={96}
+                                            aria-label="Resource Photo"
+                                            radius={9999}
+                                            src={value?.toString() ?? ""}
+                                            width={96}
+                                        />
+                                    )
+                                    : isFieldADate
+                                    ? formatDate({
+                                        date: value?.toString() ?? "",
+                                    })
+                                    : value?.toString() ??
+                                        "Unknown";
+
+                                const isAscActive = key === arrangeByField &&
+                                    arrangeByDirection ===
+                                        "ascending";
+                                const isDescActive = key === arrangeByField &&
+                                    arrangeByDirection ===
+                                        "descending";
+
+                                function handleAscUpIconClick(
+                                    _event: React.MouseEvent<
+                                        SVGElement,
+                                        MouseEvent
+                                    >,
+                                ) {
+                                    parentDispatch({
+                                        action: parentAction.setArrangeByField,
+                                        payload: key,
+                                    });
+
+                                    parentDispatch({
+                                        action:
+                                            parentAction.setArrangeByDirection,
+                                        payload: "ascending",
+                                    });
+                                }
+                                function handleDescDownIconClick(
+                                    _event: React.MouseEvent<
+                                        SVGElement,
+                                        MouseEvent
+                                    >,
+                                ) {
+                                    parentDispatch({
+                                        action: parentAction.setArrangeByField,
+                                        payload: key,
+                                    });
+
+                                    parentDispatch({
+                                        action:
+                                            parentAction.setArrangeByDirection,
+                                        payload: "descending",
+                                    });
+                                }
+
+                                const arrangeByIcons = (
+                                    <div className="resource-key-icons">
+                                        {isAscActive
+                                            ? (
+                                                <TbArrowUp
+                                                    color={isAscActive
+                                                        ? themeColorShade
+                                                        : textColor}
+                                                    onClick={handleAscUpIconClick}
+                                                    size={20}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
+                                                />
+                                            )
+                                            : (
+                                                <TbChevronUp
+                                                    color={textColor}
+                                                    onClick={handleAscUpIconClick}
+                                                    size={20}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
+                                                />
+                                            )}
+
+                                        {isDescActive
+                                            ? (
+                                                <TbArrowDown
+                                                    color={isDescActive
+                                                        ? themeColorShade
+                                                        : textColor}
+                                                    onClick={handleDescDownIconClick}
+                                                    size={20}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
+                                                />
+                                            )
+                                            : (
+                                                <TbChevronDown
+                                                    color={textColor}
+                                                    onClick={handleDescDownIconClick}
+                                                    size={20}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
+                                                />
+                                            )}
+                                    </div>
+                                );
 
                                 return (
                                     <div
@@ -72,6 +180,7 @@ function DisplayResource(
                                         }`}
                                     >
                                         <div className="resource-key">
+                                            {arrangeByIcons}
                                             {splitCamelCase(key)}
                                         </div>
                                         <div className="resource-value">
@@ -91,15 +200,24 @@ function DisplayResource(
     const resources = resourcesCards;
 
     return (
-        <Box bg={bgGradient} className="display-resource-container">
-            <Group w="100%" position="apart">
+        <Box
+            bg={bgGradient}
+            className="display-resource-container"
+            pos="relative"
+        >
+            <Group w="100%" position="apart" p="md">
                 <Title order={3} className="resource-title">
                     Resources
                 </Title>
 
-                <Text>Total Documents: {totalDocuments}</Text>
+                <Text>Total Documents: {totalDocuments || 0}</Text>
             </Group>
-            <div className="resources-content">{resources}</div>
+            {isLoading
+                ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
+                : null}
+            {resourceData.length === 0
+                ? <Text pl="md">No documents found</Text>
+                : resources}
         </Box>
     );
 }

@@ -98,6 +98,8 @@ type SortDirection = "ascending" | "descending";
 
 type SortInputsType = "date" | "number" | "time";
 
+type QueryKind = "filter" | "sort" | "search" | "projection";
+
 type QueryState = {
     filterField: string; // almost ValidationKey
     filterLogicalOperator: LogicalOperator;
@@ -111,6 +113,7 @@ type QueryState = {
     limitPerPage: string;
     projectionFields: string[];
     queryChains: QueryChains;
+    queryKind: QueryKind;
     sortDirection: SortDirection;
     sortField: string;
 };
@@ -179,6 +182,10 @@ type QueryDispatch =
     | {
         action: QueryAction["setSortField"];
         payload: string;
+    }
+    | {
+        action: QueryAction["setQueryKind"];
+        payload: QueryKind;
     };
 
 export type {
@@ -198,6 +205,7 @@ export type {
     QueryChainKind,
     QueryChains,
     QueryDispatch,
+    QueryKind,
     QueryLink,
     QueryOperator,
     QueryState,

@@ -48,6 +48,7 @@ const initialQueryState: QueryState = {
         filter: { and: [], nor: [], or: [] },
         sort: { and: [], nor: [], or: [] },
     },
+    queryKind: "filter",
     sortDirection: "descending",
     sortField: "updatedAt",
 };

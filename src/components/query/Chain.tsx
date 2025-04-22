@@ -15,10 +15,9 @@ import {
     splitCamelCase,
 } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { type QueryAction, queryAction } from "./actions";
+import { queryAction } from "./actions";
 import type {
     LogicalOperator,
-    ModifyQueryChainPayload,
     QueryChain,
     QueryChainKind,
     QueryDispatch,
@@ -300,7 +299,14 @@ function Chain(
             return (
                 <Stack key={`chain-${chainsIndex.toString()}`}>
                     {queryLinkHeadingElement}
-                    {timeline}
+                    <Group
+                        w="100%"
+                        position="left"
+                        align="flex-start"
+                        spacing="xl"
+                    >
+                        {timeline}
+                    </Group>
                 </Stack>
             );
         },
@@ -395,9 +401,13 @@ function Chain(
             generalSearchExclusionValue.length === 0 &&
             generalSearchInclusionValue.length === 0 &&
             projectionFields.length === 0
-        ? <Text>No query chain links</Text>
+        ? (
+            <Group px="md" w="100%">
+                <Text>No query chain</Text>
+            </Group>
+        )
         : (
-            <Stack>
+            <Stack px="md" w="100%">
                 {queryChainElements}
                 {projectionChainElement}
                 {generalSearchChainElement}

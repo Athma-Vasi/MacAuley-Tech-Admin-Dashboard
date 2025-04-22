@@ -3,6 +3,7 @@ import type {
     ComparisonOperator,
     GeneralSearchCase,
     LogicalOperator,
+    QueryKind,
     SortDirection,
 } from "./types";
 
@@ -60,6 +61,13 @@ const BOOLEAN_VALUES_DATA: CheckboxRadioSelectData<"true" | "false"> = [
     { label: "False", value: "false" },
 ];
 
+const QUERY_KIND_DATA: CheckboxRadioSelectData<QueryKind> = [
+    { label: "Filter", value: "filter" },
+    { label: "Search", value: "search" },
+    { label: "Sort", value: "sort" },
+    { label: "Projection", value: "projection" },
+];
+
 export {
     BOOLEAN_OPERATOR_DATA,
     BOOLEAN_VALUES_DATA,
@@ -68,6 +76,7 @@ export {
     LIMIT_PER_PAGE_DATA,
     LOGICAL_OPERATORS_DATA,
     MAX_LINKS_AMOUNT,
+    QUERY_KIND_DATA,
     QUERY_SEARCH_CASE_DATA,
     SORT_DIRECTION_DATA,
 };

@@ -1,7 +1,10 @@
 import { UserDocument } from "../../types";
+import { SortDirection } from "../query/types";
 import { UsersQueryAction } from "./actions";
 
 type UsersQueryState = {
+    arrangeByDirection: SortDirection;
+    arrangeByField: keyof UserDocument;
     currentPage: number;
     isError: boolean;
     isLoading: boolean;
@@ -13,6 +16,18 @@ type UsersQueryState = {
 };
 
 type UsersQueryDispatch =
+    | {
+        action: UsersQueryAction["resetToInitial"];
+        payload: UsersQueryState;
+    }
+    | {
+        action: UsersQueryAction["setArrangeByDirection"];
+        payload: SortDirection;
+    }
+    | {
+        action: UsersQueryAction["setArrangeByField"];
+        payload: keyof UserDocument;
+    }
     | { action: UsersQueryAction["setCurrentPage"]; payload: number }
     | { action: UsersQueryAction["setIsError"]; payload: boolean }
     | { action: UsersQueryAction["setIsLoading"]; payload: boolean }

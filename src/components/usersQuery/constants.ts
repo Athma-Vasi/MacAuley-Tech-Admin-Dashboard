@@ -1,4 +1,5 @@
 import {
+    ALL_STORE_LOCATIONS_DATA,
     COUNTRIES,
     DEPARTMENTS_DATA,
     JOB_POSITIONS_DATA,
@@ -128,9 +129,10 @@ const USER_QUERY_TEMPLATES: QueryTemplate[] = [
         name: "parentOrgId",
     },
     {
-        attributes: {} as AccessibleTextInputAttributes,
-        comparisonOperators: new Set(["in"]),
-        kind: "text",
+        attributes: {} as AccessibleSelectInputAttributes,
+        comparisonOperators: new Set(["equal to"]),
+        data: ALL_STORE_LOCATIONS_DATA,
+        kind: "select",
         name: "storeLocation",
     },
     {

@@ -1,35 +1,37 @@
 type QueryAction = {
-    modifyQueryChains: "modifyQueryChains";
-    setFilterComparisonOperator: "setFilterComparisonOperator";
-    setFilterField: "setFilterField";
-    setFilterLogicalOperator: "setFilterLogicalOperator";
-    setFilterValue: "setFilterValue";
-    setGeneralSearchCase: "setGeneralSearchCase";
-    setGeneralSearchExclusionValue: "setGeneralSearchExclusionValue";
-    setGeneralSearchInclusionValue: "setGeneralSearchInclusionValue";
-    setIsError: "setIsError";
-    setIsSearchDisabled: "setIsSearchDisabled";
-    setLimitPerPage: "setLimitPerPage";
-    setProjectionFields: "setProjectionFields";
-    setSortDirection: "setSortDirection";
     setSortField: "setSortField";
+    setSortDirection: "setSortDirection";
+    setProjectionFields: "setProjectionFields";
+    setLimitPerPage: "setLimitPerPage";
+    setIsSearchDisabled: "setIsSearchDisabled";
+    setIsError: "setIsError";
+    setGeneralSearchInclusionValue: "setGeneralSearchInclusionValue";
+    setGeneralSearchExclusionValue: "setGeneralSearchExclusionValue";
+    setGeneralSearchCase: "setGeneralSearchCase";
+    setFilterValue: "setFilterValue";
+    setFilterLogicalOperator: "setFilterLogicalOperator";
+    setFilterField: "setFilterField";
+    setFilterComparisonOperator: "setFilterComparisonOperator";
+    setQueryKind: "setQueryKind";
+    modifyQueryChains: "modifyQueryChains";
 };
 
 const queryAction: QueryAction = {
-    modifyQueryChains: "modifyQueryChains",
-    setFilterComparisonOperator: "setFilterComparisonOperator",
-    setFilterField: "setFilterField",
-    setFilterLogicalOperator: "setFilterLogicalOperator",
-    setFilterValue: "setFilterValue",
-    setGeneralSearchCase: "setGeneralSearchCase",
-    setGeneralSearchExclusionValue: "setGeneralSearchExclusionValue",
-    setGeneralSearchInclusionValue: "setGeneralSearchInclusionValue",
-    setIsError: "setIsError",
-    setIsSearchDisabled: "setIsSearchDisabled",
-    setLimitPerPage: "setLimitPerPage",
-    setProjectionFields: "setProjectionFields",
-    setSortDirection: "setSortDirection",
     setSortField: "setSortField",
+    setSortDirection: "setSortDirection",
+    setProjectionFields: "setProjectionFields",
+    setLimitPerPage: "setLimitPerPage",
+    setIsSearchDisabled: "setIsSearchDisabled",
+    setIsError: "setIsError",
+    setGeneralSearchInclusionValue: "setGeneralSearchInclusionValue",
+    setGeneralSearchExclusionValue: "setGeneralSearchExclusionValue",
+    setGeneralSearchCase: "setGeneralSearchCase",
+    setFilterValue: "setFilterValue",
+    setFilterLogicalOperator: "setFilterLogicalOperator",
+    setFilterField: "setFilterField",
+    setFilterComparisonOperator: "setFilterComparisonOperator",
+    setQueryKind: "setQueryKind",
+    modifyQueryChains: "modifyQueryChains",
 };
 
 export { queryAction };

@@ -1,4 +1,11 @@
-import { Box, Checkbox, type MantineSize, Stack, Text } from "@mantine/core";
+import {
+    Box,
+    Checkbox,
+    Group,
+    type MantineSize,
+    Stack,
+    Text,
+} from "@mantine/core";
 import type { ChangeEvent, ReactNode, RefObject } from "react";
 
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -208,10 +215,31 @@ function AccessibleCheckboxInputGroup<
             themeObject,
         });
 
+    const checkboxes = inputData?.map(({ value, label }, idx) => (
+        <Checkbox
+            disabled={disabledValuesSet.has(value) ||
+                disabledValuesSet.has(label)}
+            key={`${value}-${idx.toString()}`}
+            label={<Text>{label}</Text>}
+            name={value}
+            value={value}
+        />
+    ));
+    const [leftStack, rightStack] = checkboxes.reduce(
+        (acc, checkbox, idx) => {
+            if (idx % 2 === 0) {
+                acc[0].push(checkbox);
+            } else {
+                acc[1].push(checkbox);
+            }
+            return acc;
+        },
+        [[], []] as [React.JSX.Element[], React.JSX.Element[]],
+    );
+
     return (
         <Box
             key={`container-${name}-${uniqueId}`}
-            className="accessible-input"
             w="100%"
         >
             <Checkbox.Group
@@ -242,18 +270,14 @@ function AccessibleCheckboxInputGroup<
                 value={value}
                 withAsterisk={withAsterisk}
             >
-                <Stack>
-                    {inputData?.map(({ value, label }, idx) => (
-                        <Checkbox
-                            disabled={disabledValuesSet.has(value) ||
-                                disabledValuesSet.has(label)}
-                            key={`${value}-${idx.toString()}`}
-                            label={<Text>{label}</Text>}
-                            name={value}
-                            value={value}
-                        />
-                    ))}
-                </Stack>
+                <Group w="100%" position="left" p="md" spacing="xl">
+                    <Stack>
+                        {leftStack}
+                    </Stack>
+                    <Stack>
+                        {rightStack}
+                    </Stack>
+                </Group>
             </Checkbox.Group>
         </Box>
     );

@@ -1,4 +1,4 @@
-import { Box, Loader, Pagination } from "@mantine/core";
+import { Box, Group, Pagination, Text } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -51,6 +51,8 @@ function UsersQuery({}: UsersQueryProps) {
     }, []);
 
     const {
+        arrangeByDirection,
+        arrangeByField,
         currentPage,
         isError,
         isLoading,
@@ -62,6 +64,21 @@ function UsersQuery({}: UsersQueryProps) {
     } = usersQueryState;
 
     console.log("UsersQuery State", usersQueryState);
+
+    const refreshButton = (
+        <AccessibleButton
+            attributes={{
+                kind: "refresh",
+                enabledScreenreaderText: "Refresh query",
+                onClick: async () => {
+                    usersQueryDispatch({
+                        action: usersQueryAction.resetToInitial,
+                        payload: initialUsersQueryState,
+                    });
+                },
+            }}
+        />
+    );
 
     const submitButton = (
         <AccessibleButton
@@ -91,6 +108,58 @@ function UsersQuery({}: UsersQueryProps) {
         />
     );
 
+    const buttons = (
+        <Group w="100%" position="apart" px="md">
+            {refreshButton}
+            {submitButton}
+        </Group>
+    );
+
+    // const arrangeByDirectionSelectInput = (
+    //     <AccessibleSelectInput
+    //         attributes={{
+    //             data: SORT_DIRECTION_DATA,
+    //             disabled: resourceData.length === 0,
+    //             name: "arrangeByDirection",
+    //             parentDispatch: usersQueryDispatch,
+    //             validValueAction: usersQueryAction
+    //                 .setArrangeByDirection,
+    //             value: arrangeByDirection,
+    //         }}
+    //     />
+    // );
+
+    // const userDocumentFields = USER_QUERY_TEMPLATES.reduce(
+    //     (acc, { name }) => {
+    //         acc.push(
+    //             {
+    //                 label: splitCamelCase(name),
+    //                 value: name as keyof UserDocument,
+    //             },
+    //         );
+    //         return acc;
+    //     },
+    //     [
+    //         { label: "Created At", value: "createdAt" },
+    //         { label: "Updated At", value: "updatedAt" },
+    //         { label: "_id", value: "_id" },
+    //         { label: "__v", value: "__v" },
+    //     ] as CheckboxRadioSelectData<keyof UserDocument>,
+    // );
+
+    // const arrangeByFieldSelectInput = (
+    //     <AccessibleSelectInput
+    //         attributes={{
+    //             data: userDocumentFields,
+    //             disabled: resourceData.length === 0,
+    //             name: "arrangeByField",
+    //             parentDispatch: usersQueryDispatch,
+    //             validValueAction: usersQueryAction.setArrangeByField,
+    //             value: arrangeByField,
+    //         }}
+    //     />
+    // );
+
     const queryComponent = (
         <Query
             collectionName="users"
@@ -102,37 +171,56 @@ function UsersQuery({}: UsersQueryProps) {
 
     const displayResource = (
         <DisplayResource
+            arrangeByDirection={arrangeByDirection}
+            arrangeByField={arrangeByField}
+            isLoading={isLoading}
+            parentAction={usersQueryAction}
+            parentDispatch={usersQueryDispatch}
             resourceData={resourceData}
             totalDocuments={totalDocuments}
         />
     );
 
     const pagination = (
-        <Pagination
-            value={currentPage}
-            onChange={(page) => {
-                usersQueryDispatch({
-                    action: usersQueryAction.setCurrentPage,
-                    payload: page,
-                });
-                usersQueryDispatch({
-                    action: usersQueryAction.setNewQueryFlag,
-                    payload: false,
-                });
-            }}
-            total={10}
-            withEdges
-            withControls
-        />
+        <Group w="100%" position="left" px="md">
+            <Pagination
+                value={currentPage}
+                onChange={async (page) => {
+                    await handleUsersQuerySubmitGET({
+                        accessToken,
+                        authDispatch,
+                        currentPage: page,
+                        dispatch: usersQueryDispatch,
+                        fetchAbortControllerRef,
+                        isComponentMountedRef,
+                        newQueryFlag: false,
+                        queryString,
+                        showBoundary,
+                        totalDocuments,
+                        url: API_URL,
+                    });
+                }}
+                total={pages}
+                w="100%"
+                // withEdges
+                // withControls
+            />
+        </Group>
     );
 
     return (
-        <Box className="users-query-container" bg={bgGradient}>
+        <Box
+            className="users-query-container"
+            bg={bgGradient}
+        >
+            <Text size="lg" weight={500} mb="md">
+                Users Query
+            </Text>
             {queryComponent}
-            {submitButton}
+            {buttons}
             {pagination}
-            {isLoading ? <Loader size="lg" /> : null}
             {displayResource}
+            {pagination}
         </Box>
     );
 }

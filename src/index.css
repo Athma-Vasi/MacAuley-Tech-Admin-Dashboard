@@ -323,14 +323,14 @@
     }
   }
 
-  .main.opened {}
   .main {
     /* width: clamp(
       var(--min-app-width, 100%, calc(var(--app-width) - var(--sidebar-width)))
     ); */
-    max-width: clamp(350px, 100%, calc(var(--app-width)));
-    display: flex;
-    flex-direction: column;
+    /* max-width:  */
+    width: 100%;
+    /* display: flex;
+    flex-direction: column; */
 
     .dashboard-layout-container {
       padding: var(--padding);
@@ -345,56 +345,6 @@
     padding: var(--sidebar-padding);
   }
   .sidebar {}
-}
-
-.display-resource-container {
-  .resources-content {
-    .resource-cards-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding: var(--padding);
-      gap: var(--padding);
-
-      .resource {
-        width: var(--resource-card-width);
-        display: flex;
-        flex-direction: column;
-        padding: var(--padding);
-        gap: var(--padding);
-        border-radius: var(--border-radius);
-        border: var(--border);
-        transition: all 0.17s ease-in-out;
-
-        .resource-item.odd {
-          background: var(--entry-odd-background);
-        }
-
-        .resource-item {
-          display: grid;
-          grid-template-columns: 4fr 7fr;
-          padding: 0.25em var(--padding);
-          gap: 1em;
-          width: 100%;
-          border-radius: var(--border-radius);
-          transition: all 0.17s ease-in-out;
-
-          .resource-key {}
-
-          .resource-value {
-            text-wrap: normal;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            width: fit-content;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            outline: 1px solid salmon;
-          }
-        }
-      }
-    }
-  }
 }
 
 @media screen and (max-width: 775px) {
@@ -427,6 +377,113 @@
 
   .statistics-card {
     width: var(--card-width);
+  }
+
+  .users-query-container {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    padding: var(--padding);
+    gap: var(--padding);
+    justify-content: baseline;
+    align-items: flex-start;
+
+    .query-container {
+      width: 100%;
+      .query-filter {
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-projection {
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-sort {
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-search {
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+    }
+  }
+
+  .display-resource-container {
+    width: 100%;
+
+    .resource-cards-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: var(--padding);
+      gap: var(--padding);
+
+      .resource {
+        width: var(--resource-card-width);
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        border-radius: var(--border-radius);
+        border: var(--border);
+        transition: all 0.17s ease-in-out;
+
+        .resource-item.odd {
+          background: var(--entry-odd-background);
+        }
+
+        .resource-item {
+          display: grid;
+          grid-template-columns: 4fr 7fr;
+          padding: 0.25em var(--padding);
+          gap: 1em;
+          width: 100%;
+          border-radius: var(--border-radius);
+          transition: all 0.17s ease-in-out;
+
+          .resource-key {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: left;
+            width: 100%;
+            gap: var(--padding);
+
+            .resource-key-icons {
+              display: flex;
+              flex-direction: column;
+            }
+          }
+
+          .resource-value {
+            text-wrap: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            width: fit-content;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+    }
   }
 
   .grid-section {
@@ -485,6 +542,113 @@
 
   .main-sidebar-opened {
     display: none;
+  }
+
+  .users-query-container {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    padding: var(--padding);
+    gap: var(--padding);
+    justify-content: baseline;
+    align-items: center;
+
+    .query-container {
+      width: 100%;
+      .query-filter {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-projection {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-sort {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-search {
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+    }
+  }
+
+  .display-resource-container {
+    width: 100%;
+
+    .resource-cards-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: var(--padding);
+      gap: var(--padding);
+
+      .resource {
+        width: var(--resource-card-width);
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        border-radius: var(--border-radius);
+        border: var(--border);
+        transition: all 0.17s ease-in-out;
+
+        .resource-item.odd {
+          background: var(--entry-odd-background);
+        }
+
+        .resource-item {
+          display: grid;
+          grid-template-columns: 4fr 7fr;
+          padding: 0.25em var(--padding);
+          gap: 1em;
+          width: 100%;
+          border-radius: var(--border-radius);
+          transition: all 0.17s ease-in-out;
+
+          .resource-key {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: left;
+            width: 100%;
+            gap: var(--padding);
+
+            .resource-key-icons {
+              display: flex;
+              flex-direction: column;
+            }
+          }
+
+          .resource-value {
+            text-wrap: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            width: fit-content;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+    }
   }
 
   .grid-section.calendar {
@@ -569,6 +733,7 @@
   }
 
   .app-shell {
+    width: var(--app-width);
     display: grid;
     grid-template-areas:
       "header header"
@@ -588,6 +753,113 @@
   .main {
     grid-area: main;
     width: 100%;
+
+    .users-query-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: var(--padding);
+      gap: var(--padding);
+      justify-content: baseline;
+      align-items: center;
+
+      .display-resource-container {
+        width: 100%;
+
+        .resource-cards-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          padding: var(--padding);
+          gap: var(--padding);
+
+          .resource {
+            width: var(--resource-card-width);
+            display: flex;
+            flex-direction: column;
+            padding: var(--padding);
+            gap: var(--padding);
+            border-radius: var(--border-radius);
+            border: var(--border);
+            transition: all 0.17s ease-in-out;
+
+            .resource-item.odd {
+              background: var(--entry-odd-background);
+            }
+
+            .resource-item {
+              display: grid;
+              grid-template-columns: 4fr 7fr;
+              padding: 0.25em var(--padding);
+              gap: 1em;
+              width: 100%;
+              border-radius: var(--border-radius);
+              transition: all 0.17s ease-in-out;
+
+              .resource-key {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                text-align: left;
+                width: 100%;
+                gap: var(--padding);
+
+                .resource-key-icons {
+                  display: flex;
+                  flex-direction: column;
+                }
+              }
+
+              .resource-value {
+                text-wrap: normal;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                width: fit-content;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .query-container {
+      width: 100%;
+
+      .query-filter {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-projection {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-sort {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-search {
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+    }
   }
 
   .grid-section.calendar {
@@ -680,6 +952,7 @@
   }
 
   .app-shell {
+    width: var(--app-width);
     display: grid;
     grid-template-areas:
       "header header"
@@ -699,6 +972,113 @@
   .main {
     grid-area: main;
     width: 100%;
+
+    .users-query-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: var(--padding);
+      gap: var(--padding);
+      justify-content: baseline;
+      align-items: center;
+
+      .display-resource-container {
+        width: 100%;
+
+        .resource-cards-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          padding: var(--padding);
+          gap: var(--padding);
+
+          .resource {
+            width: var(--resource-card-width);
+            display: flex;
+            flex-direction: column;
+            padding: var(--padding);
+            gap: var(--padding);
+            border-radius: var(--border-radius);
+            border: var(--border);
+            transition: all 0.17s ease-in-out;
+
+            .resource-item.odd {
+              background: var(--entry-odd-background);
+            }
+
+            .resource-item {
+              display: grid;
+              grid-template-columns: 4fr 7fr;
+              padding: 0.25em var(--padding);
+              gap: 1em;
+              width: 100%;
+              border-radius: var(--border-radius);
+              transition: all 0.17s ease-in-out;
+
+              .resource-key {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                text-align: left;
+                width: 100%;
+                gap: var(--padding);
+
+                .resource-key-icons {
+                  display: flex;
+                  flex-direction: column;
+                }
+              }
+
+              .resource-value {
+                text-wrap: normal;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                width: fit-content;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .query-container {
+      width: 100%;
+
+      .query-filter {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-projection {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-sort {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
+      .query-search {
+        display: flex;
+        flex-direction: column;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+    }
   }
 
   .grid-section.calendar {

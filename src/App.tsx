@@ -9,7 +9,7 @@ import HomeWrapper from "./components/home";
 import LoginWrapper from "./components/login";
 import RegisterWrapper from "./components/register";
 import Testing from "./components/testing";
-import UsersQueryWrapper from "./components/usersQuery";
+import UsersQuery from "./components/usersQuery/UsersQuery";
 import { useGlobalState } from "./hooks/useGlobalState";
 
 function App() {
@@ -29,12 +29,12 @@ function App() {
             path="chart/:chartHeading"
             element={<DisplayResponsiveChartWrapper />}
           />
-          <Route path="users" element={<UsersQueryWrapper />} />
+          <Route path="users" element={<UsersQuery />} />
         </Route>
 
-        <Route path="/login" element={<LoginWrapper />} />
-        <Route path="/register" element={<RegisterWrapper />} />
-        <Route path="/testing" element={<Testing />} />
+        <Route path="login" element={<LoginWrapper />} />
+        <Route path="register" element={<RegisterWrapper />} />
+        <Route path="testing" element={<Testing />} />
 
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>

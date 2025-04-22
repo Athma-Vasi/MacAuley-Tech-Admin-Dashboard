@@ -53,7 +53,7 @@ async function handleUsersQuerySubmitGET(
     };
 
     const urlWithQuery = new URL(
-        `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}`,
+        `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}&page=${currentPage}`,
     );
 
     dispatch({
@@ -163,6 +163,21 @@ async function handleUsersQuerySubmitGET(
         dispatch({
             action: usersQueryAction.setIsLoading,
             payload: false,
+        });
+
+        dispatch({
+            action: usersQueryAction.setPages,
+            payload: serverResponse.pages,
+        });
+
+        dispatch({
+            action: usersQueryAction.setNewQueryFlag,
+            payload: true,
+        });
+
+        dispatch({
+            action: usersQueryAction.setCurrentPage,
+            payload: currentPage,
         });
     } catch (error: unknown) {
         if (

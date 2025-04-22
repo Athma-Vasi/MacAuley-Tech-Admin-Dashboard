@@ -12,7 +12,9 @@ function Home() {
 
       <Sidebar opened={opened} setOpened={setOpened} />
 
-      <Outlet />
+      <div className="main">
+        <Outlet />
+      </div>
     </div>
   );
 }

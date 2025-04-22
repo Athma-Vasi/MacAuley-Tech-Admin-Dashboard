@@ -143,7 +143,14 @@ function returnTimeToRead(string: string) {
 
 function formatDate({
   date,
-  formatOptions,
+  formatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  },
   locale = "en-US",
 }: {
   date: string;

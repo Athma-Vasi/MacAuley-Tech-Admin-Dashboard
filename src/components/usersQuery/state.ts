@@ -1,6 +1,8 @@
 import { UsersQueryState } from "./types";
 
 const initialUsersQueryState: UsersQueryState = {
+    arrangeByDirection: "ascending",
+    arrangeByField: "username",
     currentPage: 1,
     isError: false,
     isLoading: false,

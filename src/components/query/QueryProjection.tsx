@@ -1,4 +1,4 @@
-import { Modal, Stack } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { splitCamelCase } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
@@ -73,11 +73,11 @@ function QueryProjection({
         );
 
     return (
-        <Stack>
+        <div className="query-projection">
             {projectionHelpButton}
             {projectionHelpModal}
             {projectionCheckboxInput}
-        </Stack>
+        </div>
     );
 }
 

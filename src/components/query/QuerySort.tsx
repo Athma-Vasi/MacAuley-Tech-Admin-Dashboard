@@ -1,4 +1,4 @@
-import { Group, Modal, Stack } from "@mantine/core";
+import { Group, Modal } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
@@ -135,16 +135,16 @@ function QuerySort({
     );
 
     return (
-        <Stack>
+        <div className="query-sort">
             {sortFieldSelectInput}
             {sortDirectionSelectInput}
 
-            <Group>
+            <Group w="100%" position="center">
                 {sortHelpButton}
                 {addSortLinkButton}
                 {sortHelpModal}
             </Group>
-        </Stack>
+        </div>
     );
 }
 

@@ -1,4 +1,4 @@
-import { Group, Modal, Stack } from "@mantine/core";
+import { Group, Modal } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
@@ -185,17 +185,17 @@ function QueryFilter(
     );
 
     return (
-        <Stack>
+        <div className="query-filter">
             {logicalOperatorSelectInput}
             {fieldSelectInput}
             {filterComparisonOperatorSelectInput}
             {dynamicInput}
-            <Group>
+            <Group w="100%" position="center">
                 {filterHelpButton}
                 {addFilterLinkButton}
                 {filterHelpModal}
             </Group>
-        </Stack>
+        </div>
     );
 }
 
