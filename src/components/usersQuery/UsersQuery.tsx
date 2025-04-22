@@ -1,4 +1,4 @@
-import { Accordion, Box, Group, Pagination, Space, Text } from "@mantine/core";
+import { Accordion, Box, Group, Pagination, Space } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -109,10 +109,13 @@ function UsersQuery({}: UsersQueryProps) {
     );
 
     const queryAccordion = (
-        <Accordion w="100%" defaultValue={"Query"}>
-            <Accordion.Item value="Query">
-                <Accordion.Control>Query</Accordion.Control>
-                <Accordion.Panel>{queryComponent}{buttons}</Accordion.Panel>
+        <Accordion w="100%" defaultValue={"Users Query"}>
+            <Accordion.Item value="Users Query">
+                <Accordion.Control>Users Query</Accordion.Control>
+                <Accordion.Panel>
+                    {queryComponent}
+                    {buttons}
+                </Accordion.Panel>
             </Accordion.Item>
         </Accordion>
     );
@@ -162,9 +165,6 @@ function UsersQuery({}: UsersQueryProps) {
             className="users-query-container"
             bg={bgGradient}
         >
-            <Text size="lg" weight={500} mb="md">
-                Users Query
-            </Text>
             {queryAccordion}
             <Space h="md" />
             {pagination}

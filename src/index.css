@@ -977,7 +977,7 @@
     width: 100%;
 
     .users-query-container {
-      width: var(--app-width);
+      min-width: var(--app-width);
       display: flex;
       flex-direction: column;
       padding: var(--padding);
