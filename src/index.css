@@ -379,21 +379,84 @@
     width: var(--card-width);
   }
 
-  .users-query-container {
+  .main {
     width: 100%;
 
-    display: flex;
-    flex-direction: column;
-    padding: var(--padding);
-    gap: var(--padding);
-    justify-content: baseline;
-    align-items: flex-start;
+    .users-query-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      /* padding: var(--padding); */
+      gap: var(--padding);
+      justify-content: baseline;
+      align-items: center;
+
+      .display-resource-container {
+        width: 100%;
+
+        .resource-cards-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          gap: var(--padding);
+          padding: var(--padding);
+
+          .resource {
+            width: min(100%, var(--resource-card-width));
+            display: flex;
+            flex-direction: column;
+            gap: var(--padding);
+            border-radius: var(--border-radius);
+            padding: var(--padding);
+            border: var(--border);
+            transition: all 0.17s ease-in-out;
+
+            .resource-item.odd {
+              background: var(--entry-odd-background);
+            }
+
+            .resource-item {
+              display: flex;
+              flex-direction: column;
+              padding: 0.25em var(--padding);
+              gap: 1em;
+              width: 100%;
+              border-radius: var(--border-radius);
+              transition: all 0.17s ease-in-out;
+
+              .resource-key {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                text-align: left;
+                width: 100%;
+                gap: var(--padding);
+
+                .resource-key-icons {
+                  display: flex;
+                  flex-direction: column;
+                }
+              }
+
+              .resource-value {
+                text-wrap: normal;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                width: fit-content;
+                align-self: flex-end;
+              }
+            }
+          }
+        }
+      }
+    }
 
     .query-container {
       width: 100%;
+
       .query-filter {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
         padding: var(--padding);
         gap: var(--padding);
         width: 100%;
@@ -401,7 +464,7 @@
 
       .query-projection {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
         padding: var(--padding);
         gap: var(--padding);
         width: 100%;
@@ -409,7 +472,7 @@
 
       .query-sort {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
         padding: var(--padding);
         gap: var(--padding);
         width: 100%;
@@ -421,67 +484,6 @@
         padding: var(--padding);
         gap: var(--padding);
         width: 100%;
-      }
-    }
-  }
-
-  .display-resource-container {
-    width: 100%;
-
-    .resource-cards-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding: var(--padding);
-      gap: var(--padding);
-
-      .resource {
-        width: var(--resource-card-width);
-        display: flex;
-        flex-direction: column;
-        padding: var(--padding);
-        gap: var(--padding);
-        border-radius: var(--border-radius);
-        border: var(--border);
-        transition: all 0.17s ease-in-out;
-
-        .resource-item.odd {
-          background: var(--entry-odd-background);
-        }
-
-        .resource-item {
-          display: grid;
-          grid-template-columns: 4fr 7fr;
-          padding: 0.25em var(--padding);
-          gap: 1em;
-          width: 100%;
-          border-radius: var(--border-radius);
-          transition: all 0.17s ease-in-out;
-
-          .resource-key {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            text-align: left;
-            width: 100%;
-            gap: var(--padding);
-
-            .resource-key-icons {
-              display: flex;
-              flex-direction: column;
-            }
-          }
-
-          .resource-value {
-            text-wrap: normal;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            width: fit-content;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-        }
       }
     }
   }
