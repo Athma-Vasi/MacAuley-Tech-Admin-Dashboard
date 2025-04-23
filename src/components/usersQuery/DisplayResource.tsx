@@ -104,12 +104,12 @@ function DisplayResource(
         </Modal>
     );
 
-    const tableHeaderRow = resourceData.length === 0
-        ? null
-        : (
-            <thead className="table-header">
-                <tr>
-                    {Object.keys(resourceData[0]).map((key, index) => {
+    const tableHeaderRow = (
+        <thead className="table-header">
+            <tr>
+                {resourceData[0] === undefined
+                    ? []
+                    : Object.keys(resourceData[0]).map((key, index) => {
                         const arrangeByIconsElement =
                             returnArrangeByIconsElement({
                                 arrangeByDirection,
@@ -136,9 +136,9 @@ function DisplayResource(
                             </th>
                         );
                     })}
-                </tr>
-            </thead>
-        );
+            </tr>
+        </thead>
+    );
 
     const tableDataRows = resourceData.length === 0
         ? []
@@ -198,21 +198,19 @@ function DisplayResource(
             );
         });
 
-    const resourcesTable = resourceData.length === 0
-        ? []
-        : (
-            <div className="resource-table-container">
-                {resourceModal}
-                <Table
-                    striped
-                    highlightOnHover
-                    className="resource-table"
-                >
-                    {tableHeaderRow}
-                    {tableDataRows}
-                </Table>
-            </div>
-        );
+    const resourcesTable = (
+        <div className="resource-table-container">
+            {resourceModal}
+            <Table
+                striped
+                highlightOnHover
+                className="resource-table"
+            >
+                {tableHeaderRow}
+                {tableDataRows}
+            </Table>
+        </div>
+    );
 
     // const tableHeaderRow = resourceData.length === 0
     //     ? null
@@ -286,7 +284,7 @@ function DisplayResource(
     //     </div>
     // );
 
-    const resources = windowWidth < 1300 ? resourcesCards : resourcesTable;
+    const resources = windowWidth < 1400 ? resourcesCards : resourcesTable;
 
     return (
         <Box

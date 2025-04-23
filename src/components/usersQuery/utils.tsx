@@ -135,11 +135,11 @@ function returnImageDropdown(
         <Image
             alt={alt}
             fit={fit}
-            height={256}
+            height={192}
             aria-label="Resource Photo"
             radius={radius}
             src={src}
-            width={256}
+            width={192}
         />
     );
 

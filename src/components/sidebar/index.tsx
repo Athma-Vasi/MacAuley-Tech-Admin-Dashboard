@@ -11,7 +11,6 @@ import {
 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import {
-  APP_HEADER_HEIGHT,
   COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
   LOGOUT_URL,
@@ -249,7 +248,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       w="100%"
       style={{
         position: "sticky",
-        top: APP_HEADER_HEIGHT,
+        top: 0,
         height: "100vh",
         zIndex: 2,
       }}

@@ -598,7 +598,7 @@ const PRODUCT_URL = `${METRICS_URL}/products`;
 const REPAIR_URL = `${METRICS_URL}/repairs`;
 
 const OVERLAY_OPACITY = 0.05;
-const OVERLAY_BLUR = 3;
+const OVERLAY_BLUR = 2;
 
 // all fields of all resources that are date fields
 // used in displayResource to format date fields

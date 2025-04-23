@@ -250,16 +250,16 @@ function Chain(
             generalSearchInclusionValue.length === 0 &&
             projectionFields.length === 0
         ? (
-            <Group px="md" w="100%">
+            <div className="query-chain">
                 <Text>No query chain</Text>
-            </Group>
+            </div>
         )
         : (
-            <Stack px="md" w="100%">
+            <div className="query-chain">
                 {queryChainElements}
                 {projectionChainElement}
                 {generalSearchChainElement}
-            </Stack>
+            </div>
         );
 }
 

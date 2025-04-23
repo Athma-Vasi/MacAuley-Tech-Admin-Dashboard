@@ -17,7 +17,7 @@
 
   --min-app-width: 375px;
   --ideal-app-width: 100vw;
-  --max-app-width: 1650px;
+  --max-app-width: 1350px;
   --app-width: clamp(
     var(--min-app-width),
     var(--ideal-app-width),
@@ -729,7 +729,7 @@
   }
 }
 
-@media screen and (min-width: 1024px) and (max-width: 1299px) {
+@media screen and (min-width: 1024px) and (max-width: 1399px) {
   .register-card {
     display: flex;
     column-gap: var(--column-gap);
@@ -948,7 +948,7 @@
   }
 }
 
-@media screen and (min-width: 1300px) {
+@media screen and (min-width: 1400px) {
   .register-card {
     display: flex;
     column-gap: var(--column-gap);
@@ -977,7 +977,7 @@
     width: 100%;
 
     .users-query-container {
-      min-width: var(--app-width);
+      min-width: 1150px;
       display: flex;
       flex-direction: column;
       padding: var(--padding);
@@ -989,8 +989,9 @@
         width: 100%;
 
         .resource-table-container {
-          width: min(var(--app-width), calc(100vw - var(--padding-x2)));
+          width: min(1150px, calc(100vw - var(--padding-x2)));
           overflow-x: scroll;
+          padding: var(--padding);
 
           .table-header {
             .header-item {
@@ -1004,7 +1005,6 @@
               flex-wrap: wrap;
               justify-content: flex-start;
               align-items: center;
-              /* width: clamp(150px, 100%, 250px); */
               min-width: 175px;
               max-width: 275px;
               gap: var(--padding);
@@ -1013,7 +1013,6 @@
 
           .table-body {
             .table-value {
-              /* outline: 1px solid forestgreen; */
               padding: 0px var(--padding);
               cursor: pointer;
             }
@@ -1081,6 +1080,14 @@
 
     .query-container {
       width: 100%;
+
+      .query-chain {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: var(--padding);
+        gap: var(--padding);
+      }
 
       .query-filter {
         display: flex;
