@@ -3,34 +3,29 @@ import { AuthDispatch } from "../../context/authProvider/types";
 import { HttpServerResponse, UserDocument } from "../../types";
 import { decodeJWTSafe, fetchSafe, responseToJSONSafe } from "../../utils";
 import { usersQueryAction } from "./actions";
+import { UsersQueryState } from "./types";
 
 async function handleUsersQuerySubmitGET(
     {
         accessToken,
         authDispatch,
-        currentPage,
         dispatch,
         fetchAbortControllerRef,
         isComponentMountedRef,
-        newQueryFlag,
-        queryString,
         showBoundary,
-        totalDocuments,
         url,
+        usersQueryState,
     }: {
         accessToken: string;
         authDispatch: React.Dispatch<AuthDispatch>;
-        currentPage: number;
         dispatch: React.Dispatch<any>;
         fetchAbortControllerRef: React.RefObject<
             AbortController | null
         >;
         isComponentMountedRef: React.RefObject<boolean>;
-        newQueryFlag: boolean;
-        queryString: string;
-        totalDocuments: number;
         showBoundary: (error: unknown) => void;
         url: RequestInfo | URL;
+        usersQueryState: UsersQueryState;
     },
 ) {
     fetchAbortControllerRef.current?.abort(
@@ -41,6 +36,15 @@ async function handleUsersQuerySubmitGET(
 
     isComponentMountedRef.current = true;
     const isComponentMounted = isComponentMountedRef.current;
+
+    const {
+        arrangeByDirection,
+        arrangeByField,
+        currentPage,
+        newQueryFlag,
+        queryString,
+        totalDocuments,
+    } = usersQueryState;
 
     const requestInit: RequestInit = {
         method: "GET",
@@ -150,9 +154,17 @@ async function handleUsersQuerySubmitGET(
 
         const userDocuments = serverResponse.data;
 
+        const sorted = structuredClone(userDocuments).sort((a, b) => {
+            if (arrangeByDirection === "ascending") {
+                return a[arrangeByField] > b[arrangeByField] ? 1 : -1;
+            } else {
+                return a[arrangeByField] < b[arrangeByField] ? 1 : -1;
+            }
+        });
+
         dispatch({
             action: usersQueryAction.setResourceData,
-            payload: userDocuments,
+            payload: sorted,
         });
 
         dispatch({

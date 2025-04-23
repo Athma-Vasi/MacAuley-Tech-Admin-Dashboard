@@ -8,6 +8,7 @@ import {
 } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { Query } from "../query/Query";
@@ -21,6 +22,7 @@ import { initialUsersQueryState } from "./state";
 type UsersQueryProps = {};
 
 function UsersQuery({}: UsersQueryProps) {
+    const { windowWidth } = useWindowSize();
     const { authState: { accessToken }, authDispatch } = useAuth();
     const { showBoundary } = useErrorBoundary();
     const [
@@ -78,15 +80,12 @@ function UsersQuery({}: UsersQueryProps) {
                     await handleUsersQuerySubmitGET({
                         accessToken,
                         authDispatch,
-                        currentPage,
                         dispatch: usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
-                        newQueryFlag,
-                        queryString,
                         showBoundary,
-                        totalDocuments,
                         url: API_URL,
+                        usersQueryState,
                     });
                 },
             }}
@@ -141,15 +140,16 @@ function UsersQuery({}: UsersQueryProps) {
                     await handleUsersQuerySubmitGET({
                         accessToken,
                         authDispatch,
-                        currentPage: page,
                         dispatch: usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
-                        newQueryFlag: false,
-                        queryString,
                         showBoundary,
-                        totalDocuments,
                         url: API_URL,
+                        usersQueryState: {
+                            ...usersQueryState,
+                            currentPage: page,
+                            newQueryFlag: false,
+                        },
                     });
                 }}
                 total={pages}
@@ -165,7 +165,12 @@ function UsersQuery({}: UsersQueryProps) {
             className="users-query-container"
             bg={bgGradient}
         >
-            {queryAccordion}
+            {windowWidth < 1024 ? queryAccordion : (
+                <>
+                    {queryComponent}
+                    {buttons}
+                </>
+            )}
             <Space h="md" />
             {pagination}
             <Space h="md" />

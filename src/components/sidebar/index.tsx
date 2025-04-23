@@ -11,12 +11,15 @@ import {
 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import {
+  APP_HEADER_HEIGHT,
+  COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
   LOGOUT_URL,
   METRICS_URL,
 } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 import {
@@ -233,14 +236,20 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     />
   );
 
+  const { bgGradient } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   return (
     <Stack
+      bg={bgGradient}
       className={`sidebar ${opened ? "opened" : ""}`}
       pt="xl"
       w="100%"
       style={{
         position: "sticky",
-        top: 0,
+        top: APP_HEADER_HEIGHT,
         height: "100vh",
         zIndex: 2,
       }}
@@ -262,13 +271,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       {usersNavlink}
       <Space h="xl" />
       {logoutButton}
-
-      {
-        /* <Text size={18} weight={400}>
-        Testing
-      </Text> */
-      }
-      {/* {testingNavlink} */}
     </Stack>
   );
 }
