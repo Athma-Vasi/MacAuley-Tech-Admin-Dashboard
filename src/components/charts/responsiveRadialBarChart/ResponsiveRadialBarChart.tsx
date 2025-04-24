@@ -308,14 +308,13 @@ function ResponsiveRadialBarChart(
       isInteractive={true}
       role="application"
       ariaLabel="Nivo radial bar chart"
-      onClick={onClick}
       tooltip={tooltip}
     />
   );
 
   if (hideControls) {
     return (
-      <Box className="chart">
+      <Box className="chart" onClick={onClick}>
         {displayResponsiveRadialBar}
       </Box>
     );

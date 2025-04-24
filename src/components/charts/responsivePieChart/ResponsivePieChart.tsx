@@ -250,14 +250,13 @@ function ResponsivePieChart({
         ]
         : []}
       valueFormat={(value) => addCommaSeparator(value)}
-      onClick={onClick}
       tooltip={tooltip}
     />
   );
 
   if (hideControls) {
     return (
-      <Box className="chart">
+      <Box className="chart" onClick={onClick}>
         {displayResponsivePie}
       </Box>
     );

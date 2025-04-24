@@ -359,13 +359,12 @@ function ResponsiveBarChart({
       barAriaLabel={(e) => `${e.id}: ${e.formattedValue}${e.indexValue}`}
       valueFormat={(value) => addCommaSeparator(value)}
       tooltip={tooltip}
-      onClick={onClick}
     />
   );
 
   if (hideControls) {
     return (
-      <Box className="chart">
+      <Box className="chart" onClick={onClick}>
         {displayResponsiveBar}
       </Box>
     );

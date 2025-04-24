@@ -41,9 +41,10 @@ import type {
 
 function ResponsiveSunburstChart({
   hideControls = false,
+  onClick,
   sunburstChartData,
-  valueFormat,
   tooltip,
+  valueFormat,
 }: ResponsiveSunburstChartProps) {
   const {
     globalState: {
@@ -174,7 +175,7 @@ function ResponsiveSunburstChart({
 
   if (hideControls) {
     return (
-      <Box className="chart">
+      <Box className="chart" onClick={onClick}>
         {displayResponsiveSunburst}
       </Box>
     );

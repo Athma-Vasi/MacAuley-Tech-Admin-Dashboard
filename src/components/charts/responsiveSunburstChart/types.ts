@@ -22,12 +22,13 @@ type SunburstChartData = {
 
 type ResponsiveSunburstChartProps = {
   hideControls?: boolean;
+  onClick?: () => void;
   sunburstChartData: SunburstChartData;
-  valueFormat?: ValueFormat<number> | undefined;
   tooltip:
     | ((props: ComputedDatum<SunburstChartData>) => JSX.Element)
     | undefined
     | any;
+  valueFormat?: ValueFormat<number> | undefined;
 };
 
 type ResponsiveSunburstChartState = {

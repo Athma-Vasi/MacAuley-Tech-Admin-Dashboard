@@ -186,14 +186,13 @@ function ResponsiveCalendarChart({
       dayBorderColor={dayBorderColor}
       // interactivity
       isInteractive={true}
-      onClick={onClick}
       tooltip={tooltip}
     />
   );
 
   if (hideControls) {
     return (
-      <Box className="chart">
+      <Box className="chart" onClick={onClick}>
         {displayCalendarChart}
       </Box>
     );

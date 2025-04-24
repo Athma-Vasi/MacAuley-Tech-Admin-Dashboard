@@ -351,14 +351,13 @@ function ResponsiveLineChart({
       // motion
       animate={enableAnimate}
       motionConfig={motionConfig}
-      onClick={onClick}
       tooltip={tooltip}
     />
   );
 
   if (hideControls) {
     return (
-      <Box className="chart">
+      <Box className="chart" onClick={onClick}>
         {displayResponsiveLine}
       </Box>
     );
