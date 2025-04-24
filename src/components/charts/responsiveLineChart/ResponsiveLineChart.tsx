@@ -52,15 +52,16 @@ import type {
 } from "./types";
 
 function ResponsiveLineChart({
-  lineChartData,
+  chartUnitKind,
   dashboardChartTitle,
   hideControls = false,
+  lineChartData,
+  onClick,
+  tooltip,
   xFormat,
   yFormat,
-  yScaleMin = "auto",
   yScaleMax = "auto",
-  chartUnitKind,
-  tooltip,
+  yScaleMin = "auto",
 }: ResponsiveLineChartProps) {
   const {
     globalState: { isPrefersReducedMotion, themeObject },
@@ -350,6 +351,7 @@ function ResponsiveLineChart({
       // motion
       animate={enableAnimate}
       motionConfig={motionConfig}
+      onClick={onClick}
       tooltip={tooltip}
     />
   );

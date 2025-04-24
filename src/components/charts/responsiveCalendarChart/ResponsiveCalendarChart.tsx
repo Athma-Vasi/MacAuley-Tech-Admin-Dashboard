@@ -42,8 +42,9 @@ function ResponsiveCalendarChart({
   calendarChartData,
   dashboardChartTitle,
   from,
-  to,
   hideControls = false,
+  onClick,
+  to,
   tooltip,
 }: ResponsiveCalendarChartProps) {
   const {
@@ -185,6 +186,7 @@ function ResponsiveCalendarChart({
       dayBorderColor={dayBorderColor}
       // interactivity
       isInteractive={true}
+      onClick={onClick}
       tooltip={tooltip}
     />
   );
@@ -205,6 +207,7 @@ function ResponsiveCalendarChart({
         description: "Define calendar direction",
         hideLabel: true,
         name: "calendarDirection",
+        parentDispatch: responsiveCalendarChartDispatch,
         validValueAction: responsiveCalendarChartAction.setCalendarDirection,
         value: calendarDirection,
       }}
@@ -218,6 +221,7 @@ function ResponsiveCalendarChart({
         description: "Define calendar align",
         hideLabel: true,
         name: "calendarAlign",
+        parentDispatch: responsiveCalendarChartDispatch,
         validValueAction: responsiveCalendarChartAction.setCalendarAlign,
         value: calendarAlign,
       }}
@@ -280,6 +284,7 @@ function ResponsiveCalendarChart({
         description: "Define year legend position",
         hideLabel: true,
         name: "yearLegendPosition",
+        parentDispatch: responsiveCalendarChartDispatch,
         validValueAction: responsiveCalendarChartAction.setYearLegendPosition,
         value: yearLegendPosition,
       }}
@@ -364,6 +369,7 @@ function ResponsiveCalendarChart({
         description: "Define month legend position",
         hideLabel: true,
         name: "monthLegendPosition",
+        parentDispatch: responsiveCalendarChartDispatch,
         validValueAction: responsiveCalendarChartAction.setMonthLegendPosition,
         value: monthLegendPosition,
       }}

@@ -30,15 +30,16 @@ type LineChartData = {
 };
 
 type ResponsiveLineChartProps = {
+  chartUnitKind: ChartUnitKind;
   dashboardChartTitle?: string;
   hideControls?: boolean;
   lineChartData: LineChartData[];
+  onClick?: () => void;
+  tooltip: PointTooltip | undefined;
   xFormat?: ValueFormat<any>;
   yFormat?: ValueFormat<any>;
-  yScaleMin?: number | "auto";
   yScaleMax?: number | "auto";
-  chartUnitKind: ChartUnitKind;
-  tooltip: PointTooltip | undefined;
+  yScaleMin?: number | "auto";
 };
 
 type ResponsiveLineChartState = {

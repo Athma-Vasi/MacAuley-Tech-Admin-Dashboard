@@ -143,6 +143,7 @@ async function handleMetricCategoryNavlinkClick(
         payload: false,
       });
 
+      navigateFn(navigateTo);
       return;
     }
 

@@ -23,10 +23,11 @@ type PieChartData = {
 };
 
 type ResponsivePieChartProps = {
+  chartUnitKind: ChartUnitKind;
   dashboardChartTitle?: string;
   hideControls?: boolean;
+  onClick?: () => void;
   pieChartData: PieChartData[];
-  chartUnitKind: ChartUnitKind;
   tooltip: React.FC<PieTooltipProps<PieChartData>> | undefined;
 };
 

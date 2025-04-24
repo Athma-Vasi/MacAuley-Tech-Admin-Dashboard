@@ -40,10 +40,11 @@ import type { ResponsivePieChartProps } from "./types";
 import { createPieFillPatterns } from "./utils";
 
 function ResponsivePieChart({
+  chartUnitKind,
   dashboardChartTitle,
   hideControls = false,
+  onClick,
   pieChartData,
-  chartUnitKind,
   tooltip,
 }: ResponsivePieChartProps) {
   const {
@@ -249,6 +250,7 @@ function ResponsivePieChart({
         ]
         : []}
       valueFormat={(value) => addCommaSeparator(value)}
+      onClick={onClick}
       tooltip={tooltip}
     />
   );

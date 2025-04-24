@@ -40,8 +40,13 @@ import type {
 } from "./types";
 
 function ResponsiveRadialBarChart(
-  { dashboardChartTitle, hideControls = false, radialBarChartData, tooltip }:
-    ResponsiveRadialBarChartProps,
+  {
+    dashboardChartTitle,
+    hideControls = false,
+    onClick,
+    radialBarChartData,
+    tooltip,
+  }: ResponsiveRadialBarChartProps,
 ) {
   const {
     globalState: { isPrefersReducedMotion, themeObject },
@@ -303,6 +308,7 @@ function ResponsiveRadialBarChart(
       isInteractive={true}
       role="application"
       ariaLabel="Nivo radial bar chart"
+      onClick={onClick}
       tooltip={tooltip}
     />
   );

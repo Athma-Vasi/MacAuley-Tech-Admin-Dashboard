@@ -180,7 +180,7 @@ function Dashboard() {
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
         name: "storeLocation",
-        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) =>
           await handleStoreCategoryClick({
             accessToken,
             authDispatch,
@@ -196,8 +196,7 @@ function Dashboard() {
             showBoundary,
             storeLocationView: event.currentTarget
               .value as AllStoreLocations,
-          });
-        },
+          }),
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setStoreLocationView,
         value: storeLocationView,
@@ -210,7 +209,7 @@ function Dashboard() {
       attributes={{
         data: REPAIR_METRICS_DATA,
         name: "repairs",
-        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) =>
           await handleStoreCategoryClick({
             accessToken,
             authDispatch,
@@ -226,8 +225,7 @@ function Dashboard() {
               .value as RepairMetricCategory,
             showBoundary,
             storeLocationView,
-          });
-        },
+          }),
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setRepairMetricCategory,
         value: repairMetricCategory,
@@ -252,7 +250,7 @@ function Dashboard() {
       attributes={{
         data: PRODUCT_METRIC_CATEGORY_DATA,
         name: "product metrics",
-        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) =>
           await handleStoreCategoryClick({
             accessToken,
             authDispatch,
@@ -268,8 +266,7 @@ function Dashboard() {
             repairMetricCategory,
             showBoundary,
             storeLocationView,
-          });
-        },
+          }),
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setProductMetricCategory,
         value: productMetricCategory,
@@ -439,7 +436,7 @@ function Dashboard() {
         ? dashboardHeaderAccordion
         : dashboardHeader}
 
-      <Stack align="flex-start" px="md">
+      <Stack align="flex-start" p="md">
         <Title order={2} size={32}>DASHBOARD</Title>
         <Text size="md">Welcome to your dashboard</Text>
       </Stack>
@@ -451,82 +448,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
-// const isComponentMountedRef = React.useRef(false);
-// useEffect(() => {
-//   isComponentMountedRef.current = true;
-//   const isMounted = isComponentMountedRef.current;
-
-//   async function createBusinessMetrics() {
-//     try {
-//       if (businessMetrics?.length) {
-//         return;
-//       }
-
-//       dashboardDispatch({
-//         action: dashboardAction.setIsLoading,
-//         payload: true,
-//       });
-
-//       const existingMetrics = await localforage.getItem<BusinessMetric[]>(
-//         "businessMetrics",
-//       );
-//       if (existingMetrics && isMounted) {
-//         dashboardDispatch({
-//           action: dashboardAction.setBusinessMetrics,
-//           payload: existingMetrics,
-//         });
-
-//         dashboardDispatch({
-//           action: dashboardAction.setIsLoading,
-//           payload: false,
-//         });
-
-//         return;
-//       }
-
-//       console.time("createRandomBusinessMetrics");
-
-//       const createdBusinessMetrics = await createRandomBusinessMetrics({
-//         daysPerMonth: DAYS_PER_MONTH,
-//         months: MONTHS,
-//         productCategories: PRODUCT_CATEGORIES,
-//         repairCategories: REPAIR_CATEGORIES,
-//         storeLocations: STORE_LOCATIONS.map((obj) => obj.value),
-//       });
-
-//       console.timeEnd("createRandomBusinessMetrics");
-
-//       if (!isMounted) {
-//         return;
-//       }
-
-//       dashboardDispatch({
-//         action: dashboardAction.setBusinessMetrics,
-//         payload: createdBusinessMetrics,
-//       });
-
-//       localforage.setItem<BusinessMetric[]>(
-//         "businessMetrics",
-//         createdBusinessMetrics,
-//       );
-
-//       dashboardDispatch({
-//         action: dashboardAction.setIsLoading,
-//         payload: false,
-//       });
-//     } catch (error: any) {
-//       if (!isMounted) {
-//         return;
-//       }
-//       showBoundary(error);
-//     }
-//   }
-
-//   createBusinessMetrics();
-
-//   return () => {
-//     isComponentMountedRef.current = false;
-//   };
-//   // eslint-disable-next-line react-hooks/exhaustive-deps
-// }, []);

@@ -12,12 +12,12 @@
   --dashboard-header-height-mobile: 70px;
   --chart-controls-header-height: 70px;
 
-  --sidebar-width: clamp(175px, 100%, 200px);
+  --sidebar-width: 200px;
   --sidebar-padding: 2em;
 
   --min-app-width: 375px;
   --ideal-app-width: 100vw;
-  --max-app-width: 1450px;
+  --max-app-width: 1920px;
   --app-width: clamp(
     var(--min-app-width),
     var(--ideal-app-width),
@@ -52,9 +52,9 @@
   );
 
   --statistics-card-width: clamp(
-    var(--min-card-width),
+    275px,
     var(--ideal-card-width),
-    350px
+    325px
   );
 
   --title-card-width: clamp(150px, 100%, 250px);
@@ -62,8 +62,7 @@
   --min-chart-width: calc(343px - var(--padding-x2));
   --ideal-chart-width: 100%;
   --max-chart-width: calc(
-    var(--app-width) - var(--sidebar-width) - var(--card-width)
-      - var(--padding-x2)
+    var(--max-app-width) - var(--sidebar-width) - var(--padding-x2)
   );
   --chart-width: clamp(
     var(--min-chart-width),
@@ -95,6 +94,7 @@
 .chart-card .chart {
   width: var(--chart-width);
   height: clamp(350px * 0.38, calc(400px - 2em), 700px);
+  cursor: pointer;
 }
 
 .accessible-input {
@@ -207,6 +207,8 @@
         flex-direction: column;
         justify-content: center;
         width: 100%;
+        gap: var(--padding);
+        padding: var(--padding);
       }
 
       .register-form-footer {
@@ -287,7 +289,8 @@
   width: 100%;
 
   .chart {
-    width: clamp(300px, 100%, calc(1300px + var(--padding-x2)));
+    /* width: clamp(300px, 100%, calc(1600px + var(--padding-x2))); */
+    width: var(--chart-width);
   }
 }
 
@@ -739,8 +742,8 @@
     width: var(--app-width);
     display: grid;
     grid-template-areas:
-      "header header"
-      "sidebar main";
+      "header header header header header header header header header header header header"
+      "sidebar main main main main main main main main main main main";
   }
 
   .header {
@@ -749,8 +752,10 @@
 
   .sidebar {
     grid-area: sidebar;
-    width: var(--sidebar-width);
+
+    width: 100%;
     padding: var(--sidebar-padding);
+    outline: 1px solid skyblue;
   }
 
   .main {
@@ -959,8 +964,8 @@
     width: var(--app-width);
     display: grid;
     grid-template-areas:
-      "header header"
-      "sidebar main";
+      "header header header header header header header header header header header header"
+      "sidebar main main main main main main main main main main main";
   }
 
   .header {
@@ -969,7 +974,8 @@
 
   .sidebar {
     grid-area: sidebar;
-    width: var(--sidebar-width);
+    /* width: var(--sidebar-width); */
+    width: 100%;
     padding: var(--sidebar-padding);
   }
 
@@ -978,7 +984,6 @@
     width: 100%;
 
     .users-query-container {
-      /* min-width: var(--app-width); */
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -989,15 +994,12 @@
 
       .display-resource-container {
         width: min(
-          calc(var(--app-width) - var(--padding-x2)),
+          calc(var(--app-width) - 225px - var(--padding-x2)),
           calc(100vw - var(--padding-x2))
         );
+        /* width: 100%; */
 
         .resource-table-container {
-          /* width: min(
-            calc(var(--app-width) - var(--padding-x2)),
-            calc(100vw - var(--padding-x2))
-          ); */
           width: 100%;
           overflow-x: scroll;
 
@@ -1169,6 +1171,8 @@
 
     .chart-controls-card {
       grid-area: co;
+      justify-self: flex-end;
+      width: 100%;
     }
 
     .chart-titles {

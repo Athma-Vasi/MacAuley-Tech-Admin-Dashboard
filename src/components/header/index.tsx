@@ -1,4 +1,5 @@
 import { Burger, Flex, Group, Title } from "@mantine/core";
+import localforage from "localforage";
 import { useEffect, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -41,20 +42,32 @@ function Header({ opened, setOpened }: HeaderProps) {
     };
   }, []);
 
-  if (!accessToken) {
-    const requestInit: RequestInit = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer `,
-      },
-      signal: fetchAbortControllerRef.current?.signal,
-    };
+  useEffect(() => {
+    async function checkAccessToken() {
+      if (!accessToken) {
+        const requestInit: RequestInit = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer ",
+          },
+          signal: fetchAbortControllerRef.current?.signal,
+        };
 
-    fetchSafe(LOGOUT_URL, requestInit);
-    showBoundary(new Error("Access token is not available"));
-    return <></>;
-  }
+        await fetchSafe(LOGOUT_URL, requestInit);
+        await localforage.clear();
+        showBoundary(new Error("Access token is not available"));
+        return;
+      }
+    }
+
+    checkAccessToken();
+
+    return () => {
+      fetchAbortControllerRef.current?.abort("Component unmounted");
+      isComponentMountedRef.current = false;
+    };
+  }, [accessToken]);
 
   const burger = (
     <Burger

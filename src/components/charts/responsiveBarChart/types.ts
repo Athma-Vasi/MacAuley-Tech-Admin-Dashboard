@@ -29,11 +29,12 @@ type BarChartData<
 
 type ResponsiveBarChartProps = {
   barChartData: BarChartData[];
+  chartUnitKind: ChartUnitKind;
   dashboardChartTitle?: string;
   hideControls?: boolean;
   indexBy: string;
   keys: string[];
-  chartUnitKind: ChartUnitKind;
+  onClick?: () => void;
   tooltip:
     | React.FC<BarTooltipProps<BarChartData<Record<string, string | number>>>>
     | undefined;

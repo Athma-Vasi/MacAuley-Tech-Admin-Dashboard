@@ -758,19 +758,13 @@ function returnTimelineBullet(
         });
     }
 
-    const tooltipLabel = (
-        <Text color={textColorSliderLabel}>
-            Delete link: {queryLinkStatement}
-        </Text>
-    );
-
     return logicalOperator === "and"
         ? (
-            <Tooltip label={tooltipLabel}>
+            <Tooltip label={`Delete link: ${queryLinkStatement}`}>
                 <Group>
                     <TbLogicAnd
                         onClick={() => handleIconClick()}
-                        size={20}
+                        size={18}
                         style={{
                             cursor: "pointer",
                         }}
@@ -780,10 +774,10 @@ function returnTimelineBullet(
         )
         : logicalOperator === "nor"
         ? (
-            <Tooltip label={tooltipLabel}>
+            <Tooltip label={`Delete link: ${queryLinkStatement}`}>
                 <TbLogicNor
                     onClick={() => handleIconClick()}
-                    size={20}
+                    size={18}
                     style={{
                         cursor: "pointer",
                     }}
@@ -791,10 +785,10 @@ function returnTimelineBullet(
             </Tooltip>
         )
         : (
-            <Tooltip label={tooltipLabel}>
+            <Tooltip label={`Delete link: ${queryLinkStatement}`}>
                 <TbLogicOr
                     onClick={() => handleIconClick()}
-                    size={20}
+                    size={18}
                     style={{
                         cursor: "pointer",
                     }}

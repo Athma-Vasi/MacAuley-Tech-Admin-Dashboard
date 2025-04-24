@@ -175,7 +175,7 @@ function Chain(
     const generalSearchExclusionLink = generalSearchExclusionValue.length === 0
         ? null
         : (
-            <Timeline.Item bullet={<TbLink size={20} />} bulletSize={26}>
+            <Timeline.Item bullet={<TbLink size={18} />} bulletSize={26}>
                 <Text>
                     {`${splitAndJoinedGeneralSearchExclusionValue} ${
                         generalSearchExclusionValue.split(" ").length > 1
@@ -189,7 +189,7 @@ function Chain(
     const generalSearchInclusionLink = generalSearchInclusionValue.length === 0
         ? null
         : (
-            <Timeline.Item bullet={<TbLink size={20} />} bulletSize={26}>
+            <Timeline.Item bullet={<TbLink size={18} />} bulletSize={26}>
                 <Text>
                     {`${splitAndJoinedGeneralSearchInclusionValue} ${
                         generalSearchInclusionValue.split(" ").length > 1
@@ -223,7 +223,7 @@ function Chain(
             );
 
     const projectionExclusionLink = (
-        <Timeline.Item bullet={<TbLogicNot size={20} />} bulletSize={26}>
+        <Timeline.Item bullet={<TbLogicNot size={18} />} bulletSize={26}>
             <Text>
                 {`${capitalizeJoinWithAnd(projectionFields)} excluded.`}
             </Text>
@@ -251,7 +251,7 @@ function Chain(
             projectionFields.length === 0
         ? (
             <div className="query-chain">
-                <Text>No query chain</Text>
+                <Text pl="md">No query chain</Text>
             </div>
         )
         : (

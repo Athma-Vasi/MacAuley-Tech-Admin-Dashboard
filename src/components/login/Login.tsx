@@ -27,9 +27,9 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
+import { handleLoginButtonClick } from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
-import { handleLoginButtonClick } from "./handlers";
 
 function Login() {
   const [loginState, loginDispatch] = useReducer(
@@ -197,7 +197,7 @@ function Login() {
 
   const displayLinkToRegister = (
     <Flex align="center" justify="center" columnGap="sm">
-      <Text color="dark">Don&apos;t have an account?</Text>
+      <Text>Don&apos;t have an account?</Text>
       <Text>
         <Link to="/register" style={{ color: themeColorShade }}>
           Create one!

@@ -49,11 +49,12 @@ import { createBarFillPatterns } from "./utils";
 
 function ResponsiveBarChart({
   barChartData,
+  chartUnitKind,
   dashboardChartTitle,
   hideControls = false,
   indexBy,
   keys,
-  chartUnitKind,
+  onClick,
   tooltip,
 }: ResponsiveBarChartProps) {
   const { windowWidth } = useWindowSize();
@@ -358,6 +359,7 @@ function ResponsiveBarChart({
       barAriaLabel={(e) => `${e.id}: ${e.formattedValue}${e.indexValue}`}
       valueFormat={(value) => addCommaSeparator(value)}
       tooltip={tooltip}
+      onClick={onClick}
     />
   );
 

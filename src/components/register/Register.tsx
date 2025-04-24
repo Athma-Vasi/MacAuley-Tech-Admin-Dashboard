@@ -224,7 +224,7 @@ function Register() {
 
   const linkToLogin = (
     <Flex align="center" justify="center" columnGap="sm">
-      <Text color="dark">Already have an account?</Text>
+      <Text>Already have an account?</Text>
       <Text>
         <Link to="/login" style={{ color: themeColorShade }}>
           Login!

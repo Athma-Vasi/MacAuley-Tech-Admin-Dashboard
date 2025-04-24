@@ -251,6 +251,26 @@ function RepairRUS(
         indexBy={barChartIndexBy}
         keys={barChartKeys}
         chartUnitKind={barLineRadialChartUnit}
+        onClick={() => {
+          globalDispatch({
+            action: globalAction.setExpandBarChartData,
+            payload: {
+              ...commonPayload,
+              chartData: barCharts[yAxisKey],
+              chartKind: "bar",
+              chartUnitKind: barLineRadialChartUnit,
+              indexBy: barChartIndexBy,
+              keys: barChartKeys,
+            },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "bar",
+          });
+
+          navigate(expandBarChartNavigateLink);
+        }}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
@@ -274,6 +294,24 @@ function RepairRUS(
               : ""
           }${x}`}
         yFormat={(y) => addCommaSeparator(y) + barLineRadialChartUnit}
+        onClick={() => {
+          globalDispatch({
+            action: globalAction.setExpandLineChartData,
+            payload: {
+              ...commonPayload,
+              chartData: lineCharts[yAxisKey],
+              chartKind: "line",
+              chartUnitKind: barLineRadialChartUnit,
+            },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "line",
+          });
+
+          navigate(expandLineChartNavigateLink);
+        }}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
@@ -287,6 +325,22 @@ function RepairRUS(
       <ResponsiveRadialBarChart
         radialBarChartData={lineCharts[yAxisKey]}
         hideControls
+        onClick={() => {
+          globalDispatch({
+            action: globalAction.setExpandRadialBarChartData,
+            payload: {
+              ...commonPayload,
+              chartData: lineCharts[yAxisKey],
+              chartKind: "radial",
+              chartUnitKind: barLineRadialChartUnit,
+            },
+          });
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "radial",
+          });
+          navigate(expandRadialBarChartNavigateLink);
+        }}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
@@ -339,6 +393,24 @@ function RepairRUS(
       calendarChartData={calendarChartData}
       hideControls
       from={`${year}-01-01`}
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandCalendarChartData,
+          payload: {
+            ...commonPayload,
+            chartData: calendarChartData,
+            chartKind: "calendar",
+            chartUnitKind: calendarUnitKind,
+          },
+        });
+
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "calendar",
+        });
+
+        navigate(expandCalendarChartNavigateLink);
+      }}
       to={`${year}-12-31`}
       tooltip={(arg) =>
         createChartTooltipElement({
