@@ -144,7 +144,7 @@ function Dashboard() {
     <TextInput
       aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'
       className="accessible-input"
-      description="View metrics for selected calendar date."
+      aria-description="View metrics for selected calendar date."
       label="Calendar Date"
       max={"2025-03-31"}
       min={storeLocationView === "Vancouver"
