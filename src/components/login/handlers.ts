@@ -1,16 +1,21 @@
+import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
+import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
+import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
-  DecodedToken,
   FinancialMetricsDocument,
   HttpServerResponse,
   UserDocument,
 } from "../../types";
-import { decodeJWTSafe, fetchSafe, responseToJSONSafe } from "../../utils";
+import {
+  decodeJWTSafe,
+  fetchSafe,
+  responseToJSONSafe,
+  setItemForageSafe,
+} from "../../utils";
 import { loginAction } from "./actions";
-import { AuthDispatch } from "../../context/authProvider/types";
-import { GlobalDispatch } from "../../context/globalProvider/types";
 import { LoginDispatch } from "./types";
 
 async function handleLoginButtonClick(
@@ -106,7 +111,30 @@ async function handleLoginButtonClick(
       return;
     }
 
-    const { accessToken } = serverResponse;
+    const { accessToken, triggerLogout } = serverResponse;
+
+    if (triggerLogout) {
+      authDispatch({
+        action: authAction.setAccessToken,
+        payload: "",
+      });
+      authDispatch({
+        action: authAction.setIsLoggedIn,
+        payload: false,
+      });
+      authDispatch({
+        action: authAction.setDecodedToken,
+        payload: Object.create(null),
+      });
+      authDispatch({
+        action: authAction.setUserDocument,
+        payload: Object.create(null),
+      });
+
+      await localforage.clear();
+      navigateFn("/");
+      return;
+    }
 
     const decodedTokenResult = await decodeJWTSafe(accessToken);
 
@@ -146,6 +174,21 @@ async function handleLoginButtonClick(
       action: globalAction.setFinancialMetricsDocument,
       payload: serverResponse.data[0].financialMetricsDocument,
     });
+
+    const setForageItemResult = await setItemForageSafe<
+      FinancialMetricsDocument
+    >(
+      "Financials-All Locations",
+      serverResponse.data[0].financialMetricsDocument,
+    );
+
+    if (!isComponentMounted) {
+      return;
+    }
+    if (setForageItemResult.err) {
+      showBoundary(setForageItemResult.val.data);
+      return;
+    }
 
     loginDispatch({
       action: loginAction.setIsSubmitting,

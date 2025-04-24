@@ -21,10 +21,11 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
+import { DashboardMetricsView } from "../dashboard/types";
 import {
   handleLogoutButtonClick,
   handleMetricCategoryNavlinkClick,
-} from "./utils";
+} from "./handlers";
 
 type SidebarProps = {
   opened: boolean;
@@ -38,6 +39,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       themeObject,
       productMetricCategory,
       repairMetricCategory,
+      storeLocationView,
       isFetching,
     },
     globalDispatch,
@@ -47,6 +49,9 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
 
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
   const isComponentMountedRef = useRef(false);
+  const [clickedKind, setClickedKind] = React.useState<
+    "" | DashboardMetricsView
+  >("");
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -64,9 +69,13 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Products",
-        icon: <TbAffiliate />,
+        icon: clickedKind === "Products" && isFetching
+          ? <Loader size="xs" />
+          : <TbAffiliate />,
         name: "Products",
         onClick: async () => {
+          setClickedKind("Products");
+
           await handleMetricCategoryNavlinkClick({
             accessToken,
             authDispatch,
@@ -80,8 +89,9 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView: "All Locations",
+            storeLocationView,
           });
+
           setOpened(false);
         },
       }}
@@ -92,9 +102,13 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Financials",
-        icon: <TbReportMoney />,
+        icon: clickedKind === "Financials" && isFetching
+          ? <Loader size="xs" />
+          : <TbReportMoney />,
         name: "Financials",
         onClick: async () => {
+          setClickedKind("Financials");
+
           await handleMetricCategoryNavlinkClick({
             accessToken,
             authDispatch,
@@ -108,8 +122,9 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView: "All Locations",
+            storeLocationView,
           });
+
           setOpened(false);
         },
       }}
@@ -120,9 +135,13 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Customers",
-        icon: <TbUser />,
+        icon: clickedKind === "Customers" && isFetching
+          ? <Loader size="xs" />
+          : <TbUser />,
         name: "Customers",
         onClick: async () => {
+          setClickedKind("Customers");
+
           await handleMetricCategoryNavlinkClick({
             accessToken,
             authDispatch,
@@ -136,8 +155,9 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView: "All Locations",
+            storeLocationView,
           });
+
           setOpened(false);
         },
       }}
@@ -148,9 +168,13 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Repairs",
-        icon: <TbTools />,
+        icon: clickedKind === "Repairs" && isFetching
+          ? <Loader size="xs" />
+          : <TbTools />,
         name: "Repairs",
         onClick: async () => {
+          setClickedKind("Repairs");
+
           await handleMetricCategoryNavlinkClick({
             accessToken,
             authDispatch,
@@ -164,8 +188,10 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView: "All Locations",
+            storeLocationView,
           });
+          return;
+
           setOpened(false);
         },
       }}
@@ -253,11 +279,10 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         zIndex: 2,
       }}
     >
-      <Group w="100%" px="md" position="left">
+      <Group w="100%" position="left">
         <Text size={18} weight={400}>
           Metrics
         </Text>
-        {isFetching ? <Loader size="xs" /> : null}
       </Group>
       {financialsNavlink}
       {productsNavlink}

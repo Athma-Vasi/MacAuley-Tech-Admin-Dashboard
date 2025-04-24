@@ -85,7 +85,12 @@ function DisplayResource(
             }}
             maw={640}
             miw={350}
-            title={<Title order={3}>{resourceName}</Title>}
+            title={
+                <Title order={3}>
+                    {String(selectedDocument?.username ?? resourceName)}
+                </Title>
+            }
+            size={"lg"}
         >
             <div className="resource-cards-container">
                 {returnResourceCardElement({
@@ -142,67 +147,71 @@ function DisplayResource(
 
     const tableDataRows = resourceData.length === 0
         ? []
-        : resourceData.map((resource, resourceIndex) => {
-            return (
-                <tbody className="table-body" key={`${resourceIndex}`}>
-                    <tr>
-                        {Object.entries(resource).map(
-                            ([key, value], entryIndex) => {
-                                const isFieldAnImageUrl =
-                                    RESOURCES_IMAGE_URL_FIELDS
-                                        .has(key);
-                                const isFieldADate = RESOURCES_DATE_FIELDS.has(
-                                    key,
-                                );
+        : (
+            <tbody className="table-body">
+                {resourceData.map((resource, resourceIndex) => {
+                    return (
+                        <tr key={`${resourceIndex}`}>
+                            {Object.entries(resource).map(
+                                ([key, value], entryIndex) => {
+                                    const isFieldAnImageUrl =
+                                        RESOURCES_IMAGE_URL_FIELDS
+                                            .has(key);
+                                    const isFieldADate = RESOURCES_DATE_FIELDS
+                                        .has(
+                                            key,
+                                        );
 
-                                const imageDropdown = returnImageDropdown({
-                                    alt: "Resource Photo",
-                                    fit: "cover",
-                                    height: 48,
-                                    radius: 9999,
-                                    src: value?.toString() ?? "",
-                                    width: 48,
-                                });
+                                    const imageDropdown = returnImageDropdown({
+                                        alt: "Resource Photo",
+                                        fit: "cover",
+                                        height: 48,
+                                        radius: 9999,
+                                        src: value?.toString() ?? "",
+                                        width: 48,
+                                    });
 
-                                const resourceValue = isFieldAnImageUrl
-                                    ? imageDropdown
-                                    : isFieldADate
-                                    ? formatDate({
-                                        date: value?.toString() ?? "",
-                                    })
-                                    : value?.toString() ??
-                                        "Unknown";
+                                    const resourceValue = isFieldAnImageUrl
+                                        ? imageDropdown
+                                        : isFieldADate
+                                        ? formatDate({
+                                            date: value?.toString() ?? "",
+                                        })
+                                        : value?.toString() ??
+                                            "Unknown";
 
-                                return (
-                                    <td
-                                        key={`${resourceIndex}-${entryIndex}-${key}`}
-                                    >
-                                        <div
-                                            className="table-value"
-                                            onClick={() => {
-                                                setModalState((prevState) =>
-                                                    !prevState
-                                                );
-                                                setSelectedDocument(resource);
-                                                setKeyToHighlight(key);
-                                            }}
+                                    return (
+                                        <td
+                                            key={`${resourceIndex}-${entryIndex}-${key}`}
                                         >
-                                            <Text>{resourceValue}</Text>
-                                        </div>
-                                    </td>
-                                );
-                            },
-                        )}
-                    </tr>
-                </tbody>
-            );
-        });
+                                            <div
+                                                className="table-value"
+                                                onClick={() => {
+                                                    setModalState((prevState) =>
+                                                        !prevState
+                                                    );
+                                                    setSelectedDocument(
+                                                        resource,
+                                                    );
+                                                    setKeyToHighlight(key);
+                                                }}
+                                            >
+                                                <Text>{resourceValue}</Text>
+                                            </div>
+                                        </td>
+                                    );
+                                },
+                            )}
+                        </tr>
+                    );
+                })}
+            </tbody>
+        );
 
     const resourcesTable = (
         <div className="resource-table-container">
             {resourceModal}
             <Table
-                striped
                 highlightOnHover
                 className="resource-table"
             >
@@ -211,78 +220,6 @@ function DisplayResource(
             </Table>
         </div>
     );
-
-    // const tableHeaderRow = resourceData.length === 0
-    //     ? null
-    //     : (
-    //         <div className="table-header">
-    //             {Object.keys(resourceData[0]).map((key, index) => (
-    //                 <div
-    //                     key={`${key}-${index}`}
-    //                     className="resource-item"
-    //                 >
-    //                     {splitCamelCase(key)}
-    //                 </div>
-    //             ))}
-    //         </div>
-    //     );
-
-    // const tableDataRows = resourceData.length === 0
-    //     ? []
-    //     : resourceData.map((resource, resourceIndex) => {
-    //         return (
-    //             <div
-    //                 className="table-body"
-    //                 key={`${resourceIndex}`}
-    //             >
-    //                 {Object.entries(resource).map(
-    //                     ([key, value], entryIndex) => {
-    //                         const isFieldAnImageUrl = RESOURCES_IMAGE_URL_FIELDS
-    //                             .has(key);
-    //                         const isFieldADate = RESOURCES_DATE_FIELDS.has(
-    //                             key,
-    //                         );
-
-    //                         const resourceValue = isFieldAnImageUrl
-    //                             ? (
-    //                                 <Image
-    //                                     alt="Resource Photo"
-    //                                     fit="cover"
-    //                                     height={96}
-    //                                     aria-label="Resource Photo"
-    //                                     radius={9999}
-    //                                     src={value?.toString() ?? ""}
-    //                                     width={96}
-    //                                 />
-    //                             )
-    //                             : isFieldADate
-    //                             ? formatDate({
-    //                                 date: value?.toString() ?? "",
-    //                             })
-    //                             : value?.toString() ??
-    //                                 "Unknown";
-
-    //                         return (
-    //                             <div
-    //                                 key={`${resourceIndex}-${entryIndex}-${key}`}
-    //                                 className={`resource-item ${
-    //                                     entryIndex % 2 === 0 ? "even" : "odd"
-    //                                 }`}
-    //                             >
-    //                                 {resourceValue}
-    //                             </div>
-    //                         );
-    //                     },
-    //                 )}
-    //             </div>
-    //         );
-    //     });
-    // const resourcesTable = (
-    //     <div className="resource-table">
-    //         {tableHeaderRow}
-    //         {tableDataRows}
-    //     </div>
-    // );
 
     const resources = windowWidth < 1400 ? resourcesCards : resourcesTable;
 

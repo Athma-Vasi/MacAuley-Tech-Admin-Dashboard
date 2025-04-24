@@ -26,6 +26,7 @@ type GlobalAction = {
   setRespectReducedMotion: "setRespectReducedMotion";
   setSelectedChartKind: "setSelectedChartKind";
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
+  setStoreLocationView: "setStoreLocationView";
 };
 
 const globalAction: GlobalAction = {
@@ -56,6 +57,7 @@ const globalAction: GlobalAction = {
   setRespectReducedMotion: "setRespectReducedMotion",
   setSelectedChartKind: "setSelectedChartKind",
   setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
+  setStoreLocationView: "setStoreLocationView",
 };
 
 export { globalAction };

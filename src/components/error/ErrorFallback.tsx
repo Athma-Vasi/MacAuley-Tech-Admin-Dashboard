@@ -1,14 +1,15 @@
 import {
-  Button,
+  Card,
+  Center,
   Group,
-  Notification,
+  Image,
   Stack,
   Text,
   Tooltip,
 } from "@mantine/core";
 import { InvalidTokenError } from "jwt-decode";
-import { TbExclamationMark } from "react-icons/tb";
-import { useGlobalState } from "../../hooks/useGlobalState";
+import { useNavigate } from "react-router-dom";
+import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 
 function ErrorFallback({
   error,
@@ -17,31 +18,37 @@ function ErrorFallback({
   error: any;
   resetErrorBoundary: () => void;
 }) {
-  const {
-    globalState: { themeObject },
-  } = useGlobalState();
-
-  // const {
-  //   generalColors: { redColorShade, themeColorShade },
-  // } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
+  const navigateFn = useNavigate();
 
   const tryAgainButtonWithTooltip = (
     <Tooltip label="Will try the action again">
       <Group>
-        <Button
-          onClick={() => resetErrorBoundary()}
-          aria-label="Will try the action again"
-        >
-          Try again
-        </Button>
+        <AccessibleButton
+          attributes={{
+            kind: "reset",
+            label: "Try again",
+            onClick: () => resetErrorBoundary(),
+          }}
+        />
       </Group>
     </Tooltip>
   );
 
-  const { colorScheme, primaryShade } = themeObject;
-  const errorColor = colorScheme === "light"
-    ? `red.${primaryShade.light}`
-    : `red.${primaryShade.dark}`;
+  const goHomeButtonWithTooltip = (
+    <Tooltip label="Will take you to the home page">
+      <Group>
+        <AccessibleButton
+          attributes={{
+            kind: "previous",
+            label: "Login",
+            onClick: () => {
+              navigateFn("/");
+            },
+          }}
+        />
+      </Group>
+    </Tooltip>
+  );
 
   const errorMessage = error instanceof InvalidTokenError
     ? "Invalid token. Please login again!"
@@ -49,22 +56,39 @@ function ErrorFallback({
     ? "Network error. Please try again!"
     : error?.message ?? "Unknown error occurred. Please try again!";
 
+  const errorCard = (
+    <Card shadow="sm" radius="md" withBorder>
+      <Image
+        src="https://images.pexels.com/photos/2882552/pexels-photo-2882552.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        alt="Picture of a guinea pig with a thought"
+        height={320}
+        width={320}
+        fit="cover"
+        radius="md"
+      />
+
+      <Stack>
+        <Text size="lg" weight={500} mt="md">
+          Oops! Something went wrong.
+        </Text>
+        <Text size="sm" color="dimmed">
+          If the problem persists, contact support.
+        </Text>
+        <Text size="sm" color="dimmed">
+          Error details: {errorMessage}
+        </Text>
+        <Group w="100%" position="apart">
+          {goHomeButtonWithTooltip}
+          {tryAgainButtonWithTooltip}
+        </Group>
+      </Stack>
+    </Card>
+  );
+
   return (
-    <Stack w={350}>
-      <Notification
-        color={errorColor}
-        icon={<TbExclamationMark size={22} />}
-        style={{ boxShadow: "0 0 0 0", backgroundColor: "transparent" }}
-        withCloseButton={false}
-      >
-        <Stack w="100%">
-          <Text>{errorMessage}</Text>
-          <Group w="100%" position="right">
-            {tryAgainButtonWithTooltip}
-          </Group>
-        </Stack>
-      </Notification>
-    </Stack>
+    <Center h="100vh">
+      {errorCard}
+    </Center>
   );
 }
 

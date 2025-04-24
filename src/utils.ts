@@ -7,6 +7,10 @@ import { ColorsSwatches } from "./constants";
 import { AuthAction } from "./context/authProvider";
 import { AuthDispatch, AuthState } from "./context/authProvider/types";
 
+import localforage from "localforage";
+import { ProductMetricCategory } from "./components/dashboard/product/types";
+import { RepairMetricCategory } from "./components/dashboard/repair/types";
+import { AllStoreLocations } from "./components/dashboard/types";
 import {
   DecodedToken,
   HttpServerResponse,
@@ -389,6 +393,58 @@ async function responseToJSONSafe<Data = unknown>(
   }
 }
 
+async function getItemForageSafe<Data = unknown>(
+  key: string,
+): Promise<SafeBoxResult<Data>> {
+  try {
+    const data: Data = await localforage.getItem(key);
+    if (data === null || data === undefined) {
+      return new Ok({ data: void 0, kind: "notFound" });
+    }
+
+    return new Ok({ data, kind: "success" });
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
+async function setItemForageSafe<Data = unknown>(
+  key: string,
+  value: Data,
+): Promise<SafeBoxResult<undefined>> {
+  try {
+    await localforage.setItem(key, value);
+    return new Ok({ data: void 0, kind: "success" });
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
+function createForageKey(
+  {
+    metricsView,
+    productMetricCategory,
+    repairMetricCategory,
+    storeLocationView,
+  }: {
+    metricsView: string;
+    storeLocationView: AllStoreLocations;
+    productMetricCategory: ProductMetricCategory;
+    repairMetricCategory: RepairMetricCategory;
+  },
+) {
+  const capitalizedMetricsView = `${metricsView?.[0].toUpperCase()}${
+    metricsView?.slice(1)
+  }`;
+
+  return `${capitalizedMetricsView}-${storeLocationView}${
+    metricsView === "repairs" ? "-" + repairMetricCategory : metricsView ===
+        "products"
+      ? "-" + productMetricCategory
+      : ""
+  }`;
+}
+
 function addTokenDetailsToBody(
   body: Record<string, unknown>,
   authState: AuthState,
@@ -722,11 +778,13 @@ export {
   capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
+  createForageKey,
   debounce,
   decodeJWTSafe,
   fetchRequestPOSTSafe,
   fetchSafe,
   formatDate,
+  getItemForageSafe,
   hexToHSL,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
@@ -735,6 +793,7 @@ export {
   returnSliderMarks,
   returnThemeColors,
   returnTimeToRead,
+  setItemForageSafe,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
   throttle,

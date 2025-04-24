@@ -6,6 +6,7 @@ import {
   standardDeviation,
 } from "simple-statistics";
 
+import localforage from "localforage";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
@@ -22,6 +23,7 @@ import type {
 import {
   decodeJWTSafe,
   fetchSafe,
+  getItemForageSafe,
   responseToJSONSafe,
   splitCamelCase,
   toFixedFloat,
@@ -3874,182 +3876,6 @@ function returnSelectedCalendarCharts<
     : defaultValue;
 }
 
-async function handleStoreCategoryClick(
-  {
-    accessToken,
-    authDispatch,
-    dashboardDispatch,
-    fetchAbortControllerRef,
-    globalDispatch,
-    isComponentMountedRef,
-    metricsUrl,
-    metricsView,
-    productMetricCategory,
-    repairMetricCategory,
-    showBoundary,
-    storeLocationView,
-  }: {
-    accessToken: string;
-    authDispatch: React.Dispatch<AuthDispatch>;
-    dashboardDispatch: React.Dispatch<DashboardDispatch>;
-    fetchAbortControllerRef: React.RefObject<AbortController | null>;
-    globalDispatch: React.Dispatch<GlobalDispatch>;
-    isComponentMountedRef: React.RefObject<boolean>;
-    metricsUrl: string;
-    metricsView: Lowercase<DashboardMetricsView>;
-    productMetricCategory: ProductMetricCategory;
-    repairMetricCategory: RepairMetricCategory;
-    showBoundary: (error: any) => void;
-    storeLocationView: AllStoreLocations;
-  },
-) {
-  fetchAbortControllerRef.current?.abort("Previous request cancelled");
-  fetchAbortControllerRef.current = new AbortController();
-  const fetchAbortController = fetchAbortControllerRef.current;
-
-  isComponentMountedRef.current = true;
-  const isComponentMounted = isComponentMountedRef.current;
-
-  const requestInit: RequestInit = {
-    method: "GET",
-    signal: fetchAbortController.signal,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
-
-  const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
-
-  const metricCategoryQuery = metricsView === "products"
-    ? `&metricCategory[$eq]=${productMetricCategory}`
-    : metricsView === "repairs"
-    ? `&metricCategory[$eq]=${repairMetricCategory}`
-    : "";
-
-  const urlWithQuery = new URL(
-    `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
-  );
-
-  dashboardDispatch({
-    action: dashboardAction.setIsLoading,
-    payload: true,
-  });
-
-  try {
-    const responseResult = await fetchSafe(urlWithQuery, requestInit);
-    if (!isComponentMounted) {
-      return;
-    }
-
-    if (responseResult.err) {
-      showBoundary(responseResult.val.data);
-      return;
-    }
-
-    const responseUnwrapped = responseResult.safeUnwrap().data;
-
-    if (responseUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return;
-    }
-
-    const jsonResult = await responseToJSONSafe<
-      HttpServerResponse<BusinessMetricsDocument>
-    >(
-      responseUnwrapped,
-    );
-
-    if (!isComponentMounted) {
-      return;
-    }
-
-    if (jsonResult.err) {
-      showBoundary(jsonResult.val.data);
-      return;
-    }
-
-    const serverResponse = jsonResult.safeUnwrap().data;
-
-    if (serverResponse === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return;
-    }
-
-    const { accessToken } = serverResponse;
-
-    const decodedTokenResult = await decodeJWTSafe(accessToken);
-
-    if (!isComponentMounted) {
-      return;
-    }
-
-    if (decodedTokenResult.err) {
-      showBoundary(decodedTokenResult.val.data);
-      return;
-    }
-
-    const decodedToken = decodedTokenResult.safeUnwrap().data;
-    if (decodedToken === undefined) {
-      showBoundary(new Error("Invalid token"));
-      return;
-    }
-
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: accessToken,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
-
-    if (metricsView === "financials") {
-      globalDispatch({
-        action: globalAction.setFinancialMetricsDocument,
-        payload: serverResponse.data[0] as FinancialMetricsDocument,
-      });
-    }
-
-    if (metricsView === "products") {
-      globalDispatch({
-        action: globalAction.setProductMetricsDocument,
-        payload: serverResponse.data[0] as ProductMetricsDocument,
-      });
-    }
-
-    if (metricsView === "customers") {
-      globalDispatch({
-        action: globalAction.setCustomerMetricsDocument,
-        payload: serverResponse.data[0] as CustomerMetricsDocument,
-      });
-    }
-
-    if (metricsView === "repairs") {
-      globalDispatch({
-        action: globalAction.setRepairMetricsDocument,
-        payload: serverResponse.data[0] as RepairMetricsDocument,
-      });
-    }
-
-    console.group("fetchMetrics");
-    console.log("serverResponse", serverResponse);
-    console.groupEnd();
-
-    dashboardDispatch({
-      action: dashboardAction.setIsLoading,
-      payload: false,
-    });
-  } catch (error: unknown) {
-    if (
-      !isComponentMounted || fetchAbortController?.signal.aborted
-    ) {
-      return;
-    }
-    showBoundary(error);
-  }
-}
-
 export {
   createAggregatedProductMetrics,
   createAggregatedRepairMetrics,
@@ -4067,7 +3893,6 @@ export {
   createRandomRepairMetrics,
   createRepairCategoryUnitsRepairedRevenueTuple,
   excludeTodayFromCalendarView,
-  handleStoreCategoryClick,
   returnChartTitleNavigateLinks,
   returnChartTitles,
   returnDaysInMonthsInYears,

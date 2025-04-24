@@ -20,10 +20,6 @@ const dashboardReducersMap = new Map<
   (state: DashboardState, dispatch: DashboardDispatch) => DashboardState
 >([
   [dashboardAction.setSelectedYYYYMMDD, dashboardReducer_setSelectedYYYYMMDD],
-  [
-    dashboardAction.setStoreLocationView,
-    dashboardReducer_setStoreLocationView,
-  ],
   [dashboardAction.setIsLoading, dashboardReducer_setIsLoading],
   [dashboardAction.setLoadingMessage, dashboardReducer_setLoadingMessage],
   [dashboardAction.setCalendarView, dashboardReducer_setCalendarView],
@@ -36,16 +32,6 @@ function dashboardReducer_setSelectedYYYYMMDD(
   return {
     ...state,
     selectedYYYYMMDD: dispatch.payload as string,
-  };
-}
-
-function dashboardReducer_setStoreLocationView(
-  state: DashboardState,
-  dispatch: DashboardDispatch,
-): DashboardState {
-  return {
-    ...state,
-    storeLocationView: dispatch.payload as AllStoreLocations,
   };
 }
 

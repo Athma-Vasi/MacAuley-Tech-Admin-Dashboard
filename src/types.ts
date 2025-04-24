@@ -6,19 +6,18 @@ import {
   MantineThemeOverride,
 } from "@mantine/core";
 import type { Result } from "ts-results";
-import { AccessibleDateTimeInputAttributes } from "./components/accessibleInputs/AccessibleDateTimeInput";
-import { AccessibleNumberInputAttributes } from "./components/accessibleInputs/AccessibleNumberInput";
-import { AccessibleTextInputAttributes } from "./components/accessibleInputs/text/AccessibleTextInput";
+import { ProductMetricCategory } from "./components/dashboard/product/types";
+import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import {
   AllStoreLocations,
   CustomerMetrics,
+  DashboardMetricsView,
   ProductCategory,
   ProductYearlyMetric,
   RepairCategory,
   RepairYearlyMetric,
   YearlyFinancialMetric,
 } from "./components/dashboard/types";
-import { QueryOperator } from "./components/query/types";
 import { ValidationKey } from "./validations";
 
 type CheckboxRadioSelectData<Payload extends string = string> = Array<{
@@ -435,6 +434,10 @@ type FormReview<
   State extends Record<string, unknown> = Record<string, unknown>,
 > = Record<string, Record<keyof State, State[keyof State]>>;
 
+type LocalForageKeys = `${DashboardMetricsView}-${AllStoreLocations}-${
+  | ProductMetricCategory
+  | RepairMetricCategory}`;
+
 export type {
   Accounting,
   BusinessMetricsDocument,
@@ -455,6 +458,7 @@ export type {
   HumanResources,
   InformationTechnology,
   JobPosition,
+  LocalForageKeys,
   LogisticsAndInventory,
   Maintenance,
   Marketing,

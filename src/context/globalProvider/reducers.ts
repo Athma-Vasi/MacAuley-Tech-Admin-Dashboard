@@ -6,6 +6,7 @@ import {
   ProductSubMetric,
 } from "../../components/dashboard/product/types";
 import { RepairMetricCategory } from "../../components/dashboard/repair/types";
+import { AllStoreLocations } from "../../components/dashboard/types";
 import {
   CustomerMetricsDocument,
   FinancialMetricsDocument,
@@ -112,6 +113,7 @@ const globalReducersMap = new Map<
     globalReducer_setExpandSunburstChartData,
   ],
   [globalAction.setSelectedChartKind, globalReducer_setSelectedChartKind],
+  [globalAction.setStoreLocationView, globalReducer_setStoreLocationView],
 ]);
 
 function globalReducer_setProductMetricCategory(
@@ -452,6 +454,16 @@ function globalReducer_setSelectedChartKind(
   return {
     ...state,
     selectedChartKind: dispatch.payload as ChartKind,
+  };
+}
+
+function globalReducer_setStoreLocationView(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    storeLocationView: dispatch.payload as AllStoreLocations,
   };
 }
 

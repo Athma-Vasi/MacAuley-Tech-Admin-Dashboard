@@ -5,6 +5,7 @@ import {
   Department,
   FontFamily,
   JobPosition,
+  LocalForageKeys,
   Province,
   StatesUS,
   StoreLocation,

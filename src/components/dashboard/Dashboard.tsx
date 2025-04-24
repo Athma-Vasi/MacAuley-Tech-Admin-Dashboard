@@ -20,7 +20,7 @@ import {
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import {
@@ -42,6 +42,7 @@ import { CUSTOMER_METRICS_CATEGORY_DATA } from "./customer/constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
 import { FINANCIAL_METRICS_CATEGORY_DATA } from "./financial/constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
+import { handleStoreCategoryClick } from "./handlers";
 import {
   PRODUCT_METRIC_CATEGORY_DATA,
   PRODUCT_METRICS_SUB_CATEGORY_DATA,
@@ -53,7 +54,7 @@ import { RepairMetrics } from "./repair/RepairMetrics";
 import { RepairMetricCategory } from "./repair/types";
 import { initialDashboardState } from "./state";
 import { AllStoreLocations, DashboardMetricsView } from "./types";
-import { handleStoreCategoryClick, splitSelectedCalendarDate } from "./utils";
+import { splitSelectedCalendarDate } from "./utils";
 
 function Dashboard() {
   const [dashboardState, dashboardDispatch] = useReducer(
@@ -62,6 +63,7 @@ function Dashboard() {
   );
 
   const { windowWidth } = useWindowSize();
+  const navigateFn = useNavigate();
 
   const {
     globalState: {
@@ -75,6 +77,7 @@ function Dashboard() {
       productSubMetricCategory,
       repairMetricCategory,
       repairMetricsDocument,
+      storeLocationView,
       themeObject,
     },
     globalDispatch,
@@ -99,7 +102,6 @@ function Dashboard() {
     isLoading,
     loadingMessage,
     selectedYYYYMMDD,
-    storeLocationView,
   } = dashboardState;
 
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
@@ -188,6 +190,7 @@ function Dashboard() {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
+            navigateFn,
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
@@ -195,8 +198,8 @@ function Dashboard() {
               .value as AllStoreLocations,
           });
         },
-        parentDispatch: dashboardDispatch,
-        validValueAction: dashboardAction.setStoreLocationView,
+        parentDispatch: globalDispatch,
+        validValueAction: globalAction.setStoreLocationView,
         value: storeLocationView,
       }}
     />
@@ -217,6 +220,7 @@ function Dashboard() {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
+            navigateFn,
             productMetricCategory,
             repairMetricCategory: event.currentTarget
               .value as RepairMetricCategory,
@@ -258,6 +262,7 @@ function Dashboard() {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
+            navigateFn,
             productMetricCategory: event.currentTarget
               .value as ProductMetricCategory,
             repairMetricCategory,

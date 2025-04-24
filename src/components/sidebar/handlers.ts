@@ -1,3 +1,4 @@
+import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
@@ -11,7 +12,14 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
-import { decodeJWTSafe, fetchSafe, responseToJSONSafe } from "../../utils";
+import {
+  createForageKey,
+  decodeJWTSafe,
+  fetchSafe,
+  getItemForageSafe,
+  responseToJSONSafe,
+  setItemForageSafe,
+} from "../../utils";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
@@ -75,12 +83,67 @@ async function handleMetricCategoryNavlinkClick(
     `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
   );
 
+  const forageKey = createForageKey({
+    metricsView,
+    productMetricCategory,
+    repairMetricCategory,
+    storeLocationView,
+  });
+
   globalDispatch({
     action: globalAction.setIsFetching,
     payload: true,
   });
 
   try {
+    const metricsDocumentResult = await getItemForageSafe<
+      BusinessMetricsDocument
+    >(forageKey);
+
+    if (metricsDocumentResult.err) {
+      showBoundary(metricsDocumentResult.val.data);
+      return;
+    }
+    const unwrapped = metricsDocumentResult.safeUnwrap();
+    const metricsDocument = unwrapped.data;
+
+    if (
+      unwrapped.kind === "success"
+    ) {
+      if (metricsView === "customers") {
+        globalDispatch({
+          action: globalAction.setCustomerMetricsDocument,
+          payload: metricsDocument as CustomerMetricsDocument,
+        });
+      }
+
+      if (metricsView === "financials") {
+        globalDispatch({
+          action: globalAction.setFinancialMetricsDocument,
+          payload: metricsDocument as FinancialMetricsDocument,
+        });
+      }
+
+      if (metricsView === "products") {
+        globalDispatch({
+          action: globalAction.setProductMetricsDocument,
+          payload: metricsDocument as ProductMetricsDocument,
+        });
+      }
+
+      if (metricsView === "repairs") {
+        globalDispatch({
+          action: globalAction.setRepairMetricsDocument,
+          payload: metricsDocument as RepairMetricsDocument,
+        });
+      }
+      globalDispatch({
+        action: globalAction.setIsFetching,
+        payload: true,
+      });
+      return;
+    }
+
     const responseResult = await fetchSafe(urlWithQuery, requestInit);
     if (!isComponentMounted) {
       return;
@@ -120,7 +183,30 @@ async function handleMetricCategoryNavlinkClick(
       return;
     }
 
-    const { accessToken } = serverResponse;
+    const { accessToken, triggerLogout } = serverResponse;
+
+    if (triggerLogout) {
+      authDispatch({
+        action: authAction.setAccessToken,
+        payload: "",
+      });
+      authDispatch({
+        action: authAction.setIsLoggedIn,
+        payload: false,
+      });
+      authDispatch({
+        action: authAction.setDecodedToken,
+        payload: Object.create(null),
+      });
+      authDispatch({
+        action: authAction.setUserDocument,
+        payload: Object.create(null),
+      });
+
+      await localforage.clear();
+      navigateFn("/");
+      return;
+    }
 
     const decodedTokenResult = await decodeJWTSafe(accessToken);
 
@@ -139,6 +225,10 @@ async function handleMetricCategoryNavlinkClick(
       return;
     }
 
+    console.group("fetchMetrics");
+    console.log("serverResponse", serverResponse);
+    console.groupEnd();
+
     authDispatch({
       action: authAction.setAccessToken,
       payload: accessToken,
@@ -148,37 +238,45 @@ async function handleMetricCategoryNavlinkClick(
       payload: decodedToken,
     });
 
+    const payload = serverResponse.data[0];
+
     if (metricsView === "financials") {
       globalDispatch({
         action: globalAction.setFinancialMetricsDocument,
-        payload: serverResponse.data[0] as FinancialMetricsDocument,
+        payload: payload as FinancialMetricsDocument,
       });
     }
 
     if (metricsView === "products") {
       globalDispatch({
         action: globalAction.setProductMetricsDocument,
-        payload: serverResponse.data[0] as ProductMetricsDocument,
+        payload: payload as ProductMetricsDocument,
       });
     }
 
     if (metricsView === "customers") {
       globalDispatch({
         action: globalAction.setCustomerMetricsDocument,
-        payload: serverResponse.data[0] as CustomerMetricsDocument,
+        payload: payload as CustomerMetricsDocument,
       });
     }
 
     if (metricsView === "repairs") {
       globalDispatch({
         action: globalAction.setRepairMetricsDocument,
-        payload: serverResponse.data[0] as RepairMetricsDocument,
+        payload: payload as RepairMetricsDocument,
       });
     }
 
-    console.group("fetchMetrics");
-    console.log("serverResponse", serverResponse);
-    console.groupEnd();
+    const setDocResult = await setItemForageSafe<BusinessMetricsDocument>(
+      forageKey,
+      payload,
+    );
+
+    if (setDocResult.err) {
+      showBoundary(setDocResult.val.data);
+      return;
+    }
 
     globalDispatch({
       action: globalAction.setIsFetching,
@@ -252,6 +350,7 @@ async function handleLogoutButtonClick({
       payload: false,
     });
 
+    await localforage.clear();
     navigateFn("/");
   } catch (error: unknown) {
     if (

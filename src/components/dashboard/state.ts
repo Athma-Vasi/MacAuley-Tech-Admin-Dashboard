@@ -11,7 +11,6 @@ import type { DashboardState } from "./types";
 // const initialSelectedYear = new Date().getFullYear().toString() as Year;
 
 const initialDashboardState: DashboardState = {
-  storeLocationView: "All Locations",
   // selectedYYYYMMDD:
   //   `${initialSelectedYear}-${initialSelectedMonth}-${initialSelectedDate}`,
   selectedYYYYMMDD: "2025-03-31",

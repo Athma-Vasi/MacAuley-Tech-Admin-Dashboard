@@ -301,7 +301,7 @@ function createQueryLinkStatement({
 
     if (queryChainKind === "filter") {
         queryLinkStatement = `${splitCamelCase(field)} ${
-            operator === "in" ? "contains" : `is ${operator}`
+            operator === "in" ? "equals" : `is ${operator}`
         } ${value}`;
     }
 

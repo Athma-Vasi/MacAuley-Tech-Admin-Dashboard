@@ -24,17 +24,13 @@ type DashboardRepairMetric = RepairCategory | "All Repairs";
 
 type DashboardState = {
   selectedYYYYMMDD: string;
-  storeLocationView: AllStoreLocations;
+
   isLoading: boolean;
   loadingMessage: string;
   calendarView: DashboardCalendarView;
 };
 
 type DashboardDispatch =
-  | {
-    action: DashboardAction["setStoreLocationView"];
-    payload: AllStoreLocations;
-  }
   | {
     action: DashboardAction["setSelectedYYYYMMDD"];
     payload: string;

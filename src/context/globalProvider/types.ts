@@ -19,6 +19,7 @@ import { FinancialMetricCategory } from "../../components/dashboard/financial/ty
 import { ProductSubMetric } from "../../components/dashboard/product/types";
 import { RepairMetricCategory } from "../../components/dashboard/repair/types";
 import {
+  AllStoreLocations,
   DashboardCalendarView,
   ProductCategory,
 } from "../../components/dashboard/types";
@@ -157,10 +158,15 @@ type GlobalState = {
   repairMetricsDocument: RepairMetricsDocument | null;
   selectedChartKind: ChartKind;
   selectedYYYYMMDD: string;
+  storeLocationView: AllStoreLocations;
   themeObject: ThemeObject;
 };
 
 type GlobalDispatch =
+  | {
+    action: GlobalAction["setStoreLocationView"];
+    payload: AllStoreLocations;
+  }
   | {
     action: GlobalAction["setIsFetching"];
     payload: boolean;
