@@ -9,7 +9,6 @@ import {
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
-import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
@@ -155,82 +154,6 @@ function RepairRUS(
     year,
   };
 
-  const expandBarLineRadialChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText:
-          `Expand and customize ${barLineRadialChartKind} chart`,
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          if (barLineRadialChartKind === "bar") {
-            globalDispatch({
-              action: globalAction.setExpandBarChartData,
-              payload: {
-                ...commonPayload,
-                chartData: barCharts[yAxisKey],
-                chartKind: "bar",
-                chartUnitKind: barLineRadialChartUnit,
-                indexBy: barChartIndexBy,
-                keys: barChartKeys,
-              },
-            });
-
-            globalDispatch({
-              action: globalAction.setSelectedChartKind,
-              payload: "bar",
-            });
-          }
-
-          if (barLineRadialChartKind === "line") {
-            globalDispatch({
-              action: globalAction.setExpandLineChartData,
-              payload: {
-                ...commonPayload,
-                chartData: lineCharts[yAxisKey],
-                chartKind: "line",
-                chartUnitKind: barLineRadialChartUnit,
-              },
-            });
-
-            globalDispatch({
-              action: globalAction.setSelectedChartKind,
-              payload: "line",
-            });
-          }
-
-          if (barLineRadialChartKind === "radial") {
-            globalDispatch({
-              action: globalAction.setExpandRadialBarChartData,
-              payload: {
-                ...commonPayload,
-                chartData: lineCharts[yAxisKey],
-                chartKind: "radial",
-                chartUnitKind: barLineRadialChartUnit,
-              },
-            });
-
-            globalDispatch({
-              action: globalAction.setSelectedChartKind,
-              payload: "radial",
-            });
-          }
-
-          navigate(
-            barLineRadialChartKind === "bar"
-              ? expandBarChartNavigateLink
-              : barLineRadialChartKind === "line"
-              ? expandLineChartNavigateLink
-              : expandRadialBarChartNavigateLink,
-          );
-        },
-      }}
-    />
-  );
-
   const yAxisKeySelectInput = (
     <AccessibleSelectInput
       attributes={{
@@ -357,37 +280,6 @@ function RepairRUS(
 
   const calendarUnitKind = yAxisKey === "revenue" ? "CAD" : "Units";
 
-  const expandCalendarChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText: "Expand and customize calendar chart",
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          globalDispatch({
-            action: globalAction.setExpandCalendarChartData,
-            payload: {
-              ...commonPayload,
-              chartData: calendarChartData,
-              chartKind: "calendar",
-              chartUnitKind: calendarUnitKind,
-            },
-          });
-
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "calendar",
-          });
-
-          navigate(expandCalendarChartNavigateLink);
-        },
-      }}
-    />
-  );
-
   const calendarChart = (
     <ResponsiveCalendarChart
       calendarChartData={calendarChartData}
@@ -482,8 +374,6 @@ function RepairRUS(
       calendarChart={calendarChart}
       calendarView={calendarView}
       consolidatedCards={cardsWithStatisticsElements}
-      expandBarLineRadialChartButton={expandBarLineRadialChartButton}
-      expandCalendarChartButton={expandCalendarChartButton}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
       statisticsModals={statisticsModals}

@@ -13,9 +13,6 @@ type DashboardLayoutContainerProps = {
   calendarView: DashboardCalendarView;
   consolidatedCards: React.JSX.Element[];
   chartsToYAxisKeysMap: ChartsToYAxisKeysMap;
-  expandBarLineRadialChartButton: React.JSX.Element;
-  expandCalendarChartButton?: React.JSX.Element | null;
-  expandPieChartButton?: React.JSX.Element;
   pieChart?: React.JSX.Element;
   sectionHeading: string;
   semanticLabel?: string;
@@ -33,9 +30,6 @@ function DashboardLayoutContainer(
     calendarView,
     consolidatedCards,
     chartsToYAxisKeysMap,
-    expandBarLineRadialChartButton,
-    expandCalendarChartButton,
-    expandPieChartButton,
     pieChart,
     sectionHeading,
     semanticLabel,
@@ -64,20 +58,17 @@ function DashboardLayoutContainer(
 
   const pieChartWithButton = (
     <div className="chart-card pie">
-      {expandPieChartButton}
       {pieChart}
     </div>
   );
 
   const calendarChartWithButton = (
     <div className="chart-card calendar">
-      {expandCalendarChartButton}
       {calendarChart}
     </div>
   );
   const barLineRadialChartWithButton = (
     <div className="chart-card blr">
-      {expandBarLineRadialChartButton}
       {barLineRadialChart}
     </div>
   );
