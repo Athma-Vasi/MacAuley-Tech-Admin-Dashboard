@@ -29,7 +29,7 @@ import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
-import { handleLoginButtonClick } from "./utils";
+import { handleLoginButtonClick } from "./handlers";
 
 function Login() {
   const [loginState, loginDispatch] = useReducer(

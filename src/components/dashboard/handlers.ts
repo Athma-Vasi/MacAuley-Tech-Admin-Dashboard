@@ -140,10 +140,12 @@ async function handleStoreCategoryClick(
                     payload: metricsDocument as RepairMetricsDocument,
                 });
             }
+
             dashboardDispatch({
                 action: dashboardAction.setIsLoading,
                 payload: false,
             });
+
             return;
         }
 

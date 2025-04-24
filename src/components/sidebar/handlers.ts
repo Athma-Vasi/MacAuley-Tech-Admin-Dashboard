@@ -137,10 +137,12 @@ async function handleMetricCategoryNavlinkClick(
           payload: metricsDocument as RepairMetricsDocument,
         });
       }
+
       globalDispatch({
         action: globalAction.setIsFetching,
-        payload: true,
+        payload: false,
       });
+
       return;
     }
 
