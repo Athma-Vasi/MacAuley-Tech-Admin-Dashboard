@@ -5,7 +5,6 @@ import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import { addCommaSeparator, returnThemeColors } from "../../../../utils";
-import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
@@ -155,41 +154,28 @@ function Returning(
     />
   );
 
-  const expandPieChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText: "Expand and customize pie chart",
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          globalDispatch({
-            action: globalAction.setExpandPieChartData,
-            payload: {
-              ...commonPayload,
-              chartData: pieCharts[yAxisKey as FinancialMetricsPieChartsKey],
-              chartKind: "pie",
-              chartUnitKind,
-            },
-          });
-
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "pie",
-          });
-
-          navigate(expandPieChartNavigateLink);
-        },
-      }}
-    />
-  );
-
   const pieChart = (
     <ResponsivePieChart
       chartUnitKind={chartUnitKind}
       hideControls
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandPieChartData,
+          payload: {
+            ...commonPayload,
+            chartData: pieCharts[yAxisKey as FinancialMetricsPieChartsKey],
+            chartKind: "pie",
+            chartUnitKind,
+          },
+        });
+
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "pie",
+        });
+
+        navigate(expandPieChartNavigateLink);
+      }}
       pieChartData={pieCharts[yAxisKey as FinancialMetricsPieChartsKey]}
       tooltip={(arg) =>
         createChartTooltipElement({
@@ -225,79 +211,6 @@ function Returning(
     obj.label
   );
 
-  const expandBarLineRadialChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText:
-          `Expand and customize ${barLineRadialChartKind} chart`,
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          if (barLineRadialChartKind === "bar") {
-            globalDispatch({
-              action: globalAction.setExpandBarChartData,
-              payload: {
-                ...commonPayload,
-                chartData: barCharts[yAxisKey],
-                chartKind: "bar",
-                indexBy: barChartIndexBy,
-                keys: barChartKeys,
-              },
-            });
-
-            globalDispatch({
-              action: globalAction.setSelectedChartKind,
-              payload: "bar",
-            });
-          }
-
-          if (barLineRadialChartKind === "line") {
-            globalDispatch({
-              action: globalAction.setExpandLineChartData,
-              payload: {
-                ...commonPayload,
-                chartData: lineCharts[yAxisKey],
-                chartKind: "line",
-              },
-            });
-
-            globalDispatch({
-              action: globalAction.setSelectedChartKind,
-              payload: "line",
-            });
-          }
-
-          if (barLineRadialChartKind === "radial") {
-            globalDispatch({
-              action: globalAction.setExpandRadialBarChartData,
-              payload: {
-                ...commonPayload,
-                chartData: lineCharts[yAxisKey],
-                chartKind: "radial",
-              },
-            });
-
-            globalDispatch({
-              action: globalAction.setSelectedChartKind,
-              payload: "radial",
-            });
-          }
-
-          navigate(
-            barLineRadialChartKind === "bar"
-              ? expandBarChartNavigateLink
-              : barLineRadialChartKind === "line"
-              ? expandLineChartNavigateLink
-              : expandRadialBarChartNavigateLink,
-          );
-        },
-      }}
-    />
-  );
-
   const barLineRadialChart = barLineRadialChartKind === "bar"
     ? (
       <ResponsiveBarChart
@@ -306,6 +219,25 @@ function Returning(
         hideControls
         indexBy={barChartIndexBy}
         keys={barChartKeys}
+        onClick={() => {
+          globalDispatch({
+            action: globalAction.setExpandBarChartData,
+            payload: {
+              ...commonPayload,
+              chartData: barCharts[yAxisKey],
+              chartKind: "bar",
+              indexBy: barChartIndexBy,
+              keys: barChartKeys,
+            },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "bar",
+          });
+
+          navigate(expandBarChartNavigateLink);
+        }}
         tooltip={(arg) =>
           createChartTooltipElement({ arg, chartUnitKind, kind: "bar" })}
       />
@@ -316,6 +248,23 @@ function Returning(
         chartUnitKind={chartUnitKind}
         hideControls
         lineChartData={lineCharts[yAxisKey]}
+        onClick={() => {
+          globalDispatch({
+            action: globalAction.setExpandLineChartData,
+            payload: {
+              ...commonPayload,
+              chartData: lineCharts[yAxisKey],
+              chartKind: "line",
+            },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "line",
+          });
+
+          navigate(expandLineChartNavigateLink);
+        }}
         xFormat={(x) =>
           `${
             calendarView === "Daily"
@@ -333,6 +282,23 @@ function Returning(
       <ResponsiveRadialBarChart
         radialBarChartData={lineCharts[yAxisKey]}
         hideControls
+        onClick={() => {
+          globalDispatch({
+            action: globalAction.setExpandRadialBarChartData,
+            payload: {
+              ...commonPayload,
+              chartData: lineCharts[yAxisKey],
+              chartKind: "radial",
+            },
+          });
+
+          globalDispatch({
+            action: globalAction.setSelectedChartKind,
+            payload: "radial",
+          });
+
+          navigate(expandRadialBarChartNavigateLink);
+        }}
         tooltip={(arg) =>
           createChartTooltipElement({
             arg,
@@ -349,42 +315,29 @@ function Returning(
     metricCategory,
   );
 
-  const expandCalendarChartButton = (
-    <AccessibleButton
-      attributes={{
-        enabledScreenreaderText: "Expand and customize calendar chart",
-        kind: "expand",
-        onClick: (
-          _event:
-            | React.MouseEvent<HTMLButtonElement>
-            | React.PointerEvent<HTMLButtonElement>,
-        ) => {
-          globalDispatch({
-            action: globalAction.setExpandCalendarChartData,
-            payload: {
-              ...commonPayload,
-              chartData: calendarChartData,
-              chartKind: "calendar",
-            },
-          });
-
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "calendar",
-          });
-
-          navigate(expandCalendarChartNavigateLink);
-        },
-      }}
-    />
-  );
-
   const calendarChart = (
     <ResponsiveCalendarChart
       calendarChartData={calendarChartData}
       hideControls
       from={`${year}-01-01`}
       to={`${year}-12-31`}
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandCalendarChartData,
+          payload: {
+            ...commonPayload,
+            chartData: calendarChartData,
+            chartKind: "calendar",
+          },
+        });
+
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "calendar",
+        });
+
+        navigate(expandCalendarChartNavigateLink);
+      }}
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
@@ -464,9 +417,6 @@ function Returning(
         calendarChart={calendarChart}
         calendarView={calendarView}
         consolidatedCards={cardsWithStatisticsElements}
-        expandBarLineRadialChartButton={expandBarLineRadialChartButton}
-        expandCalendarChartButton={expandCalendarChartButton}
-        expandPieChartButton={expandPieChartButton}
         pieChart={pieChart}
         sectionHeading="Returning Customers"
         semanticLabel="TODO"
