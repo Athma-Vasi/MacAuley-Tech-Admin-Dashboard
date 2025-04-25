@@ -119,21 +119,6 @@ function Dashboard() {
     };
   }, []);
 
-  console.group("Dashboard");
-  console.log("storeLocationView", storeLocationView);
-  console.log("metricsView", metricsView);
-  console.log("productMetricCategory", productMetricCategory);
-  console.log("productSubMetricCategory", productSubMetricCategory);
-  console.log("repairMetricCategory", repairMetricCategory);
-  console.log("financialMetricCategory", financialMetricCategory);
-  console.log("customerMetricsCategory", customerMetricsCategory);
-  console.log("selectedYYYYMMDD", selectedYYYYMMDD);
-  console.log("financialMetricsDocument", financialMetricsDocument);
-  console.log("productMetricsDocument", productMetricsDocument);
-  console.log("customerMetricsDocument", customerMetricsDocument);
-  console.log("repairMetricsDocument", repairMetricsDocument);
-  console.groupEnd();
-
   const { selectedDate, selectedMonth, selectedYear } =
     splitSelectedCalendarDate({
       calendarDate: selectedYYYYMMDD,

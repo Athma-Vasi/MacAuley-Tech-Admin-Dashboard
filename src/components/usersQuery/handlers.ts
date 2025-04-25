@@ -119,10 +119,12 @@ async function handleUsersQuerySubmitGET(
             return;
         }
 
+        console.time("--PARSING--");
         const parsedResult = await parseServerResponseSafe({
             object: serverResponse,
             zSchema: userDocumentZ,
         });
+        console.timeEnd("--PARSING--");
 
         if (!isComponentMounted) {
             return;

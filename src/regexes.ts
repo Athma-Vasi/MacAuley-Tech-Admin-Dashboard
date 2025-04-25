@@ -142,11 +142,11 @@ const JOB_POSITION_REGEX =
 const USER_ROLES_REGEX = /^(Admin|Employee|Manager)$/;
 
 /**
- * - /^(All Locations|Calgary|Edmonton|Vancouver)$/
- * - matches the following store locations:All Locations, Calgary, Edmonton, Vancouver
+ * - /^(Calgary|Edmonton|Vancouver)$/
+ * - matches the following store locations: Calgary, Edmonton, Vancouver
  * - ^ and $ ensure that the entire string matches the regex.
  */
-const STORE_LOCATION_REGEX = /^(All Locations|Calgary|Edmonton|Vancouver)$/;
+const STORE_LOCATION_REGEX = /^(Calgary|Edmonton|Vancouver)$/;
 
 /**
  * - /^(January|February|March|April|May|June|July|August|September|October|November|December)$/
@@ -177,6 +177,22 @@ const YEARS_REGEX =
  */
 const DAYS_REGEX = /^(0[1-9]|[12][0-9]|3[01])$/;
 
+/**
+ * -  /^(All Products|Accessory|Central Processing Unit \(CPU\)|Computer Case|Desktop Computer|Display|Graphics Processing Unit \(GPU\)|Headphone|Keyboard|Laptop|Memory \(RAM\)|Microphone|Motherboard|Mouse|Power Supply Unit \(PSU\)|Smartphone|Speaker|Storage|Tablet|Webcam)$/
+ * - matches the following product categories: Accessory, Central Processing Unit (CPU), Computer Case, Desktop Computer, Display, Graphics Processing Unit (GPU), Headphone, Keyboard, Laptop, Memory (RAM), Microphone, Motherboard, Mouse, Power Supply Unit (PSU), Smartphone, Speaker, Storage, Tablet, Webcam
+ * - ^ and $ ensure that the entire string matches the regex.
+ */
+const PRODUCT_CATEGORY_REGEX =
+    /^(All Products|Accessory|Central Processing Unit \(CPU\)|Computer Case|Desktop Computer|Display|Graphics Processing Unit \(GPU\)|Headphone|Keyboard|Laptop|Memory \(RAM\)|Microphone|Motherboard|Mouse|Power Supply Unit \(PSU\)|Smartphone|Speaker|Storage|Tablet|Webcam)$/;
+
+/**
+ * - /^(All Repairs|Accessory|Computer Component|Peripheral|Electronic Device|Mobile Device|Audio\/Video)$/
+ * - matches the following repair categories: Accessory, Computer Component, Peripheral, Electronic Device, Mobile Device, Audio/Video
+ * - ^ and $ ensure that the entire string matches the regex.
+ */
+const REPAIR_CATEGORY_REGEX =
+    /^(All Repairs|Accessory|Computer Component|Peripheral|Electronic Device|Mobile Device|Audio\/Video)$/;
+
 export {
     ADDRESS_LINE_REGEX,
     ALL_STORE_LOCATIONS_REGEX,
@@ -190,7 +206,9 @@ export {
     MONTHS_REGEX,
     NAME_REGEX,
     PASSWORD_REGEX,
+    PRODUCT_CATEGORY_REGEX,
     PROVINCE_REGEX,
+    REPAIR_CATEGORY_REGEX,
     STATES_US_REGEX,
     STORE_LOCATION_REGEX,
     URL_REGEX,

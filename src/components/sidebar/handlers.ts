@@ -1,5 +1,6 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
+import { z } from "zod";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
@@ -17,11 +18,16 @@ import {
   decodeJWTSafe,
   fetchSafe,
   getItemForageSafe,
+  parseServerResponseSafe,
   responseToJSONSafe,
   setItemForageSafe,
 } from "../../utils";
+import { customerMetricsDocumentZ } from "../dashboard/customer/zodSchema";
+import { financialMetricsDocumentZ } from "../dashboard/financial/zodSchema";
 import { ProductMetricCategory } from "../dashboard/product/types";
+import { productMetricsDocumentZ } from "../dashboard/product/zodSchema";
 import { RepairMetricCategory } from "../dashboard/repair/types";
+import { repairMetricsDocumentZ } from "../dashboard/repair/zodSchema";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 
 async function handleMetricCategoryNavlinkClick(
@@ -186,7 +192,38 @@ async function handleMetricCategoryNavlinkClick(
       return;
     }
 
-    const { accessToken, triggerLogout } = serverResponse;
+    console.time("--PARSING--");
+    const parsedResult = await parseServerResponseSafe({
+      object: serverResponse,
+      zSchema: metricsView === "customers"
+        ? customerMetricsDocumentZ
+        : metricsView === "financials"
+        ? financialMetricsDocumentZ
+        : metricsView === "products"
+        ? productMetricsDocumentZ
+        : repairMetricsDocumentZ,
+    });
+    console.timeEnd("--PARSING--");
+
+    console.log("parsedResult", parsedResult);
+
+    if (!isComponentMounted) {
+      return;
+    }
+    if (parsedResult.err) {
+      showBoundary(parsedResult.val.data);
+      return;
+    }
+
+    const parsedServerResponse = parsedResult.safeUnwrap().data;
+    if (parsedServerResponse === undefined) {
+      showBoundary(
+        new Error("No data returned from server"),
+      );
+      return;
+    }
+
+    const { accessToken, triggerLogout } = parsedServerResponse;
 
     if (triggerLogout) {
       authDispatch({
@@ -241,7 +278,7 @@ async function handleMetricCategoryNavlinkClick(
       payload: decodedToken,
     });
 
-    const payload = serverResponse.data[0];
+    const payload = parsedServerResponse.data[0];
 
     if (metricsView === "financials") {
       globalDispatch({
@@ -345,6 +382,58 @@ async function handleLogoutButtonClick({
 
     if (responseResult.err) {
       showBoundary(responseResult.val.data);
+      return;
+    }
+
+    const responseUnwrapped = responseResult.safeUnwrap().data;
+
+    if (responseUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return;
+    }
+
+    const jsonResult = await responseToJSONSafe<
+      HttpServerResponse
+    >(
+      responseUnwrapped,
+    );
+
+    if (!isComponentMounted) {
+      return;
+    }
+
+    if (jsonResult.err) {
+      showBoundary(jsonResult.val.data);
+      return;
+    }
+
+    const serverResponse = jsonResult.safeUnwrap().data;
+
+    if (serverResponse === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return;
+    }
+
+    console.time("--PARSING--");
+    const parsedResult = await parseServerResponseSafe({
+      object: serverResponse,
+      zSchema: z.object({}),
+    });
+    console.timeEnd("--PARSING--");
+
+    if (!isComponentMounted) {
+      return;
+    }
+    if (parsedResult.err) {
+      showBoundary(parsedResult.val.data);
+      return;
+    }
+
+    const parsedServerResponse = parsedResult.safeUnwrap().data;
+    if (parsedServerResponse === undefined) {
+      showBoundary(
+        new Error("No data returned from server"),
+      );
       return;
     }
 

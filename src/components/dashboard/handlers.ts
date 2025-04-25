@@ -15,12 +15,17 @@ import {
     decodeJWTSafe,
     fetchSafe,
     getItemForageSafe,
+    parseServerResponseSafe,
     responseToJSONSafe,
     setItemForageSafe,
 } from "../../utils";
 import { dashboardAction } from "./actions";
+import { customerMetricsDocumentZ } from "./customer/zodSchema";
+import { financialMetricsDocumentZ } from "./financial/zodSchema";
 import { ProductMetricCategory } from "./product/types";
+import { productMetricsDocumentZ } from "./product/zodSchema";
 import { RepairMetricCategory } from "./repair/types";
+import { repairMetricsDocumentZ } from "./repair/zodSchema";
 import {
     AllStoreLocations,
     DashboardDispatch,
@@ -188,7 +193,36 @@ async function handleStoreCategoryClick(
             return;
         }
 
-        const { accessToken, triggerLogout } = serverResponse;
+        console.time("--PARSING--");
+        const parsedResult = await parseServerResponseSafe({
+            object: serverResponse,
+            zSchema: metricsView === "customers"
+                ? customerMetricsDocumentZ
+                : metricsView === "financials"
+                ? financialMetricsDocumentZ
+                : metricsView === "products"
+                ? productMetricsDocumentZ
+                : repairMetricsDocumentZ,
+        });
+        console.timeEnd("--PARSING--");
+
+        if (!isComponentMounted) {
+            return;
+        }
+        if (parsedResult.err) {
+            showBoundary(parsedResult.val.data);
+            return;
+        }
+
+        const parsedServerResponse = parsedResult.safeUnwrap().data;
+        if (parsedServerResponse === undefined) {
+            showBoundary(
+                new Error("No data returned from server"),
+            );
+            return;
+        }
+
+        const { accessToken, triggerLogout } = parsedServerResponse;
 
         if (triggerLogout) {
             authDispatch({
@@ -239,7 +273,7 @@ async function handleStoreCategoryClick(
             payload: decodedToken,
         });
 
-        const payload = serverResponse.data[0];
+        const payload = parsedServerResponse.data[0];
 
         if (metricsView === "financials") {
             globalDispatch({

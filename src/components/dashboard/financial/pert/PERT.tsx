@@ -388,9 +388,6 @@ function PERT({
     storeLocation,
   );
 
-  console.log("selectedCards", selectedCards);
-  console.log("statisticsElementsMap", statisticsElementsMap);
-
   const [modalsOpenedState, setModalsOpenedState] = React.useState<
     Map<string, boolean>
   >(

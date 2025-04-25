@@ -1,12 +1,12 @@
 import { z } from "zod";
 import {
+    ALL_STORE_LOCATIONS_REGEX,
     DAYS_REGEX,
     MONTHS_REGEX,
-    STORE_LOCATION_REGEX,
     YEARS_REGEX,
 } from "../../../regexes";
 
-const pertZodSchema = z.object({
+const pertZ = z.object({
     total: z.number().default(0),
     repair: z.number().default(0),
     sales: z.object({
@@ -21,37 +21,37 @@ const financialMetricsDocumentZ = z.object({
     createdAt: z.string(),
     updatedAt: z.string(),
     __v: z.number(),
-    storeLocation: z.string().regex(STORE_LOCATION_REGEX),
+    storeLocation: z.string().regex(ALL_STORE_LOCATIONS_REGEX),
     financialMetrics: z.array(
         z.object({
             year: z.string().regex(YEARS_REGEX),
             averageOrderValue: z.number(),
             conversionRate: z.number(),
             netProfitMargin: z.number(),
-            expenses: pertZodSchema,
-            profit: pertZodSchema,
-            revenue: pertZodSchema,
-            transactions: pertZodSchema,
+            expenses: pertZ,
+            profit: pertZ,
+            revenue: pertZ,
+            transactions: pertZ,
             monthlyMetrics: z.array(
                 z.object({
                     month: z.string().regex(MONTHS_REGEX),
                     averageOrderValue: z.number(),
                     conversionRate: z.number(),
                     netProfitMargin: z.number(),
-                    expenses: pertZodSchema,
-                    profit: pertZodSchema,
-                    revenue: pertZodSchema,
-                    transactions: pertZodSchema,
+                    expenses: pertZ,
+                    profit: pertZ,
+                    revenue: pertZ,
+                    transactions: pertZ,
                     dailyMetrics: z.array(
                         z.object({
                             day: z.string().regex(DAYS_REGEX),
                             averageOrderValue: z.number(),
                             conversionRate: z.number(),
                             netProfitMargin: z.number(),
-                            expenses: pertZodSchema,
-                            profit: pertZodSchema,
-                            revenue: pertZodSchema,
-                            transactions: pertZodSchema,
+                            expenses: pertZ,
+                            profit: pertZ,
+                            revenue: pertZ,
+                            transactions: pertZ,
                         }),
                     ),
                 }),

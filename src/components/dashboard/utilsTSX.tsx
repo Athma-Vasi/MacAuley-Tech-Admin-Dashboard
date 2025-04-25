@@ -682,7 +682,7 @@ function consolidateCardsAndStatisticsModals(
   },
 ): Map<string, React.JSX.Element> {
   return Array.from(selectedCards).reduce((acc, [key, card], idx) => {
-    const statisticsAccordion = (
+    const statisticsButton = (
       <AccessibleButton
         attributes={{
           kind: "open",
@@ -698,10 +698,11 @@ function consolidateCardsAndStatisticsModals(
             });
           },
         }}
+        uniqueId={`${key}-${idx}`}
       />
     );
 
-    card.icon = statisticsAccordion;
+    card.icon = statisticsButton;
     const cardElement = returnDashboardCardElement({ ...card, idx });
 
     acc.set(key, cardElement);

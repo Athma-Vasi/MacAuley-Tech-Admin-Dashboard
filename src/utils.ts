@@ -423,14 +423,11 @@ async function setItemForageSafe<Data = unknown>(
 
 async function parseServerResponseSafe<
   Obj extends Record<string, unknown> = Record<string, unknown>,
-  DataSchema extends z.ZodTypeAny = z.ZodTypeAny,
 >(
-  { object, zSchema }: { zSchema: DataSchema; object: Obj },
-): Promise<
-  SafeBoxResult<HttpServerResponse<DataSchema>>
-> {
+  { object, zSchema }: { zSchema: z.ZodSchema; object: Obj },
+) {
   try {
-    const serverResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+    const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema
       // the only difference is the data type
       z.object({

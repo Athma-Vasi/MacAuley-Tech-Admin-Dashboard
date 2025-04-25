@@ -115,6 +115,7 @@ async function handleLoginButtonClick(
       return;
     }
 
+    console.time("parsing");
     const parsedResult = await parseServerResponseSafe({
       object: serverResponse,
       zSchema: z.object({
@@ -122,6 +123,7 @@ async function handleLoginButtonClick(
         financialMetricsDocument: financialMetricsDocumentZ,
       }),
     });
+    console.timeEnd("parsing");
 
     if (!isComponentMounted) {
       return;
@@ -139,7 +141,7 @@ async function handleLoginButtonClick(
       return;
     }
 
-    const { accessToken, triggerLogout } = serverResponse;
+    const { accessToken, triggerLogout } = parsedServerResponse;
 
     if (triggerLogout) {
       authDispatch({
@@ -195,19 +197,19 @@ async function handleLoginButtonClick(
     });
     authDispatch({
       action: authAction.setUserDocument,
-      payload: serverResponse.data[0].userDocument,
+      payload: parsedServerResponse.data[0].userDocument,
     });
 
     globalDispatch({
       action: globalAction.setFinancialMetricsDocument,
-      payload: serverResponse.data[0].financialMetricsDocument,
+      payload: parsedServerResponse.data[0].financialMetricsDocument,
     });
 
     const setForageItemResult = await setItemForageSafe<
       FinancialMetricsDocument
     >(
       "Financials-All Locations",
-      serverResponse.data[0].financialMetricsDocument,
+      parsedServerResponse.data[0].financialMetricsDocument,
     );
 
     if (!isComponentMounted) {
