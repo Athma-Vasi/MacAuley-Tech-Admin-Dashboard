@@ -593,16 +593,5 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
   ],
 };
 
-const serverResponseZ = z.object({
-  accessToken: z.string(),
-  data: z.array(z.object({})),
-  kind: z.string(),
-  message: z.string(),
-  pages: z.number(),
-  status: z.string(),
-  totalDocuments: z.number(),
-  triggerLogout: z.boolean(),
-});
-
-export { serverResponseZ, VALIDATION_FUNCTIONS_TABLE };
+export { VALIDATION_FUNCTIONS_TABLE };
 export type { ValidationKey };

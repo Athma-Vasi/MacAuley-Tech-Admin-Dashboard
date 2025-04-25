@@ -8,6 +8,7 @@ import { AuthAction } from "./context/authProvider";
 import { AuthDispatch, AuthState } from "./context/authProvider/types";
 
 import localforage from "localforage";
+import { z } from "zod";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
@@ -420,47 +421,33 @@ async function setItemForageSafe<Data = unknown>(
   }
 }
 
-async function parseObjectsSafe<
+async function parseServerResponseSafe<
   Obj extends Record<string, unknown> = Record<string, unknown>,
->({ objects, zSchema }: {
-  zSchema: any;
-  objects: Array<Obj>;
-}): Promise<SafeBoxResult<Array<Obj>>> {
+  DataSchema extends z.ZodTypeAny = z.ZodTypeAny,
+>(
+  { object, zSchema }: { zSchema: DataSchema; object: Obj },
+): Promise<
+  SafeBoxResult<HttpServerResponse<DataSchema>>
+> {
   try {
-    const parsedResult = await Promise.all(
-      objects.map(async (object) => {
-        const parsed = await zSchema.safeParseAsync(object);
-        if (parsed.success) {
-          return parsed.data;
-        } else {
-          console.error("Error parsing object:", parsed.error);
-          return null;
-        }
-      }),
+    const serverResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+      // all server responses have the same schema
+      // the only difference is the data type
+      z.object({
+        accessToken: z.string(),
+        data: z.array(dataSchema),
+        kind: z.enum(["error", "success"]),
+        message: z.string(),
+        pages: z.number(),
+        status: z.number(),
+        totalDocuments: z.number(),
+        triggerLogout: z.boolean(),
+      });
+
+    const parsed = await serverResponseSchema(zSchema).safeParseAsync(
+      object,
     );
 
-    const parsedObjects = parsedResult.filter(removeUndefinedAndNull) as Array<
-      Obj
-    >;
-
-    return objects.length === parsedObjects.length
-      ? new Ok({ data: parsedObjects, kind: "success" })
-      : new Err({
-        data: new Error("Some objects failed to parse"),
-        kind: "error",
-      });
-  } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
-  }
-}
-
-async function parseObjectSafe<
-  Obj extends Record<string, unknown> = Record<string, unknown>,
->(
-  { object, zSchema }: { zSchema: any; object: Obj },
-): Promise<SafeBoxResult<Obj>> {
-  try {
-    const parsed = await zSchema.safeParseAsync(object);
     if (parsed.success) {
       return new Ok({ data: parsed.data, kind: "success" });
     } else {
@@ -837,8 +824,7 @@ export {
   formatDate,
   getItemForageSafe,
   hexToHSL,
-  parseObjectSafe,
-  parseObjectsSafe,
+  parseServerResponseSafe,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,

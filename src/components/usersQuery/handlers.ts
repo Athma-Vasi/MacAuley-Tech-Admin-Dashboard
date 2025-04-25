@@ -4,7 +4,7 @@ import { HttpServerResponse, UserDocument } from "../../types";
 import {
     decodeJWTSafe,
     fetchSafe,
-    parseObjectsSafe,
+    parseServerResponseSafe,
     responseToJSONSafe,
 } from "../../utils";
 import { usersQueryAction } from "./actions";
@@ -119,16 +119,37 @@ async function handleUsersQuerySubmitGET(
             return;
         }
 
-        if (serverResponse.kind === "error") {
+        const parsedResult = await parseServerResponseSafe({
+            object: serverResponse,
+            zSchema: userDocumentZ,
+        });
+
+        if (!isComponentMounted) {
+            return;
+        }
+        if (parsedResult.err) {
+            showBoundary(parsedResult.val.data);
+            return;
+        }
+
+        const parsedServerResponse = parsedResult.safeUnwrap().data;
+        if (parsedServerResponse === undefined) {
             showBoundary(
-                new Error(
-                    `Server error: ${serverResponse.message}`,
-                ),
+                new Error("No data returned from server"),
             );
             return;
         }
 
-        const { accessToken } = serverResponse;
+        const { accessToken, kind, message } = parsedServerResponse;
+
+        if (kind === "error") {
+            showBoundary(
+                new Error(
+                    `Server error: ${message}`,
+                ),
+            );
+            return;
+        }
 
         const decodedTokenResult = await decodeJWTSafe(
             accessToken,
@@ -158,33 +179,14 @@ async function handleUsersQuerySubmitGET(
             payload: decodedToken,
         });
 
-        const userDocuments = serverResponse.data;
+        const data = parsedServerResponse.data as unknown as UserDocument[];
 
-        const parsedResult = await parseObjectsSafe({
-            objects: userDocuments,
-            zSchema: userDocumentZ,
-        });
-
-        if (!isComponentMounted) {
-            return;
-        }
-
-        if (parsedResult.err) {
-            showBoundary(parsedResult.val.data);
-            return;
-        }
-
-        const parsedUserDocuments = parsedResult.safeUnwrap().data;
-        if (parsedUserDocuments === undefined) {
-            showBoundary(
-                new Error("No data returned from server"),
-            );
-            return;
-        }
-
-        const sorted = structuredClone(parsedUserDocuments).sort((a, b) => {
+        const sorted = data.sort((a, b) => {
             if (arrangeByDirection === "ascending") {
-                return a[arrangeByField] > b[arrangeByField] ? 1 : -1;
+                return a[arrangeByField] >
+                        b[arrangeByField]
+                    ? 1
+                    : -1;
             } else {
                 return a[arrangeByField] < b[arrangeByField] ? 1 : -1;
             }

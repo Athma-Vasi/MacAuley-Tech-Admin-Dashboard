@@ -1,6 +1,11 @@
 import { NavigateFunction } from "react-router-dom";
+import { z } from "zod";
 import { HttpServerResponse, UserDocument, UserSchema } from "../../types";
-import { fetchSafe, responseToJSONSafe } from "../../utils";
+import {
+  fetchSafe,
+  parseServerResponseSafe,
+  responseToJSONSafe,
+} from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, STEPS_INPUTNAMES_MAP } from "./constants";
@@ -98,26 +103,49 @@ async function handleCheckEmailExists(
 
     const serverResponse = jsonResult.safeUnwrap().data;
 
-    registerDispatch({
-      action: registerAction.setIsEmailExistsSubmitting,
-      payload: false,
-    });
-
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
       return;
     }
 
-    if (serverResponse.kind === "error") {
+    const parsedResult = await parseServerResponseSafe({
+      object: serverResponse,
+      zSchema: z.boolean(),
+    });
+
+    if (!isComponentMounted) {
+      return;
+    }
+    if (parsedResult.err) {
+      showBoundary(parsedResult.val.data);
+      return;
+    }
+
+    const parsedServerResponse = parsedResult.safeUnwrap().data;
+    if (parsedServerResponse === undefined) {
+      showBoundary(
+        new Error("No data returned from server"),
+      );
+      return;
+    }
+
+    registerDispatch({
+      action: registerAction.setIsEmailExistsSubmitting,
+      payload: false,
+    });
+
+    const { data, kind, message } = parsedServerResponse;
+
+    if (kind === "error") {
       showBoundary(
         new Error(
-          `Server error: ${serverResponse.message}`,
+          `Server error: ${message}`,
         ),
       );
       return;
     }
 
-    const [isEmailExists] = serverResponse.data;
+    const [isEmailExists] = data as unknown as boolean[];
 
     if (isEmailExists === undefined) {
       showBoundary(new Error("No data returned from server"));
@@ -230,26 +258,49 @@ async function handleCheckUsernameExists(
 
     const serverResponse = jsonResult.safeUnwrap().data;
 
-    registerDispatch({
-      action: registerAction.setIsUsernameExistsSubmitting,
-      payload: false,
-    });
-
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
       return;
     }
 
-    if (serverResponse.kind === "error") {
+    const parsedResult = await parseServerResponseSafe({
+      object: serverResponse,
+      zSchema: z.boolean(),
+    });
+
+    if (!isComponentMounted) {
+      return;
+    }
+    if (parsedResult.err) {
+      showBoundary(parsedResult.val.data);
+      return;
+    }
+
+    const parsedServerResponse = parsedResult.safeUnwrap().data;
+    if (parsedServerResponse === undefined) {
+      showBoundary(
+        new Error("No data returned from server"),
+      );
+      return;
+    }
+
+    registerDispatch({
+      action: registerAction.setIsUsernameExistsSubmitting,
+      payload: false,
+    });
+
+    const { data, kind, message } = parsedServerResponse;
+
+    if (kind === "error") {
       showBoundary(
         new Error(
-          `Server error: ${serverResponse.message}`,
+          `Server error: ${message}`,
         ),
       );
       return;
     }
 
-    const [isUsernameExists] = serverResponse.data;
+    const [isUsernameExists] = data as unknown as boolean[];
 
     if (isUsernameExists === undefined) {
       showBoundary(new Error("No data returned from server"));
