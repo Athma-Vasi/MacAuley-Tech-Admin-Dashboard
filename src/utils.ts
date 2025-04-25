@@ -420,6 +420,57 @@ async function setItemForageSafe<Data = unknown>(
   }
 }
 
+async function parseObjectsSafe<
+  Obj extends Record<string, unknown> = Record<string, unknown>,
+>({ objects, zSchema }: {
+  zSchema: any;
+  objects: Array<Obj>;
+}): Promise<SafeBoxResult<Array<Obj>>> {
+  try {
+    const parsedResult = await Promise.all(
+      objects.map(async (object) => {
+        const parsed = await zSchema.safeParseAsync(object);
+        if (parsed.success) {
+          return parsed.data;
+        } else {
+          console.error("Error parsing object:", parsed.error);
+          return null;
+        }
+      }),
+    );
+
+    const parsedObjects = parsedResult.filter(removeUndefinedAndNull) as Array<
+      Obj
+    >;
+
+    return objects.length === parsedObjects.length
+      ? new Ok({ data: parsedObjects, kind: "success" })
+      : new Err({
+        data: new Error("Some objects failed to parse"),
+        kind: "error",
+      });
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
+async function parseObjectSafe<
+  Obj extends Record<string, unknown> = Record<string, unknown>,
+>(
+  { object, zSchema }: { zSchema: any; object: Obj },
+): Promise<SafeBoxResult<Obj>> {
+  try {
+    const parsed = await zSchema.safeParseAsync(object);
+    if (parsed.success) {
+      return new Ok({ data: parsed.data, kind: "success" });
+    } else {
+      return new Err({ data: parsed.error, kind: "error" });
+    }
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
 function createForageKey(
   {
     metricsView,
@@ -786,6 +837,8 @@ export {
   formatDate,
   getItemForageSafe,
   hexToHSL,
+  parseObjectSafe,
+  parseObjectsSafe,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,

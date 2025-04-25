@@ -1,9 +1,15 @@
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { HttpServerResponse, UserDocument } from "../../types";
-import { decodeJWTSafe, fetchSafe, responseToJSONSafe } from "../../utils";
+import {
+    decodeJWTSafe,
+    fetchSafe,
+    parseObjectsSafe,
+    responseToJSONSafe,
+} from "../../utils";
 import { usersQueryAction } from "./actions";
 import { UsersQueryState } from "./types";
+import { userDocumentZ } from "./zodSchema";
 
 async function handleUsersQuerySubmitGET(
     {
@@ -154,7 +160,29 @@ async function handleUsersQuerySubmitGET(
 
         const userDocuments = serverResponse.data;
 
-        const sorted = structuredClone(userDocuments).sort((a, b) => {
+        const parsedResult = await parseObjectsSafe({
+            objects: userDocuments,
+            zSchema: userDocumentZ,
+        });
+
+        if (!isComponentMounted) {
+            return;
+        }
+
+        if (parsedResult.err) {
+            showBoundary(parsedResult.val.data);
+            return;
+        }
+
+        const parsedUserDocuments = parsedResult.safeUnwrap().data;
+        if (parsedUserDocuments === undefined) {
+            showBoundary(
+                new Error("No data returned from server"),
+            );
+            return;
+        }
+
+        const sorted = structuredClone(parsedUserDocuments).sort((a, b) => {
             if (arrangeByDirection === "ascending") {
                 return a[arrangeByField] > b[arrangeByField] ? 1 : -1;
             } else {

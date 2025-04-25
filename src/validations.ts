@@ -1,4 +1,5 @@
-import type { ValidationFunctionsTable } from "./types";
+import { z } from "zod";
+import { type ValidationFunctionsTable } from "./types";
 
 type ValidationKey =
   | "accessoryType"
@@ -592,5 +593,16 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
   ],
 };
 
-export { VALIDATION_FUNCTIONS_TABLE };
+const serverResponseZ = z.object({
+  accessToken: z.string(),
+  data: z.array(z.object({})),
+  kind: z.string(),
+  message: z.string(),
+  pages: z.number(),
+  status: z.string(),
+  totalDocuments: z.number(),
+  triggerLogout: z.boolean(),
+});
+
+export { serverResponseZ, VALIDATION_FUNCTIONS_TABLE };
 export type { ValidationKey };
