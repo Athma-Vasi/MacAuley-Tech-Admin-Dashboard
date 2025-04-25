@@ -11,7 +11,7 @@ import {
     STATES_US_REGEX,
     USER_ROLES_REGEX,
     USERNAME_REGEX,
-} from "./regexes";
+} from "../../regexes";
 
 const userDocumentZ = z.object({
     __v: z.number(),

@@ -1,5 +1,6 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
+import { z } from "zod";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
@@ -12,9 +13,12 @@ import {
 import {
   decodeJWTSafe,
   fetchSafe,
+  parseServerResponseSafe,
   responseToJSONSafe,
   setItemForageSafe,
 } from "../../utils";
+import { financialMetricsDocumentZ } from "../dashboard/financial/zodSchema";
+import { userDocumentZ } from "../usersQuery/zodSchema";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./types";
 
@@ -108,6 +112,30 @@ async function handleLoginButtonClick(
 
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
+      return;
+    }
+
+    const parsedResult = await parseServerResponseSafe({
+      object: serverResponse,
+      zSchema: z.object({
+        userDocument: userDocumentZ,
+        financialMetricsDocument: financialMetricsDocumentZ,
+      }),
+    });
+
+    if (!isComponentMounted) {
+      return;
+    }
+    if (parsedResult.err) {
+      showBoundary(parsedResult.val.data);
+      return;
+    }
+
+    const parsedServerResponse = parsedResult.safeUnwrap().data;
+    if (parsedServerResponse === undefined) {
+      showBoundary(
+        new Error("No data returned from server"),
+      );
       return;
     }
 

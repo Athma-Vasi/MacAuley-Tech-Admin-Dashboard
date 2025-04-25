@@ -141,20 +141,60 @@ const JOB_POSITION_REGEX =
  */
 const USER_ROLES_REGEX = /^(Admin|Employee|Manager)$/;
 
+/**
+ * - /^(All Locations|Calgary|Edmonton|Vancouver)$/
+ * - matches the following store locations:All Locations, Calgary, Edmonton, Vancouver
+ * - ^ and $ ensure that the entire string matches the regex.
+ */
+const STORE_LOCATION_REGEX = /^(All Locations|Calgary|Edmonton|Vancouver)$/;
+
+/**
+ * - /^(January|February|March|April|May|June|July|August|September|October|November|December)$/
+ * - matches the following months: January, February, March, April, May, June, July, August, September, October, November, December
+ * - ^ and $ ensure that the entire string matches the regex.
+ * - ex: January
+ * - Note: This regex is used to validate month names in the product metrics.
+ */
+const MONTHS_REGEX =
+    /^(January|February|March|April|May|June|July|August|September|October|November|December)$/;
+
+/**
+ * - /^(2013|2014|2015|2016|2017|2018|2019|2020|2021|2022|2023|2024|2025)$/
+ * - matches the following years: 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+ * - ^ and $ ensure that the entire string matches the regex.
+ * - ex: 2023
+ * - Note: This regex is used to validate years in the product metrics.
+ */
+const YEARS_REGEX =
+    /^(2013|2014|2015|2016|2017|2018|2019|2020|2021|2022|2023|2024|2025)$/;
+
+/**
+ * - /^(0[1-9]|[12][0-9]|3[01])$/
+ * - matches the following days: 01, 02, 03, ..., 31
+ * - ^ and $ ensure that the entire string matches the regex.
+ * - ex: 01
+ * - Note: This regex is used to validate days in the product metrics.
+ */
+const DAYS_REGEX = /^(0[1-9]|[12][0-9]|3[01])$/;
+
 export {
     ADDRESS_LINE_REGEX,
     ALL_STORE_LOCATIONS_REGEX,
     CITY_REGEX,
     COUNTRY_REGEX,
+    DAYS_REGEX,
     DEPARTMENT_REGEX,
     EMAIL_REGEX,
     FULL_NAME_REGEX,
     JOB_POSITION_REGEX,
+    MONTHS_REGEX,
     NAME_REGEX,
     PASSWORD_REGEX,
     PROVINCE_REGEX,
     STATES_US_REGEX,
+    STORE_LOCATION_REGEX,
     URL_REGEX,
     USER_ROLES_REGEX,
     USERNAME_REGEX,
+    YEARS_REGEX,
 };
