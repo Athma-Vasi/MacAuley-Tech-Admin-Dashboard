@@ -211,18 +211,6 @@ function Testing() {
         // }, 1000);
     }, [uploadedCount]);
 
-    console.log(
-        "maxOrgId",
-        DIRECTORY_EMPLOYEE_DATA.reduce((acc, employee) => {
-            const { orgId } = employee;
-            return orgId > acc ? orgId : acc;
-        }, 0),
-    );
-
-    console.log("schemas", schemas);
-    console.log("uploadedCount", uploadedCount);
-    console.log("isSubmitting", isSubmitting);
-
     const button = (
         <AccessibleButton
             attributes={{

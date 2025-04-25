@@ -23,16 +23,6 @@ function DisplayResponsiveChart() {
     },
   } = useGlobalState();
 
-  console.group("DisplayResponsiveChart");
-  console.log("expandBarChartData", expandBarChartData);
-  console.log("expandCalendarChartData", expandCalendarChartData);
-  console.log("expandLineChartData", expandLineChartData);
-  console.log("expandPieChartData", expandPieChartData);
-  console.log("expandRadialBarChartData", expandRadialBarChartData);
-  console.log("expandSunburstChartData", expandSunburstChartData);
-  console.log("themeObject", themeObject);
-  console.groupEnd();
-
   if (selectedChartKind === "bar") {
     if (!expandBarChartData) {
       return null;
@@ -49,8 +39,6 @@ function DisplayResponsiveChart() {
       month,
       year,
     } = expandBarChartData;
-
-    console.log("inside bar");
 
     return (
       <ResponsiveBarChart

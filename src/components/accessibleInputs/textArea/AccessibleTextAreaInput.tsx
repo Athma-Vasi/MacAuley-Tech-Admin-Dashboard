@@ -179,7 +179,7 @@ function AccessibleTextAreaInput<
   );
 
   const leftIcon = icon ??
-    (isValueBufferValid
+    (isValueBufferValid && valueBuffer.length > 0
       ? <TbCheck color={greenColorShade} size={18} />
       : valueBuffer.length === 0
       ? null

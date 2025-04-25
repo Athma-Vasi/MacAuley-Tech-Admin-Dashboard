@@ -319,7 +319,7 @@
         width: clamp(
           var(--min-card-width),
           var(--ideal-card-width),
-          450px
+          425px
         );
       }
     }

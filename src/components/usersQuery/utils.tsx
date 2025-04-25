@@ -1,4 +1,4 @@
-import { Image, ImageProps, Text, Tooltip } from "@mantine/core";
+import { Group, Image, ImageProps, Text, Tooltip } from "@mantine/core";
 import {
     TbArrowDown,
     TbArrowUp,
@@ -116,46 +116,50 @@ function returnArrangeByIconsElement(
 
 function returnImageDropdown(
     {
-        alt,
-        fit,
-        height,
-        radius,
-        src,
-        width,
+        alt = "Resource Photo",
+        fit = "cover",
+        height = 150,
+        radius = 9999,
+        src = "",
+        truncate = false,
+        width = 150,
     }: {
+        alt?: string;
+        fit?: ImageProps["fit"];
+        height?: number;
+        radius?: number;
         src: string;
-        alt: string;
-        height: number;
-        width: number;
-        radius: number;
-        fit: ImageProps["fit"];
+        truncate?: boolean;
+        width?: number;
     },
 ) {
     const dropDownImage = (
         <Image
             alt={alt}
             fit={fit}
-            height={192}
-            aria-label="Resource Photo"
+            height={height}
             radius={radius}
             src={src}
-            width={192}
+            width={width}
         />
     );
+
+    const sliced = truncate
+        ? src.split("").slice(0, 55).concat(" ...")
+        : src.split("");
 
     return (
         <Tooltip
             label={dropDownImage}
             position="right-start"
         >
-            <Image
-                alt={alt}
-                fit={fit}
-                height={height}
-                radius={radius}
-                src={src}
-                width={width}
-            />
+            <Group w="100%" spacing={0}>
+                {sliced.map(
+                    (part, index) => {
+                        return <Text key={`${part}-${index}`}>{part}</Text>;
+                    },
+                )}
+            </Group>
         </Tooltip>
     );
 }

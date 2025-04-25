@@ -4,7 +4,6 @@ import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
-import { CHART_CONTROLS_HEADER_HEIGHT } from "../constants";
 import { NivoChartTitlePosition } from "../types";
 
 type ChartAndControlsDisplayProps = {
@@ -41,36 +40,28 @@ function ChartAndControlsDisplay(
   } = props;
 
   const backButton = (
-    <Box
-      style={{
-        position: "sticky",
-        height: CHART_CONTROLS_HEADER_HEIGHT,
-        top: 0,
-        zIndex: 5,
+    <AccessibleButton
+      attributes={{
+        enabledScreenreaderText: "Go back",
+        kind: "previous",
+        label: "Back",
+        onClick: () => {
+          navigate(-1);
+        },
       }}
-    >
-      <AccessibleButton
-        attributes={{
-          enabledScreenreaderText: "Go back",
-          kind: "previous",
-          label: "Back",
-          onClick: () => {
-            navigate(-1);
-          },
-        }}
-      />
-    </Box>
+    />
   );
 
   return (
-    <Box className="chart-controls-container">
-      <Card bg={bgGradient} className="controls-container" shadow="md" px={0}>
-        <Group w="100%" position="apart" px="md" py="xs" pos="relative">
-          <Title order={2} pl="md" py="xs">Chart Controls</Title>
-          {backButton}
-        </Group>
+    <Box className="chart-controls-container" pos="relative">
+      <Card bg={bgGradient} className="controls-container" shadow="xs" px={0}>
+        <Title order={2} pl="md" py="xs">Chart Controls</Title>
         {chartControlsStack}
       </Card>
+
+      <Group w="100%" position="right" pr="xl" pt="md">
+        {backButton}
+      </Group>
 
       <Box
         className="chart-container"

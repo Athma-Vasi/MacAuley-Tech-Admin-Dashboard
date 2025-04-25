@@ -163,22 +163,27 @@ function DisplayResource(
                                         );
 
                                     const imageDropdown = returnImageDropdown({
-                                        alt: "Resource Photo",
-                                        fit: "cover",
-                                        height: 48,
-                                        radius: 9999,
                                         src: value?.toString() ?? "",
-                                        width: 48,
+                                        truncate: true,
                                     });
 
                                     const resourceValue = isFieldAnImageUrl
                                         ? imageDropdown
                                         : isFieldADate
-                                        ? formatDate({
-                                            date: value?.toString() ?? "",
-                                        })
-                                        : value?.toString() ??
-                                            "Unknown";
+                                        ? (
+                                            <Text>
+                                                {formatDate({
+                                                    date: value?.toString() ??
+                                                        "",
+                                                })}
+                                            </Text>
+                                        )
+                                        : (
+                                            <Text>
+                                                {value?.toString() ??
+                                                    "Unknown"}
+                                            </Text>
+                                        );
 
                                     return (
                                         <td
@@ -196,7 +201,7 @@ function DisplayResource(
                                                     setKeyToHighlight(key);
                                                 }}
                                             >
-                                                <Text>{resourceValue}</Text>
+                                                {resourceValue}
                                             </div>
                                         </td>
                                     );

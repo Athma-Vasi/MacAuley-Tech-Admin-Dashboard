@@ -79,19 +79,10 @@ function queryReducer_modifyQueryChains(
     const [field, comparisonOperator, value] = queryLink;
     const queryChains = structuredClone(state.queryChains);
 
-    console.group("queryReducer_modifyQueryChains");
-    console.log("queryChainKind", queryChainKind);
-    console.log("queryLink", queryLink);
-    console.log("queryChainActions", queryChainActions);
-    console.log("logicalOperator", logicalOperator);
-    console.log("index", index);
-    console.groupEnd();
-
     switch (queryChainActions) {
         case "delete": {
             const existingQueryLinks =
                 queryChains[queryChainKind][logicalOperator];
-            console.log("delete::existingQueryLinks", existingQueryLinks);
             const newQueryLinks = existingQueryLinks.filter(
                 (_queryLink, i) => i !== index,
             );
@@ -203,7 +194,6 @@ function queryReducer_setFilterField(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    console.log("queryReducer_setFilterField", dispatch.payload);
     return {
         ...state,
         filterField: dispatch.payload as string,

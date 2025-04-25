@@ -123,6 +123,7 @@ function ChartsAndGraphsControlsStacker({
       className="controls-card"
       radius="md"
       bg={cardBgGradient}
+      withBorder
     >
       {displayTopSection}
       <Space h="sm" />
