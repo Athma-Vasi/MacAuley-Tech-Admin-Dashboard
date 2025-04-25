@@ -1,5 +1,10 @@
 import { CheckboxRadioSelectData } from "../../../types";
-import { NivoBarGroupMode, NivoBarLayout, NivoBarValueScale } from "../types";
+import {
+  NivoAxisLegendPosition,
+  NivoBarGroupMode,
+  NivoBarLayout,
+  NivoBarValueScale,
+} from "../types";
 
 const BAR_CHART_GROUP_MODE_SELECT_DATA: CheckboxRadioSelectData<
   NivoBarGroupMode
@@ -20,7 +25,9 @@ const BAR_CHART_VALUE_SCALE_SELECT_DATA: CheckboxRadioSelectData<
   { value: "symlog", label: "Symlog" },
 ];
 
-const BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA: CheckboxRadioSelectData = [
+const BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA: CheckboxRadioSelectData<
+  NivoAxisLegendPosition
+> = [
   { value: "start", label: "Start" },
   { value: "middle", label: "Middle" },
   { value: "end", label: "End" },

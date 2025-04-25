@@ -1,5 +1,4 @@
 import { Flex, Group, Stack, Text, Title } from "@mantine/core";
-import type { ChangeEvent } from "react";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
@@ -162,9 +161,12 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
+      align={"flex-end"}
       w="100%"
     >
-      <Text pt="xl">{axisBottomLegend}</Text>
+      <Group w="100%" position="left" p="md">
+        <Text>{axisBottomLegend}</Text>
+      </Group>
       <AccessibleTextInput
         attributes={{
           disabled: !enableAxisBottom,
@@ -183,7 +185,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const axisBottomLegendOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
-        disabled: !enableAxisBottom,
+        disabled: !enableAxisBottom || !axisBottomLegend,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -207,12 +209,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
         disabled: !enableAxisBottom || !axisBottomLegend,
         hideLabel: true,
         name: "axisBottomLegendPosition",
-        onChange: (event: ChangeEvent<HTMLSelectElement>) => {
-          parentChartDispatch({
-            action: parentChartAction.setAxisBottomLegendPosition,
-            payload: event.currentTarget.value as NivoAxisLegendPosition,
-          });
-        },
+        parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setAxisBottomLegendPosition,
         value: axisBottomLegendPosition,
       }}

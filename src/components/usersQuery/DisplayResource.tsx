@@ -86,9 +86,9 @@ function DisplayResource(
             maw={640}
             miw={350}
             title={
-                <Title order={3}>
+                <Text size="lg" weight={600}>
                     {String(selectedDocument?.username ?? resourceName)}
-                </Title>
+                </Text>
             }
             size={"lg"}
         >

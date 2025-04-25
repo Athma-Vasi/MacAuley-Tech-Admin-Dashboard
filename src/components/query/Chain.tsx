@@ -251,7 +251,7 @@ function Chain(
             projectionFields.length === 0
         ? (
             <div className="query-chain">
-                <Text pl="md">No query chain</Text>
+                <Text>No query chain</Text>
             </div>
         )
         : (

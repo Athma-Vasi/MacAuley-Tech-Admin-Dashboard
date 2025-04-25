@@ -7,6 +7,7 @@ import {
   JobPosition,
   LocalForageKeys,
   Province,
+  ScreenshotImageType,
   StatesUS,
   StoreLocation,
 } from "./types";
@@ -219,11 +220,12 @@ const ALL_STORE_LOCATIONS_DATA: CheckboxRadioSelectData<AllStoreLocations> = [
   { label: "Vancouver", value: "Vancouver" },
 ];
 
-const SCREENSHOT_IMAGE_TYPE_DATA = [
-  { value: "image/png", label: "Image/png" },
-  { value: "image/jpeg", label: "Image/jpeg" },
-  { value: "image/webp", label: "Image/webp" },
-];
+const SCREENSHOT_IMAGE_TYPE_DATA: CheckboxRadioSelectData<ScreenshotImageType> =
+  [
+    { value: "image/png", label: "Image/png" },
+    { value: "image/jpeg", label: "Image/jpeg" },
+    { value: "image/webp", label: "Image/webp" },
+  ];
 
 const FETCH_REQUEST_TIMEOUT = 10000;
 

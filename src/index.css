@@ -316,7 +316,11 @@
       width: calc(100% - 1em);
 
       .controls-card {
-        width: var(--card-width);
+        width: clamp(
+          var(--min-card-width),
+          var(--ideal-card-width),
+          450px
+        );
       }
     }
 
@@ -458,6 +462,14 @@
     .query-container {
       width: 100%;
 
+      .query-chain {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
       .query-filter {
         display: flex;
         flex-wrap: wrap;
@@ -546,10 +558,6 @@
     padding: var(--sidebar-padding);
   }
 
-  .main-sidebar-opened {
-    display: none;
-  }
-
   .users-query-container {
     width: 100%;
 
@@ -562,6 +570,15 @@
 
     .query-container {
       width: 100%;
+
+      .query-chain {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
       .query-filter {
         display: flex;
         flex-wrap: wrap;
@@ -836,6 +853,14 @@
     .query-container {
       width: 100%;
 
+      .query-chain {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
+
       .query-filter {
         display: flex;
         flex-wrap: wrap;
@@ -1090,6 +1115,14 @@
 
     .query-container {
       width: 100%;
+
+      .query-chain {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--padding);
+        gap: var(--padding);
+        width: 100%;
+      }
 
       .query-filter {
         display: flex;

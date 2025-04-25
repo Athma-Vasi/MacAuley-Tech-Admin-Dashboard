@@ -1,3 +1,4 @@
+import localforage from "localforage";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { HttpServerResponse, UserDocument } from "../../types";
@@ -10,6 +11,7 @@ import {
 import { usersQueryAction } from "./actions";
 import { UsersQueryState } from "./types";
 import { userDocumentZ } from "./zodSchema";
+import { NavigateFunction } from "react-router-dom";
 
 async function handleUsersQuerySubmitGET(
     {
@@ -18,6 +20,7 @@ async function handleUsersQuerySubmitGET(
         dispatch,
         fetchAbortControllerRef,
         isComponentMountedRef,
+        navigate,
         showBoundary,
         url,
         usersQueryState,
@@ -29,6 +32,7 @@ async function handleUsersQuerySubmitGET(
             AbortController | null
         >;
         isComponentMountedRef: React.RefObject<boolean>;
+        navigate: NavigateFunction;
         showBoundary: (error: unknown) => void;
         url: RequestInfo | URL;
         usersQueryState: UsersQueryState;
@@ -142,7 +146,31 @@ async function handleUsersQuerySubmitGET(
             return;
         }
 
-        const { accessToken, kind, message } = parsedServerResponse;
+        const { accessToken, kind, message, triggerLogout } =
+            parsedServerResponse;
+
+        if (triggerLogout) {
+            authDispatch({
+                action: authAction.setAccessToken,
+                payload: "",
+            });
+            authDispatch({
+                action: authAction.setIsLoggedIn,
+                payload: false,
+            });
+            authDispatch({
+                action: authAction.setDecodedToken,
+                payload: Object.create(null),
+            });
+            authDispatch({
+                action: authAction.setUserDocument,
+                payload: Object.create(null),
+            });
+
+            await localforage.clear();
+            navigate("/");
+            return;
+        }
 
         if (kind === "error") {
             showBoundary(

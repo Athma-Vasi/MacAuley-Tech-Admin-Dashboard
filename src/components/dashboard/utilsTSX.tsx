@@ -1,5 +1,4 @@
 import {
-  Accordion,
   Card,
   Center,
   Divider,
@@ -584,90 +583,6 @@ function createFinancialStatisticsElements(
     : new Map();
 }
 
-function consolidateCustomerCardsAndStatistics(
-  cards: Map<string, DashboardCardInfo[]>,
-  statisticsElements: Map<string, React.JSX.Element>,
-): Map<string, React.JSX.Element> {
-  console.group("consolidateCustomerCardsAndStatistics");
-  console.log("cards", cards);
-  console.log("statisticsElements", statisticsElements);
-  console.groupEnd();
-
-  return Array.from(cards).reduce((acc, [key, cards], idx) => {
-    const statisticElement = statisticsElements.get(key) ?? <></>;
-    const statisticsAccordion = (
-      <Accordion>
-        <Accordion.Item value={`${key}-${idx}`}>
-          <Accordion.Control>
-            <Text size={18} weight={500}>
-              Statistics
-            </Text>
-          </Accordion.Control>
-
-          <Accordion.Panel>
-            <Stack spacing="xs">
-              {statisticElement}
-            </Stack>
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
-    );
-
-    cards.forEach((card, idx) => {
-      card.icon = statisticsAccordion;
-      const cardElement = returnDashboardCardElement(card);
-      acc.set(
-        key,
-        <React.Fragment
-          key={`${idx}-${key}-${card.value}-${card.percentage}-${card.date}`}
-        >
-          {cardElement}
-        </React.Fragment>,
-      );
-    });
-
-    // card.icon = statisticsAccordion;
-    // const cardElement = returnDashboardCardElement(card);
-
-    // acc.set(key, cardElement);
-
-    return acc;
-  }, new Map());
-}
-
-function consolidateCardsAndStatistics(
-  cards: Map<string, DashboardCardInfo>,
-  statisticsElements: Map<string, React.JSX.Element>,
-): Map<string, React.JSX.Element> {
-  return Array.from(cards).reduce((acc, [key, card], idx) => {
-    const statisticElement = statisticsElements.get(key) ?? <></>;
-    const statisticsAccordion = (
-      <Accordion>
-        <Accordion.Item value={key}>
-          <Accordion.Control>
-            <Text size="sm" weight={500}>
-              Statistics
-            </Text>
-          </Accordion.Control>
-
-          <Accordion.Panel>
-            <Stack spacing="xs">
-              {statisticElement}
-            </Stack>
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
-    );
-
-    card.icon = statisticsAccordion;
-    const cardElement = returnDashboardCardElement(card);
-
-    acc.set(key, cardElement);
-
-    return acc;
-  }, new Map());
-}
-
 function consolidateCardsAndStatisticsModals(
   {
     modalsOpenedState,
@@ -698,7 +613,7 @@ function consolidateCardsAndStatisticsModals(
             });
           },
         }}
-        uniqueId={`${key}-${idx}`}
+        uniqueId={`${key}-${idx}-${card.value}-${card.percentage}-${card.date}`}
       />
     );
 
@@ -722,7 +637,11 @@ function returnCardElementsForYAxisVariable(
     );
 
     if (cardsSet?.has(key)) {
-      acc.push(card);
+      acc.push(
+        <React.Fragment key={`${key}-fragment`}>
+          {card}
+        </React.Fragment>,
+      );
     }
 
     return acc;
@@ -836,9 +755,7 @@ function createOverviewMetricCard(
 }
 
 export {
-  consolidateCardsAndStatistics,
   consolidateCardsAndStatisticsModals,
-  consolidateCustomerCardsAndStatistics,
   createDashboardMetricsCards,
   createFinancialStatisticsElements,
   createOverviewMetricCard,

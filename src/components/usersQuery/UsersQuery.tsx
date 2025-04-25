@@ -18,6 +18,7 @@ import DisplayResource from "./DisplayResource";
 import { handleUsersQuerySubmitGET } from "./handlers";
 import { usersQueryReducer } from "./reducers";
 import { initialUsersQueryState } from "./state";
+import { useNavigate } from "react-router-dom";
 
 type UsersQueryProps = {};
 
@@ -29,6 +30,8 @@ function UsersQuery({}: UsersQueryProps) {
         usersQueryState,
         usersQueryDispatch,
     ] = useReducer(usersQueryReducer, initialUsersQueryState);
+
+    const navigate = useNavigate();
 
     const { globalState: { themeObject } } = useGlobalState();
 
@@ -83,6 +86,7 @@ function UsersQuery({}: UsersQueryProps) {
                         dispatch: usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
+                        navigate,
                         showBoundary,
                         url: API_URL,
                         usersQueryState,
@@ -143,6 +147,7 @@ function UsersQuery({}: UsersQueryProps) {
                         dispatch: usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
+                        navigate,
                         showBoundary,
                         url: API_URL,
                         usersQueryState: {

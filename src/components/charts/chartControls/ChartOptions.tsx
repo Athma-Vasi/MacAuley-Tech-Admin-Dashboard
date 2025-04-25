@@ -8,7 +8,7 @@ import {
   type TitleOrder,
   Tooltip,
 } from "@mantine/core";
-import { type ChangeEvent, useEffect } from "react";
+import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   COLORS_SWATCHES,
@@ -127,8 +127,12 @@ function ChartOptions(props: ChartOptionsProps) {
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
+      align={"flex-end"}
+      w="100%"
     >
-      <Text pt="xl">{chartTitle}</Text>
+      <Group w="100%" position="left" p="md">
+        <Text>{chartTitle}</Text>
+      </Group>
       <AccessibleTextInput
         attributes={{
           hideLabel: true,
@@ -186,28 +190,24 @@ function ChartOptions(props: ChartOptionsProps) {
         description: "Define chart title position",
         hideLabel: true,
         name: "chartTitlePosition",
-        onChange: (event: ChangeEvent<HTMLSelectElement>) => {
-          parentChartDispatch({
-            action: parentChartAction.setChartTitlePosition,
-            payload: event.currentTarget.value as NivoChartTitlePosition,
-          });
-        },
+        parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setChartTitlePosition,
         value: chartTitlePosition,
       }}
     />
   );
 
-  // screenshot
   const screenshotFilenameTextInput = (
     <Flex
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
-      align="flex-start"
+      align={"flex-end"}
       w="100%"
     >
-      <Text pt="xl">{screenshotFilename}</Text>
+      <Group w="100%" position="left" p="md">
+        <Text>{screenshotFilename}</Text>
+      </Group>
       <AccessibleTextInput
         attributes={{
           hideLabel: true,
@@ -229,12 +229,7 @@ function ChartOptions(props: ChartOptionsProps) {
         description: "Define screenshot image type.",
         hideLabel: true,
         name: "screenshotImageType",
-        onChange: (event: ChangeEvent<HTMLSelectElement>) => {
-          parentChartDispatch({
-            action: parentChartAction.setScreenshotImageType,
-            payload: event.currentTarget.value as ScreenshotImageType,
-          });
-        },
+        parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setScreenshotImageType,
         value: screenshotImageType,
       }}

@@ -1,6 +1,7 @@
 import { COLORS_SWATCHES } from "../../constants";
 import type { CheckboxRadioSelectData } from "../../types";
 import type {
+  NivoChartTitlePosition,
   NivoColorScheme,
   NivoLegendAnchor,
   NivoLegendDirection,
@@ -127,7 +128,9 @@ const NIVO_CHART_PATTERN_DEFS = [
   },
 ];
 
-const NIVO_CHART_TITLE_POSITION_DATA: CheckboxRadioSelectData = [
+const NIVO_CHART_TITLE_POSITION_DATA: CheckboxRadioSelectData<
+  NivoChartTitlePosition
+> = [
   { value: "left", label: "Left" },
   { value: "center", label: "Center" },
   { value: "right", label: "Right" },
@@ -135,7 +138,7 @@ const NIVO_CHART_TITLE_POSITION_DATA: CheckboxRadioSelectData = [
 
 const { gray } = COLORS_SWATCHES;
 const SLIDER_TOOLTIP_COLOR = gray[3];
-const CHART_CONTROLS_TEXT_INPUT_HEIGHT = 155;
+const CHART_CONTROLS_TEXT_INPUT_HEIGHT = 125;
 const CHART_CONTROLS_HEADER_HEIGHT = 70;
 
 export {

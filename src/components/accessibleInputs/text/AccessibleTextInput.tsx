@@ -171,7 +171,7 @@ function AccessibleTextInput<
     : null;
 
   const regexesArray = validationFunctionsTable[name];
-  const isValueBufferValid = valueBuffer.length > 0 && regexesArray.every(
+  const isValueBufferValid = valueBuffer.length === 0 || regexesArray.every(
     ([regexOrFunc, _validationText]: [any, any]) =>
       typeof regexOrFunc === "function"
         ? regexOrFunc(valueBuffer)
@@ -276,7 +276,6 @@ function AccessibleTextInput<
             rightSection={rightIcon}
             size={size}
             value={valueBuffer}
-            width={300}
             withAsterisk={withAsterisk}
           />
         </Popover.Target>

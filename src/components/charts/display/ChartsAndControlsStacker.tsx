@@ -98,9 +98,14 @@ function ChartsAndGraphsControlsStacker({
   );
 
   const displayBottomSection = (
-    <Group w="100%" align="center" position="apart">
+    <Group
+      w="100%"
+      align="center"
+      position="apart"
+    >
       <Text
         aria-live="polite"
+        // size="md"
         color={isInputDisabled
           ? colorScheme === "dark" ? grayColorShade : "grey"
           : ""}
@@ -118,7 +123,6 @@ function ChartsAndGraphsControlsStacker({
       className="controls-card"
       radius="md"
       bg={cardBgGradient}
-      withBorder
     >
       {displayTopSection}
       <Space h="sm" />

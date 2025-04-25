@@ -1,5 +1,4 @@
 import { Flex, Group, Stack, Text, Title } from "@mantine/core";
-import type { ChangeEvent } from "react";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
@@ -162,10 +161,12 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
-      align="flex-start"
+      align={"flex-end"}
       w="100%"
     >
-      <Text pt="xl">{axisLeftLegend}</Text>
+      <Group w="100%" position="left" p="md">
+        <Text>{axisLeftLegend}</Text>
+      </Group>
       <AccessibleTextInput
         attributes={{
           disabled: !enableAxisLeft,
@@ -184,7 +185,7 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
   const axisLeftLegendOffsetSliderInput = (
     <AccessibleSliderInput
       attributes={{
-        disabled: !enableAxisLeft,
+        disabled: !enableAxisLeft || !axisLeftLegend,
         label: (value) => (
           <Text style={{ color: SLIDER_TOOLTIP_COLOR }}>{value} px</Text>
         ),
@@ -208,12 +209,7 @@ function ChartAxisLeft(props: ChartAxisLeftProps) {
         disabled: !enableAxisLeft || !axisLeftLegend,
         hideLabel: true,
         name: "axisLeftLegendPosition",
-        onChange: (event: ChangeEvent<HTMLSelectElement>) => {
-          parentChartDispatch({
-            action: parentChartAction.setAxisLeftLegendPosition,
-            payload: event.currentTarget.value as NivoAxisLegendPosition,
-          });
-        },
+        parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setAxisLeftLegendPosition,
         value: axisLeftLegendPosition,
       }}

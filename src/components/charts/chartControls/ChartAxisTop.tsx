@@ -1,5 +1,4 @@
 import { Flex, Group, Stack, Text, Title } from "@mantine/core";
-import type { ChangeEvent } from "react";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
@@ -162,9 +161,12 @@ function ChartAxisTop(props: ChartAxisTopProps) {
       h={CHART_CONTROLS_TEXT_INPUT_HEIGHT}
       direction="column"
       justify="space-between"
+      align={"flex-end"}
       w="100%"
     >
-      <Text pt="xl">{axisTopLegend}</Text>
+      <Group w="100%" position="left" p="md">
+        <Text>{axisTopLegend}</Text>
+      </Group>
       <AccessibleTextInput
         attributes={{
           disabled: !enableAxisTop,
@@ -207,12 +209,7 @@ function ChartAxisTop(props: ChartAxisTopProps) {
         disabled: !enableAxisTop || !axisTopLegend,
         hideLabel: true,
         name: "axisTopLegendPosition",
-        onChange: (event: ChangeEvent<HTMLSelectElement>) => {
-          parentChartDispatch({
-            action: parentChartAction.setAxisTopLegendPosition,
-            payload: event.currentTarget.value as NivoAxisLegendPosition,
-          });
-        },
+        parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setAxisTopLegendPosition,
         value: axisTopLegendPosition,
       }}
