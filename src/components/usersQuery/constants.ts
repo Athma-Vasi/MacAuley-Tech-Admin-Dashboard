@@ -8,7 +8,7 @@ import {
 } from "../../constants";
 import { AccessibleDateTimeInputAttributes } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInputAttributes } from "../accessibleInputs/AccessibleSelectInput";
-import { AccessibleTextInputAttributes } from "../accessibleInputs/text/AccessibleTextInput";
+import { AccessibleTextInputAttributes } from "../accessibleInputs/AccessibleTextInput";
 import { QueryTemplate } from "../query/types";
 
 /**

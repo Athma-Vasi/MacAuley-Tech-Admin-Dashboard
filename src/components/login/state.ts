@@ -4,7 +4,6 @@ const initialLoginState: LoginState = {
   isLoading: false,
   isSubmitting: false,
   isSuccessful: false,
-  pagesInError: new Set(),
   password: "password123Q!",
   username: "manager",
 };

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { HttpServerResponse, UserDocument, UserSchema } from "../../types";
 import {
   fetchSafe,
-  parseServerResponseSafe,
+  parseServerResponseSafeAsync,
   responseToJSONSafe,
 } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
@@ -112,7 +112,7 @@ async function handleCheckEmailExists(
       return;
     }
 
-    const parsedResult = await parseServerResponseSafe({
+    const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
       zSchema: z.boolean(),
     });
@@ -271,7 +271,7 @@ async function handleCheckUsernameExists(
       return;
     }
 
-    const parsedResult = await parseServerResponseSafe({
+    const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
       zSchema: z.boolean(),
     });

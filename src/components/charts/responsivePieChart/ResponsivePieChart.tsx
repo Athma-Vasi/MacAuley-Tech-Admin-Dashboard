@@ -18,10 +18,6 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartArcLabel } from "../chartControls/ChartArcLabel";
-import { ChartLegend } from "../chartControls/ChartLegend";
-import { ChartMargin } from "../chartControls/ChartMargin";
-import { ChartOptions } from "../chartControls/ChartOptions";
 import {
   NIVO_CHART_PATTERN_DEFS,
   NIVO_COLOR_SCHEME_DATA,
@@ -30,6 +26,10 @@ import {
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
 
+import { ChartArcLabel } from "../chartControls/chartArcLabel";
+import { ChartLegend } from "../chartControls/chartLegend";
+import { ChartMargin } from "../chartControls/chartMargin";
+import { ChartOptions } from "../chartControls/chartOptions";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { createChartHeaderStyles } from "../utils";

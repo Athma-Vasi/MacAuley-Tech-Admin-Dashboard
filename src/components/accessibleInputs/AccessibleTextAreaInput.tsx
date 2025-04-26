@@ -5,7 +5,7 @@ import {
   Popover,
   Stack,
   Text,
-  TextInput,
+  Textarea,
   Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -18,21 +18,17 @@ import {
   useState,
 } from "react";
 import { TbCheck, TbRefresh, TbX } from "react-icons/tb";
-
-import { COLORS_SWATCHES } from "../../../constants";
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import type { ValidationFunctionsTable } from "../../../types";
-import { returnThemeColors, splitCamelCase } from "../../../utils";
-import {
-  VALIDATION_FUNCTIONS_TABLE,
-  ValidationKey,
-} from "../../../validations";
+import { COLORS_SWATCHES } from "../../constants";
+import { useGlobalState } from "../../hooks/useGlobalState";
+import { ValidationFunctionsTable } from "../../types";
+import { returnThemeColors, splitCamelCase } from "../../utils";
+import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import {
   createAccessibleValueValidationTextElements,
   returnValidationTexts,
-} from "../utils";
+} from "./utils";
 
-type AccessibleTextInputAttributes<
+type AccessibleTextAreaInputAttributes<
   ValidValueAction extends string = string,
   InvalidValueAction extends string = string,
 > = {
@@ -54,9 +50,9 @@ type AccessibleTextInputAttributes<
   // must correspond to name in validationFunctionsTable
   name: ValidationKey;
   onBlur?: () => void;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: ChangeEvent<HTMLTextAreaElement>) => void;
   onFocus?: () => void;
-  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   parentDispatch: Dispatch<
     | {
       action: ValidValueAction;
@@ -68,7 +64,7 @@ type AccessibleTextInputAttributes<
     }
   >;
   placeholder?: string;
-  ref?: RefObject<HTMLInputElement | null> | null;
+  ref?: RefObject<HTMLTextAreaElement | null> | null;
   required?: boolean;
   rightSection?: boolean;
   rightSectionIcon?: ReactNode;
@@ -80,22 +76,22 @@ type AccessibleTextInputAttributes<
   withAsterisk?: boolean;
 };
 
-type AccessibleTextInputProps<
+type AccessibleTextAreaInputProps<
   ValidValueAction extends string = string,
   InvalidValueAction extends string = string,
 > = {
-  attributes: AccessibleTextInputAttributes<
+  attributes: AccessibleTextAreaInputAttributes<
     ValidValueAction,
     InvalidValueAction
   >;
   uniqueId?: string;
 };
 
-function AccessibleTextInput<
+function AccessibleTextAreaInput<
   ValidValueAction extends string = string,
   InvalidValueAction extends string = string,
 >(
-  { attributes, uniqueId }: AccessibleTextInputProps<
+  { attributes, uniqueId }: AccessibleTextAreaInputProps<
     ValidValueAction,
     InvalidValueAction
   >,
@@ -148,7 +144,6 @@ function AccessibleTextInput<
     greenColorShade,
     grayColorShade,
     redColorShade,
-    cardBgGradient,
   } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
   const rightIcon = rightSection
@@ -215,7 +210,7 @@ function AccessibleTextInput<
         withArrow
       >
         <Popover.Target>
-          <TextInput
+          <Textarea
             aria-autocomplete={ariaAutoComplete}
             aria-describedby={isValueBufferValid
               // id of validValueTextElement
@@ -253,7 +248,7 @@ function AccessibleTextInput<
               onBlur?.();
               closePopover();
             }}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
               setValueBuffer(event.currentTarget.value);
 
               onChange?.(event);
@@ -287,6 +282,6 @@ function AccessibleTextInput<
   );
 }
 
-export { AccessibleTextInput };
+export { AccessibleTextAreaInput };
 
-export type { AccessibleTextInputAttributes };
+export type { AccessibleTextAreaInputAttributes };

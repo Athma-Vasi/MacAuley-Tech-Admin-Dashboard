@@ -19,13 +19,7 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAxisBottom } from "../chartControls/ChartAxisBottom";
-import { ChartAxisLeft } from "../chartControls/ChartAxisLeft";
-import { ChartAxisRight } from "../chartControls/ChartAxisRight";
-import { ChartAxisTop } from "../chartControls/ChartAxisTop";
-import { ChartLegend } from "../chartControls/ChartLegend";
-import { ChartMargin } from "../chartControls/ChartMargin";
-import { ChartOptions } from "../chartControls/ChartOptions";
+import { ChartAxisBottom } from "../chartControls/chartAxisBottom";
 import {
   NIVO_CHART_PATTERN_DEFS,
   NIVO_COLOR_SCHEME_DATA,
@@ -33,6 +27,12 @@ import {
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
 
+import { ChartAxisLeft } from "../chartControls/chartAxisLeft";
+import { ChartAxisRight } from "../chartControls/chartAxisRight";
+import { ChartAxisTop } from "../chartControls/chartAxisTop";
+import { ChartLegend } from "../chartControls/chartLegend";
+import { ChartMargin } from "../chartControls/chartMargin";
+import { ChartOptions } from "../chartControls/chartOptions";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { createChartHeaderStyles } from "../utils";

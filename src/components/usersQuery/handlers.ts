@@ -1,17 +1,17 @@
 import localforage from "localforage";
+import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { HttpServerResponse, UserDocument } from "../../types";
 import {
     decodeJWTSafe,
     fetchSafe,
-    parseServerResponseSafe,
+    parseServerResponseSafeAsync,
     responseToJSONSafe,
 } from "../../utils";
 import { usersQueryAction } from "./actions";
 import { UsersQueryState } from "./types";
 import { userDocumentZ } from "./zodSchema";
-import { NavigateFunction } from "react-router-dom";
 
 async function handleUsersQuerySubmitGET(
     {
@@ -124,7 +124,7 @@ async function handleUsersQuerySubmitGET(
         }
 
         console.time("--PARSING--");
-        const parsedResult = await parseServerResponseSafe({
+        const parsedResult = await parseServerResponseSafeAsync({
             object: serverResponse,
             zSchema: userDocumentZ,
         });

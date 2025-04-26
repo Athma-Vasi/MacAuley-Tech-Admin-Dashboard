@@ -17,7 +17,7 @@ import { TbLogicAnd, TbLogicNor, TbLogicOr } from "react-icons/tb";
 import { splitCamelCase } from "../../utils";
 import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
+import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { QueryAction } from "./actions";
 import {
     InputKind,

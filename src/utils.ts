@@ -421,11 +421,24 @@ async function setItemForageSafe<Data = unknown>(
   }
 }
 
+function parseSafeSync<
+  Obj extends Record<string, unknown> = Record<string, unknown>,
+>(
+  { object, zSchema }: { object: Obj; zSchema: z.ZodSchema },
+): SafeBoxResult<z.infer<typeof zSchema>> {
+  try {
+    const parsed = zSchema.parse(object);
+    return new Ok({ data: parsed, kind: "success" });
+  } catch (error: unknown) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
 async function parseServerResponseSafe<
   Obj extends Record<string, unknown> = Record<string, unknown>,
 >(
   { object, zSchema }: { zSchema: z.ZodSchema; object: Obj },
-) {
+): Promise<SafeBoxResult<z.infer<typeof zSchema>>> {
   try {
     const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema
@@ -821,6 +834,7 @@ export {
   formatDate,
   getItemForageSafe,
   hexToHSL,
+  parseSafeSync,
   parseServerResponseSafe,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,

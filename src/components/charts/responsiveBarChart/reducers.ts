@@ -1,8 +1,8 @@
 import type { TitleOrder } from "@mantine/core";
 import type { ScreenshotImageType } from "../../../types";
+import { parseSafeSync } from "../../../utils";
 import type {
   NivoAxisLegendPosition,
-  NivoBarGroupMode,
   NivoBarLayout,
   NivoBarValueScale,
   NivoChartTitlePosition,
@@ -14,7 +14,7 @@ import type {
   NivoMotionConfig,
 } from "../types";
 import { responsiveBarChartAction } from "./actions";
-import { initialResponsiveBarChartState } from "./state";
+import { responsiveBarChartReducer_setGroupModeZ } from "./schemas";
 import type {
   ResponsiveBarChartAction,
   ResponsiveBarChartDispatch,
@@ -373,9 +373,18 @@ function responsiveBarChartReducer_setGroupMode(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: responsiveBarChartReducer_setGroupModeZ,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    groupMode: dispatch.payload as NivoBarGroupMode,
+    groupMode: parsedResult.safeUnwrap().data.payload,
   };
 }
 
@@ -383,9 +392,13 @@ function responsiveBarChartReducer_setInnerPaddingBar(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
+  const payload = dispatch.payload;
+  if (typeof payload !== "number" || isNaN(payload) || payload < 0) {
+    return state;
+  }
   return {
     ...state,
-    innerPaddingBar: dispatch.payload as number,
+    innerPaddingBar: payload,
   };
 }
 
@@ -393,9 +406,16 @@ function responsiveBarChartReducer_setLayout(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
+  const validLayouts = new Set<NivoBarLayout>(["horizontal", "vertical"]);
+  const payload = dispatch.payload;
+  if (
+    typeof payload !== "string" || !validLayouts.has(payload as NivoBarLayout)
+  ) {
+    return state;
+  }
   return {
     ...state,
-    layout: dispatch.payload as NivoBarLayout,
+    layout: payload as NivoBarLayout,
   };
 }
 
@@ -403,9 +423,13 @@ function responsiveBarChartReducer_setPaddingBar(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
+  const payload = dispatch.payload;
+  if (typeof payload !== "number" || isNaN(payload) || payload < 0) {
+    return state;
+  }
   return {
     ...state,
-    paddingBar: dispatch.payload as number,
+    paddingBar: payload,
   };
 }
 
@@ -413,9 +437,13 @@ function responsiveBarChartReducer_setReverse(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
+  const payload = dispatch.payload;
+  if (typeof payload !== "boolean") {
+    return state;
+  }
   return {
     ...state,
-    reverse: dispatch.payload as boolean,
+    reverse: payload,
   };
 }
 
@@ -423,9 +451,17 @@ function responsiveBarChartReducer_setValueScale(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
+  const validScales: NivoBarValueScale[] = ["linear", "symlog"];
+  const payload = dispatch.payload;
+  if (
+    typeof payload !== "string" ||
+    !validScales.includes(payload as NivoBarValueScale)
+  ) {
+    return state;
+  }
   return {
     ...state,
-    valueScale: dispatch.payload as NivoBarValueScale,
+    valueScale: payload as NivoBarValueScale,
   };
 }
 
@@ -1146,4 +1182,94 @@ function responsiveBarChartReducer_setIsError(
   };
 }
 
-export { responsiveBarChartReducer };
+export {
+  responsiveBarChartReducer,
+  // reset all
+  responsiveBarChartReducer_resetChartToDefault,
+  // axis -> axisBottom
+  responsiveBarChartReducer_setAxisBottomLegend,
+  responsiveBarChartReducer_setAxisBottomLegendOffset,
+  responsiveBarChartReducer_setAxisBottomLegendPosition,
+  responsiveBarChartReducer_setAxisBottomTickPadding,
+  responsiveBarChartReducer_setAxisBottomTickRotation,
+  responsiveBarChartReducer_setAxisBottomTickSize,
+  // axis -> axisLeft
+  responsiveBarChartReducer_setAxisLeftLegend,
+  responsiveBarChartReducer_setAxisLeftLegendOffset,
+  responsiveBarChartReducer_setAxisLeftLegendPosition,
+  responsiveBarChartReducer_setAxisLeftTickPadding,
+  responsiveBarChartReducer_setAxisLeftTickRotation,
+  responsiveBarChartReducer_setAxisLeftTickSize,
+  // axis -> axisRight
+  responsiveBarChartReducer_setAxisRightLegend,
+  responsiveBarChartReducer_setAxisRightLegendOffset,
+  responsiveBarChartReducer_setAxisRightLegendPosition,
+  responsiveBarChartReducer_setAxisRightTickPadding,
+  responsiveBarChartReducer_setAxisRightTickRotation,
+  responsiveBarChartReducer_setAxisRightTickSize,
+  // axis -> axisTop
+  responsiveBarChartReducer_setAxisTopLegend,
+  responsiveBarChartReducer_setAxisTopLegendOffset,
+  responsiveBarChartReducer_setAxisTopLegendPosition,
+  responsiveBarChartReducer_setAxisTopTickPadding,
+  responsiveBarChartReducer_setAxisTopTickRotation,
+  responsiveBarChartReducer_setAxisTopTickSize,
+  responsiveBarChartReducer_setChartBorderColor,
+  responsiveBarChartReducer_setChartBorderRadius,
+  responsiveBarChartReducer_setChartBorderWidth,
+  responsiveBarChartReducer_setChartColors,
+  // options
+  responsiveBarChartReducer_setChartTitle,
+  responsiveBarChartReducer_setChartTitleColor,
+  responsiveBarChartReducer_setChartTitlePosition,
+  responsiveBarChartReducer_setChartTitleSize,
+  // motion
+  responsiveBarChartReducer_setEnableAnimate,
+  responsiveBarChartReducer_setEnableAxisBottom,
+  responsiveBarChartReducer_setEnableAxisLeft,
+  responsiveBarChartReducer_setEnableAxisRight,
+  responsiveBarChartReducer_setEnableAxisTop,
+  responsiveBarChartReducer_setEnableFillPatterns,
+  responsiveBarChartReducer_setEnableGridX,
+  responsiveBarChartReducer_setEnableGridY,
+  responsiveBarChartReducer_setEnableLabels,
+  // legend
+  responsiveBarChartReducer_setEnableLegend,
+  responsiveBarChartReducer_setEnableLegendJustify,
+  responsiveBarChartReducer_setGroupMode,
+  responsiveBarChartReducer_setInnerPaddingBar,
+  // error
+  responsiveBarChartReducer_setIsError,
+  responsiveBarChartReducer_setLabelSkipHeight,
+  responsiveBarChartReducer_setLabelSkipWidth,
+  responsiveBarChartReducer_setLabelTextColor,
+  responsiveBarChartReducer_setLayout,
+  responsiveBarChartReducer_setLegendAnchor,
+  responsiveBarChartReducer_setLegendDirection,
+  responsiveBarChartReducer_setLegendItemBackground,
+  responsiveBarChartReducer_setLegendItemDirection,
+  responsiveBarChartReducer_setLegendItemHeight,
+  responsiveBarChartReducer_setLegendItemOpacity,
+  responsiveBarChartReducer_setLegendItemsSpacing,
+  responsiveBarChartReducer_setLegendItemTextColor,
+  responsiveBarChartReducer_setLegendItemWidth,
+  responsiveBarChartReducer_setLegendSymbolBorderColor,
+  responsiveBarChartReducer_setLegendSymbolBorderWidth,
+  responsiveBarChartReducer_setLegendSymbolShape,
+  responsiveBarChartReducer_setLegendSymbolSize,
+  responsiveBarChartReducer_setLegendSymbolSpacing,
+  responsiveBarChartReducer_setLegendTranslateX,
+  responsiveBarChartReducer_setLegendTranslateY,
+  responsiveBarChartReducer_setMarginBottom,
+  responsiveBarChartReducer_setMarginLeft,
+  responsiveBarChartReducer_setMarginRight,
+  responsiveBarChartReducer_setMarginTop,
+  responsiveBarChartReducer_setMotionConfig,
+  responsiveBarChartReducer_setPaddingBar,
+  responsiveBarChartReducer_setReverse,
+  // screenshot
+  responsiveBarChartReducer_setScreenshotFilename,
+  responsiveBarChartReducer_setScreenshotImageQuality,
+  responsiveBarChartReducer_setScreenshotImageType,
+  responsiveBarChartReducer_setValueScale,
+};

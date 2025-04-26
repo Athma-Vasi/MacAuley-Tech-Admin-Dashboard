@@ -5,7 +5,7 @@ import { AUTH_URL, COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordInput";
-import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
+import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { registerAction } from "./actions";
 import { handleCheckEmailExists, handleCheckUsernameExists } from "./handlers";
 import { RegisterDispatch } from "./types";

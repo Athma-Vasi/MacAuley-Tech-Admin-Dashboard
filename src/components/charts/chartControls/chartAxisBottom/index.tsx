@@ -1,19 +1,19 @@
 import { Flex, Group, Stack, Text, Title } from "@mantine/core";
-import { COLORS_SWATCHES } from "../../../constants";
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import { returnThemeColors } from "../../../utils";
-import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextInput";
+import { COLORS_SWATCHES } from "../../../../constants";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../../utils";
+import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
+import { AccessibleSliderInput } from "../../../accessibleInputs/AccessibleSliderInput";
+import { AccessibleSwitchInput } from "../../../accessibleInputs/AccessibleSwitchInput";
+import { AccessibleTextInput } from "../../../accessibleInputs/AccessibleTextInput";
 import {
   CHART_CONTROLS_TEXT_INPUT_HEIGHT,
   SLIDER_TOOLTIP_COLOR,
-} from "../constants";
-import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
-import { BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA } from "../responsiveBarChart/constants";
-import type { NivoAxisLegendPosition } from "../types";
-import { createChartHeaderStyles } from "../utils";
+} from "../../constants";
+import ChartsAndGraphsControlsStacker from "../../display/ChartsAndControlsStacker";
+import { NIVO_BAR_AXIS_LEGEND_POSITION_DATA } from "../../responsiveBarChart/constants";
+import type { NivoAxisLegendPosition } from "../../types";
+import { createChartHeaderStyles } from "../../utils";
 
 type ChartAxisAction = {
   setAxisBottomLegend: "setAxisBottomLegend";
@@ -204,7 +204,7 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   const axisBottomLegendPositionSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: BAR_CHART_AXIS_LEGEND_POSITION_SELECT_DATA,
+        data: NIVO_BAR_AXIS_LEGEND_POSITION_DATA,
         description: "Define the position of the bottom axis legend",
         disabled: !enableAxisBottom || !axisBottomLegend,
         hideLabel: true,

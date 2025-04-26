@@ -1,5 +1,12 @@
-import type { SetStepInErrorPayload } from "../../types";
+import { parseSafeSync } from "../../utils";
 import { type LoginAction, loginAction } from "./actions";
+import {
+  setIsLoadingDispatchZod,
+  setIsSubmittingDispatchZod,
+  setIsSuccessfulDispatchZod,
+  setPasswordDispatchZod,
+  setUsernameDispatchZod,
+} from "./schemas";
 import type { LoginDispatch, LoginState } from "./types";
 
 function loginReducer(
@@ -17,7 +24,6 @@ const loginReducersMap = new Map<
   [loginAction.setIsLoading, loginReducer_setIsLoading],
   [loginAction.setIsSubmitting, loginReducer_setIsSubmitting],
   [loginAction.setIsSuccessful, loginReducer_setIsSuccessful],
-  [loginAction.setPageInError, loginReducer_setPageInError],
   [loginAction.setPassword, loginReducer_setPassword],
   [loginAction.setUsername, loginReducer_setUsername],
 ]);
@@ -26,9 +32,20 @@ function loginReducer_setIsLoading(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
+  const parsedResult = parseSafeSync(
+    {
+      object: dispatch,
+      zSchema: setIsLoadingDispatchZod,
+    },
+  );
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    isLoading: dispatch.payload as boolean,
+    isLoading: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -36,9 +53,20 @@ function loginReducer_setIsSubmitting(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
+  const parsedResult = parseSafeSync(
+    {
+      object: dispatch,
+      zSchema: setIsSubmittingDispatchZod,
+    },
+  );
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    isSubmitting: dispatch.payload as boolean,
+    isSubmitting: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -46,23 +74,20 @@ function loginReducer_setIsSuccessful(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  return {
-    ...state,
-    isSuccessful: dispatch.payload as boolean,
-  };
-}
+  const parsedResult = parseSafeSync(
+    {
+      object: dispatch,
+      zSchema: setIsSuccessfulDispatchZod,
+    },
+  );
 
-function loginReducer_setPageInError(
-  state: LoginState,
-  dispatch: LoginDispatch,
-): LoginState {
-  const { kind, page } = dispatch.payload as SetStepInErrorPayload;
-  const pagesInError = new Set(state.pagesInError);
-  kind === "add" ? pagesInError.add(page) : pagesInError.delete(page);
+  if (parsedResult.err) {
+    return state;
+  }
 
   return {
     ...state,
-    pagesInError,
+    isSuccessful: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -70,9 +95,20 @@ function loginReducer_setPassword(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
+  const parsedResult = parseSafeSync(
+    {
+      object: dispatch,
+      zSchema: setPasswordDispatchZod,
+    },
+  );
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    password: dispatch.payload as string,
+    password: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -80,10 +116,28 @@ function loginReducer_setUsername(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
+  const parsedResult = parseSafeSync(
+    {
+      object: dispatch,
+      zSchema: setUsernameDispatchZod,
+    },
+  );
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    username: dispatch.payload as string,
+    username: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
-export { loginReducer };
+export {
+  loginReducer,
+  loginReducer_setIsLoading,
+  loginReducer_setIsSubmitting,
+  loginReducer_setIsSuccessful,
+  loginReducer_setPassword,
+  loginReducer_setUsername,
+};

@@ -5,7 +5,7 @@ import {
   Stack,
   Text,
   Title,
-  type TitleOrder,
+  TitleOrder,
   Tooltip,
 } from "@mantine/core";
 import { useEffect } from "react";
@@ -14,22 +14,22 @@ import {
   COLORS_SWATCHES,
   INPUT_WIDTH,
   SCREENSHOT_IMAGE_TYPE_DATA,
-} from "../../../constants";
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import type { ScreenshotImageType } from "../../../types";
-import { captureScreenshot, returnThemeColors } from "../../../utils";
-import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
-import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { AccessibleTextInput } from "../../accessibleInputs/text/AccessibleTextInput";
+} from "../../../../constants";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
+import { ScreenshotImageType } from "../../../../types";
+import { captureScreenshot, returnThemeColors } from "../../../../utils";
+import { AccessibleButton } from "../../../accessibleInputs/AccessibleButton";
+import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
+import { AccessibleSliderInput } from "../../../accessibleInputs/AccessibleSliderInput";
+import { AccessibleTextInput } from "../../../accessibleInputs/AccessibleTextInput";
 import {
   CHART_CONTROLS_TEXT_INPUT_HEIGHT,
   NIVO_CHART_TITLE_POSITION_DATA,
   SLIDER_TOOLTIP_COLOR,
-} from "../constants";
-import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
-import type { NivoChartTitlePosition } from "../types";
-import { createChartHeaderStyles } from "../utils";
+} from "../../constants";
+import ChartsAndGraphsControlsStacker from "../../display/ChartsAndControlsStacker";
+import { NivoChartTitlePosition } from "../../types";
+import { createChartHeaderStyles } from "../../utils";
 
 type ChartOptionsAction = {
   setChartTitle: "setChartTitle";

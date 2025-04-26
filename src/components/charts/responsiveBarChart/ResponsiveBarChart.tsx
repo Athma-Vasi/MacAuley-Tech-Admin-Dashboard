@@ -19,13 +19,7 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartAxisBottom } from "../chartControls/ChartAxisBottom";
-import { ChartAxisLeft } from "../chartControls/ChartAxisLeft";
-import { ChartAxisRight } from "../chartControls/ChartAxisRight";
-import { ChartAxisTop } from "../chartControls/ChartAxisTop";
-import { ChartLegend } from "../chartControls/ChartLegend";
-import { ChartMargin } from "../chartControls/ChartMargin";
-import { ChartOptions } from "../chartControls/ChartOptions";
+import { ChartAxisBottom } from "../chartControls/chartAxisBottom";
 import {
   NIVO_CHART_PATTERN_DEFS,
   NIVO_COLOR_SCHEME_DATA,
@@ -33,14 +27,20 @@ import {
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
 
+import { ChartAxisLeft } from "../chartControls/chartAxisLeft";
+import { ChartAxisRight } from "../chartControls/chartAxisRight";
+import { ChartAxisTop } from "../chartControls/chartAxisTop";
+import { ChartLegend } from "../chartControls/chartLegend";
+import { ChartMargin } from "../chartControls/chartMargin";
+import { ChartOptions } from "../chartControls/chartOptions";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
 import { createChartHeaderStyles } from "../utils";
 import { responsiveBarChartAction } from "./actions";
 import {
-  BAR_CHART_GROUP_MODE_SELECT_DATA,
-  BAR_CHART_LAYOUT_SELECT_DATA,
-  BAR_CHART_VALUE_SCALE_SELECT_DATA,
+  NIVO_BAR_GROUP_MODE_DATA,
+  NIVO_BAR_LAYOUT_DATA,
+  NIVO_BAR_VALUE_SCALE_DATA,
 } from "./constants";
 import { responsiveBarChartReducer } from "./reducers";
 import { initialResponsiveBarChartState } from "./state";
@@ -373,7 +373,7 @@ function ResponsiveBarChart({
   const groupModeSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: BAR_CHART_GROUP_MODE_SELECT_DATA,
+        data: NIVO_BAR_GROUP_MODE_DATA,
         description: "Define how bars are grouped together",
         hideLabel: true,
         name: "groupMode",
@@ -387,7 +387,7 @@ function ResponsiveBarChart({
   const layoutSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: BAR_CHART_LAYOUT_SELECT_DATA,
+        data: NIVO_BAR_LAYOUT_DATA,
         description: "Define the chart layout",
         hideLabel: true,
         name: "layout",
@@ -401,7 +401,7 @@ function ResponsiveBarChart({
   const valueScaleSelectInput = (
     <AccessibleSelectInput
       attributes={{
-        data: BAR_CHART_VALUE_SCALE_SELECT_DATA,
+        data: NIVO_BAR_VALUE_SCALE_DATA,
         description: "Define the scale of the chart",
         hideLabel: true,
         name: "valueScale",

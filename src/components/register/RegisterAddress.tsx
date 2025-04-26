@@ -10,7 +10,7 @@ import type {
   StatesUS,
 } from "../../types";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
+import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import type { RegisterAction } from "./actions";
 import { RegisterDispatch } from "./types";
 

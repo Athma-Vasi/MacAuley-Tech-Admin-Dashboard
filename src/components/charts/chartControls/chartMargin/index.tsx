@@ -1,11 +1,11 @@
 import { Group, Stack, Text, Title } from "@mantine/core";
-import { COLORS_SWATCHES } from "../../../constants";
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import { returnThemeColors } from "../../../utils";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { SLIDER_TOOLTIP_COLOR } from "../constants";
-import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
-import { createChartHeaderStyles } from "../utils";
+import { COLORS_SWATCHES } from "../../../../constants";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../../utils";
+import { AccessibleSliderInput } from "../../../accessibleInputs/AccessibleSliderInput";
+import { SLIDER_TOOLTIP_COLOR } from "../../constants";
+import ChartsAndGraphsControlsStacker from "../../display/ChartsAndControlsStacker";
+import { createChartHeaderStyles } from "../../utils";
 
 type ChartMarginAction = {
   setMarginTop: "setMarginTop";

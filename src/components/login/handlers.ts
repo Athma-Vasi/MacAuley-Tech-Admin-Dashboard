@@ -13,7 +13,7 @@ import {
 import {
   decodeJWTSafe,
   fetchSafe,
-  parseServerResponseSafe,
+  parseServerResponseSafeAsync,
   responseToJSONSafe,
   setItemForageSafe,
 } from "../../utils";
@@ -116,7 +116,7 @@ async function handleLoginButtonClick(
     }
 
     console.time("parsing");
-    const parsedResult = await parseServerResponseSafe({
+    const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
       zSchema: z.object({
         userDocument: userDocumentZ,

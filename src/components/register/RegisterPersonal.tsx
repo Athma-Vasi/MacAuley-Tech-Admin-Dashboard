@@ -8,7 +8,7 @@ import {
 } from "../../constants";
 import { Department, JobPosition } from "../../types";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { AccessibleTextInput } from "../accessibleInputs/text/AccessibleTextInput";
+import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { AllStoreLocations } from "../dashboard/types";
 import type { RegisterAction } from "./actions";
 import { RegisterDispatch } from "./types";

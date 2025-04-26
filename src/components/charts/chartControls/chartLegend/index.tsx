@@ -1,26 +1,25 @@
 import { ColorInput, Group, Stack, Text, Title } from "@mantine/core";
-
-import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
-import { useGlobalState } from "../../../hooks/useGlobalState";
-import { returnThemeColors } from "../../../utils";
-import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../../constants";
+import { useGlobalState } from "../../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../../utils";
+import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
+import { AccessibleSliderInput } from "../../../accessibleInputs/AccessibleSliderInput";
+import { AccessibleSwitchInput } from "../../../accessibleInputs/AccessibleSwitchInput";
 import {
   NIVO_LEGEND_ANCHOR_DATA,
   NIVO_LEGEND_DIRECTION_DATA,
   NIVO_LEGEND_ITEM_DIRECTION_DATA,
   NIVO_LEGEND_SYMBOL_SHAPE_DATA,
   SLIDER_TOOLTIP_COLOR,
-} from "../constants";
-import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
-import type {
+} from "../../constants";
+import ChartsAndGraphsControlsStacker from "../../display/ChartsAndControlsStacker";
+import {
   NivoLegendAnchor,
   NivoLegendDirection,
   NivoLegendItemDirection,
   NivoLegendSymbolShape,
-} from "../types";
-import { createChartHeaderStyles } from "../utils";
+} from "../../types";
+import { createChartHeaderStyles } from "../../utils";
 
 type ChartLegendAction = {
   setEnableLegend: "setEnableLegend";

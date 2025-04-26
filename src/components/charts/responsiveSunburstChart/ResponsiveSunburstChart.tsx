@@ -18,10 +18,10 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-import { ChartArcLabel } from "../chartControls/ChartArcLabel";
-import { ChartMargin } from "../chartControls/ChartMargin";
-import { ChartOptions } from "../chartControls/ChartOptions";
 
+import { ChartArcLabel } from "../chartControls/chartArcLabel";
+import { ChartMargin } from "../chartControls/chartMargin";
+import { ChartOptions } from "../chartControls/chartOptions";
 import {
   NIVO_CHART_PATTERN_DEFS,
   NIVO_COLOR_SCHEME_DATA,

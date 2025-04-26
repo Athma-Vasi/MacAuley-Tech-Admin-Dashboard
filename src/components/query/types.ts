@@ -2,7 +2,7 @@ import { CheckboxRadioSelectData } from "../../types";
 import { ValidationKey } from "../../validations";
 import { AccessibleDateTimeInputAttributes } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInputAttributes } from "../accessibleInputs/AccessibleSelectInput";
-import { AccessibleTextInputAttributes } from "../accessibleInputs/text/AccessibleTextInput";
+import { AccessibleTextInputAttributes } from "../accessibleInputs/AccessibleTextInput";
 import { QueryAction } from "./actions";
 
 type InputKind =
