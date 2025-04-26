@@ -1,11 +1,13 @@
 import { Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { splitCamelCase } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleCheckboxInputGroup } from "../accessibleInputs/AccessibleCheckboxInput";
 import { queryAction } from "./actions";
 import type { QueryDispatch, QueryState, QueryTemplate } from "./types";
-import { PROJECTION_HELP_MODAL_CONTENT } from "./utils";
+import {
+    excludeSelectedProjectionFields,
+    PROJECTION_HELP_MODAL_CONTENT,
+} from "./utils";
 
 type QueryProjectionProps = {
     hideProjection: boolean;
@@ -55,15 +57,17 @@ function QueryProjection({
         </Modal>
     );
 
+    const { inputData } = excludeSelectedProjectionFields(
+        queryTemplates,
+        queryState,
+    );
+
     const projectionCheckboxInput = hideProjection
         ? null
         : (
             <AccessibleCheckboxInputGroup
                 attributes={{
-                    inputData: queryTemplates.map(({ name }) => ({
-                        label: splitCamelCase(name),
-                        value: name,
-                    })),
+                    inputData,
                     name: "exclusionFields",
                     parentDispatch: queryDispatch,
                     validValueAction: queryAction.setProjectionFields,

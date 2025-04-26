@@ -69,7 +69,7 @@ function RegisterAddress({
   );
 
   const countrySelectInput = (
-    <AccessibleSelectInput<RegisterAction["setCountry"], Country>
+    <AccessibleSelectInput
       attributes={{
         data: COUNTRIES,
         name: "country",
@@ -82,7 +82,7 @@ function RegisterAddress({
 
   const provinceOrStateSelectInput = country === "Canada"
     ? (
-      <AccessibleSelectInput<RegisterAction["setProvince"], Province>
+      <AccessibleSelectInput
         attributes={{
           data: PROVINCES,
           name: "province",
@@ -93,7 +93,7 @@ function RegisterAddress({
       />
     )
     : (
-      <AccessibleSelectInput<RegisterAction["setState"], StatesUS>
+      <AccessibleSelectInput
         attributes={{
           data: STATES_US,
           name: "state",
@@ -106,9 +106,7 @@ function RegisterAddress({
 
   const postalCodeTextInput = country === "Canada"
     ? (
-      <AccessibleTextInput<
-        RegisterAction["setPostalCodeCanada"]
-      >
+      <AccessibleTextInput
         attributes={{
           invalidValueAction: parentAction.setIsError,
           name: "postalCodeCanada",

@@ -1,9 +1,7 @@
-import { Box, Group, Modal, Overlay, Table, Text, Title } from "@mantine/core";
+import { Box, Group, Modal, Table, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import {
     COLORS_SWATCHES,
-    OVERLAY_BLUR,
-    OVERLAY_OPACITY,
     RESOURCES_DATE_FIELDS,
     RESOURCES_IMAGE_URL_FIELDS,
 } from "../../constants";
@@ -163,6 +161,7 @@ function DisplayResource(
                                         );
 
                                     const imageDropdown = returnImageDropdown({
+                                        key: `${resourceIndex}-${entryIndex}-${key}`,
                                         src: value?.toString() ?? "",
                                         truncate: true,
                                     });
@@ -171,7 +170,9 @@ function DisplayResource(
                                         ? imageDropdown
                                         : isFieldADate
                                         ? (
-                                            <Text>
+                                            <Text
+                                                key={`${resourceIndex}-${entryIndex}-${key}`}
+                                            >
                                                 {formatDate({
                                                     date: value?.toString() ??
                                                         "",
@@ -179,7 +180,9 @@ function DisplayResource(
                                             </Text>
                                         )
                                         : (
-                                            <Text>
+                                            <Text
+                                                key={`${resourceIndex}-${entryIndex}-${key}`}
+                                            >
                                                 {value?.toString() ??
                                                     "Unknown"}
                                             </Text>
@@ -241,9 +244,6 @@ function DisplayResource(
 
                 <Text>Total Documents: {totalDocuments || 0}</Text>
             </Group>
-            {isLoading
-                ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
-                : null}
 
             {resourceData.length === 0
                 ? <Text pl="md">No documents found</Text>

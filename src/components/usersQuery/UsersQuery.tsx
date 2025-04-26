@@ -68,8 +68,6 @@ function UsersQuery({}: UsersQueryProps) {
         totalDocuments,
     } = usersQueryState;
 
-    console.log("UsersQuery State", usersQueryState);
-
     const submitButton = (
         <AccessibleButton
             attributes={{

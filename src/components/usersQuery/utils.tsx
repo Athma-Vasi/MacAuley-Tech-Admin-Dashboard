@@ -54,7 +54,7 @@ function returnArrangeByIconsElement(
     }
 
     return (
-        <div className="resource-key-icons">
+        <div className="resource-key-icons" key={key}>
             {isAscActive
                 ? (
                     <TbArrowUp
@@ -119,6 +119,7 @@ function returnImageDropdown(
         alt = "Resource Photo",
         fit = "cover",
         height = 150,
+        key = "",
         radius = 9999,
         src = "",
         truncate = false,
@@ -127,6 +128,7 @@ function returnImageDropdown(
         alt?: string;
         fit?: ImageProps["fit"];
         height?: number;
+        key: string;
         radius?: number;
         src: string;
         truncate?: boolean;
@@ -138,6 +140,7 @@ function returnImageDropdown(
             alt={alt}
             fit={fit}
             height={height}
+            key={key}
             radius={radius}
             src={src}
             width={width}
@@ -151,12 +154,15 @@ function returnImageDropdown(
     return (
         <Tooltip
             label={dropDownImage}
+            key={key}
             position="right-start"
         >
             <Group w="100%" spacing={0}>
                 {sliced.map(
                     (part, index) => {
-                        return <Text key={`${part}-${index}`}>{part}</Text>;
+                        return (
+                            <Text key={`${key}-${part}-${index}`}>{part}</Text>
+                        );
                     },
                 )}
             </Group>
@@ -203,6 +209,7 @@ function returnResourceCardElement(
                         alt: "Resource Photo",
                         fit: "cover",
                         height: 96,
+                        key: `${resourceIndex}-${entryIndex}-${key}`,
                         radius: 9999,
                         src: value?.toString() ?? "",
                         width: 96,

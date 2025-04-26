@@ -28,6 +28,10 @@ async function handleCheckEmailExists(
     url: RequestInfo | URL;
   },
 ) {
+  if (!email) {
+    return;
+  }
+
   const emailValidations = VALIDATION_FUNCTIONS_TABLE["email"];
   const isEmailValid = emailValidations.every((validation) => {
     const [regExpOrFunc, _] = validation;
@@ -183,6 +187,10 @@ async function handleCheckUsernameExists(
     username: string;
   },
 ) {
+  if (!username) {
+    return;
+  }
+
   const usernameValidations = VALIDATION_FUNCTIONS_TABLE["username"];
   const isUsernameValid = usernameValidations.every((validation) => {
     const [regExpOrFunc, _] = validation;

@@ -99,37 +99,95 @@ function queryReducer_modifyQueryChains(
             if (value.length === 0) {
                 return state;
             }
-            const existingQueryLinks =
-                queryChains[queryChainKind][logicalOperator];
 
-            const { isFieldValueExists } = Object.entries(
-                queryChains,
-            ).reduce((acc, curr) => {
-                const [_queryChainKind, queryChain] = curr;
+            const {
+                isAndLinkExists,
+                isNorLinkExists,
+                isOrLinkExists,
+                isSortLinkExists,
+            } = Object
+                .entries(
+                    queryChains,
+                ).reduce((acc, curr) => {
+                    const [queryChainKind, queryChains] = curr;
 
-                Object.entries(queryChain).forEach((chain) => {
-                    const [_logOper, qchain] = chain;
+                    Object.entries(queryChains).forEach((chain) => {
+                        const [logOper, qchain] = chain;
 
-                    qchain.forEach((queryLink) => {
-                        const [qLField, _qLOperator, qLValue] = queryLink;
-                        if (
-                            field === qLField &&
-                            value === qLValue
-                        ) {
-                            acc.isFieldValueExists = true;
-                        }
+                        qchain.forEach((queryLink) => {
+                            const [qLField, _qLOperator, qLValue] = queryLink;
+
+                            if (queryChainKind === "filter") {
+                                if (
+                                    field === qLField &&
+                                    value === qLValue
+                                ) {
+                                    if (logOper === "nor") {
+                                        acc.isNorLinkExists = true;
+                                    }
+
+                                    if (logOper === "and") {
+                                        acc.isAndLinkExists = true;
+                                    }
+
+                                    if (logOper === "or") {
+                                        acc.isOrLinkExists = true;
+                                    }
+                                }
+                            }
+
+                            if (queryChainKind === "sort") {
+                                if (field === qLField) {
+                                    if (logOper === "and") {
+                                        acc.isSortLinkExists = true;
+                                    }
+                                }
+                            }
+                        });
                     });
+
+                    return acc;
+                }, {
+                    isNorLinkExists: false,
+                    isAndLinkExists: false,
+                    isOrLinkExists: false,
+                    isSortLinkExists: false,
                 });
 
-                return acc;
-            }, { isFieldValueExists: false });
+            if (isNorLinkExists && logicalOperator === "nor") {
+                return state;
+            }
+            if (isAndLinkExists && logicalOperator === "and") {
+                return state;
+            }
+            if (isOrLinkExists && logicalOperator === "or") {
+                return state;
+            }
+            if (isSortLinkExists && queryChainKind === "sort") {
+                // find the existing link and update it
+                const existingQueryChain =
+                    queryChains[queryChainKind][logicalOperator];
 
-            if (isFieldValueExists) {
+                const existingQueryLink = existingQueryChain.find(
+                    (queryLink) => queryLink[0] === field,
+                );
+                if (existingQueryLink === undefined) {
+                    return state;
+                }
+
+                existingQueryLink[1] = comparisonOperator;
+                existingQueryLink[2] = value;
+                queryChains[queryChainKind][logicalOperator] =
+                    existingQueryChain;
+
                 return {
                     ...state,
                     queryChains,
                 };
             }
+
+            const existingQueryLinks =
+                queryChains[queryChainKind][logicalOperator];
 
             existingQueryLinks.push([
                 field,

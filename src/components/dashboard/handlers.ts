@@ -313,10 +313,6 @@ async function handleStoreCategoryClick(
             return;
         }
 
-        console.group("fetchMetrics");
-        console.log("serverResponse", serverResponse);
-        console.groupEnd();
-
         dashboardDispatch({
             action: dashboardAction.setIsLoading,
             payload: false,

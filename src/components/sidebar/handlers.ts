@@ -205,8 +205,6 @@ async function handleMetricCategoryNavlinkClick(
     });
     console.timeEnd("--PARSING--");
 
-    console.log("parsedResult", parsedResult);
-
     if (!isComponentMounted) {
       return;
     }
@@ -264,10 +262,6 @@ async function handleMetricCategoryNavlinkClick(
       showBoundary(new Error("Invalid token"));
       return;
     }
-
-    console.group("fetchMetrics");
-    console.log("serverResponse", serverResponse);
-    console.groupEnd();
 
     authDispatch({
       action: authAction.setAccessToken,

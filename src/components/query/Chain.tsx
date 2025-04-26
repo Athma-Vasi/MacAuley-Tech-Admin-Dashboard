@@ -88,6 +88,8 @@ function Chain(
                                     const queryLinkStatement =
                                         createQueryLinkStatement({
                                             field,
+                                            index: linkIndex,
+                                            logicalOperator,
                                             operator,
                                             queryChainKind,
                                             value,
@@ -106,7 +108,7 @@ function Chain(
                                     );
 
                                     const timelineText = (
-                                        <Text size="md">
+                                        <Text>
                                             {`${queryLinkStatement}${
                                                 linkIndex ===
                                                         queryChain.length - 1
@@ -175,7 +177,21 @@ function Chain(
     const generalSearchExclusionLink = generalSearchExclusionValue.length === 0
         ? null
         : (
-            <Timeline.Item bullet={<TbLink size={18} />} bulletSize={26}>
+            <Timeline.Item
+                bullet={
+                    <TbLink
+                        onClick={() =>
+                            queryDispatch({
+                                action:
+                                    queryAction.setGeneralSearchExclusionValue,
+                                payload: "",
+                            })}
+                        size={18}
+                        style={{ cursor: "pointer" }}
+                    />
+                }
+                bulletSize={26}
+            >
                 <Text>
                     {`${splitAndJoinedGeneralSearchExclusionValue} ${
                         generalSearchExclusionValue.split(" ").length > 1
@@ -189,7 +205,21 @@ function Chain(
     const generalSearchInclusionLink = generalSearchInclusionValue.length === 0
         ? null
         : (
-            <Timeline.Item bullet={<TbLink size={18} />} bulletSize={26}>
+            <Timeline.Item
+                bullet={
+                    <TbLink
+                        onClick={() =>
+                            queryDispatch({
+                                action:
+                                    queryAction.setGeneralSearchInclusionValue,
+                                payload: "",
+                            })}
+                        size={18}
+                        style={{ cursor: "pointer" }}
+                    />
+                }
+                bulletSize={26}
+            >
                 <Text>
                     {`${splitAndJoinedGeneralSearchInclusionValue} ${
                         generalSearchInclusionValue.split(" ").length > 1
@@ -287,11 +317,15 @@ function createQueryLinkHeading({
 
 function createQueryLinkStatement({
     field,
+    index,
+    logicalOperator,
     operator,
     queryChainKind,
     value,
 }: {
     field: string;
+    index: number;
+    logicalOperator: LogicalOperator;
     operator: string;
     queryChainKind: QueryChainKind;
     value: string;
@@ -300,9 +334,9 @@ function createQueryLinkStatement({
     let queryLinkStatement = "";
 
     if (queryChainKind === "filter") {
-        queryLinkStatement = `${splitCamelCase(field)} ${
-            operator === "in" ? "equals" : `is ${operator}`
-        } ${value}`;
+        queryLinkStatement = `${index === 0 ? logicalOperator + " " : ""}${
+            splitCamelCase(field)
+        } ${operator === "in" ? "equals" : `is ${operator}`} ${value}`;
     }
 
     if (queryChainKind === "sort") {

@@ -308,10 +308,16 @@ function returnDefaultFilterValue(
 function returnFilterSelectData(
     filterField: string,
     queryTemplates: Array<QueryTemplate>,
+    projectionFields: string[],
 ) {
+    const projectionFieldsSet = new Set(projectionFields);
     return queryTemplates
         .reduce((acc, curr) => {
             const { name, comparisonOperators } = curr;
+
+            if (projectionFieldsSet.has(name)) {
+                return acc;
+            }
 
             acc.fieldSelectData.push({
                 label: splitCamelCase(name),
@@ -797,9 +803,51 @@ function returnTimelineBullet(
         );
 }
 
+function excludeSelectedProjectionFields(
+    queryTemplates: Array<QueryTemplate>,
+    queryState: QueryState,
+) {
+    const { queryChains } = queryState;
+
+    const selectedFields = Object.entries(queryChains).reduce(
+        (acc, [_queryChainKind, logicalChain]) => {
+            Object.entries(logicalChain).forEach(
+                ([_logicalOperator, qChain]) => {
+                    qChain.forEach((queryLink) => {
+                        const [field, _, __] = queryLink;
+                        if (field) {
+                            acc.add(field);
+                        }
+                    });
+                },
+            );
+            return acc;
+        },
+        new Set<string>(),
+    );
+
+    return {
+        inputData: queryTemplates.reduce((acc, { name }) => {
+            const isFieldSelected = selectedFields.has(name);
+
+            if (isFieldSelected) {
+                return acc;
+            }
+
+            acc.push({
+                label: splitCamelCase(name),
+                value: name,
+            });
+
+            return acc;
+        }, [] as CheckboxRadioSelectData),
+    };
+}
+
 export {
     createDynamicInput,
     createQueryString,
+    excludeSelectedProjectionFields,
     FILTER_HELP_MODAL_CONTENT,
     GENERAL_SEARCH_HELP_MODAL_CONTENT,
     PROJECTION_HELP_MODAL_CONTENT,

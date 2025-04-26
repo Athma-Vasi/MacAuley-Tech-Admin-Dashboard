@@ -70,8 +70,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       attributes={{
         description: "Products",
         icon: clickedKind === "Products" && isFetching
-          ? <Loader size="xs" />
-          : <TbAffiliate />,
+          ? <Loader size={18} />
+          : <TbAffiliate size={18} />,
         name: "Products",
         onClick: async () => {
           setClickedKind("Products");
@@ -103,8 +103,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       attributes={{
         description: "Financials",
         icon: clickedKind === "Financials" && isFetching
-          ? <Loader size="xs" />
-          : <TbReportMoney />,
+          ? <Loader size={18} />
+          : <TbReportMoney size={18} />,
         name: "Financials",
         onClick: async () => {
           setClickedKind("Financials");
@@ -136,8 +136,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       attributes={{
         description: "Customers",
         icon: clickedKind === "Customers" && isFetching
-          ? <Loader size="xs" />
-          : <TbUser />,
+          ? <Loader size={18} />
+          : <TbUser size={18} />,
         name: "Customers",
         onClick: async () => {
           setClickedKind("Customers");
@@ -169,8 +169,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       attributes={{
         description: "Repairs",
         icon: clickedKind === "Repairs" && isFetching
-          ? <Loader size="xs" />
-          : <TbTools />,
+          ? <Loader size={18} />
+          : <TbTools size={18} />,
         name: "Repairs",
         onClick: async () => {
           setClickedKind("Repairs");
@@ -202,7 +202,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Directory",
-        icon: <TbFileDatabase />,
+        icon: <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: () => {
           navigateFn("/dashboard/directory");
@@ -216,7 +216,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Testing",
-        icon: <TbTestPipe />,
+        icon: <TbTestPipe size={18} />,
         name: "Testing",
         onClick: async () => {
           navigateFn("/testing");
@@ -230,7 +230,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Users",
-        icon: <TbUser />,
+        icon: <TbUser size={18} />,
         name: "Users",
         onClick: () => {
           navigateFn("/dashboard/users");

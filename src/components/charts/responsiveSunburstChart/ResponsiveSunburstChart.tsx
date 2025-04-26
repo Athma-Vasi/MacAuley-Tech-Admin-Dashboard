@@ -161,10 +161,6 @@ function ResponsiveSunburstChart({
       arcLabelsTextColor={arcLabelsTextColor}
       // interactivity
       isInteractive={true}
-      onClick={(node, event) => {
-        console.log("node", node);
-        console.log("event", event);
-      }}
       // motion
       animate={enableAnimate}
       motionConfig={motionConfig}

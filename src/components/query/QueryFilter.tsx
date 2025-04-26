@@ -39,6 +39,7 @@ function QueryFilter(
         filterLogicalOperator,
         filterValue,
         isError,
+        projectionFields,
     } = queryState;
 
     const [
@@ -68,7 +69,7 @@ function QueryFilter(
     );
 
     const { fieldSelectData, filterComparisonOperatorData } =
-        returnFilterSelectData(filterField, queryTemplates);
+        returnFilterSelectData(filterField, queryTemplates, projectionFields);
 
     const fieldSelectInput = (
         <AccessibleSelectInput

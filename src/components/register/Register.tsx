@@ -372,10 +372,6 @@ function Register() {
     </Card>
   );
 
-  console.log("Register");
-  console.log("registerState", registerState);
-  console.groupEnd();
-
   return (
     <Box
       className="register-container"

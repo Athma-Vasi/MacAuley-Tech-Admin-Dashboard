@@ -83,21 +83,11 @@ function RegisterAuthentication({
             attributes={{
                 icon: isUsernameExistsSubmitting
                     ? <Loader size="xs" />
-                    : isUsernameExists
+                    : isUsernameExists && username
                     ? <TbExclamationCircle color={redColorShade} />
                     : null,
                 invalidValueAction: registerAction.setIsError,
                 name: "username",
-                onChange: async (event) => {
-                    // await handleCheckUsernameExists({
-                    //   fetchAbortControllerRef,
-                    //   isComponentMountedRef,
-                    //   registerDispatch,
-                    //   showBoundary,
-                    //   url: AUTH_URL,
-                    //   username: event.currentTarget.value,
-                    // });
-                },
                 parentDispatch: registerDispatch,
                 ref: usernameInputRef as React.RefObject<HTMLInputElement>,
                 validValueAction: registerAction.setUsername,
@@ -111,21 +101,11 @@ function RegisterAuthentication({
             attributes={{
                 icon: isEmailExistsSubmitting
                     ? <Loader size="xs" />
-                    : isEmailExists
+                    : isEmailExists && email
                     ? <TbExclamationCircle color={redColorShade} />
                     : null,
                 invalidValueAction: registerAction.setIsError,
                 name: "email",
-                onChange: async (event) => {
-                    // await handleCheckEmailExists({
-                    //   fetchAbortControllerRef,
-                    //   email: event.currentTarget.value,
-                    //   isComponentMountedRef,
-                    //   registerDispatch,
-                    //   showBoundary,
-                    //   url: AUTH_URL,
-                    // });
-                },
                 parentDispatch: registerDispatch,
                 validValueAction: registerAction.setEmail,
                 value: email,
@@ -163,7 +143,7 @@ function RegisterAuthentication({
         <Card className="register-form-card">
             <Text size={24}>Authentication</Text>
             {usernameTextInput}
-            {isUsernameExists
+            {isUsernameExists && username
                 ? (
                     <Text color={redColorShade}>
                         Username already exists!
@@ -171,7 +151,7 @@ function RegisterAuthentication({
                 )
                 : null}
             {emailTextInput}
-            {isEmailExists
+            {isEmailExists && email
                 ? (
                     <Text color={redColorShade}>
                         Email already exists!

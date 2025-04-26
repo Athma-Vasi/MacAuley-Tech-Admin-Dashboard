@@ -70,7 +70,6 @@ function Login() {
     //     storeLocations: STORE_LOCATIONS.map((location) => location.value),
     //   });
 
-    //   console.log("Business Metrics: ", businessMetrics);
     // })();
 
     const timerId = setTimeout(() => {

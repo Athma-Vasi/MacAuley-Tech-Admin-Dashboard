@@ -4,7 +4,7 @@ const initialResponsiveBarChartState: ResponsiveBarChartState = {
   /** base */
   groupMode: "stacked",
   innerPaddingBar: 0,
-  layout: "horizontal",
+  layout: "vertical",
   paddingBar: 0.1,
   reverse: false,
   valueScale: "linear",
