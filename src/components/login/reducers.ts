@@ -1,13 +1,14 @@
 import { parseSafeSync } from "../../utils";
 import { type LoginAction, loginAction } from "./actions";
 import {
+  LoginDispatch,
   setIsLoadingDispatchZod,
   setIsSubmittingDispatchZod,
   setIsSuccessfulDispatchZod,
   setPasswordDispatchZod,
   setUsernameDispatchZod,
 } from "./schemas";
-import type { LoginDispatch, LoginState } from "./types";
+import type { LoginState } from "./types";
 
 function loginReducer(
   state: LoginState,
@@ -45,7 +46,7 @@ function loginReducer_setIsLoading(
 
   return {
     ...state,
-    isLoading: parsedResult.safeUnwrap().data?.payload,
+    isLoading: parsedResult.safeUnwrap().data.payload,
   };
 }
 
@@ -66,7 +67,7 @@ function loginReducer_setIsSubmitting(
 
   return {
     ...state,
-    isSubmitting: parsedResult.safeUnwrap().data?.payload,
+    isSubmitting: parsedResult.safeUnwrap().data.payload,
   };
 }
 
@@ -87,7 +88,7 @@ function loginReducer_setIsSuccessful(
 
   return {
     ...state,
-    isSuccessful: parsedResult.safeUnwrap().data?.payload,
+    isSuccessful: parsedResult.safeUnwrap().data.payload,
   };
 }
 
@@ -108,7 +109,7 @@ function loginReducer_setPassword(
 
   return {
     ...state,
-    password: parsedResult.safeUnwrap().data?.payload,
+    password: parsedResult.safeUnwrap().data.payload,
   };
 }
 
@@ -129,7 +130,7 @@ function loginReducer_setUsername(
 
   return {
     ...state,
-    username: parsedResult.safeUnwrap().data?.payload,
+    username: parsedResult.safeUnwrap().data.payload,
   };
 }
 

@@ -1,11 +1,3 @@
-/**
- * isLoading: boolean;
-  isSubmitting: boolean;
-  isSuccessful: boolean;
-  password: string;
-  username: string;
- */
-
 import { z } from "zod";
 
 const setIsLoadingDispatchZod = z.object({
@@ -29,7 +21,7 @@ const setUsernameDispatchZod = z.object({
     payload: z.string(),
 });
 
-type LoginDispatchZod =
+type LoginDispatch =
     | z.infer<typeof setIsLoadingDispatchZod>
     | z.infer<typeof setIsSubmittingDispatchZod>
     | z.infer<typeof setIsSuccessfulDispatchZod>
@@ -43,4 +35,4 @@ export {
     setPasswordDispatchZod,
     setUsernameDispatchZod,
 };
-export type { LoginDispatchZod };
+export type { LoginDispatch };

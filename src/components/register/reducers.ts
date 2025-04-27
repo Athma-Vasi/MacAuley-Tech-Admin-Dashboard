@@ -12,7 +12,8 @@ import {
 } from "../../types";
 import { AllStoreLocations } from "../dashboard/types";
 import { registerAction } from "./actions";
-import type { RegisterAction, RegisterDispatch, RegisterState } from "./types";
+import { RegisterDispatch } from "./schemas";
+import type { RegisterAction, RegisterState } from "./types";
 
 function registerReducer(
   state: RegisterState,
