@@ -663,10 +663,16 @@ const VALID_USERNAMES = [
   "username.123",
 ];
 
+const ARRANGE_BY_DIRECTIONS = [
+  "ascending",
+  "descending",
+];
+
 export {
   ALL_STORE_LOCATIONS_DATA,
   API_URL,
   APP_HEADER_HEIGHT,
+  ARRANGE_BY_DIRECTIONS,
   AUTH_URL,
   BASE_URL,
   COLORS_SWATCHES,
