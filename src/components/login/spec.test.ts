@@ -7,6 +7,11 @@
  */
 
 import { describe, expect, it } from "vitest";
+import {
+    INVALID_BOOLEANS,
+    INVALID_STRINGS,
+    VALID_BOOLEANS,
+} from "../../constants";
 import { loginAction } from "./actions";
 import {
     loginReducer_setIsLoading,
@@ -19,8 +24,7 @@ import { initialLoginState } from "./state";
 
 describe("loginReducer_setIsLoading", () => {
     it("should allow valid boolean values", () => {
-        const validValues = [true, false];
-        validValues.forEach((value) => {
+        VALID_BOOLEANS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setIsLoading,
                 payload: value,
@@ -34,9 +38,8 @@ describe("loginReducer_setIsLoading", () => {
     });
 
     it("should not allow invalid boolean values", () => {
-        const invalidValues = [null, undefined, 0, 1, "", "true", "false"];
         const initialIsLoading = initialLoginState.isLoading;
-        invalidValues.forEach((value) => {
+        INVALID_BOOLEANS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setIsLoading,
                 payload: value,
@@ -52,8 +55,7 @@ describe("loginReducer_setIsLoading", () => {
 
 describe("loginReducer_setIsSubmitting", () => {
     it("should allow valid boolean values", () => {
-        const validValues = [true, false];
-        validValues.forEach((value) => {
+        VALID_BOOLEANS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setIsSubmitting,
                 payload: value,
@@ -67,10 +69,9 @@ describe("loginReducer_setIsSubmitting", () => {
     });
 
     it("should not allow invalid boolean values", () => {
-        const invalidValues = [null, undefined, 0, 1, "", "true", "false"];
         const initialIsSubmitting = initialLoginState.isSubmitting;
 
-        invalidValues.forEach((value) => {
+        INVALID_BOOLEANS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setIsSubmitting,
                 payload: value,
@@ -86,8 +87,7 @@ describe("loginReducer_setIsSubmitting", () => {
 
 describe("loginReducer_setIsSuccessful", () => {
     it("should allow valid boolean values", () => {
-        const validValues = [true, false];
-        validValues.forEach((value) => {
+        VALID_BOOLEANS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setIsSuccessful,
                 payload: value,
@@ -101,10 +101,9 @@ describe("loginReducer_setIsSuccessful", () => {
     });
 
     it("should not allow invalid boolean values", () => {
-        const invalidValues = [null, undefined, 0, 1, "", "true", "false"];
         const initialIsSuccessful = initialLoginState.isSuccessful;
 
-        invalidValues.forEach((value) => {
+        INVALID_BOOLEANS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setIsSuccessful,
                 payload: value,
@@ -135,10 +134,9 @@ describe("loginReducer_setPassword", () => {
     });
 
     it("should not allow invalid string values", () => {
-        const invalidValues = [null, undefined, 0, 1, true, false];
         const initialPassword = initialLoginState.password;
 
-        invalidValues.forEach((value) => {
+        INVALID_STRINGS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setPassword,
                 payload: value,
@@ -169,10 +167,9 @@ describe("loginReducer_setUsername", () => {
     });
 
     it("should not allow invalid string values", () => {
-        const invalidValues = [null, undefined, 0, 1, true, false];
         const initialUsername = initialLoginState.username;
 
-        invalidValues.forEach((value) => {
+        INVALID_STRINGS.forEach((value) => {
             const dispatch = {
                 action: loginAction.setUsername,
                 payload: value,

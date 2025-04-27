@@ -421,23 +421,29 @@ async function setItemForageSafe<Data = unknown>(
   }
 }
 
-function parseSafeSync<
-  Obj extends Record<string, unknown> = Record<string, unknown>,
->(
-  { object, zSchema }: { object: Obj; zSchema: z.ZodSchema },
+function parseSafeSync(
+  { object, zSchema }: {
+    object: Record<string, unknown>;
+    zSchema: z.ZodSchema;
+  },
 ): SafeBoxResult<z.infer<typeof zSchema>> {
   try {
-    const parsed = zSchema.parse(object);
-    return new Ok({ data: parsed, kind: "success" });
+    const parsed = zSchema.safeParse(object);
+    if (parsed.success) {
+      return new Ok({ data: parsed.data, kind: "success" });
+    } else {
+      return new Err({ data: parsed.error, kind: "error" });
+    }
   } catch (error: unknown) {
     return new Err({ data: error, kind: "error" });
   }
 }
 
-async function parseServerResponseSafeAsync<
-  Obj extends Record<string, unknown> = Record<string, unknown>,
->(
-  { object, zSchema }: { zSchema: z.ZodSchema; object: Obj },
+async function parseServerResponseSafeAsync(
+  { object, zSchema }: {
+    zSchema: z.ZodSchema;
+    object: Record<string, unknown>;
+  },
 ): Promise<SafeBoxResult<z.infer<typeof zSchema>>> {
   try {
     const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>

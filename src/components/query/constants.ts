@@ -2,6 +2,7 @@ import type { CheckboxRadioSelectData } from "../../types";
 import type {
     ComparisonOperator,
     GeneralSearchCase,
+    LimitPerPage,
     LogicalOperator,
     QueryKind,
     SortDirection,
@@ -9,7 +10,7 @@ import type {
 
 const MAX_LINKS_AMOUNT = 11;
 
-const LIMIT_PER_PAGE_DATA: CheckboxRadioSelectData = [
+const LIMIT_PER_PAGE_DATA: CheckboxRadioSelectData<LimitPerPage> = [
     { label: "10", value: "10" },
     { label: "25", value: "25" },
     { label: "50", value: "50" },

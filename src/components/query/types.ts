@@ -100,17 +100,19 @@ type SortInputsType = "date" | "number" | "time";
 
 type QueryKind = "filter" | "sort" | "search" | "projection";
 
+type LimitPerPage = "10" | "25" | "50";
+
 type QueryState = {
+    filterComparisonOperator: QueryOperator;
     filterField: string; // almost ValidationKey
     filterLogicalOperator: LogicalOperator;
-    filterComparisonOperator: QueryOperator;
     filterValue: string;
     generalSearchCase: GeneralSearchCase;
     generalSearchExclusionValue: string;
     generalSearchInclusionValue: string;
     isError: boolean;
     isSearchDisabled: boolean;
-    limitPerPage: string;
+    limitPerPage: LimitPerPage;
     projectionFields: string[];
     queryChains: QueryChains;
     queryKind: QueryKind;
@@ -198,6 +200,7 @@ export type {
     GeneralSearchCase,
     GeneralSearchKind,
     InputKind,
+    LimitPerPage,
     LogicalOperator,
     LogicalOperatorChainsSets,
     LogicalOperatorChainsSetsMap,
