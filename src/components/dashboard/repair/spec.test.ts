@@ -31,11 +31,6 @@ describe("repairMetricsReducer", async () => {
     const { currentYear, previousYear } =
         await createRepairMetricsCalendarCharts(selectedDateRepairMetrics);
 
-    console.group("repairMetricsReducer");
-    console.log("currentYear", currentYear);
-    console.log("previousYear", previousYear);
-    console.groupEnd();
-
     const repairMetricsCharts = await createRepairMetricsCharts({
         repairMetricsDocument: REPAIR_METRICS_DOCUMENT_SAMPLE,
         months: MONTHS,
@@ -141,69 +136,3 @@ describe("repairMetricsReducer", async () => {
         });
     });
 });
-
-/**
- * type RepairMetricsState = {
-  calendarChartsData: {
-    currentYear: RepairMetricCalendarCharts | null;
-    previousYear: RepairMetricCalendarCharts | null;
-  };
-  cards: RepairMetricsCards | null;
-  charts: RepairMetricsCharts | null;
-  isGenerating: boolean;
-};
-
-describe("loginReducer_setUsername", () => {
-    it("should allow valid string values", () => {
-        const validValues = ["username123Q!", "myusernameQ1!", "testuserQ1!"];
-        validValues.forEach((value) => {
-            const dispatch = {
-                action: loginAction.setUsername,
-                payload: value,
-            };
-            const state = loginReducer_setUsername(
-                initialLoginState,
-                dispatch,
-            );
-            expect(state.username).toBe(value);
-        });
-    });
-
-    it("should not allow invalid string values", () => {
-        const initialUsername = initialLoginState.username;
-
-        INVALID_STRINGS.forEach((value) => {
-            const dispatch = {
-                action: loginAction.setUsername,
-                payload: value,
-            };
-            const state = loginReducer_setUsername(
-                initialLoginState,
-                dispatch as any,
-            );
-            expect(state.username).toBe(initialUsername);
-        });
-    });
-});
-
-type RepairMetricsDispatch =
-  | {
-    action: RepairMetricsAction["setCalendarChartsData"];
-    payload: {
-      currentYear: RepairMetricCalendarCharts;
-      previousYear: RepairMetricCalendarCharts;
-    };
-  }
-  | {
-    action: RepairMetricsAction["setCards"];
-    payload: RepairMetricsCards;
-  }
-  | {
-    action: RepairMetricsAction["setCharts"];
-    payload: RepairMetricsCharts;
-  }
-  | {
-    action: RepairMetricsAction["setIsGenerating"];
-    payload: boolean;
-  };
- */
