@@ -10,8 +10,8 @@ import {
     responseToJSONSafe,
 } from "../../utils";
 import { usersQueryAction } from "./actions";
+import { userDocumentZ } from "./schemas";
 import { UsersQueryState } from "./types";
-import { userDocumentZ } from "./zodSchema";
 
 async function handleUsersQuerySubmitGET(
     {

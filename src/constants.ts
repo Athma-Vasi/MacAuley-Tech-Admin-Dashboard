@@ -1,4 +1,5 @@
 import { AllStoreLocations } from "./components/dashboard/types";
+import { SortDirection } from "./components/query/types";
 import {
   CheckboxRadioSelectData,
   Country,
@@ -663,7 +664,7 @@ const VALID_USERNAMES = [
   "username.123",
 ];
 
-const ARRANGE_BY_DIRECTIONS = [
+const ARRANGE_BY_DIRECTIONS: SortDirection[] = [
   "ascending",
   "descending",
 ];

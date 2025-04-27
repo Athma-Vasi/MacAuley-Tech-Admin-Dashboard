@@ -18,9 +18,9 @@ import {
   setItemForageSafe,
 } from "../../utils";
 import { financialMetricsDocumentZ } from "../dashboard/financial/zodSchema";
-import { userDocumentZ } from "../usersQuery/zodSchema";
+import { userDocumentZ } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
-import { LoginDispatch } from "./types";
+import { LoginDispatch } from "./schemas";
 
 async function handleLoginButtonClick(
   {
