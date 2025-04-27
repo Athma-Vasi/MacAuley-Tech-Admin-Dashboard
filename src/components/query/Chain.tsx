@@ -12,11 +12,11 @@ import {
     splitCamelCase,
 } from "../../utils";
 import { queryAction } from "./actions";
+import { QueryDispatch } from "./schemas";
 import type {
     LogicalOperator,
     QueryChain,
     QueryChainKind,
-    QueryDispatch,
     QueryState,
 } from "./types";
 import { returnTimelineBullet } from "./utils";

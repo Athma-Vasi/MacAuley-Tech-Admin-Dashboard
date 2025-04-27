@@ -82,7 +82,7 @@ type MongoQueryOperator =
 
 type QueryChain = Array<QueryLink>;
 
-type QueryChainActions = "delete" | "insert" | "slideUp" | "slideDown";
+type QueryChainActions = "delete" | "insert";
 
 type QueryChainKind = "filter" | "sort";
 
@@ -128,72 +128,6 @@ type ModifyQueryChainPayload = {
     queryLink: QueryLink;
 };
 
-type QueryDispatch =
-    | {
-        action: QueryAction["resetToInitial"];
-        payload: QueryState;
-    }
-    | {
-        action: QueryAction["setProjectionFields"];
-        payload: string[];
-    }
-    | {
-        action: QueryAction["modifyQueryChains"];
-        payload: ModifyQueryChainPayload;
-    }
-    | {
-        action: QueryAction["setFilterField"];
-        payload: string;
-    }
-    | {
-        action: QueryAction["setFilterComparisonOperator"];
-        payload: QueryOperator;
-    }
-    | {
-        action: QueryAction["setFilterLogicalOperator"];
-        payload: LogicalOperator;
-    }
-    | {
-        action: QueryAction["setFilterValue"];
-        payload: string;
-    }
-    | {
-        action: QueryAction["setGeneralSearchExclusionValue"];
-        payload: string;
-    }
-    | {
-        action: QueryAction["setGeneralSearchInclusionValue"];
-        payload: string;
-    }
-    | {
-        action: QueryAction["setIsError"];
-        payload: boolean;
-    }
-    | {
-        action: QueryAction["setGeneralSearchCase"];
-        payload: GeneralSearchCase;
-    }
-    | {
-        action: QueryAction["setIsSearchDisabled"];
-        payload: boolean;
-    }
-    | {
-        action: QueryAction["setLimitPerPage"];
-        payload: string;
-    }
-    | {
-        action: QueryAction["setSortDirection"];
-        payload: SortDirection;
-    }
-    | {
-        action: QueryAction["setSortField"];
-        payload: string;
-    }
-    | {
-        action: QueryAction["setQueryKind"];
-        payload: QueryKind;
-    };
-
 export type {
     ComparisonOperator,
     FilterFieldsOperatorsValuesSetsMap,
@@ -211,7 +145,6 @@ export type {
     QueryChainActions,
     QueryChainKind,
     QueryChains,
-    QueryDispatch,
     QueryKind,
     QueryLink,
     QueryOperator,

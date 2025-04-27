@@ -6,11 +6,8 @@ import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { queryAction } from "./actions";
 import { SORT_DIRECTION_DATA } from "./constants";
-import {
-    type QueryDispatch,
-    type QueryState,
-    type QueryTemplate,
-} from "./types";
+import { QueryDispatch } from "./schemas";
+import { type QueryState, type QueryTemplate } from "./types";
 import {
     removeProjectionExclusionFields,
     returnSortableQueryFields,

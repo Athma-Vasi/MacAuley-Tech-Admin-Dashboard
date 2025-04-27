@@ -9,12 +9,8 @@ import {
 } from "../accessibleInputs/AccessibleSelectInput";
 import { queryAction } from "./actions";
 import { LOGICAL_OPERATORS_DATA, MAX_LINKS_AMOUNT } from "./constants";
-import {
-    type QueryChains,
-    type QueryDispatch,
-    type QueryState,
-    type QueryTemplate,
-} from "./types";
+import { QueryDispatch } from "./schemas";
+import { type QueryChains, type QueryState, type QueryTemplate } from "./types";
 import {
     createDynamicInput,
     FILTER_HELP_MODAL_CONTENT,

@@ -3,7 +3,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleCheckboxInputGroup } from "../accessibleInputs/AccessibleCheckboxInput";
 import { queryAction } from "./actions";
-import type { QueryDispatch, QueryState, QueryTemplate } from "./types";
+import { QueryDispatch } from "./schemas";
+import type { QueryState, QueryTemplate } from "./types";
 import {
     excludeSelectedProjectionFields,
     PROJECTION_HELP_MODAL_CONTENT,

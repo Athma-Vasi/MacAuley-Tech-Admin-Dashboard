@@ -1,11 +1,28 @@
+import { parseSafeSync } from "../../utils";
 import { QueryAction, queryAction } from "./actions";
-import type {
-    GeneralSearchCase,
-    LogicalOperator,
-    ModifyQueryChainPayload,
+import {
+    modifyQueryChainsDispatchZod,
     QueryDispatch,
+    resetToInitialDispatchZod,
+    setFilterComparisonOperatorDispatchZod,
+    setFilterFieldDispatchZod,
+    setFilterLogicalOperatorDispatchZod,
+    setFilterValueDispatchZod,
+    setGeneralSearchCaseDispatchZod,
+    setGeneralSearchExclusionValueDispatchZod,
+    setGeneralSearchInclusionValueDispatchZod,
+    setIsErrorDispatchZod,
+    setIsSearchDisabledDispatchZod,
+    setLimitPerPageDispatchZod,
+    setProjectionFieldsDispatchZod,
+    setQueryKindDispatchZod,
+    setSortDirectionDispatchZod,
+    setSortFieldDispatchZod,
+} from "./schemas";
+import type {
+    LimitPerPage,
+    ModifyQueryChainPayload,
     QueryKind,
-    QueryOperator,
     QueryState,
     SortDirection,
 } from "./types";
@@ -53,29 +70,60 @@ function queryReducer_resetToInitial(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const initialState = dispatch.payload as QueryState;
-    return { ...state, ...initialState };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: resetToInitialDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        ...parsedResult.safeUnwrap().data?.payload,
+    };
 }
 
 function queryReducer_setProjectionFields(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const projectionFields = dispatch.payload as string[];
-    return { ...state, projectionFields };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setProjectionFieldsDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        projectionFields: parsedResult.safeUnwrap().data?.payload,
+    };
 }
 
 function queryReducer_modifyQueryChains(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: modifyQueryChainsDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     const {
         index,
         logicalOperator,
         queryChainActions,
         queryLink,
         queryChainKind,
-    } = dispatch.payload as ModifyQueryChainPayload;
+    } = parsedResult.safeUnwrap().data?.payload as ModifyQueryChainPayload;
     const [field, comparisonOperator, value] = queryLink;
     const queryChains = structuredClone(state.queryChains);
 
@@ -201,48 +249,6 @@ function queryReducer_modifyQueryChains(
             };
         }
 
-        case "slideDown": {
-            const existingQueryLinks =
-                queryChains[queryChainKind][logicalOperator];
-            const existingQueryLink = existingQueryLinks[index];
-            const nextQueryLink = existingQueryLinks[index + 1];
-            if (existingQueryLink === undefined) {
-                return state;
-            }
-            if (nextQueryLink === undefined) {
-                return state;
-            }
-            existingQueryLinks[index] = nextQueryLink;
-            existingQueryLinks[index + 1] = existingQueryLink;
-            queryChains[queryChainKind][logicalOperator] = existingQueryLinks;
-
-            return {
-                ...state,
-                queryChains,
-            };
-        }
-
-        case "slideUp": {
-            const existingQueryLinks =
-                queryChains[queryChainKind][logicalOperator];
-            const existingQueryLink = existingQueryLinks[index];
-            const previousQueryLink = existingQueryLinks[index - 1];
-            if (existingQueryLink === undefined) {
-                return state;
-            }
-            if (previousQueryLink === undefined) {
-                return state;
-            }
-            existingQueryLinks[index] = previousQueryLink;
-            existingQueryLinks[index - 1] = existingQueryLink;
-            queryChains[queryChainKind][logicalOperator] = existingQueryLinks;
-
-            return {
-                ...state,
-                queryChains,
-            };
-        }
-
         default:
             return state;
     }
@@ -252,9 +258,18 @@ function queryReducer_setFilterField(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setFilterFieldDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        filterField: dispatch.payload as string,
+        filterField: parsedResult.safeUnwrap().data?.payload,
     };
 }
 
@@ -262,9 +277,18 @@ function queryReducer_setFilterComparisonOperator(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setFilterComparisonOperatorDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        filterComparisonOperator: dispatch.payload as QueryOperator,
+        filterComparisonOperator: parsedResult.safeUnwrap().data?.payload,
     };
 }
 
@@ -272,9 +296,18 @@ function queryReducer_setFilterLogicalOperator(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setFilterLogicalOperatorDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        filterLogicalOperator: dispatch.payload as LogicalOperator,
+        filterLogicalOperator: parsedResult.safeUnwrap().data?.payload,
     };
 }
 
@@ -282,16 +315,37 @@ function queryReducer_setFilterValue(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    return { ...state, filterValue: dispatch.payload as string };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setFilterValueDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        filterValue: parsedResult.safeUnwrap().data?.payload,
+    };
 }
 
 function queryReducer_setGeneralSearchCase(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setGeneralSearchCaseDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        generalSearchCase: dispatch.payload as GeneralSearchCase,
+        generalSearchCase: parsedResult.safeUnwrap().data?.payload,
     };
 }
 
@@ -299,9 +353,18 @@ function queryReducer_setGeneralSearchExclusionValue(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setGeneralSearchExclusionValueDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        generalSearchExclusionValue: dispatch.payload as string,
+        generalSearchExclusionValue: parsedResult.safeUnwrap().data?.payload,
     };
 }
 
@@ -309,9 +372,18 @@ function queryReducer_setGeneralSearchInclusionValue(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setGeneralSearchInclusionValueDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        generalSearchInclusionValue: dispatch.payload as string,
+        generalSearchInclusionValue: parsedResult.safeUnwrap().data?.payload,
     };
 }
 
@@ -319,43 +391,129 @@ function queryReducer_setIsError(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const isError = dispatch.payload as boolean;
-    return { ...state, isError };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setIsErrorDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return { ...state, isError: parsedResult.safeUnwrap().data?.payload };
 }
 
 function queryReducer_setIsSearchDisabled(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    return { ...state, isSearchDisabled: dispatch.payload as boolean };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setIsSearchDisabledDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        isSearchDisabled: parsedResult.safeUnwrap().data?.payload,
+    };
 }
 
 function queryReducer_setLimitPerPage(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    return { ...state, limitPerPage: dispatch.payload as string };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setLimitPerPageDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        limitPerPage: parsedResult.safeUnwrap().data?.payload as LimitPerPage,
+    };
 }
 
 function queryReducer_setSortDirection(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    return { ...state, sortDirection: dispatch.payload as SortDirection };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setSortDirectionDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        sortDirection: parsedResult.safeUnwrap().data?.payload as SortDirection,
+    };
 }
 
 function queryReducer_setSortField(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    return { ...state, sortField: dispatch.payload as string };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setSortFieldDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        sortField: parsedResult.safeUnwrap().data?.payload as string,
+    };
 }
 
 function queryReducer_setQueryKind(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    return { ...state, queryKind: dispatch.payload as QueryKind };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setQueryKindDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        queryKind: parsedResult.safeUnwrap().data?.payload as QueryKind,
+    };
 }
 
-export { queryReducer };
+export {
+    queryReducer,
+    queryReducer_modifyQueryChains,
+    queryReducer_resetToInitial,
+    queryReducer_setFilterComparisonOperator,
+    queryReducer_setFilterField,
+    queryReducer_setFilterLogicalOperator,
+    queryReducer_setFilterValue,
+    queryReducer_setGeneralSearchCase,
+    queryReducer_setGeneralSearchExclusionValue,
+    queryReducer_setGeneralSearchInclusionValue,
+    queryReducer_setIsError,
+    queryReducer_setIsSearchDisabled,
+    queryReducer_setLimitPerPage,
+    queryReducer_setProjectionFields,
+    queryReducer_setQueryKind,
+    queryReducer_setSortDirection,
+    queryReducer_setSortField,
+};

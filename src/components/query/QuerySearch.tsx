@@ -7,7 +7,8 @@ import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmen
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { queryAction } from "./actions";
 import { QUERY_SEARCH_CASE_DATA } from "./constants";
-import type { QueryDispatch, QueryState } from "./types";
+import { QueryDispatch } from "./schemas";
+import type { QueryState } from "./types";
 import { SEARCH_CHAIN_HELP_MODAL_CONTENT } from "./utils";
 
 type QuerySearchProps = {

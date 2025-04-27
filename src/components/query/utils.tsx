@@ -19,12 +19,12 @@ import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeI
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { QueryAction } from "./actions";
+import { QueryDispatch } from "./schemas";
 import {
     InputKind,
     LogicalOperator,
     MongoQueryOperator,
     QueryChainKind,
-    QueryDispatch,
     QueryOperator,
     QueryState,
     QueryTemplate,
