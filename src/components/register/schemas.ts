@@ -1,9 +1,24 @@
 import { z } from "zod";
+import {
+    ADDRESS_LINE_REGEX,
+    ALL_STORE_LOCATIONS_REGEX,
+    CITY_REGEX,
+    COUNTRY_REGEX,
+    DEPARTMENT_REGEX,
+    FULL_NAME_REGEX,
+    JOB_POSITION_REGEX,
+    PASSWORD_REGEX,
+    POSTAL_CODE_CANADA_REGEX,
+    POSTAL_CODE_US_REGEX,
+    PROVINCE_REGEX,
+    STATES_US_REGEX,
+    URL_REGEX,
+} from "../../regexes";
 import { registerAction } from "./actions";
 
 const setConfirmPasswordDispatchZod = z.object({
     action: z.literal(registerAction.setConfirmPassword),
-    payload: z.string(),
+    payload: z.string().regex(PASSWORD_REGEX),
 });
 const setEmailDispatchZod = z.object({
     action: z.literal(registerAction.setEmail),
@@ -27,7 +42,7 @@ const setIsUsernameExistsSubmittingDispatchZod = z.object({
 });
 const setPasswordDispatchZod = z.object({
     action: z.literal(registerAction.setPassword),
-    payload: z.string(),
+    payload: z.string().regex(PASSWORD_REGEX),
 });
 const setUsernameDispatchZod = z.object({
     action: z.literal(registerAction.setUsername),
@@ -35,55 +50,55 @@ const setUsernameDispatchZod = z.object({
 });
 const setAddressLineDispatchZod = z.object({
     action: z.literal(registerAction.setAddressLine),
-    payload: z.string(),
+    payload: z.string().regex(ADDRESS_LINE_REGEX),
 });
 const setCityDispatchZod = z.object({
     action: z.literal(registerAction.setCity),
-    payload: z.string(),
+    payload: z.string().regex(CITY_REGEX),
 });
 const setCountryDispatchZod = z.object({
     action: z.literal(registerAction.setCountry),
-    payload: z.string(),
+    payload: z.string().regex(COUNTRY_REGEX),
 });
 const setPostalCodeCanadaDispatchZod = z.object({
     action: z.literal(registerAction.setPostalCodeCanada),
-    payload: z.string(),
+    payload: z.string().regex(POSTAL_CODE_CANADA_REGEX),
 });
 const setPostalCodeUSDispatchZod = z.object({
     action: z.literal(registerAction.setPostalCodeUS),
-    payload: z.string(),
+    payload: z.string().regex(POSTAL_CODE_US_REGEX),
 });
 const setProvinceDispatchZod = z.object({
     action: z.literal(registerAction.setProvince),
-    payload: z.string(),
+    payload: z.string().regex(PROVINCE_REGEX),
 });
 const setStateDispatchZod = z.object({
     action: z.literal(registerAction.setState),
-    payload: z.string(),
+    payload: z.string().regex(STATES_US_REGEX),
 });
 const setDepartmentDispatchZod = z.object({
     action: z.literal(registerAction.setDepartment),
-    payload: z.string(),
+    payload: z.string().regex(DEPARTMENT_REGEX),
 });
 const setFirstNameDispatchZod = z.object({
     action: z.literal(registerAction.setFirstName),
-    payload: z.string(),
+    payload: z.string().regex(FULL_NAME_REGEX),
 });
 const setJobPositionDispatchZod = z.object({
     action: z.literal(registerAction.setJobPosition),
-    payload: z.string(),
+    payload: z.string().regex(JOB_POSITION_REGEX),
 });
 const setLastNameDispatchZod = z.object({
     action: z.literal(registerAction.setLastName),
-    payload: z.string(),
+    payload: z.string().regex(FULL_NAME_REGEX),
 });
 const setProfilePictureUrlDispatchZod = z.object({
     action: z.literal(registerAction.setProfilePictureUrl),
-    payload: z.string(),
+    payload: z.string().regex(URL_REGEX),
 });
 const setStoreLocationDispatchZod = z.object({
     action: z.literal(registerAction.setStoreLocation),
-    payload: z.string(),
+    payload: z.string().regex(ALL_STORE_LOCATIONS_REGEX),
 });
 const setErrorMessageDispatchZod = z.object({
     action: z.literal(registerAction.setErrorMessage),

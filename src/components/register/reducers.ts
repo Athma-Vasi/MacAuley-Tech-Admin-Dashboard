@@ -3,6 +3,7 @@ import { parseSafeSync } from "../../utils";
 import { registerAction } from "./actions";
 import {
   RegisterDispatch,
+  setActiveStepDispatchZod,
   setAddressLineDispatchZod,
   setCityDispatchZod,
   setConfirmPasswordDispatchZod,
@@ -140,7 +141,7 @@ function registerReducer_setActiveStep(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setStepsWithEmptyInputsDispatchZod,
+    zSchema: setActiveStepDispatchZod,
   });
 
   if (parsedResult.err) {

@@ -193,6 +193,22 @@ const PRODUCT_CATEGORY_REGEX =
 const REPAIR_CATEGORY_REGEX =
     /^(All Repairs|Accessory|Computer Component|Peripheral|Electronic Device|Mobile Device|Audio\/Video)$/;
 
+/**
+ * - /^[A-Za-z]\d[A-Za-z][ ]?\d[A-Za-z]\d$/
+ * - matches the following Canadian postal code format: A1A 1A1 or A1A1A1
+ */
+const POSTAL_CODE_CANADA_REGEX = /^[A-Za-z]\d[A-Za-z][ ]?\d[A-Za-z]\d$/;
+
+/**
+ * - /^\d{5}(-\d{4})?$/
+ * - matches the following US postal code format: 12345 or 12345-6789
+ * - ^ asserts that the string starts with a digit.
+ * - \d{5} matches exactly 5 digits.
+ * - (-\d{4})? is an optional group that matches a hyphen followed by exactly 4 digits.
+ * - $ asserts that the string ends with a digit.
+ */
+const POSTAL_CODE_US_REGEX = /^\d{5}(-\d{4})?$/;
+
 export {
     ADDRESS_LINE_REGEX,
     ALL_STORE_LOCATIONS_REGEX,
@@ -206,6 +222,8 @@ export {
     MONTHS_REGEX,
     NAME_REGEX,
     PASSWORD_REGEX,
+    POSTAL_CODE_CANADA_REGEX,
+    POSTAL_CODE_US_REGEX,
     PRODUCT_CATEGORY_REGEX,
     PROVINCE_REGEX,
     REPAIR_CATEGORY_REGEX,
