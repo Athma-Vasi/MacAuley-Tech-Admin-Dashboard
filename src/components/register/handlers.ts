@@ -9,7 +9,8 @@ import {
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, STEPS_INPUTNAMES_MAP } from "./constants";
-import { RegisterDispatch, RegisterState } from "./types";
+import { RegisterDispatch } from "./schemas";
+import { RegisterState } from "./types";
 
 async function handleCheckEmailExists(
   {

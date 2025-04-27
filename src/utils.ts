@@ -434,7 +434,7 @@ function parseSafeSync<
   }
 }
 
-async function parseServerResponseSafe<
+async function parseServerResponseSafeAsync<
   Obj extends Record<string, unknown> = Record<string, unknown>,
 >(
   { object, zSchema }: { zSchema: z.ZodSchema; object: Obj },
@@ -835,7 +835,7 @@ export {
   getItemForageSafe,
   hexToHSL,
   parseSafeSync,
-  parseServerResponseSafe,
+  parseServerResponseSafeAsync,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,

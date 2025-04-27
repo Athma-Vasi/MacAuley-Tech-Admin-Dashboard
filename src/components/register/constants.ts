@@ -1,6 +1,4 @@
-import { FormReview } from "../../types";
 import { ValidationKey } from "../../validations";
-import { RegisterState } from "./types";
 
 const REGISTER_ROLE_ROUTE_PATHS = {
   admin: "/user",

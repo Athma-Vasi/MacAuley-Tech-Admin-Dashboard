@@ -4,9 +4,6 @@ import {
   Department,
   JobPosition,
   Province,
-  SetInputsInErrorPayload,
-  SetStepInErrorPayload,
-  SetStepWithEmptyInputsPayload,
   StatesUS,
   USPostalCode,
 } from "../../types";

@@ -9,19 +9,19 @@ const setEmailDispatchZod = z.object({
     action: z.literal(registerAction.setEmail),
     payload: z.string().email(),
 });
-const isEmailExistsDispatchZod = z.object({
+const setIsEmailExistsDispatchZod = z.object({
     action: z.literal(registerAction.setIsEmailExists),
     payload: z.boolean(),
 });
-const isEmailExistsSubmittingDispatchZod = z.object({
+const setIsEmailExistsSubmittingDispatchZod = z.object({
     action: z.literal(registerAction.setIsEmailExistsSubmitting),
     payload: z.boolean(),
 });
-const isUsernameExistsDispatchZod = z.object({
+const setIsUsernameExistsDispatchZod = z.object({
     action: z.literal(registerAction.setIsUsernameExists),
     payload: z.boolean(),
 });
-const isUsernameExistsSubmittingDispatchZod = z.object({
+const setIsUsernameExistsSubmittingDispatchZod = z.object({
     action: z.literal(registerAction.setIsUsernameExistsSubmitting),
     payload: z.boolean(),
 });
@@ -127,10 +127,10 @@ const setInputsInErrorDispatchZod = z.object({
 type RegisterDispatch =
     | z.infer<typeof setConfirmPasswordDispatchZod>
     | z.infer<typeof setEmailDispatchZod>
-    | z.infer<typeof isEmailExistsDispatchZod>
-    | z.infer<typeof isEmailExistsSubmittingDispatchZod>
-    | z.infer<typeof isUsernameExistsDispatchZod>
-    | z.infer<typeof isUsernameExistsSubmittingDispatchZod>
+    | z.infer<typeof setIsEmailExistsDispatchZod>
+    | z.infer<typeof setIsEmailExistsSubmittingDispatchZod>
+    | z.infer<typeof setIsUsernameExistsDispatchZod>
+    | z.infer<typeof setIsUsernameExistsSubmittingDispatchZod>
     | z.infer<typeof setPasswordDispatchZod>
     | z.infer<typeof setUsernameDispatchZod>
     | z.infer<typeof setAddressLineDispatchZod>
@@ -156,10 +156,6 @@ type RegisterDispatch =
     | z.infer<typeof setInputsInErrorDispatchZod>;
 
 export {
-    isEmailExistsDispatchZod,
-    isEmailExistsSubmittingDispatchZod,
-    isUsernameExistsDispatchZod,
-    isUsernameExistsSubmittingDispatchZod,
     setActiveStepDispatchZod,
     setAddressLineDispatchZod,
     setCityDispatchZod,
@@ -170,9 +166,13 @@ export {
     setErrorMessageDispatchZod,
     setFirstNameDispatchZod,
     setInputsInErrorDispatchZod,
+    setIsEmailExistsDispatchZod,
+    setIsEmailExistsSubmittingDispatchZod,
     setIsErrorDispatchZod,
     setIsSubmittingDispatchZod,
     setIsSuccessfulDispatchZod,
+    setIsUsernameExistsDispatchZod,
+    setIsUsernameExistsSubmittingDispatchZod,
     setJobPositionDispatchZod,
     setLastNameDispatchZod,
     setPasswordDispatchZod,
