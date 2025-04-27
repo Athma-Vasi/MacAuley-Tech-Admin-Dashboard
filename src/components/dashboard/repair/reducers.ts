@@ -3,8 +3,8 @@ import { RepairMetricsAction, repairMetricsAction } from "./actions";
 import { RepairMetricsCards } from "./cards";
 import { RepairMetricCalendarCharts, RepairMetricsCharts } from "./chartsData";
 import {
-  setCalendarChartsDataDispatchZod,
   setIsGeneratingDispatchZod,
+  setRepairCalendarChartsDataDispatchZod,
   setRepairChartsDispatchZod,
 } from "./schemas";
 import { RepairMetricsDispatch, RepairMetricsState } from "./types";
@@ -39,7 +39,7 @@ function repairMetricsReducer_setCalendarChartsData(
 ): RepairMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setCalendarChartsDataDispatchZod,
+    zSchema: setRepairCalendarChartsDataDispatchZod,
   });
 
   if (parsedResult.err) {

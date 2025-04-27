@@ -22,8 +22,8 @@ import {
 import { dashboardAction } from "./actions";
 import { customerMetricsDocumentZ } from "./customer/zodSchema";
 import { financialMetricsDocumentZ } from "./financial/zodSchema";
+import { productMetricsDocumentZ } from "./product/schemas";
 import { ProductMetricCategory } from "./product/types";
-import { productMetricsDocumentZ } from "./product/zodSchema";
 import { repairMetricsDocumentZ } from "./repair/schemas";
 import { RepairMetricCategory } from "./repair/types";
 import {

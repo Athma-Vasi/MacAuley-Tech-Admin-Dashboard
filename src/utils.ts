@@ -1,24 +1,16 @@
 import html2canvas from "html2canvas";
 import jwtDecode from "jwt-decode";
-import { NavigateFunction } from "react-router-dom";
 import { Err, Ok } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
 import { ColorsSwatches } from "./constants";
-import { AuthAction } from "./context/authProvider";
-import { AuthDispatch, AuthState } from "./context/authProvider/types";
+import { AuthState } from "./context/authProvider/types";
 
 import localforage from "localforage";
 import { z } from "zod";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
-import {
-  DecodedToken,
-  HttpServerResponse,
-  SafeBoxResult,
-  ThemeObject,
-  UserRoles,
-} from "./types";
+import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -523,199 +515,6 @@ function addTokenDetailsToBody(
   return JSON.stringify({ ...body, ...tokenDetails });
 }
 
-async function fetchRequestPOSTSafe<
-  DBRecord = Record<string, unknown> & {
-    _id: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-  },
-  IsSubmittingAction extends string = string,
-  IsSuccessfulAction extends string = string,
-  TriggerFormSubmitAction extends string = string,
->(
-  {
-    accessToken,
-    authAction,
-    authDispatch,
-    closeSubmitFormModal,
-    url,
-    dispatch,
-    fetchAbortController,
-    isComponentMounted,
-    isSubmittingAction,
-    isSuccessfulAction,
-    navigateFn,
-    openSubmitFormModal,
-    queryString,
-    requestBody,
-    roles,
-    triggerFormSubmitAction,
-  }: {
-    accessToken: string;
-    authAction: AuthAction;
-    authDispatch: React.Dispatch<AuthDispatch>;
-    closeSubmitFormModal: () => void;
-    url: URL | string;
-    dispatch: React.Dispatch<{
-      action: IsSubmittingAction | IsSuccessfulAction | TriggerFormSubmitAction;
-      payload: boolean;
-    }>;
-    /** must be defined outside useEffect */
-    fetchAbortController: AbortController;
-    /** must be defined outside useEffect */
-    isComponentMounted: boolean;
-    isSubmittingAction: IsSubmittingAction;
-    isSuccessfulAction: IsSuccessfulAction;
-    navigateFn: NavigateFunction;
-    openSubmitFormModal: () => void;
-    queryString?: string;
-    requestBody: string | FormData;
-    roles: UserRoles;
-    triggerFormSubmitAction: TriggerFormSubmitAction;
-  },
-): Promise<SafeBoxResult<HttpServerResponse<DBRecord>>> {
-  openSubmitFormModal();
-
-  dispatch({
-    action: isSubmittingAction,
-    payload: true,
-  });
-
-  const userRole = roles.includes("Manager")
-    ? "manager"
-    : roles.includes("Admin")
-    ? "admin"
-    : "employee";
-
-  const requestInit: RequestInit = {
-    body: requestBody,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    method: "POST",
-    signal: fetchAbortController.signal,
-  };
-
-  try {
-    const responseResult = await fetchSafe(url, requestInit);
-
-    if (responseResult.err) {
-      return new Err({
-        data: responseResult.val.data ??
-          new Error(responseResult.val.message ?? "Network error"),
-        kind: "error",
-      });
-    }
-
-    if (!isComponentMounted) {
-      return new Ok({ kind: "error", message: "Component is not mounted" });
-    }
-
-    const responseUnwrapped = responseResult.safeUnwrap().data;
-    if (responseUnwrapped === undefined) {
-      return new Ok({ kind: "error", message: "Response is undefined" });
-    }
-
-    if (!responseUnwrapped.ok) {
-      return new Ok({ kind: "error", message: responseUnwrapped.statusText });
-    }
-
-    const jsonResult = await responseToJSONSafe<HttpServerResponse<DBRecord>>(
-      responseUnwrapped,
-    );
-
-    if (jsonResult.err) {
-      return new Err({
-        data: jsonResult.val.data ??
-          new Error(jsonResult.val.message ?? "Network error"),
-        kind: "error",
-      });
-    }
-
-    if (!isComponentMounted) {
-      return new Ok({ kind: "error", message: "Component is not mounted" });
-    }
-
-    const serverResponse = jsonResult.safeUnwrap().data;
-    if (serverResponse === undefined) {
-      return new Ok({ kind: "error", message: "JSON data is undefined" });
-    }
-
-    if (serverResponse.triggerLogout) {
-      authDispatch({
-        action: authAction.setAccessToken,
-        payload: "",
-      });
-      authDispatch({
-        action: authAction.setIsLoggedIn,
-        payload: false,
-      });
-      authDispatch({
-        action: authAction.setDecodedToken,
-        payload: Object.create(null),
-      });
-      authDispatch({
-        action: authAction.setUserDocument,
-        payload: Object.create(null),
-      });
-
-      navigateFn("/login");
-
-      return new Err({
-        data: new Error("Unauthorized access"),
-        kind: "error",
-      });
-    }
-
-    const decodedTokenResult = await decodeJWTSafe(accessToken);
-    if (decodedTokenResult.err) {
-      return new Err({ data: decodedTokenResult.val.data, kind: "error" });
-    }
-
-    const decodedToken = decodedTokenResult.safeUnwrap().data;
-    if (decodedToken === undefined) {
-      return new Ok({ kind: "error", message: "Decoded token is undefined" });
-    }
-
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: serverResponse.accessToken,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
-
-    dispatch({
-      action: isSuccessfulAction,
-      payload: true,
-    });
-    dispatch({
-      action: isSubmittingAction,
-      payload: false,
-    });
-    dispatch({
-      action: triggerFormSubmitAction,
-      payload: false,
-    });
-
-    return new Ok({ data: serverResponse, kind: "success" });
-  } catch (error: unknown) {
-    if (
-      !isComponentMounted ||
-      error instanceof Error && error?.name === "AbortError"
-    ) {
-      return new Ok({ kind: "error" });
-    }
-
-    return new Err({ data: error, kind: "error" });
-  } finally {
-    closeSubmitFormModal();
-  }
-}
-
 function hexToHSL(
   hex: string,
   returnKind: "string" | "object",
@@ -835,7 +634,6 @@ export {
   createForageKey,
   debounce,
   decodeJWTSafe,
-  fetchRequestPOSTSafe,
   fetchSafe,
   formatDate,
   getItemForageSafe,

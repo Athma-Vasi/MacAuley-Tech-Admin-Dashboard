@@ -24,8 +24,8 @@ import {
 } from "../../utils";
 import { customerMetricsDocumentZ } from "../dashboard/customer/zodSchema";
 import { financialMetricsDocumentZ } from "../dashboard/financial/zodSchema";
+import { productMetricsDocumentZ } from "../dashboard/product/schemas";
 import { ProductMetricCategory } from "../dashboard/product/types";
-import { productMetricsDocumentZ } from "../dashboard/product/zodSchema";
 import { repairMetricsDocumentZ } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
