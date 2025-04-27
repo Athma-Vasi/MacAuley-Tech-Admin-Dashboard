@@ -26,8 +26,8 @@ import { customerMetricsDocumentZ } from "../dashboard/customer/zodSchema";
 import { financialMetricsDocumentZ } from "../dashboard/financial/zodSchema";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { productMetricsDocumentZ } from "../dashboard/product/zodSchema";
+import { repairMetricsDocumentZ } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
-import { repairMetricsDocumentZ } from "../dashboard/repair/zodSchema";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 
 async function handleMetricCategoryNavlinkClick(

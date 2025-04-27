@@ -24,8 +24,8 @@ import { customerMetricsDocumentZ } from "./customer/zodSchema";
 import { financialMetricsDocumentZ } from "./financial/zodSchema";
 import { ProductMetricCategory } from "./product/types";
 import { productMetricsDocumentZ } from "./product/zodSchema";
+import { repairMetricsDocumentZ } from "./repair/schemas";
 import { RepairMetricCategory } from "./repair/types";
-import { repairMetricsDocumentZ } from "./repair/zodSchema";
 import {
     AllStoreLocations,
     DashboardDispatch,

@@ -1,11 +1,13 @@
+import { parseSafeSync } from "../../../utils";
 import { RepairMetricsAction, repairMetricsAction } from "./actions";
 import { RepairMetricsCards } from "./cards";
 import { RepairMetricCalendarCharts, RepairMetricsCharts } from "./chartsData";
 import {
-  RepairMetricCategory,
-  RepairMetricsDispatch,
-  RepairMetricsState,
-} from "./types";
+  setCalendarChartsDataDispatchZod,
+  setIsGeneratingDispatchZod,
+  setRepairChartsDispatchZod,
+} from "./schemas";
+import { RepairMetricsDispatch, RepairMetricsState } from "./types";
 
 function repairMetricsReducer(
   state: RepairMetricsState,
@@ -35,9 +37,18 @@ function repairMetricsReducer_setCalendarChartsData(
   state: RepairMetricsState,
   dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setCalendarChartsDataDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    calendarChartsData: dispatch.payload as {
+    calendarChartsData: parsedResult.safeUnwrap().data?.payload as {
       currentYear: RepairMetricCalendarCharts;
       previousYear: RepairMetricCalendarCharts;
     },
@@ -48,6 +59,10 @@ function repairMetricsReducer_setCards(
   state: RepairMetricsState,
   dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
+  if (!dispatch.payload) {
+    return state;
+  }
+
   return {
     ...state,
     cards: dispatch.payload as RepairMetricsCards,
@@ -58,9 +73,18 @@ function repairMetricsReducer_setCharts(
   state: RepairMetricsState,
   dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setRepairChartsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    charts: dispatch.payload as RepairMetricsCharts,
+    charts: parsedResult.safeUnwrap().data?.payload as RepairMetricsCharts,
   };
 }
 
@@ -68,10 +92,25 @@ function repairMetricsReducer_setIsGenerating(
   state: RepairMetricsState,
   dispatch: RepairMetricsDispatch,
 ): RepairMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setIsGeneratingDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    isGenerating: dispatch.payload as boolean,
+    isGenerating: parsedResult.safeUnwrap().data?.payload as boolean,
   };
 }
 
-export { repairMetricsReducer };
+export {
+  repairMetricsReducer,
+  repairMetricsReducer_setCalendarChartsData,
+  repairMetricsReducer_setCards,
+  repairMetricsReducer_setCharts,
+  repairMetricsReducer_setIsGenerating,
+};

@@ -164,6 +164,9 @@ function RepairMetrics(
     return null;
   }
 
+  console.log("cards", cards);
+  console.log("charts", charts);
+
   const overviewMetrics = returnOverviewRepairMetrics(
     repairMetricsDocument,
     selectedYYYYMMDD,

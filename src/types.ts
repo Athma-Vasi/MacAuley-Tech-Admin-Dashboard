@@ -169,8 +169,8 @@ type RepairMetricsSchema = {
 
 type RepairMetricsDocument = RepairMetricsSchema & {
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 };
 
@@ -182,8 +182,8 @@ type ProductMetricsSchema = {
 
 type ProductMetricsDocument = ProductMetricsSchema & {
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 };
 
@@ -194,8 +194,8 @@ type FinancialMetricsSchema = {
 
 type FinancialMetricsDocument = FinancialMetricsSchema & {
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 };
 
@@ -206,8 +206,8 @@ type CustomerMetricsSchema = {
 
 type CustomerMetricsDocument = CustomerMetricsSchema & {
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 };
 

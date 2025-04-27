@@ -1,8 +1,8 @@
 import type { TitleOrder } from "@mantine/core";
 import type { ScreenshotImageType } from "../../../types";
-import { parseSafeSync } from "../../../utils";
 import type {
   NivoAxisLegendPosition,
+  NivoBarGroupMode,
   NivoBarLayout,
   NivoBarValueScale,
   NivoChartTitlePosition,
@@ -14,7 +14,6 @@ import type {
   NivoMotionConfig,
 } from "../types";
 import { responsiveBarChartAction } from "./actions";
-import { responsiveBarChartReducer_setGroupModeZ } from "./schemas";
 import type {
   ResponsiveBarChartAction,
   ResponsiveBarChartDispatch,
@@ -373,18 +372,9 @@ function responsiveBarChartReducer_setGroupMode(
   state: ResponsiveBarChartState,
   dispatch: ResponsiveBarChartDispatch,
 ): ResponsiveBarChartState {
-  const parsedResult = parseSafeSync({
-    object: dispatch,
-    zSchema: responsiveBarChartReducer_setGroupModeZ,
-  });
-
-  if (parsedResult.err) {
-    return state;
-  }
-
   return {
     ...state,
-    groupMode: parsedResult.safeUnwrap().data.payload,
+    groupMode: dispatch.payload as NivoBarGroupMode,
   };
 }
 
