@@ -96,35 +96,35 @@ const setFinancialCalendarChartsDispatchZod = z.object({
 });
 
 const dailyBarAllPERTChartsZod = z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     Repair: z.number(),
     "In-Store": z.number(),
     Online: z.number(),
 });
 const dailyBarInStorePERTChartsZod = z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     "In-Store": z.number(),
 });
 const dailyBarOnlinePERTChartsZod = z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     Online: z.number(),
 });
 const dailyBarOverviewPERTChartsZod = z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     Repair: z.number(),
     Sales: z.number(),
 });
 const dailyBarRepairPERTChartsZod = z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     Repair: z.number(),
 });
 const dailyBarSalesPERTChartsZod = z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     "In-Store": z.number(),
     Online: z.number(),
 });
 const dailyBarTotalPERTChartsZod = z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     Total: z.number(),
 });
 
@@ -139,35 +139,35 @@ const dailyBarPERTChartsZod = z.object({
 });
 
 const monthlyBarAllPERTChartsZod = z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     Repair: z.number(),
     "In-Store": z.number(),
     Online: z.number(),
 });
 const monthlyBarInStorePERTChartsZod = z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     "In-Store": z.number(),
 });
 const monthlyBarOnlinePERTChartsZod = z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     Online: z.number(),
 });
 const monthlyBarOverviewPERTChartsZod = z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     Repair: z.number(),
     Sales: z.number(),
 });
 const monthlyBarRepairPERTChartsZod = z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     Repair: z.number(),
 });
 const monthlyBarSalesPERTChartsZod = z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     "In-Store": z.number(),
     Online: z.number(),
 });
 const monthlyBarTotalPERTChartsZod = z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     Total: z.number(),
 });
 const monthlyBarPERTChartsZod = z.object({
@@ -181,35 +181,35 @@ const monthlyBarPERTChartsZod = z.object({
 });
 
 const yearlyBarAllPERTChartsZod = z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     Repair: z.number(),
     "In-Store": z.number(),
     Online: z.number(),
 });
 const yearlyBarInStorePERTChartsZod = z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     "In-Store": z.number(),
 });
 const yearlyBarOnlinePERTChartsZod = z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     Online: z.number(),
 });
 const yearlyBarOverviewPERTChartsZod = z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     Repair: z.number(),
     Sales: z.number(),
 });
 const yearlyBarRepairPERTChartsZod = z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     Repair: z.number(),
 });
 const yearlyBarSalesPERTChartsZod = z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     "In-Store": z.number(),
     Online: z.number(),
 });
 const yearlyBarTotalPERTChartsZod = z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     Total: z.number(),
 });
 const yearlyBarPERTChartsZod = z.object({
@@ -272,45 +272,45 @@ const piePERTChartsZod = z.object({
 
 const dailyBarOtherMetricsChartsZod = z.object({
     averageOrderValue: z.array(z.object({
-        Days: z.string(),
+        Days: z.string().regex(DAYS_REGEX),
         "Average Order Value": z.number(),
     })),
     conversionRate: z.array(z.object({
-        Days: z.string(),
+        Days: z.string().regex(DAYS_REGEX),
         "Conversion Rate": z.number(),
     })),
     netProfitMargin: z.array(z.object({
-        Days: z.string(),
+        Days: z.string().regex(DAYS_REGEX),
         "Net Profit Margin": z.number(),
     })),
 });
 
 const monthlyBarOtherMetricsChartsZod = z.object({
     averageOrderValue: z.array(z.object({
-        Months: z.string(),
+        Months: z.string().regex(MONTHS_REGEX),
         "Average Order Value": z.number(),
     })),
     conversionRate: z.array(z.object({
-        Months: z.string(),
+        Months: z.string().regex(MONTHS_REGEX),
         "Conversion Rate": z.number(),
     })),
     netProfitMargin: z.array(z.object({
-        Months: z.string(),
+        Months: z.string().regex(MONTHS_REGEX),
         "Net Profit Margin": z.number(),
     })),
 });
 
 const yearlyBarOtherMetricsChartsZod = z.object({
     averageOrderValue: z.array(z.object({
-        Years: z.string(),
+        Years: z.string().regex(YEARS_REGEX),
         "Average Order Value": z.number(),
     })),
     conversionRate: z.array(z.object({
-        Years: z.string(),
+        Years: z.string().regex(YEARS_REGEX),
         "Conversion Rate": z.number(),
     })),
     netProfitMargin: z.array(z.object({
-        Years: z.string(),
+        Years: z.string().regex(YEARS_REGEX),
         "Net Profit Margin": z.number(),
     })),
 });

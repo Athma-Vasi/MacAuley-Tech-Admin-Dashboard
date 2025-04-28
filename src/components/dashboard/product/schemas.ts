@@ -125,20 +125,20 @@ const productPieChartsZod = z.array(z.object({
 }));
 
 const productDailyInStoreBarChartsZod = z.array(z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     "In-Store": z.number(),
 }));
 const productDailyOnlineBarChartsZod = z.array(z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     "Online": z.number(),
 }));
 const productDailyOverviewBarChartsZod = z.array(z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     "In-Store": z.number(),
     "Online": z.number(),
 }));
 const productDailyTotalBarChartsZod = z.array(z.object({
-    Days: z.string(),
+    Days: z.string().regex(DAYS_REGEX),
     Total: z.number(),
 }));
 const productDailyRUSBarChartsZod = z.object({
@@ -149,20 +149,20 @@ const productDailyRUSBarChartsZod = z.object({
 });
 
 const productMonthlyInStoreBarChartsZod = z.array(z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     "In-Store": z.number(),
 }));
 const productMonthlyOnlineBarChartsZod = z.array(z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     "Online": z.number(),
 }));
 const productMonthlyOverviewBarChartsZod = z.array(z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     "In-Store": z.number(),
     "Online": z.number(),
 }));
 const productMonthlyTotalBarChartsZod = z.array(z.object({
-    Months: z.string(),
+    Months: z.string().regex(MONTHS_REGEX),
     Total: z.number(),
 }));
 const productMonthlyRUSBarChartsZod = z.object({
@@ -173,20 +173,20 @@ const productMonthlyRUSBarChartsZod = z.object({
 });
 
 const productYearlyInStoreBarChartsZod = z.array(z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     "In-Store": z.number(),
 }));
 const productYearlyOnlineBarChartsZod = z.array(z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     "Online": z.number(),
 }));
 const productYearlyOverviewBarChartsZod = z.array(z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     "In-Store": z.number(),
     "Online": z.number(),
 }));
 const productYearlyTotalBarChartsZod = z.array(z.object({
-    Years: z.string(),
+    Years: z.string().regex(YEARS_REGEX),
     Total: z.number(),
 }));
 const productYearlyRUSBarChartsZod = z.object({
