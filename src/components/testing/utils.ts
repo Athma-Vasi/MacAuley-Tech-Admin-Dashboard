@@ -1,4 +1,5 @@
 import { Err, Ok } from "ts-results";
+import { z } from "zod";
 import { LOGIN_URL, LOGOUT_URL, METRICS_URL } from "../../constants";
 import {
     BusinessMetricsDocument,
@@ -13,12 +14,13 @@ import {
     responseToJSONSafe,
 } from "../../utils";
 import { customerMetricsDocumentZ } from "../dashboard/customer/zodSchema";
-import { financialMetricsDocumentZ } from "../dashboard/financial/zodSchema";
+import { financialMetricsDocumentZ } from "../dashboard/financial/schemas";
 import { productMetricsDocumentZ } from "../dashboard/product/schemas";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZ } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
+import { userDocumentZ } from "../usersQuery/schemas";
 
 async function handleLoginMock(): Promise<
     SafeBoxResult<
@@ -92,7 +94,30 @@ async function handleLoginMock(): Promise<
             });
         }
 
-        const { accessToken, triggerLogout } = serverResponse;
+        const parsedResult = await parseServerResponseSafeAsync({
+            object: serverResponse,
+            zSchema: z.object({
+                userDocument: userDocumentZ,
+                financialMetricsDocument: financialMetricsDocumentZ,
+            }),
+        });
+
+        if (parsedResult.err) {
+            return new Err({
+                data: [],
+                kind: "error",
+            });
+        }
+
+        const parsedServerResponse = parsedResult.safeUnwrap().data;
+        if (parsedServerResponse === undefined) {
+            return new Err({
+                data: [],
+                kind: "error",
+            });
+        }
+
+        const { accessToken, triggerLogout } = parsedServerResponse;
 
         if (triggerLogout) {
             return new Err({
@@ -170,6 +195,26 @@ async function handleLogoutMock(
         const serverResponse = jsonResult.safeUnwrap().data;
 
         if (serverResponse === undefined) {
+            return new Err({
+                data: [],
+                kind: "error",
+            });
+        }
+
+        const parsedResult = await parseServerResponseSafeAsync({
+            object: serverResponse,
+            zSchema: z.object({}),
+        });
+
+        if (parsedResult.err) {
+            return new Err({
+                data: [],
+                kind: "error",
+            });
+        }
+
+        const parsedServerResponse = parsedResult.safeUnwrap().data;
+        if (parsedServerResponse === undefined) {
             return new Err({
                 data: [],
                 kind: "error",

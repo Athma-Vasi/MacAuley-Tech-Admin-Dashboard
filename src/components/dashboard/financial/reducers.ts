@@ -1,3 +1,5 @@
+import { parseSafeSync } from "../../../utils";
+import { setIsGeneratingDispatchZod } from "../product/schemas";
 import { FinancialMetricsAction, financialMetricsAction } from "./actions";
 import { FinancialMetricsCards } from "./cards";
 import {
@@ -5,10 +7,10 @@ import {
   FinancialMetricsCharts,
 } from "./chartsData";
 import {
-  FinancialMetricCategory,
-  FinancialMetricsDispatch,
-  FinancialMetricsState,
-} from "./types";
+  setFinancialCalendarChartsDispatchZod,
+  setFinancialChartsDispatchZod,
+} from "./schemas";
+import { FinancialMetricsDispatch, FinancialMetricsState } from "./types";
 
 function financialMetricsReducer(
   state: FinancialMetricsState,
@@ -27,7 +29,7 @@ const financialMetricsReducers = new Map<
 >([
   [
     financialMetricsAction.setCalendarChartsData,
-    financialMetricsReducer_setCalendarCharts,
+    financialMetricsReducer_setCalendarChartsData,
   ],
   [financialMetricsAction.setCards, financialMetricsReducer_setCards],
   [financialMetricsAction.setCharts, financialMetricsReducer_setCharts],
@@ -37,13 +39,22 @@ const financialMetricsReducers = new Map<
   ],
 ]);
 
-function financialMetricsReducer_setCalendarCharts(
+function financialMetricsReducer_setCalendarChartsData(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setFinancialCalendarChartsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    calendarChartsData: dispatch.payload as {
+    calendarChartsData: parsedResult.safeUnwrap().data?.payload as {
       currentYear: FinancialMetricsCalendarCharts;
       previousYear: FinancialMetricsCalendarCharts;
     },
@@ -54,6 +65,10 @@ function financialMetricsReducer_setCards(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
+  if (!dispatch.payload) {
+    return state;
+  }
+
   return {
     ...state,
     cards: dispatch.payload as FinancialMetricsCards,
@@ -64,9 +79,18 @@ function financialMetricsReducer_setCharts(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setFinancialChartsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    charts: dispatch.payload as FinancialMetricsCharts,
+    charts: parsedResult.safeUnwrap().data?.payload as FinancialMetricsCharts,
   };
 }
 
@@ -74,10 +98,25 @@ function financialMetricsReducer_setIsGenerating(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setIsGeneratingDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    isGenerating: dispatch.payload as boolean,
+    isGenerating: parsedResult.safeUnwrap().data?.payload as boolean,
   };
 }
 
-export { financialMetricsReducer };
+export {
+  financialMetricsReducer,
+  financialMetricsReducer_setCalendarChartsData,
+  financialMetricsReducer_setCards,
+  financialMetricsReducer_setCharts,
+  financialMetricsReducer_setIsGenerating,
+};

@@ -17,7 +17,7 @@ import {
   responseToJSONSafe,
   setItemForageSafe,
 } from "../../utils";
-import { financialMetricsDocumentZ } from "../dashboard/financial/zodSchema";
+import { financialMetricsDocumentZ } from "../dashboard/financial/schemas";
 import { userDocumentZ } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
