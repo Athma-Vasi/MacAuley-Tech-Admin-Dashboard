@@ -1,3 +1,4 @@
+import { parseSafeSync } from "../../../utils";
 import { ProductMetricsAction, productMetricsAction } from "./actions";
 import { ProductMetricsCards } from "./cards";
 import {
@@ -5,11 +6,11 @@ import {
   ProductMetricsCharts,
 } from "./chartsData";
 import {
-  ProductMetricCategory,
-  ProductMetricsDispatch,
-  ProductMetricsState,
-  ProductSubMetric,
-} from "./types";
+  setIsGeneratingDispatchZod,
+  setProductCalendarChartsDataDispatchZod,
+  setProductChartsDispatchZod,
+} from "./schemas";
+import { ProductMetricsDispatch, ProductMetricsState } from "./types";
 
 function productMetricsReducer(
   state: ProductMetricsState,
@@ -39,9 +40,18 @@ function productMetricsReducer_setCalendarChartsData(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setProductCalendarChartsDataDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    calendarChartsData: dispatch.payload as {
+    calendarChartsData: parsedResult.safeUnwrap().data?.payload as {
       currentYear: ProductMetricsCalendarCharts;
       previousYear: ProductMetricsCalendarCharts;
     },
@@ -52,6 +62,10 @@ function productMetricsReducer_setCards(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
+  if (!dispatch.payload) {
+    return state;
+  }
+
   return {
     ...state,
     cards: dispatch.payload as ProductMetricsCards,
@@ -62,9 +76,18 @@ function productMetricsReducer_setCharts(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setProductChartsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    charts: dispatch.payload as ProductMetricsCharts,
+    charts: parsedResult.safeUnwrap().data?.payload as ProductMetricsCharts,
   };
 }
 
@@ -72,10 +95,26 @@ function productMetricsReducer_setIsGenerating(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setIsGeneratingDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    isGenerating: dispatch.payload as boolean,
+    isGenerating: parsedResult.safeUnwrap().data?.payload as boolean,
   };
 }
 
-export { productMetricsReducer };
+export {
+  productMetricsReducer,
+  productMetricsReducer_setCalendarChartsData,
+  productMetricsReducer_setCards,
+  productMetricsReducer_setCharts,
+  productMetricsReducer_setIsGenerating,
+  productMetricsReducers,
+};

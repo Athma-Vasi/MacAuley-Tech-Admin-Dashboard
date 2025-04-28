@@ -44,13 +44,13 @@ const setRepairCalendarChartsDataDispatchZod = z.object({
         currentYear: z.object({
             revenue: z.array(
                 z.object({
-                    day: z.string().regex(DAYS_REGEX),
+                    day: z.string(),
                     value: z.number(),
                 }),
             ),
             unitsRepaired: z.array(
                 z.object({
-                    day: z.string().regex(DAYS_REGEX),
+                    day: z.string(),
                     value: z.number(),
                 }),
             ),
@@ -58,13 +58,13 @@ const setRepairCalendarChartsDataDispatchZod = z.object({
         previousYear: z.object({
             revenue: z.array(
                 z.object({
-                    day: z.string().regex(DAYS_REGEX),
+                    day: z.string(),
                     value: z.number(),
                 }),
             ),
             unitsRepaired: z.array(
                 z.object({
-                    day: z.string().regex(DAYS_REGEX),
+                    day: z.string(),
                     value: z.number(),
                 }),
             ),

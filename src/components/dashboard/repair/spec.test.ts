@@ -20,7 +20,6 @@ import {
     repairMetricsReducer_setIsGenerating,
 } from "./reducers";
 import { initialRepairMetricsState } from "./state";
-import { REPAIR_METRICS_DOCUMENT_SAMPLE } from "./testData";
 import { RepairMetricCategory } from "./types";
 
 async function repairMetricsTestCallback(
@@ -58,7 +57,7 @@ async function repairMetricsTestCallback(
         await createRepairMetricsCalendarCharts(selectedDateRepairMetrics);
 
     const repairMetricsCharts = await createRepairMetricsCharts({
-        repairMetricsDocument: REPAIR_METRICS_DOCUMENT_SAMPLE,
+        repairMetricsDocument: businesMetricsDocument as RepairMetricsDocument,
         months: MONTHS,
         selectedDateRepairMetrics,
     });
@@ -66,7 +65,8 @@ async function repairMetricsTestCallback(
     describe(
         `repairMetricsReducer 
         Store Location: ${storeLocation}
-        Repair Metric: ${repairMetricCategory}`,
+        Repair Metric: ${repairMetricCategory}
+        `,
         () => {
             describe("repairMetricsReducer_setCalendarChartsData", () => {
                 it("should allow valid data", () => {
