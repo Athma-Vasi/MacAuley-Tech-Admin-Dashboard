@@ -17,7 +17,7 @@ import {
   responseToJSONSafe,
   setItemForageSafe,
 } from "../../utils";
-import { financialMetricsDocumentZ } from "../dashboard/financial/schemas";
+import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { userDocumentZ } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
@@ -120,7 +120,7 @@ async function handleLoginButtonClick(
       object: serverResponse,
       zSchema: z.object({
         userDocument: userDocumentZ,
-        financialMetricsDocument: financialMetricsDocumentZ,
+        financialMetricsDocument: financialMetricsDocumentZod,
       }),
     });
     console.timeEnd("parsing");

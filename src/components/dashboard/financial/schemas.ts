@@ -7,7 +7,7 @@ import {
 } from "../../../regexes";
 import { financialMetricsAction } from "./actions";
 
-const pertZ = z.object({
+const pertZod = z.object({
     total: z.number().default(0),
     repair: z.number().default(0),
     sales: z.object({
@@ -17,7 +17,7 @@ const pertZ = z.object({
     }),
 });
 
-const financialMetricsDocumentZ = z.object({
+const financialMetricsDocumentZod = z.object({
     _id: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -29,30 +29,30 @@ const financialMetricsDocumentZ = z.object({
             averageOrderValue: z.number(),
             conversionRate: z.number(),
             netProfitMargin: z.number(),
-            expenses: pertZ,
-            profit: pertZ,
-            revenue: pertZ,
-            transactions: pertZ,
+            expenses: pertZod,
+            profit: pertZod,
+            revenue: pertZod,
+            transactions: pertZod,
             monthlyMetrics: z.array(
                 z.object({
                     month: z.string().regex(MONTHS_REGEX),
                     averageOrderValue: z.number(),
                     conversionRate: z.number(),
                     netProfitMargin: z.number(),
-                    expenses: pertZ,
-                    profit: pertZ,
-                    revenue: pertZ,
-                    transactions: pertZ,
+                    expenses: pertZod,
+                    profit: pertZod,
+                    revenue: pertZod,
+                    transactions: pertZod,
                     dailyMetrics: z.array(
                         z.object({
                             day: z.string().regex(DAYS_REGEX),
                             averageOrderValue: z.number(),
                             conversionRate: z.number(),
                             netProfitMargin: z.number(),
-                            expenses: pertZ,
-                            profit: pertZ,
-                            revenue: pertZ,
-                            transactions: pertZ,
+                            expenses: pertZod,
+                            profit: pertZod,
+                            revenue: pertZod,
+                            transactions: pertZod,
                         }),
                     ),
                 }),
@@ -422,7 +422,7 @@ const setIsGeneratingDispatchZod = z.object({
 });
 
 export {
-    financialMetricsDocumentZ,
+    financialMetricsDocumentZod,
     setFinancialCalendarChartsDispatchZod,
     setFinancialChartsDispatchZod,
     setIsGeneratingDispatchZod,

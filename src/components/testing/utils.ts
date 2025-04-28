@@ -14,7 +14,7 @@ import {
     responseToJSONSafe,
 } from "../../utils";
 import { customerMetricsDocumentZ } from "../dashboard/customer/schemas";
-import { financialMetricsDocumentZ } from "../dashboard/financial/schemas";
+import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { productMetricsDocumentZ } from "../dashboard/product/schemas";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZ } from "../dashboard/repair/schemas";
@@ -98,7 +98,7 @@ async function handleLoginMock(): Promise<
             object: serverResponse,
             zSchema: z.object({
                 userDocument: userDocumentZ,
-                financialMetricsDocument: financialMetricsDocumentZ,
+                financialMetricsDocument: financialMetricsDocumentZod,
             }),
         });
 
@@ -329,7 +329,7 @@ async function handleMetricsMock(
             zSchema: metricsView === "customers"
                 ? customerMetricsDocumentZ
                 : metricsView === "financials"
-                ? financialMetricsDocumentZ
+                ? financialMetricsDocumentZod
                 : metricsView === "products"
                 ? productMetricsDocumentZ
                 : repairMetricsDocumentZ,

@@ -21,7 +21,7 @@ import {
 } from "../../utils";
 import { dashboardAction } from "./actions";
 import { customerMetricsDocumentZ } from "./customer/schemas";
-import { financialMetricsDocumentZ } from "./financial/schemas";
+import { financialMetricsDocumentZod } from "./financial/schemas";
 import { productMetricsDocumentZ } from "./product/schemas";
 import { ProductMetricCategory } from "./product/types";
 import { repairMetricsDocumentZ } from "./repair/schemas";
@@ -199,7 +199,7 @@ async function handleStoreCategoryClick(
             zSchema: metricsView === "customers"
                 ? customerMetricsDocumentZ
                 : metricsView === "financials"
-                ? financialMetricsDocumentZ
+                ? financialMetricsDocumentZod
                 : metricsView === "products"
                 ? productMetricsDocumentZ
                 : repairMetricsDocumentZ,
