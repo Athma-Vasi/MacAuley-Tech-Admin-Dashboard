@@ -22,7 +22,7 @@ import {
   responseToJSONSafe,
   setItemForageSafe,
 } from "../../utils";
-import { customerMetricsDocumentZ } from "../dashboard/customer/zodSchema";
+import { customerMetricsDocumentZ } from "../dashboard/customer/schemas";
 import { financialMetricsDocumentZ } from "../dashboard/financial/schemas";
 import { productMetricsDocumentZ } from "../dashboard/product/schemas";
 import { ProductMetricCategory } from "../dashboard/product/types";

@@ -20,7 +20,7 @@ import {
     setItemForageSafe,
 } from "../../utils";
 import { dashboardAction } from "./actions";
-import { customerMetricsDocumentZ } from "./customer/zodSchema";
+import { customerMetricsDocumentZ } from "./customer/schemas";
 import { financialMetricsDocumentZ } from "./financial/schemas";
 import { productMetricsDocumentZ } from "./product/schemas";
 import { ProductMetricCategory } from "./product/types";

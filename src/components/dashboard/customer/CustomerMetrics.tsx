@@ -103,6 +103,8 @@ function CustomerMetrics(
           selectedDateCustomerMetrics,
         });
 
+        console.log("customerMetricsCharts", customerMetricsCharts);
+
         const customerMetricsCards = await createCustomerMetricsCards({
           cardBgGradient,
           greenColorShade,

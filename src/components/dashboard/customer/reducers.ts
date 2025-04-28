@@ -1,3 +1,5 @@
+import { parseSafeSync } from "../../../utils";
+import { setIsGeneratingDispatchZod } from "../product/schemas";
 import { CustomerMetricsAction, customerMetricsAction } from "./actions";
 import { CustomerMetricsCards } from "./cards";
 import {
@@ -5,10 +7,10 @@ import {
   CustomerMetricsCharts,
 } from "./chartsData";
 import {
-  CustomerMetricsCategory,
-  CustomerMetricsDispatch,
-  CustomerMetricsState,
-} from "./types";
+  setCustomerCalendarChartsDispatchZod,
+  setCustomerChartsDispatch,
+} from "./schemas";
+import { CustomerMetricsDispatch, CustomerMetricsState } from "./types";
 
 function customerMetricsReducer(
   state: CustomerMetricsState,
@@ -41,9 +43,18 @@ function customerMetricsReducer_setCalendarChartsData(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setCustomerCalendarChartsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    calendarChartsData: dispatch.payload as {
+    calendarChartsData: parsedResult.safeUnwrap().data?.payload as {
       currentYear: CustomerMetricsCalendarCharts;
       previousYear: CustomerMetricsCalendarCharts;
     },
@@ -54,6 +65,10 @@ function customerMetricsReducer_setCards(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
+  if (!dispatch) {
+    return state;
+  }
+
   return {
     ...state,
     cards: dispatch.payload as CustomerMetricsCards,
@@ -64,9 +79,18 @@ function customerMetricsReducer_setCharts(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setCustomerChartsDispatch,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    charts: dispatch.payload as CustomerMetricsCharts,
+    charts: parsedResult.safeUnwrap().data?.payload as CustomerMetricsCharts,
   };
 }
 
@@ -74,10 +98,25 @@ function customerMetricsReducer_setIsGenerating(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setIsGeneratingDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    isGenerating: dispatch.payload as boolean,
+    isGenerating: parsedResult.safeUnwrap().data?.payload as boolean,
   };
 }
 
-export { customerMetricsReducer };
+export {
+  customerMetricsReducer,
+  customerMetricsReducer_setCalendarChartsData,
+  customerMetricsReducer_setCards,
+  customerMetricsReducer_setCharts,
+  customerMetricsReducer_setIsGenerating,
+};
