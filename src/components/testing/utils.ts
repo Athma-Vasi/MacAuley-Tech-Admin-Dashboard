@@ -144,7 +144,7 @@ async function handleLoginMock(): Promise<
 }
 
 async function handleLogoutMock(
-    { accessToken }: { accessToken: string },
+    { newAccessToken }: { newAccessToken: string },
 ): Promise<
     SafeBoxResult<[]>
 > {
@@ -152,7 +152,7 @@ async function handleLogoutMock(
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${newAccessToken}`,
         },
         mode: "cors",
     };
@@ -354,7 +354,7 @@ async function handleMetricsMock(
             parsedServerResponse;
 
         const logoutResult = await handleLogoutMock({
-            accessToken: newAccessToken,
+            newAccessToken,
         });
 
         if (logoutResult.err || triggerLogout) {

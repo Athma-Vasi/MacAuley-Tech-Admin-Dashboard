@@ -415,12 +415,17 @@ async function setItemForageSafe<Data = unknown>(
 
 function parseSafeSync(
   { object, zSchema }: {
-    object: Record<string, unknown>;
+    object: Record<string, unknown> | Array<Record<string, unknown>>;
     zSchema: z.ZodSchema;
   },
 ): SafeBoxResult<z.infer<typeof zSchema>> {
   try {
-    const parsed = zSchema.safeParse(object);
+    const arraySchema = z.array(zSchema);
+
+    const parsed = Array.isArray(object)
+      ? arraySchema.safeParse(object)
+      : zSchema.safeParse(object);
+
     if (parsed.success) {
       return new Ok({ data: parsed.data, kind: "success" });
     } else {
@@ -429,6 +434,28 @@ function parseSafeSync(
   } catch (error: unknown) {
     return new Err({ data: error, kind: "error" });
   }
+}
+
+function createSafeBoxResult<Data extends unknown = unknown>(
+  { data, kind = "error", message = "Unknown error" }: {
+    data?: Data;
+    kind?: "error" | "success" | "notFound";
+    message?: string;
+  },
+): SafeBoxResult<Data> {
+  if (kind === "success" || kind === "notFound") {
+    return new Ok({
+      data,
+      kind,
+      message,
+    });
+  }
+
+  return new Err({
+    data,
+    kind,
+    message,
+  });
 }
 
 async function parseServerResponseSafeAsync(
@@ -632,6 +659,7 @@ export {
   capitalizeJoinWithAnd,
   captureScreenshot,
   createForageKey,
+  createSafeBoxResult,
   debounce,
   decodeJWTSafe,
   fetchSafe,

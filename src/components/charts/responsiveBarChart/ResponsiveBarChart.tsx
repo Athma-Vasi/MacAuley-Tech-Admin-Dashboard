@@ -230,8 +230,6 @@ function ResponsiveBarChart({
     return null;
   }
 
-  console.log("barChartData", barChartData);
-
   const { barFillPatterns } = createBarFillPatterns(barChartData);
 
   const displayResponsiveBar = (

@@ -21,6 +21,7 @@ import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { QueryAction } from "./actions";
 import { QueryDispatch } from "./schemas";
 import {
+    GeneralSearchCase,
     InputKind,
     LogicalOperator,
     MongoQueryOperator,
@@ -81,6 +82,31 @@ function returnSortableQueryFields(queryTemplates: QueryTemplate[]) {
 
         return acc;
     }, [] as CheckboxRadioSelectData);
+}
+
+function createRandomUsersQueryStrings() {
+    const generalSearchCases: Array<GeneralSearchCase> = [
+        "case-sensitive",
+        "case-insensitive",
+    ];
+    const generalSearchExclusionValues = "John";
+    const generalSearchInclusionValue = "Doe";
+    const limitPerPage = "10";
+    const projectionFields = ["state", "postalCodeUS"];
+    const queryChains = {
+        filter: {
+            and: [],
+            nor: [],
+            or: [],
+        },
+        sort: {
+            and: [],
+            nor: [],
+            or: [],
+        },
+    };
+
+    function generateQueryStringInputPermutations() {}
 }
 
 function createQueryString(queryState: QueryState): string {

@@ -83,8 +83,6 @@ function Query({
         queryChains,
     ]);
 
-    console.log("QUERY STATE: ", queryState);
-
     const queryChain = (
         <Chain
             collectionName={collectionName}

@@ -108,8 +108,6 @@ function RepairMetrics(
           selectedDateRepairMetrics,
         });
 
-        console.log("repairMetricsCharts", repairMetricsCharts);
-
         const repairMetricsCards = await createRepairMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -152,8 +150,6 @@ function RepairMetrics(
       }
     }
 
-    console.log("repairMetricsCharts", charts);
-
     if (repairMetricsDocument || !cards || !charts) {
       generateRepairChartsCards();
     }
@@ -167,9 +163,6 @@ function RepairMetrics(
   if (!repairMetricsDocument || !cards || !charts) {
     return null;
   }
-
-  console.log("cards", cards);
-  console.log("charts", charts);
 
   const overviewMetrics = returnOverviewRepairMetrics(
     repairMetricsDocument,

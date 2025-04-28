@@ -81,7 +81,7 @@ function UsersQuery({}: UsersQueryProps) {
                     await handleUsersQuerySubmitGET({
                         accessToken,
                         authDispatch,
-                        dispatch: usersQueryDispatch,
+                        usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
                         navigate,
@@ -142,7 +142,7 @@ function UsersQuery({}: UsersQueryProps) {
                     await handleUsersQuerySubmitGET({
                         accessToken,
                         authDispatch,
-                        dispatch: usersQueryDispatch,
+                        usersQueryDispatch,
                         fetchAbortControllerRef,
                         isComponentMountedRef,
                         navigate,

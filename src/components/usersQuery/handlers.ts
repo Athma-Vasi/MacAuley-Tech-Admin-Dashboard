@@ -2,8 +2,9 @@ import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
-import { HttpServerResponse, UserDocument } from "../../types";
+import { HttpServerResponse, SafeBoxResult, UserDocument } from "../../types";
 import {
+    createSafeBoxResult,
     decodeJWTSafe,
     fetchSafe,
     parseServerResponseSafeAsync,
@@ -17,7 +18,7 @@ async function handleUsersQuerySubmitGET(
     {
         accessToken,
         authDispatch,
-        dispatch,
+        usersQueryDispatch,
         fetchAbortControllerRef,
         isComponentMountedRef,
         navigate,
@@ -27,7 +28,7 @@ async function handleUsersQuerySubmitGET(
     }: {
         accessToken: string;
         authDispatch: React.Dispatch<AuthDispatch>;
-        dispatch: React.Dispatch<any>;
+        usersQueryDispatch: React.Dispatch<any>;
         fetchAbortControllerRef: React.RefObject<
             AbortController | null
         >;
@@ -37,7 +38,14 @@ async function handleUsersQuerySubmitGET(
         url: RequestInfo | URL;
         usersQueryState: UsersQueryState;
     },
-) {
+): Promise<
+    SafeBoxResult<
+        {
+            userDocuments: Array<UserDocument>;
+            newAccessToken: string;
+        }
+    >
+> {
     fetchAbortControllerRef.current?.abort(
         "Previous request cancelled",
     );
@@ -70,7 +78,7 @@ async function handleUsersQuerySubmitGET(
         `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}&page=${currentPage}`,
     );
 
-    dispatch({
+    usersQueryDispatch({
         action: usersQueryAction.setIsLoading,
         payload: true,
     });
@@ -82,12 +90,12 @@ async function handleUsersQuerySubmitGET(
         );
 
         if (!isComponentMounted) {
-            return;
+            return createSafeBoxResult({ message: "Component unmounted" });
         }
 
         if (responseResult.err) {
             showBoundary(responseResult.val.data);
-            return;
+            return createSafeBoxResult({ message: "Error fetching data" });
         }
 
         const responseUnwrapped = responseResult.safeUnwrap().data;
@@ -96,7 +104,9 @@ async function handleUsersQuerySubmitGET(
             showBoundary(
                 new Error("No data returned from server"),
             );
-            return;
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
         }
 
         const jsonResult = await responseToJSONSafe<
@@ -106,12 +116,12 @@ async function handleUsersQuerySubmitGET(
         );
 
         if (!isComponentMounted) {
-            return;
+            return createSafeBoxResult({ message: "Component unmounted" });
         }
 
         if (jsonResult.err) {
             showBoundary(jsonResult.val.data);
-            return;
+            return createSafeBoxResult({ message: "Error parsing response" });
         }
 
         const serverResponse = jsonResult.safeUnwrap().data;
@@ -120,7 +130,9 @@ async function handleUsersQuerySubmitGET(
             showBoundary(
                 new Error("No data returned from server"),
             );
-            return;
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
         }
 
         console.time("--PARSING--");
@@ -131,11 +143,13 @@ async function handleUsersQuerySubmitGET(
         console.timeEnd("--PARSING--");
 
         if (!isComponentMounted) {
-            return;
+            return createSafeBoxResult({ message: "Component unmounted" });
         }
         if (parsedResult.err) {
             showBoundary(parsedResult.val.data);
-            return;
+            return createSafeBoxResult({
+                message: "Error parsing server response",
+            });
         }
 
         const parsedServerResponse = parsedResult.safeUnwrap().data;
@@ -143,10 +157,12 @@ async function handleUsersQuerySubmitGET(
             showBoundary(
                 new Error("No data returned from server"),
             );
-            return;
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
         }
 
-        const { accessToken, kind, message, triggerLogout } =
+        const { accessToken: newAccessToken, kind, message, triggerLogout } =
             parsedServerResponse;
 
         if (triggerLogout) {
@@ -169,7 +185,7 @@ async function handleUsersQuerySubmitGET(
 
             await localforage.clear();
             navigate("/");
-            return;
+            return createSafeBoxResult({ message: "Logout triggered" });
         }
 
         if (kind === "error") {
@@ -178,31 +194,31 @@ async function handleUsersQuerySubmitGET(
                     `Server error: ${message}`,
                 ),
             );
-            return;
+            return createSafeBoxResult({ message: "Server error" });
         }
 
         const decodedTokenResult = await decodeJWTSafe(
-            accessToken,
+            newAccessToken,
         );
 
         if (!isComponentMounted) {
-            return;
+            return createSafeBoxResult({ message: "Component unmounted" });
         }
 
         if (decodedTokenResult.err) {
             showBoundary(decodedTokenResult.val.data);
-            return;
+            return createSafeBoxResult({ message: "Error decoding token" });
         }
 
         const decodedToken = decodedTokenResult.safeUnwrap().data;
         if (!decodedToken) {
             showBoundary(new Error("Invalid token"));
-            return;
+            return createSafeBoxResult({ message: "Invalid token" });
         }
 
         authDispatch({
             action: authAction.setAccessToken,
-            payload: accessToken,
+            payload: newAccessToken,
         });
         authDispatch({
             action: authAction.setDecodedToken,
@@ -222,43 +238,52 @@ async function handleUsersQuerySubmitGET(
             }
         });
 
-        dispatch({
+        usersQueryDispatch({
             action: usersQueryAction.setResourceData,
             payload: sorted,
         });
 
-        dispatch({
+        usersQueryDispatch({
             action: usersQueryAction.setTotalDocuments,
-            payload: serverResponse.totalDocuments,
+            payload: parsedServerResponse.totalDocuments,
         });
 
-        dispatch({
+        usersQueryDispatch({
             action: usersQueryAction.setIsLoading,
             payload: false,
         });
 
-        dispatch({
+        usersQueryDispatch({
             action: usersQueryAction.setPages,
-            payload: serverResponse.pages,
+            payload: parsedServerResponse.pages,
         });
 
-        dispatch({
+        usersQueryDispatch({
             action: usersQueryAction.setNewQueryFlag,
             payload: true,
         });
 
-        dispatch({
+        usersQueryDispatch({
             action: usersQueryAction.setCurrentPage,
             payload: currentPage,
+        });
+
+        return createSafeBoxResult({
+            data: {
+                userDocuments: sorted,
+                newAccessToken,
+            },
+            kind: "success",
         });
     } catch (error: unknown) {
         if (
             !isComponentMounted ||
             fetchAbortController.signal.aborted
         ) {
-            return;
+            return createSafeBoxResult({});
         }
         showBoundary(error);
+        return createSafeBoxResult({});
     }
 }
 

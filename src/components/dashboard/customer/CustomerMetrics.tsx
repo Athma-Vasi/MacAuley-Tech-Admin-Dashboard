@@ -102,8 +102,6 @@ function CustomerMetrics(
           selectedDateCustomerMetrics,
         });
 
-        console.log("customerMetricsCharts", customerMetricsCharts);
-
         const customerMetricsCards = await createCustomerMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -155,11 +153,6 @@ function CustomerMetrics(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYYYYMMDD, storeLocationView]);
-
-  console.log(
-    "customerMetricsState",
-    customerMetricsState,
-  );
 
   if (!customerMetricsDocument || !cards || !charts) {
     return null;

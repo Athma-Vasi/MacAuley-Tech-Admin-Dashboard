@@ -5,6 +5,7 @@ import {
     VALID_BOOLEANS,
 } from "../../../constants";
 import { RepairMetricsDocument } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import { handleMetricsMock } from "../../testing/utils";
 import { MONTHS } from "../constants";
 import { AllStoreLocations } from "../types";
@@ -29,150 +30,160 @@ async function repairMetricsTestCallback(
         repairMetricCategory: RepairMetricCategory;
     },
 ) {
-    const metricsResult = await handleMetricsMock({
-        metricsView: "repairs",
-        productMetricCategory: "All Products",
-        repairMetricCategory,
-        storeLocation,
-    });
+    try {
+        const metricsResult = await handleMetricsMock({
+            metricsView: "repairs",
+            productMetricCategory: "All Products",
+            repairMetricCategory,
+            storeLocation,
+        });
 
-    if (metricsResult.err) {
-        return;
-    }
+        if (metricsResult.err) {
+            return;
+        }
 
-    const data = metricsResult.safeUnwrap().data;
-    if (data === undefined) {
-        return;
-    }
-    const [businesMetricsDocument] = data;
+        const data = metricsResult.safeUnwrap().data;
+        if (data === undefined) {
+            return;
+        }
+        const [businesMetricsDocument] = data;
 
-    const selectedDateRepairMetrics = returnSelectedDateRepairMetrics({
-        repairMetricsDocument: businesMetricsDocument as RepairMetricsDocument,
-        day: "01",
-        month: "January",
-        months: MONTHS,
-        year: "2025",
-    });
+        const selectedDateRepairMetrics = returnSelectedDateRepairMetrics({
+            repairMetricsDocument:
+                businesMetricsDocument as RepairMetricsDocument,
+            day: "01",
+            month: "January",
+            months: MONTHS,
+            year: "2025",
+        });
 
-    const { currentYear, previousYear } =
-        await createRepairMetricsCalendarCharts(selectedDateRepairMetrics);
+        const { currentYear, previousYear } =
+            await createRepairMetricsCalendarCharts(selectedDateRepairMetrics);
 
-    const repairMetricsCharts = await createRepairMetricsCharts({
-        repairMetricsDocument: businesMetricsDocument as RepairMetricsDocument,
-        months: MONTHS,
-        selectedDateRepairMetrics,
-    });
+        const repairMetricsCharts = await createRepairMetricsCharts({
+            repairMetricsDocument:
+                businesMetricsDocument as RepairMetricsDocument,
+            months: MONTHS,
+            selectedDateRepairMetrics,
+        });
 
-    describe(
-        `repairMetricsReducer 
+        describe(
+            `repairMetricsReducer 
         Store Location: ${storeLocation}
         Repair Metric: ${repairMetricCategory}
         `,
-        () => {
-            describe("repairMetricsReducer_setCalendarChartsData", () => {
-                it("should allow valid data", () => {
-                    const dispatch = {
-                        action: repairMetricsAction.setCalendarChartsData,
-                        payload: {
-                            currentYear,
-                            previousYear,
-                        },
-                    };
-
-                    const state = repairMetricsReducer_setCalendarChartsData(
-                        initialRepairMetricsState,
-                        dispatch,
-                    );
-
-                    expect(state.calendarChartsData).to.not.equal(null);
-                });
-                it("should not allow invalid data", () => {
-                    const initialCalendarChartsData =
-                        initialRepairMetricsState.calendarChartsData;
-                    INVALID_STRINGS.forEach((value) => {
+            () => {
+                describe("repairMetricsReducer_setCalendarChartsData", () => {
+                    it("should allow valid data", () => {
                         const dispatch = {
                             action: repairMetricsAction.setCalendarChartsData,
                             payload: {
-                                currentYear: value as any,
-                                previousYear: value as any,
+                                currentYear,
+                                previousYear,
                             },
                         };
+
                         const state =
                             repairMetricsReducer_setCalendarChartsData(
                                 initialRepairMetricsState,
-                                dispatch as any,
+                                dispatch,
                             );
-                        expect(state.calendarChartsData).to.equal(
-                            initialCalendarChartsData,
-                        );
+
+                        expect(state.calendarChartsData).to.not.equal(null);
+                    });
+                    it("should not allow invalid data", () => {
+                        const initialCalendarChartsData =
+                            initialRepairMetricsState.calendarChartsData;
+                        INVALID_STRINGS.forEach((value) => {
+                            const dispatch = {
+                                action:
+                                    repairMetricsAction.setCalendarChartsData,
+                                payload: {
+                                    currentYear: value as any,
+                                    previousYear: value as any,
+                                },
+                            };
+                            const state =
+                                repairMetricsReducer_setCalendarChartsData(
+                                    initialRepairMetricsState,
+                                    dispatch as any,
+                                );
+                            expect(state.calendarChartsData).to.equal(
+                                initialCalendarChartsData,
+                            );
+                        });
                     });
                 });
-            });
 
-            describe("repairMetricsReducer_setCharts", () => {
-                it("should allow valid data", () => {
-                    const dispatch = {
-                        action: repairMetricsAction.setCharts,
-                        payload: repairMetricsCharts,
-                    };
-
-                    const state = repairMetricsReducer_setCharts(
-                        initialRepairMetricsState,
-                        dispatch,
-                    );
-
-                    expect(state.charts).to.not.equal(null);
-                });
-                it("should not allow invalid data", () => {
-                    const initialCharts = initialRepairMetricsState.charts;
-                    INVALID_STRINGS.forEach((value) => {
+                describe("repairMetricsReducer_setCharts", () => {
+                    it("should allow valid data", () => {
                         const dispatch = {
                             action: repairMetricsAction.setCharts,
-                            payload: value as any,
+                            payload: repairMetricsCharts,
                         };
-                        const state = repairMetricsReducer_setCharts(
-                            initialRepairMetricsState,
-                            dispatch as any,
-                        );
-                        expect(state.charts).to.equal(initialCharts);
-                    });
-                });
-            });
 
-            describe("repairMetricsReducer_setIsGenerating", () => {
-                it("should allow valid data", () => {
-                    VALID_BOOLEANS.forEach((value) => {
-                        const dispatch = {
-                            action: repairMetricsAction.setIsGenerating,
-                            payload: value,
-                        };
-                        const state = repairMetricsReducer_setIsGenerating(
-                            initialRepairMetricsState,
-                            dispatch as any,
-                        );
-                        expect(state.isGenerating).to.equal(value);
-                    });
-                });
-                it("should not allow invalid data", () => {
-                    const initialIsGenerating =
-                        initialRepairMetricsState.isGenerating;
-                    INVALID_BOOLEANS.forEach((value) => {
-                        const dispatch = {
-                            action: repairMetricsAction.setIsGenerating,
-                            payload: value as any,
-                        };
-                        const state = repairMetricsReducer_setIsGenerating(
+                        const state = repairMetricsReducer_setCharts(
                             initialRepairMetricsState,
                             dispatch,
                         );
-                        expect(state.isGenerating).to.equal(
-                            initialIsGenerating,
-                        );
+
+                        expect(state.charts).to.not.equal(null);
+                    });
+                    it("should not allow invalid data", () => {
+                        const initialCharts = initialRepairMetricsState.charts;
+                        INVALID_STRINGS.forEach((value) => {
+                            const dispatch = {
+                                action: repairMetricsAction.setCharts,
+                                payload: value as any,
+                            };
+                            const state = repairMetricsReducer_setCharts(
+                                initialRepairMetricsState,
+                                dispatch as any,
+                            );
+                            expect(state.charts).to.equal(initialCharts);
+                        });
                     });
                 });
-            });
-        },
-    );
+
+                describe("repairMetricsReducer_setIsGenerating", () => {
+                    it("should allow valid data", () => {
+                        VALID_BOOLEANS.forEach((value) => {
+                            const dispatch = {
+                                action: repairMetricsAction.setIsGenerating,
+                                payload: value,
+                            };
+                            const state = repairMetricsReducer_setIsGenerating(
+                                initialRepairMetricsState,
+                                dispatch as any,
+                            );
+                            expect(state.isGenerating).to.equal(value);
+                        });
+                    });
+                    it("should not allow invalid data", () => {
+                        const initialIsGenerating =
+                            initialRepairMetricsState.isGenerating;
+                        INVALID_BOOLEANS.forEach((value) => {
+                            const dispatch = {
+                                action: repairMetricsAction.setIsGenerating,
+                                payload: value as any,
+                            };
+                            const state = repairMetricsReducer_setIsGenerating(
+                                initialRepairMetricsState,
+                                dispatch,
+                            );
+                            expect(state.isGenerating).to.equal(
+                                initialIsGenerating,
+                            );
+                        });
+                    });
+                });
+            },
+        );
+
+        return createSafeBoxResult({ kind: "success" });
+    } catch (error) {
+        return createSafeBoxResult({ data: error, kind: "error" });
+    }
 }
 
 await Promise.all(
