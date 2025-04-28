@@ -8,7 +8,7 @@ import {
 } from "../../../regexes";
 import { repairMetricsAction } from "./actions";
 
-const repairMetricsDocumentZ = z.object({
+const repairMetricsDocumentZod = z.object({
     _id: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -72,13 +72,55 @@ const setRepairCalendarChartsDataDispatchZod = z.object({
     }),
 });
 
-const repairMetricsBarChartsZod = z.object({
-    revenue: z.array(
-        z.object({}),
-    ),
-    unitsRepaired: z.array(
-        z.object({}),
-    ),
+const repairDailyRevenueBarChartsZod = z.array(
+    z.object({
+        Days: z.string().regex(DAYS_REGEX),
+        Revenue: z.number(),
+    }),
+);
+const repairDailyUnitsRepairedBarChartsZod = z.array(
+    z.object({
+        Days: z.string().regex(DAYS_REGEX),
+        "Units Repaired": z.number(),
+    }),
+);
+const repairDailyRURBarChartsZod = z.object({
+    revenue: repairDailyRevenueBarChartsZod,
+    unitsRepaired: repairDailyUnitsRepairedBarChartsZod,
+});
+
+const repairMonthlyRevenueBarChartsZod = z.array(
+    z.object({
+        Months: z.string().regex(MONTHS_REGEX),
+        Revenue: z.number(),
+    }),
+);
+const repairMonthlyUnitsRepairedBarChartsZod = z.array(
+    z.object({
+        Months: z.string().regex(MONTHS_REGEX),
+        "Units Repaired": z.number(),
+    }),
+);
+const repairMonthlyRURBarChartsZod = z.object({
+    revenue: repairMonthlyRevenueBarChartsZod,
+    unitsRepaired: repairMonthlyUnitsRepairedBarChartsZod,
+});
+
+const repairYearlyRevenueBarChartsZod = z.array(
+    z.object({
+        Years: z.string().regex(YEARS_REGEX),
+        Revenue: z.number(),
+    }),
+);
+const repairYearlyUnitsRepairedBarChartsZod = z.array(
+    z.object({
+        Years: z.string().regex(YEARS_REGEX),
+        "Units Repaired": z.number(),
+    }),
+);
+const repairYearlyRURBarChartsZod = z.object({
+    revenue: repairYearlyRevenueBarChartsZod,
+    unitsRepaired: repairYearlyUnitsRepairedBarChartsZod,
 });
 
 const repairMetricsLineChartsZod = z.object({
@@ -110,15 +152,15 @@ const setRepairChartsDispatchZod = z.object({
     action: z.literal(repairMetricsAction.setCharts),
     payload: z.object({
         dailyCharts: z.object({
-            bar: repairMetricsBarChartsZod,
+            bar: repairDailyRURBarChartsZod,
             line: repairMetricsLineChartsZod,
         }),
         monthlyCharts: z.object({
-            bar: repairMetricsBarChartsZod,
+            bar: repairMonthlyRURBarChartsZod,
             line: repairMetricsLineChartsZod,
         }),
         yearlyCharts: z.object({
-            bar: repairMetricsBarChartsZod,
+            bar: repairYearlyRURBarChartsZod,
             line: repairMetricsLineChartsZod,
         }),
     }),
@@ -145,4 +187,4 @@ export {
   isGenerating: boolean;
  */
 
-export { repairMetricsDocumentZ };
+export { repairMetricsDocumentZod };

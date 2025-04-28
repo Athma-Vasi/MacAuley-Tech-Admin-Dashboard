@@ -24,7 +24,7 @@ import { customerMetricsDocumentZ } from "./customer/schemas";
 import { financialMetricsDocumentZod } from "./financial/schemas";
 import { productMetricsDocumentZod } from "./product/schemas";
 import { ProductMetricCategory } from "./product/types";
-import { repairMetricsDocumentZ } from "./repair/schemas";
+import { repairMetricsDocumentZod } from "./repair/schemas";
 import { RepairMetricCategory } from "./repair/types";
 import {
     AllStoreLocations,
@@ -202,7 +202,7 @@ async function handleStoreCategoryClick(
                 ? financialMetricsDocumentZod
                 : metricsView === "products"
                 ? productMetricsDocumentZod
-                : repairMetricsDocumentZ,
+                : repairMetricsDocumentZod,
         });
         console.timeEnd("--PARSING--");
 
