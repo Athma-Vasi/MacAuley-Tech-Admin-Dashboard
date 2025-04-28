@@ -106,6 +106,8 @@ function ProductMetrics(
           selectedDateProductMetrics,
         });
 
+        console.log("productMetricsCharts", productMetricsCharts);
+
         const productMetricsCards = await createProductMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -147,6 +149,8 @@ function ProductMetrics(
         showBoundary(error);
       }
     }
+
+    console.log("productMetricsState", productMetricsState);
 
     if (productMetricsDocument || !cards || !charts) {
       generateProductChartsCards();

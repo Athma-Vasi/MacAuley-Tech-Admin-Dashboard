@@ -22,7 +22,7 @@ import {
 import { dashboardAction } from "./actions";
 import { customerMetricsDocumentZ } from "./customer/schemas";
 import { financialMetricsDocumentZod } from "./financial/schemas";
-import { productMetricsDocumentZ } from "./product/schemas";
+import { productMetricsDocumentZod } from "./product/schemas";
 import { ProductMetricCategory } from "./product/types";
 import { repairMetricsDocumentZ } from "./repair/schemas";
 import { RepairMetricCategory } from "./repair/types";
@@ -201,7 +201,7 @@ async function handleStoreCategoryClick(
                 : metricsView === "financials"
                 ? financialMetricsDocumentZod
                 : metricsView === "products"
-                ? productMetricsDocumentZ
+                ? productMetricsDocumentZod
                 : repairMetricsDocumentZ,
         });
         console.timeEnd("--PARSING--");

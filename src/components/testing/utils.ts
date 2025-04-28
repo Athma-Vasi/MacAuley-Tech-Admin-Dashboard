@@ -15,7 +15,7 @@ import {
 } from "../../utils";
 import { customerMetricsDocumentZ } from "../dashboard/customer/schemas";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
-import { productMetricsDocumentZ } from "../dashboard/product/schemas";
+import { productMetricsDocumentZod } from "../dashboard/product/schemas";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZ } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
@@ -331,7 +331,7 @@ async function handleMetricsMock(
                 : metricsView === "financials"
                 ? financialMetricsDocumentZod
                 : metricsView === "products"
-                ? productMetricsDocumentZ
+                ? productMetricsDocumentZod
                 : repairMetricsDocumentZ,
         });
 

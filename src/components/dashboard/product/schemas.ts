@@ -8,13 +8,13 @@ import {
 } from "../../../regexes";
 import { productMetricsAction } from "./actions";
 
-const rusZ = z.object({
+const rusZod = z.object({
     total: z.number().default(0),
     online: z.number().default(0),
     inStore: z.number().default(0),
 });
 
-const productMetricsDocumentZ = z.object({
+const productMetricsDocumentZod = z.object({
     _id: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -24,18 +24,18 @@ const productMetricsDocumentZ = z.object({
     yearlyMetrics: z.array(
         z.object({
             year: z.string().regex(YEARS_REGEX),
-            revenue: rusZ,
-            unitsSold: rusZ,
+            revenue: rusZod,
+            unitsSold: rusZod,
             monthlyMetrics: z.array(
                 z.object({
                     month: z.string().regex(MONTHS_REGEX),
-                    revenue: rusZ,
-                    unitsSold: rusZ,
+                    revenue: rusZod,
+                    unitsSold: rusZod,
                     dailyMetrics: z.array(
                         z.object({
                             day: z.string().regex(DAYS_REGEX),
-                            revenue: rusZ,
-                            unitsSold: rusZ,
+                            revenue: rusZod,
+                            unitsSold: rusZod,
                         }),
                     ).optional(),
                 }),
@@ -87,64 +87,153 @@ const setProductCalendarChartsDataDispatchZod = z.object({
     }),
 });
 
-const barLinePieChartsZod = z.object({
-    bar: z.object({
-        total: z.array(z.object({})),
-        overview: z.array(z.object({})),
-        online: z.array(z.object({})),
-        inStore: z.array(z.object({})),
-    }),
-    line: z.object({
-        total: z.array(z.object({
-            id: z.literal("Total"),
-            data: z.array(z.object({
-                x: z.string(),
-                y: z.number(),
-            })),
+const productLineChartsZod = z.object({
+    total: z.array(z.object({
+        id: z.literal("Total"),
+        data: z.array(z.object({
+            x: z.string(),
+            y: z.number(),
         })),
-        overview: z.array(z.object({
-            id: z.union([z.literal("Online"), z.literal("In-Store")]),
-            data: z.array(z.object({
-                x: z.string(),
-                y: z.number(),
-            })),
-        })),
-        online: z.array(z.object({
-            id: z.literal("Online"),
-            data: z.array(z.object({
-                x: z.string(),
-                y: z.number(),
-            })),
-        })),
-        inStore: z.array(z.object({
-            id: z.literal("In-Store"),
-            data: z.array(z.object({
-                x: z.string(),
-                y: z.number(),
-            })),
-        })),
-    }),
-    pie: z.array(z.object({
-        id: z.string(),
-        label: z.string(),
-        value: z.number(),
     })),
+    overview: z.array(z.object({
+        id: z.union([z.literal("Online"), z.literal("In-Store")]),
+        data: z.array(z.object({
+            x: z.string(),
+            y: z.number(),
+        })),
+    })),
+    online: z.array(z.object({
+        id: z.literal("Online"),
+        data: z.array(z.object({
+            x: z.string(),
+            y: z.number(),
+        })),
+    })),
+    inStore: z.array(z.object({
+        id: z.literal("In-Store"),
+        data: z.array(z.object({
+            x: z.string(),
+            y: z.number(),
+        })),
+    })),
+});
+
+const productPieChartsZod = z.array(z.object({
+    id: z.string(),
+    label: z.string(),
+    value: z.number(),
+}));
+
+const productDailyInStoreBarChartsZod = z.array(z.object({
+    Days: z.string(),
+    "In-Store": z.number(),
+}));
+const productDailyOnlineBarChartsZod = z.array(z.object({
+    Days: z.string(),
+    "Online": z.number(),
+}));
+const productDailyOverviewBarChartsZod = z.array(z.object({
+    Days: z.string(),
+    "In-Store": z.number(),
+    "Online": z.number(),
+}));
+const productDailyTotalBarChartsZod = z.array(z.object({
+    Days: z.string(),
+    Total: z.number(),
+}));
+const productDailyRUSBarChartsZod = z.object({
+    total: productDailyTotalBarChartsZod,
+    online: productDailyOnlineBarChartsZod,
+    inStore: productDailyInStoreBarChartsZod,
+    overview: productDailyOverviewBarChartsZod,
+});
+
+const productMonthlyInStoreBarChartsZod = z.array(z.object({
+    Months: z.string(),
+    "In-Store": z.number(),
+}));
+const productMonthlyOnlineBarChartsZod = z.array(z.object({
+    Months: z.string(),
+    "Online": z.number(),
+}));
+const productMonthlyOverviewBarChartsZod = z.array(z.object({
+    Months: z.string(),
+    "In-Store": z.number(),
+    "Online": z.number(),
+}));
+const productMonthlyTotalBarChartsZod = z.array(z.object({
+    Months: z.string(),
+    Total: z.number(),
+}));
+const productMonthlyRUSBarChartsZod = z.object({
+    total: productMonthlyTotalBarChartsZod,
+    online: productMonthlyOnlineBarChartsZod,
+    inStore: productMonthlyInStoreBarChartsZod,
+    overview: productMonthlyOverviewBarChartsZod,
+});
+
+const productYearlyInStoreBarChartsZod = z.array(z.object({
+    Years: z.string(),
+    "In-Store": z.number(),
+}));
+const productYearlyOnlineBarChartsZod = z.array(z.object({
+    Years: z.string(),
+    "Online": z.number(),
+}));
+const productYearlyOverviewBarChartsZod = z.array(z.object({
+    Years: z.string(),
+    "In-Store": z.number(),
+    "Online": z.number(),
+}));
+const productYearlyTotalBarChartsZod = z.array(z.object({
+    Years: z.string(),
+    Total: z.number(),
+}));
+const productYearlyRUSBarChartsZod = z.object({
+    total: productYearlyTotalBarChartsZod,
+    online: productYearlyOnlineBarChartsZod,
+    inStore: productYearlyInStoreBarChartsZod,
+    overview: productYearlyOverviewBarChartsZod,
 });
 
 const setProductChartsDispatchZod = z.object({
     action: z.literal(productMetricsAction.setCharts),
     payload: z.object({
         dailyCharts: z.object({
-            unitsSold: barLinePieChartsZod,
-            revenue: barLinePieChartsZod,
+            revenue: z.object({
+                bar: productDailyRUSBarChartsZod,
+                line: productLineChartsZod,
+                pie: productPieChartsZod,
+            }),
+            unitsSold: z.object({
+                bar: productDailyRUSBarChartsZod,
+                line: productLineChartsZod,
+                pie: productPieChartsZod,
+            }),
         }),
         monthlyCharts: z.object({
-            unitsSold: barLinePieChartsZod,
-            revenue: barLinePieChartsZod,
+            revenue: z.object({
+                bar: productMonthlyRUSBarChartsZod,
+                line: productLineChartsZod,
+                pie: productPieChartsZod,
+            }),
+            unitsSold: z.object({
+                bar: productMonthlyRUSBarChartsZod,
+                line: productLineChartsZod,
+                pie: productPieChartsZod,
+            }),
         }),
         yearlyCharts: z.object({
-            unitsSold: barLinePieChartsZod,
-            revenue: barLinePieChartsZod,
+            revenue: z.object({
+                bar: productYearlyRUSBarChartsZod,
+                line: productLineChartsZod,
+                pie: productPieChartsZod,
+            }),
+            unitsSold: z.object({
+                bar: productYearlyRUSBarChartsZod,
+                line: productLineChartsZod,
+                pie: productPieChartsZod,
+            }),
         }),
     }),
 });
@@ -155,7 +244,7 @@ const setIsGeneratingDispatchZod = z.object({
 });
 
 export {
-    productMetricsDocumentZ,
+    productMetricsDocumentZod,
     setIsGeneratingDispatchZod,
     setProductCalendarChartsDataDispatchZod,
     setProductChartsDispatchZod,
