@@ -84,6 +84,11 @@ function customerMetricsReducer_setCharts(
     zSchema: setCustomerChartsDispatch,
   });
 
+  console.group("customerMetricsReducer_setCharts");
+  console.log("parsedResult", parsedResult);
+  console.log("dispatch", dispatch);
+  console.groupEnd();
+
   if (parsedResult.err) {
     return state;
   }

@@ -1,4 +1,3 @@
-import { LoadingOverlay, Stack } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -156,6 +155,11 @@ function CustomerMetrics(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYYYYMMDD, storeLocationView]);
+
+  console.log(
+    "customerMetricsState",
+    customerMetricsState,
+  );
 
   if (!customerMetricsDocument || !cards || !charts) {
     return null;

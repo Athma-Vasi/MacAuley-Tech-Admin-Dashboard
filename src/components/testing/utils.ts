@@ -13,7 +13,7 @@ import {
     parseServerResponseSafeAsync,
     responseToJSONSafe,
 } from "../../utils";
-import { customerMetricsDocumentZ } from "../dashboard/customer/schemas";
+import { customerMetricsDocumentZod } from "../dashboard/customer/schemas";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { productMetricsDocumentZod } from "../dashboard/product/schemas";
 import { ProductMetricCategory } from "../dashboard/product/types";
@@ -327,7 +327,7 @@ async function handleMetricsMock(
         const parsedResult = await parseServerResponseSafeAsync({
             object: serverResponse,
             zSchema: metricsView === "customers"
-                ? customerMetricsDocumentZ
+                ? customerMetricsDocumentZod
                 : metricsView === "financials"
                 ? financialMetricsDocumentZod
                 : metricsView === "products"

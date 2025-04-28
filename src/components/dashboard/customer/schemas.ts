@@ -7,7 +7,7 @@ import {
 } from "../../../regexes";
 import { customerMetricsAction } from "./actions";
 
-const customersZ = z.object({
+const customersZod = z.object({
     churnRate: z.number().default(0),
     retentionRate: z.number().default(0),
     new: z.object({
@@ -31,7 +31,7 @@ const customersZ = z.object({
     total: z.number().default(0),
 });
 
-const customerMetricsDocumentZ = z.object({
+const customerMetricsDocumentZod = z.object({
     _id: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -45,15 +45,15 @@ const customerMetricsDocumentZ = z.object({
         yearlyMetrics: z.array(
             z.object({
                 year: z.string().regex(YEARS_REGEX),
-                customers: customersZ,
+                customers: customersZod,
                 monthlyMetrics: z.array(
                     z.object({
                         month: z.string().regex(MONTHS_REGEX),
-                        customers: customersZ,
+                        customers: customersZod,
                         dailyMetrics: z.array(
                             z.object({
                                 day: z.string().regex(DAYS_REGEX),
-                                customers: customersZ,
+                                customers: customersZod,
                             }),
                         ),
                     }),
@@ -93,15 +93,175 @@ const setCustomerCalendarChartsDispatchZod = z.object({
     }),
 });
 
-const customerNewReturningBarChartsZod = z.object({
-    total: z.array(z.object({})),
-    all: z.array(z.object({})),
-    overview: z.array(z.object({})),
-    sales: z.array(z.object({})),
-    online: z.array(z.object({})),
-    inStore: z.array(z.object({})),
-    repair: z.array(z.object({})),
+const customerDailyNRAllBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    "In Store": z.number(),
+    Online: z.number(),
+    Repair: z.number(),
+}));
+const customerDailyNRInStoreBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    "In Store": z.number(),
+}));
+const customerDailyNROnlineBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    Online: z.number(),
+}));
+const customerDailyNROverviewBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    Sales: z.number(),
+    Repair: z.number(),
+}));
+const customerDailyNRRepairBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    Repair: z.number(),
+}));
+const customerDailyNRSalesBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    "In Store": z.number(),
+    Online: z.number(),
+}));
+const customerDailyNRTotalBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    Total: z.number(),
+}));
+const customerDailyNRBarChartsZod = z.object({
+    all: customerDailyNRAllBarChartsZod,
+    inStore: customerDailyNRInStoreBarChartsZod,
+    online: customerDailyNROnlineBarChartsZod,
+    overview: customerDailyNROverviewBarChartsZod,
+    repair: customerDailyNRRepairBarChartsZod,
+    sales: customerDailyNRSalesBarChartsZod,
+    total: customerDailyNRTotalBarChartsZod,
 });
+
+const customerDailyCRChurnBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    "Churn Rate": z.number(),
+}));
+const customerDailyCRRetentionBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    "Retention Rate": z.number(),
+}));
+const customerDailyCROverviewBarChartsZod = z.array(z.object({
+    Days: z.string().regex(DAYS_REGEX),
+    "Churn Rate": z.number(),
+    "Retention Rate": z.number(),
+}));
+
+const customerMonthlyNRAllBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    "In Store": z.number(),
+    Online: z.number(),
+    Repair: z.number(),
+}));
+const customerMonthlyNRInStoreBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    "In Store": z.number(),
+}));
+const customerMonthlyNROnlineBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    Online: z.number(),
+}));
+const customerMonthlyNROverviewBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    Sales: z.number(),
+    Repair: z.number(),
+}));
+const customerMonthlyNRRepairBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    Repair: z.number(),
+}));
+const customerMonthlyNRSalesBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    "In Store": z.number(),
+    Online: z.number(),
+}));
+const customerMonthlyNRTotalBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    Total: z.number(),
+}));
+
+const customerMonthlyNRBarChartsZod = z.object({
+    all: customerMonthlyNRAllBarChartsZod,
+    inStore: customerMonthlyNRInStoreBarChartsZod,
+    online: customerMonthlyNROnlineBarChartsZod,
+    overview: customerMonthlyNROverviewBarChartsZod,
+    repair: customerMonthlyNRRepairBarChartsZod,
+    sales: customerMonthlyNRSalesBarChartsZod,
+    total: customerMonthlyNRTotalBarChartsZod,
+});
+
+const customerMonthlyCRChurnBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    "Churn Rate": z.number(),
+}));
+const customerMonthlyCRRetentionBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    "Retention Rate": z.number(),
+}));
+const customerMonthlyCROverviewBarChartsZod = z.array(z.object({
+    Months: z.string().regex(MONTHS_REGEX),
+    "Churn Rate": z.number(),
+    "Retention Rate": z.number(),
+}));
+
+const customerYearlyNRAllBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    "In Store": z.number(),
+    Online: z.number(),
+    Repair: z.number(),
+}));
+const customerYearlyNRInStoreBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    "In Store": z.number(),
+}));
+const customerYearlyNROnlineBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    Online: z.number(),
+}));
+const customerYearlyNROverviewBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    Sales: z.number(),
+    Repair: z.number(),
+}));
+const customerYearlyNRRepairBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    Repair: z.number(),
+}));
+const customerYearlyNRSalesBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    "In Store": z.number(),
+    Online: z.number(),
+}));
+const customerYearlyNRTotalBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    Total: z.number(),
+}));
+
+const customerYearlyNRBarChartsZod = z.object({
+    all: customerYearlyNRAllBarChartsZod,
+    inStore: customerYearlyNRInStoreBarChartsZod,
+    online: customerYearlyNROnlineBarChartsZod,
+    overview: customerYearlyNROverviewBarChartsZod,
+    repair: customerYearlyNRRepairBarChartsZod,
+    sales: customerYearlyNRSalesBarChartsZod,
+    total: customerYearlyNRTotalBarChartsZod,
+});
+
+const customerYearlyCRChurnBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    "Churn Rate": z.number(),
+}));
+const customerYearlyCRRetentionBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    "Retention Rate": z.number(),
+}));
+const customerYearlyCROverviewBarChartsZod = z.array(z.object({
+    Years: z.string().regex(YEARS_REGEX),
+    "Churn Rate": z.number(),
+    "Retention Rate": z.number(),
+}));
 
 const lineChartsDataZod = z.object({
     id: z.string(),
@@ -134,12 +294,6 @@ const customerNewReturningPieChartsZod = z.object({
     all: z.array(pieChartsDataZod),
 });
 
-const customerChurnBarChartsZod = z.object({
-    overview: z.array(z.object({})),
-    churnRate: z.array(z.object({})),
-    retentionRate: z.array(z.object({})),
-});
-
 const customerChurnLineChartsZod = z.object({
     overview: z.array(lineChartsDataZod),
     churnRate: z.array(lineChartsDataZod),
@@ -148,28 +302,70 @@ const customerChurnLineChartsZod = z.object({
 
 const customerChurnPieCharts = z.array(pieChartsDataZod);
 
-const customerChartsBaseZod = z.object({
-    new: z.object({
-        bar: customerNewReturningBarChartsZod,
-        line: customerNewReturningLineChartsZod,
-        pie: customerNewReturningPieChartsZod,
-    }),
-    returning: z.object({
-        bar: customerNewReturningBarChartsZod,
-        line: customerNewReturningLineChartsZod,
-        pie: customerNewReturningPieChartsZod,
-    }),
-    churnRetention: z.object({
-        bar: customerChurnBarChartsZod,
-        line: customerChurnLineChartsZod,
-        pie: customerChurnPieCharts,
-    }),
-});
-
 const customerChartsZod = z.object({
-    dailyCharts: customerChartsBaseZod,
-    monthlyCharts: customerChartsBaseZod,
-    yearlyCharts: customerChartsBaseZod,
+    dailyCharts: z.object({
+        churnRetention: z.object({
+            bar: z.object({
+                churnRate: customerDailyCRChurnBarChartsZod,
+                retentionRate: customerDailyCRRetentionBarChartsZod,
+                overview: customerDailyCROverviewBarChartsZod,
+            }),
+            line: customerChurnLineChartsZod,
+            pie: customerChurnPieCharts,
+        }),
+        new: z.object({
+            bar: customerDailyNRBarChartsZod,
+            line: customerNewReturningLineChartsZod,
+            pie: customerNewReturningPieChartsZod,
+        }),
+        returning: z.object({
+            bar: customerDailyNRBarChartsZod,
+            line: customerNewReturningLineChartsZod,
+            pie: customerNewReturningPieChartsZod,
+        }),
+    }),
+    monthlyCharts: z.object({
+        churnRetention: z.object({
+            bar: z.object({
+                churnRate: customerMonthlyCRChurnBarChartsZod,
+                retentionRate: customerMonthlyCRRetentionBarChartsZod,
+                overview: customerMonthlyCROverviewBarChartsZod,
+            }),
+            line: customerChurnLineChartsZod,
+            pie: customerChurnPieCharts,
+        }),
+        new: z.object({
+            bar: customerMonthlyNRBarChartsZod,
+            line: customerNewReturningLineChartsZod,
+            pie: customerNewReturningPieChartsZod,
+        }),
+        returning: z.object({
+            bar: customerMonthlyNRBarChartsZod,
+            line: customerNewReturningLineChartsZod,
+            pie: customerNewReturningPieChartsZod,
+        }),
+    }),
+    yearlyCharts: z.object({
+        churnRetention: z.object({
+            bar: z.object({
+                churnRate: customerYearlyCRChurnBarChartsZod,
+                retentionRate: customerYearlyCRRetentionBarChartsZod,
+                overview: customerYearlyCROverviewBarChartsZod,
+            }),
+            line: customerChurnLineChartsZod,
+            pie: customerChurnPieCharts,
+        }),
+        new: z.object({
+            bar: customerYearlyNRBarChartsZod,
+            line: customerNewReturningLineChartsZod,
+            pie: customerNewReturningPieChartsZod,
+        }),
+        returning: z.object({
+            bar: customerYearlyNRBarChartsZod,
+            line: customerNewReturningLineChartsZod,
+            pie: customerNewReturningPieChartsZod,
+        }),
+    }),
 });
 
 const setCustomerChartsDispatch = z.object({
@@ -183,7 +379,7 @@ const setCustomerIsGeneratingDispatch = z.object({
 });
 
 export {
-    customerMetricsDocumentZ,
+    customerMetricsDocumentZod,
     setCustomerCalendarChartsDispatchZod,
     setCustomerChartsDispatch,
     setCustomerIsGeneratingDispatch,

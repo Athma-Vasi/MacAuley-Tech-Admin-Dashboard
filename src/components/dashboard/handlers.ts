@@ -20,7 +20,7 @@ import {
     setItemForageSafe,
 } from "../../utils";
 import { dashboardAction } from "./actions";
-import { customerMetricsDocumentZ } from "./customer/schemas";
+import { customerMetricsDocumentZod } from "./customer/schemas";
 import { financialMetricsDocumentZod } from "./financial/schemas";
 import { productMetricsDocumentZod } from "./product/schemas";
 import { ProductMetricCategory } from "./product/types";
@@ -197,7 +197,7 @@ async function handleStoreCategoryClick(
         const parsedResult = await parseServerResponseSafeAsync({
             object: serverResponse,
             zSchema: metricsView === "customers"
-                ? customerMetricsDocumentZ
+                ? customerMetricsDocumentZod
                 : metricsView === "financials"
                 ? financialMetricsDocumentZod
                 : metricsView === "products"
