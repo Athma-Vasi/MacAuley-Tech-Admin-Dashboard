@@ -120,6 +120,8 @@ function PERT({
     ])
     : charts.profit;
 
+  console.log("financialMetricsCharts", financialMetricsCharts);
+
   const {
     expandBarChartNavigateLink,
     expandCalendarChartNavigateLink,

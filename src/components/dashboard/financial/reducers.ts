@@ -84,6 +84,8 @@ function financialMetricsReducer_setCharts(
     zSchema: setFinancialChartsDispatchZod,
   });
 
+  console.log("parsedResult", parsedResult);
+
   if (parsedResult.err) {
     return state;
   }

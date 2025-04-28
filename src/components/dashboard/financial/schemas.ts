@@ -61,7 +61,7 @@ const financialMetricsDocumentZ = z.object({
     ),
 });
 
-const pertZCharts = z.object({
+const financialPERTCalendarChartsZod = z.object({
     total: z.array(z.object({ day: z.string(), value: z.number() })),
     repair: z.array(z.object({ day: z.string(), value: z.number() })),
     sales: z.array(z.object({ day: z.string(), value: z.number() })),
@@ -69,7 +69,7 @@ const pertZCharts = z.object({
     online: z.array(z.object({ day: z.string(), value: z.number() })),
 });
 
-const financialMetricsCalendarChartsZ = z.object({
+const financialMetricsCalendarChartsZod = z.object({
     otherMetrics: z.object({
         averageOrderValue: z.array(
             z.object({ day: z.string(), value: z.number() }),
@@ -81,28 +81,145 @@ const financialMetricsCalendarChartsZ = z.object({
             z.object({ day: z.string(), value: z.number() }),
         ),
     }),
-    expenses: pertZCharts,
-    profit: pertZCharts,
-    revenue: pertZCharts,
-    transactions: pertZCharts,
+    expenses: financialPERTCalendarChartsZod,
+    profit: financialPERTCalendarChartsZod,
+    revenue: financialPERTCalendarChartsZod,
+    transactions: financialPERTCalendarChartsZod,
 });
 
 const setFinancialCalendarChartsDispatchZod = z.object({
     action: z.literal(financialMetricsAction.setCalendarChartsData),
     payload: z.object({
-        currentYear: financialMetricsCalendarChartsZ,
-        previousYear: financialMetricsCalendarChartsZ,
+        currentYear: financialMetricsCalendarChartsZod,
+        previousYear: financialMetricsCalendarChartsZod,
     }),
 });
 
-const barPERTChartsZod = z.object({
-    total: z.array(z.object({})),
-    all: z.array(z.object({})),
-    overview: z.array(z.object({})),
-    repair: z.array(z.object({})),
-    sales: z.array(z.object({})),
-    inStore: z.array(z.object({})),
-    online: z.array(z.object({})),
+const dailyBarAllPERTChartsZod = z.object({
+    Days: z.string(),
+    Repair: z.number(),
+    "In-Store": z.number(),
+    Online: z.number(),
+});
+const dailyBarInStorePERTChartsZod = z.object({
+    Days: z.string(),
+    "In-Store": z.number(),
+});
+const dailyBarOnlinePERTChartsZod = z.object({
+    Days: z.string(),
+    Online: z.number(),
+});
+const dailyBarOverviewPERTChartsZod = z.object({
+    Days: z.string(),
+    Repair: z.number(),
+    Sales: z.number(),
+});
+const dailyBarRepairPERTChartsZod = z.object({
+    Days: z.string(),
+    Repair: z.number(),
+});
+const dailyBarSalesPERTChartsZod = z.object({
+    Days: z.string(),
+    "In-Store": z.number(),
+    Online: z.number(),
+});
+const dailyBarTotalPERTChartsZod = z.object({
+    Days: z.string(),
+    Total: z.number(),
+});
+
+const dailyBarPERTChartsZod = z.object({
+    total: z.array(dailyBarTotalPERTChartsZod),
+    all: z.array(dailyBarAllPERTChartsZod),
+    overview: z.array(dailyBarOverviewPERTChartsZod),
+    repair: z.array(dailyBarRepairPERTChartsZod),
+    sales: z.array(dailyBarSalesPERTChartsZod),
+    inStore: z.array(dailyBarInStorePERTChartsZod),
+    online: z.array(dailyBarOnlinePERTChartsZod),
+});
+
+const monthlyBarAllPERTChartsZod = z.object({
+    Months: z.string(),
+    Repair: z.number(),
+    "In-Store": z.number(),
+    Online: z.number(),
+});
+const monthlyBarInStorePERTChartsZod = z.object({
+    Months: z.string(),
+    "In-Store": z.number(),
+});
+const monthlyBarOnlinePERTChartsZod = z.object({
+    Months: z.string(),
+    Online: z.number(),
+});
+const monthlyBarOverviewPERTChartsZod = z.object({
+    Months: z.string(),
+    Repair: z.number(),
+    Sales: z.number(),
+});
+const monthlyBarRepairPERTChartsZod = z.object({
+    Months: z.string(),
+    Repair: z.number(),
+});
+const monthlyBarSalesPERTChartsZod = z.object({
+    Months: z.string(),
+    "In-Store": z.number(),
+    Online: z.number(),
+});
+const monthlyBarTotalPERTChartsZod = z.object({
+    Months: z.string(),
+    Total: z.number(),
+});
+const monthlyBarPERTChartsZod = z.object({
+    total: z.array(monthlyBarTotalPERTChartsZod),
+    all: z.array(monthlyBarAllPERTChartsZod),
+    overview: z.array(monthlyBarOverviewPERTChartsZod),
+    repair: z.array(monthlyBarRepairPERTChartsZod),
+    sales: z.array(monthlyBarSalesPERTChartsZod),
+    inStore: z.array(monthlyBarInStorePERTChartsZod),
+    online: z.array(monthlyBarOnlinePERTChartsZod),
+});
+
+const yearlyBarAllPERTChartsZod = z.object({
+    Years: z.string(),
+    Repair: z.number(),
+    "In-Store": z.number(),
+    Online: z.number(),
+});
+const yearlyBarInStorePERTChartsZod = z.object({
+    Years: z.string(),
+    "In-Store": z.number(),
+});
+const yearlyBarOnlinePERTChartsZod = z.object({
+    Years: z.string(),
+    Online: z.number(),
+});
+const yearlyBarOverviewPERTChartsZod = z.object({
+    Years: z.string(),
+    Repair: z.number(),
+    Sales: z.number(),
+});
+const yearlyBarRepairPERTChartsZod = z.object({
+    Years: z.string(),
+    Repair: z.number(),
+});
+const yearlyBarSalesPERTChartsZod = z.object({
+    Years: z.string(),
+    "In-Store": z.number(),
+    Online: z.number(),
+});
+const yearlyBarTotalPERTChartsZod = z.object({
+    Years: z.string(),
+    Total: z.number(),
+});
+const yearlyBarPERTChartsZod = z.object({
+    total: z.array(yearlyBarTotalPERTChartsZod),
+    all: z.array(yearlyBarAllPERTChartsZod),
+    overview: z.array(yearlyBarOverviewPERTChartsZod),
+    repair: z.array(yearlyBarRepairPERTChartsZod),
+    sales: z.array(yearlyBarSalesPERTChartsZod),
+    inStore: z.array(yearlyBarInStorePERTChartsZod),
+    online: z.array(yearlyBarOnlinePERTChartsZod),
 });
 
 const linePERTChartsZod = z.object({
@@ -153,10 +270,49 @@ const piePERTChartsZod = z.object({
     })),
 });
 
-const barOtherMetricsChartsZod = z.object({
-    averageOrderValue: z.array(z.object({})),
-    conversionRate: z.array(z.object({})),
-    netProfitMargin: z.array(z.object({})),
+const dailyBarOtherMetricsChartsZod = z.object({
+    averageOrderValue: z.array(z.object({
+        Days: z.string(),
+        "Average Order Value": z.number(),
+    })),
+    conversionRate: z.array(z.object({
+        Days: z.string(),
+        "Conversion Rate": z.number(),
+    })),
+    netProfitMargin: z.array(z.object({
+        Days: z.string(),
+        "Net Profit Margin": z.number(),
+    })),
+});
+
+const monthlyBarOtherMetricsChartsZod = z.object({
+    averageOrderValue: z.array(z.object({
+        Months: z.string(),
+        "Average Order Value": z.number(),
+    })),
+    conversionRate: z.array(z.object({
+        Months: z.string(),
+        "Conversion Rate": z.number(),
+    })),
+    netProfitMargin: z.array(z.object({
+        Months: z.string(),
+        "Net Profit Margin": z.number(),
+    })),
+});
+
+const yearlyBarOtherMetricsChartsZod = z.object({
+    averageOrderValue: z.array(z.object({
+        Years: z.string(),
+        "Average Order Value": z.number(),
+    })),
+    conversionRate: z.array(z.object({
+        Years: z.string(),
+        "Conversion Rate": z.number(),
+    })),
+    netProfitMargin: z.array(z.object({
+        Years: z.string(),
+        "Net Profit Margin": z.number(),
+    })),
 });
 
 const lineOtherMetricsChartsZod = z.object({
@@ -174,37 +330,85 @@ const lineOtherMetricsChartsZod = z.object({
     })),
 });
 
-const financialChartZod = z.object({
-    profit: z.object({
-        bar: barPERTChartsZod,
-        line: linePERTChartsZod,
-        pie: piePERTChartsZod,
-    }),
-    revenue: z.object({
-        bar: barPERTChartsZod,
-        line: linePERTChartsZod,
-        pie: piePERTChartsZod,
-    }),
-    expenses: z.object({
-        bar: barPERTChartsZod,
-        line: linePERTChartsZod,
-        pie: piePERTChartsZod,
-    }),
-    transactions: z.object({
-        bar: barPERTChartsZod,
-        line: linePERTChartsZod,
-        pie: piePERTChartsZod,
-    }),
-    otherMetrics: z.object({
-        bar: barOtherMetricsChartsZod,
-        line: lineOtherMetricsChartsZod,
-    }),
-});
-
 const financialChartsZod = z.object({
-    dailyCharts: financialChartZod,
-    monthlyCharts: financialChartZod,
-    yearlyCharts: financialChartZod,
+    dailyCharts: z.object({
+        profit: z.object({
+            bar: dailyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        revenue: z.object({
+            bar: dailyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        expenses: z.object({
+            bar: dailyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        transactions: z.object({
+            bar: dailyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        otherMetrics: z.object({
+            bar: dailyBarOtherMetricsChartsZod,
+            line: lineOtherMetricsChartsZod,
+        }),
+    }),
+    monthlyCharts: z.object({
+        profit: z.object({
+            bar: monthlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        revenue: z.object({
+            bar: monthlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        expenses: z.object({
+            bar: monthlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        transactions: z.object({
+            bar: monthlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        otherMetrics: z.object({
+            bar: monthlyBarOtherMetricsChartsZod,
+            line: lineOtherMetricsChartsZod,
+        }),
+    }),
+    yearlyCharts: z.object({
+        profit: z.object({
+            bar: yearlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        revenue: z.object({
+            bar: yearlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        expenses: z.object({
+            bar: yearlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        transactions: z.object({
+            bar: yearlyBarPERTChartsZod,
+            line: linePERTChartsZod,
+            pie: piePERTChartsZod,
+        }),
+        otherMetrics: z.object({
+            bar: yearlyBarOtherMetricsChartsZod,
+            line: lineOtherMetricsChartsZod,
+        }),
+    }),
 });
 
 const setFinancialChartsDispatchZod = z.object({

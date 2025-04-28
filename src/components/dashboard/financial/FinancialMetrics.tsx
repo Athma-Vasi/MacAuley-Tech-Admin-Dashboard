@@ -107,6 +107,8 @@ function FinancialMetrics(
           storeLocation: storeLocationView,
         });
 
+        console.log("financialMetricsCharts", financialMetricsCharts);
+
         const financialMetricsCards = await createFinancialMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -158,6 +160,8 @@ function FinancialMetrics(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYYYYMMDD, storeLocationView, themeObject]);
+
+  console.log("financialMetricsState", financialMetricsState);
 
   if (!financialMetricsDocument || !cards || !charts) {
     return null;
