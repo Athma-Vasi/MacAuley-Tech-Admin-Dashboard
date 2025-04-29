@@ -8,9 +8,11 @@ import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   FinancialMetricsDocument,
   HttpServerResponse,
+  SafeBoxResult,
   UserDocument,
 } from "../../types";
 import {
+  createSafeBoxResult,
   decodeJWTSafe,
   fetchSafe,
   parseServerResponseSafeAsync,
@@ -29,10 +31,10 @@ async function handleLoginButtonClick(
     globalDispatch,
     isComponentMountedRef,
     loginDispatch,
-    navigateFn,
-    navigateTo,
+    navigate,
     schema,
     showBoundary,
+    toLocation,
     url,
   }: {
     authDispatch: React.Dispatch<AuthDispatch>;
@@ -40,13 +42,22 @@ async function handleLoginButtonClick(
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
     loginDispatch: React.Dispatch<LoginDispatch>;
-    navigateFn: NavigateFunction;
-    navigateTo: string;
+    navigate: NavigateFunction;
     schema: { username: string; password: string };
     showBoundary: (error: unknown) => void;
+    toLocation: string;
     url: RequestInfo | URL;
   },
-) {
+): Promise<
+  SafeBoxResult<
+    HttpServerResponse<
+      {
+        userDocument: UserDocument;
+        financialMetricsDocument: FinancialMetricsDocument;
+      }
+    >
+  >
+> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -73,19 +84,24 @@ async function handleLoginButtonClick(
     const responseResult = await fetchSafe(url, requestInit);
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (responseResult.err) {
       showBoundary(responseResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: responseResult.val.message ?? "Error fetching response",
+      });
     }
 
     const responseUnwrapped = responseResult.safeUnwrap().data;
-
     if (responseUnwrapped === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
     }
 
     const jsonResult = await responseToJSONSafe<
@@ -100,22 +116,27 @@ async function handleLoginButtonClick(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (jsonResult.err) {
       showBoundary(jsonResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: jsonResult.val.message ?? "Error parsing JSON",
+      });
     }
 
     const serverResponse = jsonResult.safeUnwrap().data;
-
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
-    console.time("parsing");
+    console.time("---parsing---");
     const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
       zSchema: z.object({
@@ -123,14 +144,18 @@ async function handleLoginButtonClick(
         financialMetricsDocument: financialMetricsDocumentZod,
       }),
     });
-    console.timeEnd("parsing");
+    console.timeEnd("---parsing---");
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
     if (parsedResult.err) {
       showBoundary(parsedResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: parsedResult.val.message ?? "Error parsing server response",
+      });
     }
 
     const parsedServerResponse = parsedResult.safeUnwrap().data;
@@ -138,7 +163,9 @@ async function handleLoginButtonClick(
       showBoundary(
         new Error("No data returned from server"),
       );
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const { accessToken, triggerLogout } = parsedServerResponse;
@@ -162,25 +189,33 @@ async function handleLoginButtonClick(
       });
 
       await localforage.clear();
-      navigateFn("/");
-      return;
+      navigate("/");
+      return createSafeBoxResult({
+        message: "Logout triggered",
+      });
     }
 
     const decodedTokenResult = await decodeJWTSafe(accessToken);
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (decodedTokenResult.err) {
       showBoundary(decodedTokenResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: decodedTokenResult.val.message ?? "Error decoding token",
+      });
     }
 
     const decodedToken = decodedTokenResult.safeUnwrap().data;
     if (decodedToken === undefined) {
       showBoundary(new Error("Invalid token"));
-      return;
+      return createSafeBoxResult({
+        message: "Invalid token",
+      });
     }
 
     authDispatch({
@@ -213,11 +248,15 @@ async function handleLoginButtonClick(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
     if (setForageItemResult.err) {
       showBoundary(setForageItemResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: setForageItemResult.val.message ?? "Error setting forage item",
+      });
     }
 
     loginDispatch({
@@ -229,14 +268,23 @@ async function handleLoginButtonClick(
       payload: true,
     });
 
-    navigateFn(navigateTo);
+    navigate(toLocation);
+    return createSafeBoxResult({
+      message: "Login successful",
+    });
   } catch (error: unknown) {
     if (
       !isComponentMounted || fetchAbortController?.signal.aborted
     ) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
     }
+
     showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error occurred during login",
+    });
   }
 }
 

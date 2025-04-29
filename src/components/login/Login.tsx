@@ -51,7 +51,7 @@ function Login() {
     globalState: { themeObject },
     globalDispatch,
   } = useGlobalState();
-  const navigateFn = useNavigate();
+  const navigate = useNavigate();
   const { showBoundary } = useErrorBoundary();
 
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -150,10 +150,10 @@ function Login() {
             globalDispatch,
             isComponentMountedRef,
             loginDispatch,
-            navigateFn,
-            navigateTo: "/dashboard/financials",
+            navigate,
             schema: { username, password },
             showBoundary,
+            toLocation: "/dashboard/financials",
             url: LOGIN_URL,
           });
         },
