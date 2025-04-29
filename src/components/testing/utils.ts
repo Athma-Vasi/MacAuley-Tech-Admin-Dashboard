@@ -1,4 +1,4 @@
-import { Err, Ok } from "ts-results";
+import { Ok } from "ts-results";
 import { z } from "zod";
 import { LOGIN_URL, LOGOUT_URL, METRICS_URL } from "../../constants";
 import {
@@ -9,6 +9,7 @@ import {
     UserDocument,
 } from "../../types";
 import {
+    createSafeBoxResult,
     fetchSafe,
     parseServerResponseSafeAsync,
     responseToJSONSafe,
@@ -57,18 +58,15 @@ async function handleLoginMock(
         );
 
         if (responseResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: responseResult.val.message ?? "Error fetching data",
             });
         }
 
         const responseUnwrapped = responseResult.safeUnwrap().data;
-
         if (responseUnwrapped === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Response is undefined",
             });
         }
 
@@ -84,18 +82,15 @@ async function handleLoginMock(
         );
 
         if (jsonResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: jsonResult.val.message ?? "Error parsing response",
             });
         }
 
         const serverResponse = jsonResult.safeUnwrap().data;
-
         if (serverResponse === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Server response is undefined",
             });
         }
 
@@ -108,26 +103,23 @@ async function handleLoginMock(
         });
 
         if (parsedResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: parsedResult.val.message ?? "Error parsing response",
             });
         }
 
         const parsedServerResponse = parsedResult.safeUnwrap().data;
         if (parsedServerResponse === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Parsed server response is undefined",
             });
         }
 
         const { accessToken, triggerLogout } = parsedServerResponse;
 
         if (triggerLogout) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Trigger logout",
             });
         }
 
@@ -141,9 +133,8 @@ async function handleLoginMock(
             kind: "success",
         });
     } catch (error) {
-        return new Err({
-            data: [],
-            kind: "error",
+        return createSafeBoxResult({
+            message: "Unknown error",
         });
     }
 }
@@ -169,18 +160,16 @@ async function handleLogoutMock(
         );
 
         if (responseResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: responseResult.val.message ?? "Error fetching data",
             });
         }
 
         const responseUnwrapped = responseResult.safeUnwrap().data;
 
         if (responseUnwrapped === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Response is undefined",
             });
         }
 
@@ -191,18 +180,16 @@ async function handleLogoutMock(
         );
 
         if (jsonResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: jsonResult.val.message ?? "Error parsing response",
             });
         }
 
         const serverResponse = jsonResult.safeUnwrap().data;
 
         if (serverResponse === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Server response is undefined",
             });
         }
 
@@ -212,28 +199,25 @@ async function handleLogoutMock(
         });
 
         if (parsedResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: parsedResult.val.message ?? "Error parsing response",
             });
         }
 
         const parsedServerResponse = parsedResult.safeUnwrap().data;
         if (parsedServerResponse === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Parsed server response is undefined",
             });
         }
 
-        return new Ok({
+        return createSafeBoxResult({
             data: [],
             kind: "success",
         });
     } catch (error: unknown) {
-        return new Err({
-            data: [],
-            kind: "error",
+        return createSafeBoxResult({
+            message: "Unknown error",
         });
     }
 }
@@ -256,18 +240,18 @@ async function handleMetricsMock(
     try {
         const loginResult = await handleLoginMock({});
         if (loginResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: loginResult.val.message ?? "Login failed",
             });
         }
+
         const loginUnwrapped = loginResult.safeUnwrap().data;
         if (loginUnwrapped === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Login unwrapped is undefined",
             });
         }
+
         const { accessToken } = loginUnwrapped[0];
         const requestInit: RequestInit = {
             method: "GET",
@@ -292,18 +276,15 @@ async function handleMetricsMock(
         const responseResult = await fetchSafe(urlWithQuery, requestInit);
 
         if (responseResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: responseResult.val.message ?? "Error fetching data",
             });
         }
 
         const responseUnwrapped = responseResult.safeUnwrap().data;
-
         if (responseUnwrapped === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Response is undefined",
             });
         }
 
@@ -314,18 +295,15 @@ async function handleMetricsMock(
         );
 
         if (jsonResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: jsonResult.val.message ?? "Error parsing response",
             });
         }
 
         const serverResponse = jsonResult.safeUnwrap().data;
-
         if (serverResponse === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Server response is undefined",
             });
         }
 
@@ -341,17 +319,15 @@ async function handleMetricsMock(
         });
 
         if (parsedResult.err) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: parsedResult.val.message ?? "Error parsing response",
             });
         }
 
         const parsedServerResponse = parsedResult.safeUnwrap().data;
         if (parsedServerResponse === undefined) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: "Parsed server response is undefined",
             });
         }
 
@@ -363,9 +339,8 @@ async function handleMetricsMock(
         });
 
         if (logoutResult.err || triggerLogout) {
-            return new Err({
-                data: [],
-                kind: "error",
+            return createSafeBoxResult({
+                message: logoutResult.val.message ?? "Error logging out",
             });
         }
 
@@ -374,9 +349,8 @@ async function handleMetricsMock(
             kind: "success",
         });
     } catch (error) {
-        return new Err({
-            data: [],
-            kind: "error",
+        return createSafeBoxResult({
+            message: "Error handling metrics",
         });
     }
 }
