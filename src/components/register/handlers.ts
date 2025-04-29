@@ -1,7 +1,13 @@
 import { NavigateFunction } from "react-router-dom";
 import { z } from "zod";
-import { HttpServerResponse, UserDocument, UserSchema } from "../../types";
 import {
+  HttpServerResponse,
+  SafeBoxResult,
+  UserDocument,
+  UserSchema,
+} from "../../types";
+import {
+  createSafeBoxResult,
   fetchSafe,
   parseServerResponseSafeAsync,
   responseToJSONSafe,
@@ -28,9 +34,9 @@ async function handleCheckEmailExists(
     showBoundary: (error: unknown) => void;
     url: RequestInfo | URL;
   },
-) {
+): Promise<SafeBoxResult<boolean>> {
   if (!email) {
-    return;
+    return createSafeBoxResult({});
   }
 
   const emailValidations = VALIDATION_FUNCTIONS_TABLE["email"];
@@ -43,7 +49,7 @@ async function handleCheckEmailExists(
   });
 
   if (!isEmailValid) {
-    return;
+    return createSafeBoxResult({});
   }
 
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
@@ -76,19 +82,23 @@ async function handleCheckEmailExists(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({ message: "Component unmounted" });
     }
 
     if (responseResult.err) {
       showBoundary(responseResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error fetching data",
+      });
     }
 
     const responseUnwrapped = responseResult.safeUnwrap().data;
 
     if (responseUnwrapped === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const jsonResult = await responseToJSONSafe<
@@ -98,19 +108,25 @@ async function handleCheckEmailExists(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (jsonResult.err) {
       showBoundary(jsonResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error parsing response",
+      });
     }
 
     const serverResponse = jsonResult.safeUnwrap().data;
 
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const parsedResult = await parseServerResponseSafeAsync({
@@ -119,11 +135,15 @@ async function handleCheckEmailExists(
     });
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
     if (parsedResult.err) {
       showBoundary(parsedResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error parsing server response",
+      });
     }
 
     const parsedServerResponse = parsedResult.safeUnwrap().data;
@@ -131,7 +151,9 @@ async function handleCheckEmailExists(
       showBoundary(
         new Error("No data returned from server"),
       );
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     registerDispatch({
@@ -147,27 +169,41 @@ async function handleCheckEmailExists(
           `Server error: ${message}`,
         ),
       );
-      return;
+      return createSafeBoxResult({
+        message: `Server error: ${message}`,
+      });
     }
 
     const [isEmailExists] = data as unknown as boolean[];
 
     if (isEmailExists === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     registerDispatch({
       action: registerAction.setIsEmailExists,
       payload: isEmailExists,
     });
+
+    return createSafeBoxResult({
+      data: isEmailExists,
+      kind: "success",
+    });
   } catch (error: unknown) {
     if (
       !isComponentMounted || fetchAbortController.signal.aborted
     ) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
     }
     showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
   }
 }
 
@@ -187,9 +223,11 @@ async function handleCheckUsernameExists(
     url: RequestInfo | URL;
     username: string;
   },
-) {
+): Promise<SafeBoxResult<boolean>> {
   if (!username) {
-    return;
+    return createSafeBoxResult({
+      message: "Username is empty",
+    });
   }
 
   const usernameValidations = VALIDATION_FUNCTIONS_TABLE["username"];
@@ -202,7 +240,9 @@ async function handleCheckUsernameExists(
   });
 
   if (!isUsernameValid) {
-    return;
+    return createSafeBoxResult({
+      message: "Username is invalid",
+    });
   }
 
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
@@ -235,19 +275,25 @@ async function handleCheckUsernameExists(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (responseResult.err) {
       showBoundary(responseResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error fetching data",
+      });
     }
 
     const responseUnwrapped = responseResult.safeUnwrap().data;
 
     if (responseUnwrapped === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const jsonResult = await responseToJSONSafe<
@@ -257,19 +303,25 @@ async function handleCheckUsernameExists(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (jsonResult.err) {
       showBoundary(jsonResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error parsing response",
+      });
     }
 
     const serverResponse = jsonResult.safeUnwrap().data;
 
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const parsedResult = await parseServerResponseSafeAsync({
@@ -278,11 +330,15 @@ async function handleCheckUsernameExists(
     });
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
     if (parsedResult.err) {
       showBoundary(parsedResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error parsing server response",
+      });
     }
 
     const parsedServerResponse = parsedResult.safeUnwrap().data;
@@ -290,7 +346,9 @@ async function handleCheckUsernameExists(
       showBoundary(
         new Error("No data returned from server"),
       );
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     registerDispatch({
@@ -306,27 +364,41 @@ async function handleCheckUsernameExists(
           `Server error: ${message}`,
         ),
       );
-      return;
+      return createSafeBoxResult({
+        message: `Server error: ${message}`,
+      });
     }
 
     const [isUsernameExists] = data as unknown as boolean[];
 
     if (isUsernameExists === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     registerDispatch({
       action: registerAction.setIsUsernameExists,
       payload: isUsernameExists,
     });
+
+    return createSafeBoxResult({
+      data: isUsernameExists,
+      kind: "success",
+    });
   } catch (error: unknown) {
     if (
       !isComponentMounted || fetchAbortController.signal.aborted
     ) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
     }
     showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
   }
 }
 
@@ -350,7 +422,7 @@ async function handleRegisterButtonClick(
     showBoundary: (error: unknown) => void;
     url: RequestInfo | URL;
   },
-) {
+): Promise<SafeBoxResult<[]>> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -377,19 +449,25 @@ async function handleRegisterButtonClick(
     const responseResult = await fetchSafe(url, requestInit);
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (responseResult.err) {
       showBoundary(responseResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error fetching data",
+      });
     }
 
     const responseUnwrapped = responseResult.safeUnwrap().data;
 
     if (responseUnwrapped === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const jsonResult = await responseToJSONSafe<
@@ -399,19 +477,25 @@ async function handleRegisterButtonClick(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (jsonResult.err) {
       showBoundary(jsonResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: "Error parsing response",
+      });
     }
 
     const serverResponse = jsonResult.safeUnwrap().data;
 
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     if (serverResponse.kind === "error") {
@@ -428,7 +512,9 @@ async function handleRegisterButtonClick(
         payload: serverResponse.message,
       });
       navigateFn("/register");
-      return;
+      return createSafeBoxResult({
+        message: serverResponse.message ?? "Error",
+      });
     }
 
     registerDispatch({
@@ -449,13 +535,23 @@ async function handleRegisterButtonClick(
     });
 
     navigateFn(navigateTo);
+    return createSafeBoxResult({
+      data: [],
+      kind: "success",
+    });
   } catch (error: unknown) {
     if (
       !isComponentMounted || fetchAbortController.signal.aborted
     ) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
     }
+
     showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
   }
 }
 
