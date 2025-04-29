@@ -1,3 +1,74 @@
+import { NavigateFunction } from "react-router-dom";
+import { vi } from "vitest";
+import { AuthDispatch } from "../../context/authProvider";
+import { GlobalDispatch } from "../../context/globalProvider";
+import { createSafeBoxResult } from "../../utils";
+import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
+import { handleLoginMock } from "../testing/utils";
+import { SafeBoxResult } from "../../types";
+import { handleMetricCategoryNavlinkClick } from "./handlers";
+
+async function handleMetricCategoryNavlinkClickTestMock(): Promise<
+    SafeBoxResult<[]>
+> {
+    const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
+    const fetchAbortControllerRef = {
+        current: null,
+    } as React.RefObject<AbortController | null>;
+    const globalDispatch = vi.fn() as React.Dispatch<GlobalDispatch>;
+    const isComponentMountedRef = {
+        current: true,
+    } as React.RefObject<boolean>;
+    const metricsUrl = "https://example.com/metrics";
+    const metricsView = "products" as Lowercase<DashboardMetricsView>;
+    const navigate = vi.fn() as NavigateFunction;
+    const toLocation = "/metrics";
+    const productMetricCategory = "All Products";
+    const repairMetricCategory = "All Repairs";
+    const showBoundary = vi.fn() as (error: any) => void;
+    const storeLocationView = "All Store Locations" as AllStoreLocations;
+
+    try {
+        const loginResult = await handleLoginMock({});
+        if (loginResult.err) {
+            return createSafeBoxResult({
+                message: loginResult.val.message ?? "Login failed",
+            });
+        }
+
+        const loginUnwrapped = loginResult.safeUnwrap().data;
+        if (loginUnwrapped === undefined) {
+            return createSafeBoxResult({ message: "Login data is undefined" });
+        }
+
+        const { accessToken } = loginUnwrapped[0];
+
+        const handleMetricCategoryNavlinkClickResult =
+            await handleMetricCategoryNavlinkClick({
+                accessToken,
+                authDispatch,
+                fetchAbortControllerRef,
+                globalDispatch,
+                isComponentMountedRef,
+                metricsUrl,
+                metricsView,
+                navigate,
+                toLocation,
+                productMetricCategory,
+                repairMetricCategory,
+                showBoundary,
+                storeLocationView,
+            });
+
+        if (handleMetricCategoryNavlinkClickResult.err) {
+            return createSafeBoxResult({
+                message: handleMetricCategoryNavlinkClickResult.val.message,
+            });
+        }
+    } catch (error) {
+    }
+}
+
 /**
  * async function handleMetricCategoryNavlinkClick(
   {
@@ -8,8 +79,8 @@
     isComponentMountedRef,
     metricsUrl,
     metricsView,
-    navigateFn,
-    navigateTo,
+    navigate,
+    toLocation,
     productMetricCategory,
     repairMetricCategory,
     showBoundary,
@@ -22,8 +93,8 @@
     isComponentMountedRef: React.RefObject<boolean>;
     metricsUrl: string;
     metricsView: Lowercase<DashboardMetricsView>;
-    navigateFn: NavigateFunction;
-    navigateTo: string;
+    navigate: NavigateFunction;
+    toLocation: string;
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: any) => void;
@@ -118,7 +189,7 @@
         payload: false,
       });
 
-      navigateFn(navigateTo);
+      navigate(toLocation);
       return;
     }
 
@@ -211,7 +282,7 @@
       });
 
       await localforage.clear();
-      navigateFn("/");
+      navigate("/");
       return;
     }
 
@@ -286,7 +357,7 @@
       payload: false,
     });
 
-    navigateFn(navigateTo);
+    navigate(toLocation);
   } catch (error: unknown) {
     if (
       !isComponentMounted || fetchAbortController?.signal.aborted

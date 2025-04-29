@@ -44,7 +44,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     },
     globalDispatch,
   } = useGlobalState();
-  const navigateFn = useNavigate();
+  const navigate = useNavigate();
   const { showBoundary } = useErrorBoundary();
 
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
@@ -84,8 +84,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "products",
-            navigateFn,
-            navigateTo: "/dashboard/products",
+            navigate,
+            toLocation: "/dashboard/products",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
@@ -117,8 +117,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "financials",
-            navigateFn,
-            navigateTo: "/dashboard/financials",
+            navigate,
+            toLocation: "/dashboard/financials",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
@@ -150,8 +150,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "customers",
-            navigateFn,
-            navigateTo: "/dashboard/customers",
+            navigate,
+            toLocation: "/dashboard/customers",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
@@ -183,8 +183,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "repairs",
-            navigateFn,
-            navigateTo: "/dashboard/repairs",
+            navigate,
+            toLocation: "/dashboard/repairs",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
@@ -205,7 +205,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         icon: <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: () => {
-          navigateFn("/dashboard/directory");
+          navigate("/dashboard/directory");
           setOpened(false);
         },
       }}
@@ -219,7 +219,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         icon: <TbTestPipe size={18} />,
         name: "Testing",
         onClick: async () => {
-          navigateFn("/testing");
+          navigate("/testing");
           setOpened(false);
         },
       }}
@@ -233,7 +233,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         icon: <TbUser size={18} />,
         name: "Users",
         onClick: () => {
-          navigateFn("/dashboard/users");
+          navigate("/dashboard/users");
           setOpened(false);
         },
       }}
@@ -253,7 +253,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             globalDispatch,
             isComponentMountedRef,
             logoutUrl: LOGOUT_URL,
-            navigateFn,
+            navigate,
             showBoundary,
           });
         },

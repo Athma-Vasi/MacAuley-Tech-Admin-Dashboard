@@ -12,9 +12,11 @@ import {
   HttpServerResponse,
   ProductMetricsDocument,
   RepairMetricsDocument,
+  SafeBoxResult,
 } from "../../types";
 import {
   createForageKey,
+  createSafeBoxResult,
   decodeJWTSafe,
   fetchSafe,
   getItemForageSafe,
@@ -39,12 +41,12 @@ async function handleMetricCategoryNavlinkClick(
     isComponentMountedRef,
     metricsUrl,
     metricsView,
-    navigateFn,
-    navigateTo,
+    navigate,
     productMetricCategory,
     repairMetricCategory,
     showBoundary,
     storeLocationView,
+    toLocation,
   }: {
     accessToken: string;
     authDispatch: React.Dispatch<AuthDispatch>;
@@ -53,14 +55,14 @@ async function handleMetricCategoryNavlinkClick(
     isComponentMountedRef: React.RefObject<boolean>;
     metricsUrl: string;
     metricsView: Lowercase<DashboardMetricsView>;
-    navigateFn: NavigateFunction;
-    navigateTo: string;
+    navigate: NavigateFunction;
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: any) => void;
     storeLocationView: AllStoreLocations;
+    toLocation: string;
   },
-) {
+): Promise<SafeBoxResult<BusinessMetricsDocument>> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -106,41 +108,52 @@ async function handleMetricCategoryNavlinkClick(
       BusinessMetricsDocument
     >(forageKey);
 
-    if (metricsDocumentResult.err) {
-      showBoundary(metricsDocumentResult.val.data);
-      return;
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
-    const unwrapped = metricsDocumentResult.safeUnwrap();
-    const metricsDocument = unwrapped.data;
+
+    // if (metricsDocumentResult.err) {
+    //   showBoundary(metricsDocumentResult.val.data);
+    //   return createSafeBoxResult({
+    //     message: metricsDocumentResult.val.message ?? "Error fetching response",
+    //   });
+    // }
 
     if (
-      unwrapped.kind === "success"
+      metricsDocumentResult.ok &&
+      metricsDocumentResult.safeUnwrap().kind === "success"
     ) {
       if (metricsView === "customers") {
         globalDispatch({
           action: globalAction.setCustomerMetricsDocument,
-          payload: metricsDocument as CustomerMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as CustomerMetricsDocument,
         });
       }
 
       if (metricsView === "financials") {
         globalDispatch({
           action: globalAction.setFinancialMetricsDocument,
-          payload: metricsDocument as FinancialMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as FinancialMetricsDocument,
         });
       }
 
       if (metricsView === "products") {
         globalDispatch({
           action: globalAction.setProductMetricsDocument,
-          payload: metricsDocument as ProductMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as ProductMetricsDocument,
         });
       }
 
       if (metricsView === "repairs") {
         globalDispatch({
           action: globalAction.setRepairMetricsDocument,
-          payload: metricsDocument as RepairMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as RepairMetricsDocument,
         });
       }
 
@@ -149,25 +162,34 @@ async function handleMetricCategoryNavlinkClick(
         payload: false,
       });
 
-      navigateFn(navigateTo);
-      return;
+      navigate(toLocation);
+      return createSafeBoxResult({
+        data: metricsDocumentResult.safeUnwrap().data,
+        kind: "success",
+      });
     }
 
     const responseResult = await fetchSafe(urlWithQuery, requestInit);
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (responseResult.err) {
       showBoundary(responseResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: responseResult.val.message ?? "Error fetching response",
+      });
     }
 
     const responseUnwrapped = responseResult.safeUnwrap().data;
 
     if (responseUnwrapped === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const jsonResult = await responseToJSONSafe<
@@ -177,22 +199,28 @@ async function handleMetricCategoryNavlinkClick(
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (jsonResult.err) {
       showBoundary(jsonResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: jsonResult.val.message ?? "Error parsing JSON",
+      });
     }
 
     const serverResponse = jsonResult.safeUnwrap().data;
 
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
-    console.time("--PARSING--");
+    console.time("--parsing--");
     const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
       zSchema: metricsView === "customers"
@@ -203,14 +231,18 @@ async function handleMetricCategoryNavlinkClick(
         ? productMetricsDocumentZod
         : repairMetricsDocumentZod,
     });
-    console.timeEnd("--PARSING--");
+    console.timeEnd("--parsing--");
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
     if (parsedResult.err) {
       showBoundary(parsedResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: parsedResult.val.message ?? "Error parsing response",
+      });
     }
 
     const parsedServerResponse = parsedResult.safeUnwrap().data;
@@ -218,7 +250,9 @@ async function handleMetricCategoryNavlinkClick(
       showBoundary(
         new Error("No data returned from server"),
       );
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const { accessToken, triggerLogout } = parsedServerResponse;
@@ -242,25 +276,33 @@ async function handleMetricCategoryNavlinkClick(
       });
 
       await localforage.clear();
-      navigateFn("/");
-      return;
+      navigate("/");
+      return createSafeBoxResult({
+        message: "Logout triggered",
+      });
     }
 
     const decodedTokenResult = await decodeJWTSafe(accessToken);
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (decodedTokenResult.err) {
       showBoundary(decodedTokenResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: decodedTokenResult.val.message ?? "Error decoding JWT",
+      });
     }
 
     const decodedToken = decodedTokenResult.safeUnwrap().data;
     if (decodedToken === undefined) {
       showBoundary(new Error("Invalid token"));
-      return;
+      return createSafeBoxResult({
+        message: "Invalid token",
+      });
     }
 
     authDispatch({
@@ -302,29 +344,34 @@ async function handleMetricCategoryNavlinkClick(
       });
     }
 
-    const setDocResult = await setItemForageSafe<BusinessMetricsDocument>(
+    await setItemForageSafe<BusinessMetricsDocument>(
       forageKey,
       payload,
     );
-
-    if (setDocResult.err) {
-      showBoundary(setDocResult.val.data);
-      return;
-    }
 
     globalDispatch({
       action: globalAction.setIsFetching,
       payload: false,
     });
 
-    navigateFn(navigateTo);
+    navigate(toLocation);
+    return createSafeBoxResult({
+      data: parsedServerResponse,
+      kind: "success",
+    });
   } catch (error: unknown) {
     if (
       !isComponentMounted || fetchAbortController?.signal.aborted
     ) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
     }
+
     showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
   }
 }
 
@@ -334,7 +381,7 @@ async function handleLogoutButtonClick({
   globalDispatch,
   isComponentMountedRef,
   logoutUrl,
-  navigateFn,
+  navigate,
   showBoundary,
 }: {
   accessToken: string;
@@ -342,9 +389,9 @@ async function handleLogoutButtonClick({
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   logoutUrl: string;
-  navigateFn: NavigateFunction;
+  navigate: NavigateFunction;
   showBoundary: (error: any) => void;
-}) {
+}): Promise<SafeBoxResult<HttpServerResponse>> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -371,19 +418,24 @@ async function handleLogoutButtonClick({
     const responseResult = await fetchSafe(logoutUrl, requestInit);
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (responseResult.err) {
       showBoundary(responseResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: responseResult.val.message ?? "Error fetching response",
+      });
     }
 
     const responseUnwrapped = responseResult.safeUnwrap().data;
-
     if (responseUnwrapped === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     const jsonResult = await responseToJSONSafe<
@@ -393,19 +445,25 @@ async function handleLogoutButtonClick({
     );
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
 
     if (jsonResult.err) {
       showBoundary(jsonResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: jsonResult.val.message ?? "Error parsing JSON",
+      });
     }
 
     const serverResponse = jsonResult.safeUnwrap().data;
 
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     console.time("--PARSING--");
@@ -416,11 +474,15 @@ async function handleLogoutButtonClick({
     console.timeEnd("--PARSING--");
 
     if (!isComponentMounted) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
     }
     if (parsedResult.err) {
       showBoundary(parsedResult.val.data);
-      return;
+      return createSafeBoxResult({
+        message: parsedResult.val.message ?? "Error parsing response",
+      });
     }
 
     const parsedServerResponse = parsedResult.safeUnwrap().data;
@@ -428,7 +490,9 @@ async function handleLogoutButtonClick({
       showBoundary(
         new Error("No data returned from server"),
       );
-      return;
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
     }
 
     globalDispatch({
@@ -437,14 +501,24 @@ async function handleLogoutButtonClick({
     });
 
     await localforage.clear();
-    navigateFn("/");
+    navigate("/");
+    return createSafeBoxResult({
+      data: parsedServerResponse,
+      kind: "success",
+    });
   } catch (error: unknown) {
     if (
       !isComponentMounted || fetchAbortController?.signal.aborted
     ) {
-      return;
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
     }
+
     showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
   }
 }
 
