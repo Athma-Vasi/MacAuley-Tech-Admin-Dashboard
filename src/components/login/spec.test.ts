@@ -1,395 +1,200 @@
 import { NavigateFunction } from "react-router-dom";
+import { shuffle } from "simple-statistics";
 import { describe, expect, it, vi } from "vitest";
-import { LOGIN_URL } from "../../constants";
+import {
+    INVALID_BOOLEANS,
+    INVALID_STRINGS,
+    LOGIN_URL,
+    VALID_BOOLEANS,
+} from "../../constants";
 import { AuthDispatch } from "../../context/authProvider";
 import { GlobalDispatch } from "../../context/globalProvider";
 import { createSafeBoxResult } from "../../utils";
 import { DIRECTORY_EMPLOYEE_DATA } from "../directory/data";
 import { handleLogoutMock } from "../testing/utils";
+import { SAMPLE_USER_DOCUMENT } from "../usersQuery/constants";
+import { loginAction } from "./actions";
 import { handleLoginButtonClick } from "./handlers";
+import {
+    loginReducer_setIsLoading,
+    loginReducer_setIsSubmitting,
+    loginReducer_setIsSuccessful,
+    loginReducer_setPassword,
+    loginReducer_setUsername,
+} from "./reducers";
 import { LoginDispatch } from "./schemas";
+import { initialLoginState } from "./state";
 
-// describe("loginReducer_setIsLoading", () => {
-//     it("should allow valid boolean values", () => {
-//         VALID_BOOLEANS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setIsLoading,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setIsLoading(
-//                 initialLoginState,
-//                 dispatch,
-//             );
-//             expect(state.isLoading).toBe(value);
-//         });
-//     });
+describe("loginReducer", () => {
+    describe("setIsLoading", () => {
+        it("should allow valid boolean values", () => {
+            VALID_BOOLEANS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setIsLoading,
+                    payload: value,
+                };
+                const state = loginReducer_setIsLoading(
+                    initialLoginState,
+                    dispatch,
+                );
+                expect(state.isLoading).toBe(value);
+            });
+        });
 
-//     it("should not allow invalid boolean values", () => {
-//         const initialIsLoading = initialLoginState.isLoading;
-//         INVALID_BOOLEANS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setIsLoading,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setIsLoading(
-//                 initialLoginState,
-//                 dispatch as any,
-//             );
-//             expect(state.isLoading).toBe(initialIsLoading);
-//         });
-//     });
-// });
-
-// describe("loginReducer_setIsSubmitting", () => {
-//     it("should allow valid boolean values", () => {
-//         VALID_BOOLEANS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setIsSubmitting,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setIsSubmitting(
-//                 initialLoginState,
-//                 dispatch,
-//             );
-//             expect(state.isSubmitting).toBe(value);
-//         });
-//     });
-
-//     it("should not allow invalid boolean values", () => {
-//         const initialIsSubmitting = initialLoginState.isSubmitting;
-
-//         INVALID_BOOLEANS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setIsSubmitting,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setIsSubmitting(
-//                 initialLoginState,
-//                 dispatch as any,
-//             );
-//             expect(state.isSubmitting).toBe(initialIsSubmitting);
-//         });
-//     });
-// });
-
-// describe("loginReducer_setIsSuccessful", () => {
-//     it("should allow valid boolean values", () => {
-//         VALID_BOOLEANS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setIsSuccessful,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setIsSuccessful(
-//                 initialLoginState,
-//                 dispatch,
-//             );
-//             expect(state.isSuccessful).toBe(value);
-//         });
-//     });
-
-//     it("should not allow invalid boolean values", () => {
-//         const initialIsSuccessful = initialLoginState.isSuccessful;
-
-//         INVALID_BOOLEANS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setIsSuccessful,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setIsSuccessful(
-//                 initialLoginState,
-//                 dispatch as any,
-//             );
-//             expect(state.isSuccessful).toBe(initialIsSuccessful);
-//         });
-//     });
-// });
-
-// describe("loginReducer_setPassword", () => {
-//     it("should allow valid string values", () => {
-//         const validValues = ["password123Q!", "mypasswordQ1!", "testingQ1!"];
-//         validValues.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setPassword,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setPassword(
-//                 initialLoginState,
-//                 dispatch,
-//             );
-//             expect(state.password).toBe(value);
-//         });
-//     });
-
-//     it("should not allow invalid string values", () => {
-//         const initialPassword = initialLoginState.password;
-
-//         INVALID_STRINGS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setPassword,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setPassword(
-//                 initialLoginState,
-//                 dispatch as any,
-//             );
-//             expect(state.password).toBe(initialPassword);
-//         });
-//     });
-// });
-
-// describe("loginReducer_setUsername", () => {
-//     it("should allow valid string values", () => {
-//         const validValues = ["username123Q!", "myusernameQ1!", "testuserQ1!"];
-//         validValues.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setUsername,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setUsername(
-//                 initialLoginState,
-//                 dispatch,
-//             );
-//             expect(state.username).toBe(value);
-//         });
-//     });
-
-//     it("should not allow invalid string values", () => {
-//         const initialUsername = initialLoginState.username;
-
-//         INVALID_STRINGS.forEach((value) => {
-//             const dispatch = {
-//                 action: loginAction.setUsername,
-//                 payload: value,
-//             };
-//             const state = loginReducer_setUsername(
-//                 initialLoginState,
-//                 dispatch as any,
-//             );
-//             expect(state.username).toBe(initialUsername);
-//         });
-//     });
-// });
-
-/**
- *
-async function handleLoginButtonClick(
-  {
-    authDispatch,
-    fetchAbortControllerRef,
-    globalDispatch,
-    isComponentMountedRef,
-    loginDispatch,
-    navigateFn,
-    navigateTo,
-    schema,
-    showBoundary,
-    url,
-  }: {
-    authDispatch: React.Dispatch<AuthDispatch>;
-    fetchAbortControllerRef: React.RefObject<AbortController | null>;
-    globalDispatch: React.Dispatch<GlobalDispatch>;
-    isComponentMountedRef: React.RefObject<boolean>;
-    loginDispatch: React.Dispatch<LoginDispatch>;
-    navigateFn: NavigateFunction;
-    navigateTo: string;
-    schema: { username: string; password: string };
-    showBoundary: (error: unknown) => void;
-    url: RequestInfo | URL;
-  },
-) {
-  fetchAbortControllerRef.current?.abort("Previous request cancelled");
-  fetchAbortControllerRef.current = new AbortController();
-  const fetchAbortController = fetchAbortControllerRef.current;
-
-  isComponentMountedRef.current = true;
-  const isComponentMounted = isComponentMountedRef.current;
-
-  const requestInit: RequestInit = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    mode: "cors",
-    body: JSON.stringify({ schema }),
-    signal: fetchAbortController.signal,
-  };
-
-  loginDispatch({
-    action: loginAction.setIsSubmitting,
-    payload: true,
-  });
-
-  try {
-    const responseResult = await fetchSafe(url, requestInit);
-
-    if (!isComponentMounted) {
-      return;
-    }
-
-    if (responseResult.err) {
-      showBoundary(responseResult.val.data);
-      return;
-    }
-
-    const responseUnwrapped = responseResult.safeUnwrap().data;
-
-    if (responseUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return;
-    }
-
-    const jsonResult = await responseToJSONSafe<
-      HttpServerResponse<
-        {
-          userDocument: UserDocument;
-          financialMetricsDocument: FinancialMetricsDocument;
-        }
-      >
-    >(
-      responseUnwrapped,
-    );
-
-    if (!isComponentMounted) {
-      return;
-    }
-
-    if (jsonResult.err) {
-      showBoundary(jsonResult.val.data);
-      return;
-    }
-
-    const serverResponse = jsonResult.safeUnwrap().data;
-
-    if (serverResponse === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return;
-    }
-
-    console.time("parsing");
-    const parsedResult = await parseServerResponseSafeAsync({
-      object: serverResponse,
-      zSchema: z.object({
-        userDocument: userDocumentZ,
-        financialMetricsDocument: financialMetricsDocumentZod,
-      }),
-    });
-    console.timeEnd("parsing");
-
-    if (!isComponentMounted) {
-      return;
-    }
-    if (parsedResult.err) {
-      showBoundary(parsedResult.val.data);
-      return;
-    }
-
-    const parsedServerResponse = parsedResult.safeUnwrap().data;
-    if (parsedServerResponse === undefined) {
-      showBoundary(
-        new Error("No data returned from server"),
-      );
-      return;
-    }
-
-    const { accessToken, triggerLogout } = parsedServerResponse;
-
-    if (triggerLogout) {
-      authDispatch({
-        action: authAction.setAccessToken,
-        payload: "",
-      });
-      authDispatch({
-        action: authAction.setIsLoggedIn,
-        payload: false,
-      });
-      authDispatch({
-        action: authAction.setDecodedToken,
-        payload: Object.create(null),
-      });
-      authDispatch({
-        action: authAction.setUserDocument,
-        payload: Object.create(null),
-      });
-
-      await localforage.clear();
-      navigateFn("/");
-      return;
-    }
-
-    const decodedTokenResult = await decodeJWTSafe(accessToken);
-
-    if (!isComponentMounted) {
-      return;
-    }
-
-    if (decodedTokenResult.err) {
-      showBoundary(decodedTokenResult.val.data);
-      return;
-    }
-
-    const decodedToken = decodedTokenResult.safeUnwrap().data;
-    if (decodedToken === undefined) {
-      showBoundary(new Error("Invalid token"));
-      return;
-    }
-
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: accessToken,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
-    authDispatch({
-      action: authAction.setIsLoggedIn,
-      payload: true,
-    });
-    authDispatch({
-      action: authAction.setUserDocument,
-      payload: parsedServerResponse.data[0].userDocument,
+        it("should not allow invalid boolean values", () => {
+            const initialIsLoading = initialLoginState.isLoading;
+            INVALID_BOOLEANS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setIsLoading,
+                    payload: value,
+                };
+                const state = loginReducer_setIsLoading(
+                    initialLoginState,
+                    dispatch as any,
+                );
+                expect(state.isLoading).toBe(initialIsLoading);
+            });
+        });
     });
 
-    globalDispatch({
-      action: globalAction.setFinancialMetricsDocument,
-      payload: parsedServerResponse.data[0].financialMetricsDocument,
+    describe("setIsSubmitting", () => {
+        it("should allow valid boolean values", () => {
+            VALID_BOOLEANS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setIsSubmitting,
+                    payload: value,
+                };
+                const state = loginReducer_setIsSubmitting(
+                    initialLoginState,
+                    dispatch,
+                );
+                expect(state.isSubmitting).toBe(value);
+            });
+        });
+
+        it("should not allow invalid boolean values", () => {
+            const initialIsSubmitting = initialLoginState.isSubmitting;
+
+            INVALID_BOOLEANS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setIsSubmitting,
+                    payload: value,
+                };
+                const state = loginReducer_setIsSubmitting(
+                    initialLoginState,
+                    dispatch as any,
+                );
+                expect(state.isSubmitting).toBe(initialIsSubmitting);
+            });
+        });
     });
 
-    const setForageItemResult = await setItemForageSafe<
-      FinancialMetricsDocument
-    >(
-      "Financials-All Locations",
-      parsedServerResponse.data[0].financialMetricsDocument,
-    );
+    describe("setIsSuccessful", () => {
+        it("should allow valid boolean values", () => {
+            VALID_BOOLEANS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setIsSuccessful,
+                    payload: value,
+                };
+                const state = loginReducer_setIsSuccessful(
+                    initialLoginState,
+                    dispatch,
+                );
+                expect(state.isSuccessful).toBe(value);
+            });
+        });
 
-    if (!isComponentMounted) {
-      return;
-    }
-    if (setForageItemResult.err) {
-      showBoundary(setForageItemResult.val.data);
-      return;
-    }
+        it("should not allow invalid boolean values", () => {
+            const initialIsSuccessful = initialLoginState.isSuccessful;
 
-    loginDispatch({
-      action: loginAction.setIsSubmitting,
-      payload: false,
+            INVALID_BOOLEANS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setIsSuccessful,
+                    payload: value,
+                };
+                const state = loginReducer_setIsSuccessful(
+                    initialLoginState,
+                    dispatch as any,
+                );
+                expect(state.isSuccessful).toBe(initialIsSuccessful);
+            });
+        });
     });
-    loginDispatch({
-      action: loginAction.setIsSuccessful,
-      payload: true,
+
+    describe("setPassword", () => {
+        it("should allow valid string values", () => {
+            const validValues = [
+                "password123Q!",
+                "mypasswordQ1!",
+                "testingQ1!",
+            ];
+            validValues.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setPassword,
+                    payload: value,
+                };
+                const state = loginReducer_setPassword(
+                    initialLoginState,
+                    dispatch,
+                );
+                expect(state.password).toBe(value);
+            });
+        });
+
+        it("should not allow invalid string values", () => {
+            const initialPassword = initialLoginState.password;
+
+            INVALID_STRINGS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setPassword,
+                    payload: value,
+                };
+                const state = loginReducer_setPassword(
+                    initialLoginState,
+                    dispatch as any,
+                );
+                expect(state.password).toBe(initialPassword);
+            });
+        });
     });
 
-    navigateFn(navigateTo);
-  } catch (error: unknown) {
-    if (
-      !isComponentMounted || fetchAbortController?.signal.aborted
-    ) {
-      return;
-    }
-    showBoundary(error);
-  }
-}
- */
+    describe("setUsername", () => {
+        it("should allow valid string values", () => {
+            const validValues = [
+                "username123Q!",
+                "myusernameQ1!",
+                "testuserQ1!",
+            ];
+            validValues.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setUsername,
+                    payload: value,
+                };
+                const state = loginReducer_setUsername(
+                    initialLoginState,
+                    dispatch,
+                );
+                expect(state.username).toBe(value);
+            });
+        });
+
+        it("should not allow invalid string values", () => {
+            const initialUsername = initialLoginState.username;
+
+            INVALID_STRINGS.forEach((value) => {
+                const dispatch = {
+                    action: loginAction.setUsername,
+                    payload: value,
+                };
+                const state = loginReducer_setUsername(
+                    initialLoginState,
+                    dispatch as any,
+                );
+                expect(state.username).toBe(initialUsername);
+            });
+        });
+    });
+});
 
 async function handleLoginButtonClickTestMock(
     schema: { username: string; password: string },
@@ -430,28 +235,31 @@ async function handleLoginButtonClickTestMock(
             });
         }
 
-        const loginResponseUnwrapped =
+        const parsedServerResponse =
             handleLoginButtonClickResult.safeUnwrap().data;
-        if (loginResponseUnwrapped === undefined) {
+        if (parsedServerResponse === undefined) {
             return createSafeBoxResult({
                 message: "No data returned from server",
             });
         }
 
-        const { accessToken: newAccessToken, kind } = loginResponseUnwrapped;
+        if (testKind === "success" && parsedServerResponse.kind === "success") {
+            const { accessToken: newAccessToken } = parsedServerResponse;
 
-        const logoutResult = await handleLogoutMock({
-            newAccessToken,
-        });
-
-        if (logoutResult.err) {
-            return createSafeBoxResult({
-                message: logoutResult.val.message ?? "Logout failed",
+            const logoutResult = await handleLogoutMock({
+                newAccessToken,
             });
+
+            if (logoutResult.err) {
+                return createSafeBoxResult({
+                    message: logoutResult.val.message ?? "Logout failed",
+                });
+            }
         }
 
         describe(
-            `given 
+            `handleLoginButtonClickTestMock - ${testKind} - login
+            given 
             ${
                 testKind === "success"
                     ? "valid"
@@ -461,19 +269,21 @@ async function handleLoginButtonClickTestMock(
             `,
             () => {
                 if (testKind === "success") {
-                    it("should check successfully", () => {
-                        expect(kind).toBe("success");
+                    it("should login successfully", () => {
+                        expect(parsedServerResponse.data.length)
+                            .toBeGreaterThanOrEqual(1);
                     });
                 } else {
-                    it("should check unsuccessfully", () => {
-                        expect(kind).toBe("error");
+                    it("should login unsuccessfully", () => {
+                        expect(parsedServerResponse.data.length)
+                            .toBe(0);
                     });
                 }
             },
         );
 
         return createSafeBoxResult({
-            data: loginResponseUnwrapped,
+            data: true,
             kind: "success",
         });
     } catch (error) {
@@ -481,9 +291,11 @@ async function handleLoginButtonClickTestMock(
     }
 }
 
-const EXISTING_USERNAMES = DIRECTORY_EMPLOYEE_DATA.map(
+const TEST_SIZE = 20;
+
+const EXISTING_USERNAMES = shuffle(DIRECTORY_EMPLOYEE_DATA).map(
     (employee) => employee.username,
-);
+).slice(0, TEST_SIZE);
 await Promise.all(
     EXISTING_USERNAMES.map(
         async (username) => {
@@ -496,148 +308,17 @@ await Promise.all(
     ),
 );
 
-/**
- * async function handleRegisterButtonClickTestMock(
-  schema: UserSchema,
-): Promise<SafeBoxResult<UserDocument>> {
-  const fetchAbortControllerRef = {
-    current: null,
-  } as React.RefObject<AbortController | null>;
-  const isComponentMountedRef = {
-    current: true,
-  } as React.RefObject<boolean>;
-  const registerDispatch = vi.fn() as React.Dispatch<any>;
-  const navigateFn = vi.fn() as NavigateFunction;
-  const showBoundary = vi.fn() as (error: unknown) => void;
-
-  try {
-    const handleRegisterButtonClickResult = await handleRegisterButtonClick(
-      {
-        fetchAbortControllerRef,
-        isComponentMountedRef,
-        navigateFn,
-        navigateTo: "/register",
-        registerDispatch,
-        schema,
-        showBoundary,
-        url: REGISTER_URL,
-      },
-    );
-
-    if (
-      handleRegisterButtonClickResult.err
-    ) {
-      return createSafeBoxResult({
-        message: handleRegisterButtonClickResult.val.message ??
-          "Error registering",
-      });
-    }
-
-    const userDocumentUnwrapped =
-      handleRegisterButtonClickResult.safeUnwrap().data;
-    if (userDocumentUnwrapped === undefined) {
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    const loginResult = await handleLoginMock({});
-    if (loginResult.err) {
-      return createSafeBoxResult({
-        message: loginResult.val.message ?? "Login failed",
-      });
-    }
-
-    const loginUnwrapped = loginResult.safeUnwrap().data;
-    if (loginUnwrapped === undefined) {
-      return createSafeBoxResult({ message: "Login data is undefined" });
-    }
-
-    const { accessToken } = loginUnwrapped[0];
-    const [userDocument] = userDocumentUnwrapped;
-
-    const url = new URL(`${API_URL}/user/${userDocument._id}`);
-    const requestInit: RequestInit = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      method: "DELETE",
-      mode: "cors",
-    };
-
-    const deleteUserResult = await fetchSafe(url, requestInit);
-
-    if (deleteUserResult.err) {
-      return createSafeBoxResult({
-        message: deleteUserResult.val.message ?? "Unable to delete user",
-      });
-    }
-
-    const responseUnwrapped = deleteUserResult.safeUnwrap().data;
-    if (responseUnwrapped === undefined) {
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    const jsonResult = await responseToJSONSafe<
-      HttpServerResponse<boolean>
-    >(
-      responseUnwrapped,
-    );
-
-    if (jsonResult.err) {
-      return createSafeBoxResult({
-        message: jsonResult.val.message ?? "Error parsing response",
-      });
-    }
-
-    const serverResponse = jsonResult.safeUnwrap().data;
-    if (serverResponse === undefined) {
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    const { accessToken: newAccessToken } = serverResponse;
-
-    const logoutResult = await handleLogoutMock({
-      newAccessToken,
-    });
-
-    if (logoutResult.err) {
-      return createSafeBoxResult({
-        message: logoutResult.val.message ?? "Logout failed",
-      });
-    }
-
-    describe("userDocument", () => {
-      Object.entries(schema).forEach(([key, value]) => {
-        if (key === "password") {
-          return;
-        }
-
-        it(
-          `should check successfully
-                        given:
-                        ${key}: ${value.toString()?.slice(0, 19)} ...
-                        `,
-          () => {
-            expect(userDocument[key as keyof UserSchema]).toStrictEqual(
-              value,
-            );
-          },
-        );
-      });
-    });
-
-    return createSafeBoxResult({
-      data: userDocument,
-      kind: "success",
-    });
-  } catch (error) {
-    return createSafeBoxResult({ message: "Registration error" });
-  }
-}
- */
+const NON_EXISTING_USERNAMES = Array.from({ length: TEST_SIZE }, (_, idx) => {
+    return `${idx}${SAMPLE_USER_DOCUMENT.username}`;
+});
+await Promise.all(
+    NON_EXISTING_USERNAMES.map(
+        async (username) => {
+            const schema = {
+                username,
+                password: "passwordQ1!",
+            };
+            await handleLoginButtonClickTestMock(schema, "error");
+        },
+    ),
+);

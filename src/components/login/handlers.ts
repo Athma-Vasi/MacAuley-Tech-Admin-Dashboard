@@ -136,6 +136,14 @@ async function handleLoginButtonClick(
       });
     }
 
+    if (serverResponse.message === "User not found") {
+      return createSafeBoxResult({
+        kind: "notFound",
+        message: "User not found",
+        data: serverResponse,
+      });
+    }
+
     console.time("---parsing---");
     const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
@@ -240,7 +248,7 @@ async function handleLoginButtonClick(
       payload: parsedServerResponse.data[0].financialMetricsDocument,
     });
 
-    const setForageItemResult = await setItemForageSafe<
+    await setItemForageSafe<
       FinancialMetricsDocument
     >(
       "Financials-All Locations",
@@ -252,12 +260,13 @@ async function handleLoginButtonClick(
         message: "Component unmounted",
       });
     }
-    if (setForageItemResult.err) {
-      showBoundary(setForageItemResult.val.data);
-      return createSafeBoxResult({
-        message: setForageItemResult.val.message ?? "Error setting forage item",
-      });
-    }
+
+    // if (setForageItemResult.err) {
+    //   showBoundary(setForageItemResult.val.data);
+    //   return createSafeBoxResult({
+    //     message: setForageItemResult.val.message ?? "Error setting forage item",
+    //   });
+    // }
 
     loginDispatch({
       action: loginAction.setIsSubmitting,
@@ -270,6 +279,8 @@ async function handleLoginButtonClick(
 
     navigate(toLocation);
     return createSafeBoxResult({
+      data: parsedServerResponse,
+      kind: "success",
       message: "Login successful",
     });
   } catch (error: unknown) {
