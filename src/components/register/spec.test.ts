@@ -1,53 +1,26 @@
-import { describe, expect, it } from "vitest";
+import { NavigateFunction } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
+import { API_URL, AUTH_URL } from "../../constants";
 import {
-    ALL_STORE_LOCATIONS_DATA,
-    COUNTRIES,
-    DEPARTMENTS_DATA,
-    INVALID_BOOLEANS,
-    INVALID_NUMBERS,
-    INVALID_STRINGS,
-    JOB_POSITIONS_DATA,
-    PROVINCES,
-    STATES_US,
-    VALID_BOOLEANS,
-    VALID_PASSWORDS,
-    VALID_USERNAMES,
-} from "../../constants";
-import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
-import { registerAction } from "./actions";
+    HttpServerResponse,
+    SafeBoxResult,
+    UserDocument,
+    UserSchema,
+} from "../../types";
 import {
-    registerReducer_setActiveStep,
-    registerReducer_setAddressLine,
-    registerReducer_setCity,
-    registerReducer_setConfirmPassword,
-    registerReducer_setCountry,
-    registerReducer_setDepartment,
-    registerReducer_setEmail,
-    registerReducer_setErrorMessage,
-    registerReducer_setFirstName,
-    registerReducer_setInputsInError,
-    registerReducer_setIsEmailExists,
-    registerReducer_setIsEmailExistsSubmitting,
-    registerReducer_setIsError,
-    registerReducer_setIsSubmitting,
-    registerReducer_setIsSuccessful,
-    registerReducer_setIsUsernameExists,
-    registerReducer_setIsUsernameExistsSubmitting,
-    registerReducer_setJobPosition,
-    registerReducer_setLastName,
-    registerReducer_setPassword,
-    registerReducer_setPostalCodeCanada,
-    registerReducer_setPostalCodeUS,
-    registerReducer_setProfilePictureUrl,
-    registerReducer_setProvince,
-    registerReducer_setState,
-    registerReducer_setStepsInError,
-    registerReducer_setStepsWithEmptyInputs,
-    registerReducer_setStoreLocation,
-    registerReducer_setUsername,
-} from "./reducers";
-import { RegisterDispatch } from "./schemas";
-import { initialRegisterState } from "./state";
+    createSafeBoxResult,
+    fetchSafe,
+    responseToJSONSafe,
+} from "../../utils";
+import { DIRECTORY_EMPLOYEE_DATA } from "../directory/data";
+import { handleLoginMock, handleLogoutMock } from "../testing/utils";
+import { REGISTER_URL } from "./constants";
+import {
+    handleCheckEmailExists,
+    handleCheckUsernameExists,
+    handleRegisterButtonClick,
+} from "./handlers";
+import { SAMPLE_USER_DOCUMENT } from "./testData";
 
 // describe("registerReducer_setConfirmPassword", () => {
 //     it("should allow valid string values", () => {
@@ -1089,7 +1062,650 @@ import { initialRegisterState } from "./state";
 //     });
 // });
 
+async function handleCheckEmailExistsTestMock(email: string) {
+    const fetchAbortControllerRef = {
+        current: null,
+    } as React.RefObject<AbortController | null>;
+    const isComponentMountedRef = {
+        current: true,
+    } as React.RefObject<boolean>;
+    const registerDispatch = vi.fn() as React.Dispatch<any>;
+    const showBoundary = vi.fn() as (error: unknown) => void;
+    const url = AUTH_URL;
+
+    try {
+        const checkEmailExistsResult = await handleCheckEmailExists({
+            email,
+            fetchAbortControllerRef,
+            isComponentMountedRef,
+            registerDispatch,
+            showBoundary,
+            url,
+        });
+
+        if (
+            checkEmailExistsResult.err
+        ) {
+            return createSafeBoxResult({
+                message: "Error checking email existence",
+            });
+        }
+
+        const checkEmailExists = checkEmailExistsResult.safeUnwrap().data;
+        if (checkEmailExists === undefined) {
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
+        }
+
+        describe("handleCheckEmailExists", () => {
+            it("should check successfully", () => {
+                expect(checkEmailExists).toBe(true || false);
+            });
+        });
+
+        return createSafeBoxResult({
+            data: checkEmailExists,
+            kind: "success",
+        });
+    } catch (error) {
+        return createSafeBoxResult({ message: "Login error" });
+    }
+}
+
+const VALID_EMAILS = DIRECTORY_EMPLOYEE_DATA.map(
+    (employee) => employee.email,
+);
+
+// await Promise.all(
+//     VALID_EMAILS.map(async (email) =>
+//         await handleCheckEmailExistsTestMock(email)
+//     ),
+// );
+
+async function handleCheckUsernameExistsTestMock(username: string) {
+    const fetchAbortControllerRef = {
+        current: null,
+    } as React.RefObject<AbortController | null>;
+    const isComponentMountedRef = {
+        current: true,
+    } as React.RefObject<boolean>;
+    const registerDispatch = vi.fn() as React.Dispatch<any>;
+    const showBoundary = vi.fn() as (error: unknown) => void;
+    const url = AUTH_URL;
+
+    try {
+        const checkUsernameExistsResult = await handleCheckUsernameExists({
+            username,
+            fetchAbortControllerRef,
+            isComponentMountedRef,
+            registerDispatch,
+            showBoundary,
+            url,
+        });
+
+        if (
+            checkUsernameExistsResult.err
+        ) {
+            return createSafeBoxResult({
+                message: "Error checking username existence",
+            });
+        }
+
+        const checkUsernameExists = checkUsernameExistsResult.safeUnwrap().data;
+        if (checkUsernameExists === undefined) {
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
+        }
+
+        describe("handleCheckUsernameExists", () => {
+            it("should check successfully", () => {
+                expect(checkUsernameExists).toBe(true);
+            });
+        });
+
+        return createSafeBoxResult({
+            data: checkUsernameExists,
+            kind: "success",
+        });
+    } catch (error) {
+        return createSafeBoxResult({ message: "Login error" });
+    }
+}
+
+const VALID_USERNAMES = DIRECTORY_EMPLOYEE_DATA.map(
+    (employee) => employee.username,
+);
+
+// await Promise.all(
+//     VALID_USERNAMES.map(async (username) =>
+//         await handleCheckUsernameExistsTestMock(username)
+//     ),
+// );
+
+async function handleRegisterButtonClickTestMock(
+    schema: UserSchema,
+    idx: number,
+): Promise<SafeBoxResult<UserDocument>> {
+    const fetchAbortControllerRef = {
+        current: null,
+    } as React.RefObject<AbortController | null>;
+    const isComponentMountedRef = {
+        current: true,
+    } as React.RefObject<boolean>;
+    const registerDispatch = vi.fn() as React.Dispatch<any>;
+    const navigateFn = vi.fn() as NavigateFunction;
+    const showBoundary = vi.fn() as (error: unknown) => void;
+
+    try {
+        const handleRegisterButtonClickResult = await handleRegisterButtonClick(
+            {
+                fetchAbortControllerRef,
+                isComponentMountedRef,
+                navigateFn,
+                navigateTo: "/register",
+                registerDispatch,
+                schema,
+                showBoundary,
+                url: REGISTER_URL,
+            },
+        );
+
+        if (
+            handleRegisterButtonClickResult.err
+        ) {
+            return createSafeBoxResult({
+                message: "Error registering user",
+            });
+        }
+
+        const userDocumentUnwrapped =
+            handleRegisterButtonClickResult.safeUnwrap().data;
+        if (userDocumentUnwrapped === undefined) {
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
+        }
+
+        const loginResult = await handleLoginMock({
+            username: `${idx}${schema.username}`,
+        });
+
+        if (loginResult.err) {
+            return createSafeBoxResult({ message: "Login failed" });
+        }
+
+        const loginUnwrapped = loginResult.safeUnwrap().data;
+        if (loginUnwrapped === undefined) {
+            return createSafeBoxResult({ message: "Login data is undefined" });
+        }
+
+        const { accessToken } = loginUnwrapped[0];
+
+        const [userDocument] = userDocumentUnwrapped;
+
+        const url = new URL(`${API_URL}/${userDocument._id}`);
+        const requestInit: RequestInit = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+            method: "DELETE",
+            mode: "cors",
+        };
+
+        const deleteUserResult = await fetchSafe(url, requestInit);
+
+        if (deleteUserResult.err) {
+            return createSafeBoxResult({ message: "Unable to delete user" });
+        }
+
+        const responseUnwrapped = deleteUserResult.safeUnwrap().data;
+        if (responseUnwrapped === undefined) {
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
+        }
+
+        const jsonResult = await responseToJSONSafe<
+            HttpServerResponse<boolean>
+        >(
+            responseUnwrapped,
+        );
+
+        if (jsonResult.err) {
+            return createSafeBoxResult({ message: "Error parsing response" });
+        }
+
+        const serverResponse = jsonResult.safeUnwrap().data;
+        if (serverResponse === undefined) {
+            return createSafeBoxResult({
+                message: "No data returned from server",
+            });
+        }
+
+        const { accessToken: newAccessToken } = serverResponse;
+
+        const logoutResult = await handleLogoutMock({
+            newAccessToken,
+        });
+
+        if (logoutResult.err) {
+            return createSafeBoxResult({ message: "Logout failed" });
+        }
+
+        describe("userDocument", () => {
+            Object.entries(schema).forEach(([key, value]) => {
+                it(
+                    `should check successfully
+                        given:
+                        ${key}: ${value.toString()?.slice(0, 19)} ...
+                        `,
+                    () => {
+                        expect(userDocument[key as keyof UserSchema]).toBe(
+                            value,
+                        );
+                    },
+                );
+            });
+        });
+
+        return createSafeBoxResult({
+            data: userDocument,
+            kind: "success",
+        });
+    } catch (error) {
+        return createSafeBoxResult({ message: "Registration error" });
+    }
+}
+
+function generateUserSchemas(amount = 10): UserSchema[] {
+    return Array.from({ length: amount }, (_, idx) => {
+        const EXCLUDED_KEYS = new Set([
+            "_id",
+            "createdAt",
+            "updatedAt",
+            "__v",
+        ]);
+        const sampleUserSchema = Object.entries(SAMPLE_USER_DOCUMENT).reduce(
+            (acc, [key, value]) => {
+                if (EXCLUDED_KEYS.has(key)) {
+                    return acc;
+                }
+
+                acc[key as keyof UserSchema] = value;
+                return acc;
+            },
+            Object.create(null),
+        );
+        const { email, username } = sampleUserSchema;
+
+        return {
+            ...sampleUserSchema,
+            email: `${idx}${email}`,
+            username: `${idx}${username}`,
+            password: "passwordQ1!",
+        };
+    });
+}
+
+const userSchemas = generateUserSchemas(1);
+
+console.log(userSchemas);
+
+const result = await Promise.all(
+    userSchemas.map(async (schema, idx) =>
+        await handleRegisterButtonClickTestMock(schema, idx)
+    ),
+);
+
+console.log(result);
+
 /**
+ *
+ * async function handleRegisterButtonClick(
+  {
+    fetchAbortControllerRef,
+    isComponentMountedRef,
+    navigateFn,
+    navigateTo,
+    registerDispatch,
+    schema,
+    showBoundary,
+    url,
+  }: {
+    fetchAbortControllerRef: React.RefObject<AbortController | null>;
+    isComponentMountedRef: React.RefObject<boolean>;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    navigateFn: NavigateFunction;
+    navigateTo: string;
+    schema: UserSchema;
+    showBoundary: (error: unknown) => void;
+    url: RequestInfo | URL;
+  },
+): Promise<SafeBoxResult<[]>> {
+  fetchAbortControllerRef.current?.abort("Previous request cancelled");
+  fetchAbortControllerRef.current = new AbortController();
+  const fetchAbortController = fetchAbortControllerRef.current;
+
+  isComponentMountedRef.current = true;
+  const isComponentMounted = isComponentMountedRef.current;
+
+  const requestInit: RequestInit = {
+    body: JSON.stringify({ schema }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    mode: "cors",
+    signal: fetchAbortController.signal,
+  };
+
+  registerDispatch({
+    action: registerAction.setIsSubmitting,
+    payload: true,
+  });
+
+  try {
+    const responseResult = await fetchSafe(url, requestInit);
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (responseResult.err) {
+      showBoundary(responseResult.val.data);
+      return createSafeBoxResult({
+        message: "Error fetching data",
+      });
+    }
+
+    const responseUnwrapped = responseResult.safeUnwrap().data;
+
+    if (responseUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    const jsonResult = await responseToJSONSafe<
+      HttpServerResponse<UserDocument>
+    >(
+      responseUnwrapped,
+    );
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (jsonResult.err) {
+      showBoundary(jsonResult.val.data);
+      return createSafeBoxResult({
+        message: "Error parsing response",
+      });
+    }
+
+    const serverResponse = jsonResult.safeUnwrap().data;
+
+    if (serverResponse === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    if (serverResponse.kind === "error") {
+      registerDispatch({
+        action: registerAction.setIsSubmitting,
+        payload: false,
+      });
+      registerDispatch({
+        action: registerAction.setIsError,
+        payload: true,
+      });
+      registerDispatch({
+        action: registerAction.setErrorMessage,
+        payload: serverResponse.message,
+      });
+      navigateFn("/register");
+      return createSafeBoxResult({
+        message: serverResponse.message ?? "Error",
+      });
+    }
+
+    registerDispatch({
+      action: registerAction.setIsSubmitting,
+      payload: false,
+    });
+    registerDispatch({
+      action: registerAction.setIsSuccessful,
+      payload: true,
+    });
+    registerDispatch({
+      action: registerAction.setIsError,
+      payload: false,
+    });
+    registerDispatch({
+      action: registerAction.setErrorMessage,
+      payload: "",
+    });
+
+    navigateFn(navigateTo);
+    return createSafeBoxResult({
+      data: [],
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMounted || fetchAbortController.signal.aborted
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
+  }
+}
+ *
+ * async function handleCheckEmailExists(
+  {
+    email,
+    fetchAbortControllerRef,
+    isComponentMountedRef,
+    registerDispatch,
+    showBoundary,
+    url,
+  }: {
+    email: string;
+    fetchAbortControllerRef: React.RefObject<AbortController | null>;
+    isComponentMountedRef: React.RefObject<boolean>;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    showBoundary: (error: unknown) => void;
+    url: RequestInfo | URL;
+  },
+): Promise<SafeBoxResult<boolean>> {
+  if (!email) {
+    return createSafeBoxResult({});
+  }
+
+  const emailValidations = VALIDATION_FUNCTIONS_TABLE["email"];
+  const isEmailValid = emailValidations.every((validation) => {
+    const [regExpOrFunc, _] = validation;
+
+    return typeof regExpOrFunc === "function"
+      ? regExpOrFunc(email)
+      : regExpOrFunc.test(email);
+  });
+
+  if (!isEmailValid) {
+    return createSafeBoxResult({});
+  }
+
+  fetchAbortControllerRef.current?.abort("Previous request cancelled");
+  fetchAbortControllerRef.current = new AbortController();
+  const fetchAbortController = fetchAbortControllerRef.current;
+
+  isComponentMountedRef.current = true;
+  const isComponentMounted = isComponentMountedRef.current;
+
+  const requestInit: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "GET",
+    mode: "cors",
+    signal: fetchAbortController.signal,
+  };
+
+  registerDispatch({
+    action: registerAction.setIsEmailExistsSubmitting,
+    payload: true,
+  });
+
+  const urlWithQuery = new URL(`${url}/check/?&email[$in]=${email}`);
+
+  try {
+    const responseResult = await fetchSafe(
+      urlWithQuery,
+      requestInit,
+    );
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({ message: "Component unmounted" });
+    }
+
+    if (responseResult.err) {
+      showBoundary(responseResult.val.data);
+      return createSafeBoxResult({
+        message: "Error fetching data",
+      });
+    }
+
+    const responseUnwrapped = responseResult.safeUnwrap().data;
+
+    if (responseUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    const jsonResult = await responseToJSONSafe<
+      HttpServerResponse<boolean>
+    >(
+      responseUnwrapped,
+    );
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (jsonResult.err) {
+      showBoundary(jsonResult.val.data);
+      return createSafeBoxResult({
+        message: "Error parsing response",
+      });
+    }
+
+    const serverResponse = jsonResult.safeUnwrap().data;
+
+    if (serverResponse === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    const parsedResult = await parseServerResponseSafeAsync({
+      object: serverResponse,
+      zSchema: z.boolean(),
+    });
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+    if (parsedResult.err) {
+      showBoundary(parsedResult.val.data);
+      return createSafeBoxResult({
+        message: "Error parsing server response",
+      });
+    }
+
+    const parsedServerResponse = parsedResult.safeUnwrap().data;
+    if (parsedServerResponse === undefined) {
+      showBoundary(
+        new Error("No data returned from server"),
+      );
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    registerDispatch({
+      action: registerAction.setIsEmailExistsSubmitting,
+      payload: false,
+    });
+
+    const { data, kind, message } = parsedServerResponse;
+
+    if (kind === "error") {
+      showBoundary(
+        new Error(
+          `Server error: ${message}`,
+        ),
+      );
+      return createSafeBoxResult({
+        message: `Server error: ${message}`,
+      });
+    }
+
+    const [isEmailExists] = data as unknown as boolean[];
+
+    if (isEmailExists === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    registerDispatch({
+      action: registerAction.setIsEmailExists,
+      payload: isEmailExists,
+    });
+
+    return createSafeBoxResult({
+      data: isEmailExists,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMounted || fetchAbortController.signal.aborted
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted or request aborted",
+      });
+    }
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
+  }
+}
+ *
  * type RegisterState = {
   // register personal
   confirmPassword: string;

@@ -22,7 +22,12 @@ import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { userDocumentZ } from "../usersQuery/schemas";
 
-async function handleLoginMock(): Promise<
+async function handleLoginMock(
+    { username = "manager", password = "passwordQ1!" }: {
+        username?: string;
+        password?: string;
+    },
+): Promise<
     SafeBoxResult<
         Array<{
             accessToken: string;
@@ -32,8 +37,8 @@ async function handleLoginMock(): Promise<
     >
 > {
     const schema = {
-        username: "manager",
-        password: "passwordQ1!",
+        username,
+        password,
     };
 
     const requestInit: RequestInit = {
@@ -249,7 +254,7 @@ async function handleMetricsMock(
     >
 > {
     try {
-        const loginResult = await handleLoginMock();
+        const loginResult = await handleLoginMock({});
         if (loginResult.err) {
             return new Err({
                 data: [],

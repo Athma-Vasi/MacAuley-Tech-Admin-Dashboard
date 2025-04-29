@@ -422,7 +422,7 @@ async function handleRegisterButtonClick(
     showBoundary: (error: unknown) => void;
     url: RequestInfo | URL;
   },
-): Promise<SafeBoxResult<[]>> {
+): Promise<SafeBoxResult<UserDocument[]>> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -536,7 +536,7 @@ async function handleRegisterButtonClick(
 
     navigateFn(navigateTo);
     return createSafeBoxResult({
-      data: [],
+      data: serverResponse.data,
       kind: "success",
     });
   } catch (error: unknown) {

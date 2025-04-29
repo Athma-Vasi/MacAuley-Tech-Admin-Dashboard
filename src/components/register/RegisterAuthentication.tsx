@@ -8,7 +8,7 @@ import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordI
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { registerAction } from "./actions";
 import { handleCheckEmailExists, handleCheckUsernameExists } from "./handlers";
-import { RegisterDispatch } from "./types";
+import { RegisterDispatch } from "./schemas";
 
 type RegisterAuthenticationProps = {
     confirmPassword: string;
