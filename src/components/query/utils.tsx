@@ -18,14 +18,19 @@ import { splitCamelCase } from "../../utils";
 import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
+import { DIRECTORY_EMPLOYEE_DATA, EmployeeDoc } from "../directory/data";
 import { QueryAction } from "./actions";
 import { QueryDispatch } from "./schemas";
+import { initialQueryState } from "./state";
 import {
     GeneralSearchCase,
     InputKind,
+    LimitPerPage,
     LogicalOperator,
     MongoQueryOperator,
     QueryChainKind,
+    QueryChains,
+    QueryLink,
     QueryOperator,
     QueryState,
     QueryTemplate,
@@ -82,31 +87,6 @@ function returnSortableQueryFields(queryTemplates: QueryTemplate[]) {
 
         return acc;
     }, [] as CheckboxRadioSelectData);
-}
-
-function createRandomUsersQueryStrings() {
-    const generalSearchCases: Array<GeneralSearchCase> = [
-        "case-sensitive",
-        "case-insensitive",
-    ];
-    const generalSearchExclusionValues = "John";
-    const generalSearchInclusionValue = "Doe";
-    const limitPerPage = "10";
-    const projectionFields = ["state", "postalCodeUS"];
-    const queryChains = {
-        filter: {
-            and: [],
-            nor: [],
-            or: [],
-        },
-        sort: {
-            and: [],
-            nor: [],
-            or: [],
-        },
-    };
-
-    function generateQueryStringInputPermutations() {}
 }
 
 function createQueryString(queryState: QueryState): string {
