@@ -188,15 +188,6 @@ async function handleUsersQuerySubmitGET(
             return createSafeBoxResult({ message: "Logout triggered" });
         }
 
-        if (kind === "error") {
-            showBoundary(
-                new Error(
-                    `Server error: ${message}`,
-                ),
-            );
-            return createSafeBoxResult({ message: "Server error" });
-        }
-
         const decodedTokenResult = await decodeJWTSafe(
             newAccessToken,
         );
@@ -224,6 +215,18 @@ async function handleUsersQuerySubmitGET(
             action: authAction.setDecodedToken,
             payload: decodedToken,
         });
+
+        if (kind === "error") {
+            showBoundary(
+                new Error(
+                    `Server error: ${message}`,
+                ),
+            );
+            return createSafeBoxResult({
+                message,
+                kind: "error",
+            });
+        }
 
         const data = parsedServerResponse.data as unknown as UserDocument[];
 

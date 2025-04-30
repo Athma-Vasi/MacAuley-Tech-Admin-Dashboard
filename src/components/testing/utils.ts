@@ -115,11 +115,11 @@ async function handleLoginMock(
             });
         }
 
-        const { accessToken, triggerLogout } = parsedServerResponse;
+        const { accessToken, triggerLogout, kind } = parsedServerResponse;
 
-        if (triggerLogout) {
+        if (triggerLogout || kind === "error") {
             return createSafeBoxResult({
-                message: "Trigger logout",
+                message: "Trigger logout or error",
             });
         }
 

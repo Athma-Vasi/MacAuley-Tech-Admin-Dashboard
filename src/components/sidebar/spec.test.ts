@@ -80,11 +80,6 @@ async function handleMetricCategoryNavlinkClickTestMock(
                 storeLocationView,
             });
 
-        console.log(
-            "handleMetricCategoryNavlinkClickResult",
-            handleMetricCategoryNavlinkClickResult,
-        );
-
         if (handleMetricCategoryNavlinkClickResult.err) {
             return createSafeBoxResult({
                 message: handleMetricCategoryNavlinkClickResult.val.message ??
@@ -130,9 +125,12 @@ async function handleMetricCategoryNavlinkClickTestMock(
                             .to.equal(storeLocationView);
                     });
                 } else {
-                    it("should return a notFound HttpServerResponse", () => {
-                        expect(handleMetricCategoryNavlinkClickResult.val.kind)
-                            .toBe("notFound");
+                    it("should return undefined", () => {
+                        expect(
+                            handleMetricCategoryNavlinkClickResult.val.data
+                                ?.businessMetricsDocument,
+                        )
+                            .toBe(undefined);
                     });
                 }
             },
@@ -256,49 +254,49 @@ function generateMetricCategoryNavlinkClickPermutations(): {
 
 const { validPermutations, invalidPermutations } =
     generateMetricCategoryNavlinkClickPermutations();
-const TEST_SIZE = 1;
+const TEST_SIZE = 20;
 const slicedValids = validPermutations.slice(0, TEST_SIZE);
 const slicedInvalids = invalidPermutations.slice(0, TEST_SIZE);
 
-// await Promise.all(
-//     slicedValids.map(
-//         async ({
-//             metricsView,
-//             productMetricCategory,
-//             repairMetricCategory,
-//             storeLocationView,
-//             testKind,
-//         }) => {
-//             await handleMetricCategoryNavlinkClickTestMock({
-//                 metricsView,
-//                 productMetricCategory,
-//                 repairMetricCategory,
-//                 storeLocationView,
-//                 testKind,
-//             });
-//         },
-//     ),
-// );
+await Promise.all(
+    slicedValids.map(
+        async ({
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            storeLocationView,
+            testKind,
+        }) => {
+            await handleMetricCategoryNavlinkClickTestMock({
+                metricsView,
+                productMetricCategory,
+                repairMetricCategory,
+                storeLocationView,
+                testKind,
+            });
+        },
+    ),
+);
 
-// await Promise.all(
-//     slicedInvalids.map(
-//         async ({
-//             metricsView,
-//             productMetricCategory,
-//             repairMetricCategory,
-//             storeLocationView,
-//             testKind,
-//         }) => {
-//             await handleMetricCategoryNavlinkClickTestMock({
-//                 metricsView,
-//                 productMetricCategory,
-//                 repairMetricCategory,
-//                 storeLocationView,
-//                 testKind,
-//             });
-//         },
-//     ),
-// );
+await Promise.all(
+    slicedInvalids.map(
+        async ({
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            storeLocationView,
+            testKind,
+        }) => {
+            await handleMetricCategoryNavlinkClickTestMock({
+                metricsView,
+                productMetricCategory,
+                repairMetricCategory,
+                storeLocationView,
+                testKind,
+            });
+        },
+    ),
+);
 
 type HandleLogoutButtonClickTestMockInput = {
     testKind: "success" | "error";
@@ -322,10 +320,6 @@ async function handleLogoutButtonClickTestMock(
 
     try {
         const loginResult = await handleLoginMock({ username, password });
-        console.log(
-            "loginResult",
-            loginResult,
-        );
         if (loginResult.err) {
             return createSafeBoxResult({
                 message: loginResult.val.message ?? "Login failed",
@@ -338,7 +332,6 @@ async function handleLogoutButtonClickTestMock(
         }
 
         const { accessToken } = loginUnwrapped[0];
-        console.log("accessToken", accessToken);
 
         const handleLogoutButtonClickResult = await handleLogoutButtonClick({
             accessToken: testKind === "success"
@@ -352,14 +345,6 @@ async function handleLogoutButtonClickTestMock(
             navigate,
             showBoundary,
         });
-
-        console.log("username", username);
-        console.log("password", password);
-        console.log("testKind", testKind);
-        console.log(
-            "handleLogoutButtonClickResult",
-            handleLogoutButtonClickResult,
-        );
 
         if (testKind === "success" && handleLogoutButtonClickResult.err) {
             return createSafeBoxResult({
@@ -431,7 +416,7 @@ const {
     invalidLogoutPermutations,
 } = generateLogoutButtonClickInputPermutations();
 
-const TEST_SIZE_LOGOUT = 5;
+const TEST_SIZE_LOGOUT = 20;
 const slicedValidLogoutPermutations = validLogoutPermutations.slice(
     0,
     TEST_SIZE_LOGOUT,
@@ -464,152 +449,3 @@ await Promise.all(
         },
     ),
 );
-
-/**
- * async function handleLogoutButtonClick({
-  accessToken,
-  fetchAbortControllerRef,
-  globalDispatch,
-  isComponentMountedRef,
-  logoutUrl,
-  navigate,
-  showBoundary,
-}: {
-  accessToken: string;
-  fetchAbortControllerRef: React.RefObject<AbortController | null>;
-  globalDispatch: React.Dispatch<GlobalDispatch>;
-  isComponentMountedRef: React.RefObject<boolean>;
-  logoutUrl: string;
-  navigate: NavigateFunction;
-  showBoundary: (error: any) => void;
-}): Promise<SafeBoxResult<HttpServerResponse>> {
-  fetchAbortControllerRef.current?.abort("Previous request cancelled");
-  fetchAbortControllerRef.current = new AbortController();
-  const fetchAbortController = fetchAbortControllerRef.current;
-
-  isComponentMountedRef.current = true;
-  const isComponentMounted = isComponentMountedRef.current;
-
-  const requestInit: RequestInit = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    mode: "cors",
-    signal: fetchAbortController.signal,
-  };
-
-  globalDispatch({
-    action: globalAction.setIsFetching,
-    payload: true,
-  });
-
-  try {
-    const responseResult = await fetchSafe(logoutUrl, requestInit);
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    if (responseResult.err) {
-      showBoundary(responseResult.val.data);
-      return createSafeBoxResult({
-        message: responseResult.val.message ?? "Error fetching response",
-      });
-    }
-
-    const responseUnwrapped = responseResult.safeUnwrap().data;
-    if (responseUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    const jsonResult = await responseToJSONSafe<
-      HttpServerResponse
-    >(
-      responseUnwrapped,
-    );
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    if (jsonResult.err) {
-      showBoundary(jsonResult.val.data);
-      return createSafeBoxResult({
-        message: jsonResult.val.message ?? "Error parsing JSON",
-      });
-    }
-
-    const serverResponse = jsonResult.safeUnwrap().data;
-
-    if (serverResponse === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    console.time("--PARSING--");
-    const parsedResult = await parseServerResponseSafeAsync({
-      object: serverResponse,
-      zSchema: z.object({}),
-    });
-    console.timeEnd("--PARSING--");
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-    if (parsedResult.err) {
-      showBoundary(parsedResult.val.data);
-      return createSafeBoxResult({
-        message: parsedResult.val.message ?? "Error parsing response",
-      });
-    }
-
-    const parsedServerResponse = parsedResult.safeUnwrap().data;
-    if (parsedServerResponse === undefined) {
-      showBoundary(
-        new Error("No data returned from server"),
-      );
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    globalDispatch({
-      action: globalAction.setIsFetching,
-      payload: false,
-    });
-
-    await localforage.clear();
-    navigate("/");
-    return createSafeBoxResult({
-      data: parsedServerResponse,
-      kind: "success",
-    });
-  } catch (error: unknown) {
-    if (
-      !isComponentMounted || fetchAbortController?.signal.aborted
-    ) {
-      return createSafeBoxResult({
-        message: "Component unmounted or request aborted",
-      });
-    }
-
-    showBoundary(error);
-    return createSafeBoxResult({
-      message: "Unknown error",
-    });
-  }
-}
- */

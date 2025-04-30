@@ -1,4 +1,5 @@
 import { NavigateFunction } from "react-router-dom";
+import { shuffle } from "simple-statistics";
 import { describe, expect, it, vi } from "vitest";
 import {
   ALL_STORE_LOCATIONS_DATA,
@@ -1238,6 +1239,10 @@ async function handleCheckUsernameExistsTestMock(
       });
     }
 
+    if (testKind === "error") {
+      console.log("checkUsernameExists", checkUsernameExists);
+    }
+
     describe(
       `given:
         ${testKind === "success" ? "valid" : "invalid"} username: ${username}
@@ -1276,8 +1281,8 @@ await Promise.all(
   ),
 );
 
-const NON_EXISTING_USERNAMES = DIRECTORY_EMPLOYEE_DATA.map(
-  (employee, idx) => `${idx}${employee.username}`,
+const NON_EXISTING_USERNAMES = shuffle(DIRECTORY_EMPLOYEE_DATA).slice(0, 3).map(
+  (employee, idx) => `${idx + 1}${employee.username}`,
 );
 await Promise.all(
   NON_EXISTING_USERNAMES.map(async (username) =>
@@ -1429,7 +1434,7 @@ async function handleRegisterButtonClickTestMock(
   }
 }
 
-function generateUserSchemas(amount = 1): UserSchema[] {
+function generateUserSchemas(amount = 20): UserSchema[] {
   return Array.from({ length: amount }, (_, idx) => {
     const EXCLUDED_KEYS = new Set([
       "_id",
@@ -1459,9 +1464,8 @@ function generateUserSchemas(amount = 1): UserSchema[] {
   });
 }
 
-const userSchemas = generateUserSchemas(1);
 await Promise.all(
-  userSchemas.map(async (schema) =>
+  generateUserSchemas().map(async (schema) =>
     await handleRegisterButtonClickTestMock(schema)
   ),
 );

@@ -263,7 +263,7 @@ async function handleMetricCategoryNavlinkClick(
       });
     }
 
-    const { accessToken: newAccessToken, triggerLogout, kind } =
+    const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;
 
     if (triggerLogout) {
@@ -323,14 +323,14 @@ async function handleMetricCategoryNavlinkClick(
       payload: decodedToken,
     });
 
-    if (serverResponse.kind === "error") {
+    if (kind === "error") {
       showBoundary(
         new Error(
-          `Server error: ${serverResponse.message}`,
+          `Server error: ${message}`,
         ),
       );
       return createSafeBoxResult({
-        message: serverResponse.message,
+        message,
         kind: "error",
       });
     }
@@ -473,8 +473,6 @@ async function handleLogoutButtonClick({
       responseUnwrapped,
     );
 
-    console.log("jsonResult", jsonResult);
-
     if (!isComponentMounted) {
       return createSafeBoxResult({
         message: "Component unmounted",
@@ -503,8 +501,6 @@ async function handleLogoutButtonClick({
       zSchema: z.object({}),
     });
     console.timeEnd("--PARSING--");
-
-    console.log("parsedResult", parsedResult);
 
     if (!isComponentMounted) {
       return createSafeBoxResult({

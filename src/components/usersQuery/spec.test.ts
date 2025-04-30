@@ -799,14 +799,18 @@ function createRandomUsersQueryStrings() {
     });
 }
 
-function generateUsersQueryTestInput(): Array<UsersQueryState> {
+function generateUsersQueryTestInput(
+    slicedAmount: number = 50,
+): Array<UsersQueryState> {
     const randomQueryStrings = createRandomUsersQueryStrings();
     console.log("length", randomQueryStrings.length);
-    const SAMPLE_SIZE = 5;
     const randomIdx = Math.floor(
-        Math.random() * randomQueryStrings.length - SAMPLE_SIZE,
+        Math.random() * randomQueryStrings.length - slicedAmount,
     );
-    const sliced = randomQueryStrings.slice(randomIdx, randomIdx + SAMPLE_SIZE);
+    const sliced = randomQueryStrings.slice(
+        randomIdx,
+        randomIdx + slicedAmount,
+    );
 
     return sliced.map((queryString) => {
         return {

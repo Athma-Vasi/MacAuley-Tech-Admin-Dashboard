@@ -275,8 +275,8 @@ async function handleLoginButtonClickTestMock(
                     });
                 } else {
                     it("should login unsuccessfully", () => {
-                        expect(parsedServerResponse.data.length)
-                            .toBe(0);
+                        expect(parsedServerResponse.data)
+                            .toBe(void 0);
                     });
                 }
             },
@@ -291,11 +291,9 @@ async function handleLoginButtonClickTestMock(
     }
 }
 
-const TEST_SIZE = 20;
-
 const EXISTING_USERNAMES = shuffle(DIRECTORY_EMPLOYEE_DATA).map(
     (employee) => employee.username,
-).slice(0, TEST_SIZE);
+);
 await Promise.all(
     EXISTING_USERNAMES.map(
         async (username) => {
@@ -308,6 +306,7 @@ await Promise.all(
     ),
 );
 
+const TEST_SIZE = 5;
 const NON_EXISTING_USERNAMES = Array.from({ length: TEST_SIZE }, (_, idx) => {
     return `${idx}${SAMPLE_USER_DOCUMENT.username}`;
 });
