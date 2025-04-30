@@ -35,8 +35,6 @@ const initialThemeObject: ThemeObject = {
 const initialGlobalState: GlobalState = {
   customerMetricsCategory: "new",
   customerMetricsDocument: null,
-  directoryDepartment: "Executive Management",
-  directoryStoreLocation: "Edmonton",
   expandBarChartData: null,
   expandCalendarChartData: null,
   expandLineChartData: null,

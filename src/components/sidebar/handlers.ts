@@ -32,8 +32,13 @@ import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZod } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
-import { DepartmentsWithDefaultKey } from "../directory/types";
+import { directoryAction } from "../directory/actions";
+import {
+  DepartmentsWithDefaultKey,
+  DirectoryDispatch,
+} from "../directory/types";
 import { userDocumentZod } from "../usersQuery/schemas";
+import { createDirectoryForageKey } from "./utils";
 
 async function handleMetricCategoryNavlinkClick(
   {
@@ -562,30 +567,32 @@ async function handleLogoutButtonClick({
   }
 }
 
-async function handleDirectoryNavlinkClick({
+async function handleDirectoryClicks({
   accessToken,
   authDispatch,
-  directoryDepartment,
-  directoryStoreLocation,
+  department,
+  directoryDispatch,
   directoryUrl,
   fetchAbortControllerRef,
   globalDispatch,
   isComponentMountedRef,
   navigate,
   showBoundary,
-  toLocation,
+  storeLocation,
+  toLocation = "/dashboard/directory",
 }: {
   accessToken: string;
   authDispatch: React.Dispatch<AuthDispatch>;
-  directoryDepartment: DepartmentsWithDefaultKey;
-  directoryStoreLocation: AllStoreLocations;
+  department: DepartmentsWithDefaultKey;
+  directoryDispatch?: React.Dispatch<DirectoryDispatch>;
   directoryUrl: string;
   fetchAbortControllerRef: React.RefObject<AbortController | null>;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
-  navigate: NavigateFunction;
+  navigate?: NavigateFunction;
   showBoundary: (error: any) => void;
-  toLocation: string;
+  storeLocation: AllStoreLocations;
+  toLocation?: string;
 }): Promise<SafeBoxResult<UserDocument[]>> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
@@ -604,7 +611,7 @@ async function handleDirectoryNavlinkClick({
   };
 
   const urlWithQuery = new URL(
-    `${directoryUrl}/user/?storeLocation[$eq]=${directoryStoreLocation}&department[$eq]=${directoryDepartment}`,
+    `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
   );
 
   globalDispatch({
@@ -612,10 +619,17 @@ async function handleDirectoryNavlinkClick({
     payload: true,
   });
 
+  const directoryKey = createDirectoryForageKey(
+    department,
+    storeLocation,
+  );
+
   try {
     const forageResult = await getItemForageSafe<UserDocument[]>(
-      "directory",
+      directoryKey,
     );
+    console.log("\n");
+    console.log("handleDirectoryClicks forageResult", forageResult);
     if (!isComponentMounted) {
       return createSafeBoxResult({
         message: "Component unmounted",
@@ -635,17 +649,22 @@ async function handleDirectoryNavlinkClick({
       //   payload: forageResult.safeUnwrap().data,
       // });
 
+      directoryDispatch?.({
+        action: directoryAction.setDirectory,
+        payload: unwrappedData,
+      });
+
+      await setItemForageSafe<UserDocument[]>(
+        directoryKey,
+        unwrappedData,
+      );
+
       globalDispatch({
         action: globalAction.setIsFetching,
         payload: false,
       });
 
-      await setItemForageSafe<UserDocument[]>(
-        "directory",
-        unwrappedData,
-      );
-
-      navigate(toLocation);
+      navigate?.(toLocation);
       return createSafeBoxResult({
         data: forageResult.safeUnwrap().data,
         kind: "success",
@@ -653,6 +672,8 @@ async function handleDirectoryNavlinkClick({
     }
 
     const responseResult = await fetchSafe(urlWithQuery, requestInit);
+    console.log("\n");
+    console.log("handleDirectoryClicks responseResult", responseResult);
     if (!isComponentMounted) {
       return createSafeBoxResult({
         message: "Component unmounted",
@@ -731,6 +752,8 @@ async function handleDirectoryNavlinkClick({
       });
     }
 
+    console.log("parsedServerResponse", parsedServerResponse);
+
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;
 
@@ -753,7 +776,7 @@ async function handleDirectoryNavlinkClick({
       });
 
       await localforage.clear();
-      navigate("/");
+      navigate?.("/");
       return createSafeBoxResult({
         message: "Logout triggered",
       });
@@ -803,14 +826,16 @@ async function handleDirectoryNavlinkClick({
       });
     }
 
-    // globalDispatch({
-    //   action: globalAction.setDirectory,
-    //   payload: parsedServerResponse.data,
-    // });
+    const directory = parsedServerResponse.data;
+
+    directoryDispatch?.({
+      action: directoryAction.setDirectory,
+      payload: directory,
+    });
 
     await setItemForageSafe<UserDocument[]>(
-      "directory",
-      parsedServerResponse.data,
+      directoryKey,
+      directory,
     );
 
     globalDispatch({
@@ -818,9 +843,9 @@ async function handleDirectoryNavlinkClick({
       payload: false,
     });
 
-    navigate(toLocation);
+    navigate?.(toLocation);
     return createSafeBoxResult({
-      data: parsedServerResponse.data,
+      data: directory,
       kind: "success",
     });
   } catch (error: unknown) {
@@ -841,7 +866,7 @@ async function handleDirectoryNavlinkClick({
 }
 
 export {
-  handleDirectoryNavlinkClick,
+  handleDirectoryClicks,
   handleLogoutButtonClick,
   handleMetricCategoryNavlinkClick,
 };

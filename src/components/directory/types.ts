@@ -1,8 +1,9 @@
-import { Department, StoreLocation } from "../../types";
+import { Department, StoreLocation, UserDocument } from "../../types";
 import { DirectoryAction } from "./actions";
 
 type DirectoryState = {
   department: DepartmentsWithDefaultKey;
+  directory: UserDocument[];
   storeLocation: StoreLocationsWithDefaultKey;
 };
 
@@ -14,6 +15,10 @@ type DirectoryDispatch =
   | {
     action: DirectoryAction["setDepartment"];
     payload: DepartmentsWithDefaultKey;
+  }
+  | {
+    action: DirectoryAction["setDirectory"];
+    payload: UserDocument[];
   }
   | {
     action: DirectoryAction["setStoreLocation"];

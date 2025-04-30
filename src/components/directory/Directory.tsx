@@ -1,22 +1,22 @@
 import { Box, Group, Stack } from "@mantine/core";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 
 import { useErrorBoundary } from "react-error-boundary";
 import {
+  API_URL,
   COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
   STORE_LOCATIONS,
 } from "../../constants";
+import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import type { CheckboxRadioSelectData, UserDocument } from "../../types";
-import {
-  createSafeBoxResult,
-  getItemForageSafe,
-  returnThemeColors,
-} from "../../utils";
+import type { CheckboxRadioSelectData } from "../../types";
+import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { type DirectoryAction, directoryAction } from "./actions";
-import { DEPARTMENTS_DATA } from "./constants";
+import { AllStoreLocations } from "../dashboard/types";
+import { handleDirectoryClicks } from "../sidebar/handlers";
+import { directoryAction } from "./actions";
+import { ALL_DEPARTMENTS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
 import { directoryReducer } from "./reducers";
@@ -25,19 +25,24 @@ import type {
   DepartmentsWithDefaultKey,
   StoreLocationsWithDefaultKey,
 } from "./types";
-import { filterEmployees, returnIsStoreLocationDisabled } from "./utils";
+import { forageDirectory, returnIsStoreLocationDisabled } from "./utils";
 
 function Directory() {
   const [directoryState, directoryDispatch] = useReducer(
     directoryReducer,
     initialDirectoryState,
   );
-  const { department, storeLocation } = directoryState;
-  const [directory, setDirectory] = useState<UserDocument[]>([]);
+  const {
+    directory,
+    department,
+    storeLocation,
+  } = directoryState;
   const { showBoundary } = useErrorBoundary();
+  const { authState: { accessToken }, authDispatch } = useAuth();
 
   const {
     globalState: { themeObject },
+    globalDispatch,
   } = useGlobalState();
   const {
     themeColorShade,
@@ -48,65 +53,12 @@ function Directory() {
   const isComponentMountedRef = useRef(false);
 
   useEffect(() => {
-    async function forageDirectory() {
-      fetchAbortControllerRef.current?.abort("Previous request cancelled");
-      fetchAbortControllerRef.current = new AbortController();
-      const fetchAbortController = fetchAbortControllerRef.current;
-
-      isComponentMountedRef.current = true;
-      const isComponentMounted = isComponentMountedRef.current;
-
-      try {
-        const forageResult = await getItemForageSafe<UserDocument[]>(
-          "directory",
-        );
-
-        if (!isComponentMounted) {
-          return createSafeBoxResult({
-            message: "Component unmounted",
-          });
-        }
-
-        if (forageResult.err) {
-          return createSafeBoxResult({
-            message: forageResult.val.message ?? "Error getting directory",
-          });
-        }
-
-        const { kind, message, data } = forageResult.safeUnwrap();
-        if (kind === "notFound") {
-          return createSafeBoxResult({
-            message: message ?? "No directory found",
-          });
-        }
-
-        if (data === undefined) {
-          return createSafeBoxResult({
-            message: "Data is undefined",
-          });
-        }
-
-        setDirectory(data);
-        return createSafeBoxResult({
-          message: "Directory fetched successfully",
-        });
-      } catch (error) {
-        if (
-          !isComponentMounted || fetchAbortController?.signal.aborted
-        ) {
-          return createSafeBoxResult({
-            message: "Component unmounted or request aborted",
-          });
-        }
-
-        showBoundary(error);
-        return createSafeBoxResult({
-          message: "Unknown error",
-        });
-      }
-    }
-
-    forageDirectory();
+    forageDirectory({
+      directoryDispatch,
+      fetchAbortControllerRef,
+      isComponentMountedRef,
+      showBoundary,
+    });
 
     const timerId = setTimeout(() => {
       fetchAbortControllerRef?.current?.abort("Request timed out");
@@ -123,19 +75,30 @@ function Directory() {
     return null;
   }
 
-  const departmentData = [
-    { label: "All Departments", value: "All Departments" },
-    ...DEPARTMENTS_DATA,
-  ] as CheckboxRadioSelectData<DepartmentsWithDefaultKey>;
-
   const departmentSelectInput = (
-    <AccessibleSelectInput<
-      DirectoryAction["setDepartment"],
-      DepartmentsWithDefaultKey
-    >
+    <AccessibleSelectInput
       attributes={{
-        data: departmentData,
+        data: ALL_DEPARTMENTS_DATA,
         name: "department",
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          const isStoreLocationDisabled = returnIsStoreLocationDisabled(
+            event.currentTarget.value as DepartmentsWithDefaultKey,
+          );
+          await handleDirectoryClicks({
+            accessToken,
+            authDispatch,
+            department: event.currentTarget.value as DepartmentsWithDefaultKey,
+            directoryDispatch,
+            directoryUrl: API_URL,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            showBoundary,
+            storeLocation: isStoreLocationDisabled
+              ? "All Locations"
+              : "Edmonton" as AllStoreLocations,
+          });
+        },
         value: department,
         parentDispatch: directoryDispatch,
         validValueAction: directoryAction.setDepartment,
@@ -143,7 +106,9 @@ function Directory() {
     />
   );
 
-  const isStoreLocationDisabled = returnIsStoreLocationDisabled(department);
+  const isStoreLocationDisabled = returnIsStoreLocationDisabled(
+    department,
+  );
   const storeLocationData = isStoreLocationDisabled
     ? ([
       {
@@ -156,14 +121,27 @@ function Directory() {
     >);
 
   const storeLocationSelectInput = (
-    <AccessibleSelectInput<
-      DirectoryAction["setStoreLocation"],
-      StoreLocationsWithDefaultKey
-    >
+    <AccessibleSelectInput
       attributes={{
         data: storeLocationData,
         disabled: isStoreLocationDisabled,
         name: "storeLocation",
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          await handleDirectoryClicks({
+            accessToken,
+            authDispatch,
+            department,
+            directoryDispatch,
+            directoryUrl: API_URL,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            showBoundary,
+            storeLocation: isStoreLocationDisabled
+              ? "All Locations"
+              : event.currentTarget.value as AllStoreLocations,
+          });
+        },
         value: storeLocation,
         parentDispatch: directoryDispatch,
         validValueAction: directoryAction.setStoreLocation,
@@ -171,16 +149,18 @@ function Directory() {
     />
   );
 
-  const filteredEmployees = filterEmployees({
-    department,
-    directory,
-    isStoreLocationDisabled,
-    storeLocation,
-  });
+  // const filteredEmployees = filterEmployees({
+  //   department: directoryDepartment,
+  //   directory,
+  //   isStoreLocationDisabled,
+  //   storeLocation: directoryStoreLocation,
+  // });
 
-  const d3Tree = (
-    <D3Tree data={buildD3Tree(filteredEmployees, themeColorShade)} />
-  );
+  // console.log("filteredEmployees", filteredEmployees);
+
+  const d3Tree = directory.length > 0
+    ? <D3Tree data={buildD3Tree(directory, themeColorShade)} />
+    : null;
 
   return (
     <Stack w="100%" align="center" bg={cardBgGradient}>

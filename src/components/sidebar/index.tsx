@@ -25,7 +25,7 @@ import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 import { DashboardMetricsView } from "../dashboard/types";
 import {
-  handleDirectoryNavlinkClick,
+  handleDirectoryClicks,
   handleLogoutButtonClick,
   handleMetricCategoryNavlinkClick,
 } from "./handlers";
@@ -39,8 +39,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const { authState: { accessToken }, authDispatch } = useAuth();
   const {
     globalState: {
-      directoryDepartment,
-      directoryStoreLocation,
       themeObject,
       productMetricCategory,
       repairMetricCategory,
@@ -210,11 +208,11 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         icon: <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: async () => {
-          await handleDirectoryNavlinkClick({
+          await handleDirectoryClicks({
             accessToken,
             authDispatch,
-            directoryDepartment,
-            directoryStoreLocation,
+            department: "Executive Management",
+            storeLocation: "All Locations",
             directoryUrl: API_URL,
             fetchAbortControllerRef,
             globalDispatch,

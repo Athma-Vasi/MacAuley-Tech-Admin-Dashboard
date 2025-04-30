@@ -1,4 +1,5 @@
 import { CheckboxRadioSelectData, Department } from "../../types";
+import { DepartmentsWithDefaultKey } from "./types";
 
 const DEPARTMENTS_DATA: CheckboxRadioSelectData<Department> = [
   { value: "Executive Management", label: "Executive Management" },
@@ -16,4 +17,10 @@ const DEPARTMENTS_DATA: CheckboxRadioSelectData<Department> = [
   { value: "Maintenance", label: "Maintenance" },
 ];
 
-export { DEPARTMENTS_DATA };
+const ALL_DEPARTMENTS_DATA: CheckboxRadioSelectData<DepartmentsWithDefaultKey> =
+  [
+    { label: "All Departments", value: "All Departments" },
+    ...DEPARTMENTS_DATA,
+  ];
+
+export { ALL_DEPARTMENTS_DATA, DEPARTMENTS_DATA };

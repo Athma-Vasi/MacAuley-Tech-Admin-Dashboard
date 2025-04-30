@@ -66,17 +66,17 @@ function renderForeignObjectNode({
 
   const foreignChild = (
     <Flex direction="column" rowGap={2} align="center">
-      <Text size={22}>
+      <Text size={24}>
         {nodeDatum.attributes.jobPosition}
       </Text>
 
-      <Text size={18}>
+      <Text size={20}>
         {nodeDatum.attributes.city}, {nodeDatum.attributes.country}
       </Text>
     </Flex>
   );
 
-  const [firstName, middleName, lastName] = nodeDatum.name.split(" ");
+  const [firstName, lastName] = nodeDatum.name.split(" ");
 
   const foreignCard = (
     <Card
@@ -92,11 +92,8 @@ function renderForeignObjectNode({
             {profilePic}
           </Flex>
           <Flex direction="column">
-            <Text size={24} weight={600}>{firstName}</Text>
-            {middleName
-              ? <Text size={24} weight={600}>{middleName}</Text>
-              : null}
-            <Text size={24} weight={600}>{lastName}</Text>
+            <Text size={28} weight={600}>{firstName}</Text>
+            <Text size={28} weight={600}>{lastName}</Text>
           </Flex>
         </GoldenGrid>
 
@@ -127,7 +124,7 @@ function renderForeignObjectNode({
 function D3Tree({ data }: { data: Array<D3TreeInput> }) {
   const [translate, containerRef] = useCenteredTree();
 
-  const nodeSize = { x: 400, y: 400 };
+  const nodeSize = { x: 500, y: 500 };
   const foreignObjectProps = {
     width: nodeSize.x,
     height: nodeSize.y,
