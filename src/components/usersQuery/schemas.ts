@@ -14,7 +14,7 @@ import {
 } from "../../regexes";
 import { usersQueryAction } from "./actions";
 
-const userDocumentZ = z.object({
+const userDocumentZod = z.object({
     __v: z.number().optional(),
     _id: z.string().optional(),
     addressLine: z.string().regex(ADDRESS_LINE_REGEX).optional(),
@@ -97,7 +97,7 @@ const setQueryStringDispatchZod = z.object({
 });
 const setResourceDataDispatchZod = z.object({
     action: z.literal(usersQueryAction.setResourceData),
-    payload: z.array(userDocumentZ),
+    payload: z.array(userDocumentZod),
 });
 const setTotalDocumentsDispatchZod = z.object({
     action: z.literal(usersQueryAction.setTotalDocuments),
@@ -138,7 +138,7 @@ const resetToInitialDispatchZod = z.object({
         newQueryFlag: z.boolean(),
         pages: z.number().min(0),
         queryString: z.string(),
-        resourceData: z.array(userDocumentZ),
+        resourceData: z.array(userDocumentZod),
         totalDocuments: z.number().min(0),
     }),
 });
@@ -168,7 +168,7 @@ export {
     setQueryStringDispatchZod,
     setResourceDataDispatchZod,
     setTotalDocumentsDispatchZod,
-    userDocumentZ,
+    userDocumentZod,
 };
 export type { UsersQueryDispatch };
 

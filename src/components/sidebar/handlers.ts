@@ -8,14 +8,16 @@ import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   BusinessMetricsDocument,
   CustomerMetricsDocument,
+  Department,
   FinancialMetricsDocument,
   HttpServerResponse,
   ProductMetricsDocument,
   RepairMetricsDocument,
   SafeBoxResult,
+  UserDocument,
 } from "../../types";
 import {
-  createForageKey,
+  createMetricsForageKey,
   createSafeBoxResult,
   decodeJWTSafe,
   fetchSafe,
@@ -31,6 +33,7 @@ import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZod } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
+import { userDocumentZod } from "../usersQuery/schemas";
 
 async function handleMetricCategoryNavlinkClick(
   {
@@ -96,7 +99,7 @@ async function handleMetricCategoryNavlinkClick(
     `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
   );
 
-  const forageKey = createForageKey({
+  const forageKey = createMetricsForageKey({
     metricsView,
     productMetricCategory,
     repairMetricCategory,
@@ -559,4 +562,274 @@ async function handleLogoutButtonClick({
   }
 }
 
-export { handleLogoutButtonClick, handleMetricCategoryNavlinkClick };
+async function handleDirectoryNavlinkClick({
+  accessToken,
+  authDispatch,
+  directoryDepartment,
+  directoryStoreLocation,
+  directoryUrl,
+  fetchAbortControllerRef,
+  globalDispatch,
+  isComponentMountedRef,
+  navigate,
+  showBoundary,
+  toLocation,
+}: {
+  accessToken: string;
+  authDispatch: React.Dispatch<AuthDispatch>;
+  directoryDepartment: Department;
+  directoryStoreLocation: AllStoreLocations;
+  directoryUrl: string;
+  fetchAbortControllerRef: React.RefObject<AbortController | null>;
+  globalDispatch: React.Dispatch<GlobalDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
+  navigate: NavigateFunction;
+  showBoundary: (error: any) => void;
+  toLocation: string;
+}): Promise<SafeBoxResult<UserDocument[]>> {
+  fetchAbortControllerRef.current?.abort("Previous request cancelled");
+  fetchAbortControllerRef.current = new AbortController();
+  const fetchAbortController = fetchAbortControllerRef.current;
+
+  isComponentMountedRef.current = true;
+  const isComponentMounted = isComponentMountedRef.current;
+
+  const requestInit: RequestInit = {
+    method: "GET",
+    signal: fetchAbortController.signal,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  const urlWithQuery = new URL(
+    `${directoryUrl}/?storeLocation[$eq]=${directoryStoreLocation}&department[$eq]=${directoryDepartment}`,
+  );
+
+  globalDispatch({
+    action: globalAction.setIsFetching,
+    payload: true,
+  });
+
+  try {
+    const forageResult = await getItemForageSafe<UserDocument[]>(
+      "directory",
+    );
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (forageResult.ok && forageResult.safeUnwrap().kind === "success") {
+      globalDispatch({
+        action: globalAction.setDirectory,
+        payload: forageResult.safeUnwrap().data,
+      });
+
+      globalDispatch({
+        action: globalAction.setIsFetching,
+        payload: false,
+      });
+
+      navigate(toLocation);
+      return createSafeBoxResult({
+        data: forageResult.safeUnwrap().data,
+        kind: "success",
+      });
+    }
+
+    const responseResult = await fetchSafe(urlWithQuery, requestInit);
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (responseResult.err) {
+      showBoundary(responseResult.val.data);
+      return createSafeBoxResult({
+        message: responseResult.val.message ?? "Error fetching response",
+      });
+    }
+
+    const responseUnwrapped = responseResult.safeUnwrap().data;
+    if (responseUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    const jsonResult = await responseToJSONSafe<
+      HttpServerResponse<UserDocument>
+    >(
+      responseUnwrapped,
+    );
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (jsonResult.err) {
+      showBoundary(jsonResult.val.data);
+      return createSafeBoxResult({
+        message: jsonResult.val.message ?? "Error parsing JSON",
+      });
+    }
+
+    const serverResponse = jsonResult.safeUnwrap().data;
+    if (serverResponse === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    console.time("--parsing--");
+    const parsedResult = await parseServerResponseSafeAsync({
+      object: serverResponse,
+      zSchema: userDocumentZod,
+    });
+    console.timeEnd("--parsing--");
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (parsedResult.err) {
+      showBoundary(parsedResult.val.data);
+      return createSafeBoxResult({
+        message: parsedResult.val.message ?? "Error parsing response",
+      });
+    }
+
+    const parsedServerResponse = parsedResult.safeUnwrap().data;
+    if (parsedServerResponse === undefined) {
+      showBoundary(
+        new Error("No data returned from server"),
+      );
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    const { accessToken: newAccessToken, triggerLogout, kind, message } =
+      parsedServerResponse;
+
+    if (triggerLogout) {
+      authDispatch({
+        action: authAction.setAccessToken,
+        payload: "",
+      });
+      authDispatch({
+        action: authAction.setIsLoggedIn,
+        payload: false,
+      });
+      authDispatch({
+        action: authAction.setDecodedToken,
+        payload: Object.create(null),
+      });
+      authDispatch({
+        action: authAction.setUserDocument,
+        payload: Object.create(null),
+      });
+
+      await localforage.clear();
+      navigate("/");
+      return createSafeBoxResult({
+        message: "Logout triggered",
+      });
+    }
+
+    const decodedTokenResult = await decodeJWTSafe(newAccessToken);
+
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (decodedTokenResult.err) {
+      showBoundary(decodedTokenResult.val.data);
+      return createSafeBoxResult({
+        message: decodedTokenResult.val.message ?? "Error decoding JWT",
+      });
+    }
+
+    const decodedToken = decodedTokenResult.safeUnwrap().data;
+    if (decodedToken === undefined) {
+      showBoundary(new Error("Invalid token"));
+      return createSafeBoxResult({
+        message: "Invalid token",
+      });
+    }
+
+    authDispatch({
+      action: authAction.setAccessToken,
+      payload: newAccessToken,
+    });
+    authDispatch({
+      action: authAction.setDecodedToken,
+      payload: decodedToken,
+    });
+
+    if (kind === "error") {
+      showBoundary(
+        new Error(
+          `Server error: ${message}`,
+        ),
+      );
+      return createSafeBoxResult({
+        message,
+        kind: "error",
+      });
+    }
+
+    globalDispatch({
+      action: globalAction.setDirectory,
+      payload: parsedServerResponse.data,
+    });
+
+    await setItemForageSafe<UserDocument[]>(
+      "directory",
+      parsedServerResponse.data,
+    );
+
+    globalDispatch({
+      action: globalAction.setIsFetching,
+      payload: false,
+    });
+
+    navigate(toLocation);
+    return createSafeBoxResult({
+      data: parsedServerResponse.data,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMountedRef.current ||
+      fetchAbortControllerRef.current?.signal.aborted
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted or fetch aborted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
+  }
+}
+
+export {
+  handleDirectoryNavlinkClick,
+  handleLogoutButtonClick,
+  handleMetricCategoryNavlinkClick,
+};

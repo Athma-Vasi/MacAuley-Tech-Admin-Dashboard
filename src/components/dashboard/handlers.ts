@@ -11,7 +11,7 @@ import {
     RepairMetricsDocument,
 } from "../../types";
 import {
-    createForageKey,
+    createMetricsForageKey,
     decodeJWTSafe,
     fetchSafe,
     getItemForageSafe,
@@ -91,7 +91,7 @@ async function handleStoreCategoryClick(
         `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
     );
 
-    const forageKey = createForageKey({
+    const forageKey = createMetricsForageKey({
         metricsView,
         productMetricCategory,
         repairMetricCategory,
@@ -303,15 +303,10 @@ async function handleStoreCategoryClick(
             });
         }
 
-        const setDocResult = await setItemForageSafe<BusinessMetricsDocument>(
+        await setItemForageSafe<BusinessMetricsDocument>(
             forageKey,
             payload,
         );
-
-        if (setDocResult.err) {
-            showBoundary(setDocResult.val.data);
-            return;
-        }
 
         dashboardDispatch({
             action: dashboardAction.setIsLoading,

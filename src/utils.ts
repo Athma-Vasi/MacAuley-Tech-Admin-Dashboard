@@ -501,7 +501,7 @@ async function parseServerResponseSafeAsync(
   }
 }
 
-function createForageKey(
+function createMetricsForageKey(
   {
     metricsView,
     productMetricCategory,
@@ -666,7 +666,7 @@ export {
   capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
-  createForageKey,
+  createMetricsForageKey,
   createSafeBoxResult,
   debounce,
   decodeJWTSafe,

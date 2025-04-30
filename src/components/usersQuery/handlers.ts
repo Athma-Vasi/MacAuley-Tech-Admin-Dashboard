@@ -11,7 +11,7 @@ import {
     responseToJSONSafe,
 } from "../../utils";
 import { usersQueryAction } from "./actions";
-import { userDocumentZ } from "./schemas";
+import { userDocumentZod } from "./schemas";
 import { UsersQueryState } from "./types";
 
 async function handleUsersQuerySubmitGET(
@@ -138,7 +138,7 @@ async function handleUsersQuerySubmitGET(
         console.time("--PARSING--");
         const parsedResult = await parseServerResponseSafeAsync({
             object: serverResponse,
-            zSchema: userDocumentZ,
+            zSchema: userDocumentZod,
         });
         console.timeEnd("--PARSING--");
 
