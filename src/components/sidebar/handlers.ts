@@ -593,7 +593,9 @@ async function handleDirectoryClicks({
   showBoundary: (error: any) => void;
   storeLocation: AllStoreLocations;
   toLocation?: string;
-}): Promise<SafeBoxResult<UserDocument[]>> {
+}): Promise<
+  SafeBoxResult<{ newAccessToken: string; userDocuments: UserDocument[] }>
+> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -663,7 +665,10 @@ async function handleDirectoryClicks({
 
       navigate?.(toLocation);
       return createSafeBoxResult({
-        data: forageResult.safeUnwrap().data,
+        data: {
+          newAccessToken: accessToken,
+          userDocuments: unwrappedData,
+        },
         kind: "success",
       });
     }
@@ -819,16 +824,16 @@ async function handleDirectoryClicks({
       });
     }
 
-    const directory = parsedServerResponse.data;
+    const userDocuments = parsedServerResponse.data;
 
     directoryDispatch?.({
       action: directoryAction.setDirectory,
-      payload: directory,
+      payload: userDocuments,
     });
 
     await setItemForageSafe<UserDocument[]>(
       directoryKey,
-      directory,
+      userDocuments,
     );
 
     globalDispatch({
@@ -838,7 +843,10 @@ async function handleDirectoryClicks({
 
     navigate?.(toLocation);
     return createSafeBoxResult({
-      data: directory,
+      data: {
+        newAccessToken,
+        userDocuments,
+      },
       kind: "success",
     });
   } catch (error: unknown) {
