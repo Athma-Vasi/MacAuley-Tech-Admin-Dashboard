@@ -251,7 +251,7 @@ async function handleLoginButtonClick(
     await setItemForageSafe<
       FinancialMetricsDocument
     >(
-      "Financials-All Locations",
+      "Financials/All Locations",
       parsedServerResponse.data[0].financialMetricsDocument,
     );
 

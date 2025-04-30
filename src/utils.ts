@@ -518,10 +518,10 @@ function createMetricsForageKey(
     metricsView?.slice(1)
   }`;
 
-  return `${capitalizedMetricsView}-${storeLocationView}${
-    metricsView === "repairs" ? "-" + repairMetricCategory : metricsView ===
+  return `${capitalizedMetricsView}/${storeLocationView}${
+    metricsView === "repairs" ? "/" + repairMetricCategory : metricsView ===
         "products"
-      ? "-" + productMetricCategory
+      ? "/" + productMetricCategory
       : ""
   }`;
 }

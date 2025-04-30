@@ -610,9 +610,13 @@ async function handleDirectoryClicks({
     },
   };
 
-  const urlWithQuery = new URL(
-    `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
-  );
+  const urlWithQuery = department === "All Departments"
+    ? new URL(
+      `${directoryUrl}/user/?&limit=1000&newQueryFlag=true&totalDocuments=0`,
+    )
+    : new URL(
+      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
+    );
 
   globalDispatch({
     action: globalAction.setIsFetching,
@@ -628,8 +632,6 @@ async function handleDirectoryClicks({
     const forageResult = await getItemForageSafe<UserDocument[]>(
       directoryKey,
     );
-    console.log("\n");
-    console.log("handleDirectoryClicks forageResult", forageResult);
     if (!isComponentMounted) {
       return createSafeBoxResult({
         message: "Component unmounted",
@@ -643,11 +645,6 @@ async function handleDirectoryClicks({
           message: "Data is undefined",
         });
       }
-
-      // globalDispatch({
-      //   action: globalAction.setDirectory,
-      //   payload: forageResult.safeUnwrap().data,
-      // });
 
       directoryDispatch?.({
         action: directoryAction.setDirectory,
@@ -672,8 +669,6 @@ async function handleDirectoryClicks({
     }
 
     const responseResult = await fetchSafe(urlWithQuery, requestInit);
-    console.log("\n");
-    console.log("handleDirectoryClicks responseResult", responseResult);
     if (!isComponentMounted) {
       return createSafeBoxResult({
         message: "Component unmounted",
@@ -751,8 +746,6 @@ async function handleDirectoryClicks({
         message: "No data returned from server",
       });
     }
-
-    console.log("parsedServerResponse", parsedServerResponse);
 
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;

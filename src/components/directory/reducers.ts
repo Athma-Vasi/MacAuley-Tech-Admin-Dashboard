@@ -7,7 +7,6 @@ import {
   DirectoryState,
   StoreLocationsWithDefaultKey,
 } from "./types";
-import { returnIsStoreLocationDisabled } from "./utils";
 
 function directoryReducer(
   state: DirectoryState,
@@ -30,30 +29,9 @@ function directoryReducer_setDepartment(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
-  const isStoreLocationDisabled = returnIsStoreLocationDisabled(
-    dispatch.payload as DepartmentsWithDefaultKey,
-  );
-  const department = dispatch.payload as DepartmentsWithDefaultKey;
-
-  console.log(
-    "directoryReducer_setDepartment department ::",
-    department,
-    "isStoreLocationDisabled ::",
-    isStoreLocationDisabled,
-  );
-
-  // if (isStoreLocationDisabled) {
-  //   return {
-  //     ...state,
-  //     department,
-  //     storeLocation: "All Locations" as StoreLocationsWithDefaultKey,
-  //   };
-  // }
-
   return {
     ...state,
-    // storeLocation: "Edmonton" as StoreLocationsWithDefaultKey,
-    department,
+    department: dispatch.payload as DepartmentsWithDefaultKey,
   };
 }
 
