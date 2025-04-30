@@ -1,4 +1,4 @@
-import { Group, Modal } from "@mantine/core";
+import { Group, Modal, Text } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
@@ -175,7 +175,7 @@ function QueryFilter(
         <Modal
             opened={openedFilterHelpModal}
             onClose={closeFilterHelpModal}
-            title="Filter Query guide"
+            title={<Text size="xl">🛠 How to Use the Filter Builder</Text>}
         >
             {FILTER_HELP_MODAL_CONTENT}
         </Modal>

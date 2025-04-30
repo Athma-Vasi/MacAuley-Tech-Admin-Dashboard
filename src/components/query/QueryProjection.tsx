@@ -1,4 +1,4 @@
-import { Modal } from "@mantine/core";
+import { Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleCheckboxInputGroup } from "../accessibleInputs/AccessibleCheckboxInput";
@@ -52,7 +52,7 @@ function QueryProjection({
         <Modal
             opened={openedProjectionHelpModal}
             onClose={closeProjectionHelpModal}
-            title="Projection Query guide"
+            title={<Text size="xl">🧰 How it works:</Text>}
         >
             {PROJECTION_HELP_MODAL_CONTENT}
         </Modal>

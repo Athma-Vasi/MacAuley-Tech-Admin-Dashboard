@@ -87,6 +87,12 @@ const setSortFieldDispatchZod = z.object({
     action: z.literal(queryAction.setSortField),
     payload: z.string(),
 });
+
+const queryChainZod = z.object({
+    and: z.array(z.array(z.string()).length(3)),
+    nor: z.array(z.array(z.string()).length(3)),
+    or: z.array(z.array(z.string()).length(3)),
+});
 const resetToInitialDispatchZod = z.object({
     action: z.literal(queryAction.resetToInitial),
     payload: z.object({
@@ -109,7 +115,10 @@ const resetToInitialDispatchZod = z.object({
         isSearchDisabled: z.boolean(),
         limitPerPage: z.enum(["10", "25", "50"]),
         projectionFields: z.array(z.string()),
-        queryChains: z.object({}),
+        queryChains: z.object({
+            filter: queryChainZod,
+            sort: queryChainZod,
+        }),
         queryKind: z.enum(["filter", "sort", "search", "projection"]),
         sortDirection: z.enum(["ascending", "descending"]),
         sortField: z.string(),

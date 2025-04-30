@@ -1,4 +1,4 @@
-import { Group, Modal } from "@mantine/core";
+import { Group, Modal, Text } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
@@ -125,7 +125,7 @@ function QuerySort({
         <Modal
             opened={openedSortHelpModal}
             onClose={closeSortHelpModal}
-            title="Sort Query guide"
+            title={<Text size="xl">🔃 How it works:</Text>}
         >
             {SORT_HELP_MODAL_CONTENT}
         </Modal>

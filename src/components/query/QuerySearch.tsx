@@ -165,7 +165,7 @@ function QuerySearch({
         <Modal
             opened={openedSearchHelpModal}
             onClose={closeSearchHelpModal}
-            title="Search Query guide"
+            title={<Text size="xl">🔍 How it works:</Text>}
         >
             {SEARCH_CHAIN_HELP_MODAL_CONTENT}
         </Modal>

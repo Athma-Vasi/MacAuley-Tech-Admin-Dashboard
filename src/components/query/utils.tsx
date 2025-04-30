@@ -6,7 +6,6 @@ import {
     List,
     Stack,
     Text,
-    Title,
     Tooltip,
 } from "@mantine/core";
 
@@ -18,19 +17,13 @@ import { splitCamelCase } from "../../utils";
 import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
-import { DIRECTORY_EMPLOYEE_DATA, EmployeeDoc } from "../directory/data";
 import { QueryAction } from "./actions";
 import { QueryDispatch } from "./schemas";
-import { initialQueryState } from "./state";
 import {
-    GeneralSearchCase,
     InputKind,
-    LimitPerPage,
     LogicalOperator,
     MongoQueryOperator,
     QueryChainKind,
-    QueryChains,
-    QueryLink,
     QueryOperator,
     QueryState,
     QueryTemplate,
@@ -348,76 +341,8 @@ function returnFilterSelectData(
         });
 }
 
-const QUERY_BUILDER_HELP_MODAL_CONTENT = (
-    <Stack w="100%">
-        <Text size="xl">🛠 How to use the Query Builder:</Text>
-        <Text>
-            The Query Builder lets you construct custom queries to retrieve
-            documents from a collection. You can mix and match operations like
-            <strong>Filter</strong>, <strong>Search</strong>,{" "}
-            <strong>Sort</strong>, and <strong>Projection</strong>{" "}
-            to fine-tune your results 🎯.
-        </Text>
-
-        <Text size="lg">🔎 Filter:</Text>
-        <Text>
-            Use <strong>filters</strong>{" "}
-            to apply precise conditions to fields — for example, check if a date
-            is after a certain value, or if a number is greater than a
-            threshold. Combine multiple conditions using logical operators like
-            {" "}
-            <strong>AND</strong> or{" "}
-            <strong>OR</strong>, and group them into blocks for more complex
-            logic. All conditions within a group must be met for a document to
-            match ✅.
-        </Text>
-
-        <Text size="lg">📝 Search:</Text>
-        <Text>
-            The <strong>search</strong>{" "}
-            operation helps you find documents using free-text input. Ideal for
-            matching names, descriptions, or emails. You can chain multiple
-            search terms and group them with logical operators to build dynamic,
-            flexible search rules.
-        </Text>
-
-        <Text size="lg">🔃 Sort:</Text>
-        <Text>
-            <strong>Sort</strong> your results by one or more fields in{" "}
-            <strong>ascending</strong> (⬆️) or <strong>descending</strong>{" "}
-            (⬇️) order — perfect for ordering by dates, status, priority, and
-            more. You can use multiple sort fields for secondary sorting
-            (tiebreakers).
-        </Text>
-
-        <Text size="lg">📦 Projection:</Text>
-        <Text>
-            Use <strong>projection</strong>{" "}
-            to choose which fields to include or exclude in your results. This
-            helps reduce clutter and return only the information you care about.
-            By default, all fields are shown — toggle checkboxes to adjust
-            visibility.
-        </Text>
-
-        <Text size="lg">💡 Example:</Text>
-        <Text>
-            Build a query to: filter documents where{" "}
-            <strong>"Created date"</strong> is on or after{" "}
-            <strong>2021-01-01</strong>, search <strong>"Customer name"</strong>
-            {" "}
-            for <strong>"John"</strong>, sort by <strong>"Created date"</strong>
-            {" "}
-            in descending order, and exclude the <strong>"Updated date"</strong>
-            {" "}
-            from the results.
-        </Text>
-    </Stack>
-);
-
 const FILTER_HELP_MODAL_CONTENT = (
     <Stack w="100%">
-        <Text size="xl">🛠 How to Use the Filter Builder</Text>
-
         <Stack>
             <Text>
                 The <strong>Filter Builder</strong>{" "}
@@ -427,7 +352,18 @@ const FILTER_HELP_MODAL_CONTENT = (
                 scenes 🧠.
             </Text>
 
-            <Text size="md">🧩 Components of a Filter Condition</Text>
+            <Text>
+                Use <strong>filters</strong>{" "}
+                to apply precise conditions to fields — for example, check if a
+                date is after a certain value, or if a number is greater than a
+                threshold. Combine multiple conditions using logical operators
+                like <strong>AND</strong> or{" "}
+                <strong>OR</strong>, and group them into blocks for more complex
+                logic. All conditions within a group must be met for a document
+                to match ✅.
+            </Text>
+
+            <Text size="lg">🧩 Components of a Filter Condition</Text>
             <Text>
                 Each filter condition is made up of the following parts:
             </Text>
@@ -459,7 +395,7 @@ const FILTER_HELP_MODAL_CONTENT = (
                 field.
             </Text>
 
-            <Text size="md">🧱 Building a Query</Text>
+            <Text size="lg">🧱 Building a Query</Text>
             <Text>
                 You can chain multiple filter conditions using logical operators
                 like <strong>AND</strong> and{" "}
@@ -492,90 +428,51 @@ const FILTER_HELP_MODAL_CONTENT = (
                 control over your results 🧠.
             </Text>
 
-            <Text size="md">💡 Tips & Tricks</Text>
+            <Text size="lg">💡 Tips & Tricks</Text>
             <List>
                 <List.Item>
-                    ✅ Use <strong>AND</strong> when <i>all</i>{" "}
-                    conditions must be true.
+                    <Text>
+                        ✅ Use <strong>AND</strong> when <i>all</i>{" "}
+                        conditions must be true.
+                    </Text>
                 </List.Item>
                 <List.Item>
-                    🔄 Use <strong>OR</strong> when <i>any</i>{" "}
-                    condition can be true.
+                    <Text>
+                        🔄 Use <strong>OR</strong> when <i>any</i>{" "}
+                        condition can be true.
+                    </Text>
                 </List.Item>
                 <List.Item>
-                    🧱 Filter groups act as independent logical blocks that can
-                    be combined to shape more precise results.
+                    <Text>
+                        🧱 Filter groups act as independent logical blocks that
+                        can be combined to shape more precise results.
+                    </Text>
                 </List.Item>
                 <List.Item>
-                    🧹 Use the <strong>link</strong>{" "}
-                    icon to remove a filter condition from the chain.
+                    <Text>
+                        🧹 Use the <strong>link</strong>{" "}
+                        icon to remove a filter condition from the chain.
+                    </Text>
                 </List.Item>
                 <List.Item>
-                    📁 Fields and values directly map to the document structure
-                    in your database. Choose wisely!
+                    <Text>
+                        📁 Fields and values directly map to the document
+                        structure in your database. Choose wisely!
+                    </Text>
                 </List.Item>
             </List>
         </Stack>
     </Stack>
 );
 
-const GENERAL_SEARCH_HELP_MODAL_CONTENT = (
-    <Stack w="100%">
-        <Text size="xl">🔍 How it works:</Text>
-        <Flex direction="column" rowGap="xs">
-            <Text>
-                The <strong>general search</strong>{" "}
-                operation allows you to search for documents based on free-form
-                text. This is ideal for matching keywords across multiple fields
-                where values aren’t strictly structured.
-            </Text>
-            <Text>
-                Each space-separated word or phrase is treated as a{" "}
-                <strong>token</strong>. Documents that contain <em>any</em>{" "}
-                of these tokens will be included (or excluded) from the search
-                results depending on your input.
-            </Text>
-        </Flex>
-
-        <Title order={6}>💡 Example:</Title>
-        <Flex direction="column" rowGap="xs">
-            <Text>
-                An inclusion string like <code>'John Doe'</code>{" "}
-                will return documents that contain either the token{" "}
-                <strong>"John"</strong> or <strong>"Doe"</strong>.
-            </Text>
-            <Text>
-                An exclusion string like <code>'-Jane -Smith'</code>{" "}
-                will return documents that
-                <em>do not</em> contain the tokens <strong>"Jane"</strong> or
-                {" "}
-                <strong>"Smith"</strong>.
-            </Text>
-            <Text>
-                If you combine them, for example:{" "}
-                <code>'John Doe -Jane -Smith'</code>, the search will return
-                documents that contain <strong>"John"</strong> or{" "}
-                <strong>"Doe"</strong>
-                <em>and</em> do <strong>not</strong> contain{" "}
-                <strong>"Jane"</strong> or{" "}
-                <strong>"Smith"</strong>. Searches are case-insensitive by
-                default (e.g., <code>"john"</code> and <code>"JOHN"</code>{" "}
-                are treated the same).
-            </Text>
-        </Flex>
-    </Stack>
-);
-
 const SEARCH_CHAIN_HELP_MODAL_CONTENT = (
     <Stack w="100%">
-        <Text size="xl">🔍 How it works:</Text>
         <Flex direction="column" rowGap="xs">
             <Text>
                 The <strong>search</strong>{" "}
-                operation allows you to find documents where specified fields
-                contain free-form text (e.g., inputs like text or textarea). You
-                can chain multiple search statements together to build logical
-                search chains.
+                operation helps you find documents where specified fields
+                contain free-text input. Ideal for matching names, descriptions,
+                or emails. You can chain multiple flexible search rules.
             </Text>
 
             <Text>
@@ -607,128 +504,117 @@ const SEARCH_CHAIN_HELP_MODAL_CONTENT = (
                 <code>2021-01-01</code>.
             </Text>
 
-            <Text>
-                ✅ For better accuracy and UX, each field is validated according
-                to its type:
-                <ul style={{ marginLeft: "1rem" }}>
-                    <li>📅 Date fields must contain valid dates</li>
-                    <li>🔢 Number fields only accept numeric input</li>
-                    <li>📧 Email fields must be valid email addresses</li>
-                    <li>✏️ Text fields accept general text</li>
-                </ul>
-            </Text>
+            <List>
+                <Text>
+                    ✅ For better accuracy and UX, each field is validated
+                    according to its type:
+                </Text>
+                <List.Item>
+                    <Text>📅 Date fields must contain valid dates</Text>
+                </List.Item>
+                <List.Item>
+                    <Text>🔢 Number fields only accept numeric input</Text>
+                </List.Item>
+                <List.Item>
+                    <Text>
+                        📧 Email fields must be valid email addresses
+                    </Text>
+                </List.Item>
+                <List.Item>
+                    <Text>✏️ Text fields accept general text</Text>
+                </List.Item>
+            </List>
         </Flex>
 
         <Text size="lg">📦 Statement Structure</Text>
-        <Text>
-            Each search statement has two parts:
-            <ul style={{ marginLeft: "1rem" }}>
-                <li>
-                    <strong>Field</strong>{" "}
-                    – The document attribute you want to search (e.g., name,
+
+        <List>
+            <Text>
+                Each search statement has two parts:
+            </Text>
+            <List.Item>
+                <Text>
+                    <strong>Field</strong>
+                    : The document attribute you want to search (e.g., name,
                     status, createdAt)
-                </li>
-                <li>
-                    <strong>Value</strong>{" "}
-                    – The term to match within the selected field
-                </li>
-            </ul>
-        </Text>
+                </Text>
+            </List.Item>
+            <List.Item>
+                <Text>
+                    <strong>Value</strong>
+                    : The term to match within the selected field
+                </Text>
+            </List.Item>
+        </List>
     </Stack>
 );
 
 const SORT_HELP_MODAL_CONTENT = (
     <Stack w="100%">
-        <Flex direction="column">
-            <Title order={6}>🔃 How it works:</Title>
-            <Flex direction="column" rowGap="xs">
-                <Text>
-                    The <strong>sort</strong>{" "}
-                    operation lets you control the order in which documents are
-                    returned by sorting them based on specific fields and
-                    direction (ascending or descending).
-                </Text>
-                <Text>
-                    Each additional sort field acts as a{" "}
-                    <strong>tiebreaker</strong>{" "}
-                    if the previous field's values are identical. This allows
-                    for multi-level sorting — for example, sort by{" "}
-                    <code>"Status"</code>, then by <code>"Created date"</code>.
-                </Text>
-            </Flex>
-        </Flex>
+        <Text>
+            The <strong>sort</strong>{" "}
+            operation lets you control the order in which documents are returned
+            by sorting them based on specific fields and direction (ascending or
+            descending).
+        </Text>
 
-        <Flex direction="column">
-            <Title order={6}>⬆️ Ascending order:</Title>
-            <Flex direction="column" rowGap="xs">
-                <Text>
-                    Ascending order (the default) arranges values from{" "}
-                    <strong>lowest to highest</strong>. It’s commonly used for
-                    dates, numbers, and alphabetical sorting.
-                </Text>
-                <Text>
-                    For example: sorting by <strong>"Created date"</strong>{" "}
-                    in ascending order will list the <em>oldest</em>{" "}
-                    documents first.
-                </Text>
-            </Flex>
-        </Flex>
+        <Text>
+            Each additional sort field acts as a <strong>tiebreaker</strong>
+            {" "}
+            if the previous field's values are identical. This allows for
+            multi-level sorting — for example, sort by{" "}
+            <code>"Status"</code>, then by <code>"Created date"</code>.
+        </Text>
 
-        <Flex direction="column">
-            <Title order={6}>⬇️ Descending order:</Title>
-            <Flex direction="column" rowGap="xs">
-                <Text>
-                    Descending order arranges values from{" "}
-                    <strong>highest to lowest</strong>. This is useful when you
-                    want the most recent, largest, or highest-ranked items
-                    first.
-                </Text>
-                <Text>
-                    For example: sorting by <strong>"Updated date"</strong>{" "}
-                    in descending order will show the{" "}
-                    <em>most recently updated</em> documents first.
-                </Text>
-            </Flex>
-        </Flex>
+        <Text size="lg">⬆️ Ascending order:</Text>
+        <Text>
+            Ascending order (the default) arranges values from{" "}
+            <strong>lowest to highest</strong>. It’s commonly used for dates,
+            numbers, and alphabetical sorting.
+        </Text>
+        <Text>
+            For example: sorting by <strong>"Created date"</strong>{" "}
+            in ascending order will list the <em>oldest</em> documents first.
+        </Text>
+
+        <Text size="lg">⬇️ Descending order:</Text>
+        <Text>
+            Descending order arranges values from{" "}
+            <strong>highest to lowest</strong>. This is useful when you want the
+            most recent, largest, or highest-ranked items first.
+        </Text>
+        <Text>
+            For example: sorting by <strong>"Updated date"</strong>{" "}
+            in descending order will show the <em>most recently updated</em>
+            {" "}
+            documents first.
+        </Text>
     </Stack>
 );
 
 const PROJECTION_HELP_MODAL_CONTENT = (
-    <Flex direction="column" w="100%">
-        <Title order={6}>🧰 How it works:</Title>
-        <Flex direction="column" rowGap="xs">
-            <Text>
-                The <strong>projection</strong>{" "}
-                operation lets you control which fields are{" "}
-                <strong>included or excluded</strong>
-                in the query results. This is useful when you want to limit the
-                amount of data retrieved — either for performance, clarity, or
-                privacy.
-            </Text>
+    <Stack>
+        <Text>
+            The <strong>projection</strong>{" "}
+            operation lets you control which fields are{" "}
+            <strong>included or excluded</strong>{" "}
+            in the query results. This is useful when you want to limit the
+            amount of data retrieved — either for performance, clarity, or
+            privacy.
+        </Text>
 
-            <Text>
-                🟢 By default, <strong>all fields</strong>{" "}
-                are included in the results. To <strong>exclude</strong>{" "}
-                a field, simply check its checkbox. To <strong>include</strong>
-                {" "}
-                a field back, just uncheck the checkbox.
-            </Text>
-
-            <Text>
-                🆔 The <strong>document ID</strong> and <strong>user ID</strong>
-                {" "}
-                fields are always included for reference.
-            </Text>
-
-            <Text>
-                🖥️ If you're on desktop, you can toggle the{" "}
-                <strong>"Table view"</strong> between
-                <em>Condensed</em> and <em>Expanded</em>{" "}
-                to hide or reveal these ID fields in the result table — without
-                affecting the actual projection query.
-            </Text>
-        </Flex>
-    </Flex>
+        <Text>
+            🟢 By default, <strong>all fields</strong>{" "}
+            are included in the results. To <strong>exclude</strong>{" "}
+            a field, simply check its checkbox. To <strong>include</strong>{" "}
+            a field back, just uncheck the checkbox.
+        </Text>
+        <Text>
+            🆔 The <strong>document ID</strong> and <strong>user ID</strong>
+            {" "}
+            fields are always included for reference.
+        </Text>
+    </Stack>
 );
 
 function returnTimelineBullet(
@@ -855,9 +741,7 @@ export {
     createQueryString,
     excludeSelectedProjectionFields,
     FILTER_HELP_MODAL_CONTENT,
-    GENERAL_SEARCH_HELP_MODAL_CONTENT,
     PROJECTION_HELP_MODAL_CONTENT,
-    QUERY_BUILDER_HELP_MODAL_CONTENT,
     removeProjectionExclusionFields,
     returnDefaultFilterValue,
     returnFilterSelectData,
