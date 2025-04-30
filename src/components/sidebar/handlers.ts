@@ -8,7 +8,6 @@ import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   BusinessMetricsDocument,
   CustomerMetricsDocument,
-  Department,
   FinancialMetricsDocument,
   HttpServerResponse,
   ProductMetricsDocument,
@@ -33,6 +32,7 @@ import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZod } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
+import { DepartmentsWithDefaultKey } from "../directory/types";
 import { userDocumentZod } from "../usersQuery/schemas";
 
 async function handleMetricCategoryNavlinkClick(
@@ -577,7 +577,7 @@ async function handleDirectoryNavlinkClick({
 }: {
   accessToken: string;
   authDispatch: React.Dispatch<AuthDispatch>;
-  directoryDepartment: Department;
+  directoryDepartment: DepartmentsWithDefaultKey;
   directoryStoreLocation: AllStoreLocations;
   directoryUrl: string;
   fetchAbortControllerRef: React.RefObject<AbortController | null>;
@@ -623,15 +623,27 @@ async function handleDirectoryNavlinkClick({
     }
 
     if (forageResult.ok && forageResult.safeUnwrap().kind === "success") {
-      globalDispatch({
-        action: globalAction.setDirectory,
-        payload: forageResult.safeUnwrap().data,
-      });
+      const unwrappedData = forageResult.safeUnwrap().data;
+      if (unwrappedData === undefined) {
+        return createSafeBoxResult({
+          message: "Data is undefined",
+        });
+      }
+
+      // globalDispatch({
+      //   action: globalAction.setDirectory,
+      //   payload: forageResult.safeUnwrap().data,
+      // });
 
       globalDispatch({
         action: globalAction.setIsFetching,
         payload: false,
       });
+
+      await setItemForageSafe<UserDocument[]>(
+        "directory",
+        unwrappedData,
+      );
 
       navigate(toLocation);
       return createSafeBoxResult({
@@ -791,10 +803,10 @@ async function handleDirectoryNavlinkClick({
       });
     }
 
-    globalDispatch({
-      action: globalAction.setDirectory,
-      payload: parsedServerResponse.data,
-    });
+    // globalDispatch({
+    //   action: globalAction.setDirectory,
+    //   payload: parsedServerResponse.data,
+    // });
 
     await setItemForageSafe<UserDocument[]>(
       "directory",

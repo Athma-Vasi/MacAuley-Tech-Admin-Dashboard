@@ -39,6 +39,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const { authState: { accessToken }, authDispatch } = useAuth();
   const {
     globalState: {
+      directoryDepartment,
+      directoryStoreLocation,
       themeObject,
       productMetricCategory,
       repairMetricCategory,
@@ -208,8 +210,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         icon: <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: async () => {
-          // navigate("/dashboard/directory");
-
           await handleDirectoryNavlinkClick({
             accessToken,
             authDispatch,

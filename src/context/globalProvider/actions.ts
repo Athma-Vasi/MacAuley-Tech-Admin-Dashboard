@@ -3,6 +3,8 @@ type GlobalAction = {
   setCustomerMetricsCategory: "setCustomerMetricsCategory";
   setCustomerMetricsDocument: "setCustomerMetricsDocument";
   setDefaultGradient: "setDefaultGradient";
+  setDirectoryDepartment: "setDirectoryDepartment";
+  setDirectoryStoreLocation: "setDirectoryStoreLocation";
   setExpandBarChartData: "setExpandBarChartData";
   setExpandCalendarChartData: "setExpandCalendarChartData";
   setExpandLineChartData: "setExpandLineChartData";
@@ -34,6 +36,8 @@ const globalAction: GlobalAction = {
   setCustomerMetricsCategory: "setCustomerMetricsCategory",
   setCustomerMetricsDocument: "setCustomerMetricsDocument",
   setDefaultGradient: "setDefaultGradient",
+  setDirectoryDepartment: "setDirectoryDepartment",
+  setDirectoryStoreLocation: "setDirectoryStoreLocation",
   setExpandBarChartData: "setExpandBarChartData",
   setExpandCalendarChartData: "setExpandCalendarChartData",
   setExpandLineChartData: "setExpandLineChartData",

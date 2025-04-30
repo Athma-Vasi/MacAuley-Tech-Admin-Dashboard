@@ -23,6 +23,7 @@ import {
   DashboardCalendarView,
   ProductCategory,
 } from "../../components/dashboard/types";
+import { DepartmentsWithDefaultKey } from "../../components/directory/types";
 import {
   CustomerMetricsDocument,
   FinancialMetricsDocument,
@@ -140,6 +141,8 @@ type ChartKind = "bar" | "calendar" | "line" | "pie" | "radial" | "sunburst";
 type GlobalState = {
   customerMetricsCategory: CustomerMetricsCategory;
   customerMetricsDocument: CustomerMetricsDocument | null;
+  directoryDepartment: DepartmentsWithDefaultKey;
+  directoryStoreLocation: AllStoreLocations;
   expandBarChartData: ExpandBarChartData | null;
   expandCalendarChartData: ExpandCalendarChartData | null;
   expandLineChartData: ExpandLineChartData | null;
@@ -163,6 +166,14 @@ type GlobalState = {
 };
 
 type GlobalDispatch =
+  | {
+    action: GlobalAction["setDirectoryDepartment"];
+    payload: DepartmentsWithDefaultKey;
+  }
+  | {
+    action: GlobalAction["setDirectoryStoreLocation"];
+    payload: AllStoreLocations;
+  }
   | {
     action: GlobalAction["setStoreLocationView"];
     payload: AllStoreLocations;

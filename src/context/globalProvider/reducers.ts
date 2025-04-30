@@ -28,6 +28,7 @@ import type {
   GlobalState,
   Shade,
 } from "./types";
+import { DepartmentsWithDefaultKey } from "../../components/directory/types";
 
 function globalReducer(
   state: GlobalState,
@@ -41,6 +42,12 @@ const globalReducersMap = new Map<
   GlobalAction[keyof GlobalAction],
   (state: GlobalState, dispatch: GlobalDispatch) => GlobalState
 >([
+  [globalAction.setDirectoryDepartment, globalReducer_setDirectoryDepartment],
+
+  [
+    globalAction.setDirectoryStoreLocation,
+    globalReducer_setDirectoryStoreLocation,
+  ],
   [
     globalAction.setProductMetricCategory,
     globalReducer_setProductMetricCategory,
@@ -115,6 +122,26 @@ const globalReducersMap = new Map<
   [globalAction.setSelectedChartKind, globalReducer_setSelectedChartKind],
   [globalAction.setStoreLocationView, globalReducer_setStoreLocationView],
 ]);
+
+function globalReducer_setDirectoryDepartment(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    directoryDepartment: dispatch.payload as DepartmentsWithDefaultKey,
+  };
+}
+
+function globalReducer_setDirectoryStoreLocation(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  return {
+    ...state,
+    directoryStoreLocation: dispatch.payload as AllStoreLocations,
+  };
+}
 
 function globalReducer_setProductMetricCategory(
   state: GlobalState,
