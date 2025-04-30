@@ -62,7 +62,12 @@ async function handleMetricCategoryNavlinkClick(
     storeLocationView: AllStoreLocations;
     toLocation: string;
   },
-): Promise<SafeBoxResult<BusinessMetricsDocument>> {
+): Promise<
+  SafeBoxResult<{
+    accessToken: string;
+    businessMetricsDocument: BusinessMetricsDocument;
+  }>
+> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -163,8 +168,13 @@ async function handleMetricCategoryNavlinkClick(
       });
 
       navigate(toLocation);
+
       return createSafeBoxResult({
-        data: metricsDocumentResult.safeUnwrap().data,
+        data: {
+          accessToken,
+          businessMetricsDocument: metricsDocumentResult.safeUnwrap()
+            .data as BusinessMetricsDocument,
+        },
         kind: "success",
       });
     }
@@ -184,7 +194,6 @@ async function handleMetricCategoryNavlinkClick(
     }
 
     const responseUnwrapped = responseResult.safeUnwrap().data;
-
     if (responseUnwrapped === undefined) {
       showBoundary(new Error("No data returned from server"));
       return createSafeBoxResult({
@@ -212,7 +221,6 @@ async function handleMetricCategoryNavlinkClick(
     }
 
     const serverResponse = jsonResult.safeUnwrap().data;
-
     if (serverResponse === undefined) {
       showBoundary(new Error("No data returned from server"));
       return createSafeBoxResult({
@@ -255,7 +263,8 @@ async function handleMetricCategoryNavlinkClick(
       });
     }
 
-    const { accessToken, triggerLogout } = parsedServerResponse;
+    const { accessToken: newAccessToken, triggerLogout, kind } =
+      parsedServerResponse;
 
     if (triggerLogout) {
       authDispatch({
@@ -282,7 +291,7 @@ async function handleMetricCategoryNavlinkClick(
       });
     }
 
-    const decodedTokenResult = await decodeJWTSafe(accessToken);
+    const decodedTokenResult = await decodeJWTSafe(newAccessToken);
 
     if (!isComponentMounted) {
       return createSafeBoxResult({
@@ -307,46 +316,60 @@ async function handleMetricCategoryNavlinkClick(
 
     authDispatch({
       action: authAction.setAccessToken,
-      payload: accessToken,
+      payload: newAccessToken,
     });
     authDispatch({
       action: authAction.setDecodedToken,
       payload: decodedToken,
     });
 
-    const payload = parsedServerResponse.data[0];
-
-    if (metricsView === "financials") {
-      globalDispatch({
-        action: globalAction.setFinancialMetricsDocument,
-        payload: payload as FinancialMetricsDocument,
+    if (serverResponse.kind === "error") {
+      showBoundary(
+        new Error(
+          `Server error: ${serverResponse.message}`,
+        ),
+      );
+      return createSafeBoxResult({
+        message: serverResponse.message,
+        kind: "error",
       });
     }
 
-    if (metricsView === "products") {
-      globalDispatch({
-        action: globalAction.setProductMetricsDocument,
-        payload: payload as ProductMetricsDocument,
-      });
-    }
+    parsedServerResponse.data.forEach(
+      async (payload: BusinessMetricsDocument) => {
+        if (metricsView === "financials") {
+          globalDispatch({
+            action: globalAction.setFinancialMetricsDocument,
+            payload: payload as FinancialMetricsDocument,
+          });
+        }
 
-    if (metricsView === "customers") {
-      globalDispatch({
-        action: globalAction.setCustomerMetricsDocument,
-        payload: payload as CustomerMetricsDocument,
-      });
-    }
+        if (metricsView === "products") {
+          globalDispatch({
+            action: globalAction.setProductMetricsDocument,
+            payload: payload as ProductMetricsDocument,
+          });
+        }
 
-    if (metricsView === "repairs") {
-      globalDispatch({
-        action: globalAction.setRepairMetricsDocument,
-        payload: payload as RepairMetricsDocument,
-      });
-    }
+        if (metricsView === "customers") {
+          globalDispatch({
+            action: globalAction.setCustomerMetricsDocument,
+            payload: payload as CustomerMetricsDocument,
+          });
+        }
 
-    await setItemForageSafe<BusinessMetricsDocument>(
-      forageKey,
-      payload,
+        if (metricsView === "repairs") {
+          globalDispatch({
+            action: globalAction.setRepairMetricsDocument,
+            payload: payload as RepairMetricsDocument,
+          });
+        }
+
+        await setItemForageSafe<BusinessMetricsDocument>(
+          forageKey,
+          payload,
+        );
+      },
     );
 
     globalDispatch({
@@ -356,7 +379,11 @@ async function handleMetricCategoryNavlinkClick(
 
     navigate(toLocation);
     return createSafeBoxResult({
-      data: parsedServerResponse,
+      data: {
+        accessToken: newAccessToken,
+        businessMetricsDocument: parsedServerResponse
+          .data[0] as BusinessMetricsDocument,
+      },
       kind: "success",
     });
   } catch (error: unknown) {
@@ -380,6 +407,7 @@ async function handleLogoutButtonClick({
   fetchAbortControllerRef,
   globalDispatch,
   isComponentMountedRef,
+  localforage,
   logoutUrl,
   navigate,
   showBoundary,
@@ -388,6 +416,7 @@ async function handleLogoutButtonClick({
   fetchAbortControllerRef: React.RefObject<AbortController | null>;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
+  localforage: LocalForage;
   logoutUrl: string;
   navigate: NavigateFunction;
   showBoundary: (error: any) => void;
@@ -444,6 +473,8 @@ async function handleLogoutButtonClick({
       responseUnwrapped,
     );
 
+    console.log("jsonResult", jsonResult);
+
     if (!isComponentMounted) {
       return createSafeBoxResult({
         message: "Component unmounted",
@@ -473,6 +504,8 @@ async function handleLogoutButtonClick({
     });
     console.timeEnd("--PARSING--");
 
+    console.log("parsedResult", parsedResult);
+
     if (!isComponentMounted) {
       return createSafeBoxResult({
         message: "Component unmounted",
@@ -492,6 +525,14 @@ async function handleLogoutButtonClick({
       );
       return createSafeBoxResult({
         message: "No data returned from server",
+      });
+    }
+
+    if (parsedServerResponse.kind === "error") {
+      showBoundary(new Error(parsedServerResponse.message));
+      return createSafeBoxResult({
+        message: parsedServerResponse.message,
+        kind: "error",
       });
     }
 

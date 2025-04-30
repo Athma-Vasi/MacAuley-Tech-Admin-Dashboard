@@ -443,9 +443,17 @@ function createSafeBoxResult<Data extends unknown = unknown>(
     message?: string;
   },
 ): SafeBoxResult<Data> {
-  if (kind === "success" || kind === "notFound") {
+  if (kind === "success") {
     return new Ok({
       data,
+      kind,
+      message,
+    });
+  }
+
+  if (kind === "notFound") {
+    return new Ok({
+      data: [] as Data,
       kind,
       message,
     });
