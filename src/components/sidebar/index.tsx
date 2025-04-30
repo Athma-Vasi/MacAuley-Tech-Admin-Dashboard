@@ -12,6 +12,7 @@ import {
 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import {
+  API_URL,
   COLORS_SWATCHES,
   FETCH_REQUEST_TIMEOUT,
   LOGOUT_URL,
@@ -24,6 +25,7 @@ import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 import { DashboardMetricsView } from "../dashboard/types";
 import {
+  handleDirectoryNavlinkClick,
   handleLogoutButtonClick,
   handleMetricCategoryNavlinkClick,
 } from "./handlers";
@@ -205,8 +207,22 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         description: "Directory",
         icon: <TbFileDatabase size={18} />,
         name: "Directory",
-        onClick: () => {
-          navigate("/dashboard/directory");
+        onClick: async () => {
+          // navigate("/dashboard/directory");
+
+          await handleDirectoryNavlinkClick({
+            accessToken,
+            authDispatch,
+            directoryDepartment,
+            directoryStoreLocation,
+            directoryUrl: API_URL,
+            fetchAbortControllerRef,
+            globalDispatch,
+            isComponentMountedRef,
+            navigate,
+            showBoundary,
+            toLocation: "/dashboard/directory",
+          });
           setOpened(false);
         },
       }}

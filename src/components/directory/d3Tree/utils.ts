@@ -1,4 +1,4 @@
-import { EmployeeDoc } from "../data";
+import { UserDocument } from "../../../types";
 
 type D3TreeInput = {
   attributes: Record<string, string>;
@@ -11,7 +11,7 @@ type TreeHelpers = {
 };
 
 function createTreeHelpers(
-  employees: Array<EmployeeDoc>,
+  employees: Array<UserDocument>,
   nodeColor: string,
 ): TreeHelpers {
   const initialAcc = {
@@ -26,12 +26,11 @@ function createTreeHelpers(
       firstName,
       jobPosition,
       lastName,
-      middleName,
       orgId,
       country,
       profilePictureUrl,
     } = employee;
-    const name = `${firstName} ${middleName} ${lastName}`;
+    const name = `${firstName} ${lastName}`;
 
     const attributes = {
       jobPosition,
@@ -54,7 +53,7 @@ function createTreeHelpers(
 }
 
 function buildD3Tree(
-  employees: Array<EmployeeDoc>,
+  employees: Array<UserDocument>,
   nodeColor: string,
 ): Array<D3TreeInput> {
   const { minOrgId, nodeMap } = createTreeHelpers(employees, nodeColor);

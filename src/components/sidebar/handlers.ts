@@ -604,7 +604,7 @@ async function handleDirectoryNavlinkClick({
   };
 
   const urlWithQuery = new URL(
-    `${directoryUrl}/?storeLocation[$eq]=${directoryStoreLocation}&department[$eq]=${directoryDepartment}`,
+    `${directoryUrl}/user/?storeLocation[$eq]=${directoryStoreLocation}&department[$eq]=${directoryDepartment}`,
   );
 
   globalDispatch({

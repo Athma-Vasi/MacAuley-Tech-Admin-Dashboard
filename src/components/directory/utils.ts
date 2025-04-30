@@ -1,22 +1,8 @@
-import { EmployeeDoc } from "./data";
+import { UserDocument } from "../../types";
 import {
   DepartmentsWithDefaultKey,
-  DirectoryUserDocument,
   StoreLocationsWithDefaultKey,
 } from "./types";
-
-function returnSearchInputData(usersDocs: DirectoryUserDocument[]) {
-  return Array.from(
-    usersDocs.reduce<Set<string>>((acc, user) => {
-      const { firstName, middleName, lastName } = user;
-      acc.add(firstName);
-      acc.add(middleName);
-      acc.add(lastName);
-
-      return acc;
-    }, new Set<string>()),
-  );
-}
 
 function returnIsStoreLocationDisabled(department: DepartmentsWithDefaultKey) {
   const disabledSet = new Set<DepartmentsWithDefaultKey>([
@@ -34,18 +20,18 @@ function returnIsStoreLocationDisabled(department: DepartmentsWithDefaultKey) {
 
 function filterEmployees({
   department,
-  employees,
+  directory,
   isStoreLocationDisabled,
   storeLocation,
 }: {
   department: DepartmentsWithDefaultKey;
-  employees: EmployeeDoc[];
+  directory: UserDocument[];
   isStoreLocationDisabled: boolean;
   storeLocation: StoreLocationsWithDefaultKey;
 }) {
   return department === "All Departments"
-    ? employees
-    : employees.filter((employee) => {
+    ? directory
+    : directory.filter((employee) => {
       return isStoreLocationDisabled
         ? employee.department === department
         : employee.department === department &&
@@ -53,8 +39,4 @@ function filterEmployees({
     });
 }
 
-export {
-  filterEmployees,
-  returnIsStoreLocationDisabled,
-  returnSearchInputData,
-};
+export { filterEmployees, returnIsStoreLocationDisabled };

@@ -126,6 +126,7 @@ function renderForeignObjectNode({
 
 function D3Tree({ data }: { data: Array<D3TreeInput> }) {
   const [translate, containerRef] = useCenteredTree();
+
   const nodeSize = { x: 400, y: 400 };
   const foreignObjectProps = {
     width: nodeSize.x,

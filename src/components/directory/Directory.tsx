@@ -1,16 +1,24 @@
 import { Box, Group, Stack } from "@mantine/core";
-import { useReducer } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 
-import { COLORS_SWATCHES, STORE_LOCATIONS } from "../../constants";
+import { useErrorBoundary } from "react-error-boundary";
+import {
+  COLORS_SWATCHES,
+  FETCH_REQUEST_TIMEOUT,
+  STORE_LOCATIONS,
+} from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import type { CheckboxRadioSelectData } from "../../types";
-import { returnThemeColors } from "../../utils";
+import type { CheckboxRadioSelectData, UserDocument } from "../../types";
+import {
+  createSafeBoxResult,
+  getItemForageSafe,
+  returnThemeColors,
+} from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { type DirectoryAction, directoryAction } from "./actions";
 import { DEPARTMENTS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
-import { DIRECTORY_EMPLOYEE_DATA } from "./data";
 import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";
 import type {
@@ -25,6 +33,8 @@ function Directory() {
     initialDirectoryState,
   );
   const { department, storeLocation } = directoryState;
+  const [directory, setDirectory] = useState<UserDocument[]>([]);
+  const { showBoundary } = useErrorBoundary();
 
   const {
     globalState: { themeObject },
@@ -33,6 +43,85 @@ function Directory() {
     themeColorShade,
     cardBgGradient,
   } = returnThemeColors({ colorsSwatches: COLORS_SWATCHES, themeObject });
+
+  const fetchAbortControllerRef = useRef<AbortController | null>(null);
+  const isComponentMountedRef = useRef(false);
+
+  useEffect(() => {
+    async function forageDirectory() {
+      fetchAbortControllerRef.current?.abort("Previous request cancelled");
+      fetchAbortControllerRef.current = new AbortController();
+      const fetchAbortController = fetchAbortControllerRef.current;
+
+      isComponentMountedRef.current = true;
+      const isComponentMounted = isComponentMountedRef.current;
+
+      try {
+        const forageResult = await getItemForageSafe<UserDocument[]>(
+          "directory",
+        );
+
+        if (!isComponentMounted) {
+          return createSafeBoxResult({
+            message: "Component unmounted",
+          });
+        }
+
+        if (forageResult.err) {
+          return createSafeBoxResult({
+            message: forageResult.val.message ?? "Error getting directory",
+          });
+        }
+
+        const { kind, message, data } = forageResult.safeUnwrap();
+        if (kind === "notFound") {
+          return createSafeBoxResult({
+            message: message ?? "No directory found",
+          });
+        }
+
+        if (data === undefined) {
+          return createSafeBoxResult({
+            message: "Data is undefined",
+          });
+        }
+
+        setDirectory(data);
+        return createSafeBoxResult({
+          message: "Directory fetched successfully",
+        });
+      } catch (error) {
+        if (
+          !isComponentMounted || fetchAbortController?.signal.aborted
+        ) {
+          return createSafeBoxResult({
+            message: "Component unmounted or request aborted",
+          });
+        }
+
+        showBoundary(error);
+        return createSafeBoxResult({
+          message: "Unknown error",
+        });
+      }
+    }
+
+    forageDirectory();
+
+    const timerId = setTimeout(() => {
+      fetchAbortControllerRef?.current?.abort("Request timed out");
+    }, FETCH_REQUEST_TIMEOUT);
+
+    return () => {
+      clearTimeout(timerId);
+      fetchAbortControllerRef?.current?.abort("Component unmounted");
+      isComponentMountedRef.current = false;
+    };
+  }, []);
+
+  if (directory === null || directory === undefined || directory.length === 0) {
+    return null;
+  }
 
   const departmentData = [
     { label: "All Departments", value: "All Departments" },
@@ -84,7 +173,7 @@ function Directory() {
 
   const filteredEmployees = filterEmployees({
     department,
-    employees: DIRECTORY_EMPLOYEE_DATA,
+    directory,
     isStoreLocationDisabled,
     storeLocation,
   });
