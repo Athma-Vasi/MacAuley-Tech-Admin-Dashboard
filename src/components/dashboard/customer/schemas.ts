@@ -379,6 +379,7 @@ const setCustomerIsGeneratingDispatch = z.object({
 });
 
 export {
+    calendarChartDataZod,
     customerMetricsDocumentZod,
     setCustomerCalendarChartsDispatchZod,
     setCustomerChartsDispatch,

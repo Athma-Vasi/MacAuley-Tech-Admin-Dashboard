@@ -28,6 +28,12 @@ function DisplayResponsiveChart() {
       return null;
     }
 
+    console.log("display responsive chart", {
+      expandBarChartData,
+      selectedChartKind,
+      themeObject,
+    });
+
     const {
       calendarView,
       chartData,
