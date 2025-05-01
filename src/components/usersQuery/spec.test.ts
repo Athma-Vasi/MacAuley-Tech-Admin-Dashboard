@@ -38,7 +38,7 @@ import {
     usersQueryReducer_setResourceData,
     usersQueryReducer_setTotalDocuments,
 } from "./reducers";
-import { userDocumentZod, UsersQueryDispatch } from "./schemas";
+import { userDocumentOptionalsZod, UsersQueryDispatch } from "./schemas";
 import { initialUsersQueryState } from "./state";
 import { UsersQueryState } from "./types";
 
@@ -497,7 +497,7 @@ async function handleUsersQuerySubmitGETTestMock(
 
         const parsedResult = parseSafeSync({
             object: userDocuments,
-            zSchema: userDocumentZod,
+            zSchema: userDocumentOptionalsZod,
         });
 
         if (parsedResult.err) {

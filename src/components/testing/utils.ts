@@ -21,7 +21,7 @@ import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZod } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
-import { userDocumentZod } from "../usersQuery/schemas";
+import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 
 async function handleLoginMock(
     { username = "manager", password = "passwordQ1!" }: {
@@ -97,7 +97,7 @@ async function handleLoginMock(
         const parsedResult = await parseServerResponseSafeAsync({
             object: serverResponse,
             zSchema: z.object({
-                userDocument: userDocumentZod,
+                userDocument: userDocumentOptionalsZod,
                 financialMetricsDocument: financialMetricsDocumentZod,
             }),
         });

@@ -28,7 +28,7 @@ type AuthDispatch =
   }
   | {
     action: AuthAction["setUserDocument"];
-    payload: UserDocument;
+    payload: Omit<UserDocument, "password">;
   };
 
 export type { AuthDispatch, AuthProviderProps, AuthState };

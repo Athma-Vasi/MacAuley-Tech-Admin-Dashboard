@@ -39,40 +39,6 @@ import {
 import { initialGlobalState } from "./state";
 import { ColorScheme, GlobalDispatch, Shade } from "./types";
 
-/**
- * describe("usersQueryReducer_setCurrentPage", () => {
-        it("should allow valid number values", () => {
-            const VALID_NUMBERS = [0, 1, 2, 3, 4, 5];
-            VALID_NUMBERS.forEach((value) => {
-                const dispatch: UsersQueryDispatch = {
-                    action: usersQueryAction.setCurrentPage,
-                    payload: value,
-                };
-                const state = usersQueryReducer_setCurrentPage(
-                    initialUsersQueryState,
-                    dispatch,
-                );
-                expect(state.currentPage).toBe(value);
-            });
-        });
-        it("should not allow invalid number values", () => {
-            const initialCurrentPage = initialUsersQueryState.currentPage;
-
-            INVALID_NUMBERS.forEach((value) => {
-                const dispatch: UsersQueryDispatch = {
-                    action: usersQueryAction.setCurrentPage,
-                    payload: value as any,
-                };
-                const state = usersQueryReducer_setCurrentPage(
-                    initialUsersQueryState,
-                    dispatch,
-                );
-                expect(state.currentPage).toBe(initialCurrentPage);
-            });
-        });
-    });
- */
-
 describe("globalReducer", () => {
     describe("setProductMetricCategory", () => {
         it("should allow valid string values", () => {

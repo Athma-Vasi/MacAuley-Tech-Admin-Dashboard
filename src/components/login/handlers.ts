@@ -20,7 +20,7 @@ import {
   setItemForageSafe,
 } from "../../utils";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
-import { userDocumentZod } from "../usersQuery/schemas";
+import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
 
@@ -148,7 +148,7 @@ async function handleLoginButtonClick(
     const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
       zSchema: z.object({
-        userDocument: userDocumentZod,
+        userDocument: userDocumentOptionalsZod,
         financialMetricsDocument: financialMetricsDocumentZod,
       }),
     });

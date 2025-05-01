@@ -6,6 +6,7 @@ import {
     PROVINCES,
     STATES_US,
 } from "../../constants";
+import { UserDocument } from "../../types";
 import { AccessibleDateTimeInputAttributes } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInputAttributes } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInputAttributes } from "../accessibleInputs/AccessibleTextInput";
@@ -213,6 +214,6 @@ const SAMPLE_USER_DOCUMENT = {
     createdAt: "2025-04-18T01:22:10.726Z",
     updatedAt: "2025-04-18T01:22:10.726Z",
     __v: 0,
-};
+} as Omit<UserDocument, "password">;
 
 export { SAMPLE_USER_DOCUMENT, USER_QUERY_TEMPLATES };

@@ -37,7 +37,7 @@ import {
   DepartmentsWithDefaultKey,
   DirectoryDispatch,
 } from "../directory/types";
-import { userDocumentZod } from "../usersQuery/schemas";
+import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { createDirectoryForageKey } from "./utils";
 
 async function handleMetricCategoryNavlinkClick(
@@ -725,7 +725,7 @@ async function handleDirectoryClicks({
     console.time("--parsing--");
     const parsedResult = await parseServerResponseSafeAsync({
       object: serverResponse,
-      zSchema: userDocumentZod,
+      zSchema: userDocumentOptionalsZod,
     });
     console.timeEnd("--parsing--");
 

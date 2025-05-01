@@ -14,7 +14,7 @@ import {
 } from "../../regexes";
 import { usersQueryAction } from "./actions";
 
-const userDocumentZod = z.object({
+const userDocumentOptionalsZod = z.object({
     __v: z.number().optional(),
     _id: z.string().optional(),
     addressLine: z.string().regex(ADDRESS_LINE_REGEX).optional(),
@@ -37,6 +37,31 @@ const userDocumentZod = z.object({
     storeLocation: z.string().regex(ALL_STORE_LOCATIONS_REGEX).optional(),
     updatedAt: z.string().optional(),
     username: z.string().regex(USERNAME_REGEX).optional(),
+});
+
+const userDocumentRequiredZod = z.object({
+    __v: z.number(),
+    _id: z.string(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    addressLine: z.string().regex(ADDRESS_LINE_REGEX),
+    city: z.string().regex(CITY_REGEX),
+    country: z.string().regex(COUNTRY_REGEX),
+    department: z.string().regex(DEPARTMENT_REGEX),
+    email: z.string().email(),
+    firstName: z.string().regex(FULL_NAME_REGEX),
+    jobPosition: z.string().regex(JOB_POSITION_REGEX),
+    lastName: z.string().regex(FULL_NAME_REGEX),
+    orgId: z.number(),
+    parentOrgId: z.number(),
+    postalCodeCanada: z.string(),
+    postalCodeUS: z.string(),
+    profilePictureUrl: z.string(),
+    province: z.string().regex(PROVINCE_REGEX),
+    roles: z.array(z.string().regex(USER_ROLES_REGEX)),
+    state: z.string().regex(STATES_US_REGEX),
+    storeLocation: z.string().regex(ALL_STORE_LOCATIONS_REGEX),
+    username: z.string().regex(USERNAME_REGEX),
 });
 
 const setArrangeByDirectionDispatchZod = z.object({
@@ -97,7 +122,7 @@ const setQueryStringDispatchZod = z.object({
 });
 const setResourceDataDispatchZod = z.object({
     action: z.literal(usersQueryAction.setResourceData),
-    payload: z.array(userDocumentZod),
+    payload: z.array(userDocumentOptionalsZod),
 });
 const setTotalDocumentsDispatchZod = z.object({
     action: z.literal(usersQueryAction.setTotalDocuments),
@@ -138,7 +163,7 @@ const resetToInitialDispatchZod = z.object({
         newQueryFlag: z.boolean(),
         pages: z.number().min(0),
         queryString: z.string(),
-        resourceData: z.array(userDocumentZod),
+        resourceData: z.array(userDocumentOptionalsZod),
         totalDocuments: z.number().min(0),
     }),
 });
@@ -168,52 +193,7 @@ export {
     setQueryStringDispatchZod,
     setResourceDataDispatchZod,
     setTotalDocumentsDispatchZod,
-    userDocumentZod,
+    userDocumentOptionalsZod,
+    userDocumentRequiredZod,
 };
 export type { UsersQueryDispatch };
-
-/**
- * type UsersQueryState = {
-    arrangeByDirection: SortDirection;
-    arrangeByField: keyof UserDocument;
-    currentPage: number;
-    isError: boolean;
-    isLoading: boolean;
-    newQueryFlag: boolean;
-    pages: number;
-    queryString: string;
-    resourceData: Array<UserDocument>;
-    totalDocuments: number;
-};
- */
-
-/**
- * type UserSchema = {
-  addressLine: string;
-  city: string;
-  country: Country;
-  department: Department;
-  email: string;
-  firstName: string;
-  jobPosition: JobPosition;
-  lastName: string;
-  orgId: number;
-  parentOrgId: number;
-  password: string;
-  postalCodeCanada: CanadianPostalCode;
-  postalCodeUS: USPostalCode;
-  profilePictureUrl: string;
-  province: Province;
-  roles: UserRoles;
-  state: StatesUS;
-  storeLocation: AllStoreLocations;
-  username: string;
-};
-
-type UserDocument = UserSchema & {
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-};
- */

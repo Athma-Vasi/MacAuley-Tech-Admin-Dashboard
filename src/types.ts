@@ -122,11 +122,9 @@ type Validation = [RegExp | ((value: string) => boolean), string][];
 type StoreLocation = "Calgary" | "Edmonton" | "Vancouver";
 
 type DecodedToken = {
-  userInfo: {
-    userId: string;
-    username: string;
-    roles: ("Admin" | "Employee" | "Manager")[];
-  };
+  userId: string;
+  username: string;
+  roles: UserRoles;
   sessionId: string;
   iat: number;
   exp: number;
