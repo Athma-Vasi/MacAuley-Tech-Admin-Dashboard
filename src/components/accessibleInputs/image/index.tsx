@@ -38,7 +38,7 @@ import {
 import { accessibleImageInputReducer } from "./reducers";
 import { initialAccessibleImageInputState } from "./state";
 import type { AccessibleImageInputProps } from "./types";
-import { validateImages } from "./utils";
+import { retrieveStoredValues, validateImages } from "./utils";
 
 function AccessibleImageInput<
     ValidValueAction extends string = string,
@@ -86,80 +86,12 @@ function AccessibleImageInput<
         greenColorShade,
     } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
+    const isComponentMountedRef = useRef(false);
+
     const isMountedRetrieveStoredValuesRef = useRef(false);
     useEffect(() => {
         isMountedRetrieveStoredValuesRef.current = true;
         const isMounted = isMountedRetrieveStoredValuesRef.current;
-
-        async function retrieveStoredValues(): Promise<void> {
-            try {
-                accessibleImageInputDispatch({
-                    action: accessibleImageInputAction.setIsLoading,
-                    payload: true,
-                });
-
-                const modifiedFiles = await localforage.getItem<
-                    Array<ModifiedFile>
-                >(
-                    `${storageKey}-modifiedFiles`,
-                );
-
-                const fileNames = await localforage.getItem<Array<string>>(
-                    `${storageKey}-fileNames`,
-                );
-
-                const qualities = (await localforage.getItem<Array<number>>(
-                    `${storageKey}-qualities`,
-                )) ??
-                    Array.from({ length: maxImagesAmount }, () => 10);
-
-                const orientations = (await localforage.getItem<Array<number>>(
-                    `${storageKey}-orientations`,
-                )) ??
-                    Array.from({ length: maxImagesAmount }, () => 1);
-
-                if (!isMounted) {
-                    return;
-                }
-
-                modifiedFiles?.forEach((modifiedFile: ModifiedFile, index) => {
-                    if (!modifiedFile) {
-                        return;
-                    }
-
-                    accessibleImageInputDispatch({
-                        action: accessibleImageInputAction.setImageFileBlobs,
-                        payload: { fileBlob: modifiedFile, index },
-                    });
-
-                    accessibleImageInputDispatch({
-                        action: accessibleImageInputAction.addFileName,
-                        payload: fileNames?.[index] ?? "Unknown file name",
-                    });
-
-                    accessibleImageInputDispatch({
-                        action: accessibleImageInputAction.setQualities,
-                        payload: { index, value: qualities[index] },
-                    });
-
-                    accessibleImageInputDispatch({
-                        action: accessibleImageInputAction.setOrientations,
-                        payload: { index, value: orientations[index] },
-                    });
-                });
-
-                accessibleImageInputDispatch({
-                    action: accessibleImageInputAction.setIsLoading,
-                    payload: false,
-                });
-            } catch (error: any) {
-                if (!isMounted) {
-                    return;
-                }
-
-                showBoundary(error);
-            }
-        }
 
         retrieveStoredValues();
 

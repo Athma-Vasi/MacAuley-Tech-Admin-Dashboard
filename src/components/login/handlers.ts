@@ -17,7 +17,7 @@ import {
   fetchSafe,
   parseServerResponseSafeAsync,
   responseToJSONSafe,
-  setItemForageSafe,
+  setForageItemSafe,
 } from "../../utils";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
@@ -248,7 +248,7 @@ async function handleLoginButtonClick(
       payload: parsedServerResponse.data[0].financialMetricsDocument,
     });
 
-    await setItemForageSafe<
+    await setForageItemSafe<
       FinancialMetricsDocument
     >(
       "Financials/All Locations",

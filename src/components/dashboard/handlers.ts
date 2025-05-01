@@ -14,10 +14,10 @@ import {
     createMetricsForageKey,
     decodeJWTSafe,
     fetchSafe,
-    getItemForageSafe,
+    getForageItemSafe,
     parseServerResponseSafeAsync,
     responseToJSONSafe,
-    setItemForageSafe,
+    setForageItemSafe,
 } from "../../utils";
 import { dashboardAction } from "./actions";
 import { customerMetricsDocumentZod } from "./customer/schemas";
@@ -104,7 +104,7 @@ async function handleStoreCategoryClick(
     });
 
     try {
-        const metricsDocumentResult = await getItemForageSafe<
+        const metricsDocumentResult = await getForageItemSafe<
             BusinessMetricsDocument
         >(forageKey);
 
@@ -303,7 +303,7 @@ async function handleStoreCategoryClick(
             });
         }
 
-        await setItemForageSafe<BusinessMetricsDocument>(
+        await setForageItemSafe<BusinessMetricsDocument>(
             forageKey,
             payload,
         );

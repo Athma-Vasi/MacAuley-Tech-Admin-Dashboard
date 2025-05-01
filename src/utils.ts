@@ -385,7 +385,7 @@ async function responseToJSONSafe<Data = unknown>(
   }
 }
 
-async function getItemForageSafe<Data = unknown>(
+async function getForageItemSafe<Data = unknown>(
   key: string,
 ): Promise<SafeBoxResult<Data>> {
   try {
@@ -400,7 +400,7 @@ async function getItemForageSafe<Data = unknown>(
   }
 }
 
-async function setItemForageSafe<Data = unknown>(
+async function setForageItemSafe<Data = unknown>(
   key: string,
   value: Data,
 ): Promise<SafeBoxResult<undefined>> {
@@ -646,7 +646,7 @@ export {
   decodeJWTSafe,
   fetchSafe,
   formatDate,
-  getItemForageSafe,
+  getForageItemSafe,
   hexToHSL,
   parseSafeSync,
   parseServerResponseSafeAsync,
@@ -657,7 +657,7 @@ export {
   returnSliderMarks,
   returnThemeColors,
   returnTimeToRead,
-  setItemForageSafe,
+  setForageItemSafe,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
   throttle,

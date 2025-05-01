@@ -1,5 +1,5 @@
 import { UserDocument } from "../../types";
-import { createSafeBoxResult, getItemForageSafe } from "../../utils";
+import { createSafeBoxResult, getForageItemSafe } from "../../utils";
 import { createDirectoryForageKey } from "../sidebar/utils";
 import { directoryAction } from "./actions";
 import { DepartmentsWithDefaultKey, DirectoryDispatch } from "./types";
@@ -41,7 +41,7 @@ async function forageDirectory(
   const directoryKey = createDirectoryForageKey();
 
   try {
-    const forageResult = await getItemForageSafe<UserDocument[]>(
+    const forageResult = await getForageItemSafe<UserDocument[]>(
       directoryKey,
     );
 

@@ -20,10 +20,10 @@ import {
   createSafeBoxResult,
   decodeJWTSafe,
   fetchSafe,
-  getItemForageSafe,
+  getForageItemSafe,
   parseServerResponseSafeAsync,
   responseToJSONSafe,
-  setItemForageSafe,
+  setForageItemSafe,
 } from "../../utils";
 import { customerMetricsDocumentZod } from "../dashboard/customer/schemas";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
@@ -117,7 +117,7 @@ async function handleMetricCategoryNavlinkClick(
   });
 
   try {
-    const metricsDocumentResult = await getItemForageSafe<
+    const metricsDocumentResult = await getForageItemSafe<
       BusinessMetricsDocument
     >(forageKey);
 
@@ -373,7 +373,7 @@ async function handleMetricCategoryNavlinkClick(
           });
         }
 
-        await setItemForageSafe<BusinessMetricsDocument>(
+        await setForageItemSafe<BusinessMetricsDocument>(
           forageKey,
           payload,
         );
@@ -631,7 +631,7 @@ async function handleDirectoryClicks({
   );
 
   try {
-    const forageResult = await getItemForageSafe<UserDocument[]>(
+    const forageResult = await getForageItemSafe<UserDocument[]>(
       directoryKey,
     );
     if (!isComponentMounted) {
@@ -653,7 +653,7 @@ async function handleDirectoryClicks({
         payload: unwrappedData,
       });
 
-      await setItemForageSafe<UserDocument[]>(
+      await setForageItemSafe<UserDocument[]>(
         directoryKey,
         unwrappedData,
       );
@@ -831,7 +831,7 @@ async function handleDirectoryClicks({
       payload: userDocuments,
     });
 
-    await setItemForageSafe<UserDocument[]>(
+    await setForageItemSafe<UserDocument[]>(
       directoryKey,
       userDocuments,
     );

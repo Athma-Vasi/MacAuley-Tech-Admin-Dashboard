@@ -6,36 +6,15 @@ import {
   standardDeviation,
 } from "simple-statistics";
 
-import localforage from "localforage";
-import { authAction } from "../../context/authProvider";
-import { AuthDispatch } from "../../context/authProvider/types";
-import { globalAction } from "../../context/globalProvider/actions";
-import { GlobalDispatch } from "../../context/globalProvider/types";
-import type {
-  BusinessMetricsDocument,
-  CustomerMetricsDocument,
-  FinancialMetricsDocument,
-  HttpServerResponse,
-  ProductMetricsDocument,
-  RepairMetricsDocument,
-  StoreLocation,
-} from "../../types";
-import {
-  decodeJWTSafe,
-  fetchSafe,
-  getItemForageSafe,
-  responseToJSONSafe,
-  splitCamelCase,
-  toFixedFloat,
-} from "../../utils";
+import type { StoreLocation } from "../../types";
+import { splitCamelCase, toFixedFloat } from "../../utils";
 import type { BarChartData } from "../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
-import { dashboardAction } from "./actions";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
 import { FinancialMetricCategory } from "./financial/types";
-import { ProductMetricCategory, ProductSubMetric } from "./product/types";
-import { RepairMetricCategory, RepairSubMetric } from "./repair/types";
+import { ProductSubMetric } from "./product/types";
+import { RepairSubMetric } from "./repair/types";
 import type {
   AllStoreLocations,
   BusinessMetric,
@@ -45,7 +24,6 @@ import type {
   CustomerYearlyMetric,
   DailyFinancialMetric,
   DashboardCalendarView,
-  DashboardDispatch,
   DashboardMetricsView,
   DaysInMonthsInYears,
   FinancialMetricCategories,
