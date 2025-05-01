@@ -1,4 +1,4 @@
-import { Modal, Text } from "@mantine/core";
+import { Group, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleCheckboxInputGroup } from "../accessibleInputs/AccessibleCheckboxInput";
@@ -79,9 +79,9 @@ function QueryProjection({
 
     return (
         <div className="query-projection">
-            {projectionHelpButton}
             {projectionHelpModal}
             {projectionCheckboxInput}
+            <Group w="100%" position="center">{projectionHelpButton}</Group>
         </div>
     );
 }
