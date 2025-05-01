@@ -3,6 +3,7 @@ import {
     Checkbox,
     Group,
     type MantineSize,
+    Space,
     Stack,
     Text,
 } from "@mantine/core";
@@ -225,16 +226,34 @@ function AccessibleCheckboxInputGroup<
             value={value}
         />
     ));
-    const [leftStack, rightStack] = checkboxes.reduce(
+    // const [leftStack, rightStack] = checkboxes.reduce(
+    //     (acc, checkbox, idx) => {
+    //         if (idx % 2 === 0) {
+    //             acc[0].push(checkbox);
+    //         } else {
+    //             acc[1].push(checkbox);
+    //         }
+    //         return acc;
+    //     },
+    //     [[], []] as [React.JSX.Element[], React.JSX.Element[]],
+    // );
+    const [leftStack, middleStack, rightStack] = checkboxes.reduce(
         (acc, checkbox, idx) => {
-            if (idx % 2 === 0) {
+            if (idx % 3 === 0) {
                 acc[0].push(checkbox);
-            } else {
+            } else if (idx % 3 === 1) {
                 acc[1].push(checkbox);
+            } else {
+                acc[2].push(checkbox);
             }
+
             return acc;
         },
-        [[], []] as [React.JSX.Element[], React.JSX.Element[]],
+        [[], [], []] as [
+            React.JSX.Element[],
+            React.JSX.Element[],
+            React.JSX.Element[],
+        ],
     );
 
     return (
@@ -274,6 +293,11 @@ function AccessibleCheckboxInputGroup<
                     <Stack>
                         {leftStack}
                     </Stack>
+                    <Space w="xl" />
+                    <Stack>
+                        {middleStack}
+                    </Stack>
+                    <Space w="xl" />
                     <Stack>
                         {rightStack}
                     </Stack>
