@@ -3,7 +3,6 @@ import jwtDecode from "jwt-decode";
 import { Err, Ok } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
 import { ColorsSwatches } from "./constants";
-import { AuthState } from "./context/authProvider/types";
 
 import localforage from "localforage";
 import { z } from "zod";
@@ -526,30 +525,6 @@ function createMetricsForageKey(
   }`;
 }
 
-function addTokenDetailsToBody(
-  body: Record<string, unknown>,
-  authState: AuthState,
-): string {
-  const { decodedToken } = authState;
-
-  if (!decodedToken) {
-    return JSON.stringify(body);
-  }
-
-  const { sessionId, userInfo: { userId, username, roles } } = decodedToken;
-
-  const tokenDetails = {
-    sessionId,
-    userInfo: {
-      roles,
-      userId,
-      username,
-    },
-  };
-
-  return JSON.stringify({ ...body, ...tokenDetails });
-}
-
 function hexToHSL(
   hex: string,
   returnKind: "string" | "object",
@@ -662,7 +637,6 @@ function throttle<T extends (...args: any[]) => void>(
 
 export {
   addCommaSeparator,
-  addTokenDetailsToBody,
   capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
