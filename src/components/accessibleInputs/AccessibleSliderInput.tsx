@@ -41,6 +41,11 @@ type AccessibleSliderInputAttributes<
     action: ValidValueAction;
     payload: Payload;
   }>;
+  /** default dispatch for user-created dynamic inputs */
+  parentDynamicDispatch?: React.Dispatch<{
+    action: ValidValueAction;
+    payload: DynamicSliderInputPayload;
+  }>;
   precision?: number;
   size?: MantineSize;
   sliderDefaultValue?: number;
@@ -72,6 +77,7 @@ function AccessibleSliderInput<
   const {
     color = primaryColor,
     disabled = false,
+    index,
     label = null,
     labelTransition = "skew-down",
     labelTransitionDuration = 100,
@@ -84,6 +90,7 @@ function AccessibleSliderInput<
     onChange,
     onFocus,
     parentDispatch,
+    parentDynamicDispatch,
     precision = 1,
     size = "sm",
     sliderDefaultValue = min,
@@ -129,10 +136,15 @@ function AccessibleSliderInput<
       name={name}
       onBlur={onBlur}
       onChange={(value: Payload) => {
-        parentDispatch?.({
-          action: validValueAction,
-          payload: value,
-        });
+        index === undefined
+          ? parentDispatch?.({
+            action: validValueAction,
+            payload: value,
+          })
+          : parentDynamicDispatch?.({
+            action: validValueAction,
+            payload: { index, value },
+          });
 
         onChange?.(value);
       }}

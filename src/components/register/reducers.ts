@@ -12,6 +12,7 @@ import {
   setEmailDispatchZod,
   setErrorMessageDispatchZod,
   setFirstNameDispatchZod,
+  setFormDataDispatchZod,
   setInputsInErrorDispatchZod,
   setIsEmailExistsDispatchZod,
   setIsEmailExistsSubmittingDispatchZod,
@@ -56,6 +57,7 @@ const registerReducers = new Map<
   [registerAction.setStepsInError, registerReducer_setStepsInError],
   [registerAction.setDepartment, registerReducer_setDepartment],
   [registerAction.setFirstName, registerReducer_setFirstName],
+  [registerAction.setFormData, registerReducer_setFormData],
   [registerAction.setJobPosition, registerReducer_setJobPosition],
   [registerAction.setLastName, registerReducer_setLastName],
   [registerAction.setProfilePictureUrl, registerReducer_setProfilePictureUrl],
@@ -100,7 +102,7 @@ function registerReducer_setInputsInError(
     return state;
   }
 
-  const { kind, name } = parsedResult.safeUnwrap().data.payload;
+  const { kind, name } = parsedResult.safeUnwrap().data?.payload;
   const inputsInError = new Set(state.inputsInError);
   if (kind === "add") {
     inputsInError.add(name);
@@ -124,7 +126,7 @@ function registerReducer_setStepsWithEmptyInputs(
     return state;
   }
 
-  const { kind, step } = parsedResult.safeUnwrap().data.payload;
+  const { kind, step } = parsedResult.safeUnwrap().data?.payload;
   const stepsWithEmptyInputs = new Set(state.stepsWithEmptyInputs);
   if (kind === "add") {
     stepsWithEmptyInputs.add(step);
@@ -148,7 +150,7 @@ function registerReducer_setActiveStep(
     return state;
   }
 
-  return { ...state, activeStep: parsedResult.safeUnwrap().data.payload };
+  return { ...state, activeStep: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setStepsInError(
@@ -190,7 +192,7 @@ function registerReducer_setDepartment(
     return state;
   }
 
-  return { ...state, department: parsedResult.safeUnwrap().data.payload };
+  return { ...state, department: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setFirstName(
@@ -206,7 +208,23 @@ function registerReducer_setFirstName(
     return state;
   }
 
-  return { ...state, firstName: parsedResult.safeUnwrap().data.payload };
+  return { ...state, firstName: parsedResult.safeUnwrap().data?.payload };
+}
+
+function registerReducer_setFormData(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setFormDataDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return { ...state, formData: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setJobPosition(
@@ -222,7 +240,7 @@ function registerReducer_setJobPosition(
     return state;
   }
 
-  return { ...state, jobPosition: parsedResult.safeUnwrap().data.payload };
+  return { ...state, jobPosition: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setLastName(
@@ -238,7 +256,7 @@ function registerReducer_setLastName(
     return state;
   }
 
-  return { ...state, lastName: parsedResult.safeUnwrap().data.payload };
+  return { ...state, lastName: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setProfilePictureUrl(
@@ -256,7 +274,7 @@ function registerReducer_setProfilePictureUrl(
 
   return {
     ...state,
-    profilePictureUrl: parsedResult.safeUnwrap().data.payload,
+    profilePictureUrl: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -273,7 +291,7 @@ function registerReducer_setStoreLocation(
     return state;
   }
 
-  return { ...state, storeLocation: parsedResult.safeUnwrap().data.payload };
+  return { ...state, storeLocation: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setAddressLine(
@@ -289,7 +307,7 @@ function registerReducer_setAddressLine(
     return state;
   }
 
-  return { ...state, addressLine: parsedResult.safeUnwrap().data.payload };
+  return { ...state, addressLine: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setCity(
@@ -305,7 +323,7 @@ function registerReducer_setCity(
     return state;
   }
 
-  return { ...state, city: parsedResult.safeUnwrap().data.payload };
+  return { ...state, city: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setCountry(
@@ -321,7 +339,7 @@ function registerReducer_setCountry(
     return state;
   }
 
-  return { ...state, country: parsedResult.safeUnwrap().data.payload };
+  return { ...state, country: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setPostalCodeCanada(
@@ -337,7 +355,10 @@ function registerReducer_setPostalCodeCanada(
     return state;
   }
 
-  return { ...state, postalCodeCanada: parsedResult.safeUnwrap().data.payload };
+  return {
+    ...state,
+    postalCodeCanada: parsedResult.safeUnwrap().data?.payload,
+  };
 }
 
 function registerReducer_setPostalCodeUS(
@@ -353,7 +374,7 @@ function registerReducer_setPostalCodeUS(
     return state;
   }
 
-  return { ...state, postalCodeUS: parsedResult.safeUnwrap().data.payload };
+  return { ...state, postalCodeUS: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setProvince(
@@ -369,7 +390,7 @@ function registerReducer_setProvince(
     return state;
   }
 
-  return { ...state, province: parsedResult.safeUnwrap().data.payload };
+  return { ...state, province: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setState(
@@ -387,7 +408,7 @@ function registerReducer_setState(
 
   return {
     ...state,
-    state: parsedResult.safeUnwrap().data.payload as StatesUS,
+    state: parsedResult.safeUnwrap().data?.payload as StatesUS,
   };
 }
 
@@ -404,7 +425,7 @@ function registerReducer_setConfirmPassword(
     return state;
   }
 
-  return { ...state, confirmPassword: parsedResult.safeUnwrap().data.payload };
+  return { ...state, confirmPassword: parsedResult.safeUnwrap().data?.payload };
 }
 function registerReducer_setEmail(
   state: RegisterState,
@@ -419,7 +440,7 @@ function registerReducer_setEmail(
     return state;
   }
 
-  return { ...state, email: parsedResult.safeUnwrap().data.payload };
+  return { ...state, email: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setErrorMessage(
@@ -435,7 +456,7 @@ function registerReducer_setErrorMessage(
     return state;
   }
 
-  return { ...state, errorMessage: parsedResult.safeUnwrap().data.payload };
+  return { ...state, errorMessage: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setIsEmailExists(
@@ -451,7 +472,7 @@ function registerReducer_setIsEmailExists(
     return state;
   }
 
-  return { ...state, isEmailExists: parsedResult.safeUnwrap().data.payload };
+  return { ...state, isEmailExists: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setIsEmailExistsSubmitting(
@@ -469,7 +490,7 @@ function registerReducer_setIsEmailExistsSubmitting(
 
   return {
     ...state,
-    isEmailExistsSubmitting: parsedResult.safeUnwrap().data.payload,
+    isEmailExistsSubmitting: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -486,7 +507,7 @@ function registerReducer_setIsError(
     return state;
   }
 
-  return { ...state, isError: parsedResult.safeUnwrap().data.payload };
+  return { ...state, isError: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setIsSubmitting(
@@ -502,7 +523,7 @@ function registerReducer_setIsSubmitting(
     return state;
   }
 
-  return { ...state, isSubmitting: parsedResult.safeUnwrap().data.payload };
+  return { ...state, isSubmitting: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setIsSuccessful(
@@ -518,7 +539,7 @@ function registerReducer_setIsSuccessful(
     return state;
   }
 
-  return { ...state, isSuccessful: parsedResult.safeUnwrap().data.payload };
+  return { ...state, isSuccessful: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setIsUsernameExists(
@@ -534,7 +555,10 @@ function registerReducer_setIsUsernameExists(
     return state;
   }
 
-  return { ...state, isUsernameExists: parsedResult.safeUnwrap().data.payload };
+  return {
+    ...state,
+    isUsernameExists: parsedResult.safeUnwrap().data?.payload,
+  };
 }
 
 function registerReducer_setIsUsernameExistsSubmitting(
@@ -552,7 +576,7 @@ function registerReducer_setIsUsernameExistsSubmitting(
 
   return {
     ...state,
-    isUsernameExistsSubmitting: parsedResult.safeUnwrap().data.payload,
+    isUsernameExistsSubmitting: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -569,7 +593,7 @@ function registerReducer_setPassword(
     return state;
   }
 
-  return { ...state, password: parsedResult.safeUnwrap().data.payload };
+  return { ...state, password: parsedResult.safeUnwrap().data?.payload };
 }
 
 function registerReducer_setUsername(
@@ -585,7 +609,7 @@ function registerReducer_setUsername(
     return state;
   }
 
-  return { ...state, username: parsedResult.safeUnwrap().data.payload };
+  return { ...state, username: parsedResult.safeUnwrap().data?.payload };
 }
 
 export {

@@ -11,7 +11,7 @@ import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { AllStoreLocations } from "../dashboard/types";
 import type { RegisterAction } from "./actions";
-import { RegisterDispatch } from "./types";
+import { RegisterDispatch } from "./schemas";
 
 type RegisterPersonalProps = {
     department: Department;

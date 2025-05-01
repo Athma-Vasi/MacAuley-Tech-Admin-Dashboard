@@ -25,7 +25,6 @@ type AccessibleFileInputAttributes<
             payload: string;
         }
     >;
-    placeholder?: string;
     radius?: MantineNumberSize;
     required?: boolean;
     size?: MantineSize;
@@ -62,7 +61,6 @@ function AccessibleFileInput<
         onChange,
         onFocus,
         parentDispatch,
-        placeholder = "",
         radius,
         required = false,
         size = "sm",
@@ -118,10 +116,9 @@ function AccessibleFileInput<
                     modifiedFiles,
                 );
 
-                const fileNames =
-                    (await localforage.getItem<Array<string>>(
-                        `${storageKey}-fileNames`,
-                    )) ?? [];
+                const fileNames = (await localforage.getItem<Array<string>>(
+                    `${storageKey}-fileNames`,
+                )) ?? [];
                 fileNames.push(payload?.name ?? "Unknown file name");
                 await localforage.setItem<Array<string>>(
                     `${storageKey}-fileNames`,

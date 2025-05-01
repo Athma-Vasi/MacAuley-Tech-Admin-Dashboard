@@ -12,7 +12,7 @@ import type {
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import type { RegisterAction } from "./actions";
-import { RegisterDispatch } from "./types";
+import { RegisterDispatch } from "./schemas";
 
 type RegisterAddressProps = {
   addressLine: string;

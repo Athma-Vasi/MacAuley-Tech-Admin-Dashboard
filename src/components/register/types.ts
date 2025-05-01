@@ -47,6 +47,7 @@ type RegisterState = {
   stepsInError: Set<number>;
   stepsWithEmptyInputs: Set<number>;
   inputsInError: Set<ValidationKey>;
+  formData: FormData;
 };
 
 export type { RegisterAction, RegisterState };

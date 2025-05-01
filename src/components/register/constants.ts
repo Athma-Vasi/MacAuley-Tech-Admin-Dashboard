@@ -38,9 +38,19 @@ const STEPS_INPUTNAMES_MAP: Map<number, Array<ValidationKey>> = new Map([
       "postalCodeUS",
     ],
   ],
+  [
+    3,
+    [],
+  ],
 ]);
 
-const REGISTER_STEPS = ["Authentication", "Personal", "Address", "Review"];
+const REGISTER_STEPS = [
+  "Authentication",
+  "Personal",
+  "Address",
+  "File",
+  "Review",
+];
 const MAX_REGISTER_STEPS = REGISTER_STEPS.length;
 
 export {

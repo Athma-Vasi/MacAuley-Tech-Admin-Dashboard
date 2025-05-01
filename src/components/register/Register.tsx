@@ -18,6 +18,7 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { FormReview } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
+import { AccessibleImageInput } from "../accessibleInputs/image";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
 import { handlePrevNextStepClick, handleRegisterButtonClick } from "./handlers";
@@ -293,6 +294,9 @@ function Register() {
         country,
         postalCodeUS,
       },
+    "File": {
+      "Is File Valid": true,
+    },
   };
 
   const reviewStep = (
@@ -301,6 +305,20 @@ function Register() {
       inputsInError={inputsInError}
       stepsInError={stepsInError}
     />
+  );
+
+  const imageUpload = (
+    <Group w="100%" position="center">
+      <AccessibleImageInput
+        attributes={{
+          invalidValueAction: registerAction.setIsError,
+          maxImagesAmount: 1,
+          parentDispatch: registerDispatch,
+          storageKey: "profilePicture",
+          validValueAction: registerAction.setFormData,
+        }}
+      />
+    </Group>
   );
 
   const registerStep = activeStep === 0
@@ -348,6 +366,8 @@ function Register() {
         state={state}
       />
     )
+    : activeStep === 3
+    ? imageUpload
     : reviewStep;
 
   const stepperCard = returnRegisterStepperCard({
@@ -371,6 +391,8 @@ function Register() {
       </div>
     </Card>
   );
+
+  console.log("Register form data", Object.fromEntries(registerState.formData));
 
   return (
     <Box

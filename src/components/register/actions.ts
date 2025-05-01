@@ -8,6 +8,7 @@ type RegisterAction = {
   setEmail: "setEmail";
   setErrorMessage: "setErrorMessage";
   setFirstName: "setFirstName";
+  setFormData: "setFormData";
   setInputsInError: "setInputsInError";
   setIsEmailExists: "setIsEmailExists";
   setIsEmailExistsSubmitting: "setIsEmailExistsSubmitting";
@@ -40,6 +41,7 @@ const registerAction: RegisterAction = {
   setEmail: "setEmail",
   setErrorMessage: "setErrorMessage",
   setFirstName: "setFirstName",
+  setFormData: "setFormData",
   setInputsInError: "setInputsInError", // This is the new action
   setIsEmailExists: "setIsEmailExists",
   setIsEmailExistsSubmitting: "setIsEmailExistsSubmitting",

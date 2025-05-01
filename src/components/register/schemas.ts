@@ -139,6 +139,11 @@ const setInputsInErrorDispatchZod = z.object({
     ),
 });
 
+const setFormDataDispatchZod = z.object({
+    action: z.literal(registerAction.setFormData),
+    payload: z.any(),
+});
+
 type RegisterDispatch =
     | z.infer<typeof setConfirmPasswordDispatchZod>
     | z.infer<typeof setEmailDispatchZod>
@@ -168,7 +173,8 @@ type RegisterDispatch =
     | z.infer<typeof setActiveStepDispatchZod>
     | z.infer<typeof setStepsInErrorDispatchZod>
     | z.infer<typeof setStepsWithEmptyInputsDispatchZod>
-    | z.infer<typeof setInputsInErrorDispatchZod>;
+    | z.infer<typeof setInputsInErrorDispatchZod>
+    | z.infer<typeof setFormDataDispatchZod>;
 
 export {
     setActiveStepDispatchZod,
@@ -180,6 +186,7 @@ export {
     setEmailDispatchZod,
     setErrorMessageDispatchZod,
     setFirstNameDispatchZod,
+    setFormDataDispatchZod,
     setInputsInErrorDispatchZod,
     setIsEmailExistsDispatchZod,
     setIsEmailExistsSubmittingDispatchZod,

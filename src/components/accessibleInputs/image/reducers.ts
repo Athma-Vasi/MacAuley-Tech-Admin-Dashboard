@@ -181,7 +181,7 @@ function accessibleImageInputReducer_setQualities(
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
     const { index, value } = dispatch.payload as DynamicSliderInputPayload;
-    const qualities = state.qualities.slice();
+    const qualities = structuredClone(state.qualities);
     qualities[index] = value;
 
     return {

@@ -10,7 +10,6 @@ type AccessibleImageInputAttributes<
     invalidValueAction: InvalidValueAction;
     maxImageSize?: number;
     maxImagesAmount?: number;
-    page: number;
     parentDispatch?: Dispatch<
         | {
             action: ValidValueAction;

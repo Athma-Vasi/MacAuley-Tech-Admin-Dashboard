@@ -54,7 +54,6 @@ function AccessibleImageInput<
         invalidValueAction,
         maxImageSize = MAX_IMAGE_SIZE,
         maxImagesAmount = MAX_IMAGES,
-        page,
         parentDispatch,
         storageKey,
         validValueAction,
@@ -360,18 +359,26 @@ function AccessibleImageInput<
                     </Text>
                 </GoldenGrid>
             );
-            const invalidImageDescription = isImageSizeInvalid
+
+            const isImageSizeInvalidText = isImageSizeInvalid
                 ? `Image is too large. Must be less than ${
                     maxImageSize / 1000
                 } KB.`
-                : !ALLOWED_FILE_EXTENSIONS_REGEX.test(type.split("/")[1])
+                : "";
+            const isImageTypeInvalidText = isImageTypeInvalid
                 ? "Image contains disallowed file type. Must only contain .jpg, .jpeg, .png, or .webp file types."
-                : "Image is invalid.";
+                : "";
+
+            const invalidImageDescription =
+                `Image is invalid. ${isImageSizeInvalidText} ${isImageTypeInvalidText}`;
 
             const invalidScreenreaderTextElement = (
                 <GoldenGrid>
-                    <Group position="right">
+                    <Group>
                         <TbExclamationCircle color={redColorShade} size={22} />
+                        <Text color={redColorShade} aria-live="polite">
+                            Oops!
+                        </Text>
                     </Group>
                     <Text color={redColorShade} aria-live="polite">
                         {invalidImageDescription}
@@ -543,7 +550,7 @@ function AccessibleImageInput<
                                 storedQualities,
                             );
                         },
-                        // parentDynamicDispatch: accessibleImageInputDispatch,
+                        parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setQualities,
@@ -586,7 +593,7 @@ function AccessibleImageInput<
                                 storedOrientations,
                             );
                         },
-                        // parentDynamicDispatch: accessibleImageInputDispatch,
+                        parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setOrientations,
@@ -641,6 +648,8 @@ function AccessibleImageInput<
     );
 
     const loadingOverlay = <LoadingOverlay visible={isLoading} />;
+
+    console.log("AccessibleImageInputState", accessibleImageInputState);
 
     return (
         <Stack style={{ minWidth: INPUT_WIDTH, maxWidth: "400px" }}>

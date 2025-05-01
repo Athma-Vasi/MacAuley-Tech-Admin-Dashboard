@@ -10,6 +10,7 @@ const initialRegisterState: RegisterState = {
   email: "",
   errorMessage: "",
   firstName: "",
+  formData: new FormData(),
   inputsInError: new Set(),
   isEmailExists: false,
   isEmailExistsSubmitting: false,
