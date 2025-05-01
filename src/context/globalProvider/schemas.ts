@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { customerMetricsDocumentZod } from "../../components/dashboard/customer/schemas";
 import { financialMetricsDocumentZod } from "../../components/dashboard/financial/schemas";
+import { productMetricsDocumentZod } from "../../components/dashboard/product/schemas";
 import { repairMetricsDocumentZod } from "../../components/dashboard/repair/schemas";
 import { globalAction } from "./actions";
 
@@ -28,11 +29,6 @@ const setFinancialMetricCategoryGlobalDispatchZod = z.object({
 const setFinancialMetricsDocumentGlobalDispatchZod = z.object({
     action: z.literal(globalAction.setFinancialMetricsDocument),
     payload: financialMetricsDocumentZod,
-});
-
-const isErrorGlobalDispatchZod = z.object({
-    action: z.literal(globalAction.setIsError),
-    payload: z.boolean(),
 });
 
 const setIsFetchingGlobalDispatchZod = z.object({
@@ -66,6 +62,11 @@ const setProductMetricCategoryGlobalDispatchZod = z.object({
         "Storage",
         "Webcam",
     ]),
+});
+
+const setProductMetricsDocumentGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setProductMetricsDocument),
+    payload: productMetricsDocumentZod,
 });
 
 const setProductSubMetricCategoryGlobalDispatchZod = z.object({
@@ -118,15 +119,106 @@ const setStoreLocationViewGlobalDispatchZod = z.object({
     ]),
 });
 
+const setColorSchemeGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setColorScheme),
+    payload: z.enum(["light", "dark"]),
+});
+
+const setDefaultGradientGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setDefaultGradient),
+    payload: z.object({
+        deg: z.number(),
+        from: z.enum([
+            "dark",
+            "red",
+            "blue",
+            "green",
+            "yellow",
+            "pink",
+            "orange",
+            "cyan",
+            "gray",
+            "grape",
+            "violet",
+            "indigo",
+            "lime",
+            "teal",
+        ]),
+        to: z.enum([
+            "dark",
+            "red",
+            "blue",
+            "green",
+            "yellow",
+            "pink",
+            "orange",
+            "cyan",
+            "gray",
+            "grape",
+            "violet",
+            "indigo",
+            "lime",
+            "teal",
+        ]),
+    }),
+});
+
+const setPrefersReducedMotionGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setPrefersReducedMotion),
+    payload: z.boolean(),
+});
+
+const setPrimaryShadeDarkGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setPrimaryShadeDark),
+    payload: z.number().min(0).max(9),
+});
+
+const setPrimaryShadeLightGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setPrimaryShadeLight),
+    payload: z.number().min(0).max(9),
+});
+
+const setPrimaryColorGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setPrimaryColor),
+    payload: z.enum([
+        "dark",
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "pink",
+        "orange",
+        "cyan",
+        "gray",
+        "grape",
+        "violet",
+        "indigo",
+        "lime",
+        "teal",
+    ]),
+});
+
+const setIsErrorGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setIsError),
+    payload: z.boolean(),
+});
+
 export {
-    isErrorGlobalDispatchZod,
+    setColorSchemeGlobalDispatchZod,
     setCustomerMetricsCategoryGlobalDispatchZod,
     setCustomerMetricsDocumentGlobalDispatchZod,
+    setDefaultGradientGlobalDispatchZod,
     setFinancialMetricCategoryGlobalDispatchZod,
     setFinancialMetricsDocumentGlobalDispatchZod,
+    setIsErrorGlobalDispatchZod,
     setIsFetchingGlobalDispatchZod,
     setIsPrefersReducedMotionGlobalDispatchZod,
+    setPrefersReducedMotionGlobalDispatchZod,
+    setPrimaryColorGlobalDispatchZod,
+    setPrimaryShadeDarkGlobalDispatchZod,
+    setPrimaryShadeLightGlobalDispatchZod,
     setProductMetricCategoryGlobalDispatchZod,
+    setProductMetricsDocumentGlobalDispatchZod,
     setProductSubMetricCategoryGlobalDispatchZod,
     setRepairMetricCategoryGlobalDispatchZod,
     setRepairMetricsDocumentGlobalDispatchZod,
