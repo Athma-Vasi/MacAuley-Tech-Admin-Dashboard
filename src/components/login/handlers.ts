@@ -15,7 +15,7 @@ import {
   createSafeBoxResult,
   decodeJWTSafe,
   fetchSafe,
-  parseServerResponseSafeAsync,
+  parseServerResponseAsyncSafe,
   responseToJSONSafe,
   setForageItemSafe,
 } from "../../utils";
@@ -145,7 +145,7 @@ async function handleLoginButtonClick(
     }
 
     console.time("---parsing---");
-    const parsedResult = await parseServerResponseSafeAsync({
+    const parsedResult = await parseServerResponseAsyncSafe({
       object: serverResponse,
       zSchema: z.object({
         userDocument: userDocumentOptionalsZod,

@@ -7,7 +7,7 @@ import {
     createSafeBoxResult,
     decodeJWTSafe,
     fetchSafe,
-    parseServerResponseSafeAsync,
+    parseServerResponseAsyncSafe,
     responseToJSONSafe,
 } from "../../utils";
 import { usersQueryAction } from "./actions";
@@ -136,7 +136,7 @@ async function handleUsersQuerySubmitGET(
         }
 
         console.time("--PARSING--");
-        const parsedResult = await parseServerResponseSafeAsync({
+        const parsedResult = await parseServerResponseAsyncSafe({
             object: serverResponse,
             zSchema: userDocumentOptionalsZod,
         });

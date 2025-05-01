@@ -4,6 +4,7 @@ import { Err, Ok } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
 import { ColorsSwatches } from "./constants";
 
+import { compress, ICompressConfig } from "image-conversion";
 import localforage from "localforage";
 import { z } from "zod";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
@@ -465,7 +466,19 @@ function createSafeBoxResult<Data extends unknown = unknown>(
   });
 }
 
-async function parseServerResponseSafeAsync(
+async function modifyImageSafe(
+  file: Blob,
+  config?: ICompressConfig | number,
+): Promise<SafeBoxResult<Blob>> {
+  try {
+    const compressedBlob = await compress(file, config);
+    return new Ok({ data: compressedBlob, kind: "success" });
+  } catch (error) {
+    return new Err({ data: error, kind: "error" });
+  }
+}
+
+async function parseServerResponseAsyncSafe(
   { object, zSchema }: {
     zSchema: z.ZodSchema;
     object: Record<string, unknown>;
@@ -648,8 +661,9 @@ export {
   formatDate,
   getForageItemSafe,
   hexToHSL,
+  modifyImageSafe,
   parseSafeSync,
-  parseServerResponseSafeAsync,
+  parseServerResponseAsyncSafe,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,

@@ -11,7 +11,7 @@ import {
 import {
     createSafeBoxResult,
     fetchSafe,
-    parseServerResponseSafeAsync,
+    parseServerResponseAsyncSafe,
     responseToJSONSafe,
 } from "../../utils";
 import { customerMetricsDocumentZod } from "../dashboard/customer/schemas";
@@ -94,7 +94,7 @@ async function handleLoginMock(
             });
         }
 
-        const parsedResult = await parseServerResponseSafeAsync({
+        const parsedResult = await parseServerResponseAsyncSafe({
             object: serverResponse,
             zSchema: z.object({
                 userDocument: userDocumentOptionalsZod,
@@ -193,7 +193,7 @@ async function handleLogoutMock(
             });
         }
 
-        const parsedResult = await parseServerResponseSafeAsync({
+        const parsedResult = await parseServerResponseAsyncSafe({
             object: serverResponse,
             zSchema: z.object({}),
         });
@@ -307,7 +307,7 @@ async function handleMetricsMock(
             });
         }
 
-        const parsedResult = await parseServerResponseSafeAsync({
+        const parsedResult = await parseServerResponseAsyncSafe({
             object: serverResponse,
             zSchema: metricsView === "customers"
                 ? customerMetricsDocumentZod

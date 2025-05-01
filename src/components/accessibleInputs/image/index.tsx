@@ -7,7 +7,6 @@ import {
     Text,
     Tooltip,
 } from "@mantine/core";
-import { compress, EImageType } from "image-conversion";
 import localforage from "localforage";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
@@ -38,7 +37,7 @@ import {
 import { accessibleImageInputReducer } from "./reducers";
 import { initialAccessibleImageInputState } from "./state";
 import type { AccessibleImageInputProps } from "./types";
-import { retrieveStoredValues, validateImages } from "./utils";
+import { modifyImage, retrieveStoredImagesValues } from "./utils";
 
 function AccessibleImageInput<
     ValidValueAction extends string = string,
@@ -88,124 +87,40 @@ function AccessibleImageInput<
 
     const isComponentMountedRef = useRef(false);
 
-    const isMountedRetrieveStoredValuesRef = useRef(false);
     useEffect(() => {
-        isMountedRetrieveStoredValuesRef.current = true;
-        const isMounted = isMountedRetrieveStoredValuesRef.current;
-
-        retrieveStoredValues();
+        retrieveStoredImagesValues({
+            accessibleImageInputDispatch,
+            isComponentMountedRef,
+            maxImagesAmount,
+            showBoundary,
+            storageKey,
+        });
 
         return () => {
-            isMountedRetrieveStoredValuesRef.current = false;
+            isComponentMountedRef.current = false;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const isMountedModifyImagesRef = useRef(false);
     useEffect(() => {
-        isMountedModifyImagesRef.current = true;
-        const isMounted = isMountedModifyImagesRef.current;
-
-        async function modifyImage(): Promise<void> {
-            try {
-                const originalFiles = await localforage.getItem<
-                    Array<OriginalFile>
-                >(
-                    `${storageKey}-originalFiles`,
-                );
-
-                if (!originalFiles) {
-                    return;
-                }
-
-                const imageToModify = structuredClone(
-                    originalFiles[currentImageIndex],
-                );
-
-                if (!imageToModify) {
-                    return;
-                }
-
-                const quality = qualities[currentImageIndex] / 10;
-                const orientation = orientations[currentImageIndex];
-                const type = imageToModify?.type as EImageType;
-
-                const fileBlob: Blob = await compress(imageToModify, {
-                    quality,
-                    orientation,
-                    type,
-                });
-
-                if (!isMounted) {
-                    return;
-                }
-
-                accessibleImageInputDispatch({
-                    action: accessibleImageInputAction.setImageFileBlobs,
-                    payload: {
-                        fileBlob,
-                        index: currentImageIndex,
-                    },
-                });
-
-                const updatedModifiedFiles = originalFiles.map(
-                    (originalFile, index) => {
-                        if (index === currentImageIndex) {
-                            return fileBlob;
-                        }
-                        return originalFile;
-                    },
-                );
-
-                await localforage.setItem<Array<ModifiedFile>>(
-                    `${storageKey}-modifiedFiles`,
-                    updatedModifiedFiles,
-                );
-
-                const { areImagesInvalid } = validateImages({
-                    allowedFileExtensionsRegex: ALLOWED_FILE_EXTENSIONS_REGEX,
-                    imageFileBlobs,
-                    maxImagesAmount,
-                    maxImageSize,
-                });
-
-                parentDispatch?.({
-                    action: invalidValueAction,
-                    payload: areImagesInvalid,
-                });
-
-                const formData = imageFileBlobs.reduce<FormData>(
-                    (formDataAcc, imageFileBlob, index) => {
-                        if (imageFileBlob) {
-                            formDataAcc.append(
-                                `${storageKey}-modifiedFiles`,
-                                imageFileBlob,
-                                fileNames[index],
-                            );
-                        }
-
-                        return formDataAcc;
-                    },
-                    new FormData(),
-                );
-
-                parentDispatch?.({
-                    action: validValueAction,
-                    payload: formData,
-                });
-            } catch (error: any) {
-                if (!isMounted) {
-                    return;
-                }
-
-                showBoundary(error);
-            }
-        }
-
-        modifyImage();
+        modifyImage({
+            accessibleImageInputDispatch,
+            currentImageIndex,
+            fileNames,
+            imageFileBlobs,
+            invalidValueAction,
+            isComponentMountedRef,
+            maxImagesAmount,
+            maxImageSize,
+            orientations,
+            parentDispatch,
+            qualities,
+            showBoundary,
+            storageKey,
+            validValueAction,
+        });
 
         return () => {
-            isMountedModifyImagesRef.current = false;
+            isComponentMountedRef.current = false;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentImageIndex, qualities, orientations]);

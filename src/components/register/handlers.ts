@@ -9,7 +9,7 @@ import {
 import {
   createSafeBoxResult,
   fetchSafe,
-  parseServerResponseSafeAsync,
+  parseServerResponseAsyncSafe,
   responseToJSONSafe,
 } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
@@ -129,7 +129,7 @@ async function handleCheckEmailExists(
       });
     }
 
-    const parsedResult = await parseServerResponseSafeAsync({
+    const parsedResult = await parseServerResponseAsyncSafe({
       object: serverResponse,
       zSchema: z.boolean(),
     });
@@ -324,7 +324,7 @@ async function handleCheckUsernameExists(
       });
     }
 
-    const parsedResult = await parseServerResponseSafeAsync({
+    const parsedResult = await parseServerResponseAsyncSafe({
       object: serverResponse,
       zSchema: z.boolean(),
     });

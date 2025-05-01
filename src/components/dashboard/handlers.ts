@@ -15,7 +15,7 @@ import {
     decodeJWTSafe,
     fetchSafe,
     getForageItemSafe,
-    parseServerResponseSafeAsync,
+    parseServerResponseAsyncSafe,
     responseToJSONSafe,
     setForageItemSafe,
 } from "../../utils";
@@ -194,7 +194,7 @@ async function handleStoreCategoryClick(
         }
 
         console.time("--PARSING--");
-        const parsedResult = await parseServerResponseSafeAsync({
+        const parsedResult = await parseServerResponseAsyncSafe({
             object: serverResponse,
             zSchema: metricsView === "customers"
                 ? customerMetricsDocumentZod
