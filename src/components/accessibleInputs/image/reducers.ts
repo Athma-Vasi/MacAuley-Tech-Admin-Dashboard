@@ -1,10 +1,10 @@
-import type { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
-import type { DynamicSliderInputPayload } from "../AccessibleSliderInput";
+import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
+import { DynamicSliderInputPayload } from "../AccessibleSliderInput";
 import {
-    type AccessibleImageInputAction,
+    AccessibleImageInputAction,
     accessibleImageInputAction,
 } from "./actions";
-import type {
+import {
     AccessibleImageInputDispatch,
     AccessibleImageInputState,
 } from "./types";

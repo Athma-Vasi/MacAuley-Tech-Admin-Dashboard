@@ -1,10 +1,6 @@
-import type { Dispatch } from "react";
-
-import type { SetPageInErrorPayload } from "../../../types";
-import type { ProductCategory } from "../../dashboard/types";
-import type { AdditionalFieldsFormDataPayload } from "../../product/dispatch";
-import type { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
-import type { AccessibleImageInputAction } from "./actions";
+import { Dispatch } from "react";
+import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
+import { AccessibleImageInputAction } from "./actions";
 
 type AccessibleImageInputAttributes<
     ValidValueAction extends string = string,
@@ -22,18 +18,7 @@ type AccessibleImageInputAttributes<
         }
         | {
             action: InvalidValueAction;
-            payload: SetPageInErrorPayload;
-        }
-    >;
-    productCategory?: ProductCategory;
-    productCategoryDispatch?: Dispatch<
-        | {
-            action: ValidValueAction;
-            payload: AdditionalFieldsFormDataPayload;
-        }
-        | {
-            action: InvalidValueAction;
-            payload: SetPageInErrorPayload;
+            payload: boolean;
         }
     >;
     /** unique id for local forage */

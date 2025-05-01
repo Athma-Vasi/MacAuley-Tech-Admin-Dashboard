@@ -7,30 +7,24 @@ import {
     Text,
     Tooltip,
 } from "@mantine/core";
-import { compress, type EImageType } from "image-conversion";
+import { compress, EImageType } from "image-conversion";
 import localforage from "localforage";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
-
-import {
-    COLORS_SWATCHES,
-    INPUT_MAX_WIDTH,
-    INPUT_MIN_WIDTH,
-} from "../../../constants/data";
-import { useGlobalState } from "../../../hooks";
-import { logState, returnThemeColors } from "../../../utils";
-
+import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
+import { useGlobalState } from "../../../hooks/useGlobalState";
+import { returnThemeColors } from "../../../utils";
+import { GoldenGrid } from "../../goldenGrid";
 import {
     AccessibleFileInput,
-    type ModifiedFile,
-    type OriginalFile,
+    ModifiedFile,
+    OriginalFile,
 } from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
-import { GoldenGrid } from "../GoldenGrid";
 import { createAccessibleButtons } from "../utils";
 import {
-    type AccessibleImageInputAction,
+    AccessibleImageInputAction,
     accessibleImageInputAction,
 } from "./actions";
 import {
@@ -62,8 +56,6 @@ function AccessibleImageInput<
         maxImagesAmount = MAX_IMAGES,
         page,
         parentDispatch,
-        productCategory,
-        productCategoryDispatch,
         storageKey,
         validValueAction,
     } = attributes;
@@ -90,16 +82,10 @@ function AccessibleImageInput<
     const { showBoundary } = useErrorBoundary();
 
     const {
-        generalColors: { redColorShade, textColor, greenColorShade },
-        appThemeColors: { borderColor },
+        redColorShade,
+        textColor,
+        greenColorShade,
     } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
-
-    useEffect(() => {
-        logState({
-            state: accessibleImageInputState,
-            groupLabel: "Accessible Image Input State",
-        });
-    }, [accessibleImageInputState]);
 
     const isMountedRetrieveStoredValuesRef = useRef(false);
     useEffect(() => {
@@ -254,10 +240,7 @@ function AccessibleImageInput<
 
                 parentDispatch?.({
                     action: invalidValueAction,
-                    payload: {
-                        kind: areImagesInvalid ? "add" : "delete",
-                        page,
-                    },
+                    payload: areImagesInvalid,
                 });
 
                 const formData = imageFileBlobs.reduce<FormData>(
@@ -311,23 +294,10 @@ function AccessibleImageInput<
                 );
                 const isImageInvalid = isImageSizeInvalid || isImageTypeInvalid;
 
-                if (productCategory && productCategoryDispatch) {
-                    productCategoryDispatch({
-                        action: invalidValueAction,
-                        payload: {
-                            kind: isImageInvalid ? "add" : "delete",
-                            page,
-                        },
-                    });
-                } else {
-                    parentDispatch?.({
-                        action: invalidValueAction,
-                        payload: {
-                            kind: isImageInvalid ? "add" : "delete",
-                            page,
-                        },
-                    });
-                }
+                parentDispatch?.({
+                    action: invalidValueAction,
+                    payload: isImageInvalid,
+                });
             }
         });
 
@@ -346,17 +316,11 @@ function AccessibleImageInput<
             new FormData(),
         );
 
-        if (productCategory && productCategoryDispatch) {
-            productCategoryDispatch({
-                action: validValueAction,
-                payload: { productCategory, value },
-            });
-        } else {
-            parentDispatch?.({
-                action: validValueAction,
-                payload: value,
-            });
-        }
+        parentDispatch?.({
+            action: validValueAction,
+            payload: value,
+        });
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [imageFileBlobs.length]);
 
@@ -579,7 +543,7 @@ function AccessibleImageInput<
                                 storedQualities,
                             );
                         },
-                        parentDynamicDispatch: accessibleImageInputDispatch,
+                        // parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setQualities,
@@ -622,7 +586,7 @@ function AccessibleImageInput<
                                 storedOrientations,
                             );
                         },
-                        parentDynamicDispatch: accessibleImageInputDispatch,
+                        // parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setOrientations,
@@ -647,7 +611,9 @@ function AccessibleImageInput<
             return (
                 <Card
                     w={325}
-                    style={{ outline: borderColor, borderRadius: 4 }}
+                    withBorder
+                    radius="md"
+                    shadow="sm"
                     key={`${index}-${fileNames[index]}`}
                 >
                     <Stack spacing="xl">
@@ -677,7 +643,7 @@ function AccessibleImageInput<
     const loadingOverlay = <LoadingOverlay visible={isLoading} />;
 
     return (
-        <Stack style={{ minWidth: INPUT_MIN_WIDTH, maxWidth: INPUT_MAX_WIDTH }}>
+        <Stack style={{ minWidth: INPUT_WIDTH, maxWidth: "400px" }}>
             {loadingOverlay}
             {fileInput}
             {fileBlobCards}
