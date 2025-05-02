@@ -55,24 +55,18 @@ function createImageInputForageKeys(storageKey: string) {
 async function retrieveStoredImagesValues(
     {
         accessibleImageInputDispatch,
-        fileNamesForageKey,
         isComponentMountedRef,
         maxImagesAmount,
-        modifiedFilesForageKey,
-        orientationsForageKey,
-        qualitiesForageKey,
         showBoundary,
+        storageKey,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
-        fileNamesForageKey: string;
         isComponentMountedRef: React.RefObject<boolean>;
         maxImagesAmount: number;
-        modifiedFilesForageKey: string;
-        orientationsForageKey: string;
-        qualitiesForageKey: string;
         showBoundary: (error: Error) => void;
+        storageKey: string;
     },
 ): Promise<SafeBoxResult> {
     const isComponentMounted = isComponentMountedRef.current;
@@ -81,6 +75,15 @@ async function retrieveStoredImagesValues(
             message: "Component is not mounted",
         });
     }
+
+    const {
+        fileNamesForageKey,
+        modifiedFilesForageKey,
+        orientationsForageKey,
+        qualitiesForageKey,
+    } = createImageInputForageKeys(
+        storageKey,
+    );
 
     try {
         accessibleImageInputDispatch({
@@ -217,15 +220,14 @@ function checkImageFileBlobs<
         imageFileBlobs,
         invalidValueAction,
         maxImageSize,
-        modifiedFilesForageKey,
         parentDispatch,
+        storageKey,
         validValueAction,
     }: {
         fileNames: string[];
         imageFileBlobs: Array<ModifiedFile>;
         invalidValueAction: InvalidValueAction;
         maxImageSize: number;
-        modifiedFilesForageKey: string;
         parentDispatch?: React.Dispatch<
             | {
                 action: ValidValueAction;
@@ -236,6 +238,7 @@ function checkImageFileBlobs<
                 payload: boolean;
             }
         >;
+        storageKey: string;
         validValueAction: ValidValueAction;
     },
 ): SafeBoxResult<boolean> {
@@ -244,6 +247,12 @@ function checkImageFileBlobs<
             message: "No images to process",
         });
     }
+
+    const {
+        modifiedFilesForageKey,
+    } = createImageInputForageKeys(
+        storageKey,
+    );
 
     imageFileBlobs.forEach((imageFileBlob) => {
         if (imageFileBlob !== null) {

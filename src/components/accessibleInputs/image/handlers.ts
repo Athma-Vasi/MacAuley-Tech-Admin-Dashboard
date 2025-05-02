@@ -24,6 +24,7 @@ async function handleResetImageClick(
         >;
         index: number;
         isComponentMountedRef: React.RefObject<boolean>;
+
         storageKey: string;
     },
 ): Promise<SafeBoxResult<boolean>> {
@@ -91,19 +92,28 @@ async function handleResetImageClick(
     }
 }
 
-async function handleRemoveImageClick(
+async function handleRemoveImageClick<
+    ValidValueAction extends string = string,
+>(
     {
         accessibleImageInputDispatch,
         index,
         isComponentMountedRef,
+        parentDispatch,
         storageKey,
+        validValueAction,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
         index: number;
         isComponentMountedRef: React.RefObject<boolean>;
+        parentDispatch?: React.Dispatch<{
+            action: ValidValueAction;
+            payload: FormData;
+        }>;
         storageKey: string;
+        validValueAction: ValidValueAction;
     },
 ): Promise<SafeBoxResult<boolean>> {
     const isComponentMounted = isComponentMountedRef.current;
@@ -214,6 +224,10 @@ async function handleRemoveImageClick(
         accessibleImageInputDispatch({
             action: accessibleImageInputAction.setCurrentImageIndex,
             payload: index,
+        });
+        parentDispatch?.({
+            action: validValueAction,
+            payload: new FormData(),
         });
 
         return createSafeBoxResult({
@@ -506,6 +520,11 @@ async function handleImageQualityOrientationSliderChange<
                 payload: { index: currentImageIndex, value: orientationValue },
             });
         }
+
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setCurrentImageIndex,
+            payload: currentImageIndex,
+        });
 
         return createSafeBoxResult({
             kind: "success",

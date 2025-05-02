@@ -29,6 +29,7 @@ import { RegisterPersonal } from "./RegisterPersonal";
 import { initialRegisterState } from "./state";
 import { StepperFormReview } from "./StepperFormReview";
 import { returnRegisterStepperCard } from "./utils";
+import { MAX_IMAGES } from "../accessibleInputs/image/constants";
 
 function Register() {
   const [registerState, registerDispatch] = useReducer(
@@ -46,6 +47,7 @@ function Register() {
     email,
     errorMessage,
     firstName,
+    formData,
     inputsInError,
     isEmailExists,
     isEmailExistsSubmitting,
@@ -307,10 +309,14 @@ function Register() {
     />
   );
 
+  console.log("Register form data", Object.keys(Object.fromEntries(formData)));
+
   const imageUpload = (
     <Group w="100%" position="center">
       <AccessibleImageInput
         attributes={{
+          disabled:
+            Object.keys(Object.fromEntries(formData)).length === MAX_IMAGES,
           invalidValueAction: registerAction.setIsError,
           maxImagesAmount: 1,
           parentDispatch: registerDispatch,
@@ -391,8 +397,6 @@ function Register() {
       </div>
     </Card>
   );
-
-  console.log("Register form data", Object.fromEntries(registerState.formData));
 
   return (
     <Box

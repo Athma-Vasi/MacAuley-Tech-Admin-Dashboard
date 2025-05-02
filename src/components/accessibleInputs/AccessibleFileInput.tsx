@@ -36,6 +36,7 @@ type AccessibleFileInputAttributes<
     required?: boolean;
     size?: MantineSize;
     storageKey: string;
+    style?: React.CSSProperties;
     value?: OriginalFile;
     validValueAction: ValidValueAction;
     variant?: "default" | "filled" | "unstyled";
@@ -72,6 +73,7 @@ function AccessibleFileInput<
         required = false,
         size = "sm",
         storageKey,
+        style,
         validValueAction,
         value = null,
         variant = "default",
@@ -168,6 +170,7 @@ function AccessibleFileInput<
             radius={radius}
             required={required}
             size={size}
+            style={{ ...style, cursor: disabled ? "not-allowed" : "auto" }}
             value={value}
             variant={variant}
             withAsterisk={required}

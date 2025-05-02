@@ -120,17 +120,14 @@ function accessibleImageInputReducer_removeImageFileBlob(
     const imageFileBlobs = structuredClone(state.imageFileBlobs).filter(
         (_: ModifiedFile, i: number) => i !== index,
     );
-
     const fileNames = structuredClone(state.fileNames).filter(
         (_: string, i: number) => i !== index,
     );
-
-    const qualities = structuredClone(state.qualities).filter(
-        (_: number, i: number) => i !== index,
+    const qualities = structuredClone(state.qualities).map(
+        (quality: number, i: number) => i === index ? 10 : quality,
     );
-
-    const orientations = structuredClone(state.orientations).filter(
-        (_: number, i: number) => i !== index,
+    const orientations = structuredClone(state.orientations).map(
+        (orientation: number, i: number) => i === index ? 1 : orientation,
     );
 
     return {

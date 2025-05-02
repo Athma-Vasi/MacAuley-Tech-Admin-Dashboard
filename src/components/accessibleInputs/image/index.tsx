@@ -4,17 +4,18 @@ import {
     Group,
     Image,
     LoadingOverlay,
+    Modal,
     Stack,
     Text,
     Tooltip,
 } from "@mantine/core";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useMountedRef } from "../../../hooks/useMountedRef";
-import { returnThemeColors } from "../../../utils";
+import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { GoldenGrid } from "../../goldenGrid";
 import { AccessibleFileInput, ModifiedFile } from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
@@ -39,11 +40,7 @@ import {
 import { accessibleImageInputReducer } from "./reducers";
 import { initialAccessibleImageInputState } from "./state";
 import type { AccessibleImageInputProps } from "./types";
-import {
-    checkImageFileBlobs,
-    createImageInputForageKeys,
-    retrieveStoredImagesValues,
-} from "./utils";
+import { checkImageFileBlobs, retrieveStoredImagesValues } from "./utils";
 
 function AccessibleImageInput<
     ValidValueAction extends string = string,
@@ -83,58 +80,27 @@ function AccessibleImageInput<
         globalState: { themeObject },
     } = useGlobalState();
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { showBoundary } = useErrorBoundary();
 
     const {
         redColorShade,
         textColor,
         greenColorShade,
+        themeColorShade,
     } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
     const isComponentMountedRef = useMountedRef();
 
-    const {
-        fileNamesForageKey,
-        modifiedFilesForageKey,
-        orientationsForageKey,
-        originalFilesForageKey,
-        qualitiesForageKey,
-    } = createImageInputForageKeys(
-        storageKey,
-    );
-
     useEffect(() => {
         retrieveStoredImagesValues({
             accessibleImageInputDispatch,
-            fileNamesForageKey,
             isComponentMountedRef,
             maxImagesAmount,
-            modifiedFilesForageKey,
-            orientationsForageKey,
-            qualitiesForageKey,
             showBoundary,
+            storageKey,
         });
     }, []);
-
-    // useEffect(() => {
-    //     modifyImage({
-    //         accessibleImageInputDispatch,
-    //         currentImageIndex,
-    //         fileNames,
-    //         imageFileBlobs,
-    //         invalidValueAction,
-    //         isComponentMountedRef,
-    //         maxImageSize,
-    //         maxImagesAmount,
-    //         modifiedFilesForageKey,
-    //         orientations,
-    //         originalFilesForageKey,
-    //         parentDispatch,
-    //         qualities,
-    //         showBoundary,
-    //         validValueAction,
-    //     });
-    // }, [currentImageIndex, qualities, orientations]);
 
     useEffect(() => {
         checkImageFileBlobs({
@@ -142,8 +108,8 @@ function AccessibleImageInput<
             imageFileBlobs,
             invalidValueAction,
             maxImageSize,
-            modifiedFilesForageKey,
             parentDispatch,
+            storageKey,
             validValueAction,
         });
     }, [imageFileBlobs.length]);
@@ -156,6 +122,7 @@ function AccessibleImageInput<
             attributes={{
                 addFileNameAction: accessibleImageInputAction.addFileName,
                 disabled,
+                label: disabled ? "Maximum number of images reached" : void 0,
                 name: "images",
                 parentDispatch: accessibleImageInputDispatch,
                 storageKey,
@@ -187,11 +154,11 @@ function AccessibleImageInput<
 
             const isImageSizeInvalidText = isImageSizeInvalid
                 ? `Image is too large. Must be less than ${
-                    maxImageSize / 1000
+                    addCommaSeparator(maxImageSize / 1000)
                 } KB.`
                 : "";
             const isImageTypeInvalidText = isImageTypeInvalid
-                ? "Image contains disallowed file type. Must only contain .jpg, .jpeg, .png, or .webp file types."
+                ? "Image contains disallowed file type. Must only contain jpg, jpeg, png, or webp file types."
                 : "";
 
             const invalidImageDescription =
@@ -219,6 +186,15 @@ function AccessibleImageInput<
                     key={index.toString()}
                     maw={300}
                     src={URL.createObjectURL(fileBlob ?? new Blob([]))}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                        setIsModalOpen((prevState) => !prevState);
+                        accessibleImageInputDispatch({
+                            action:
+                                accessibleImageInputAction.setCurrentImageIndex,
+                            payload: index,
+                        });
+                    }}
                     withPlaceholder
                 />
             );
@@ -226,7 +202,19 @@ function AccessibleImageInput<
             const imageName = (
                 <GoldenGrid>
                     <Text color={textColor}>Name:</Text>
-                    <Text color={textColor}>{fileNames[index] ?? "Image"}</Text>
+
+                    <Group spacing={0}>
+                        {fileNames[index]?.split("").map((char, charIndex) => {
+                            return (
+                                <Text
+                                    key={`${index}-${charIndex}`}
+                                    color={textColor}
+                                >
+                                    {char}
+                                </Text>
+                            );
+                        })}
+                    </Group>
                 </GoldenGrid>
             );
 
@@ -237,7 +225,7 @@ function AccessibleImageInput<
                 <GoldenGrid>
                     <Text color={imageSizeColor}>Size:</Text>
                     <Text color={imageSizeColor}>
-                        {Math.round(size / 1000)} KB
+                        {addCommaSeparator(Math.round(size / 1000))} KB
                     </Text>
                 </GoldenGrid>
             );
@@ -275,7 +263,9 @@ function AccessibleImageInput<
                             accessibleImageInputDispatch,
                             index,
                             isComponentMountedRef,
+                            parentDispatch,
                             storageKey,
+                            validValueAction,
                         });
                     },
                 },
@@ -346,6 +336,7 @@ function AccessibleImageInput<
                             });
                         },
                         // parentDynamicDispatch: accessibleImageInputDispatch,
+                        sliderDefaultValue: 1,
                         step: 1,
                         validValueAction: accessibleImageInputAction.setQuality,
                         value: qualities[index],
@@ -392,6 +383,7 @@ function AccessibleImageInput<
                             });
                         },
                         // parentDynamicDispatch: accessibleImageInputDispatch,
+                        sliderDefaultValue: 1,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setOrientation,
@@ -426,6 +418,7 @@ function AccessibleImageInput<
                         {isImageInvalid
                             ? invalidScreenreaderTextElement
                             : validScreenreaderTextElement}
+
                         <Stack spacing="xs">
                             {imageName}
                             <Divider />
@@ -434,14 +427,16 @@ function AccessibleImageInput<
                             {imageType}
                             <Divider />
                         </Stack>
-                        <Group w="100%" position="apart">
-                            {removeButtonWithTooltip}
-                            {resetButtonWithTooltip}
-                        </Group>
+
                         <Stack spacing="xl">
                             {imageQualityStack}
                             {imageOrientationStack}
                         </Stack>
+
+                        <Group w="100%" position="apart">
+                            {removeButtonWithTooltip}
+                            {resetButtonWithTooltip}
+                        </Group>
                     </Stack>
                 </Card>
             );
@@ -452,8 +447,58 @@ function AccessibleImageInput<
 
     console.log("AccessibleImageInputState", accessibleImageInputState);
 
+    const modifiedImagePreviewModal = (
+        <Modal
+            centered
+            closeButtonProps={{ color: themeColorShade }}
+            opened={isModalOpen}
+            onClose={() => setIsModalOpen((prevState) => !prevState)}
+            transitionProps={{
+                transition: "fade",
+                duration: 200,
+                timingFunction: "ease-in-out",
+            }}
+            maw={1024}
+            miw={350}
+            title={
+                <Text size="lg" weight={600}>
+                    {fileNames[currentImageIndex] ?? "Image"}
+                </Text>
+            }
+            size={"xl"}
+        >
+            <Stack spacing="lg" align="center">
+                <Image
+                    alt={fileNames[currentImageIndex] ?? "Image"}
+                    maw={640}
+                    src={URL.createObjectURL(
+                        imageFileBlobs[currentImageIndex] ?? new Blob([]),
+                    )}
+                    placeholder="Image loading..."
+                    withPlaceholder
+                />
+                <Stack w="100%">
+                    <Text color={textColor} size="md">
+                        {`Orientation: ${orientations[currentImageIndex]} - ${
+                            displayOrientationLabel(
+                                orientations[currentImageIndex],
+                            )
+                        }`}
+                    </Text>
+                    <Text color={textColor} size="md">
+                        {`Quality: ${qualities[currentImageIndex]}`}
+                    </Text>
+                </Stack>
+            </Stack>
+        </Modal>
+    );
+
     return (
-        <Stack style={{ minWidth: INPUT_WIDTH, maxWidth: "400px" }}>
+        <Stack
+            style={{ minWidth: INPUT_WIDTH, maxWidth: "400px" }}
+            pos="relative"
+        >
+            {modifiedImagePreviewModal}
             {loadingOverlay}
             {fileInput}
             {fileBlobCards}

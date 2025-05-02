@@ -44,19 +44,26 @@ function returnRegisterStepperCard(
                             }`}
                         >
                             {isStepInError
-                                ? <TbX color={redColorShade} size={24} />
+                                ? <TbX color={redColorShade} size={26} />
                                 : isStepWithEmptyInputs
                                 ? (
                                     <TbAlertCircle
                                         color={activeStep === idx
                                             ? themeColorShade
                                             : "gray"}
-                                        size={24}
+                                        size={26}
                                     />
                                 )
                                 : (
                                     <div className="stepper-circle">
-                                        <Text>{idx + 1}</Text>
+                                        <Text
+                                            size="md"
+                                            color={activeStep === idx
+                                                ? themeColorShade
+                                                : "dimmed"}
+                                        >
+                                            {idx + 1}
+                                        </Text>
                                     </div>
                                 )}
                         </div>
@@ -66,7 +73,11 @@ function returnRegisterStepperCard(
                         <Title
                             order={4}
                             size={16}
-                            color={isStepInError ? redColorShade : "dimmed"}
+                            color={isStepInError
+                                ? redColorShade
+                                : activeStep === idx
+                                ? textColor
+                                : "dimmed"}
                         >
                             {`Step ${idx + 1}`}
                         </Title>
@@ -97,10 +108,10 @@ function returnRegisterStepperCard(
                             }`}
                         >
                             <Flex
-                                align="center"
+                                align="flex-start"
                                 w="100%"
                                 justify="flex-start"
-                                columnGap="md"
+                                gap="md"
                             >
                                 {icon}
                                 <Stack spacing={2}>
