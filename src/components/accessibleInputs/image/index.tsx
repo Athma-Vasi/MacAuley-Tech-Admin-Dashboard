@@ -7,19 +7,15 @@ import {
     Text,
     Tooltip,
 } from "@mantine/core";
-import localforage from "localforage";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
+import { useMountedRef } from "../../../hooks/useMountedRef";
 import { returnThemeColors } from "../../../utils";
 import { GoldenGrid } from "../../goldenGrid";
-import {
-    AccessibleFileInput,
-    ModifiedFile,
-    OriginalFile,
-} from "../AccessibleFileInput";
+import { AccessibleFileInput, ModifiedFile } from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
 import { createAccessibleButtons } from "../utils";
 import {
@@ -34,10 +30,20 @@ import {
     MAX_IMAGE_SIZE,
     MAX_IMAGES,
 } from "./constants";
+import {
+    handleImageOrientationSliderChange,
+    handleImageQualitySliderChange,
+    handleRemoveImageClick,
+    handleResetImageClick,
+} from "./handlers";
 import { accessibleImageInputReducer } from "./reducers";
 import { initialAccessibleImageInputState } from "./state";
 import type { AccessibleImageInputProps } from "./types";
-import { modifyImage, retrieveStoredImagesValues } from "./utils";
+import {
+    checkImageFileBlobs,
+    createImageInputForageKeys,
+    retrieveStoredImagesValues,
+} from "./utils";
 
 function AccessibleImageInput<
     ValidValueAction extends string = string,
@@ -85,89 +91,61 @@ function AccessibleImageInput<
         greenColorShade,
     } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
-    const isComponentMountedRef = useRef(false);
+    const isComponentMountedRef = useMountedRef();
+
+    const {
+        fileNamesForageKey,
+        modifiedFilesForageKey,
+        orientationsForageKey,
+        originalFilesForageKey,
+        qualitiesForageKey,
+    } = createImageInputForageKeys(
+        storageKey,
+    );
 
     useEffect(() => {
         retrieveStoredImagesValues({
             accessibleImageInputDispatch,
+            fileNamesForageKey,
             isComponentMountedRef,
             maxImagesAmount,
+            modifiedFilesForageKey,
+            orientationsForageKey,
+            qualitiesForageKey,
             showBoundary,
-            storageKey,
         });
-
-        return () => {
-            isComponentMountedRef.current = false;
-        };
     }, []);
 
+    // useEffect(() => {
+    //     modifyImage({
+    //         accessibleImageInputDispatch,
+    //         currentImageIndex,
+    //         fileNames,
+    //         imageFileBlobs,
+    //         invalidValueAction,
+    //         isComponentMountedRef,
+    //         maxImageSize,
+    //         maxImagesAmount,
+    //         modifiedFilesForageKey,
+    //         orientations,
+    //         originalFilesForageKey,
+    //         parentDispatch,
+    //         qualities,
+    //         showBoundary,
+    //         validValueAction,
+    //     });
+    // }, [currentImageIndex, qualities, orientations]);
+
     useEffect(() => {
-        modifyImage({
-            accessibleImageInputDispatch,
-            currentImageIndex,
+        checkImageFileBlobs({
             fileNames,
             imageFileBlobs,
             invalidValueAction,
-            isComponentMountedRef,
-            maxImagesAmount,
             maxImageSize,
-            orientations,
+            modifiedFilesForageKey,
             parentDispatch,
-            qualities,
-            showBoundary,
-            storageKey,
             validValueAction,
         });
-
-        return () => {
-            isComponentMountedRef.current = false;
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentImageIndex, qualities, orientations]);
-
-    useEffect(() => {
-        if (imageFileBlobs.length === 0) {
-            return;
-        }
-
-        imageFileBlobs.forEach((imageFileBlob) => {
-            if (imageFileBlob !== null) {
-                const { size, type } = imageFileBlob;
-
-                const isImageSizeInvalid = size > maxImageSize;
-                const isImageTypeInvalid = !ALLOWED_FILE_EXTENSIONS_REGEX.test(
-                    type.split("/")[1],
-                );
-                const isImageInvalid = isImageSizeInvalid || isImageTypeInvalid;
-
-                parentDispatch?.({
-                    action: invalidValueAction,
-                    payload: isImageInvalid,
-                });
-            }
-        });
-
-        const value = imageFileBlobs.reduce<FormData>(
-            (formDataAcc, imageFileBlob, index) => {
-                if (imageFileBlob) {
-                    formDataAcc.append(
-                        `${storageKey}-modifiedFiles`,
-                        imageFileBlob,
-                        fileNames[index],
-                    );
-                }
-
-                return formDataAcc;
-            },
-            new FormData(),
-        );
-
-        parentDispatch?.({
-            action: validValueAction,
-            payload: value,
-        });
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [imageFileBlobs.length]);
 
     const fileInput = (
@@ -293,32 +271,12 @@ function AccessibleImageInput<
                             | React.MouseEvent<HTMLButtonElement, MouseEvent>
                             | React.PointerEvent<HTMLButtonElement>,
                     ) => {
-                        const modifiedFiles = await localforage.getItem<
-                            Array<ModifiedFile>
-                        >(
-                            storageKey,
-                        );
-                        modifiedFiles?.splice(index, 1);
-                        await localforage.setItem(
-                            `${storageKey}-modifiedFiles`,
-                            modifiedFiles,
-                        );
-
-                        const originalFiles = await localforage.getItem<
-                            Array<OriginalFile>
-                        >(
-                            `${storageKey}-originalFiles`,
-                        );
-                        originalFiles?.splice(index, 1);
-                        await localforage.setItem(
-                            `${storageKey}-originalFiles`,
-                            originalFiles,
-                        );
-
-                        accessibleImageInputDispatch({
-                            action:
-                                accessibleImageInputAction.removeImageFileBlob,
-                            payload: index,
+                        await handleRemoveImageClick({
+                            accessibleImageInputDispatch,
+                            index,
+                            isComponentMountedRef,
+                            modifiedFilesForageKey,
+                            originalFilesForageKey,
                         });
                     },
                 },
@@ -334,24 +292,12 @@ function AccessibleImageInput<
                             | React.MouseEvent<HTMLButtonElement, MouseEvent>
                             | React.PointerEvent<HTMLButtonElement>,
                     ) => {
-                        const originalFiles = await localforage.getItem<
-                            Array<OriginalFile>
-                        >(
-                            `${storageKey}-originalFiles`,
-                        );
-
-                        if (!originalFiles) {
-                            return;
-                        }
-
-                        const originalFile = originalFiles[index];
-                        accessibleImageInputDispatch({
-                            action:
-                                accessibleImageInputAction.resetImageFileBlob,
-                            payload: {
-                                index,
-                                value: originalFile,
-                            },
+                        isComponentMountedRef.current = true;
+                        await handleResetImageClick({
+                            accessibleImageInputDispatch,
+                            index,
+                            isComponentMountedRef,
+                            originalFilesForageKey,
                         });
                     },
                 },
@@ -377,27 +323,32 @@ function AccessibleImageInput<
                 <AccessibleSliderInput
                     attributes={{
                         disabled: isImageTypeInvalid,
-                        index,
                         marks: IMG_QUALITY_SLIDER_DATA,
                         max: 10,
                         min: 1,
                         name: "quality",
                         onChange: async (value: number) => {
-                            const storedQualities =
-                                (await localforage.getItem<Array<number>>(
-                                    `${storageKey}-qualities`,
-                                )) ??
-                                    Array.from(
-                                        { length: maxImagesAmount },
-                                        () => 10,
-                                    );
-                            storedQualities[index] = value;
-                            await localforage.setItem(
-                                `${storageKey}-qualities`,
-                                storedQualities,
-                            );
+                            await handleImageQualitySliderChange({
+                                accessibleImageInputDispatch,
+                                fileNames,
+                                imageFileBlobs,
+                                index,
+                                invalidValueAction,
+                                isComponentMountedRef,
+                                maxImageSize,
+                                maxImagesAmount,
+                                modifiedFilesForageKey,
+                                orientations,
+                                originalFilesForageKey,
+                                parentDispatch,
+                                qualities,
+                                qualitiesForageKey,
+                                showBoundary,
+                                validValueAction,
+                                value,
+                            });
                         },
-                        parentDynamicDispatch: accessibleImageInputDispatch,
+                        // parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setQualities,
@@ -426,21 +377,27 @@ function AccessibleImageInput<
                         min: 1,
                         name: "orientation",
                         onChange: async (value: number) => {
-                            const storedOrientations =
-                                (await localforage.getItem<Array<number>>(
-                                    `${storageKey}-orientations`,
-                                )) ??
-                                    Array.from(
-                                        { length: maxImagesAmount },
-                                        () => 1,
-                                    );
-                            storedOrientations[index] = value;
-                            await localforage.setItem(
-                                `${storageKey}-orientations`,
-                                storedOrientations,
-                            );
+                            await handleImageOrientationSliderChange({
+                                accessibleImageInputDispatch,
+                                fileNames,
+                                imageFileBlobs,
+                                index,
+                                invalidValueAction,
+                                isComponentMountedRef,
+                                maxImageSize,
+                                maxImagesAmount,
+                                modifiedFilesForageKey,
+                                orientations,
+                                orientationsForageKey,
+                                originalFilesForageKey,
+                                parentDispatch,
+                                qualities,
+                                showBoundary,
+                                validValueAction,
+                                value,
+                            });
                         },
-                        parentDynamicDispatch: accessibleImageInputDispatch,
+                        // parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setOrientations,

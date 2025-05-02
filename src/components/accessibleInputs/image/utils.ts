@@ -15,7 +15,7 @@ function validateImages({
     allowedFileExtensionsRegex,
     imageFileBlobs,
     maxImageSize,
-    maxImagesAmount,
+    maxImagesAmount = 1,
 }: {
     allowedFileExtensionsRegex: RegExp;
     imageFileBlobs: Array<ModifiedFile>;
@@ -61,35 +61,32 @@ function createImageInputForageKeys(storageKey: string) {
 async function retrieveStoredImagesValues(
     {
         accessibleImageInputDispatch,
+        fileNamesForageKey,
         isComponentMountedRef,
         maxImagesAmount,
+        modifiedFilesForageKey,
+        orientationsForageKey,
+        qualitiesForageKey,
         showBoundary,
-        storageKey,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
+        fileNamesForageKey: string;
         isComponentMountedRef: React.RefObject<boolean>;
         maxImagesAmount: number;
+        modifiedFilesForageKey: string;
+        orientationsForageKey: string;
+        qualitiesForageKey: string;
         showBoundary: (error: Error) => void;
-        storageKey: string;
     },
 ): Promise<SafeBoxResult> {
-    isComponentMountedRef.current = true;
     const isComponentMounted = isComponentMountedRef.current;
-
     if (!isComponentMounted) {
         return createSafeBoxResult({
             message: "Component is not mounted",
         });
     }
-
-    const {
-        modifiedFilesForageKey,
-        fileNamesForageKey,
-        qualitiesForageKey,
-        orientationsForageKey,
-    } = createImageInputForageKeys(storageKey);
 
     try {
         accessibleImageInputDispatch({
@@ -227,11 +224,12 @@ async function modifyImage<
         invalidValueAction,
         maxImagesAmount,
         maxImageSize,
+        modifiedFilesForageKey,
         orientations,
+        originalFilesForageKey,
         parentDispatch,
         qualities,
         showBoundary,
-        storageKey,
         validValueAction,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
@@ -244,7 +242,9 @@ async function modifyImage<
         invalidValueAction: InvalidValueAction;
         maxImagesAmount: number;
         maxImageSize: number;
+        modifiedFilesForageKey: string;
         orientations: number[];
+        originalFilesForageKey: string;
         parentDispatch?: React.Dispatch<
             | {
                 action: ValidValueAction;
@@ -257,23 +257,15 @@ async function modifyImage<
         >;
         qualities: number[];
         showBoundary: (error: Error) => void;
-        storageKey: string;
         validValueAction: ValidValueAction;
     },
 ): Promise<SafeBoxResult> {
-    isComponentMountedRef.current = true;
     const isComponentMounted = isComponentMountedRef.current;
-
     if (!isComponentMounted) {
         return createSafeBoxResult({
             message: "Component is not mounted",
         });
     }
-
-    const {
-        modifiedFilesForageKey,
-        originalFilesForageKey,
-    } = createImageInputForageKeys(storageKey);
 
     try {
         const originalFilesResult = await getForageItemSafe<
@@ -286,7 +278,8 @@ async function modifyImage<
         }
         if (originalFilesResult.err) {
             return createSafeBoxResult({
-                kind: "notFound",
+                message: originalFilesResult.val.message ??
+                    "Unable to retrieve original files",
             });
         }
         const originalFiles = originalFilesResult.safeUnwrap().data ?? [];
@@ -296,7 +289,7 @@ async function modifyImage<
         );
         if (!imageToModify) {
             return createSafeBoxResult({
-                kind: "notFound",
+                message: "Image to modify is undefined",
             });
         }
 
@@ -370,7 +363,7 @@ async function modifyImage<
             (formDataAcc, imageFileBlob, index) => {
                 if (imageFileBlob) {
                     formDataAcc.append(
-                        `${storageKey}-modifiedFiles`,
+                        modifiedFilesForageKey,
                         imageFileBlob,
                         fileNames[index],
                     );
@@ -404,4 +397,92 @@ async function modifyImage<
     }
 }
 
-export { modifyImage, retrieveStoredImagesValues, validateImages };
+function checkImageFileBlobs<
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
+>(
+    {
+        fileNames,
+        imageFileBlobs,
+        invalidValueAction,
+        maxImageSize,
+        modifiedFilesForageKey,
+        parentDispatch,
+        validValueAction,
+    }: {
+        fileNames: string[];
+        imageFileBlobs: Array<ModifiedFile>;
+        invalidValueAction: InvalidValueAction;
+        maxImageSize: number;
+        modifiedFilesForageKey: string;
+        parentDispatch?: React.Dispatch<
+            | {
+                action: ValidValueAction;
+                payload: FormData;
+            }
+            | {
+                action: InvalidValueAction;
+                payload: boolean;
+            }
+        >;
+        validValueAction: ValidValueAction;
+    },
+): SafeBoxResult<boolean> {
+    if (imageFileBlobs.length === 0) {
+        return createSafeBoxResult({
+            message: "No images to process",
+        });
+    }
+
+    imageFileBlobs.forEach((imageFileBlob) => {
+        if (imageFileBlob !== null) {
+            const { size, type } = imageFileBlob;
+
+            const isImageSizeInvalid = size > maxImageSize;
+            const isImageTypeInvalid = !ALLOWED_FILE_EXTENSIONS_REGEX
+                .test(
+                    type.split("/")[1],
+                );
+            const isImageInvalid = isImageSizeInvalid ||
+                isImageTypeInvalid;
+
+            parentDispatch?.({
+                action: invalidValueAction,
+                payload: isImageInvalid,
+            });
+        }
+    });
+
+    const value = imageFileBlobs.reduce<FormData>(
+        (formDataAcc, imageFileBlob, index) => {
+            if (imageFileBlob) {
+                formDataAcc.append(
+                    modifiedFilesForageKey,
+                    imageFileBlob,
+                    fileNames[index],
+                );
+            }
+
+            return formDataAcc;
+        },
+        new FormData(),
+    );
+
+    parentDispatch?.({
+        action: validValueAction,
+        payload: value,
+    });
+
+    return createSafeBoxResult({
+        kind: "success",
+        data: true,
+    });
+}
+
+export {
+    checkImageFileBlobs,
+    createImageInputForageKeys,
+    modifyImage,
+    retrieveStoredImagesValues,
+    validateImages,
+};

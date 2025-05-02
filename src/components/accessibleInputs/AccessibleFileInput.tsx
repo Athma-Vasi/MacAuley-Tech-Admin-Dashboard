@@ -1,8 +1,12 @@
 import { FileInput, MantineNumberSize, MantineSize, Text } from "@mantine/core";
-import localforage from "localforage";
 import { Dispatch } from "react";
 
-import { splitCamelCase } from "../../utils";
+import {
+    getForageItemSafe,
+    setForageItemSafe,
+    splitCamelCase,
+} from "../../utils";
+import { createImageInputForageKeys } from "./image/utils";
 
 type ModifiedFile = File | Blob | null;
 type OriginalFile = File | null;
@@ -76,6 +80,12 @@ function AccessibleFileInput<
         </Text>
     );
 
+    const {
+        originalFilesForageKey,
+        modifiedFilesForageKey,
+        fileNamesForageKey,
+    } = createImageInputForageKeys(storageKey);
+
     return (
         <FileInput
             aria-disabled={disabled}
@@ -96,34 +106,54 @@ function AccessibleFileInput<
                     payload: payload?.name ?? "Unknown file name",
                 });
 
-                const originalFiles =
-                    (await localforage.getItem<Array<OriginalFile>>(
-                        `${storageKey}-originalFiles`,
-                    )) ?? [];
-                originalFiles.push(payload);
-                await localforage.setItem<Array<OriginalFile>>(
-                    `${storageKey}-originalFiles`,
-                    originalFiles,
+                const originalFilesResult = await getForageItemSafe<
+                    Array<OriginalFile>
+                >(
+                    originalFilesForageKey,
                 );
+                if (originalFilesResult.ok) {
+                    const originalFiles =
+                        originalFilesResult.safeUnwrap().data ?? [];
+                    originalFiles.push(payload);
 
-                const modifiedFiles =
-                    (await localforage.getItem<Array<ModifiedFile>>(
-                        `${storageKey}-modifiedFiles`,
-                    )) ?? [];
-                modifiedFiles.push(payload);
-                await localforage.setItem<Array<ModifiedFile>>(
-                    `${storageKey}-modifiedFiles`,
-                    modifiedFiles,
-                );
+                    await setForageItemSafe(
+                        originalFilesForageKey,
+                        originalFiles,
+                    );
+                }
 
-                const fileNames = (await localforage.getItem<Array<string>>(
-                    `${storageKey}-fileNames`,
-                )) ?? [];
-                fileNames.push(payload?.name ?? "Unknown file name");
-                await localforage.setItem<Array<string>>(
-                    `${storageKey}-fileNames`,
-                    fileNames,
+                const modifiedFilesResult = await getForageItemSafe<
+                    Array<ModifiedFile>
+                >(
+                    modifiedFilesForageKey,
                 );
+                if (modifiedFilesResult.ok) {
+                    const modifiedFiles =
+                        modifiedFilesResult.safeUnwrap().data ?? [];
+                    modifiedFiles.push(payload);
+
+                    await setForageItemSafe(
+                        modifiedFilesForageKey,
+                        modifiedFiles,
+                    );
+                }
+                const fileNamesResult = await getForageItemSafe<
+                    Array<string>
+                >(
+                    fileNamesForageKey,
+                );
+                if (fileNamesResult.ok) {
+                    const fileNamesUnwrapped =
+                        fileNamesResult.safeUnwrap().data ?? [];
+                    fileNamesUnwrapped.push(
+                        payload?.name ?? "Unknown file name",
+                    );
+
+                    await setForageItemSafe(
+                        fileNamesForageKey,
+                        fileNamesUnwrapped,
+                    );
+                }
 
                 onChange?.(payload);
             }}
