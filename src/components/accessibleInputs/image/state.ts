@@ -6,6 +6,7 @@ const initialAccessibleImageInputState: AccessibleImageInputState = {
     fileNames: [],
     imageFileBlobs: [],
     isLoading: false,
+    isModalOpen: false,
     orientations: Array.from({ length: MAX_IMAGES }, () => 1),
     qualities: Array.from({ length: MAX_IMAGES }, () => 10),
 };

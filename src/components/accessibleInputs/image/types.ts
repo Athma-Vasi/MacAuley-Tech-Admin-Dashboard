@@ -41,11 +41,16 @@ type AccessibleImageInputState = {
     fileNames: string[];
     imageFileBlobs: Array<ModifiedFile>;
     isLoading: boolean;
+    isModalOpen: boolean;
     qualities: number[];
     orientations: number[];
 };
 
 type AccessibleImageInputDispatch =
+    | {
+        action: AccessibleImageInputAction["setIsModalOpen"];
+        payload: boolean;
+    }
     | {
         action: AccessibleImageInputAction["addImageFileBlob"];
         payload: ModifiedFile;

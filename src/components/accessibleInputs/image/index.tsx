@@ -9,7 +9,7 @@ import {
     Text,
     Tooltip,
 } from "@mantine/core";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
@@ -72,6 +72,7 @@ function AccessibleImageInput<
         fileNames,
         imageFileBlobs,
         isLoading,
+        isModalOpen,
         orientations,
         qualities,
     } = accessibleImageInputState;
@@ -80,7 +81,6 @@ function AccessibleImageInput<
         globalState: { themeObject },
     } = useGlobalState();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const { showBoundary } = useErrorBoundary();
 
     const {
@@ -188,7 +188,10 @@ function AccessibleImageInput<
                     src={URL.createObjectURL(fileBlob ?? new Blob([]))}
                     style={{ cursor: "pointer" }}
                     onClick={() => {
-                        setIsModalOpen((prevState) => !prevState);
+                        accessibleImageInputDispatch({
+                            action: accessibleImageInputAction.setIsModalOpen,
+                            payload: true,
+                        });
                         accessibleImageInputDispatch({
                             action:
                                 accessibleImageInputAction.setCurrentImageIndex,
@@ -452,7 +455,11 @@ function AccessibleImageInput<
             centered
             closeButtonProps={{ color: themeColorShade }}
             opened={isModalOpen}
-            onClose={() => setIsModalOpen((prevState) => !prevState)}
+            onClose={() =>
+                accessibleImageInputDispatch({
+                    action: accessibleImageInputAction.setIsModalOpen,
+                    payload: false,
+                })}
             transitionProps={{
                 transition: "fade",
                 duration: 200,
@@ -477,16 +484,36 @@ function AccessibleImageInput<
                     placeholder="Image loading..."
                     withPlaceholder
                 />
-                <Stack w="100%">
+                <Stack w="100%" pl="xl">
                     <Text color={textColor} size="md">
-                        {`Orientation: ${orientations[currentImageIndex]} - ${
+                        {`Name: ${fileNames[currentImageIndex]}`}
+                    </Text>
+
+                    <Text color={textColor} size="md">
+                        {`Quality: ${qualities[currentImageIndex]} = ${
+                            qualities[currentImageIndex] * 10
+                        }%`}
+                    </Text>
+
+                    <Text color={textColor} size="md">
+                        {`Orientation: ${orientations[currentImageIndex]} = ${
                             displayOrientationLabel(
                                 orientations[currentImageIndex],
                             )
                         }`}
                     </Text>
+
                     <Text color={textColor} size="md">
-                        {`Quality: ${qualities[currentImageIndex]}`}
+                        {imageFileBlobs[currentImageIndex]
+                            ? `Size: ${
+                                addCommaSeparator(
+                                    Math.round(
+                                        imageFileBlobs[currentImageIndex].size /
+                                            1000,
+                                    ),
+                                )
+                            } KB`
+                            : null}
                     </Text>
                 </Stack>
             </Stack>

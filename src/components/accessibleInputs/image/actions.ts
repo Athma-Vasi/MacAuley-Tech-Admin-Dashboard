@@ -6,6 +6,7 @@ type AccessibleImageInputAction = {
     setCurrentImageIndex: "setCurrentImageIndex";
     setImageFileBlob: "setImageFileBlob";
     setIsLoading: "setIsLoading";
+    setIsModalOpen: "setIsModalOpen";
     setOrientation: "setOrientation";
     setQuality: "setQuality";
 };
@@ -18,6 +19,7 @@ const accessibleImageInputAction: AccessibleImageInputAction = {
     setCurrentImageIndex: "setCurrentImageIndex",
     setImageFileBlob: "setImageFileBlob",
     setIsLoading: "setIsLoading",
+    setIsModalOpen: "setIsModalOpen",
     setOrientation: "setOrientation",
     setQuality: "setQuality",
 };

@@ -53,6 +53,10 @@ const accessibleImageInputReducersMap = new Map<
         accessibleImageInputReducer_setIsLoading,
     ],
     [
+        accessibleImageInputAction.setIsModalOpen,
+        accessibleImageInputReducer_setIsModalOpen,
+    ],
+    [
         accessibleImageInputAction.setQuality,
         accessibleImageInputReducer_setQuality,
     ],
@@ -188,6 +192,16 @@ function accessibleImageInputReducer_setIsLoading(
     return {
         ...state,
         isLoading: dispatch.payload as boolean,
+    };
+}
+
+function accessibleImageInputReducer_setIsModalOpen(
+    state: AccessibleImageInputState,
+    dispatch: AccessibleImageInputDispatch,
+): AccessibleImageInputState {
+    return {
+        ...state,
+        isModalOpen: dispatch.payload as boolean,
     };
 }
 
