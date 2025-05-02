@@ -1,5 +1,5 @@
 const MAX_IMAGE_SIZE = 3_000_000; // 3 MB
-const MAX_IMAGES = 5;
+const MAX_IMAGES = 1;
 
 const IMG_QUALITY_SLIDER_DATA = [
     { value: 2, label: "20%" },

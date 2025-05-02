@@ -26,7 +26,10 @@ type AccessibleFileInputAttributes<
         | { action: ValidValueAction; payload: OriginalFile }
         | {
             action: AddFileNameAction;
-            payload: string;
+            payload: {
+                index: number;
+                value: string;
+            };
         }
     >;
     radius?: MantineNumberSize;
@@ -96,16 +99,6 @@ function AccessibleFileInput<
             name={name}
             onBlur={onBlur}
             onChange={async (payload: OriginalFile) => {
-                parentDispatch({
-                    action: validValueAction,
-                    payload,
-                });
-
-                parentDispatch({
-                    action: addFileNameAction,
-                    payload: payload?.name ?? "Unknown file name",
-                });
-
                 const originalFilesResult = await getForageItemSafe<
                     Array<OriginalFile>
                 >(
@@ -129,7 +122,8 @@ function AccessibleFileInput<
                 );
                 if (modifiedFilesResult.ok) {
                     const modifiedFiles =
-                        modifiedFilesResult.safeUnwrap().data ?? [];
+                        modifiedFilesResult.safeUnwrap().data ??
+                            [];
                     modifiedFiles.push(payload);
 
                     await setForageItemSafe(
@@ -154,6 +148,19 @@ function AccessibleFileInput<
                         fileNamesUnwrapped,
                     );
                 }
+
+                parentDispatch({
+                    action: validValueAction,
+                    payload,
+                });
+
+                parentDispatch({
+                    action: addFileNameAction,
+                    payload: {
+                        index: -1, // new file being pushed
+                        value: payload?.name ?? "Unknown file name",
+                    },
+                });
 
                 onChange?.(payload);
             }}

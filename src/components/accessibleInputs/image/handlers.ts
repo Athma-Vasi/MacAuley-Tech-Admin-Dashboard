@@ -1,27 +1,30 @@
+import { EImageType } from "image-conversion";
 import { SafeBoxResult } from "../../../types";
 import {
     createSafeBoxResult,
     getForageItemSafe,
+    modifyImageSafe,
     setForageItemSafe,
 } from "../../../utils";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
+import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
 import { AccessibleImageInputDispatch } from "./types";
-import { modifyImage } from "./utils";
+import { createImageInputForageKeys, validateImages } from "./utils";
 
 async function handleResetImageClick(
     {
         accessibleImageInputDispatch,
         index,
         isComponentMountedRef,
-        originalFilesForageKey,
+        storageKey,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
         index: number;
         isComponentMountedRef: React.RefObject<boolean>;
-        originalFilesForageKey: string;
+        storageKey: string;
     },
 ): Promise<SafeBoxResult<boolean>> {
     const isComponentMounted = isComponentMountedRef.current;
@@ -30,6 +33,12 @@ async function handleResetImageClick(
             message: "Component is not mounted",
         });
     }
+
+    const {
+        originalFilesForageKey,
+    } = createImageInputForageKeys(
+        storageKey,
+    );
 
     try {
         const originalFilesResult = await getForageItemSafe<
@@ -87,16 +96,14 @@ async function handleRemoveImageClick(
         accessibleImageInputDispatch,
         index,
         isComponentMountedRef,
-        modifiedFilesForageKey,
-        originalFilesForageKey,
+        storageKey,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
         index: number;
         isComponentMountedRef: React.RefObject<boolean>;
-        modifiedFilesForageKey: string;
-        originalFilesForageKey: string;
+        storageKey: string;
     },
 ): Promise<SafeBoxResult<boolean>> {
     const isComponentMounted = isComponentMountedRef.current;
@@ -105,6 +112,14 @@ async function handleRemoveImageClick(
             message: "Component is not mounted",
         });
     }
+
+    const {
+        modifiedFilesForageKey,
+        originalFilesForageKey,
+        fileNamesForageKey,
+    } = createImageInputForageKeys(
+        storageKey,
+    );
 
     try {
         const modifiedFilesResult = await getForageItemSafe<
@@ -165,6 +180,33 @@ async function handleRemoveImageClick(
             });
         }
 
+        const fileNamesResult = await getForageItemSafe<Array<string>>(
+            fileNamesForageKey,
+        );
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Component is not mounted",
+            });
+        }
+        if (fileNamesResult.err) {
+            return createSafeBoxResult({
+                kind: "notFound",
+            });
+        }
+
+        const fileNames = fileNamesResult.safeUnwrap().data ?? [];
+        fileNames?.splice(index, 1);
+
+        await setForageItemSafe(
+            fileNamesForageKey,
+            fileNames,
+        );
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Component is not mounted",
+            });
+        }
+
         accessibleImageInputDispatch({
             action: accessibleImageInputAction.removeImageFileBlob,
             payload: index,
@@ -192,42 +234,300 @@ async function handleRemoveImageClick(
     }
 }
 
-async function handleImageQualitySliderChange<
+// async function handleImageQualitySliderChange<
+//     ValidValueAction extends string = string,
+//     InvalidValueAction extends string = string,
+// >(
+//     {
+//         accessibleImageInputDispatch,
+//         fileNames,
+//         imageFileBlobs,
+//         index,
+//         invalidValueAction,
+//         isComponentMountedRef,
+//         maxImageSize,
+//         maxImagesAmount,
+//         modifiedFilesForageKey,
+//         orientations,
+//         originalFilesForageKey,
+//         parentDispatch,
+//         qualities,
+//         qualitiesForageKey,
+//         showBoundary,
+//         validValueAction,
+//         value,
+//     }: {
+//         accessibleImageInputDispatch: React.Dispatch<
+//             AccessibleImageInputDispatch
+//         >;
+//         fileNames: string[];
+//         imageFileBlobs: Array<ModifiedFile>;
+//         index: number;
+//         invalidValueAction: InvalidValueAction;
+//         isComponentMountedRef: React.RefObject<boolean>;
+//         maxImageSize: number;
+//         maxImagesAmount: number;
+//         modifiedFilesForageKey: string;
+//         orientations: number[];
+//         originalFilesForageKey: string;
+//         parentDispatch?: React.Dispatch<
+//             | {
+//                 action: ValidValueAction;
+//                 payload: FormData;
+//             }
+//             | {
+//                 action: InvalidValueAction;
+//                 payload: boolean;
+//             }
+//         >;
+//         qualities: number[];
+//         qualitiesForageKey: string;
+//         showBoundary: (error: Error) => void;
+//         validValueAction: ValidValueAction;
+//         value: number;
+//     },
+// ): Promise<SafeBoxResult<boolean>> {
+//     const isComponentMounted = isComponentMountedRef.current;
+//     if (!isComponentMounted) {
+//         return createSafeBoxResult({
+//             message: "Component is not mounted",
+//         });
+//     }
+
+//     try {
+//         const clonedQualities = structuredClone(qualities);
+//         clonedQualities[index] = value;
+
+//         await setForageItemSafe(
+//             qualitiesForageKey,
+//             clonedQualities,
+//         );
+//         if (!isComponentMounted) {
+//             return createSafeBoxResult({
+//                 message: "Component is not mounted",
+//             });
+//         }
+
+//         const modifyImageResult = await modifyImage({
+//             accessibleImageInputDispatch,
+//             currentImageIndex: index,
+//             fileNames,
+//             isComponentMountedRef,
+//             imageFileBlobs,
+//             invalidValueAction,
+//             maxImagesAmount,
+//             maxImageSize,
+//             modifiedFilesForageKey,
+//             orientations,
+//             originalFilesForageKey,
+//             parentDispatch,
+//             qualities: clonedQualities,
+//             showBoundary,
+//             validValueAction,
+//         });
+
+//         if (!isComponentMounted) {
+//             return createSafeBoxResult({
+//                 message: "Component is not mounted",
+//             });
+//         }
+//         if (modifyImageResult.err) {
+//             return createSafeBoxResult({
+//                 kind: "notFound",
+//             });
+//         }
+
+//         accessibleImageInputDispatch({
+//             action: accessibleImageInputAction.setQualities,
+//             payload: { index, value },
+//         });
+//         accessibleImageInputDispatch({
+//             action: accessibleImageInputAction.setCurrentImageIndex,
+//             payload: index,
+//         });
+
+//         return createSafeBoxResult({
+//             kind: "success",
+//             data: true,
+//         });
+//     } catch (error) {
+//         if (!isComponentMounted) {
+//             return createSafeBoxResult({
+//                 message: "Error: Component is not mounted",
+//             });
+//         }
+
+//         return createSafeBoxResult({
+//             kind: "error",
+//             message: "Error setting image quality",
+//         });
+//     }
+// }
+
+// async function handleImageOrientationSliderChange<
+//     ValidValueAction extends string = string,
+//     InvalidValueAction extends string = string,
+// >(
+//     {
+//         accessibleImageInputDispatch,
+//         fileNames,
+//         imageFileBlobs,
+//         index,
+//         invalidValueAction,
+//         isComponentMountedRef,
+//         maxImageSize,
+//         maxImagesAmount,
+//         modifiedFilesForageKey,
+//         orientations,
+//         orientationsForageKey,
+//         originalFilesForageKey,
+//         parentDispatch,
+//         qualities,
+//         showBoundary,
+//         validValueAction,
+//         value,
+//     }: {
+//         accessibleImageInputDispatch: React.Dispatch<
+//             AccessibleImageInputDispatch
+//         >;
+//         fileNames: string[];
+//         imageFileBlobs: Array<ModifiedFile>;
+//         index: number;
+//         invalidValueAction: InvalidValueAction;
+//         isComponentMountedRef: React.RefObject<boolean>;
+//         maxImageSize: number;
+//         maxImagesAmount: number;
+//         modifiedFilesForageKey: string;
+//         orientations: number[];
+//         orientationsForageKey: string;
+//         originalFilesForageKey: string;
+//         parentDispatch?: React.Dispatch<
+//             | {
+//                 action: ValidValueAction;
+//                 payload: FormData;
+//             }
+//             | {
+//                 action: InvalidValueAction;
+//                 payload: boolean;
+//             }
+//         >;
+//         qualities: number[];
+//         showBoundary: (error: Error) => void;
+//         validValueAction: ValidValueAction;
+//         value: number;
+//     },
+// ) {
+//     const isComponentMounted = isComponentMountedRef.current;
+//     if (!isComponentMounted) {
+//         return createSafeBoxResult({
+//             message: "Component is not mounted",
+//         });
+//     }
+
+//     try {
+//         const clonedOrientations = structuredClone(orientations);
+//         clonedOrientations[index] = value;
+
+//         await setForageItemSafe(
+//             orientationsForageKey,
+//             clonedOrientations,
+//         );
+//         if (!isComponentMounted) {
+//             return createSafeBoxResult({
+//                 message: "Component is not mounted",
+//             });
+//         }
+
+//         const modifyImageResult = await modifyImage({
+//             accessibleImageInputDispatch,
+//             currentImageIndex: index,
+//             fileNames,
+//             isComponentMountedRef,
+//             imageFileBlobs,
+//             invalidValueAction,
+//             maxImagesAmount,
+//             maxImageSize,
+//             modifiedFilesForageKey,
+//             orientations: clonedOrientations,
+//             originalFilesForageKey,
+//             parentDispatch,
+//             qualities,
+//             showBoundary,
+//             validValueAction,
+//         });
+
+//         if (!isComponentMounted) {
+//             return createSafeBoxResult({
+//                 message: "Component is not mounted",
+//             });
+//         }
+//         if (modifyImageResult.err) {
+//             return createSafeBoxResult({
+//                 kind: "notFound",
+//             });
+//         }
+
+//         accessibleImageInputDispatch({
+//             action: accessibleImageInputAction.setOrientations,
+//             payload: { index, value },
+//         });
+//         accessibleImageInputDispatch({
+//             action: accessibleImageInputAction.setCurrentImageIndex,
+//             payload: index,
+//         });
+
+//         return createSafeBoxResult({
+//             kind: "success",
+//             data: true,
+//         });
+//     } catch (error) {
+//         if (!isComponentMounted) {
+//             return createSafeBoxResult({
+//                 message: "Error: Component is not mounted",
+//             });
+//         }
+
+//         return createSafeBoxResult({
+//             kind: "error",
+//             message: "Error setting image orientation",
+//         });
+//     }
+// }
+
+async function handleImageQualityOrientationSliderChange<
     ValidValueAction extends string = string,
     InvalidValueAction extends string = string,
 >(
     {
         accessibleImageInputDispatch,
+        currentImageIndex,
         fileNames,
-        imageFileBlobs,
-        index,
-        invalidValueAction,
         isComponentMountedRef,
-        maxImageSize,
+        imageFileBlobs,
+        invalidValueAction,
         maxImagesAmount,
-        modifiedFilesForageKey,
+        maxImageSize,
         orientations,
-        originalFilesForageKey,
+        orientationValue,
         parentDispatch,
         qualities,
-        qualitiesForageKey,
+        qualityValue,
         showBoundary,
+        storageKey,
         validValueAction,
-        value,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
+        currentImageIndex: number;
         fileNames: string[];
-        imageFileBlobs: Array<ModifiedFile>;
-        index: number;
-        invalidValueAction: InvalidValueAction;
         isComponentMountedRef: React.RefObject<boolean>;
-        maxImageSize: number;
+        imageFileBlobs: Array<ModifiedFile>;
+        invalidValueAction: InvalidValueAction;
         maxImagesAmount: number;
-        modifiedFilesForageKey: string;
+        maxImageSize: number;
         orientations: number[];
-        originalFilesForageKey: string;
+        orientationValue?: number;
         parentDispatch?: React.Dispatch<
             | {
                 action: ValidValueAction;
@@ -239,12 +539,12 @@ async function handleImageQualitySliderChange<
             }
         >;
         qualities: number[];
-        qualitiesForageKey: string;
+        qualityValue?: number;
         showBoundary: (error: Error) => void;
+        storageKey: string;
         validValueAction: ValidValueAction;
-        value: number;
     },
-): Promise<SafeBoxResult<boolean>> {
+): Promise<SafeBoxResult> {
     const isComponentMounted = isComponentMountedRef.current;
     if (!isComponentMounted) {
         return createSafeBoxResult({
@@ -252,168 +552,87 @@ async function handleImageQualitySliderChange<
         });
     }
 
-    try {
-        const clonedQualities = structuredClone(qualities);
-        clonedQualities[index] = value;
-
-        await setForageItemSafe(
-            qualitiesForageKey,
-            clonedQualities,
-        );
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Component is not mounted",
-            });
-        }
-
-        const modifyImageResult = await modifyImage({
-            accessibleImageInputDispatch,
-            currentImageIndex: index,
-            fileNames,
-            isComponentMountedRef,
-            imageFileBlobs,
-            invalidValueAction,
-            maxImagesAmount,
-            maxImageSize,
-            modifiedFilesForageKey,
-            orientations,
-            originalFilesForageKey,
-            parentDispatch,
-            qualities: clonedQualities,
-            showBoundary,
-            validValueAction,
-        });
-
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Component is not mounted",
-            });
-        }
-        if (modifyImageResult.err) {
-            return createSafeBoxResult({
-                kind: "notFound",
-            });
-        }
-
-        accessibleImageInputDispatch({
-            action: accessibleImageInputAction.setQualities,
-            payload: { index, value },
-        });
-        accessibleImageInputDispatch({
-            action: accessibleImageInputAction.setCurrentImageIndex,
-            payload: index,
-        });
-
-        return createSafeBoxResult({
-            kind: "success",
-            data: true,
-        });
-    } catch (error) {
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Error: Component is not mounted",
-            });
-        }
-
-        return createSafeBoxResult({
-            kind: "error",
-            message: "Error setting image quality",
-        });
-    }
-}
-
-async function handleImageOrientationSliderChange<
-    ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
->(
-    {
-        accessibleImageInputDispatch,
-        fileNames,
-        imageFileBlobs,
-        index,
-        invalidValueAction,
-        isComponentMountedRef,
-        maxImageSize,
-        maxImagesAmount,
+    const {
         modifiedFilesForageKey,
-        orientations,
         orientationsForageKey,
         originalFilesForageKey,
-        parentDispatch,
-        qualities,
-        showBoundary,
-        validValueAction,
-        value,
-    }: {
-        accessibleImageInputDispatch: React.Dispatch<
-            AccessibleImageInputDispatch
-        >;
-        fileNames: string[];
-        imageFileBlobs: Array<ModifiedFile>;
-        index: number;
-        invalidValueAction: InvalidValueAction;
-        isComponentMountedRef: React.RefObject<boolean>;
-        maxImageSize: number;
-        maxImagesAmount: number;
-        modifiedFilesForageKey: string;
-        orientations: number[];
-        orientationsForageKey: string;
-        originalFilesForageKey: string;
-        parentDispatch?: React.Dispatch<
-            | {
-                action: ValidValueAction;
-                payload: FormData;
-            }
-            | {
-                action: InvalidValueAction;
-                payload: boolean;
-            }
-        >;
-        qualities: number[];
-        showBoundary: (error: Error) => void;
-        validValueAction: ValidValueAction;
-        value: number;
-    },
-) {
-    const isComponentMounted = isComponentMountedRef.current;
-    if (!isComponentMounted) {
-        return createSafeBoxResult({
-            message: "Component is not mounted",
-        });
-    }
+        qualitiesForageKey,
+    } = createImageInputForageKeys(
+        storageKey,
+    );
 
     try {
-        const clonedOrientations = structuredClone(orientations);
-        clonedOrientations[index] = value;
-
-        await setForageItemSafe(
-            orientationsForageKey,
-            clonedOrientations,
-        );
+        const originalFilesResult = await getForageItemSafe<
+            Array<OriginalFile>
+        >(originalFilesForageKey);
+        console.log("isComponentMounted", isComponentMounted);
         if (!isComponentMounted) {
             return createSafeBoxResult({
                 message: "Component is not mounted",
             });
         }
+        if (originalFilesResult.err) {
+            return createSafeBoxResult({
+                kind: "notFound",
+                message: originalFilesResult.val.message ??
+                    "Unable to retrieve original files",
+            });
+        }
+        const originalFiles = originalFilesResult.safeUnwrap().data ??
+            [];
+        if (originalFiles.length === 0) {
+            return createSafeBoxResult({
+                message: "Original files are empty",
+            });
+        }
 
-        const modifyImageResult = await modifyImage({
-            accessibleImageInputDispatch,
-            currentImageIndex: index,
-            fileNames,
-            isComponentMountedRef,
-            imageFileBlobs,
-            invalidValueAction,
-            maxImagesAmount,
-            maxImageSize,
-            modifiedFilesForageKey,
-            orientations: clonedOrientations,
-            originalFilesForageKey,
-            parentDispatch,
-            qualities,
-            showBoundary,
-            validValueAction,
+        const imageToModify = structuredClone(
+            originalFiles[currentImageIndex],
+        );
+        if (!imageToModify) {
+            return createSafeBoxResult({
+                message: "Image to modify is undefined",
+            });
+        }
+
+        const quality = qualityValue
+            ? qualityValue / 10
+            : qualities[currentImageIndex] / 10;
+        const orientation = orientationValue ?? orientations[currentImageIndex];
+        const type = imageToModify?.type as EImageType;
+
+        console.log(
+            "handleImageQualityOrientationSliderChange",
+            {
+                currentImageIndex,
+                fileNames,
+                imageFileBlobs,
+                maxImageSize,
+                maxImagesAmount,
+                modifiedFilesForageKey,
+                orientationValue,
+                orientations,
+                orientationsForageKey,
+                originalFiles,
+                originalFilesForageKey,
+                qualities,
+                qualitiesForageKey,
+                qualityValue,
+                quality,
+                orientation,
+                type,
+            },
+        );
+
+        const modifyImageResult = await modifyImageSafe(imageToModify, {
+            quality,
+            orientation,
+            type,
         });
-
+        console.log(
+            "handleImageQualityOrientationSliderChange modifyImageResult",
+            modifyImageResult,
+        );
         if (!isComponentMounted) {
             return createSafeBoxResult({
                 message: "Component is not mounted",
@@ -421,40 +640,153 @@ async function handleImageOrientationSliderChange<
         }
         if (modifyImageResult.err) {
             return createSafeBoxResult({
-                kind: "notFound",
+                message: modifyImageResult.val.message ??
+                    "Unable to modify image",
+            });
+        }
+        const fileBlob = modifyImageResult.safeUnwrap().data;
+        if (fileBlob === undefined) {
+            return createSafeBoxResult({
+                message: "File blob is undefined",
             });
         }
 
         accessibleImageInputDispatch({
-            action: accessibleImageInputAction.setOrientations,
-            payload: { index, value },
+            action: accessibleImageInputAction.setImageFileBlob,
+            payload: {
+                fileBlob,
+                index: currentImageIndex,
+            },
         });
-        accessibleImageInputDispatch({
-            action: accessibleImageInputAction.setCurrentImageIndex,
-            payload: index,
+
+        const modifiedFilesResult = await getForageItemSafe<
+            Array<ModifiedFile>
+        >(modifiedFilesForageKey);
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Component is not mounted",
+            });
+        }
+        if (modifiedFilesResult.err) {
+            return createSafeBoxResult({
+                kind: "notFound",
+                message: modifiedFilesResult.val.message ??
+                    "Unable to retrieve modified files",
+            });
+        }
+        const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
+        const updatedModifiedFiles = modifiedFiles.map(
+            (modifiedFile, index) => {
+                if (index === currentImageIndex) {
+                    return fileBlob;
+                }
+                return modifiedFile;
+            },
+        );
+
+        await setForageItemSafe(
+            modifiedFilesForageKey,
+            updatedModifiedFiles,
+        );
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Component is not mounted",
+            });
+        }
+
+        const { areImagesInvalid } = validateImages({
+            allowedFileExtensionsRegex: ALLOWED_FILE_EXTENSIONS_REGEX,
+            imageFileBlobs: updatedModifiedFiles,
+            maxImagesAmount,
+            maxImageSize,
         });
+
+        parentDispatch?.({
+            action: invalidValueAction,
+            payload: areImagesInvalid,
+        });
+
+        const formData = updatedModifiedFiles.reduce<FormData>(
+            (formDataAcc, modifiedFile, index) => {
+                if (modifiedFile) {
+                    formDataAcc.append(
+                        modifiedFilesForageKey,
+                        modifiedFile,
+                        fileNames[index],
+                    );
+                }
+
+                return formDataAcc;
+            },
+            new FormData(),
+        );
+
+        parentDispatch?.({
+            action: validValueAction,
+            payload: formData,
+        });
+
+        // update qualities
+        if (qualityValue !== undefined) {
+            const clonedQualities = structuredClone(qualities);
+            clonedQualities[currentImageIndex] = qualityValue;
+
+            await setForageItemSafe(
+                qualitiesForageKey,
+                clonedQualities,
+            );
+            if (!isComponentMounted) {
+                return createSafeBoxResult({
+                    message: "Component is not mounted",
+                });
+            }
+
+            accessibleImageInputDispatch({
+                action: accessibleImageInputAction.setQuality,
+                payload: { index: currentImageIndex, value: qualityValue },
+            });
+        }
+        // update orientations
+        if (orientationValue !== undefined) {
+            const clonedOrientations = structuredClone(orientations);
+            clonedOrientations[currentImageIndex] = orientationValue;
+
+            await setForageItemSafe(
+                orientationsForageKey,
+                clonedOrientations,
+            );
+            if (!isComponentMounted) {
+                return createSafeBoxResult({
+                    message: "Component is not mounted",
+                });
+            }
+
+            accessibleImageInputDispatch({
+                action: accessibleImageInputAction.setOrientation,
+                payload: { index: currentImageIndex, value: orientationValue },
+            });
+        }
 
         return createSafeBoxResult({
             kind: "success",
             data: true,
         });
-    } catch (error) {
+    } catch (error: any) {
         if (!isComponentMounted) {
             return createSafeBoxResult({
                 message: "Error: Component is not mounted",
             });
         }
 
+        showBoundary(error);
         return createSafeBoxResult({
-            kind: "error",
-            message: "Error setting image orientation",
+            message: "Unknown error",
         });
     }
 }
 
 export {
-    handleImageOrientationSliderChange,
-    handleImageQualitySliderChange,
+    handleImageQualityOrientationSliderChange,
     handleRemoveImageClick,
     handleResetImageClick,
 };

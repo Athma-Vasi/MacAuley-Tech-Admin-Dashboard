@@ -1,5 +1,6 @@
 import {
     Card,
+    Divider,
     Group,
     Image,
     LoadingOverlay,
@@ -31,8 +32,7 @@ import {
     MAX_IMAGES,
 } from "./constants";
 import {
-    handleImageOrientationSliderChange,
-    handleImageQualitySliderChange,
+    handleImageQualityOrientationSliderChange,
     handleRemoveImageClick,
     handleResetImageClick,
 } from "./handlers";
@@ -275,8 +275,7 @@ function AccessibleImageInput<
                             accessibleImageInputDispatch,
                             index,
                             isComponentMountedRef,
-                            modifiedFilesForageKey,
-                            originalFilesForageKey,
+                            storageKey,
                         });
                     },
                 },
@@ -297,7 +296,7 @@ function AccessibleImageInput<
                             accessibleImageInputDispatch,
                             index,
                             isComponentMountedRef,
-                            originalFilesForageKey,
+                            storageKey,
                         });
                     },
                 },
@@ -328,30 +327,27 @@ function AccessibleImageInput<
                         min: 1,
                         name: "quality",
                         onChange: async (value: number) => {
-                            await handleImageQualitySliderChange({
+                            await handleImageQualityOrientationSliderChange({
                                 accessibleImageInputDispatch,
+                                currentImageIndex: index,
                                 fileNames,
                                 imageFileBlobs,
-                                index,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
                                 maxImagesAmount,
-                                modifiedFilesForageKey,
                                 orientations,
-                                originalFilesForageKey,
                                 parentDispatch,
                                 qualities,
-                                qualitiesForageKey,
+                                qualityValue: value,
                                 showBoundary,
+                                storageKey,
                                 validValueAction,
-                                value,
                             });
                         },
                         // parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
-                        validValueAction:
-                            accessibleImageInputAction.setQualities,
+                        validValueAction: accessibleImageInputAction.setQuality,
                         value: qualities[index],
                     }}
                 />
@@ -377,30 +373,28 @@ function AccessibleImageInput<
                         min: 1,
                         name: "orientation",
                         onChange: async (value: number) => {
-                            await handleImageOrientationSliderChange({
+                            await handleImageQualityOrientationSliderChange({
                                 accessibleImageInputDispatch,
+                                currentImageIndex: index,
                                 fileNames,
                                 imageFileBlobs,
-                                index,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
                                 maxImagesAmount,
-                                modifiedFilesForageKey,
                                 orientations,
-                                orientationsForageKey,
-                                originalFilesForageKey,
+                                orientationValue: value,
                                 parentDispatch,
                                 qualities,
                                 showBoundary,
+                                storageKey,
                                 validValueAction,
-                                value,
                             });
                         },
                         // parentDynamicDispatch: accessibleImageInputDispatch,
                         step: 1,
                         validValueAction:
-                            accessibleImageInputAction.setOrientations,
+                            accessibleImageInputAction.setOrientation,
                         value: orientations[index],
                     }}
                 />
@@ -427,20 +421,23 @@ function AccessibleImageInput<
                     shadow="sm"
                     key={`${index}-${fileNames[index]}`}
                 >
-                    <Stack spacing="xl">
+                    <Stack spacing="lg">
                         {img}
                         {isImageInvalid
                             ? invalidScreenreaderTextElement
                             : validScreenreaderTextElement}
-                        <Stack>
+                        <Stack spacing="xs">
                             {imageName}
+                            <Divider />
                             {imageSize}
+                            <Divider />
                             {imageType}
+                            <Divider />
                         </Stack>
-                        <GoldenGrid>
+                        <Group w="100%" position="apart">
                             {removeButtonWithTooltip}
                             {resetButtonWithTooltip}
-                        </GoldenGrid>
+                        </Group>
                         <Stack spacing="xl">
                             {imageQualityStack}
                             {imageOrientationStack}

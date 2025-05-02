@@ -45,20 +45,20 @@ const accessibleImageInputReducersMap = new Map<
         accessibleImageInputReducer_removeImageFileBlob,
     ],
     [
-        accessibleImageInputAction.setImageFileBlobs,
-        accessibleImageInputReducer_setImageFileBlobs,
+        accessibleImageInputAction.setImageFileBlob,
+        accessibleImageInputReducer_setImageFileBlob,
     ],
     [
         accessibleImageInputAction.setIsLoading,
         accessibleImageInputReducer_setIsLoading,
     ],
     [
-        accessibleImageInputAction.setQualities,
-        accessibleImageInputReducer_setQualities,
+        accessibleImageInputAction.setQuality,
+        accessibleImageInputReducer_setQuality,
     ],
     [
-        accessibleImageInputAction.setOrientations,
-        accessibleImageInputReducer_setOrientations,
+        accessibleImageInputAction.setOrientation,
+        accessibleImageInputReducer_setOrientation,
     ],
 ]);
 
@@ -80,7 +80,20 @@ function accessibleImageInputReducer_addFileName(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const fileName = dispatch.payload as string;
+    const {
+        value: fileName,
+        index,
+    } = dispatch.payload as {
+        value: string;
+        index: number;
+    };
+
+    const fileNames = structuredClone(state.fileNames);
+    if (index < 0) {
+        fileNames.push(fileName);
+    } else {
+        fileNames[index] = fileName;
+    }
 
     return {
         ...state,
@@ -103,17 +116,22 @@ function accessibleImageInputReducer_removeImageFileBlob(
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
     const index = dispatch.payload as number;
-    const imageFileBlobs = structuredClone(state.imageFileBlobs);
-    imageFileBlobs.splice(index, 1);
 
-    const fileNames = state.fileNames.slice();
-    fileNames.splice(index, 1);
+    const imageFileBlobs = structuredClone(state.imageFileBlobs).filter(
+        (_: ModifiedFile, i: number) => i !== index,
+    );
 
-    const qualities = state.qualities.slice();
-    qualities.splice(index, 1);
+    const fileNames = structuredClone(state.fileNames).filter(
+        (_: string, i: number) => i !== index,
+    );
 
-    const orientations = state.orientations.slice();
-    orientations.splice(index, 1);
+    const qualities = structuredClone(state.qualities).filter(
+        (_: number, i: number) => i !== index,
+    );
+
+    const orientations = structuredClone(state.orientations).filter(
+        (_: number, i: number) => i !== index,
+    );
 
     return {
         ...state,
@@ -148,7 +166,7 @@ function accessibleImageInputReducer_resetImageFileBlob(
     };
 }
 
-function accessibleImageInputReducer_setImageFileBlobs(
+function accessibleImageInputReducer_setImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
@@ -176,7 +194,7 @@ function accessibleImageInputReducer_setIsLoading(
     };
 }
 
-function accessibleImageInputReducer_setQualities(
+function accessibleImageInputReducer_setQuality(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
@@ -191,7 +209,7 @@ function accessibleImageInputReducer_setQualities(
     };
 }
 
-function accessibleImageInputReducer_setOrientations(
+function accessibleImageInputReducer_setOrientation(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {

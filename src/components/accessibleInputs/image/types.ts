@@ -56,7 +56,10 @@ type AccessibleImageInputDispatch =
     }
     | {
         action: AccessibleImageInputAction["addFileName"];
-        payload: string;
+        payload: {
+            index: number;
+            value: string;
+        };
     }
     | {
         action: AccessibleImageInputAction["setCurrentImageIndex"];
@@ -70,7 +73,7 @@ type AccessibleImageInputDispatch =
         };
     }
     | {
-        action: AccessibleImageInputAction["setImageFileBlobs"];
+        action: AccessibleImageInputAction["setImageFileBlob"];
         payload: {
             index: number;
             fileBlob: ModifiedFile;
@@ -81,14 +84,14 @@ type AccessibleImageInputDispatch =
         payload: boolean;
     }
     | {
-        action: AccessibleImageInputAction["setQualities"];
+        action: AccessibleImageInputAction["setQuality"];
         payload: {
             index: number;
             value: number;
         };
     }
     | {
-        action: AccessibleImageInputAction["setOrientations"];
+        action: AccessibleImageInputAction["setOrientation"];
         payload: {
             index: number;
             value: number;

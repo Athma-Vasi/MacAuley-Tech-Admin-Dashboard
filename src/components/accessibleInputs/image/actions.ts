@@ -4,10 +4,10 @@ type AccessibleImageInputAction = {
     removeImageFileBlob: "removeImageFileBlob";
     resetImageFileBlob: "resetImageFileBlob";
     setCurrentImageIndex: "setCurrentImageIndex";
-    setImageFileBlobs: "setImageFileBlobs";
+    setImageFileBlob: "setImageFileBlob";
     setIsLoading: "setIsLoading";
-    setOrientations: "setOrientations";
-    setQualities: "setQualities";
+    setOrientation: "setOrientation";
+    setQuality: "setQuality";
 };
 
 const accessibleImageInputAction: AccessibleImageInputAction = {
@@ -16,10 +16,10 @@ const accessibleImageInputAction: AccessibleImageInputAction = {
     removeImageFileBlob: "removeImageFileBlob",
     resetImageFileBlob: "resetImageFileBlob",
     setCurrentImageIndex: "setCurrentImageIndex",
-    setImageFileBlobs: "setImageFileBlobs",
+    setImageFileBlob: "setImageFileBlob",
     setIsLoading: "setIsLoading",
-    setOrientations: "setOrientations",
-    setQualities: "setQualities",
+    setOrientation: "setOrientation",
+    setQuality: "setQuality",
 };
 
 export { accessibleImageInputAction };
