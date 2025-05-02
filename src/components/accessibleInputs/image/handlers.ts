@@ -2,9 +2,9 @@ import { EImageType } from "image-conversion";
 import { SafeBoxResult } from "../../../types";
 import {
     createSafeBoxResult,
-    getForageItemSafe,
-    modifyImageSafe,
-    setForageItemSafe,
+    GetForageItemSafe,
+    ModifyImageSafe,
+    SetForageItemSafe,
 } from "../../../utils";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
@@ -15,6 +15,7 @@ import { createImageInputForageKeys, validateImages } from "./utils";
 async function handleResetImageClick(
     {
         accessibleImageInputDispatch,
+        getForageItemSafe,
         index,
         isComponentMountedRef,
         storageKey,
@@ -22,9 +23,9 @@ async function handleResetImageClick(
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
+        getForageItemSafe: GetForageItemSafe;
         index: number;
         isComponentMountedRef: React.RefObject<boolean>;
-
         storageKey: string;
     },
 ): Promise<SafeBoxResult<boolean>> {
@@ -50,27 +51,20 @@ async function handleResetImageClick(
                 message: "Component is not mounted",
             });
         }
-        if (originalFilesResult.err) {
-            return createSafeBoxResult({
-                kind: "notFound",
+
+        if (originalFilesResult.ok) {
+            const originalFiles = originalFilesResult.safeUnwrap().data ?? [];
+            const originalFile = originalFiles[index];
+
+            accessibleImageInputDispatch({
+                action: accessibleImageInputAction.resetImageFileBlob,
+                payload: {
+                    index,
+                    value: originalFile,
+                },
             });
         }
 
-        const originalFiles = originalFilesResult.safeUnwrap().data ?? [];
-        if (originalFiles.length === 0) {
-            return createSafeBoxResult({
-                kind: "notFound",
-            });
-        }
-
-        const originalFile = originalFiles[index];
-        accessibleImageInputDispatch({
-            action: accessibleImageInputAction.resetImageFileBlob,
-            payload: {
-                index,
-                value: originalFile,
-            },
-        });
         accessibleImageInputDispatch({
             action: accessibleImageInputAction.setCurrentImageIndex,
             payload: index,
@@ -87,7 +81,7 @@ async function handleResetImageClick(
             });
         }
         return createSafeBoxResult({
-            message: "Error resetting image",
+            message: error.message ?? "Error resetting image",
         });
     }
 }
@@ -97,21 +91,25 @@ async function handleRemoveImageClick<
 >(
     {
         accessibleImageInputDispatch,
+        getForageItemSafe,
         index,
         isComponentMountedRef,
         parentDispatch,
+        setForageItemSafe,
         storageKey,
         validValueAction,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
+        getForageItemSafe: GetForageItemSafe;
         index: number;
         isComponentMountedRef: React.RefObject<boolean>;
         parentDispatch?: React.Dispatch<{
             action: ValidValueAction;
             payload: FormData;
         }>;
+        setForageItemSafe: SetForageItemSafe;
         storageKey: string;
         validValueAction: ValidValueAction;
     },
@@ -256,16 +254,19 @@ async function handleImageQualityOrientationSliderChange<
         accessibleImageInputDispatch,
         currentImageIndex,
         fileNames,
+        getForageItemSafe,
         isComponentMountedRef,
         imageFileBlobs,
         invalidValueAction,
         maxImagesAmount,
         maxImageSize,
+        modifyImageSafe,
         orientations,
         orientationValue,
         parentDispatch,
         qualities,
         qualityValue,
+        setForageItemSafe,
         showBoundary,
         storageKey,
         validValueAction,
@@ -275,11 +276,13 @@ async function handleImageQualityOrientationSliderChange<
         >;
         currentImageIndex: number;
         fileNames: string[];
+        getForageItemSafe: GetForageItemSafe;
         isComponentMountedRef: React.RefObject<boolean>;
         imageFileBlobs: Array<ModifiedFile>;
         invalidValueAction: InvalidValueAction;
         maxImagesAmount: number;
         maxImageSize: number;
+        modifyImageSafe: ModifyImageSafe;
         orientations: number[];
         orientationValue?: number;
         parentDispatch?: React.Dispatch<
@@ -294,6 +297,7 @@ async function handleImageQualityOrientationSliderChange<
         >;
         qualities: number[];
         qualityValue?: number;
+        setForageItemSafe: SetForageItemSafe;
         showBoundary: (error: Error) => void;
         storageKey: string;
         validValueAction: ValidValueAction;

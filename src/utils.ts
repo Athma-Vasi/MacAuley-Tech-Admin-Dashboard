@@ -386,6 +386,10 @@ async function responseToJSONSafe<Data = unknown>(
   }
 }
 
+type GetForageItemSafe = <Data = unknown>(
+  key: string,
+) => Promise<SafeBoxResult<Data>>;
+
 async function getForageItemSafe<Data = unknown>(
   key: string,
 ): Promise<SafeBoxResult<Data>> {
@@ -400,6 +404,11 @@ async function getForageItemSafe<Data = unknown>(
     return new Err({ data: error, kind: "error" });
   }
 }
+
+type SetForageItemSafe = <Data = unknown>(
+  key: string,
+  value: Data,
+) => Promise<SafeBoxResult<undefined>>;
 
 async function setForageItemSafe<Data = unknown>(
   key: string,
@@ -465,6 +474,11 @@ function createSafeBoxResult<Data extends unknown = unknown>(
     message,
   });
 }
+
+type ModifyImageSafe = (
+  file: Blob,
+  config?: ICompressConfig | number,
+) => Promise<SafeBoxResult<Blob>>;
 
 async function modifyImageSafe(
   file: Blob,
@@ -678,3 +692,4 @@ export {
   toFixedFloat,
   urlBuilder,
 };
+export type { GetForageItemSafe, ModifyImageSafe, SetForageItemSafe };

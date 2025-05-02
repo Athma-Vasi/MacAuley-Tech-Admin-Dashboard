@@ -15,13 +15,15 @@ import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useMountedRef } from "../../../hooks/useMountedRef";
-import { addCommaSeparator, returnThemeColors } from "../../../utils";
-import { GoldenGrid } from "../../goldenGrid";
 import {
-    AccessibleFileInput,
-    ModifiedFile,
-    OriginalFile,
-} from "../AccessibleFileInput";
+    addCommaSeparator,
+    getForageItemSafe,
+    modifyImageSafe,
+    returnThemeColors,
+    setForageItemSafe,
+} from "../../../utils";
+import { GoldenGrid } from "../../goldenGrid";
+import { AccessibleFileInput, ModifiedFile } from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
 import { createAccessibleButtons } from "../utils";
 import {
@@ -270,9 +272,11 @@ function AccessibleImageInput<
                     ) => {
                         await handleRemoveImageClick({
                             accessibleImageInputDispatch,
+                            getForageItemSafe,
                             index,
                             isComponentMountedRef,
                             parentDispatch,
+                            setForageItemSafe,
                             storageKey,
                             validValueAction,
                         });
@@ -293,6 +297,7 @@ function AccessibleImageInput<
                         isComponentMountedRef.current = true;
                         await handleResetImageClick({
                             accessibleImageInputDispatch,
+                            getForageItemSafe,
                             index,
                             isComponentMountedRef,
                             storageKey,
@@ -330,15 +335,18 @@ function AccessibleImageInput<
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
                                 fileNames,
+                                getForageItemSafe,
                                 imageFileBlobs,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
                                 maxImagesAmount,
+                                modifyImageSafe,
                                 orientations,
                                 parentDispatch,
                                 qualities,
                                 qualityValue: value,
+                                setForageItemSafe,
                                 showBoundary,
                                 storageKey,
                                 validValueAction,
@@ -376,15 +384,18 @@ function AccessibleImageInput<
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
                                 fileNames,
+                                getForageItemSafe,
                                 imageFileBlobs,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
                                 maxImagesAmount,
+                                modifyImageSafe,
                                 orientations,
                                 orientationValue: value,
                                 parentDispatch,
                                 qualities,
+                                setForageItemSafe,
                                 showBoundary,
                                 storageKey,
                                 validValueAction,
