@@ -12,12 +12,16 @@ import {
 import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { TbCheck, TbExclamationCircle } from "react-icons/tb";
-import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
+import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useMountedRef } from "../../../hooks/useMountedRef";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { GoldenGrid } from "../../goldenGrid";
-import { AccessibleFileInput, ModifiedFile } from "../AccessibleFileInput";
+import {
+    AccessibleFileInput,
+    ModifiedFile,
+    OriginalFile,
+} from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
 import { createAccessibleButtons } from "../utils";
 import {
@@ -187,7 +191,9 @@ function AccessibleImageInput<
                     maw={300}
                     src={URL.createObjectURL(fileBlob ?? new Blob([]))}
                     style={{ cursor: "pointer" }}
-                    onClick={() => {
+                    onClick={(
+                        _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+                    ) => {
                         accessibleImageInputDispatch({
                             action: accessibleImageInputAction.setIsModalOpen,
                             payload: true,
@@ -338,7 +344,6 @@ function AccessibleImageInput<
                                 validValueAction,
                             });
                         },
-                        // parentDynamicDispatch: accessibleImageInputDispatch,
                         sliderDefaultValue: 1,
                         step: 1,
                         validValueAction: accessibleImageInputAction.setQuality,
@@ -385,7 +390,6 @@ function AccessibleImageInput<
                                 validValueAction,
                             });
                         },
-                        // parentDynamicDispatch: accessibleImageInputDispatch,
                         sliderDefaultValue: 1,
                         step: 1,
                         validValueAction:
@@ -522,7 +526,8 @@ function AccessibleImageInput<
 
     return (
         <Stack
-            style={{ minWidth: INPUT_WIDTH, maxWidth: "400px" }}
+            className="accessible-input"
+            // style={{ minWidth: INPUT_WIDTH, maxWidth: "400px" }}
             pos="relative"
         >
             {modifiedImagePreviewModal}

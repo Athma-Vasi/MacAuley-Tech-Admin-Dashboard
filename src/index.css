@@ -130,134 +130,6 @@
     width: var(--card-width);
   }
 }
-.register-container {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: flex-start;
-
-  padding: var(--padding);
-  width: 100%;
-
-  .register-card {
-    display: flex;
-    height: clamp(
-      var(--min-register-card-height),
-      var(--ideal-register-card-height),
-      var(--max-register-card-height)
-    );
-    overflow-y: auto;
-    width: clamp(
-      var(--min-register-card-width),
-      var(--ideal-register-card-width),
-      var(--max-register-card-width)
-    );
-
-    .register-stepper-container {
-      align-items: flex-start;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      row-gap: var(--row-gap);
-      width: 100%;
-
-      .register-stepper-header {
-        width: 100%;
-      }
-
-      .register-stepper-cards {
-        align-items: flex-start;
-        column-gap: var(--column-gap);
-        display: flex;
-        flex-direction: column;
-        row-gap: var(--row-gap);
-        width: 100%;
-
-        .stepper-card {
-          width: var(--card-width);
-          border-radius: 1em;
-          transition: box-shadow 0.17s ease-in-out;
-        }
-
-        .stepper-card.active {
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-      }
-    }
-
-    .register-form-container {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      row-gap: var(--row-gap);
-      width: 100%;
-      padding: var(--padding);
-
-      .register-form-header {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        width: 100%;
-      }
-
-      .register-form-card {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        width: 100%;
-        gap: var(--padding);
-        padding: var(--padding);
-      }
-
-      .register-form-footer {
-        column-gap: var(--column-gap);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        row-gap: var(--row-gap);
-        width: 100%;
-      }
-
-      .form-review {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        row-gap: var(--row-gap);
-        padding-top: var(--padding);
-
-        .review-section-container {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-
-          .step-inputs-container {
-            padding: var(--padding) 0px;
-            display: flex;
-            flex-direction: column;
-            row-gap: 0.25em;
-
-            .input-section {
-              padding: 0.25em 0px;
-              display: grid;
-              grid-template-columns: 3fr 8fr;
-              column-gap: 2em;
-              border-radius: 0.38em;
-              padding: 0.38em;
-            }
-
-            .input-section.isEven {
-              background: hsla(0, 0%, 0%, 0.03);
-            }
-          }
-        }
-      }
-    }
-  }
-}
 
 .statistics-card {
   display: flex;
@@ -351,6 +223,139 @@
 }
 
 @media screen and (max-width: 775px) {
+  .register-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
+
+    padding: var(--padding);
+    width: 100%;
+
+    .register-card {
+      display: flex;
+      height: clamp(
+        var(--min-register-card-height),
+        var(--ideal-register-card-height),
+        var(--max-register-card-height)
+      );
+      overflow-y: auto;
+      width: clamp(
+        var(--min-register-card-width),
+        var(--ideal-register-card-width),
+        var(--max-register-card-width)
+      );
+      outline: 1px solid teal;
+      flex-direction: column;
+
+      .register-stepper-container {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+
+        .register-stepper-header {
+          width: 100%;
+        }
+
+        .register-stepper-cards {
+          align-items: center;
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          row-gap: var(--row-gap);
+          width: 100%;
+
+          .stepper-card {
+            display: none;
+          }
+
+          .stepper-card.active {
+            display: flex;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: var(--card-width);
+            border-radius: 1em;
+            transition: box-shadow 0.17s ease-in-out;
+          }
+        }
+      }
+
+      .register-form-container {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+        padding: var(--padding);
+
+        .register-form-header {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .register-form-card {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          width: 100%;
+          gap: var(--padding);
+          padding: var(--padding);
+        }
+
+        .register-form-footer {
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          row-gap: var(--row-gap);
+          width: 100%;
+        }
+
+        .form-review {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          row-gap: var(--row-gap);
+          padding-top: var(--padding);
+
+          .review-section-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .step-inputs-container {
+              padding: var(--padding) 0px;
+              display: flex;
+              flex-direction: column;
+              row-gap: 0.25em;
+
+              .input-section {
+                padding: 0.25em 0px;
+                display: grid;
+                grid-template-columns: 3fr 8fr;
+                column-gap: 2em;
+                border-radius: 0.38em;
+                padding: 0.38em;
+              }
+
+              .input-section.isEven {
+                background: hsla(0, 0%, 0%, 0.03);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   .app-shell {
     width: 100vw;
     display: flex;
@@ -530,6 +535,136 @@
 }
 
 @media screen and (min-width: 776px) and (max-width: 1023px) {
+  .register-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
+
+    padding: var(--padding);
+    width: 100%;
+
+    .register-card {
+      display: flex;
+      height: clamp(
+        var(--min-register-card-height),
+        var(--ideal-register-card-height),
+        var(--max-register-card-height)
+      );
+      overflow-y: auto;
+      width: clamp(
+        var(--min-register-card-width),
+        var(--ideal-register-card-width),
+        var(--max-register-card-width)
+      );
+      outline: 1px solid teal;
+
+      .register-stepper-container {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+
+        .register-stepper-header {
+          width: 100%;
+        }
+
+        .register-stepper-cards {
+          align-items: flex-start;
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          row-gap: var(--row-gap);
+          width: 100%;
+
+          .stepper-card {
+            width: var(--card-width);
+            border-radius: 1em;
+            transition: box-shadow 0.17s ease-in-out;
+          }
+
+          .stepper-card.active {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+
+      .register-form-container {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+        padding: var(--padding);
+
+        .register-form-header {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .register-form-card {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          width: 100%;
+          gap: var(--padding);
+          padding: var(--padding);
+        }
+
+        .register-form-footer {
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          row-gap: var(--row-gap);
+          width: 100%;
+        }
+
+        .form-review {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          row-gap: var(--row-gap);
+          padding-top: var(--padding);
+
+          .review-section-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .step-inputs-container {
+              padding: var(--padding) 0px;
+              display: flex;
+              flex-direction: column;
+              row-gap: 0.25em;
+
+              .input-section {
+                padding: 0.25em 0px;
+                display: grid;
+                grid-template-columns: 3fr 8fr;
+                column-gap: 2em;
+                border-radius: 0.38em;
+                padding: 0.38em;
+              }
+
+              .input-section.isEven {
+                background: hsla(0, 0%, 0%, 0.03);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   .app-shell {
     width: 100vw;
     display: flex;
@@ -745,6 +880,136 @@
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1399px) {
+  .register-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
+
+    padding: var(--padding);
+    width: 100%;
+
+    .register-card {
+      display: flex;
+      height: clamp(
+        var(--min-register-card-height),
+        var(--ideal-register-card-height),
+        var(--max-register-card-height)
+      );
+      overflow-y: auto;
+      width: clamp(
+        var(--min-register-card-width),
+        var(--ideal-register-card-width),
+        var(--max-register-card-width)
+      );
+      outline: 1px solid teal;
+
+      .register-stepper-container {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+
+        .register-stepper-header {
+          width: 100%;
+        }
+
+        .register-stepper-cards {
+          align-items: flex-start;
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          row-gap: var(--row-gap);
+          width: 100%;
+
+          .stepper-card {
+            width: var(--card-width);
+            border-radius: 1em;
+            transition: box-shadow 0.17s ease-in-out;
+          }
+
+          .stepper-card.active {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+
+      .register-form-container {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+        padding: var(--padding);
+
+        .register-form-header {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .register-form-card {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          width: 100%;
+          gap: var(--padding);
+          padding: var(--padding);
+        }
+
+        .register-form-footer {
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          row-gap: var(--row-gap);
+          width: 100%;
+        }
+
+        .form-review {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          row-gap: var(--row-gap);
+          padding-top: var(--padding);
+
+          .review-section-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .step-inputs-container {
+              padding: var(--padding) 0px;
+              display: flex;
+              flex-direction: column;
+              row-gap: 0.25em;
+
+              .input-section {
+                padding: 0.25em 0px;
+                display: grid;
+                grid-template-columns: 3fr 8fr;
+                column-gap: 2em;
+                border-radius: 0.38em;
+                padding: 0.38em;
+              }
+
+              .input-section.isEven {
+                background: hsla(0, 0%, 0%, 0.03);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   .register-card {
     display: flex;
     column-gap: var(--column-gap);
@@ -974,6 +1239,136 @@
 }
 
 @media screen and (min-width: 1400px) {
+  .register-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
+
+    padding: var(--padding);
+    width: 100%;
+
+    .register-card {
+      display: flex;
+      height: clamp(
+        var(--min-register-card-height),
+        var(--ideal-register-card-height),
+        var(--max-register-card-height)
+      );
+      overflow-y: auto;
+      width: clamp(
+        var(--min-register-card-width),
+        var(--ideal-register-card-width),
+        var(--max-register-card-width)
+      );
+      outline: 1px solid teal;
+
+      .register-stepper-container {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+
+        .register-stepper-header {
+          width: 100%;
+        }
+
+        .register-stepper-cards {
+          align-items: flex-start;
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          row-gap: var(--row-gap);
+          width: 100%;
+
+          .stepper-card {
+            width: var(--card-width);
+            border-radius: 1em;
+            transition: box-shadow 0.17s ease-in-out;
+          }
+
+          .stepper-card.active {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+
+      .register-form-container {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: var(--row-gap);
+        width: 100%;
+        padding: var(--padding);
+
+        .register-form-header {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .register-form-card {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          width: 100%;
+          gap: var(--padding);
+          padding: var(--padding);
+        }
+
+        .register-form-footer {
+          column-gap: var(--column-gap);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          row-gap: var(--row-gap);
+          width: 100%;
+        }
+
+        .form-review {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          row-gap: var(--row-gap);
+          padding-top: var(--padding);
+
+          .review-section-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .step-inputs-container {
+              padding: var(--padding) 0px;
+              display: flex;
+              flex-direction: column;
+              row-gap: 0.25em;
+
+              .input-section {
+                padding: 0.25em 0px;
+                display: grid;
+                grid-template-columns: 3fr 8fr;
+                column-gap: 2em;
+                border-radius: 0.38em;
+                padding: 0.38em;
+              }
+
+              .input-section.isEven {
+                background: hsla(0, 0%, 0%, 0.03);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   .register-card {
     display: flex;
     column-gap: var(--column-gap);

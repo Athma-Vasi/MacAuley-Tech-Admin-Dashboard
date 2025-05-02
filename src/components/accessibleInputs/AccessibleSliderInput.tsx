@@ -1,5 +1,6 @@
 import {
   Box,
+  MantineNumberSize,
   type MantineSize,
   type MantineTransition,
   Slider,
@@ -55,6 +56,7 @@ type AccessibleSliderInputAttributes<
   thumbSize?: number;
   validValueAction: ValidValueAction;
   value: number;
+  width?: MantineNumberSize;
 };
 
 type AccessibleSliderInputProps<
@@ -100,6 +102,7 @@ function AccessibleSliderInput<
     thumbSize,
     validValueAction,
     value,
+    width = "100%",
   } = attributes;
 
   const {
@@ -167,7 +170,7 @@ function AccessibleSliderInput<
   return (
     <Box
       key={`${name}-${value}-${uniqueId ?? ""}`}
-      w={INPUT_WIDTH}
+      w={width ?? INPUT_WIDTH}
     >
       {accessibleSliderInput}
       <Box
