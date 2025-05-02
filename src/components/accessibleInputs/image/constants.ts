@@ -46,8 +46,12 @@ function displayOrientationLabel(value: number): string {
 /** /(jpg|jpeg|png|webp)$/i */
 const ALLOWED_FILE_EXTENSIONS_REGEX = /(jpg|jpeg|png|webp)$/i;
 
+const ALLOWED_FILE_TYPES_REGEX =
+    /(image\/jpg|image\/jpeg|image\/png|image\/webp)$/i;
+
 export {
     ALLOWED_FILE_EXTENSIONS_REGEX,
+    ALLOWED_FILE_TYPES_REGEX,
     displayOrientationLabel,
     IMG_ORIENTATION_SLIDER_DATA,
     IMG_QUALITY_SLIDER_DATA,

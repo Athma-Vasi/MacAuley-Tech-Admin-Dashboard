@@ -1,9 +1,21 @@
+import { parseSafeSync } from "../../../utils";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { DynamicSliderInputPayload } from "../AccessibleSliderInput";
 import {
     AccessibleImageInputAction,
     accessibleImageInputAction,
 } from "./actions";
+import {
+    addImageFileBlobDispatchZod,
+    addImageFileNameDispatchZod,
+    removeImageFileBlobDispatchZod,
+    resetImageFileBlobDispatchZod,
+    setCurrentImageIndexDispatchZod,
+    setIsLoadingImageDispatchZod,
+    setIsModalOpenImageDispatchZod,
+    setOrientationImageDispatchZod,
+    setQualityImageDispatchZod,
+} from "./schemas";
 import {
     AccessibleImageInputDispatch,
     AccessibleImageInputState,
@@ -70,7 +82,16 @@ function accessibleImageInputReducer_addImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const fileBlob = dispatch.payload as ModifiedFile;
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: addImageFileBlobDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    const fileBlob = parsedResult.safeUnwrap().data?.payload as ModifiedFile;
     const imageFileBlobs = structuredClone(state.imageFileBlobs);
     imageFileBlobs.push(fileBlob);
 
@@ -84,10 +105,19 @@ function accessibleImageInputReducer_addFileName(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: addImageFileNameDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     const {
         value: fileName,
         index,
-    } = dispatch.payload as {
+    } = parsedResult.safeUnwrap().data?.payload as {
         value: string;
         index: number;
     };
@@ -109,9 +139,18 @@ function accessibleImageInputReducer_setCurrentImageIndex(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setCurrentImageIndexDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        currentImageIndex: dispatch.payload as number,
+        currentImageIndex: parsedResult.safeUnwrap().data?.payload as number,
     };
 }
 
@@ -119,7 +158,16 @@ function accessibleImageInputReducer_removeImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const index = dispatch.payload as number;
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: removeImageFileBlobDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    const index = parsedResult.safeUnwrap().data?.payload as number;
 
     const imageFileBlobs = structuredClone(state.imageFileBlobs).filter(
         (_: ModifiedFile, i: number) => i !== index,
@@ -147,7 +195,16 @@ function accessibleImageInputReducer_resetImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const { index, value } = dispatch.payload as {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: resetImageFileBlobDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    const { index, value } = parsedResult.safeUnwrap().data?.payload as {
         index: number;
         value: OriginalFile;
     };
@@ -189,9 +246,18 @@ function accessibleImageInputReducer_setIsLoading(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setIsLoadingImageDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        isLoading: dispatch.payload as boolean,
+        isLoading: parsedResult.safeUnwrap().data?.payload as boolean,
     };
 }
 
@@ -199,9 +265,18 @@ function accessibleImageInputReducer_setIsModalOpen(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setIsModalOpenImageDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     return {
         ...state,
-        isModalOpen: dispatch.payload as boolean,
+        isModalOpen: parsedResult.safeUnwrap().data?.payload as boolean,
     };
 }
 
@@ -209,6 +284,15 @@ function accessibleImageInputReducer_setQuality(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setQualityImageDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     const { index, value } = dispatch.payload as DynamicSliderInputPayload;
     const qualities = structuredClone(state.qualities);
     qualities[index] = value;
@@ -224,6 +308,15 @@ function accessibleImageInputReducer_setOrientation(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setOrientationImageDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
     const { index, value } = dispatch.payload as DynamicSliderInputPayload;
     const orientations = state.orientations.slice();
     orientations[index] = value;
@@ -235,4 +328,16 @@ function accessibleImageInputReducer_setOrientation(
     };
 }
 
-export { accessibleImageInputReducer };
+export {
+    accessibleImageInputReducer,
+    accessibleImageInputReducer_addFileName,
+    accessibleImageInputReducer_addImageFileBlob,
+    accessibleImageInputReducer_removeImageFileBlob,
+    accessibleImageInputReducer_resetImageFileBlob,
+    accessibleImageInputReducer_setCurrentImageIndex,
+    accessibleImageInputReducer_setImageFileBlob,
+    accessibleImageInputReducer_setIsLoading,
+    accessibleImageInputReducer_setIsModalOpen,
+    accessibleImageInputReducer_setOrientation,
+    accessibleImageInputReducer_setQuality,
+};

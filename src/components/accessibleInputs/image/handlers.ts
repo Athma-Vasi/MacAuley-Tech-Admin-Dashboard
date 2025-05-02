@@ -430,12 +430,8 @@ async function handleImageQualityOrientationSliderChange<
         }
         const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
         const updatedModifiedFiles = modifiedFiles.map(
-            (modifiedFile, index) => {
-                if (index === currentImageIndex) {
-                    return fileBlob;
-                }
-                return modifiedFile;
-            },
+            (modifiedFile, index) =>
+                index === currentImageIndex ? fileBlob : modifiedFile,
         );
 
         await setForageItemSafe(

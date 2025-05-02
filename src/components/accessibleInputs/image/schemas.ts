@@ -8,13 +8,7 @@ const setIsModalOpenImageDispatchZod = z.object({
 
 const addImageFileBlobDispatchZod = z.object({
     action: z.literal(accessibleImageInputAction.addImageFileBlob),
-    payload: z.object({
-        name: z.string(),
-        size: z.number(),
-        type: z.union([z.instanceof(Blob), z.instanceof(File)]),
-        lastModified: z.number(),
-        lastModifiedDate: z.date(),
-    }),
+    payload: z.union([z.instanceof(Blob), z.instanceof(File)]).optional(),
 });
 
 const removeImageFileBlobDispatchZod = z.object({
@@ -32,7 +26,7 @@ const addImageFileNameDispatchZod = z.object({
 
 const setCurrentImageIndexDispatchZod = z.object({
     action: z.literal(accessibleImageInputAction.setCurrentImageIndex),
-    payload: z.number(),
+    payload: z.number().min(0),
 });
 
 const resetImageFileBlobDispatchZod = z.object({
