@@ -1,9 +1,11 @@
+import { Orientation } from "react-d3-tree";
 import { Department, StoreLocation, UserDocument } from "../../types";
 import { DirectoryAction } from "./actions";
 
 type DirectoryState = {
   department: DepartmentsWithDefaultKey;
   directory: UserDocument[];
+  orientation: Orientation;
   storeLocation: StoreLocationsWithDefaultKey;
 };
 
@@ -19,6 +21,10 @@ type DirectoryDispatch =
   | {
     action: DirectoryAction["setDirectory"];
     payload: UserDocument[];
+  }
+  | {
+    action: DirectoryAction["setOrientation"];
+    payload: Orientation;
   }
   | {
     action: DirectoryAction["setStoreLocation"];

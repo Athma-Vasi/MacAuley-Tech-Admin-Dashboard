@@ -16,7 +16,7 @@ import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput
 import { AllStoreLocations } from "../dashboard/types";
 import { handleDirectoryClicks } from "../sidebar/handlers";
 import { directoryAction } from "./actions";
-import { ALL_DEPARTMENTS_DATA } from "./constants";
+import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
 import { directoryReducer } from "./reducers";
@@ -35,6 +35,7 @@ function Directory() {
   const {
     directory,
     department,
+    orientation,
     storeLocation,
   } = directoryState;
   const { showBoundary } = useErrorBoundary();
@@ -149,6 +150,18 @@ function Directory() {
     />
   );
 
+  const orientationSelectInput = (
+    <AccessibleSelectInput
+      attributes={{
+        data: ORIENTATIONS_DATA,
+        name: "orientation",
+        value: directoryState.orientation,
+        parentDispatch: directoryDispatch,
+        validValueAction: directoryAction.setOrientation,
+      }}
+    />
+  );
+
   // const filteredEmployees = filterEmployees({
   //   department: directoryDepartment,
   //   directory,
@@ -159,7 +172,12 @@ function Directory() {
   // console.log("filteredEmployees", filteredEmployees);
 
   const d3Tree = directory.length > 0
-    ? <D3Tree data={buildD3Tree(directory, themeColorShade)} />
+    ? (
+      <D3Tree
+        data={buildD3Tree(directory, themeColorShade)}
+        orientation={orientation}
+      />
+    )
     : null;
 
   return (
@@ -167,6 +185,9 @@ function Directory() {
       <Group w="100%" position="center" py="md" align="baseline">
         {departmentSelectInput}
         {storeLocationSelectInput}
+        {orientationSelectInput}
+      </Group>
+      <Group w="100%" position="center" py="md" align="baseline">
       </Group>
       <Box>{d3Tree}</Box>
     </Stack>

@@ -5,6 +5,7 @@ import {
     Image,
     LoadingOverlay,
     Modal,
+    Space,
     Stack,
     Text,
     Tooltip,
@@ -191,7 +192,7 @@ function AccessibleImageInput<
                         ? "Invalid image"
                         : fileNames[index] ?? "Image"}
                     key={index.toString()}
-                    maw={300}
+                    // maw={300}
                     src={URL.createObjectURL(fileBlob ?? new Blob([]))}
                     style={{ cursor: "pointer" }}
                     onClick={(
@@ -358,6 +359,7 @@ function AccessibleImageInput<
                         step: 1,
                         validValueAction: accessibleImageInputAction.setQuality,
                         value: qualities[index],
+                        width: "100%",
                     }}
                 />
             );
@@ -408,6 +410,7 @@ function AccessibleImageInput<
                         validValueAction:
                             accessibleImageInputAction.setOrientation,
                         value: orientations[index],
+                        width: "100%",
                     }}
                 />
             );
@@ -432,8 +435,11 @@ function AccessibleImageInput<
                     shadow="sm"
                     key={`${index}-${fileNames[index]}`}
                 >
-                    <Stack spacing="lg">
+                    <Card.Section>
                         {img}
+                    </Card.Section>
+                    <Space h="xs" />
+                    <Stack spacing="lg">
                         {isImageInvalid
                             ? invalidScreenreaderTextElement
                             : validScreenreaderTextElement}
@@ -501,10 +507,6 @@ function AccessibleImageInput<
                     withPlaceholder
                 />
                 <Stack w="100%" pl="xl">
-                    <Text color={textColor} size="md">
-                        {`Name: ${fileNames[currentImageIndex]}`}
-                    </Text>
-
                     <Text color={textColor} size="md">
                         {`Quality: ${qualities[currentImageIndex]} = ${
                             qualities[currentImageIndex] * 10

@@ -1,3 +1,4 @@
+import { Orientation } from "react-d3-tree";
 import { CheckboxRadioSelectData, Department } from "../../types";
 import { DepartmentsWithDefaultKey } from "./types";
 
@@ -23,4 +24,9 @@ const ALL_DEPARTMENTS_DATA: CheckboxRadioSelectData<DepartmentsWithDefaultKey> =
     ...DEPARTMENTS_DATA,
   ];
 
-export { ALL_DEPARTMENTS_DATA, DEPARTMENTS_DATA };
+const ORIENTATIONS_DATA: CheckboxRadioSelectData<Orientation> = [
+  { label: "Horizontal", value: "horizontal" },
+  { label: "Vertical", value: "vertical" },
+];
+
+export { ALL_DEPARTMENTS_DATA, DEPARTMENTS_DATA, ORIENTATIONS_DATA };

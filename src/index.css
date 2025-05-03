@@ -102,7 +102,7 @@
 }
 
 .directory-card {
-  width: clamp(250px, 100%, 375px);
+  width: clamp(250px, 100%, 425px);
   /* min-height: 300px; */
 }
 

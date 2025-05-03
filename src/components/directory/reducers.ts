@@ -1,3 +1,4 @@
+import { Orientation } from "react-d3-tree";
 import { UserDocument } from "../../types";
 import { directoryAction } from "./actions";
 import {
@@ -22,6 +23,7 @@ const directoryReducers = new Map<
 >([
   [directoryAction.setDepartment, directoryReducer_setDepartment],
   [directoryAction.setDirectory, directoryReducer_setDirectory],
+  [directoryAction.setOrientation, directoryReducer_setOrientation],
   [directoryAction.setStoreLocation, directoryReducer_setStoreLocation],
 ]);
 
@@ -42,6 +44,16 @@ function directoryReducer_setDirectory(
   return {
     ...state,
     directory: dispatch.payload as UserDocument[],
+  };
+}
+
+function directoryReducer_setOrientation(
+  state: DirectoryState,
+  dispatch: DirectoryDispatch,
+): DirectoryState {
+  return {
+    ...state,
+    orientation: dispatch.payload as Orientation,
   };
 }
 

@@ -102,7 +102,7 @@ function AccessibleSliderInput<
     thumbSize,
     validValueAction,
     value,
-    width = "100%",
+    width,
   } = attributes;
 
   const {

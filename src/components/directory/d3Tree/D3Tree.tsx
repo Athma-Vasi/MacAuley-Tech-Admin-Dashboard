@@ -1,5 +1,9 @@
 import { Card, Flex, Group, Stack, Text } from "@mantine/core";
-import Tree, { type CustomNodeElementProps, type Point } from "react-d3-tree";
+import Tree, {
+  type CustomNodeElementProps,
+  Orientation,
+  type Point,
+} from "react-d3-tree";
 
 import { useCenteredTree } from "../../../hooks/userCenteredTree";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
@@ -8,6 +12,7 @@ import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import AccessibleImage from "../../accessibleInputs/AccessibleImage";
 import { GoldenGrid } from "../../goldenGrid";
 import type { D3TreeInput } from "./utils";
+import { useWindowSize } from "../../../hooks";
 
 function renderForeignObjectNode({
   nodeDatum,
@@ -65,7 +70,7 @@ function renderForeignObjectNode({
   // );
 
   const foreignChild = (
-    <Flex direction="column" rowGap={2} align="center">
+    <Flex direction="column" rowGap={2} align="center" justify="center">
       <Text size={24}>
         {nodeDatum.attributes.jobPosition}
       </Text>
@@ -91,10 +96,11 @@ function renderForeignObjectNode({
           <Flex h="100%" direction="column" align="start" justify="center">
             {profilePic}
           </Flex>
-          <Flex direction="column">
+
+          <Stack w="100%" align="flex-start" spacing={2}>
             <Text size={28} weight={600}>{firstName}</Text>
             <Text size={28} weight={600}>{lastName}</Text>
-          </Flex>
+          </Stack>
         </GoldenGrid>
 
         {foreignChild}
@@ -109,7 +115,7 @@ function renderForeignObjectNode({
   return (
     <g>
       <circle
-        r={15}
+        r={20}
         fill={nodeDatum.attributes.nodeColor ?? "gray"}
         opacity={nodeDatum.children.length ? 1 : 0.4}
         stroke="black"
@@ -121,10 +127,13 @@ function renderForeignObjectNode({
   );
 }
 
-function D3Tree({ data }: { data: Array<D3TreeInput> }) {
+function D3Tree(
+  { data, orientation }: { data: Array<D3TreeInput>; orientation: Orientation },
+) {
+  const { windowWidth } = useWindowSize();
   const [translate, containerRef] = useCenteredTree();
 
-  const nodeSize = { x: 500, y: 500 };
+  const nodeSize = { x: 600, y: 600 };
   const foreignObjectProps = {
     width: nodeSize.x,
     height: nodeSize.y,
@@ -132,7 +141,7 @@ function D3Tree({ data }: { data: Array<D3TreeInput> }) {
     y: 15,
   };
   const containerStyles = {
-    width: "calc(100vw - 225px)",
+    width: windowWidth < 1024 ? "100vw" : "calc(100vw - 225px)",
     height: "100vh",
   };
 
@@ -141,7 +150,7 @@ function D3Tree({ data }: { data: Array<D3TreeInput> }) {
       <Tree
         data={data}
         nodeSize={nodeSize}
-        orientation="vertical"
+        orientation={orientation}
         renderCustomNodeElement={(rd3tProps: CustomNodeElementProps) =>
           renderForeignObjectNode({ ...rd3tProps, foreignObjectProps })}
         translate={translate as Point}
