@@ -34,32 +34,35 @@ function StepperFormReview(
                 }, new Set()).has(true)
                 : stepsInError.has(sectionIdx);
 
-            const sectionTitle = sectionKey === "Files" && !isStepInError
-                ? null
-                : (
-                    <Text
-                        size={20}
-                        color={isStepInError ? redColorShade : textColor}
-                        key={`${sectionKey}-${sectionIdx}-title`}
-                    >
-                        {sectionKey}
-                    </Text>
-                );
+            const sectionTitle = (
+                <Text
+                    size={20}
+                    color={isStepInError ? redColorShade : textColor}
+                    key={`${sectionKey}-${sectionIdx}-title`}
+                >
+                    {sectionKey}
+                </Text>
+            );
 
             const stepInputsSection = (
                 <div className="step-inputs-container">
                     {Object.entries(section).map(
                         ([inputName, inputValue], inputIdx) => {
-                            const isInputInError = sectionKey !== "Files" &&
-                                inputsInError.has(
+                            const isInputInError = sectionKey !== "File"
+                                ? inputsInError.has(
                                     inputName as ValidationKey,
-                                );
-                            const isFileInError = sectionKey === "Files" &&
-                                filesInError.get(
-                                        inputValue?.toString() ?? "",
-                                    ) === true;
+                                )
+                                : sectionKey === "File" &&
+                                        inputName === "profilePictureUrl"
+                                ? inputsInError.has(
+                                    inputName as ValidationKey,
+                                )
+                                // sectionKey === "File"
+                                : filesInError.get(
+                                    inputValue?.toString() ?? "",
+                                ) === true;
 
-                            const isInputEmpty = sectionKey !== "Files" &&
+                            const isInputEmpty = sectionKey !== "File" &&
                                 (typeof inputValue === "string"
                                     ? inputValue.trim() === ""
                                     : inputValue === undefined);
@@ -69,7 +72,7 @@ function StepperFormReview(
                                     size={15}
                                     color={isInputEmpty
                                         ? grayColorShade
-                                        : isInputInError || isFileInError
+                                        : isInputInError
                                         ? redColorShade
                                         : textColor}
                                 >
@@ -79,7 +82,7 @@ function StepperFormReview(
                             const inputValueElem = (
                                 <Text
                                     size={15}
-                                    color={isInputInError || isFileInError
+                                    color={isInputInError
                                         ? redColorShade
                                         : textColor}
                                 >

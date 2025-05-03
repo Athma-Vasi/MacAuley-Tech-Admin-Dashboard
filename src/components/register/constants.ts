@@ -26,7 +26,6 @@ const STEPS_INPUTNAMES_MAP: Map<number, Array<ValidationKey>> = new Map([
     [
       "firstName",
       "lastName",
-      "profilePictureUrl",
     ],
   ],
   [
@@ -40,7 +39,7 @@ const STEPS_INPUTNAMES_MAP: Map<number, Array<ValidationKey>> = new Map([
   ],
   [
     3,
-    [],
+    ["profilePictureUrl"],
   ],
 ]);
 

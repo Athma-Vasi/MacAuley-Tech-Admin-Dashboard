@@ -32,7 +32,7 @@ import { RegisterPersonal } from "./RegisterPersonal";
 import { initialRegisterState } from "./state";
 import { StepperFormReview } from "./StepperFormReview";
 import {
-  createFilesSectionInFormReview,
+  createFileSectionInFormReview,
   returnRegisterStepperCard,
 } from "./utils";
 
@@ -288,7 +288,6 @@ function Register() {
     "Personal": {
       firstName,
       lastName,
-      profilePictureUrl,
       jobPosition,
       department,
       storeLocation,
@@ -308,7 +307,10 @@ function Register() {
         country,
         postalCodeUS,
       },
-    "Files": createFilesSectionInFormReview(filesInError),
+    "File": {
+      profilePictureUrl,
+      ...createFileSectionInFormReview(filesInError),
+    },
   };
 
   const reviewStep = (
@@ -320,6 +322,7 @@ function Register() {
     />
   );
 
+  console.log("register state", registerState);
   console.log("Register form data", Object.keys(Object.fromEntries(formData)));
 
   const profilePictureUrlTextInput = (
