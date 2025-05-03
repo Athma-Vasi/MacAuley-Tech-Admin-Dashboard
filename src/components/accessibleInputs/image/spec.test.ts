@@ -7,7 +7,7 @@ import {
   handleRemoveImageClick,
   handleResetImageClick,
 } from "./handlers";
-import { AccessibleImageInputDispatch } from "./types";
+import { AccessibleImageInputDispatch, SetFilesInErrorPayload } from "./types";
 
 const READY_RUN_TEST = true;
 
@@ -425,19 +425,23 @@ async function handleRemoveImageClickTestMock(): Promise<SafeBoxResult> {
       message: "png",
     });
   }) as any;
-  const parentDispatch = vi.fn() as React.Dispatch<{
-    action: string;
-    payload: FormData;
-  }>;
+  const parentDispatch = vi.fn() as React.Dispatch<
+    {
+      action: string;
+      payload: FormData;
+    } | { action: string; payload: SetFilesInErrorPayload }
+  >;
 
   const storageKey = "testStorageKey";
   const validValueAction = "testValidValueAction";
+  const invalidValueAction = "testInvalidValueAction";
 
   try {
     const handleClickResult = await handleRemoveImageClick({
       accessibleImageInputDispatch,
       getForageItemSafe,
       index,
+      invalidValueAction,
       isComponentMountedRef,
       parentDispatch,
       setForageItemSafe,
@@ -498,7 +502,7 @@ async function handleImageQualityOrientationSliderChangeTestMock(): Promise<
     }
     | {
       action: string;
-      payload: boolean;
+      payload: SetFilesInErrorPayload;
     }
   >;
   const qualities = [0, 1, 2];
@@ -510,12 +514,7 @@ async function handleImageQualityOrientationSliderChangeTestMock(): Promise<
   const getForageItemSafe = vi.fn(async () => {
     return createSafeBoxResult<Array<OriginalFile>>({
       kind: "success",
-      data: [
-        new File([sampleBlobs[0]], "sample.png", {
-          type: "image/png",
-          lastModified: Date.now(),
-        }),
-      ],
+      data: [sampleFiles[0]],
       message: "png",
     });
   }) as any;

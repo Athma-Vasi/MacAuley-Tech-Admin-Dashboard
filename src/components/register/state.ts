@@ -9,6 +9,7 @@ const initialRegisterState: RegisterState = {
   department: "Accounting",
   email: "",
   errorMessage: "",
+  filesInError: new Map(),
   firstName: "",
   formData: new FormData(),
   inputsInError: new Set(),

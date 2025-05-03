@@ -48,6 +48,7 @@ type RegisterState = {
   stepsWithEmptyInputs: Set<number>;
   inputsInError: Set<ValidationKey>;
   formData: FormData;
+  filesInError: Map<string, boolean>;
 };
 
 export type { RegisterAction, RegisterState };

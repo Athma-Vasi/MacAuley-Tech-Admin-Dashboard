@@ -5,6 +5,7 @@ import {
   Group,
   Loader,
   Space,
+  Stack,
   Text,
   Title,
 } from "@mantine/core";
@@ -18,7 +19,9 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { FormReview } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
+import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { AccessibleImageInput } from "../accessibleInputs/image";
+import { MAX_IMAGES } from "../accessibleInputs/image/constants";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
 import { handlePrevNextStepClick, handleRegisterButtonClick } from "./handlers";
@@ -28,8 +31,10 @@ import { RegisterAuthentication } from "./RegisterAuthentication";
 import { RegisterPersonal } from "./RegisterPersonal";
 import { initialRegisterState } from "./state";
 import { StepperFormReview } from "./StepperFormReview";
-import { returnRegisterStepperCard } from "./utils";
-import { MAX_IMAGES } from "../accessibleInputs/image/constants";
+import {
+  createFilesSectionInFormReview,
+  returnRegisterStepperCard,
+} from "./utils";
 
 function Register() {
   const [registerState, registerDispatch] = useReducer(
@@ -46,6 +51,7 @@ function Register() {
     department,
     email,
     errorMessage,
+    filesInError,
     firstName,
     formData,
     inputsInError,
@@ -154,7 +160,13 @@ function Register() {
 
   const isSubmitButtonDisabled = !username || !email || !password ||
     !confirmPassword || isUsernameExists || isEmailExists ||
-    isError || stepsInError.size > 0 || inputsInError.size > 0;
+    isError || stepsInError.size > 0 || inputsInError.size > 0 ||
+    Array.from(filesInError).reduce((acc, curr) => {
+      const [_fileName, isFileInError] = curr;
+      acc.add(isFileInError);
+
+      return acc;
+    }, new Set()).has(true);
 
   const submitButton = (
     <AccessibleButton
@@ -296,13 +308,12 @@ function Register() {
         country,
         postalCodeUS,
       },
-    "File": {
-      "Is File Valid": true,
-    },
+    "Files": createFilesSectionInFormReview(filesInError),
   };
 
   const reviewStep = (
     <StepperFormReview
+      filesInError={filesInError}
       formReview={registerFormReview}
       inputsInError={inputsInError}
       stepsInError={stepsInError}
@@ -311,20 +322,44 @@ function Register() {
 
   console.log("Register form data", Object.keys(Object.fromEntries(formData)));
 
-  const imageUpload = (
-    <Group w="100%" position="center">
+  const profilePictureUrlTextInput = (
+    <AccessibleTextInput
+      attributes={{
+        disabled: filesInError.size > 0,
+        invalidValueAction: registerAction.setIsError,
+        name: "profilePictureUrl",
+        parentDispatch: registerDispatch,
+        validValueAction: registerAction.setProfilePictureUrl,
+        value: profilePictureUrl,
+      }}
+    />
+  );
+
+  const isMaxFilesReached = Object.keys(Object.fromEntries(formData)).length ===
+    MAX_IMAGES;
+  const isProfilePictureUrlNotEmpty = profilePictureUrl.length > 0;
+
+  const filesSection = (
+    <Stack w="100%" align="center">
+      {profilePictureUrlTextInput}
+      <Text size="xl">or</Text>
       <AccessibleImageInput
         attributes={{
-          disabled:
-            Object.keys(Object.fromEntries(formData)).length === MAX_IMAGES,
-          invalidValueAction: registerAction.setIsError,
+          disabled: isMaxFilesReached ||
+            isProfilePictureUrlNotEmpty,
+          disabledScreenreaderText: isMaxFilesReached
+            ? "You have reached the maximum number of files"
+            : isProfilePictureUrlNotEmpty
+            ? "You have already provided a profile picture URL"
+            : "",
+          invalidValueAction: registerAction.setFilesInError,
           maxImagesAmount: 1,
           parentDispatch: registerDispatch,
           storageKey: "profilePicture",
           validValueAction: registerAction.setFormData,
         }}
       />
-    </Group>
+    </Stack>
   );
 
   const registerStep = activeStep === 0
@@ -352,8 +387,8 @@ function Register() {
         firstName={firstName}
         jobPosition={jobPosition}
         lastName={lastName}
-        parentAction={registerAction}
-        parentDispatch={registerDispatch}
+        registerAction={registerAction}
+        registerDispatch={registerDispatch}
         profilePictureUrl={profilePictureUrl}
         storeLocation={storeLocation}
       />
@@ -364,8 +399,8 @@ function Register() {
         addressLine={addressLine}
         city={city}
         country={country}
-        parentAction={registerAction}
-        parentDispatch={registerDispatch}
+        registerAction={registerAction}
+        registerDispatch={registerDispatch}
         postalCodeCanada={postalCodeCanada}
         postalCodeUS={postalCodeUS}
         province={province}
@@ -373,7 +408,7 @@ function Register() {
       />
     )
     : activeStep === 3
-    ? imageUpload
+    ? filesSection
     : reviewStep;
 
   const stepperCard = returnRegisterStepperCard({

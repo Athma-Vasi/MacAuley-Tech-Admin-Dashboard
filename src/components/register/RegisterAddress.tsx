@@ -18,8 +18,8 @@ type RegisterAddressProps = {
   addressLine: string;
   city: string;
   country: Country;
-  parentAction: RegisterAction;
-  parentDispatch: React.Dispatch<RegisterDispatch>;
+  registerAction: RegisterAction;
+  registerDispatch: React.Dispatch<RegisterDispatch>;
   postalCodeCanada: CanadianPostalCode;
   postalCodeUS: PostalCode;
   province: Province;
@@ -30,8 +30,8 @@ function RegisterAddress({
   addressLine,
   city,
   country,
-  parentAction,
-  parentDispatch,
+  registerAction,
+  registerDispatch,
   postalCodeCanada,
   postalCodeUS,
   province,
@@ -46,11 +46,11 @@ function RegisterAddress({
   const addressLineTextInput = (
     <AccessibleTextInput
       attributes={{
-        invalidValueAction: parentAction.setIsError,
+        invalidValueAction: registerAction.setIsError,
         name: "addressLine",
-        parentDispatch,
+        parentDispatch: registerDispatch,
         ref: addressLineInputRef,
-        validValueAction: parentAction.setAddressLine,
+        validValueAction: registerAction.setAddressLine,
         value: addressLine,
       }}
     />
@@ -59,10 +59,10 @@ function RegisterAddress({
   const cityTextInput = (
     <AccessibleTextInput
       attributes={{
-        invalidValueAction: parentAction.setIsError,
+        invalidValueAction: registerAction.setIsError,
         name: "city",
-        parentDispatch,
-        validValueAction: parentAction.setCity,
+        parentDispatch: registerDispatch,
+        validValueAction: registerAction.setCity,
         value: city,
       }}
     />
@@ -73,8 +73,8 @@ function RegisterAddress({
       attributes={{
         data: COUNTRIES,
         name: "country",
-        parentDispatch,
-        validValueAction: parentAction.setCountry,
+        parentDispatch: registerDispatch,
+        validValueAction: registerAction.setCountry,
         value: country,
       }}
     />
@@ -86,8 +86,8 @@ function RegisterAddress({
         attributes={{
           data: PROVINCES,
           name: "province",
-          parentDispatch,
-          validValueAction: parentAction.setProvince,
+          parentDispatch: registerDispatch,
+          validValueAction: registerAction.setProvince,
           value: province,
         }}
       />
@@ -97,8 +97,8 @@ function RegisterAddress({
         attributes={{
           data: STATES_US,
           name: "state",
-          parentDispatch,
-          validValueAction: parentAction.setState,
+          parentDispatch: registerDispatch,
+          validValueAction: registerAction.setState,
           value: state,
         }}
       />
@@ -108,10 +108,10 @@ function RegisterAddress({
     ? (
       <AccessibleTextInput
         attributes={{
-          invalidValueAction: parentAction.setIsError,
+          invalidValueAction: registerAction.setIsError,
           name: "postalCodeCanada",
-          parentDispatch: parentDispatch as any,
-          validValueAction: parentAction.setPostalCodeCanada,
+          parentDispatch: registerDispatch,
+          validValueAction: registerAction.setPostalCodeCanada,
           value: postalCodeCanada as CanadianPostalCode,
         }}
       />
@@ -119,10 +119,10 @@ function RegisterAddress({
     : (
       <AccessibleTextInput
         attributes={{
-          invalidValueAction: parentAction.setIsError,
+          invalidValueAction: registerAction.setIsError,
           name: "postalCodeUS",
-          parentDispatch,
-          validValueAction: parentAction.setPostalCodeUS,
+          parentDispatch: registerDispatch,
+          validValueAction: registerAction.setPostalCodeUS,
           value: postalCodeUS as PostalCode,
         }}
       />

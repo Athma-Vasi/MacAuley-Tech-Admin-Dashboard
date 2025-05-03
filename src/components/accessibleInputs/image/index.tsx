@@ -59,6 +59,7 @@ function AccessibleImageInput<
 ) {
     const {
         disabled,
+        disabledScreenreaderText,
         invalidValueAction,
         maxImageSize = MAX_IMAGE_SIZE,
         maxImagesAmount = MAX_IMAGES,
@@ -128,8 +129,8 @@ function AccessibleImageInput<
             attributes={{
                 addFileNameAction: accessibleImageInputAction.addFileName,
                 disabled,
-                label: disabled ? "Maximum number of images reached" : void 0,
-                name: "images",
+                label: disabled ? disabledScreenreaderText : void 0,
+                name: "image",
                 parentDispatch: accessibleImageInputDispatch,
                 storageKey,
                 validValueAction: accessibleImageInputAction.addImageFileBlob,
@@ -214,8 +215,8 @@ function AccessibleImageInput<
                 <GoldenGrid>
                     <Text color={textColor}>Name:</Text>
 
-                    <Group spacing={0}>
-                        {fileNames[index]?.split("").map((char, charIndex) => {
+                    <Group spacing={4}>
+                        {fileNames[index]?.split(" ").map((char, charIndex) => {
                             return (
                                 <Text
                                     key={`${index}-${charIndex}`}
@@ -274,6 +275,7 @@ function AccessibleImageInput<
                             accessibleImageInputDispatch,
                             getForageItemSafe,
                             index,
+                            invalidValueAction,
                             isComponentMountedRef,
                             parentDispatch,
                             setForageItemSafe,
@@ -425,7 +427,6 @@ function AccessibleImageInput<
 
             return (
                 <Card
-                    w={325}
                     withBorder
                     radius="md"
                     shadow="sm"

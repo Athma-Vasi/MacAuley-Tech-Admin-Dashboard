@@ -1,19 +1,5 @@
 import { z } from "zod";
-import {
-    ADDRESS_LINE_REGEX,
-    ALL_STORE_LOCATIONS_REGEX,
-    CITY_REGEX,
-    COUNTRY_REGEX,
-    DEPARTMENT_REGEX,
-    FULL_NAME_REGEX,
-    JOB_POSITION_REGEX,
-    PASSWORD_REGEX,
-    POSTAL_CODE_CANADA_REGEX,
-    POSTAL_CODE_US_REGEX,
-    PROVINCE_REGEX,
-    STATES_US_REGEX,
-    URL_REGEX,
-} from "../../regexes";
+import { PASSWORD_REGEX } from "../../regexes";
 import { registerAction } from "./actions";
 
 const setConfirmPasswordDispatchZod = z.object({
@@ -22,7 +8,7 @@ const setConfirmPasswordDispatchZod = z.object({
 });
 const setEmailDispatchZod = z.object({
     action: z.literal(registerAction.setEmail),
-    payload: z.string().email(),
+    payload: z.string(),
 });
 const setIsEmailExistsDispatchZod = z.object({
     action: z.literal(registerAction.setIsEmailExists),
@@ -42,7 +28,7 @@ const setIsUsernameExistsSubmittingDispatchZod = z.object({
 });
 const setPasswordDispatchZod = z.object({
     action: z.literal(registerAction.setPassword),
-    payload: z.string().regex(PASSWORD_REGEX),
+    payload: z.string(),
 });
 const setUsernameDispatchZod = z.object({
     action: z.literal(registerAction.setUsername),
@@ -50,55 +36,55 @@ const setUsernameDispatchZod = z.object({
 });
 const setAddressLineDispatchZod = z.object({
     action: z.literal(registerAction.setAddressLine),
-    payload: z.string().regex(ADDRESS_LINE_REGEX),
+    payload: z.string(),
 });
 const setCityDispatchZod = z.object({
     action: z.literal(registerAction.setCity),
-    payload: z.string().regex(CITY_REGEX),
+    payload: z.string(),
 });
 const setCountryDispatchZod = z.object({
     action: z.literal(registerAction.setCountry),
-    payload: z.string().regex(COUNTRY_REGEX),
+    payload: z.string(),
 });
 const setPostalCodeCanadaDispatchZod = z.object({
     action: z.literal(registerAction.setPostalCodeCanada),
-    payload: z.string().regex(POSTAL_CODE_CANADA_REGEX),
+    payload: z.string(),
 });
 const setPostalCodeUSDispatchZod = z.object({
     action: z.literal(registerAction.setPostalCodeUS),
-    payload: z.string().regex(POSTAL_CODE_US_REGEX),
+    payload: z.string(),
 });
 const setProvinceDispatchZod = z.object({
     action: z.literal(registerAction.setProvince),
-    payload: z.string().regex(PROVINCE_REGEX),
+    payload: z.string(),
 });
 const setStateDispatchZod = z.object({
     action: z.literal(registerAction.setState),
-    payload: z.string().regex(STATES_US_REGEX),
+    payload: z.string(),
 });
 const setDepartmentDispatchZod = z.object({
     action: z.literal(registerAction.setDepartment),
-    payload: z.string().regex(DEPARTMENT_REGEX),
+    payload: z.string(),
 });
 const setFirstNameDispatchZod = z.object({
     action: z.literal(registerAction.setFirstName),
-    payload: z.string().regex(FULL_NAME_REGEX),
+    payload: z.string(),
 });
 const setJobPositionDispatchZod = z.object({
     action: z.literal(registerAction.setJobPosition),
-    payload: z.string().regex(JOB_POSITION_REGEX),
+    payload: z.string(),
 });
 const setLastNameDispatchZod = z.object({
     action: z.literal(registerAction.setLastName),
-    payload: z.string().regex(FULL_NAME_REGEX),
+    payload: z.string(),
 });
 const setProfilePictureUrlDispatchZod = z.object({
     action: z.literal(registerAction.setProfilePictureUrl),
-    payload: z.string().regex(URL_REGEX),
+    payload: z.string(),
 });
 const setStoreLocationDispatchZod = z.object({
     action: z.literal(registerAction.setStoreLocation),
-    payload: z.string().regex(ALL_STORE_LOCATIONS_REGEX),
+    payload: z.string(),
 });
 const setErrorMessageDispatchZod = z.object({
     action: z.literal(registerAction.setErrorMessage),
@@ -144,6 +130,16 @@ const setFormDataDispatchZod = z.object({
     payload: z.any(),
 });
 
+const setFilesInErrorRegisterDispatchZod = z.object({
+    action: z.literal(registerAction.setFilesInError),
+    payload: z.object(
+        {
+            kind: z.enum(["isError", "notError", "remove"]),
+            name: z.string(),
+        },
+    ),
+});
+
 type RegisterDispatch =
     | z.infer<typeof setConfirmPasswordDispatchZod>
     | z.infer<typeof setEmailDispatchZod>
@@ -174,7 +170,8 @@ type RegisterDispatch =
     | z.infer<typeof setStepsInErrorDispatchZod>
     | z.infer<typeof setStepsWithEmptyInputsDispatchZod>
     | z.infer<typeof setInputsInErrorDispatchZod>
-    | z.infer<typeof setFormDataDispatchZod>;
+    | z.infer<typeof setFormDataDispatchZod>
+    | z.infer<typeof setFilesInErrorRegisterDispatchZod>;
 
 export {
     setActiveStepDispatchZod,
@@ -185,6 +182,7 @@ export {
     setDepartmentDispatchZod,
     setEmailDispatchZod,
     setErrorMessageDispatchZod,
+    setFilesInErrorRegisterDispatchZod,
     setFirstNameDispatchZod,
     setFormDataDispatchZod,
     setInputsInErrorDispatchZod,

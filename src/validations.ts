@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { type ValidationFunctionsTable } from "./types";
 
 type ValidationKey =
@@ -30,6 +29,7 @@ type ValidationKey =
   | "firstName"
   | "frequencyResponse"
   | "fullName"
+  | "image"
   | "inclusion"
   | "jobPosition"
   | "largeInteger"
@@ -298,6 +298,8 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
     ],
     [/^.{2,75}$/, "Must be between 2 and 75 characters length."],
   ],
+
+  image: [],
 
   inclusion: [
     [

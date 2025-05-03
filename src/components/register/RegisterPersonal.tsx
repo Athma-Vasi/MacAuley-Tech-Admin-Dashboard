@@ -18,8 +18,8 @@ type RegisterPersonalProps = {
     firstName: string;
     jobPosition: JobPosition;
     lastName: string;
-    parentAction: RegisterAction;
-    parentDispatch: React.Dispatch<RegisterDispatch>;
+    registerAction: RegisterAction;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
     profilePictureUrl: string;
     storeLocation: AllStoreLocations;
 };
@@ -29,8 +29,8 @@ function RegisterPersonal({
     firstName,
     jobPosition,
     lastName,
-    parentAction,
-    parentDispatch,
+    registerAction,
+    registerDispatch,
     profilePictureUrl,
     storeLocation,
 }: RegisterPersonalProps) {
@@ -43,11 +43,11 @@ function RegisterPersonal({
     const firstNameTextInput = (
         <AccessibleTextInput
             attributes={{
-                invalidValueAction: parentAction.setIsError,
+                invalidValueAction: registerAction.setIsError,
                 name: "firstName",
-                parentDispatch,
+                parentDispatch: registerDispatch,
                 ref: firstNameInputRef,
-                validValueAction: parentAction.setFirstName,
+                validValueAction: registerAction.setFirstName,
                 value: firstName,
             }}
         />
@@ -56,34 +56,34 @@ function RegisterPersonal({
     const lastNameTextInput = (
         <AccessibleTextInput
             attributes={{
-                invalidValueAction: parentAction.setIsError,
+                invalidValueAction: registerAction.setIsError,
                 name: "lastName",
-                parentDispatch,
-                validValueAction: parentAction.setLastName,
+                parentDispatch: registerDispatch,
+                validValueAction: registerAction.setLastName,
                 value: lastName,
             }}
         />
     );
 
-    const profilePictureUrlTextInput = (
-        <AccessibleTextInput
-            attributes={{
-                invalidValueAction: parentAction.setIsError,
-                name: "profilePictureUrl",
-                parentDispatch,
-                validValueAction: parentAction.setProfilePictureUrl,
-                value: profilePictureUrl,
-            }}
-        />
-    );
+    // const profilePictureUrlTextInput = (
+    //     <AccessibleTextInput
+    //         attributes={{
+    //             invalidValueAction: registerAction.setIsError,
+    //             name: "profilePictureUrl",
+    //             parentDispatch: registerDispatch,
+    //             validValueAction: registerAction.setProfilePictureUrl,
+    //             value: profilePictureUrl,
+    //         }}
+    //     />
+    // );
 
     const jobPositionSelectInput = (
         <AccessibleSelectInput
             attributes={{
                 data: JOB_POSITIONS_DATA,
                 name: "jobPosition",
-                parentDispatch,
-                validValueAction: parentAction.setJobPosition,
+                parentDispatch: registerDispatch,
+                validValueAction: registerAction.setJobPosition,
                 value: jobPosition,
             }}
         />
@@ -94,8 +94,8 @@ function RegisterPersonal({
             attributes={{
                 data: DEPARTMENTS_DATA,
                 name: "department",
-                parentDispatch,
-                validValueAction: parentAction.setDepartment,
+                parentDispatch: registerDispatch,
+                validValueAction: registerAction.setDepartment,
                 value: department,
             }}
         />
@@ -106,8 +106,8 @@ function RegisterPersonal({
             attributes={{
                 data: ALL_STORE_LOCATIONS_DATA,
                 name: "storeLocation",
-                parentDispatch,
-                validValueAction: parentAction.setStoreLocation,
+                parentDispatch: registerDispatch,
+                validValueAction: registerAction.setStoreLocation,
                 value: storeLocation,
             }}
         />
@@ -118,7 +118,7 @@ function RegisterPersonal({
             <Text size={24}>Personal</Text>
             {firstNameTextInput}
             {lastNameTextInput}
-            {profilePictureUrlTextInput}
+            {/* {profilePictureUrlTextInput} */}
             {jobPositionSelectInput}
             {departmentSelectInput}
             {storeLocationSelectInput}

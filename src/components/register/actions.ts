@@ -7,6 +7,7 @@ type RegisterAction = {
   setDepartment: "setDepartment";
   setEmail: "setEmail";
   setErrorMessage: "setErrorMessage";
+  setFilesInError: "setFilesInError";
   setFirstName: "setFirstName";
   setFormData: "setFormData";
   setInputsInError: "setInputsInError";
@@ -40,6 +41,7 @@ const registerAction: RegisterAction = {
   setDepartment: "setDepartment",
   setEmail: "setEmail",
   setErrorMessage: "setErrorMessage",
+  setFilesInError: "setFilesInError",
   setFirstName: "setFirstName",
   setFormData: "setFormData",
   setInputsInError: "setInputsInError", // This is the new action

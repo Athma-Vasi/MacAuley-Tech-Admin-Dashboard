@@ -2,42 +2,74 @@ import { SafeBoxResult } from "../../../types";
 import { createSafeBoxResult, getForageItemSafe } from "../../../utils";
 import { ModifiedFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
-import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
-import { AccessibleImageInputDispatch } from "./types";
+import {
+    ALLOWED_FILE_EXTENSIONS_REGEX,
+    ALLOWED_FILE_TYPES_REGEX,
+    MAX_IMAGES,
+} from "./constants";
+import { AccessibleImageInputDispatch, SetFilesInErrorPayload } from "./types";
 
 function validateImages({
     allowedFileExtensionsRegex,
     imageFileBlobs,
     maxImageSize,
-    maxImagesAmount = 1,
+    maxImagesAmount = MAX_IMAGES,
 }: {
     allowedFileExtensionsRegex: RegExp;
     imageFileBlobs: Array<ModifiedFile>;
     maxImageSize: number;
     maxImagesAmount: number;
 }) {
-    const areImagesInvalid = imageFileBlobs.length > maxImagesAmount ||
-        imageFileBlobs.reduce((invalidAcc, fileBlob) => {
+    const areImagesInvalid = imageFileBlobs.reduce<Array<boolean>>(
+        (invalidAcc, fileBlob, idx) => {
             if (fileBlob === null) {
-                return true;
+                invalidAcc[idx] = true;
+                return invalidAcc;
             }
 
             const { size, type } = fileBlob;
             if (size > maxImageSize) {
-                return true;
+                invalidAcc[idx] = true;
+                return invalidAcc;
             }
 
             if (!type.length) {
-                return true;
+                invalidAcc[idx] = true;
+                return invalidAcc;
             }
 
             const extension = type.split("/")[1];
             if (!allowedFileExtensionsRegex.test(extension)) {
-                return true;
+                invalidAcc[idx] = true;
+                return invalidAcc;
             }
 
             return invalidAcc;
-        }, false);
+        },
+        Array.from({ length: imageFileBlobs.length }, () => false),
+    );
+    // const areImagesInvalid = imageFileBlobs.length > maxImagesAmount ||
+    //     imageFileBlobs.reduce((invalidAcc, fileBlob) => {
+    //         if (fileBlob === null) {
+    //             return true;
+    //         }
+
+    //         const { size, type } = fileBlob;
+    //         if (size > maxImageSize) {
+    //             return true;
+    //         }
+
+    //         if (!type.length) {
+    //             return true;
+    //         }
+
+    //         const extension = type.split("/")[1];
+    //         if (!allowedFileExtensionsRegex.test(extension)) {
+    //             return true;
+    //         }
+
+    //         return invalidAcc;
+    //     }, false);
 
     return { areImagesInvalid };
 }
@@ -235,7 +267,7 @@ function checkImageFileBlobs<
             }
             | {
                 action: InvalidValueAction;
-                payload: boolean;
+                payload: SetFilesInErrorPayload;
             }
         >;
         storageKey: string;
@@ -254,7 +286,7 @@ function checkImageFileBlobs<
         storageKey,
     );
 
-    imageFileBlobs.forEach((imageFileBlob) => {
+    imageFileBlobs.forEach((imageFileBlob, idx) => {
         if (imageFileBlob !== null) {
             const { size, type } = imageFileBlob;
 
@@ -268,7 +300,10 @@ function checkImageFileBlobs<
 
             parentDispatch?.({
                 action: invalidValueAction,
-                payload: isImageInvalid,
+                payload: {
+                    kind: isImageInvalid ? "isError" : "notError",
+                    name: fileNames[idx],
+                },
             });
         }
     });

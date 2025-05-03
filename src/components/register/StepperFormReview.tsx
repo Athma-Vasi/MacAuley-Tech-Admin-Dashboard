@@ -6,13 +6,15 @@ import { returnThemeColors, splitCamelCase } from "../../utils";
 import { ValidationKey } from "../../validations";
 
 type StepperFormReviewProps = {
+    filesInError: Map<string, boolean>;
     formReview: FormReview;
     inputsInError: Set<ValidationKey>;
     stepsInError: Set<number>;
 };
 
 function StepperFormReview(
-    { formReview, inputsInError, stepsInError }: StepperFormReviewProps,
+    { filesInError, formReview, inputsInError, stepsInError }:
+        StepperFormReviewProps,
 ) {
     const { globalState: { themeObject } } = useGlobalState();
 
@@ -23,35 +25,51 @@ function StepperFormReview(
 
     const formReviewElem = Object.entries(formReview).map(
         ([sectionKey, section], sectionIdx) => {
-            const isStepInError = stepsInError.has(sectionIdx);
+            const isStepInError = sectionKey === "Files"
+                ? Array.from(filesInError).reduce((acc, curr) => {
+                    const [_fileName, isFileInError] = curr;
+                    acc.add(isFileInError);
 
-            const sectionTitle = (
-                <Text
-                    size={20}
-                    color={isStepInError ? redColorShade : textColor}
-                    key={`${sectionKey}-${sectionIdx}-title`}
-                >
-                    {sectionKey}
-                </Text>
-            );
+                    return acc;
+                }, new Set()).has(true)
+                : stepsInError.has(sectionIdx);
+
+            const sectionTitle = sectionKey === "Files" && !isStepInError
+                ? null
+                : (
+                    <Text
+                        size={20}
+                        color={isStepInError ? redColorShade : textColor}
+                        key={`${sectionKey}-${sectionIdx}-title`}
+                    >
+                        {sectionKey}
+                    </Text>
+                );
 
             const stepInputsSection = (
                 <div className="step-inputs-container">
                     {Object.entries(section).map(
                         ([inputName, inputValue], inputIdx) => {
-                            const isInputInError = inputsInError.has(
-                                inputName as ValidationKey,
-                            );
-                            const isInputEmpty = typeof inputValue === "string"
-                                ? inputValue.trim() === ""
-                                : inputValue === undefined;
+                            const isInputInError = sectionKey !== "Files" &&
+                                inputsInError.has(
+                                    inputName as ValidationKey,
+                                );
+                            const isFileInError = sectionKey === "Files" &&
+                                filesInError.get(
+                                        inputValue?.toString() ?? "",
+                                    ) === true;
+
+                            const isInputEmpty = sectionKey !== "Files" &&
+                                (typeof inputValue === "string"
+                                    ? inputValue.trim() === ""
+                                    : inputValue === undefined);
 
                             const inputNameElem = (
                                 <Text
                                     size={15}
                                     color={isInputEmpty
                                         ? grayColorShade
-                                        : isInputInError
+                                        : isInputInError || isFileInError
                                         ? redColorShade
                                         : textColor}
                                 >
@@ -61,7 +79,7 @@ function StepperFormReview(
                             const inputValueElem = (
                                 <Text
                                     size={15}
-                                    color={isInputInError
+                                    color={isInputInError || isFileInError
                                         ? redColorShade
                                         : textColor}
                                 >

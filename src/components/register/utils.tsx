@@ -127,4 +127,16 @@ function returnRegisterStepperCard(
     );
 }
 
-export { returnRegisterStepperCard };
+function createFilesSectionInFormReview(filesInError: Map<string, boolean>) {
+    return Array.from(filesInError).reduce((acc, fileInError, idx) => {
+        const [fileName, _isFileInError] = fileInError;
+        Object.defineProperty(acc, `File ${idx + 1}`, {
+            value: fileName,
+            enumerable: true,
+        });
+
+        return acc;
+    }, Object.create(null));
+}
+
+export { createFilesSectionInFormReview, returnRegisterStepperCard };

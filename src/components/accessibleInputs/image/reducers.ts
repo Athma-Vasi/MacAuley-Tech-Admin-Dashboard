@@ -11,6 +11,7 @@ import {
     removeImageFileBlobDispatchZod,
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,
+    setIsErrorsImageDispatchZod,
     setIsLoadingImageDispatchZod,
     setIsModalOpenImageDispatchZod,
     setOrientationImageDispatchZod,
@@ -59,6 +60,10 @@ const accessibleImageInputReducersMap = new Map<
     [
         accessibleImageInputAction.setImageFileBlob,
         accessibleImageInputReducer_setImageFileBlob,
+    ],
+    [
+        accessibleImageInputAction.setIsErrors,
+        accessibleImageInputReducer_setIsErrors,
     ],
     [
         accessibleImageInputAction.setIsLoading,
@@ -239,6 +244,32 @@ function accessibleImageInputReducer_setImageFileBlob(
     return {
         ...state,
         imageFileBlobs,
+    };
+}
+
+function accessibleImageInputReducer_setIsErrors(
+    state: AccessibleImageInputState,
+    dispatch: AccessibleImageInputDispatch,
+): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setIsErrorsImageDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    const { index, value } = parsedResult.safeUnwrap().data?.payload as {
+        index: number;
+        value: boolean;
+    };
+    const isErrors = structuredClone(state.isErrors);
+    isErrors[index] = value;
+
+    return {
+        ...state,
+        isErrors,
     };
 }
 

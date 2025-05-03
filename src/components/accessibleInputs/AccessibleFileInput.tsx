@@ -93,7 +93,6 @@ function AccessibleFileInput<
 
     return (
         <FileInput
-            className="accessible-input"
             aria-disabled={disabled}
             aria-label={splitCamelCase(name)}
             aria-required={required}

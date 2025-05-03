@@ -9,7 +9,7 @@ import {
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
-import { AccessibleImageInputDispatch } from "./types";
+import { AccessibleImageInputDispatch, SetFilesInErrorPayload } from "./types";
 import { createImageInputForageKeys, validateImages } from "./utils";
 
 async function handleResetImageClick(
@@ -88,11 +88,13 @@ async function handleResetImageClick(
 
 async function handleRemoveImageClick<
     ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
 >(
     {
         accessibleImageInputDispatch,
         getForageItemSafe,
         index,
+        invalidValueAction,
         isComponentMountedRef,
         parentDispatch,
         setForageItemSafe,
@@ -104,11 +106,18 @@ async function handleRemoveImageClick<
         >;
         getForageItemSafe: GetForageItemSafe;
         index: number;
+        invalidValueAction: InvalidValueAction;
         isComponentMountedRef: React.RefObject<boolean>;
-        parentDispatch?: React.Dispatch<{
-            action: ValidValueAction;
-            payload: FormData;
-        }>;
+        parentDispatch?: React.Dispatch<
+            | {
+                action: ValidValueAction;
+                payload: FormData;
+            }
+            | {
+                action: InvalidValueAction;
+                payload: SetFilesInErrorPayload;
+            }
+        >;
         setForageItemSafe: SetForageItemSafe;
         storageKey: string;
         validValueAction: ValidValueAction;
@@ -203,6 +212,7 @@ async function handleRemoveImageClick<
         }
 
         const fileNames = fileNamesResult.safeUnwrap().data ?? [];
+        const existingFileName = fileNames[index];
         fileNames?.splice(index, 1);
 
         await setForageItemSafe(
@@ -226,6 +236,13 @@ async function handleRemoveImageClick<
         parentDispatch?.({
             action: validValueAction,
             payload: new FormData(),
+        });
+        parentDispatch?.({
+            action: invalidValueAction,
+            payload: {
+                kind: "remove",
+                name: existingFileName,
+            },
         });
 
         return createSafeBoxResult({
@@ -292,7 +309,7 @@ async function handleImageQualityOrientationSliderChange<
             }
             | {
                 action: InvalidValueAction;
-                payload: boolean;
+                payload: SetFilesInErrorPayload;
             }
         >;
         qualities: number[];
@@ -455,10 +472,17 @@ async function handleImageQualityOrientationSliderChange<
             maxImageSize,
         });
 
-        parentDispatch?.({
-            action: invalidValueAction,
-            payload: areImagesInvalid,
-        });
+        areImagesInvalid.forEach(
+            (isImageInvalid, index) => {
+                parentDispatch?.({
+                    action: invalidValueAction,
+                    payload: {
+                        kind: isImageInvalid ? "isError" : "notError",
+                        name: fileNames[index],
+                    },
+                });
+            },
+        );
 
         const formData = updatedModifiedFiles.reduce<FormData>(
             (formDataAcc, modifiedFile, index) => {

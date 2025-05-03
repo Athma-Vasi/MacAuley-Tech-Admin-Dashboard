@@ -7,6 +7,7 @@ type AccessibleImageInputAttributes<
     InvalidValueAction extends string = string,
 > = {
     disabled?: boolean;
+    disabledScreenreaderText?: string;
     invalidValueAction: InvalidValueAction;
     maxImageSize?: number;
     maxImagesAmount?: number;
@@ -17,7 +18,7 @@ type AccessibleImageInputAttributes<
         }
         | {
             action: InvalidValueAction;
-            payload: boolean;
+            payload: SetFilesInErrorPayload;
         }
     >;
     /** unique id for local forage */
@@ -40,13 +41,26 @@ type AccessibleImageInputState = {
     /** blobs do not have name property */
     fileNames: string[];
     imageFileBlobs: Array<ModifiedFile>;
+    isErrors: boolean[];
     isLoading: boolean;
     isModalOpen: boolean;
     qualities: number[];
     orientations: number[];
 };
 
+type SetFilesInErrorPayload = {
+    kind: "isError" | "notError" | "remove";
+    name: string;
+};
+
 type AccessibleImageInputDispatch =
+    | {
+        action: AccessibleImageInputAction["setIsErrors"];
+        payload: {
+            index: number;
+            value: boolean;
+        };
+    }
     | {
         action: AccessibleImageInputAction["setIsModalOpen"];
         payload: boolean;
@@ -108,4 +122,5 @@ export type {
     AccessibleImageInputDispatch,
     AccessibleImageInputProps,
     AccessibleImageInputState,
+    SetFilesInErrorPayload,
 };

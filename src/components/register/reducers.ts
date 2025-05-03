@@ -11,6 +11,7 @@ import {
   setDepartmentDispatchZod,
   setEmailDispatchZod,
   setErrorMessageDispatchZod,
+  setFilesInErrorRegisterDispatchZod,
   setFirstNameDispatchZod,
   setFormDataDispatchZod,
   setInputsInErrorDispatchZod,
@@ -56,6 +57,7 @@ const registerReducers = new Map<
   [registerAction.setActiveStep, registerReducer_setActiveStep],
   [registerAction.setStepsInError, registerReducer_setStepsInError],
   [registerAction.setDepartment, registerReducer_setDepartment],
+  [registerAction.setFilesInError, registerReducer_setFilesInError],
   [registerAction.setFirstName, registerReducer_setFirstName],
   [registerAction.setFormData, registerReducer_setFormData],
   [registerAction.setJobPosition, registerReducer_setJobPosition],
@@ -193,6 +195,30 @@ function registerReducer_setDepartment(
   }
 
   return { ...state, department: parsedResult.safeUnwrap().data?.payload };
+}
+
+function registerReducer_setFilesInError(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setFilesInErrorRegisterDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  const { data: { payload: { kind, name } } } = parsedResult.safeUnwrap();
+  const filesInError = new Map(state.filesInError);
+  if (kind === "remove") {
+    filesInError.delete(name);
+  } else {
+    filesInError.set(name, kind === "isError");
+  }
+
+  return { ...state, filesInError };
 }
 
 function registerReducer_setFirstName(

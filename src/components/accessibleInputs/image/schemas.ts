@@ -66,6 +66,14 @@ const setOrientationImageDispatchZod = z.object({
     }),
 });
 
+const setIsErrorsImageDispatchZod = z.object({
+    action: z.literal(accessibleImageInputAction.setIsErrors),
+    payload: z.object({
+        index: z.number(),
+        value: z.boolean(),
+    }),
+});
+
 export {
     addImageFileBlobDispatchZod,
     addImageFileNameDispatchZod,
@@ -73,6 +81,7 @@ export {
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,
     setImageFileBlobDispatchZod,
+    setIsErrorsImageDispatchZod,
     setIsLoadingImageDispatchZod,
     setIsModalOpenImageDispatchZod,
     setOrientationImageDispatchZod,
