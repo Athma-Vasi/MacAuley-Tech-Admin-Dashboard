@@ -174,12 +174,10 @@ function AccessibleImageInput<
 
             const invalidScreenreaderTextElement = (
                 <GoldenGrid>
-                    <Group>
+                    <Group w="100%" position="right">
                         <TbExclamationCircle color={redColorShade} size={22} />
-                        <Text color={redColorShade} aria-live="polite">
-                            Oops!
-                        </Text>
                     </Group>
+
                     <Text color={redColorShade} aria-live="polite">
                         {invalidImageDescription}
                     </Text>
@@ -469,8 +467,6 @@ function AccessibleImageInput<
     );
 
     const loadingOverlay = <LoadingOverlay visible={isLoading} />;
-
-    console.log("AccessibleImageInputState", accessibleImageInputState);
 
     const modifiedImagePreviewModal = (
         <Modal

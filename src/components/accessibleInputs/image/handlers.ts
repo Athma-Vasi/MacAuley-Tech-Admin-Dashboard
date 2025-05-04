@@ -340,7 +340,6 @@ async function handleImageQualityOrientationSliderChange<
         const originalFilesResult = await getForageItemSafe<
             Array<OriginalFile>
         >(originalFilesForageKey);
-        console.log("isComponentMounted", isComponentMounted);
         if (!isComponentMounted) {
             return createSafeBoxResult({
                 message: "Component is not mounted",
@@ -376,38 +375,11 @@ async function handleImageQualityOrientationSliderChange<
         const orientation = orientationValue ?? orientations[currentImageIndex];
         const type = imageToModify?.type as EImageType;
 
-        console.log(
-            "handleImageQualityOrientationSliderChange",
-            {
-                currentImageIndex,
-                fileNames,
-                imageFileBlobs,
-                maxImageSize,
-                maxImagesAmount,
-                modifiedFilesForageKey,
-                orientationValue,
-                orientations,
-                orientationsForageKey,
-                originalFiles,
-                originalFilesForageKey,
-                qualities,
-                qualitiesForageKey,
-                qualityValue,
-                quality,
-                orientation,
-                type,
-            },
-        );
-
         const modifyImageResult = await modifyImageSafe(imageToModify, {
             quality,
             orientation,
             type,
         });
-        console.log(
-            "handleImageQualityOrientationSliderChange modifyImageResult",
-            modifyImageResult,
-        );
         if (!isComponentMounted) {
             return createSafeBoxResult({
                 message: "Component is not mounted",

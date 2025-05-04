@@ -83,10 +83,12 @@ function usersQueryReducer_setArrangeByDirection(
     const cloned = structuredClone(resourceData);
 
     const sorted = cloned.sort((a, b) => {
+        const aValue = a[arrangeByField] ?? "";
+        const bValue = b[arrangeByField] ?? "";
         if (arrangeByDirection === "ascending") {
-            return a[arrangeByField] > b[arrangeByField] ? 1 : -1;
+            return aValue > bValue ? 1 : -1;
         }
-        return a[arrangeByField] < b[arrangeByField] ? 1 : -1;
+        return aValue < bValue ? 1 : -1;
     });
 
     return { ...state, arrangeByDirection, resourceData: sorted };
@@ -107,14 +109,16 @@ function usersQueryReducer_setArrangeByField(
 
     const { arrangeByDirection, resourceData } = state;
     const arrangeByField = parsedResult.safeUnwrap().data
-        .payload as keyof UserDocument;
+        .payload as keyof Omit<UserDocument, "password">;
     const cloned = structuredClone(resourceData);
 
     const sorted = cloned.sort((a, b) => {
+        const aValue = a[arrangeByField] ?? "";
+        const bValue = b[arrangeByField] ?? "";
         if (arrangeByDirection === "ascending") {
-            return a[arrangeByField] > b[arrangeByField] ? 1 : -1;
+            return aValue > bValue ? 1 : -1;
         }
-        return a[arrangeByField] < b[arrangeByField] ? 1 : -1;
+        return aValue < bValue ? 1 : -1;
     });
 
     return { ...state, arrangeByField, resourceData: sorted };

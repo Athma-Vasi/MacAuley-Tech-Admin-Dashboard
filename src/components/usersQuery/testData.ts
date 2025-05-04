@@ -1,3 +1,5 @@
+import { UserDocument } from "../../types";
+
 const USER_DOCUMENT_SAMPLE = {
     "_id": "6801a9426f9c9056d944398e",
     "username": "manager",
@@ -7,6 +9,7 @@ const USER_DOCUMENT_SAMPLE = {
     "country": "Canada",
     "postalCodeCanada": "Q7A 5E3",
     "postalCodeUS": "00000",
+    "fileUploadId": "1234567890abcdef",
     "province": "British Columbia",
     "state": "Not Applicable",
     "department": "Information Technology",
@@ -24,6 +27,6 @@ const USER_DOCUMENT_SAMPLE = {
     "createdAt": "2025-04-18T01:22:10.726Z",
     "updatedAt": "2025-04-18T01:22:10.726Z",
     "__v": 0,
-};
+} as Omit<UserDocument, "password">;
 
 export { USER_DOCUMENT_SAMPLE };

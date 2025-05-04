@@ -1,4 +1,4 @@
-const MAX_IMAGE_SIZE = 3_000_000; // 3 MB
+const MAX_IMAGE_SIZE = 1_000_000; // 1 MB
 const MAX_IMAGES = 1;
 
 const IMG_QUALITY_SLIDER_DATA = [

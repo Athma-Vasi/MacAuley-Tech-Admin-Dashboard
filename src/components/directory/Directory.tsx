@@ -162,15 +162,6 @@ function Directory() {
     />
   );
 
-  // const filteredEmployees = filterEmployees({
-  //   department: directoryDepartment,
-  //   directory,
-  //   isStoreLocationDisabled,
-  //   storeLocation: directoryStoreLocation,
-  // });
-
-  // console.log("filteredEmployees", filteredEmployees);
-
   const d3Tree = directory.length > 0
     ? (
       <D3Tree

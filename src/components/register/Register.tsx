@@ -16,14 +16,19 @@ import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { FormReview } from "../../types";
+import { FormReview, UserSchema } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { AccessibleImageInput } from "../accessibleInputs/image";
 import { MAX_IMAGES } from "../accessibleInputs/image/constants";
 import { registerAction } from "./actions";
-import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
+import {
+  MAX_REGISTER_STEPS,
+  REGISTER_STEPS,
+  REGISTER_URL,
+  SAMPLE_USER_SCHEMA,
+} from "./constants";
 import { handlePrevNextStepClick, handleRegisterButtonClick } from "./handlers";
 import { registerReducer } from "./reducers";
 import { RegisterAddress } from "./RegisterAddress";
@@ -158,15 +163,15 @@ function Register() {
     />
   );
 
-  const isSubmitButtonDisabled = !username || !email || !password ||
-    !confirmPassword || isUsernameExists || isEmailExists ||
-    isError || stepsInError.size > 0 || inputsInError.size > 0 ||
-    Array.from(filesInError).reduce((acc, curr) => {
-      const [_fileName, isFileInError] = curr;
-      acc.add(isFileInError);
+  // const isSubmitButtonDisabled = !username || !email || !password ||
+  //   !confirmPassword || isUsernameExists || isEmailExists ||
+  //   isError || stepsInError.size > 0 || inputsInError.size > 0 ||
+  //   Array.from(filesInError).reduce((acc, curr) => {
+  //     const [_fileName, isFileInError] = curr;
+  //     acc.add(isFileInError);
 
-      return acc;
-    }, new Set()).has(true);
+  //     return acc;
+  //   }, new Set()).has(true);
 
   const submitButton = (
     <AccessibleButton
@@ -176,7 +181,7 @@ function Register() {
             !confirmPassword
           ? "Fields cannot be empty"
           : "Please fix errors before registering.",
-        disabled: isSubmitButtonDisabled,
+        // disabled: isSubmitButtonDisabled,
         kind: "submit",
         leftIcon: isSubmitting
           ? <Loader size="xs" />
@@ -198,37 +203,43 @@ function Register() {
           }
 
           const randomNum = () => Math.floor(Math.random() * 10);
-
           const randomOrgId =
             `${randomNum()}${randomNum()}${randomNum()}${randomNum()}${randomNum()}${randomNum()}${randomNum()}`;
+
+          const schema: UserSchema = {
+            username,
+            email,
+            password,
+            addressLine,
+            city,
+            country,
+            department,
+            firstName,
+            jobPosition,
+            lastName,
+            orgId: parseInt(randomOrgId),
+            parentOrgId: 76,
+            postalCodeCanada,
+            postalCodeUS,
+            profilePictureUrl,
+            province,
+            state,
+            storeLocation,
+            roles: ["Employee"],
+          };
+
+          formData.append(
+            "schema",
+            JSON.stringify({ schema }),
+          );
 
           await handleRegisterButtonClick({
             fetchAbortControllerRef,
             isComponentMountedRef,
+            formData,
             navigateFn,
             navigateTo: "/login",
             registerDispatch,
-            schema: {
-              username,
-              email,
-              password,
-              addressLine,
-              city,
-              country,
-              department,
-              firstName,
-              jobPosition,
-              lastName,
-              orgId: parseInt(randomOrgId),
-              parentOrgId: 1,
-              postalCodeCanada,
-              postalCodeUS,
-              profilePictureUrl,
-              province,
-              state,
-              storeLocation,
-              roles: ["Employee"],
-            },
             showBoundary,
             url: REGISTER_URL,
           });
@@ -321,9 +332,6 @@ function Register() {
       stepsInError={stepsInError}
     />
   );
-
-  console.log("register state", registerState);
-  console.log("Register form data", Object.keys(Object.fromEntries(formData)));
 
   const profilePictureUrlTextInput = (
     <AccessibleTextInput

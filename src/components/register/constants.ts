@@ -1,3 +1,4 @@
+import { UserSchema } from "../../types";
 import { ValidationKey } from "../../validations";
 
 const REGISTER_ROLE_ROUTE_PATHS = {
@@ -52,11 +53,34 @@ const REGISTER_STEPS = [
 ];
 const MAX_REGISTER_STEPS = REGISTER_STEPS.length;
 
+const SAMPLE_USER_SCHEMA: UserSchema = {
+  username: "0manager",
+  email: "0manager@example.com",
+  password: "passwordQ1!",
+  addressLine: "123 Main St",
+  city: "Calgary",
+  country: "Canada",
+  department: "Maintenance",
+  firstName: "John",
+  jobPosition: "Custodian",
+  lastName: "Doe",
+  orgId: 160,
+  postalCodeCanada: "T2A 1A1",
+  postalCodeUS: "12345",
+  profilePictureUrl: "https://example.com/profile.jpg",
+  province: "Alberta",
+  state: "Alabama",
+  storeLocation: "Edmonton",
+  parentOrgId: 76,
+  roles: ["Employee"],
+};
+
 export {
   MAX_REGISTER_STEPS,
   REGISTER_MAX_STEPPER_POSITION,
   REGISTER_ROLE_ROUTE_PATHS,
   REGISTER_STEPS,
   REGISTER_URL,
+  SAMPLE_USER_SCHEMA,
   STEPS_INPUTNAMES_MAP,
 };

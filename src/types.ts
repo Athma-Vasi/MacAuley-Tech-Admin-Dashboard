@@ -144,7 +144,7 @@ type UserSchema = {
   password: string;
   postalCodeCanada: CanadianPostalCode;
   postalCodeUS: USPostalCode;
-  profilePictureUrl: string;
+  profilePictureUrl?: string;
   province: Province;
   roles: UserRoles;
   state: StatesUS;
@@ -153,6 +153,29 @@ type UserSchema = {
 };
 
 type UserDocument = UserSchema & {
+  _id: string;
+  createdAt: string;
+  fileUploadId: string;
+  updatedAt: string;
+  __v: number;
+};
+
+type FileExtension = "jpeg" | "png" | "jpg" | "webp";
+
+type FileUploadSchema = {
+  // empty string is used as a placeholder for the model name
+  associatedDocumentId: string;
+  userId: string;
+  uploadedFile: Buffer;
+  username: string;
+  fileExtension: FileExtension;
+  fileName: string;
+  fileSize: number;
+  fileMimeType: string;
+  fileEncoding: string;
+};
+
+type FileUploadDocument = FileUploadSchema & {
   _id: string;
   createdAt: string;
   updatedAt: string;
@@ -449,6 +472,9 @@ export type {
   Department,
   ExecutiveManagement,
   FieldServiceTechnicians,
+  FileExtension,
+  FileUploadDocument,
+  FileUploadSchema,
   FinancialMetricsDocument,
   FontFamily,
   FormReview,

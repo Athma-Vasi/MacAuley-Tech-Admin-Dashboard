@@ -142,13 +142,17 @@ function returnImageDropdown(
             height={height}
             key={key}
             radius={radius}
-            src={src}
+            src={src
+                ? src
+                : "https://images.pexels.com/photos/3396661/pexels-photo-3396661.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
             width={width}
         />
     );
 
     const sliced = truncate
-        ? src.split("").slice(0, 55).concat(" ...")
+        ? src
+            ? src.split("").slice(0, 55).concat(" ...")
+            : "No URL provided".split(" ")
         : src.split("");
 
     return (
@@ -211,7 +215,8 @@ function returnResourceCardElement(
                         height: 96,
                         key: `${resourceIndex}-${entryIndex}-${key}`,
                         radius: 9999,
-                        src: value?.toString() ?? "",
+                        src: value?.toString() ||
+                            "https://images.pexels.com/photos/3396661/pexels-photo-3396661.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
                         width: 96,
                     });
 

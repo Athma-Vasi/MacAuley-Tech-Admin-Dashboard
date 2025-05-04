@@ -3,14 +3,14 @@ import { SortDirection } from "../query/types";
 
 type UsersQueryState = {
     arrangeByDirection: SortDirection;
-    arrangeByField: keyof UserDocument;
+    arrangeByField: keyof Omit<UserDocument, "password">;
     currentPage: number;
     isError: boolean;
     isLoading: boolean;
     newQueryFlag: boolean;
     pages: number;
     queryString: string;
-    resourceData: Array<UserDocument>;
+    resourceData: Array<Omit<UserDocument, "password">>;
     totalDocuments: number;
 };
 

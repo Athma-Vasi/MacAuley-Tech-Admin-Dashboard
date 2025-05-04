@@ -210,8 +210,6 @@ function registerReducer_setFilesInError(
     return state;
   }
 
-  console.log("registerReducer_setFilesInError parsedResult", parsedResult);
-
   const { data: { payload: { kind, name } } } = parsedResult.safeUnwrap();
   const filesInError = new Map(state.filesInError);
   if (kind === "remove") {

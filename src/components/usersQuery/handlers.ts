@@ -231,19 +231,37 @@ async function handleUsersQuerySubmitGET(
         const data = parsedServerResponse.data as unknown as UserDocument[];
 
         const sorted = data.sort((a, b) => {
+            const aValue = a[arrangeByField];
+            const bValue = b[arrangeByField];
+
+            if (aValue === undefined && bValue === undefined) return 0;
+            if (aValue === undefined) return 1;
+            if (bValue === undefined) return -1;
+
             if (arrangeByDirection === "ascending") {
-                return a[arrangeByField] >
-                        b[arrangeByField]
-                    ? 1
-                    : -1;
+                return aValue > bValue ? 1 : -1;
             } else {
-                return a[arrangeByField] < b[arrangeByField] ? 1 : -1;
+                return aValue < bValue ? 1 : -1;
             }
         });
 
+        const withFUIAndPPUFieldsAdded = sorted.map(
+            (userDocument) => {
+                return {
+                    ...userDocument,
+                    fileUploadId: userDocument.fileUploadId
+                        ? userDocument.fileUploadId
+                        : "",
+                    profilePictureUrl: userDocument.profilePictureUrl
+                        ? userDocument.profilePictureUrl
+                        : "",
+                };
+            },
+        );
+
         usersQueryDispatch({
             action: usersQueryAction.setResourceData,
-            payload: sorted,
+            payload: withFUIAndPPUFieldsAdded,
         });
 
         usersQueryDispatch({

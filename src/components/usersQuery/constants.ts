@@ -200,6 +200,7 @@ const SAMPLE_USER_DOCUMENT = {
     province: "British Columbia",
     state: "Not Applicable",
     department: "Information Technology",
+    fileUploadId: "1234567890abcdef",
     firstName: "Miles",
     jobPosition: "Web Developer",
     lastName: "Vorkosigan",

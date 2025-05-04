@@ -405,24 +405,24 @@ async function handleCheckUsernameExists(
 async function handleRegisterButtonClick(
   {
     fetchAbortControllerRef,
+    formData,
     isComponentMountedRef,
     navigateFn,
     navigateTo,
     registerDispatch,
-    schema,
     showBoundary,
     url,
   }: {
     fetchAbortControllerRef: React.RefObject<AbortController | null>;
+    formData: FormData;
     isComponentMountedRef: React.RefObject<boolean>;
     registerDispatch: React.Dispatch<RegisterDispatch>;
     navigateFn: NavigateFunction;
     navigateTo: string;
-    schema: UserSchema;
     showBoundary: (error: unknown) => void;
     url: RequestInfo | URL;
   },
-): Promise<SafeBoxResult<UserDocument[]>> {
+): Promise<SafeBoxResult<boolean[]>> {
   fetchAbortControllerRef.current?.abort("Previous request cancelled");
   fetchAbortControllerRef.current = new AbortController();
   const fetchAbortController = fetchAbortControllerRef.current;
@@ -431,10 +431,7 @@ async function handleRegisterButtonClick(
   const isComponentMounted = isComponentMountedRef.current;
 
   const requestInit: RequestInit = {
-    body: JSON.stringify({ schema }),
-    headers: {
-      "Content-Type": "application/json",
-    },
+    body: formData,
     method: "POST",
     mode: "cors",
     signal: fetchAbortController.signal,
@@ -471,7 +468,7 @@ async function handleRegisterButtonClick(
     }
 
     const jsonResult = await responseToJSONSafe<
-      HttpServerResponse<UserDocument>
+      HttpServerResponse<boolean>
     >(
       responseUnwrapped,
     );
