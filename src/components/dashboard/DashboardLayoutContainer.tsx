@@ -57,9 +57,6 @@ function DashboardLayoutContainer(
     chartsToYAxisKeysMap.calendar.has(
       yAxisKey,
     );
-  // const isBarLineRadialChartSafe = chartsToYAxisKeysMap.bar.has(yAxisKey) ||
-  //   chartsToYAxisKeysMap.line.has(yAxisKey) ||
-  //   chartsToYAxisKeysMap.radial.has(yAxisKey);
 
   const pieChartCard = pieChart
     ? (
@@ -130,42 +127,6 @@ function DashboardLayoutContainer(
       {consolidatedCards}
     </div>
   );
-
-  // const newGridLayout = isPieChartSafe
-  //   ? (
-  //     <div className="grid-section pie">
-  //       {yAxisKeyChartHeadingTitle}
-  //       {pieChartCard}
-  //       {barChartCard}
-  //       {lineChartCard}
-  //       {radialChartCard}
-  //       <div className="controls-stat-zero">
-  //         {yAxisKeyControlsCard}
-  //         {consolidatedCards[0]}
-  //       </div>
-  //       <div className="stat-one-two">
-  //         {consolidatedCards[1]}
-  //         {consolidatedCards[2]}
-  //       </div>
-  //       <div className="stat-three-four">
-  //         {consolidatedCards[3]}
-  //         {consolidatedCards[4]}
-  //       </div>
-  //     </div>
-  //   )
-  //   : (
-  //     <div className="grid-section calendar">
-  //       {yAxisKeyChartHeadingTitle}
-  //       {yAxisKeyControlsCard}
-  //       {calendarChartCard}
-  //       {barChartCard}
-  //       {lineChartCard}
-  //       {radialChartCard}
-  //       <div className="stat-zero">
-  //         {consolidatedCards[0]}
-  //       </div>
-  //     </div>
-  //   );
 
   const dashboardLayoutContainer = (
     <div

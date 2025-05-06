@@ -533,18 +533,15 @@ function PERT({
   );
 
   return (
-    // <Box>{calendarChart}</Box>
     <DashboardLayoutContainer
-      // barLineRadialChart={barLineRadialChart}
-      // barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
-      calendarChart={calendarChart}
       barChart={barChart}
+      calendarChart={calendarChart}
+      calendarView={calendarView}
+      chartsToYAxisKeysMap={FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP}
+      consolidatedCards={cardsWithStatisticsElements}
       lineChart={lineChart}
       pieChart={pieChart}
       radialChart={radialChart}
-      calendarView={calendarView}
-      consolidatedCards={cardsWithStatisticsElements}
-      chartsToYAxisKeysMap={FINANCIAL_CHARTS_TO_Y_AXIS_KEYS_MAP}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
       statisticsModals={statisticsModals}
