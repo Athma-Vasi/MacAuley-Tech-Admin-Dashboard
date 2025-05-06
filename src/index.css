@@ -1,11 +1,12 @@
 :root {
-  --padding: 1em;
-  --padding-x2: 2em;
-  --row-gap: 1em;
-  --column-gap: 1em;
-  --border: 1px solid hsla(0, 0%, 0%, 0.17);
   --border-radius: 0.38em;
+  --border: 1px solid hsla(0, 0%, 0%, 0.17);
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.17);
+  --column-gap: 1em;
   --entry-odd-background: hsla(0, 0%, 0%, 0.04);
+  --padding-x2: 2em;
+  --padding: 1em;
+  --row-gap: 1em;
 
   --app-header-height: 70px;
   --dashboard-header-height: 130px;
@@ -274,19 +275,21 @@
       align-items: center;
       border-radius: var(--border-radius);
       border: var(--border);
+      box-shadow: var(--box-shadow);
       display: flex;
       flex-direction: column;
       gap: var(--padding);
       height: var(--grid-item-height);
-      justify-content: center;
+      justify-content: flex-start;
       padding: var(--padding);
       transition: all 0.17s ease-in-out;
       width: var(--grid-item-width);
     }
 
     .chart-titles {
-      border-radius: var(--border-radius);
-      border: var(--border);
+      /* border-radius: var(--border-radius); */
+      /* border: var(--border); */
+      /* box-shadow: var(--box-shadow); */
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
@@ -299,6 +302,7 @@
       align-items: flex-start;
       border-radius: var(--border-radius);
       border: var(--border);
+      box-shadow: var(--box-shadow);
       display: flex;
       flex-direction: column;
       height: var(--grid-item-height);
@@ -311,6 +315,7 @@
     .chart-card {
       border-radius: var(--border-radius);
       border: var(--border);
+      box-shadow: var(--box-shadow);
       display: grid;
       place-items: center;
       width: 100%;
@@ -425,9 +430,9 @@
 
         .stepper-card.active {
           border-radius: 1em;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          box-shadow: var(--box-shadow);
           display: flex;
-          transition: box-shadow 0.17s ease-in-out;
+          transition: all 0.17s ease-in-out;
           width: var(--card-width);
         }
       }

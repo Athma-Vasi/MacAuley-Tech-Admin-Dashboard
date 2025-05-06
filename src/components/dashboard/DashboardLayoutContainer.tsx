@@ -1,4 +1,4 @@
-import { Box, Title } from "@mantine/core";
+import { Box, Group, Text, Title } from "@mantine/core";
 import React from "react";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -98,7 +98,7 @@ function DashboardLayoutContainer(
   const yAxisKeyChartHeadingTitle = (
     <div className="chart-titles">
       {yAxisKeyChartHeading?.split(" ").map((word, idx) => (
-        <Title order={3} size={24} key={`${idx}-${word}-${calendarView}`}>
+        <Title order={5} size={26} key={`${idx}-${word}-${calendarView}`}>
           {word}
         </Title>
       ))}
@@ -107,6 +107,9 @@ function DashboardLayoutContainer(
 
   const yAxisKeyControlsCard = (
     <div className="chart-controls-card">
+      <Group w="100%" position="left">
+        <Text size={24} weight={500}>Data Mapping</Text>
+      </Group>
       {yAxisKeySelectInput}
     </div>
   );

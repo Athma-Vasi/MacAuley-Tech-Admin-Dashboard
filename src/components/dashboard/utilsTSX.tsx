@@ -220,10 +220,10 @@ function returnMinMaxSectionElement(
     >
       <GoldenGrid>
         <Group position="right">
-          <Text>{kind}:</Text>
+          <Text size="md">{kind}:</Text>
         </Group>
         <Group position="left">
-          <Text>
+          <Text size="md">
             {`${unitSymbol === "%" ? "" : unitSymbol} ${
               addCommaSeparator(data.value.toFixed(2))
             } ${unitSymbol === "%" ? "%" : ""}`}
@@ -233,10 +233,10 @@ function returnMinMaxSectionElement(
 
       <GoldenGrid>
         <Group position="right">
-          <Text>Occurred:</Text>
+          <Text size="md">Occurred:</Text>
         </Group>
         <Group position="left">
-          <Text>{data.occurred}</Text>
+          <Text size="md">{data.occurred}</Text>
         </Group>
       </GoldenGrid>
     </Stack>
@@ -256,10 +256,10 @@ function returnMedianModeSection(
       style={{ ...style }}
     >
       <Group position="right">
-        <Text>{kind}:</Text>
+        <Text size="md">{kind}:</Text>
       </Group>
       <Group position="left">
-        <Text>
+        <Text size="md">
           {`${unitSymbol === "%" ? "" : unitSymbol} ${
             addCommaSeparator(value.toFixed(2))
           } ${unitSymbol === "%" ? "%" : ""}`}
@@ -285,14 +285,14 @@ function returnMeanRangeSDSection(
     >
       <Stack spacing={0}>
         <Group position="right">
-          <Text>{firstWord}</Text>
+          <Text size="md">{firstWord}</Text>
         </Group>
         <Group position="right">
-          <Text>{lastWord}:</Text>
+          <Text size="md">{lastWord}:</Text>
         </Group>
       </Stack>
       <Group position="left">
-        <Text>
+        <Text size="md">
           {`${unitSymbol === "%" ? "" : unitSymbol} ${
             addCommaSeparator(value.toFixed(2))
           } ${unitSymbol === "%" ? "%" : ""}`}
@@ -354,7 +354,7 @@ function createStatisticsElements(
 
       const heading = (
         <Center>
-          <Text weight={600} size={18}>
+          <Text weight={600} size={22}>
             {`${calendarView} ${cardsKey} ${
               splitCamelCase(metricCategory)
             } for ${storeLocation}`}
@@ -488,7 +488,7 @@ function createFinancialStatisticsElements(
 
       const heading = (
         <Center>
-          <Text weight={600} size={18}>
+          <Text weight={600} size={22}>
             {`${calendarView} ${cardsKey} ${
               metricsKind === "pert" ? splitCamelCase(metricCategory) : ""
             } for ${storeLocation}`}
