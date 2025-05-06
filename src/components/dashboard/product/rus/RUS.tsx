@@ -9,7 +9,6 @@ import {
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
-import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
@@ -20,7 +19,6 @@ import {
 } from "../../../charts";
 import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
-import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardLayoutContainer";
 import {
   type ProductMetricsCards,
@@ -184,19 +182,6 @@ function RUS(
     />
   );
 
-  const barLineRadialChartKindSegmentedControl = (
-    <AccessibleSegmentedControl
-      attributes={{
-        data: CHART_KIND_DATA,
-        name: "chartKind",
-        parentDispatch: rusDispatch,
-        validValueAction: rusAction.setBarLineRadialChartKind,
-        value: barLineRadialChartKind,
-        defaultValue: "bar",
-      }}
-    />
-  );
-
   const barChartIndexBy = calendarView === "Daily"
     ? "Days"
     : calendarView === "Monthly"
@@ -218,111 +203,111 @@ function RUS(
     />
   );
 
-  const barLineRadialChart = barLineRadialChartKind === "bar"
-    ? (
-      <ResponsiveBarChart
-        barChartData={barCharts[yAxisKey]}
-        chartUnitKind={chartUnitKind}
-        hideControls
-        indexBy={barChartIndexBy}
-        keys={barChartKeys}
-        onClick={() => {
-          globalDispatch({
-            action: globalAction.setExpandBarChartData,
-            payload: {
-              ...commonPayload,
-              chartData: barCharts[yAxisKey],
-              chartKind: "bar",
-              indexBy: barChartIndexBy,
-              keys: barChartKeys,
-            },
-          });
+  const barChart = (
+    <ResponsiveBarChart
+      barChartData={barCharts[yAxisKey]}
+      chartUnitKind={chartUnitKind}
+      hideControls
+      indexBy={barChartIndexBy}
+      keys={barChartKeys}
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandBarChartData,
+          payload: {
+            ...commonPayload,
+            chartData: barCharts[yAxisKey],
+            chartKind: "bar",
+            indexBy: barChartIndexBy,
+            keys: barChartKeys,
+          },
+        });
 
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "bar",
-          });
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "bar",
+        });
 
-          navigate(expandBarChartNavigateLink);
-        }}
-        tooltip={(arg) =>
-          createChartTooltipElement({
-            arg,
-            chartUnitKind,
-            kind: "bar",
-          })}
-      />
-    )
-    : barLineRadialChartKind === "line"
-    ? (
-      <ResponsiveLineChart
-        chartUnitKind={chartUnitKind}
-        hideControls
-        lineChartData={lineCharts[yAxisKey]}
-        onClick={() => {
-          globalDispatch({
-            action: globalAction.setExpandLineChartData,
-            payload: {
-              ...commonPayload,
-              chartData: lineCharts[yAxisKey],
-              chartKind: "line",
-            },
-          });
+        navigate(expandBarChartNavigateLink);
+      }}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          chartUnitKind,
+          kind: "bar",
+        })}
+    />
+  );
 
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "line",
-          });
+  const lineChart = (
+    <ResponsiveLineChart
+      chartUnitKind={chartUnitKind}
+      hideControls
+      lineChartData={lineCharts[yAxisKey]}
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandLineChartData,
+          payload: {
+            ...commonPayload,
+            chartData: lineCharts[yAxisKey],
+            chartKind: "line",
+          },
+        });
 
-          navigate(expandLineChartNavigateLink);
-        }}
-        tooltip={(arg) =>
-          createChartTooltipElement({
-            arg,
-            chartUnitKind,
-            kind: "line",
-          })}
-        xFormat={(x) =>
-          `${
-            calendarView === "Daily"
-              ? "Day - "
-              : calendarView === "Yearly"
-              ? "Year - "
-              : ""
-          }${x}`}
-        yFormat={(y) => addCommaSeparator(y) + chartUnitKind}
-      />
-    )
-    : (
-      <ResponsiveRadialBarChart
-        hideControls
-        radialBarChartData={lineCharts[yAxisKey]}
-        onClick={() => {
-          globalDispatch({
-            action: globalAction.setExpandRadialBarChartData,
-            payload: {
-              ...commonPayload,
-              chartData: lineCharts[yAxisKey],
-              chartKind: "radial",
-            },
-          });
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "line",
+        });
 
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "radial",
-          });
+        navigate(expandLineChartNavigateLink);
+      }}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          chartUnitKind,
+          kind: "line",
+        })}
+      xFormat={(x) =>
+        `${
+          calendarView === "Daily"
+            ? "Day - "
+            : calendarView === "Yearly"
+            ? "Year - "
+            : ""
+        }${x}`}
+      yFormat={(y) => addCommaSeparator(y) + chartUnitKind}
+    />
+  );
 
-          navigate(expandRadialBarChartNavigateLink);
-        }}
-        tooltip={(arg) =>
-          createChartTooltipElement({
-            arg,
-            calendarView,
-            chartUnitKind,
-            kind: "radial",
-          })}
-      />
-    );
+  const radialChart = (
+    <ResponsiveRadialBarChart
+      hideControls
+      radialBarChartData={lineCharts[yAxisKey]}
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandRadialBarChartData,
+          payload: {
+            ...commonPayload,
+            chartData: lineCharts[yAxisKey],
+            chartKind: "radial",
+          },
+        });
+
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "radial",
+        });
+
+        navigate(expandRadialBarChartNavigateLink);
+      }}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          calendarView,
+          chartUnitKind,
+          kind: "radial",
+        })}
+    />
+  );
 
   const calendarChartData = returnSelectedCalendarCharts(
     calendarChartsData,
@@ -420,19 +405,20 @@ function RUS(
 
   return (
     <DashboardBarLineLayout
-      barLineRadialChart={barLineRadialChart}
-      barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+      barChart={barChart}
       calendarChart={calendarChart}
       calendarView={calendarView}
+      chartsToYAxisKeysMap={PRODUCT_CHARTS_TO_Y_AXIS_KEYS_MAP}
       consolidatedCards={cardsWithStatisticsElements}
+      lineChart={lineChart}
       pieChart={pieChart}
+      radialChart={radialChart}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
       statisticsModals={statisticsModals}
       yAxisKey={yAxisKey}
       yAxisKeyChartHeading={yAxisKeyChartHeading}
       yAxisKeySelectInput={yAxisKeySelectInput}
-      chartsToYAxisKeysMap={PRODUCT_CHARTS_TO_Y_AXIS_KEYS_MAP}
     />
   );
 }
