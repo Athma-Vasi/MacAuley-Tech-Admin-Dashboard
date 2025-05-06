@@ -78,13 +78,14 @@ function ResponsiveCalendarChart({
   }, [themeObject]);
 
   useEffect(() => {
-    const newCalendarDirection = windowWidth < 775 ? "vertical" : "horizontal";
+    if (windowWidth < 1811 && calendarDirection === "horizontal") {
+      return;
+    }
 
     responsiveCalendarChartDispatch({
       action: responsiveCalendarChartAction.setCalendarDirection,
-      payload: newCalendarDirection,
+      payload: windowWidth > 1811 ? "vertical" : "horizontal",
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowWidth]);
 
   const stateWithChartTitle: ResponsiveCalendarChartState = {

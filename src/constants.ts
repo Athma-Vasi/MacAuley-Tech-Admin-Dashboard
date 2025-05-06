@@ -573,7 +573,7 @@ const COUNTRIES: CheckboxRadioSelectData<Country> = [
 ];
 
 const INPUT_WIDTH = 250;
-const TEXT_SHADOW = "0 2px 4px rgba(0, 0, 0, 0.15)";
+const TEXT_SHADOW = "0 2px 4px rgba(0, 0, 0, 0.11)";
 
 const APP_HEADER_HEIGHT = 70;
 const DASHBOARD_HEADER_HEIGHT = 170;
@@ -581,7 +581,8 @@ const DASHBOARD_HEADER_HEIGHT_MOBILE = 70;
 const METRICS_HEADER_HEIGHT = 100;
 const METRICS_HEADER_HEIGHT_MOBILE = 70;
 
-const MOBILE_BREAKPOINT = 1024;
+// sidebar-width + padding + max-input-width + padding + max-input-width + padding
+const ACCORDION_BREAKPOINT = 1112;
 
 const PROTOCOL = "http";
 const DOMAIN_NAME = "://localhost";
@@ -670,6 +671,7 @@ const ARRANGE_BY_DIRECTIONS: SortDirection[] = [
 ];
 
 export {
+  ACCORDION_BREAKPOINT,
   ALL_STORE_LOCATIONS_DATA,
   API_URL,
   APP_HEADER_HEIGHT,
@@ -697,7 +699,6 @@ export {
   METRICS_HEADER_HEIGHT,
   METRICS_HEADER_HEIGHT_MOBILE,
   METRICS_URL,
-  MOBILE_BREAKPOINT,
   OVERLAY_BLUR,
   OVERLAY_OPACITY,
   PORT,

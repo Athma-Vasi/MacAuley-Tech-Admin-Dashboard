@@ -13,7 +13,7 @@ import { useEffect, useReducer, useRef } from "react";
 
 import { COLORS_SWATCHES, INPUT_WIDTH } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
-import { returnThemeColors } from "../../../utils";
+import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
@@ -211,7 +211,7 @@ function ResponsiveRadialBarChart(
       data={radialBarChartData}
       // base
       maxValue="auto"
-      valueFormat=">-.2f"
+      valueFormat={(value) => addCommaSeparator(value)}
       margin={{
         top: marginTop,
         right: marginRight,
@@ -314,7 +314,7 @@ function ResponsiveRadialBarChart(
 
   if (hideControls) {
     return (
-      <Box className="chart" onClick={onClick}>
+      <Box className="chart radial" onClick={onClick}>
         {displayResponsiveRadialBar}
       </Box>
     );

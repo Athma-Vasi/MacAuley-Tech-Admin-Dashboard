@@ -10,8 +10,8 @@ const initialResponsiveLineChartState: ResponsiveLineChartState = {
   // margin
   marginTop: 60,
   marginRight: 60,
-  marginBottom: 90,
-  marginLeft: 90,
+  marginBottom: 60,
+  marginLeft: 60,
 
   // style
   areaBlendMode: "normal",

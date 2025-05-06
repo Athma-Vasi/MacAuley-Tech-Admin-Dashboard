@@ -1,19 +1,21 @@
-import { Box, Space, Title } from "@mantine/core";
+import { Box, Title } from "@mantine/core";
 import React from "react";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
 import { ChartsToYAxisKeysMap, DashboardCalendarView } from "./types";
 
 type DashboardLayoutContainerProps = {
-  barLineRadialChart: React.JSX.Element;
-  barLineRadialChartKindSegmentedControl: React.JSX.Element;
-  calendarChart?: React.JSX.Element | null;
+  barChart: React.JSX.Element;
+  lineChart: React.JSX.Element;
+  pieChart?: React.JSX.Element;
+  radialChart: React.JSX.Element;
+  calendarChart?: React.JSX.Element;
+  // barLineRadialChart: React.JSX.Element;
+  // barLineRadialChartKindSegmentedControl: React.JSX.Element;
   calendarView: DashboardCalendarView;
   consolidatedCards: React.JSX.Element[];
   chartsToYAxisKeysMap: ChartsToYAxisKeysMap;
-  pieChart?: React.JSX.Element;
   sectionHeading: string;
   semanticLabel?: string;
   statisticsModals: React.JSX.Element[];
@@ -24,10 +26,13 @@ type DashboardLayoutContainerProps = {
 
 function DashboardLayoutContainer(
   {
-    barLineRadialChart,
-    barLineRadialChartKindSegmentedControl,
+    // barLineRadialChart,
+    // barLineRadialChartKindSegmentedControl,
     calendarChart,
     calendarView,
+    radialChart,
+    barChart,
+    lineChart,
     consolidatedCards,
     chartsToYAxisKeysMap,
     pieChart,
@@ -44,32 +49,49 @@ function DashboardLayoutContainer(
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
-  const { windowWidth } = useWindowSize();
 
-  const isPieChartSafe = chartsToYAxisKeysMap.pie.has(
+  const isPieChartSafe = pieChart && chartsToYAxisKeysMap.pie.has(
     yAxisKey,
   );
-  const isCalendarChartSafe = chartsToYAxisKeysMap.calendar.has(
-    yAxisKey,
-  );
-  const isBarLineRadialChartSafe = chartsToYAxisKeysMap.bar.has(yAxisKey) ||
-    chartsToYAxisKeysMap.line.has(yAxisKey) ||
-    chartsToYAxisKeysMap.radial.has(yAxisKey);
+  const isCalendarChartSafe = calendarChart &&
+    chartsToYAxisKeysMap.calendar.has(
+      yAxisKey,
+    );
+  // const isBarLineRadialChartSafe = chartsToYAxisKeysMap.bar.has(yAxisKey) ||
+  //   chartsToYAxisKeysMap.line.has(yAxisKey) ||
+  //   chartsToYAxisKeysMap.radial.has(yAxisKey);
 
-  const pieChartWithButton = (
-    <div className="chart-card pie">
-      {pieChart}
+  const pieChartCard = pieChart
+    ? (
+      <div className="chart-card pie">
+        {pieChart}
+      </div>
+    )
+    : null;
+
+  const barChartCard = (
+    <div className="chart-card bar">
+      {barChart}
     </div>
   );
 
-  const calendarChartWithButton = (
-    <div className="chart-card calendar">
-      {calendarChart}
+  const calendarChartCard = calendarChart
+    ? (
+      <div className="chart-card calendar">
+        {calendarChart}
+      </div>
+    )
+    : null;
+
+  const lineChartCard = (
+    <div className="chart-card line">
+      {lineChart}
     </div>
   );
-  const barLineRadialChartWithButton = (
-    <div className="chart-card blr">
-      {barLineRadialChart}
+
+  const radialChartCard = (
+    <div className="chart-card radial">
+      {radialChart}
     </div>
   );
 
@@ -86,153 +108,67 @@ function DashboardLayoutContainer(
   const yAxisKeyControlsCard = (
     <div className="chart-controls-card">
       {yAxisKeySelectInput}
-      {isBarLineRadialChartSafe ? barLineRadialChartKindSegmentedControl : null}
     </div>
   );
 
-  const newGridLayout = windowWidth > 775 && windowWidth < 1024
-    ? (
-      <div
-        className={`grid-section ${
-          isPieChartSafe ? "pie " : isCalendarChartSafe ? "calendar" : ""
-        }`}
-      >
-        {yAxisKeyChartHeadingTitle}
-        {yAxisKeyControlsCard}
-        {barLineRadialChartWithButton}
-        {isPieChartSafe ? pieChartWithButton : null}
-        {isCalendarChartSafe ? calendarChartWithButton : null}
-        <div className="statistics-cards-container">
-          {consolidatedCards}
-        </div>
-      </div>
-    )
-    : (
-      <div
-        className={`grid-section ${
-          isPieChartSafe ? "pie " : isCalendarChartSafe ? "calendar" : ""
-        }`}
-      >
-        {yAxisKeyChartHeadingTitle}
-        {yAxisKeyControlsCard}
-        {barLineRadialChartWithButton}
-        {isPieChartSafe ? pieChartWithButton : null}
-        {isCalendarChartSafe ? calendarChartWithButton : null}
-        {consolidatedCards}
-      </div>
-    );
+  const newGridLayout = (
+    <div
+      className={`grid-section ${
+        isPieChartSafe ? "pie" : isCalendarChartSafe ? "calendar" : ""
+      }`}
+    >
+      {yAxisKeyChartHeadingTitle}
+      {yAxisKeyControlsCard}
+      {isPieChartSafe ? pieChartCard : null}
+      {isCalendarChartSafe ? calendarChartCard : null}
+      {barChartCard}
+      {lineChartCard}
+      {radialChartCard}
+      {consolidatedCards}
+    </div>
+  );
 
-  // const pieChartSectionMaybe =
-  //   chartsToYAxisKeysMap?.["pie"]?.has(yAxisKey as FinancialYAxisKey)
-  //     ? (
-  //       <section className="chart-section">
-  //         <div className="chart-titles">
-  //           {pieChartHeading
-  //             ? pieChartHeading.split(" ").map((word) => (
-  //               <Title order={4} size={24}>{word}</Title>
-  //             ))
-  //             : null}
-  //         </div>
-
-  //         <div className="chart-controls-card">
-  //           {pieChartYAxisSelectInput}
-  //           <div className="footer">{expandPieChartButton}</div>
-  //         </div>
-
-  //         <div className="chart-card">
-  //           {pieChart}
-  //         </div>
-  //       </section>
-  //     )
-  //     : null;
-
-  // const barLineRadialChartTitle = (
-  //   <div className="chart-titles">
-  //     {barLineRadialChartHeading
-  //       ? barLineRadialChartHeading.split(" ").map((word) => (
-  //         <Title order={3} size={24}>{word}</Title>
-  //       ))
-  //       : null}
-  //   </div>
-  // );
-
-  // const barLineRadialChartControlsCard = (
-  //   <div className="chart-controls-card">
-  //     {barLineRadialChartYAxisSelectInput}
-  //     <div className="footer">
-  //       {expandBarLineRadialChartButton}
-  //       {barLineRadialChartKindSegmentedControl}
-  //     </div>
-  //   </div>
-  // );
-
-  // const barLineRadialChartCard = (
-  //   <div className="chart-card">
-  //     {barLineRadialChart}
-  //   </div>
-  // );
-
-  // const barLineRadialSection = windowWidth < 1024
+  // const newGridLayout = isPieChartSafe
   //   ? (
-  //     <div className="chart-section-container">
-  //       <section className="chart-section-blr">
-  //         {barLineRadialChartTitle}
-  //         {barLineRadialChartControlsCard}
-  //         {barLineRadialChartCard}
-  //       </section>
-  //       <div className="mobile-air">{consolidatedCards}</div>
+  //     <div className="grid-section pie">
+  //       {yAxisKeyChartHeadingTitle}
+  //       {pieChartCard}
+  //       {barChartCard}
+  //       {lineChartCard}
+  //       {radialChartCard}
+  //       <div className="controls-stat-zero">
+  //         {yAxisKeyControlsCard}
+  //         {consolidatedCards[0]}
+  //       </div>
+  //       <div className="stat-one-two">
+  //         {consolidatedCards[1]}
+  //         {consolidatedCards[2]}
+  //       </div>
+  //       <div className="stat-three-four">
+  //         {consolidatedCards[3]}
+  //         {consolidatedCards[4]}
+  //       </div>
   //     </div>
   //   )
   //   : (
-  //     <div className="chart-section-container">
-  //       <section className="chart-section-blr">
-  //         {barLineRadialChartTitle}
-  //         {barLineRadialChartControlsCard}
-  //         {barLineRadialChartCard}
-  //         {consolidatedCards}
-  //       </section>
+  //     <div className="grid-section calendar">
+  //       {yAxisKeyChartHeadingTitle}
+  //       {yAxisKeyControlsCard}
+  //       {calendarChartCard}
+  //       {barChartCard}
+  //       {lineChartCard}
+  //       {radialChartCard}
+  //       <div className="stat-zero">
+  //         {consolidatedCards[0]}
+  //       </div>
   //     </div>
   //   );
-
-  // const calendarChartTitle = (
-  //   <div className="chart-titles">
-  //     {calendarChartHeading
-  //       ? calendarChartHeading.split(" ").map((word, idx) => (
-  //         <Title order={3} size={24} key={`${idx}-${word}`}>{word}</Title>
-  //       ))
-  //       : null}
-  //   </div>
-  // );
-
-  // const calendarChartControlsCard = (
-  //   <div className="chart-controls-card">
-  //     {calendarChartYAxisSelectInput}
-  //     <div className="footer">{expandCalendarChartButton}</div>
-  //   </div>
-  // );
-
-  // const calendarChartCard = (
-  //   <div className="chart-card">
-  //     {calendarChart}
-  //   </div>
-  // );
-
-  // const calendarSection = (
-  //   <div className="chart-section-container">
-  //     <section className="chart-section">
-  //       {calendarChartTitle}
-  //       {calendarChartControlsCard}
-  //       {calendarChartCard}
-  //     </section>
-  //   </div>
-  // );
 
   const dashboardLayoutContainer = (
     <div
       className="dashboard-layout-container"
       key={`${yAxisKeyChartHeading}-${calendarView}`}
     >
-      <Space h="xl" />
       <Box bg={bgGradient} className="header">
         <Title order={3} size={28}>
           {calendarView}{"  "}{sectionHeading}

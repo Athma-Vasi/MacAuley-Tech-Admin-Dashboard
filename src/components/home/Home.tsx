@@ -22,7 +22,7 @@ function Home() {
 
       <Sidebar opened={opened} setOpened={setOpened} />
 
-      <Box className="main" bg={bgGradient}>
+      <Box className={`main ${opened ? "sidebar-opened" : ""}`} bg={bgGradient}>
         <Outlet />
       </Box>
     </div>

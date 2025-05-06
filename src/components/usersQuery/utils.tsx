@@ -258,15 +258,16 @@ function returnResourceCardElement(
                                     {splitCamelCase(key)}
                                 </Text>
                             </div>
-                            <div className="resource-value">
-                                <Text
-                                    color={key === keyToHighlight
-                                        ? themeColorShade
-                                        : textColor}
-                                >
-                                    {resourceValue}
-                                </Text>
-                            </div>
+
+                            <Text
+                                className="resource-value"
+                                color={key === keyToHighlight
+                                    ? themeColorShade
+                                    : textColor}
+                                truncate
+                            >
+                                {resourceValue}
+                            </Text>
                         </div>
                     );
                 },

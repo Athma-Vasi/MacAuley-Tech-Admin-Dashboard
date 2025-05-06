@@ -76,19 +76,17 @@ function DisplayResource(
             closeButtonProps={{ color: themeColorShade }}
             opened={modalState}
             onClose={() => setModalState((prevState) => !prevState)}
+            size="lg"
             transitionProps={{
                 transition: "fade",
                 duration: 200,
                 timingFunction: "ease-in-out",
             }}
-            maw={640}
-            miw={350}
             title={
                 <Text size="lg" weight={600}>
                     {String(selectedDocument?.username ?? resourceName)}
                 </Text>
             }
-            size={"lg"}
         >
             <div className="resource-cards-container">
                 {returnResourceCardElement({
@@ -229,7 +227,7 @@ function DisplayResource(
         </div>
     );
 
-    const resources = windowWidth < 1400 ? resourcesCards : resourcesTable;
+    const resources = windowWidth < 1361 ? resourcesCards : resourcesTable;
 
     return (
         <Box

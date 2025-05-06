@@ -71,9 +71,9 @@ function returnDashboardCardElement(
   );
 
   const cardBody = (
-    <Group w="100%" position="left" py="sm">
+    <Group w="100%" position="center">
       <Text
-        size={26}
+        size={28}
         weight={600}
         style={{ textShadow: TEXT_SHADOW }}
       >
@@ -83,7 +83,7 @@ function returnDashboardCardElement(
   );
 
   const displayPercentage = (
-    <Text size={16} italic color={deltaTextColor}>
+    <Text size={18} italic color={deltaTextColor}>
       {percentage}
     </Text>
   );

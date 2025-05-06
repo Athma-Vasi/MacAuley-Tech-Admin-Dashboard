@@ -67,7 +67,7 @@ function ChartAndControlsDisplay(
         className="chart-container"
         ref={chartRef}
       >
-        <Stack w="100%" align={chartTitlePosition} p="xl">
+        <Stack w="100%" align={chartTitlePosition}>
           <Title order={chartTitleSize} color={chartTitleColor}>
             {chartTitle}
           </Title>

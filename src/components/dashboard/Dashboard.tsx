@@ -11,11 +11,11 @@ import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
+  ACCORDION_BREAKPOINT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
   FETCH_REQUEST_TIMEOUT,
   METRICS_URL,
-  MOBILE_BREAKPOINT,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -417,9 +417,9 @@ function Dashboard() {
 
   const dashboard = (
     <Box bg={bgGradient}>
-      {windowWidth < MOBILE_BREAKPOINT
-        ? dashboardHeaderAccordion
-        : dashboardHeader}
+      {windowWidth > ACCORDION_BREAKPOINT
+        ? dashboardHeader
+        : dashboardHeaderAccordion}
 
       <Stack align="flex-start" p="md">
         <Title order={2} size={32}>DASHBOARD</Title>

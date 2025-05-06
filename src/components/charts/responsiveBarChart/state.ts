@@ -12,8 +12,8 @@ const initialResponsiveBarChartState: ResponsiveBarChartState = {
   /** margin */
   marginTop: 60,
   marginRight: 60,
-  marginBottom: 90,
-  marginLeft: 90,
+  marginBottom: 60,
+  marginLeft: 60,
 
   /** style */
   chartBorderColor: "#ffffff",
@@ -75,7 +75,7 @@ const initialResponsiveBarChartState: ResponsiveBarChartState = {
   legendItemOpacity: 1,
   legendItemTextColor: "gray",
   legendItemWidth: 60,
-  legendItemsSpacing: 80,
+  legendItemsSpacing: 30,
   legendSymbolBorderColor: "rgba(0, 0, 0, 0)",
   legendSymbolBorderWidth: 0,
   legendSymbolShape: "square",
