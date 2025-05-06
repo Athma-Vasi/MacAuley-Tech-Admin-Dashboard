@@ -9,7 +9,6 @@ import {
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
-import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
@@ -18,7 +17,6 @@ import {
   ResponsiveRadialBarChart,
 } from "../../../charts";
 import { createChartTooltipElement } from "../../../charts/utils";
-import { CHART_KIND_DATA } from "../../constants";
 import DashboardBarLineLayout from "../../DashboardLayoutContainer";
 import type {
   AllStoreLocations,
@@ -125,19 +123,6 @@ function RepairRUS(
     },
   );
 
-  const barLineRadialChartKindSegmentedControl = (
-    <AccessibleSegmentedControl
-      attributes={{
-        data: CHART_KIND_DATA,
-        name: "chartKind",
-        parentDispatch: repairRUSDispatch,
-        validValueAction: repairRUSAction.setBarLineRadialChartKind,
-        value: barLineRadialChartKind,
-        defaultValue: "bar",
-      }}
-    />
-  );
-
   const barLineRadialChartUnit = yAxisKey === "revenue" ? "CAD" : "Units";
   const barChartIndexBy = calendarView === "Daily"
     ? "Days"
@@ -166,112 +151,112 @@ function RepairRUS(
     />
   );
 
-  const barLineRadialChart = barLineRadialChartKind === "bar"
-    ? (
-      <ResponsiveBarChart
-        barChartData={barCharts[yAxisKey]}
-        hideControls
-        indexBy={barChartIndexBy}
-        keys={barChartKeys}
-        chartUnitKind={barLineRadialChartUnit}
-        onClick={() => {
-          globalDispatch({
-            action: globalAction.setExpandBarChartData,
-            payload: {
-              ...commonPayload,
-              chartData: barCharts[yAxisKey],
-              chartKind: "bar",
-              chartUnitKind: barLineRadialChartUnit,
-              indexBy: barChartIndexBy,
-              keys: barChartKeys,
-            },
-          });
-
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "bar",
-          });
-
-          navigate(expandBarChartNavigateLink);
-        }}
-        tooltip={(arg) =>
-          createChartTooltipElement({
-            arg,
+  const barChart = (
+    <ResponsiveBarChart
+      barChartData={barCharts[yAxisKey]}
+      hideControls
+      indexBy={barChartIndexBy}
+      keys={barChartKeys}
+      chartUnitKind={barLineRadialChartUnit}
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandBarChartData,
+          payload: {
+            ...commonPayload,
+            chartData: barCharts[yAxisKey],
+            chartKind: "bar",
             chartUnitKind: barLineRadialChartUnit,
-            kind: "bar",
-          })}
-      />
-    )
-    : barLineRadialChartKind === "line"
-    ? (
-      <ResponsiveLineChart
-        chartUnitKind={barLineRadialChartUnit}
-        lineChartData={lineCharts[yAxisKey]}
-        hideControls
-        xFormat={(x) =>
-          `${
-            calendarView === "Daily"
-              ? "Day - "
-              : calendarView === "Yearly"
-              ? "Year - "
-              : ""
-          }${x}`}
-        yFormat={(y) => addCommaSeparator(y) + barLineRadialChartUnit}
-        onClick={() => {
-          globalDispatch({
-            action: globalAction.setExpandLineChartData,
-            payload: {
-              ...commonPayload,
-              chartData: lineCharts[yAxisKey],
-              chartKind: "line",
-              chartUnitKind: barLineRadialChartUnit,
-            },
-          });
+            indexBy: barChartIndexBy,
+            keys: barChartKeys,
+          },
+        });
 
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "line",
-          });
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "bar",
+        });
 
-          navigate(expandLineChartNavigateLink);
-        }}
-        tooltip={(arg) =>
-          createChartTooltipElement({
-            arg,
-            calendarView,
+        navigate(expandBarChartNavigateLink);
+      }}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          chartUnitKind: barLineRadialChartUnit,
+          kind: "bar",
+        })}
+    />
+  );
+
+  const lineChart = (
+    <ResponsiveLineChart
+      chartUnitKind={barLineRadialChartUnit}
+      lineChartData={lineCharts[yAxisKey]}
+      hideControls
+      xFormat={(x) =>
+        `${
+          calendarView === "Daily"
+            ? "Day - "
+            : calendarView === "Yearly"
+            ? "Year - "
+            : ""
+        }${x}`}
+      yFormat={(y) => addCommaSeparator(y) + barLineRadialChartUnit}
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandLineChartData,
+          payload: {
+            ...commonPayload,
+            chartData: lineCharts[yAxisKey],
+            chartKind: "line",
             chartUnitKind: barLineRadialChartUnit,
-            kind: "line",
-          })}
-      />
-    )
-    : (
-      <ResponsiveRadialBarChart
-        radialBarChartData={lineCharts[yAxisKey]}
-        hideControls
-        onClick={() => {
-          globalDispatch({
-            action: globalAction.setExpandRadialBarChartData,
-            payload: {
-              ...commonPayload,
-              chartData: lineCharts[yAxisKey],
-              chartKind: "radial",
-              chartUnitKind: barLineRadialChartUnit,
-            },
-          });
-          globalDispatch({
-            action: globalAction.setSelectedChartKind,
-            payload: "radial",
-          });
-          navigate(expandRadialBarChartNavigateLink);
-        }}
-        tooltip={(arg) =>
-          createChartTooltipElement({
-            arg,
+          },
+        });
+
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "line",
+        });
+
+        navigate(expandLineChartNavigateLink);
+      }}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          calendarView,
+          chartUnitKind: barLineRadialChartUnit,
+          kind: "line",
+        })}
+    />
+  );
+
+  const radialChart = (
+    <ResponsiveRadialBarChart
+      radialBarChartData={lineCharts[yAxisKey]}
+      hideControls
+      onClick={() => {
+        globalDispatch({
+          action: globalAction.setExpandRadialBarChartData,
+          payload: {
+            ...commonPayload,
+            chartData: lineCharts[yAxisKey],
+            chartKind: "radial",
             chartUnitKind: barLineRadialChartUnit,
-            kind: "radial",
-          })}
-      />
-    );
+          },
+        });
+        globalDispatch({
+          action: globalAction.setSelectedChartKind,
+          payload: "radial",
+        });
+        navigate(expandRadialBarChartNavigateLink);
+      }}
+      tooltip={(arg) =>
+        createChartTooltipElement({
+          arg,
+          chartUnitKind: barLineRadialChartUnit,
+          kind: "radial",
+        })}
+    />
+  );
 
   const calendarChartData = returnSelectedRepairCalendarCharts(
     calendarChartsData,
@@ -369,18 +354,19 @@ function RepairRUS(
 
   return (
     <DashboardBarLineLayout
-      barLineRadialChart={barLineRadialChart}
-      barLineRadialChartKindSegmentedControl={barLineRadialChartKindSegmentedControl}
+      barChart={barChart}
       calendarChart={calendarChart}
       calendarView={calendarView}
+      chartsToYAxisKeysMap={REPAIR_CHARTS_TO_Y_AXIS_KEYS_MAP}
       consolidatedCards={cardsWithStatisticsElements}
+      lineChart={lineChart}
+      radialChart={radialChart}
       sectionHeading={splitCamelCase(metricsView)}
       semanticLabel="TODO"
       statisticsModals={statisticsModals}
       yAxisKey={yAxisKey}
       yAxisKeyChartHeading={yAxisKeyChartHeading}
       yAxisKeySelectInput={yAxisKeySelectInput}
-      chartsToYAxisKeysMap={REPAIR_CHARTS_TO_Y_AXIS_KEYS_MAP}
     />
   );
 }
