@@ -95,7 +95,7 @@ function DashboardLayoutContainer(
   const yAxisKeyChartHeadingTitle = (
     <div className="chart-titles">
       {yAxisKeyChartHeading?.split(" ").map((word, idx) => (
-        <Title order={5} size={26} key={`${idx}-${word}-${calendarView}`}>
+        <Title order={5} size={24} key={`${idx}-${word}-${calendarView}`}>
           {word}
         </Title>
       ))}
