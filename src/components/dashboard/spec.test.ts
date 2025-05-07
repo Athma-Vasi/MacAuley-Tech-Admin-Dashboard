@@ -1,32 +1,18 @@
-import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
-import { authAction, AuthDispatch } from "../../context/authProvider";
-import { globalAction, GlobalDispatch } from "../../context/globalProvider";
+import { describe, expect, it, vi } from "vitest";
+import { METRICS_URL } from "../../constants";
+import { AuthDispatch } from "../../context/authProvider";
+import { GlobalDispatch } from "../../context/globalProvider";
+import { SafeBoxResult } from "../../types";
 import {
-    BusinessMetricsDocument,
-    CustomerMetricsDocument,
-    FinancialMetricsDocument,
-    HttpServerResponse,
-    ProductMetricsDocument,
-    RepairMetricsDocument,
-    SafeBoxResult,
-} from "../../types";
-import {
-    createMetricsForageKey,
     createSafeBoxResult,
-    decodeJWTSafe,
-    fetchSafe,
-    GetForageItemSafe,
-    parseServerResponseAsyncSafe,
-    responseToJSONSafe,
-    SetForageItemSafe,
+    getForageItemSafe,
+    setForageItemSafe,
 } from "../../utils";
-import { dashboardAction } from "./actions";
-import { customerMetricsDocumentZod } from "./customer/schemas";
-import { financialMetricsDocumentZod } from "./financial/schemas";
-import { productMetricsDocumentZod } from "./product/schemas";
+import { generateDashbaordQueryParamsPermutations } from "../sidebar/spec.test";
+import { handleLoginMock, handleLogoutMock } from "../testing/utils";
+import { handleStoreCategoryClick } from "./handlers";
 import { ProductMetricCategory } from "./product/types";
-import { repairMetricsDocumentZod } from "./repair/schemas";
 import { RepairMetricCategory } from "./repair/types";
 import {
     AllStoreLocations,
@@ -34,13 +20,186 @@ import {
     DashboardMetricsView,
 } from "./types";
 
-async function handleStoreCategoryClick(
+type DashboardTestMockInput = {
+    metricsView: Lowercase<DashboardMetricsView>;
+    productMetricCategory: ProductMetricCategory;
+    repairMetricCategory: RepairMetricCategory;
+    storeLocationView: AllStoreLocations;
+    testKind: "success" | "error";
+};
+
+async function handleStoreCategoryClickTestMock(
+    {
+        metricsView,
+        productMetricCategory,
+        repairMetricCategory,
+        storeLocationView,
+        testKind,
+    }: DashboardTestMockInput,
+): Promise<
+    SafeBoxResult<boolean>
+> {
+    const fetchAbortControllerRef = {
+        current: null,
+    } as React.RefObject<AbortController | null>;
+    const isComponentMountedRef = {
+        current: true,
+    } as React.RefObject<boolean>;
+    const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
+    const dashboardDispatch = vi.fn() as React.Dispatch<DashboardDispatch>;
+    const globalDispatch = vi.fn() as React.Dispatch<GlobalDispatch>;
+    const showBoundary = vi.fn() as (error: any) => void;
+    const navigateFn = vi.fn() as NavigateFunction;
+    const metricsUrl = METRICS_URL;
+
+    try {
+        const loginResult = await handleLoginMock({});
+        if (loginResult.err) {
+            return createSafeBoxResult({ message: "Login failed" });
+        }
+
+        const loginUnwrapped = loginResult.safeUnwrap().data;
+        if (loginUnwrapped === undefined) {
+            return createSafeBoxResult({ message: "Login data is undefined" });
+        }
+
+        const { accessToken } = loginUnwrapped[0];
+
+        const handleStoreCategoryClickResult = await handleStoreCategoryClick({
+            accessToken,
+            authDispatch,
+            dashboardDispatch,
+            fetchAbortControllerRef,
+            getForageItemSafe,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl,
+            metricsView,
+            navigateFn,
+            productMetricCategory,
+            repairMetricCategory,
+            setForageItemSafe,
+            showBoundary,
+            storeLocationView,
+        });
+        if (handleStoreCategoryClickResult.err) {
+            return createSafeBoxResult({
+                message: handleStoreCategoryClickResult.val.message ??
+                    "Handle store category click failed",
+            });
+        }
+
+        const unwrappedResult =
+            handleStoreCategoryClickResult.safeUnwrap().data;
+        if (unwrappedResult === undefined) {
+            return createSafeBoxResult({
+                message: "Unwrapped result is undefined",
+            });
+        }
+
+        const { newAccessToken, businessMetricsDocument } = unwrappedResult;
+
+        const logoutResult = await handleLogoutMock({ newAccessToken });
+        if (logoutResult.err) {
+            return createSafeBoxResult({
+                message: logoutResult.val.message ?? "Logout failed",
+            });
+        }
+
+        describe(
+            `given ${testKind === "success" ? "valid" : "invalid"} data,
+               metricsView: ${metricsView}
+               productMetricCategory: ${productMetricCategory}
+               repairMetricCategory: ${repairMetricCategory}
+               storeLocationView: ${storeLocationView}
+            `,
+            () => {
+                if (testKind === "success") {
+                    it("should not equal null", () => {
+                        expect(businessMetricsDocument).to.not
+                            .equal(null);
+                    });
+                    it("should have storeLocation property", () => {
+                        expect(businessMetricsDocument).to.have
+                            .property("storeLocation");
+                        expect(businessMetricsDocument.storeLocation)
+                            .to.equal(storeLocationView);
+                    });
+                } else {
+                    it("should return undefined", () => {
+                        expect(
+                            handleStoreCategoryClickResult.val.data
+                                ?.businessMetricsDocument,
+                        )
+                            .toBe(undefined);
+                    });
+                }
+            },
+        );
+
+        return createSafeBoxResult({
+            kind: "success",
+        });
+    } catch (error) {
+        return createSafeBoxResult({
+            message: "Unknown error",
+        });
+    }
+}
+
+const { invalidPermutations, validPermutations } =
+    generateDashbaordQueryParamsPermutations();
+const TEST_SIZE = 1;
+const slicedValids = validPermutations.slice(0, TEST_SIZE);
+const slicedInvalids = invalidPermutations.slice(0, TEST_SIZE);
+
+await Promise.all(
+    slicedValids.map(
+        async ({
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            storeLocationView,
+            testKind,
+        }) => {
+            await handleStoreCategoryClickTestMock({
+                metricsView,
+                productMetricCategory,
+                repairMetricCategory,
+                storeLocationView,
+                testKind,
+            });
+        },
+    ),
+);
+
+await Promise.all(
+    slicedInvalids.map(
+        async ({
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            storeLocationView,
+            testKind,
+        }) => {
+            await handleStoreCategoryClickTestMock({
+                metricsView,
+                productMetricCategory,
+                repairMetricCategory,
+                storeLocationView,
+                testKind,
+            });
+        },
+    ),
+);
+
+/**
+ * async function handleStoreCategoryClick(
     {
         accessToken,
         authDispatch,
         dashboardDispatch,
         fetchAbortControllerRef,
-        getForageItemSafe,
         globalDispatch,
         isComponentMountedRef,
         metricsUrl,
@@ -48,7 +207,6 @@ async function handleStoreCategoryClick(
         metricsView,
         productMetricCategory,
         repairMetricCategory,
-        setForageItemSafe,
         showBoundary,
         storeLocationView,
     }: {
@@ -56,7 +214,6 @@ async function handleStoreCategoryClick(
         authDispatch: React.Dispatch<AuthDispatch>;
         dashboardDispatch: React.Dispatch<DashboardDispatch>;
         fetchAbortControllerRef: React.RefObject<AbortController | null>;
-        getForageItemSafe: GetForageItemSafe;
         globalDispatch: React.Dispatch<GlobalDispatch>;
         isComponentMountedRef: React.RefObject<boolean>;
         metricsUrl: string;
@@ -64,18 +221,10 @@ async function handleStoreCategoryClick(
         navigateFn: NavigateFunction;
         productMetricCategory: ProductMetricCategory;
         repairMetricCategory: RepairMetricCategory;
-        setForageItemSafe: SetForageItemSafe;
         showBoundary: (error: any) => void;
         storeLocationView: AllStoreLocations;
     },
-): Promise<
-    SafeBoxResult<
-        {
-            newAccessToken: string;
-            businessMetricsDocument: BusinessMetricsDocument;
-        }
-    >
-> {
+): Promise<SafeBoxResult<boolean[]>> {
     fetchAbortControllerRef.current?.abort("Previous request cancelled");
     fetchAbortControllerRef.current = new AbortController();
     const fetchAbortController = fetchAbortControllerRef.current;
@@ -132,7 +281,7 @@ async function handleStoreCategoryClick(
         const metricsDocument = unwrapped.data;
 
         if (
-            unwrapped.kind === "success" && metricsDocument !== undefined
+            unwrapped.kind === "success"
         ) {
             if (metricsView === "customers") {
                 globalDispatch({
@@ -168,10 +317,7 @@ async function handleStoreCategoryClick(
             });
 
             return createSafeBoxResult({
-                data: {
-                    newAccessToken: "",
-                    businessMetricsDocument: metricsDocument,
-                },
+                data: [true],
                 kind: "success",
             });
         }
@@ -263,8 +409,7 @@ async function handleStoreCategoryClick(
             });
         }
 
-        const { accessToken: newAccessToken, triggerLogout } =
-            parsedServerResponse;
+        const { accessToken, triggerLogout } = parsedServerResponse;
 
         if (triggerLogout) {
             authDispatch({
@@ -287,16 +432,19 @@ async function handleStoreCategoryClick(
             await localforage.clear();
             navigateFn("/");
             return createSafeBoxResult({
-                message: "Logout triggered",
+                data: [false],
+                kind: "success",
             });
         }
 
-        const decodedTokenResult = await decodeJWTSafe(newAccessToken);
+        const decodedTokenResult = await decodeJWTSafe(accessToken);
+
         if (!isComponentMounted) {
             return createSafeBoxResult({
                 message: "Component unmounted",
             });
         }
+
         if (decodedTokenResult.err) {
             showBoundary(decodedTokenResult.val.data);
             return createSafeBoxResult({
@@ -315,7 +463,7 @@ async function handleStoreCategoryClick(
 
         authDispatch({
             action: authAction.setAccessToken,
-            payload: newAccessToken,
+            payload: accessToken,
         });
         authDispatch({
             action: authAction.setDecodedToken,
@@ -352,19 +500,10 @@ async function handleStoreCategoryClick(
             });
         }
 
-        const setForageItemResult = await setForageItemSafe<
-            BusinessMetricsDocument
-        >(
+        await setForageItemSafe<BusinessMetricsDocument>(
             forageKey,
             payload,
         );
-        if (setForageItemResult.err) {
-            showBoundary(setForageItemResult.val.data);
-            return createSafeBoxResult({
-                message: setForageItemResult.val.message ??
-                    "Unable to set forage item",
-            });
-        }
 
         dashboardDispatch({
             action: dashboardAction.setIsLoading,
@@ -372,7 +511,7 @@ async function handleStoreCategoryClick(
         });
 
         return createSafeBoxResult({
-            data: { newAccessToken, businessMetricsDocument: payload },
+            data: [true],
             kind: "success",
         });
     } catch (error: unknown) {
@@ -390,5 +529,4 @@ async function handleStoreCategoryClick(
         });
     }
 }
-
-export { handleStoreCategoryClick };
+ */

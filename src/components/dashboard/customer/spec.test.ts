@@ -1,6 +1,6 @@
+import { shuffle } from "simple-statistics";
 import { describe, expect, it } from "vitest";
 import {
-    ALL_STORE_LOCATIONS_DATA,
     INVALID_BOOLEANS,
     INVALID_STRINGS,
     VALID_BOOLEANS,
@@ -8,7 +8,7 @@ import {
 import { CustomerMetricsDocument } from "../../../types";
 import { handleMetricsMock } from "../../testing/utils";
 import { MONTHS } from "../constants";
-import { AllStoreLocations } from "../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { customerMetricsAction } from "./actions";
 import {
     createCustomerMetricsCalendarCharts,
@@ -23,10 +23,13 @@ import {
 import { initialCustomerMetricsState } from "./state";
 import { CustomerMetricsDispatch } from "./types";
 
+type CustomerMetricsTestCallbackInput = {
+    calendarView: DashboardCalendarView;
+    storeLocation: AllStoreLocations;
+};
+
 async function customerMetricsTestCallback(
-    { storeLocation }: {
-        storeLocation: AllStoreLocations;
-    },
+    { calendarView, storeLocation }: CustomerMetricsTestCallbackInput,
 ) {
     const metricsResult = await handleMetricsMock({
         metricsView: "customers",
@@ -56,7 +59,9 @@ async function customerMetricsTestCallback(
 
     const { currentYear, previousYear } =
         await createCustomerMetricsCalendarCharts(
+            calendarView,
             selectedDateCustomerMetrics,
+            "2025-01-01",
         );
 
     const customerMetricsCharts = await createCustomerMetricsCharts({
@@ -68,7 +73,7 @@ async function customerMetricsTestCallback(
 
     describe(
         `customerMetricsReducer 
-        Store Location: ${storeLocation}
+           Store Location: ${storeLocation}
         `,
         () => {
             describe("customerMetricsReducer_setCalendarChartsData", () => {
@@ -177,11 +182,66 @@ async function customerMetricsTestCallback(
     );
 }
 
+function generateCustomerMetricsPermutations() {
+    const calendarViews: Array<DashboardCalendarView> = [
+        "Daily",
+        "Monthly",
+        "Yearly",
+    ];
+    const shuffledCalendarViews = shuffle(calendarViews);
+    const storeLocationViews: Array<AllStoreLocations> = [
+        "All Locations",
+        "Calgary",
+        "Edmonton",
+        "Vancouver",
+    ];
+    const shuffledStoreLocationViews = shuffle(storeLocationViews);
+
+    return shuffledCalendarViews.reduce((acc, calendarView) => {
+        shuffledStoreLocationViews.forEach((storeLocation) => {
+            acc.validPermutations.push({
+                calendarView,
+                storeLocation,
+            });
+        });
+
+        //
+        //
+        return acc;
+    }, {
+        validPermutations: [] as Array<
+            CustomerMetricsTestCallbackInput
+        >,
+        invalidPermutations: [] as Array<
+            CustomerMetricsTestCallbackInput
+        >,
+    });
+}
+
+const { validPermutations, invalidPermutations } =
+    generateCustomerMetricsPermutations();
+const TEST_SIZE = 1;
+const slicedValids = validPermutations.slice(0, TEST_SIZE);
+const slicedInvalids = invalidPermutations.slice(0, TEST_SIZE);
+
 await Promise.all(
-    ALL_STORE_LOCATIONS_DATA.map(
-        async ({ value }) =>
+    slicedValids.map(
+        async ({ calendarView, storeLocation }) => {
             await customerMetricsTestCallback({
-                storeLocation: value,
-            }),
+                calendarView,
+                storeLocation,
+            });
+        },
+    ),
+);
+
+await Promise.all(
+    slicedInvalids.map(
+        async ({ calendarView, storeLocation }) => {
+            await customerMetricsTestCallback({
+                calendarView,
+                storeLocation,
+            });
+        },
     ),
 );

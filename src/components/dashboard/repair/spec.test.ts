@@ -1,14 +1,15 @@
+import { shuffle } from "simple-statistics";
 import { describe, expect, it } from "vitest";
 import {
     INVALID_BOOLEANS,
     INVALID_STRINGS,
     VALID_BOOLEANS,
 } from "../../../constants";
-import { RepairMetricsDocument } from "../../../types";
+import { RepairMetricsDocument, SafeBoxResult } from "../../../types";
 import { createSafeBoxResult } from "../../../utils";
 import { handleMetricsMock } from "../../testing/utils";
 import { MONTHS } from "../constants";
-import { AllStoreLocations } from "../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { repairMetricsAction } from "./actions";
 import {
     createRepairMetricsCalendarCharts,
@@ -21,15 +22,18 @@ import {
     repairMetricsReducer_setIsGenerating,
 } from "./reducers";
 import { initialRepairMetricsState } from "./state";
-import { REPAIR_METRICS_TEST_INPUT } from "./testData";
 import { RepairMetricCategory } from "./types";
 
+type RepairMetricsTestCallbackInput = {
+    calendarView: DashboardCalendarView;
+    repairMetricCategory: RepairMetricCategory;
+    storeLocation: AllStoreLocations;
+};
+
 async function repairMetricsTestCallback(
-    { repairMetricCategory, storeLocation }: {
-        storeLocation: AllStoreLocations;
-        repairMetricCategory: RepairMetricCategory;
-    },
-) {
+    { calendarView, repairMetricCategory, storeLocation }:
+        RepairMetricsTestCallbackInput,
+): Promise<SafeBoxResult> {
     try {
         const metricsResult = await handleMetricsMock({
             metricsView: "repairs",
@@ -39,12 +43,17 @@ async function repairMetricsTestCallback(
         });
 
         if (metricsResult.err) {
-            return;
+            return createSafeBoxResult({
+                message: metricsResult.val.message ??
+                    "Error handling metrics mock",
+            });
         }
 
         const data = metricsResult.safeUnwrap().data;
         if (data === undefined) {
-            return;
+            return createSafeBoxResult({
+                message: "No data returned from metrics mock",
+            });
         }
         const [businesMetricsDocument] = data;
 
@@ -58,7 +67,11 @@ async function repairMetricsTestCallback(
         });
 
         const { currentYear, previousYear } =
-            await createRepairMetricsCalendarCharts(selectedDateRepairMetrics);
+            await createRepairMetricsCalendarCharts(
+                calendarView,
+                selectedDateRepairMetrics,
+                "2025-01-01",
+            );
 
         const repairMetricsCharts = await createRepairMetricsCharts({
             repairMetricsDocument:
@@ -69,9 +82,9 @@ async function repairMetricsTestCallback(
 
         describe(
             `repairMetricsReducer 
-        Store Location: ${storeLocation}
-        Repair Metric: ${repairMetricCategory}
-        `,
+               Store Location: ${storeLocation}
+               Repair Metric: ${repairMetricCategory}
+             `,
             () => {
                 describe("repairMetricsReducer_setCalendarChartsData", () => {
                     it("should allow valid data", () => {
@@ -186,10 +199,77 @@ async function repairMetricsTestCallback(
     }
 }
 
+function generateRepairMetricsPermutations() {
+    const calendarViews: Array<DashboardCalendarView> = [
+        "Daily",
+        "Monthly",
+        "Yearly",
+    ];
+    const shuffledCalendarViews = shuffle(calendarViews);
+    const repairMetricCategories: Array<RepairMetricCategory> = [
+        "Accessory",
+        "All Repairs",
+        "Audio/Video",
+        "Computer Component",
+        "Electronic Device",
+        "Mobile Device",
+        "Peripheral",
+    ];
+    const shuffledRepairMetricCategories = shuffle(repairMetricCategories);
+    const storeLocationViews: Array<AllStoreLocations> = [
+        "All Locations",
+        "Calgary",
+        "Edmonton",
+        "Vancouver",
+    ];
+    const shuffledStoreLocationViews = shuffle(storeLocationViews);
+
+    return shuffledCalendarViews.reduce((acc, calendarView) => {
+        shuffledRepairMetricCategories.forEach((repairMetricCategory) => {
+            shuffledStoreLocationViews.forEach((storeLocation) => {
+                acc.validPermutations.push({
+                    calendarView,
+                    repairMetricCategory,
+                    storeLocation,
+                });
+            });
+        });
+        //
+        //
+        return acc;
+    }, {
+        validPermutations: [] as Array<
+            RepairMetricsTestCallbackInput
+        >,
+        invalidPermutations: [] as Array<
+            RepairMetricsTestCallbackInput
+        >,
+    });
+}
+
+const { validPermutations, invalidPermutations } =
+    generateRepairMetricsPermutations();
+const TEST_SIZE = 1;
+const slicedValids = validPermutations.slice(0, TEST_SIZE);
+const slicedInvalids = invalidPermutations.slice(0, TEST_SIZE);
+
 await Promise.all(
-    REPAIR_METRICS_TEST_INPUT.map(
-        async ({ repairMetricCategory, storeLocation }) => {
+    slicedValids.map(
+        async ({ calendarView, repairMetricCategory, storeLocation }) => {
             await repairMetricsTestCallback({
+                calendarView,
+                repairMetricCategory,
+                storeLocation,
+            });
+        },
+    ),
+);
+
+await Promise.all(
+    slicedInvalids.map(
+        async ({ calendarView, repairMetricCategory, storeLocation }) => {
+            await repairMetricsTestCallback({
+                calendarView,
                 repairMetricCategory,
                 storeLocation,
             });

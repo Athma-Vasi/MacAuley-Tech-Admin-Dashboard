@@ -29,7 +29,11 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
-import { returnThemeColors } from "../../utils";
+import {
+  getForageItemSafe,
+  returnThemeColors,
+  setForageItemSafe,
+} from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
@@ -171,6 +175,7 @@ function Dashboard() {
             authDispatch,
             dashboardDispatch,
             fetchAbortControllerRef,
+            getForageItemSafe,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
@@ -178,6 +183,7 @@ function Dashboard() {
             navigateFn,
             productMetricCategory,
             repairMetricCategory,
+            setForageItemSafe,
             showBoundary,
             storeLocationView: event.currentTarget
               .value as AllStoreLocations,
@@ -200,6 +206,7 @@ function Dashboard() {
             authDispatch,
             dashboardDispatch,
             fetchAbortControllerRef,
+            getForageItemSafe,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
@@ -208,6 +215,7 @@ function Dashboard() {
             productMetricCategory,
             repairMetricCategory: event.currentTarget
               .value as RepairMetricCategory,
+            setForageItemSafe,
             showBoundary,
             storeLocationView,
           }),
@@ -241,6 +249,7 @@ function Dashboard() {
             authDispatch,
             dashboardDispatch,
             fetchAbortControllerRef,
+            getForageItemSafe,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
@@ -249,6 +258,7 @@ function Dashboard() {
             productMetricCategory: event.currentTarget
               .value as ProductMetricCategory,
             repairMetricCategory,
+            setForageItemSafe,
             showBoundary,
             storeLocationView,
           }),

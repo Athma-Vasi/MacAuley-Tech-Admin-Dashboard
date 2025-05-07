@@ -459,7 +459,9 @@ async function handleUsersQuerySubmitGETTestMock(
         });
 
         if (usersQueryResult.err) {
-            return createSafeBoxResult({ message: "Users query failed" });
+            return createSafeBoxResult({
+                message: usersQueryResult.val.message ?? "Users query failed",
+            });
         }
 
         const usersQueryUnwrapped = usersQueryResult.safeUnwrap().data;

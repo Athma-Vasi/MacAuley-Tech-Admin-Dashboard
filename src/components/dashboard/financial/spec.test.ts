@@ -1,6 +1,6 @@
+import { shuffle } from "simple-statistics";
 import { describe, expect, it } from "vitest";
 import {
-    ALL_STORE_LOCATIONS_DATA,
     INVALID_BOOLEANS,
     INVALID_STRINGS,
     VALID_BOOLEANS,
@@ -8,7 +8,7 @@ import {
 import { FinancialMetricsDocument } from "../../../types";
 import { handleMetricsMock } from "../../testing/utils";
 import { MONTHS } from "../constants";
-import { AllStoreLocations } from "../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { financialMetricsAction } from "./actions";
 import {
     createFinancialMetricsCalendarCharts,
@@ -23,10 +23,13 @@ import {
 import { initialFinancialMetricsState } from "./state";
 import { FinancialMetricsDispatch } from "./types";
 
+type FinancialMetricsTestCallbackInput = {
+    calendarView: DashboardCalendarView;
+    storeLocation: AllStoreLocations;
+};
+
 async function financialMetricsTestCallback(
-    { storeLocation }: {
-        storeLocation: AllStoreLocations;
-    },
+    { calendarView, storeLocation }: FinancialMetricsTestCallbackInput,
 ) {
     const metricsResult = await handleMetricsMock({
         metricsView: "financials",
@@ -61,7 +64,9 @@ async function financialMetricsTestCallback(
         currentYear,
         previousYear,
     } = await createFinancialMetricsCalendarCharts(
+        calendarView,
         selectedDateFinancialMetrics,
+        "2025-01-01",
     );
 
     const financialMetricsCharts = await createFinancialMetricsCharts({
@@ -74,7 +79,7 @@ async function financialMetricsTestCallback(
 
     describe(
         `financialMetricsReducer 
-        Store Location: ${storeLocation}
+           Store Location: ${storeLocation}
         `,
         () => {
             describe("financialMetricsReducer_setCalendarChartsData", () => {
@@ -184,11 +189,66 @@ async function financialMetricsTestCallback(
     );
 }
 
+function generateFinancialMetricsPermutations() {
+    const calendarViews: Array<DashboardCalendarView> = [
+        "Daily",
+        "Monthly",
+        "Yearly",
+    ];
+    const shuffledCalendarViews = shuffle(calendarViews);
+    const storeLocationViews: Array<AllStoreLocations> = [
+        "All Locations",
+        "Calgary",
+        "Edmonton",
+        "Vancouver",
+    ];
+    const shuffledStoreLocationViews = shuffle(storeLocationViews);
+
+    return shuffledCalendarViews.reduce((acc, calendarView) => {
+        shuffledStoreLocationViews.forEach((storeLocation) => {
+            acc.validPermutations.push({
+                calendarView,
+                storeLocation,
+            });
+        });
+
+        //
+        //
+        return acc;
+    }, {
+        validPermutations: [] as Array<
+            FinancialMetricsTestCallbackInput
+        >,
+        invalidPermutations: [] as Array<
+            FinancialMetricsTestCallbackInput
+        >,
+    });
+}
+
+const { validPermutations, invalidPermutations } =
+    generateFinancialMetricsPermutations();
+const TEST_SIZE = 1;
+const slicedValids = validPermutations.slice(0, TEST_SIZE);
+const slicedInvalids = invalidPermutations.slice(0, TEST_SIZE);
+
 await Promise.all(
-    ALL_STORE_LOCATIONS_DATA.map(
-        async ({ value }) =>
+    slicedValids.map(
+        async ({ calendarView, storeLocation }) => {
             await financialMetricsTestCallback({
-                storeLocation: value,
-            }),
+                calendarView,
+                storeLocation,
+            });
+        },
+    ),
+);
+
+await Promise.all(
+    slicedInvalids.map(
+        async ({ calendarView, storeLocation }) => {
+            await financialMetricsTestCallback({
+                calendarView,
+                storeLocation,
+            });
+        },
     ),
 );

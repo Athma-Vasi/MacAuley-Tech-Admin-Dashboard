@@ -28,7 +28,7 @@ import {
     handleMetricCategoryNavlinkClick,
 } from "./handlers";
 
-type HandleMetricCategoryNavlinkClickTestMockInput = {
+type DashboardTestMockInput = {
     metricsView: Lowercase<DashboardMetricsView>;
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
@@ -43,7 +43,7 @@ async function handleMetricCategoryNavlinkClickTestMock(
         repairMetricCategory,
         storeLocationView,
         testKind,
-    }: HandleMetricCategoryNavlinkClickTestMockInput,
+    }: DashboardTestMockInput,
 ): Promise<
     SafeBoxResult<[]>
 > {
@@ -158,14 +158,12 @@ async function handleMetricCategoryNavlinkClickTestMock(
     }
 }
 
-function generateMetricCategoryNavlinkClickPermutations(): {
-    validPermutations: Array<
-        HandleMetricCategoryNavlinkClickTestMockInput
-    >;
-    invalidPermutations: Array<
-        HandleMetricCategoryNavlinkClickTestMockInput
-    >;
-} {
+type DashboardQueryParamsPermutations = {
+    validPermutations: Array<DashboardTestMockInput>;
+    invalidPermutations: Array<DashboardTestMockInput>;
+};
+
+function generateDashbaordQueryParamsPermutations(): DashboardQueryParamsPermutations {
     const metricsViews: Array<Lowercase<DashboardMetricsView>> = [
         "products",
         "repairs",
@@ -255,17 +253,17 @@ function generateMetricCategoryNavlinkClickPermutations(): {
         },
         {
             validPermutations: [] as Array<
-                HandleMetricCategoryNavlinkClickTestMockInput
+                DashboardTestMockInput
             >,
             invalidPermutations: [] as Array<
-                HandleMetricCategoryNavlinkClickTestMockInput
+                DashboardTestMockInput
             >,
         },
     );
 }
 
 const { validPermutations, invalidPermutations } =
-    generateMetricCategoryNavlinkClickPermutations();
+    generateDashbaordQueryParamsPermutations();
 const TEST_SIZE = 20;
 const slicedValids = validPermutations.slice(0, TEST_SIZE);
 const slicedInvalids = invalidPermutations.slice(0, TEST_SIZE);
@@ -669,3 +667,6 @@ await Promise.all(
         },
     ),
 );
+
+export { generateDashbaordQueryParamsPermutations };
+export type { DashboardQueryParamsPermutations, DashboardTestMockInput };
