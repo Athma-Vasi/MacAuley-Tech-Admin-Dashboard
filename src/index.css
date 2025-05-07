@@ -140,12 +140,12 @@
   .chart-controls-container {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: calc(100vw - var(--sidebar-width) - var(--padding) * 0.5);
 
     .controls-container {
-      width: 100%;
-      overflow-y: scroll;
       height: 38vh;
+      overflow-y: scroll;
+      width: 100%;
 
       .controls-card {
         width: clamp(
@@ -341,10 +341,6 @@
       transition: all 0.17s ease-in-out;
       width: var(--grid-item-width);
     }
-    .chart-controls-card:hover {
-      box-shadow: var(--box-shadow);
-      transform: scale(var(--hover-transform-scale));
-    }
 
     .chart-titles {
       display: flex;
@@ -366,10 +362,6 @@
       padding: var(--padding);
       transition: all 0.17s ease-in-out;
       width: var(--grid-item-width);
-    }
-    .statistics-card:hover {
-      box-shadow: var(--box-shadow);
-      transform: scale(var(--hover-transform-scale));
     }
 
     .chart-card {
