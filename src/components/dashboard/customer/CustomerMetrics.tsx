@@ -93,7 +93,9 @@ function CustomerMetrics(
 
         const { currentYear, previousYear } =
           await createCustomerMetricsCalendarCharts(
+            calendarView,
             selectedDateCustomerMetrics,
+            selectedYYYYMMDD,
           );
 
         const customerMetricsCharts = await createCustomerMetricsCharts({
@@ -152,7 +154,7 @@ function CustomerMetrics(
       isComponentMountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYYYYMMDD, storeLocationView]);
+  }, [calendarView, selectedYYYYMMDD, storeLocationView, themeObject]);
 
   if (!customerMetricsDocument || !cards || !charts) {
     return null;

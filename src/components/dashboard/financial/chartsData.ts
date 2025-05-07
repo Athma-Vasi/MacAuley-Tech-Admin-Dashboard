@@ -3622,12 +3622,6 @@ async function createFinancialMetricsCalendarCharts(
     yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
   } = selectedDateFinancialMetrics;
 
-  console.log({ selectedDateFinancialMetrics });
-  console.log({ selectedYYYYMMDD });
-  console.log({ selectedYearMetrics });
-  console.log({ prevYearMetrics });
-  console.log({ calendarView });
-
   const calendarChartsTemplatePERT: CalendarChartsPERT = {
     total: [],
     repair: [],

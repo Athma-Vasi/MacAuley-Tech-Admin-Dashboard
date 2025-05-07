@@ -2180,7 +2180,9 @@ type CustomerMetricsCalendarCharts = {
 };
 
 async function createCustomerMetricsCalendarCharts(
+  calendarView: DashboardCalendarView,
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics,
+  selectedYYYYMMDD: string,
 ): Promise<
   {
     currentYear: CustomerMetricsCalendarCharts;
@@ -2189,6 +2191,12 @@ async function createCustomerMetricsCalendarCharts(
 > {
   const { yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics } } =
     selectedDateCustomerMetrics;
+
+  console.log({ selectedDateCustomerMetrics });
+  console.log({ selectedYYYYMMDD });
+  console.log({ selectedYearMetrics });
+  console.log({ prevYearMetrics });
+  console.log({ calendarView });
 
   const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
     total: [],
@@ -2211,18 +2219,24 @@ async function createCustomerMetricsCalendarCharts(
 
   const [currentYear, previousYear] = await Promise.all([
     createDailyCustomerCalendarCharts(
-      selectedYearMetrics,
       structuredClone(calendarChartsTemplate),
+      calendarView,
+      selectedYYYYMMDD,
+      selectedYearMetrics,
     ),
     createDailyCustomerCalendarCharts(
-      prevYearMetrics,
       structuredClone(calendarChartsTemplate),
+      calendarView,
+      selectedYYYYMMDD,
+      prevYearMetrics,
     ),
   ]);
 
   async function createDailyCustomerCalendarCharts(
-    yearlyMetrics: CustomerYearlyMetric | undefined,
     calendarChartsTemplate: CustomerMetricsCalendarCharts,
+    calendarView: DashboardCalendarView,
+    selectedYYYYMMDD: string,
+    yearlyMetrics: CustomerYearlyMetric | undefined,
   ): Promise<CustomerMetricsCalendarCharts> {
     if (!yearlyMetrics) {
       return new Promise((resolve) => {
@@ -2232,7 +2246,33 @@ async function createCustomerMetricsCalendarCharts(
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        const dailyCustomerCalendarCharts = yearlyMetrics.monthlyMetrics.reduce(
+        let selectedMetrics: Array<CustomerMonthlyMetric> = [];
+
+        if (calendarView === "Daily") {
+          const selectedMonthMetrics = yearlyMetrics.monthlyMetrics.find(
+            (monthlyMetric) => {
+              const { month } = monthlyMetric;
+              const monthIdx = MONTHS.indexOf(month) + 1;
+              return monthIdx === parseInt(selectedYYYYMMDD.split("-")[1]);
+            },
+          );
+
+          if (!selectedMonthMetrics) {
+            return resolve(calendarChartsTemplate);
+          }
+
+          selectedMetrics = [selectedMonthMetrics];
+        }
+
+        if (calendarView === "Monthly" || calendarView === "Yearly") {
+          selectedMetrics = yearlyMetrics.monthlyMetrics;
+        }
+
+        if (selectedMetrics.length === 0) {
+          return resolve(calendarChartsTemplate);
+        }
+
+        const customerCalendarCharts = selectedMetrics.reduce(
           (resultAcc, monthlyMetric) => {
             const { month, dailyMetrics } = monthlyMetric;
             const monthNumber = MONTHS.indexOf(month) + 1;
@@ -2322,7 +2362,7 @@ async function createCustomerMetricsCalendarCharts(
           calendarChartsTemplate,
         );
 
-        resolve(dailyCustomerCalendarCharts);
+        resolve(customerCalendarCharts);
       }, 0);
     });
   }
