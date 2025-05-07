@@ -44,39 +44,24 @@ const productMetricsDocumentZod = z.object({
     ).optional(),
 });
 
+const productMetricsRUSCalendarChartsZod = z.object({
+    total: z.array(z.object({
+        day: z.string(),
+        value: z.number(),
+    })),
+    online: z.array(z.object({
+        day: z.string(),
+        value: z.number(),
+    })),
+    inStore: z.array(z.object({
+        day: z.string(),
+        value: z.number(),
+    })),
+});
+
 const productMetricsCalendarChartsZod = z.object({
-    revenue: z.array(
-        z.object({
-            total: z.array(z.object({
-                day: z.string(),
-                value: z.number(),
-            })),
-            online: z.array(z.object({
-                day: z.string(),
-                value: z.number(),
-            })),
-            inStore: z.array(z.object({
-                day: z.string(),
-                value: z.number(),
-            })),
-        }),
-    ),
-    unitsSold: z.array(
-        z.object({
-            total: z.array(z.object({
-                day: z.string(),
-                value: z.number(),
-            })),
-            online: z.array(z.object({
-                day: z.string(),
-                value: z.number(),
-            })),
-            inStore: z.array(z.object({
-                day: z.string(),
-                value: z.number(),
-            })),
-        }),
-    ),
+    revenue: productMetricsRUSCalendarChartsZod,
+    unitsSold: productMetricsRUSCalendarChartsZod,
 });
 
 const setProductCalendarChartsDataDispatchZod = z.object({

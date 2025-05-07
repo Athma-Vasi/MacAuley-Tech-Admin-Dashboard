@@ -64,6 +64,8 @@ function ProductMetrics(
     isGenerating,
   } = productMetricsState;
 
+  console.log({ productMetricsState });
+
   const {
     globalState: { themeObject },
   } = useGlobalState();
