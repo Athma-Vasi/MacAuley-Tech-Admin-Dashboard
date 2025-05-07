@@ -97,7 +97,9 @@ function FinancialMetrics(
           currentYear,
           previousYear,
         } = await createFinancialMetricsCalendarCharts(
+          calendarView,
           selectedDateFinancialMetrics,
+          selectedYYYYMMDD,
         );
 
         const financialMetricsCharts = await createFinancialMetricsCharts({
@@ -157,7 +159,7 @@ function FinancialMetrics(
       isComponentMountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYYYYMMDD, storeLocationView, themeObject]);
+  }, [calendarView, selectedYYYYMMDD, storeLocationView, themeObject]);
 
   if (!financialMetricsDocument || !cards || !charts) {
     return null;
