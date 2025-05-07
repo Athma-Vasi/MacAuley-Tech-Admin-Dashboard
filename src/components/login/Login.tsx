@@ -26,8 +26,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { DIRECTORY_EMPLOYEE_DATA, EmployeeDoc } from "../directory/data";
-import { QueryLink } from "../query/types";
 import { loginAction } from "./actions";
 import { handleLoginButtonClick } from "./handlers";
 import { loginReducer } from "./reducers";

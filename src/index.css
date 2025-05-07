@@ -1500,7 +1500,8 @@
     grid-template-areas:
       "header header header header header header header header header header header header"
       "sidebar main main main main main main main main main main main";
-    width: var(--app-width);
+    /* width: var(--app-width); */
+    width: 100%;
   }
 
   .header {
@@ -1534,9 +1535,9 @@
       width: 100%;
 
       .display-resource-container {
-        width: min(
+        width: max(
           calc(var(--app-width) - var(--sidebar-width) - var(--padding-x2)),
-          calc(100vw - var(--padding-x2))
+          calc(100vw - var(--sidebar-width) - var(--padding-x2))
         );
 
         .resource-table-container {
@@ -1577,16 +1578,17 @@
     gap: var(--padding);
 
     /* grid-template-areas:
-       1  2  3  4  5  6  7
-      "ti co co rc rc cc cc" 1
-      "ti c0 c0 rc rc cc cc" 2
-      "bc bc bc bc bc cc cc" 3
-      "bc bc bc bc bc cc cc" 4
-      "lc lc lc lc lc cc cc" 5
-      "lc lc lc lc lc cc cc" 6; */
+    1  2  3  4  5  6  7
+    "ti co co rc rc cc cc" 1
+    "ti c0 c0 rc rc cc cc" 2
+    "bc bc bc bc bc cc cc" 3
+    "bc bc bc bc bc cc cc" 4
+    "lc lc lc lc lc cc cc" 5
+    "lc lc lc lc lc cc cc" 6; */
 
-    grid-template-columns: repeat(5, var(--grid-item-height));
+    grid-template-columns: repeat(7, var(--grid-item-height));
     grid-template-rows: repeat(6, var(--grid-item-height));
+    place-content: center;
     width: 100%;
 
     .chart-titles {
@@ -1649,8 +1651,9 @@
       "c3 c3 lc lc lc lc lc" 5
       "c4 c4 lc lc lc lc lc";6 */
 
-    grid-template-columns: repeat(5, var(--grid-item-height));
+    grid-template-columns: repeat(7, var(--grid-item-height));
     grid-template-rows: repeat(6, var(--grid-item-height));
+    place-content: center;
     width: 100%;
 
     .chart-titles {

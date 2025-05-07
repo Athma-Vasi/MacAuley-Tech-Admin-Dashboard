@@ -670,6 +670,8 @@ const ARRANGE_BY_DIRECTIONS: SortDirection[] = [
   "descending",
 ];
 
+const READY_RUN_TEST = false;
+
 export {
   ACCORDION_BREAKPOINT,
   ALL_STORE_LOCATIONS_DATA,
@@ -705,6 +707,7 @@ export {
   PRODUCT_URL,
   PROTOCOL,
   PROVINCES,
+  READY_RUN_TEST,
   REGISTER_URL,
   REPAIR_URL,
   RESOURCES_DATE_FIELDS,

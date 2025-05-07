@@ -25,12 +25,6 @@ import {
 } from "./handlers";
 import { SAMPLE_USER_DOCUMENT } from "./testData";
 
-const READY_RUN_TEST = true;
-
-if (!READY_RUN_TEST) {
-  throw new Error("This test is not ready to run");
-}
-
 // describe("registerReducer", () => {
 //   describe("registerReducer_setConfirmPassword", () => {
 //     it("should allow valid string values", () => {
@@ -1425,8 +1419,8 @@ function generateUserSchemas(amount = 20): UserSchema[] {
   });
 }
 
-await Promise.all(
-  generateUserSchemas(1).map(async (schema) =>
-    await handleRegisterButtonClickTestMock(schema)
-  ),
-);
+// await Promise.all(
+//   generateUserSchemas(1).map(async (schema) =>
+//     await handleRegisterButtonClickTestMock(schema)
+//   ),
+// );

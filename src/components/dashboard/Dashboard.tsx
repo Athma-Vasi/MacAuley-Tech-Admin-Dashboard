@@ -65,6 +65,7 @@ function Dashboard() {
     dashboardReducer,
     initialDashboardState,
   );
+  const { authState: { userDocument } } = useAuth();
 
   const { windowWidth } = useWindowSize();
   const navigateFn = useNavigate();
@@ -433,7 +434,9 @@ function Dashboard() {
 
       <Stack align="flex-start" p="md">
         <Title order={2} size={32}>DASHBOARD</Title>
-        <Text size="md">Welcome to your dashboard</Text>
+        <Text size="md">
+          Welcome to your dashboard{`, ${userDocument?.firstName ?? ""}`}
+        </Text>
       </Stack>
       {displayMetricsView}
     </Box>
