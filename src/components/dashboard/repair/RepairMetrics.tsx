@@ -100,7 +100,11 @@ function RepairMetrics(
         });
 
         const { currentYear, previousYear } =
-          await createRepairMetricsCalendarCharts(selectedDateRepairMetrics);
+          await createRepairMetricsCalendarCharts(
+            calendarView,
+            selectedDateRepairMetrics,
+            selectedYYYYMMDD,
+          );
 
         const repairMetricsCharts = await createRepairMetricsCharts({
           repairMetricsDocument,
@@ -158,7 +162,13 @@ function RepairMetrics(
       isComponentMountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYYYYMMDD, storeLocationView, repairMetricCategory]);
+  }, [
+    calendarView,
+    selectedYYYYMMDD,
+    storeLocationView,
+    repairMetricCategory,
+    themeObject,
+  ]);
 
   if (!repairMetricsDocument || !cards || !charts) {
     return null;

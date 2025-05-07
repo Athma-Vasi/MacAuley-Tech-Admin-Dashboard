@@ -500,7 +500,9 @@ type RepairMetricCalendarCharts = {
 };
 
 async function createRepairMetricsCalendarCharts(
+  calendarView: DashboardCalendarView,
   selectedDateRepairMetrics: SelectedDateRepairMetrics,
+  selectedYYYYMMDD: string,
 ): Promise<
   {
     currentYear: RepairMetricCalendarCharts;
@@ -528,17 +530,43 @@ async function createRepairMetricsCalendarCharts(
 
   async function createDailyRepairCalendarCharts(
     yearlyMetrics: RepairYearlyMetric | undefined,
-    calendarChartTemplate: RepairMetricCalendarCharts,
+    calendarChartsTemplate: RepairMetricCalendarCharts,
   ): Promise<RepairMetricCalendarCharts> {
     if (!yearlyMetrics) {
       return new Promise((resolve) => {
-        resolve(calendarChartTemplate);
+        resolve(calendarChartsTemplate);
       });
     }
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        const dailyRepairCalendarCharts = yearlyMetrics.monthlyMetrics.reduce(
+        let selectedMetrics: Array<RepairMonthlyMetric> = [];
+
+        if (calendarView === "Daily") {
+          const selectedMonthMetrics = yearlyMetrics.monthlyMetrics.find(
+            (monthlyMetric) => {
+              const { month } = monthlyMetric;
+              const monthIdx = MONTHS.indexOf(month) + 1;
+              return monthIdx === parseInt(selectedYYYYMMDD.split("-")[1]);
+            },
+          );
+
+          if (!selectedMonthMetrics) {
+            return resolve(calendarChartsTemplate);
+          }
+
+          selectedMetrics = [selectedMonthMetrics];
+        }
+
+        if (calendarView === "Monthly" || calendarView === "Yearly") {
+          selectedMetrics = yearlyMetrics.monthlyMetrics;
+        }
+
+        if (selectedMetrics.length === 0) {
+          return resolve(calendarChartsTemplate);
+        }
+
+        const repairCalendarCharts = selectedMetrics.reduce(
           (resultAcc, monthlyMetric) => {
             const { dailyMetrics, month } = monthlyMetric;
             const monthNumber = MONTHS.indexOf(month) + 1;
@@ -566,10 +594,10 @@ async function createRepairMetricsCalendarCharts(
 
             return resultAcc;
           },
-          calendarChartTemplate,
+          calendarChartsTemplate,
         );
 
-        resolve(dailyRepairCalendarCharts);
+        resolve(repairCalendarCharts);
       }, 0);
     });
   }
