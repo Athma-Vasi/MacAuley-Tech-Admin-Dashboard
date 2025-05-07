@@ -3670,7 +3670,7 @@ async function createFinancialMetricsCalendarCharts(
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        let selectedMetrics: Array<MonthlyFinancialMetric> | undefined;
+        let selectedMetrics: Array<MonthlyFinancialMetric> = [];
 
         if (calendarView === "Daily") {
           const selectedMonthMetrics = yearlyMetrics.monthlyMetrics.find(
@@ -3692,7 +3692,7 @@ async function createFinancialMetricsCalendarCharts(
           selectedMetrics = yearlyMetrics.monthlyMetrics;
         }
 
-        if (!selectedMetrics) {
+        if (selectedMetrics.length === 0) {
           return resolve(calendarChartsTemplate);
         }
 

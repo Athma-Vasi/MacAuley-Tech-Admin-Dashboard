@@ -2192,12 +2192,6 @@ async function createCustomerMetricsCalendarCharts(
   const { yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics } } =
     selectedDateCustomerMetrics;
 
-  console.log({ selectedDateCustomerMetrics });
-  console.log({ selectedYYYYMMDD });
-  console.log({ selectedYearMetrics });
-  console.log({ prevYearMetrics });
-  console.log({ calendarView });
-
   const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
     total: [],
     repair: [],

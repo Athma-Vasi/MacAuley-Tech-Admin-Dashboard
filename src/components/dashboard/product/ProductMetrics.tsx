@@ -99,7 +99,9 @@ function ProductMetrics(
 
         const { currentYear, previousYear } =
           await createProductMetricsCalendarCharts(
+            calendarView,
             selectedDateProductMetrics,
+            selectedYYYYMMDD,
           );
 
         const productMetricsCharts = await createProductMetricsCharts({
@@ -158,7 +160,13 @@ function ProductMetrics(
       isComponentMountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYYYYMMDD, storeLocationView, productMetricCategory]);
+  }, [
+    calendarView,
+    productMetricCategory,
+    selectedYYYYMMDD,
+    storeLocationView,
+    themeObject,
+  ]);
 
   if (!productMetricsDocument || !cards || !charts) {
     return null;

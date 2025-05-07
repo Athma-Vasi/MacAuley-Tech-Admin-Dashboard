@@ -5,6 +5,7 @@ import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
 import { MONTHS } from "../constants";
 import {
+  DashboardCalendarView,
   Month,
   ProductDailyMetric,
   ProductMonthlyMetric,
@@ -1090,7 +1091,9 @@ type ProductMetricsCalendarCharts = {
 };
 
 async function createProductMetricsCalendarCharts(
+  calendarView: DashboardCalendarView,
   selectedDateProductMetrics: SelectedDateProductMetrics,
+  selectedYYYYMMDD: string,
 ): Promise<{
   currentYear: ProductMetricsCalendarCharts;
   previousYear: ProductMetricsCalendarCharts;
@@ -1134,7 +1137,33 @@ async function createProductMetricsCalendarCharts(
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        const dailyProductMetricsCalendarCharts = yearlyMetrics.monthlyMetrics
+        let selectedMetrics: Array<ProductMonthlyMetric> = [];
+
+        if (calendarView === "Daily") {
+          const selectedMonthMetrics = yearlyMetrics.monthlyMetrics.find(
+            (monthlyMetric) => {
+              const { month } = monthlyMetric;
+              const monthIdx = MONTHS.indexOf(month) + 1;
+              return monthIdx === parseInt(selectedYYYYMMDD.split("-")[1]);
+            },
+          );
+
+          if (!selectedMonthMetrics) {
+            return resolve(calendarChartsTemplate);
+          }
+
+          selectedMetrics = [selectedMonthMetrics];
+        }
+
+        if (calendarView === "Monthly" || calendarView === "Yearly") {
+          selectedMetrics = yearlyMetrics.monthlyMetrics;
+        }
+
+        if (selectedMetrics.length === 0) {
+          return resolve(calendarChartsTemplate);
+        }
+
+        const productMetricsCalendarCharts = selectedMetrics
           .reduce((resultAcc, monthlyMetric) => {
             const { month, dailyMetrics } = monthlyMetric;
             const monthNumber = MONTHS.indexOf(month) + 1;
@@ -1183,7 +1212,7 @@ async function createProductMetricsCalendarCharts(
             return resultAcc;
           }, calendarChartsTemplate);
 
-        resolve(dailyProductMetricsCalendarCharts);
+        resolve(productMetricsCalendarCharts);
       }, 0);
     });
   }
