@@ -1,6 +1,7 @@
 import { Accordion, Box, Group, Pagination, Space } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
+import { useNavigate } from "react-router-dom";
 import {
     API_URL,
     COLORS_SWATCHES,
@@ -18,7 +19,6 @@ import DisplayResource from "./DisplayResource";
 import { handleUsersQuerySubmitGET } from "./handlers";
 import { usersQueryReducer } from "./reducers";
 import { initialUsersQueryState } from "./state";
-import { useNavigate } from "react-router-dom";
 
 type UsersQueryProps = {};
 

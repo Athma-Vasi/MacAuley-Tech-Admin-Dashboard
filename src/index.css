@@ -19,7 +19,7 @@
 
   --min-app-width: 375px;
   --ideal-app-width: 100vw;
-  --max-app-width: 1908px;
+  --max-app-width: 1906px;
   --app-width: clamp(
     var(--min-app-width),
     var(--ideal-app-width),
@@ -392,57 +392,6 @@
   }
 }
 
-/* .app-shell {
-  display: flex;
-  width: var(--app-width);
-  height: 100%;
-
-  .header {}
-
-  .chart-controls-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-
-    .controls-container {
-      height: 38vh;
-      overflow-y: scroll;
-      width: 100%;
-
-      .controls-card {
-        width: clamp(
-          var(--min-card-width),
-          var(--ideal-card-width),
-          425px
-        );
-      }
-    }
-
-    .chart-container {
-      height: 38vh;
-      width: 100%;
-      padding: var(--padding);
-    }
-  }
-
-  .main {
-    width: 100%;
-
-    .dashboard-layout-container {
-      padding: var(--padding);
-
-      .header {}
-    }
-  }
-
-  .sidebar.opened {
-    display: flex;
-    flex-direction: column;
-    padding: var(--sidebar-padding);
-  }
-  .sidebar {}
-} */
-
 .register-container {
   align-items: center;
   display: flex;
@@ -741,6 +690,7 @@
         justify-self: flex-end;
         grid-column: 2/3;
         grid-row: 1/2;
+        width: 100%;
       }
       .chart-card.pie {
         grid-column: 1/3;
@@ -763,6 +713,7 @@
         justify-self: flex-end;
         grid-column: 2/3;
         grid-row: 2/3;
+        width: 100%;
       }
       .statistics-card.c1 {
         grid-column: 1/3;
@@ -956,6 +907,7 @@
         justify-self: flex-end;
         grid-column: 2/3;
         grid-row: 1/2;
+        width: 100%;
       }
 
       .chart-card.pie {
@@ -979,6 +931,7 @@
         grid-column: 2/3;
         grid-row: 2/3;
         justify-self: flex-end;
+        width: 100%;
       }
       .statistics-card.c1 {
         grid-column: 1/3;
@@ -1203,6 +1156,7 @@
     .chart-controls-card {
       grid-column: 2/4;
       grid-row: 1/2;
+      width: 100%;
     }
 
     .chart-card.pie {
@@ -1225,24 +1179,29 @@
     .statistics-card.c0 {
       grid-column: 2/4;
       grid-row: 2/4;
+      width: 100%;
     }
     .statistics-card.c1 {
       grid-column: 3/5;
       grid-row: 9/10;
       justify-self: flex-end;
+      width: 100%;
     }
     .statistics-card.c2 {
       grid-column: 3/5;
       grid-row: 10/11;
       justify-self: flex-end;
+      width: 100%;
     }
     .statistics-card.c3 {
       grid-column: 1/3;
       grid-row: 11/12;
+      width: 100%;
     }
     .statistics-card.c4 {
       grid-column: 1/3;
       grid-row: 12/13;
+      width: 100%;
     }
   }
 }
@@ -1393,6 +1352,7 @@
       grid-column: 2/4;
       grid-row: 1/2;
       justify-self: center;
+      width: 100%;
     }
     .chart-card.calendar {
       grid-column: 1/6;
@@ -1415,6 +1375,7 @@
       grid-column: 2/4;
       grid-row: 2/3;
       justify-self: center;
+      width: 100%;
     }
   }
 
@@ -1451,6 +1412,7 @@
       grid-column: 2/4;
       grid-row: 1/2;
       justify-self: center;
+      width: 100%;
     }
 
     .chart-card.pie {
@@ -1474,24 +1436,29 @@
       grid-column: 2/4;
       grid-row: 2/4;
       justify-self: center;
+      width: 100%;
     }
     .statistics-card.c1 {
       grid-column: 1/3;
       grid-row: 5/6;
+      width: 100%;
     }
     .statistics-card.c2 {
       grid-column: 1/3;
       grid-row: 6/7;
+      width: 100%;
     }
     .statistics-card.c3 {
       grid-column: 4/6;
       grid-row: 7/8;
       justify-self: flex-end;
+      width: 100%;
     }
     .statistics-card.c4 {
       grid-column: 4/6;
       grid-row: 8/9;
       justify-self: flex-end;
+      width: 100%;
     }
   }
 }
@@ -1636,6 +1603,7 @@
       grid-column: 2/4;
       grid-row: 1/2;
       justify-self: center;
+      width: 100%;
     }
 
     .chart-card.calendar {
@@ -1664,6 +1632,7 @@
       grid-column: 2/4;
       grid-row: 2/3;
       justify-self: center;
+      width: 100%;
     }
   }
 
@@ -1698,6 +1667,7 @@
       grid-column: 2/4;
       grid-row: 1/2;
       justify-self: center;
+      width: 100%;
     }
 
     .chart-card.pie {
@@ -1721,1487 +1691,31 @@
       grid-column: 2/4;
       grid-row: 2/4;
       justify-self: center;
+      width: 100%;
     }
     .statistics-card.c1 {
       grid-column: 6/8;
       grid-row: 3/4;
       justify-self: flex-end;
+      width: 100%;
     }
     .statistics-card.c2 {
       grid-column: 6/8;
       grid-row: 4/5;
       justify-self: flex-end;
+      width: 100%;
     }
     .statistics-card.c3 {
       grid-column: 1/3;
       grid-row: 5/6;
       justify-self: flex-start;
+      width: 100%;
     }
     .statistics-card.c4 {
       grid-column: 1/3;
       grid-row: 6/7;
       justify-self: flex-start;
+      width: 100%;
     }
   }
 }
-
-/**
-@media screen and (max-width: 775px) {
-  .register-container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: flex-start;
-
-    padding: var(--padding);
-    width: 100%;
-
-    .register-card {
-      display: flex;
-      height: clamp(
-        var(--min-register-card-height),
-        var(--ideal-register-card-height),
-        var(--max-register-card-height)
-      );
-      overflow-y: auto;
-      width: clamp(
-        var(--min-register-card-width),
-        var(--ideal-register-card-width),
-        var(--max-register-card-width)
-      );
-      outline: 1px solid teal;
-      flex-direction: column;
-
-      .register-stepper-container {
-        align-items: flex-start;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-
-        .register-stepper-header {
-          width: 100%;
-        }
-
-        .register-stepper-cards {
-          align-items: center;
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          row-gap: var(--row-gap);
-          width: 100%;
-
-          .stepper-card {
-            display: none;
-          }
-
-          .stepper-card.active {
-            display: flex;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: var(--card-width);
-            border-radius: 1em;
-            transition: box-shadow 0.17s ease-in-out;
-          }
-        }
-      }
-
-      .register-form-container {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-        padding: var(--padding);
-
-        .register-form-header {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          width: 100%;
-        }
-
-        .register-form-card {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          width: 100%;
-          gap: var(--padding);
-          padding: var(--padding);
-        }
-
-        .register-form-footer {
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          row-gap: var(--row-gap);
-          width: 100%;
-        }
-
-        .form-review {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          row-gap: var(--row-gap);
-          padding-top: var(--padding);
-
-          .review-section-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-
-            .step-inputs-container {
-              padding: var(--padding) 0px;
-              display: flex;
-              flex-direction: column;
-              row-gap: 0.25em;
-
-              .input-section {
-                padding: 0.25em 0px;
-                display: grid;
-                grid-template-columns: 3fr 8fr;
-                column-gap: 2em;
-                border-radius: 0.38em;
-                padding: 0.38em;
-              }
-
-              .input-section.isEven {
-                background: hsla(0, 0%, 0%, 0.03);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .app-shell {
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .header-title {
-    display: none;
-  }
-
-  .burger {
-    display: flex;
-  }
-
-  .sidebar {
-    display: none;
-  }
-
-  .sidebar-opened {
-    display: flex;
-    padding: var(--sidebar-padding);
-  }
-
-  .main-sidebar-opened {
-    display: none;
-  }
-
-  .statistics-card {
-    width: var(--card-width);
-  }
-
-  .main {
-    width: 100%;
-
-    .users-query-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: var(--padding);
-      justify-content: baseline;
-      align-items: center;
-
-      .display-resource-container {
-        width: 100%;
-
-        .resource-cards-container {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          gap: var(--padding);
-          padding: var(--padding);
-
-          .resource {
-            width: min(100%, var(--resource-card-width));
-            display: flex;
-            flex-direction: column;
-            gap: var(--padding);
-            border-radius: var(--border-radius);
-            padding: var(--padding);
-            border: var(--border);
-            transition: all 0.17s ease-in-out;
-
-            .resource-item.odd {
-              background: var(--entry-odd-background);
-            }
-
-            .resource-item {
-              display: flex;
-              flex-direction: column;
-              padding: 0.25em var(--padding);
-              gap: 1em;
-              width: 100%;
-              border-radius: var(--border-radius);
-              transition: all 0.17s ease-in-out;
-
-              .resource-key {
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                text-align: left;
-                width: 100%;
-                gap: var(--padding);
-
-                .resource-key-icons {
-                  display: flex;
-                  flex-direction: column;
-                }
-              }
-
-              .resource-value {
-                text-wrap: normal;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                width: fit-content;
-                align-self: flex-end;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .query-container {
-      width: 100%;
-
-      .query-chain {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-filter {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-projection {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-sort {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-search {
-        display: flex;
-        flex-direction: column;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-    }
-  }
-
-  .grid-section {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: var(--padding) 0px;
-    gap: var(--padding);
-
-    .chart-card.calendar {
-      .chart {
-        height: calc(775px - var(--padding));
-        width: 100%;
-      }
-    }
-
-    .chart-card.blr {
-      .chart {
-        height: calc(775px - var(--padding));
-        width: 100%;
-      }
-    }
-
-    .chart-card.pie {
-      .chart {
-        height: 350px;
-        width: 100%;
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 776px) and (max-width: 1023px) {
-  .register-container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: flex-start;
-
-    padding: var(--padding);
-    width: 100%;
-
-    .register-card {
-      display: flex;
-      height: clamp(
-        var(--min-register-card-height),
-        var(--ideal-register-card-height),
-        var(--max-register-card-height)
-      );
-      overflow-y: auto;
-      width: clamp(
-        var(--min-register-card-width),
-        var(--ideal-register-card-width),
-        var(--max-register-card-width)
-      );
-      outline: 1px solid teal;
-
-      .register-stepper-container {
-        align-items: flex-start;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-
-        .register-stepper-header {
-          width: 100%;
-        }
-
-        .register-stepper-cards {
-          align-items: flex-start;
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          row-gap: var(--row-gap);
-          width: 100%;
-
-          .stepper-card {
-            width: var(--card-width);
-            border-radius: 1em;
-            transition: box-shadow 0.17s ease-in-out;
-          }
-
-          .stepper-card.active {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          }
-        }
-      }
-
-      .register-form-container {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-        padding: var(--padding);
-
-        .register-form-header {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          width: 100%;
-        }
-
-        .register-form-card {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          width: 100%;
-          gap: var(--padding);
-          padding: var(--padding);
-        }
-
-        .register-form-footer {
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          row-gap: var(--row-gap);
-          width: 100%;
-        }
-
-        .form-review {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          row-gap: var(--row-gap);
-          padding-top: var(--padding);
-
-          .review-section-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-
-            .step-inputs-container {
-              padding: var(--padding) 0px;
-              display: flex;
-              flex-direction: column;
-              row-gap: 0.25em;
-
-              .input-section {
-                padding: 0.25em 0px;
-                display: grid;
-                grid-template-columns: 3fr 8fr;
-                column-gap: 2em;
-                border-radius: 0.38em;
-                padding: 0.38em;
-              }
-
-              .input-section.isEven {
-                background: hsla(0, 0%, 0%, 0.03);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .app-shell {
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .header-title {
-    display: none;
-  }
-
-  .burger {
-    display: flex;
-  }
-
-  .sidebar {
-    display: none;
-  }
-
-  .sidebar-opened {
-    display: flex;
-    padding: var(--sidebar-padding);
-  }
-
-  .users-query-container {
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-    padding: var(--padding);
-    gap: var(--padding);
-    justify-content: baseline;
-    align-items: center;
-
-    .query-container {
-      width: 100%;
-
-      .query-chain {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-filter {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-projection {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-sort {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-search {
-        display: flex;
-        flex-direction: column;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-    }
-  }
-
-  .display-resource-container {
-    width: 100%;
-
-    .resource-cards-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding: var(--padding);
-      gap: var(--padding);
-
-      .resource {
-        width: var(--resource-card-width);
-        display: flex;
-        flex-direction: column;
-        padding: var(--padding);
-        gap: var(--padding);
-        border-radius: var(--border-radius);
-        border: var(--border);
-        transition: all 0.17s ease-in-out;
-
-        .resource-item.odd {
-          background: var(--entry-odd-background);
-        }
-
-        .resource-item {
-          display: grid;
-          grid-template-columns: 4fr 7fr;
-          padding: 0.25em var(--padding);
-          gap: 1em;
-          width: 100%;
-          border-radius: var(--border-radius);
-          transition: all 0.17s ease-in-out;
-
-          .resource-key {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            text-align: left;
-            width: 100%;
-            gap: var(--padding);
-
-            .resource-key-icons {
-              display: flex;
-              flex-direction: column;
-            }
-          }
-
-          .resource-value {
-            text-wrap: normal;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            width: fit-content;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-        }
-      }
-    }
-  }
-
-  .grid-section.calendar {
-    display: grid;
-    grid-template-areas:
-      "ti co co co co"
-      "bc bc bc bc bc"
-      "cc cc cc cc cc"
-      ".. .. .. .. ..";
-    width: 100%;
-    gap: var(--padding);
-
-    .chart-controls-card {
-      grid-area: co;
-    }
-
-    .chart-titles {
-      grid-area: ti;
-    }
-
-    .chart-card.calendar {
-      grid-area: cc;
-
-      .chart {}
-    }
-
-    .chart-card.blr {
-      grid-area: bc;
-    }
-
-    .statistics-card {}
-    .statistics-card.active {}
-  }
-
-  .grid-section.pie {
-    display: grid;
-    grid-template-areas:
-      "ti co co co co"
-      "bc bc bc bc bc"
-      "pc pc pc pc pc"
-      ".. .. .. .. ..";
-    width: 100%;
-    gap: var(--padding);
-
-    .chart-controls-card {
-      grid-area: co;
-    }
-
-    .chart-titles {
-      grid-area: ti;
-    }
-
-    .chart-card.pie {
-      grid-area: pc;
-    }
-
-    .chart-card.blr {
-      grid-area: bc;
-    }
-
-    .statistics-cards-container {
-      display: flex;
-      flex-wrap: wrap;
-      width: 100%;
-      gap: var(--padding);
-
-      .statistics-card {
-        width: var(--statistics-card-width);
-      }
-      .statistics-card.active {}
-    }
-  }
-}
-
-@media screen and (min-width: 1024px) and (max-width: 1399px) {
-  .register-container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: flex-start;
-
-    padding: var(--padding);
-    width: 100%;
-
-    .register-card {
-      display: flex;
-      height: clamp(
-        var(--min-register-card-height),
-        var(--ideal-register-card-height),
-        var(--max-register-card-height)
-      );
-      overflow-y: auto;
-      width: clamp(
-        var(--min-register-card-width),
-        var(--ideal-register-card-width),
-        var(--max-register-card-width)
-      );
-      outline: 1px solid teal;
-
-      .register-stepper-container {
-        align-items: flex-start;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-
-        .register-stepper-header {
-          width: 100%;
-        }
-
-        .register-stepper-cards {
-          align-items: flex-start;
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          row-gap: var(--row-gap);
-          width: 100%;
-
-          .stepper-card {
-            width: var(--card-width);
-            border-radius: 1em;
-            transition: box-shadow 0.17s ease-in-out;
-          }
-
-          .stepper-card.active {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          }
-        }
-      }
-
-      .register-form-container {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-        padding: var(--padding);
-
-        .register-form-header {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          width: 100%;
-        }
-
-        .register-form-card {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          width: 100%;
-          gap: var(--padding);
-          padding: var(--padding);
-        }
-
-        .register-form-footer {
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          row-gap: var(--row-gap);
-          width: 100%;
-        }
-
-        .form-review {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          row-gap: var(--row-gap);
-          padding-top: var(--padding);
-
-          .review-section-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-
-            .step-inputs-container {
-              padding: var(--padding) 0px;
-              display: flex;
-              flex-direction: column;
-              row-gap: 0.25em;
-
-              .input-section {
-                padding: 0.25em 0px;
-                display: grid;
-                grid-template-columns: 3fr 8fr;
-                column-gap: 2em;
-                border-radius: 0.38em;
-                padding: 0.38em;
-              }
-
-              .input-section.isEven {
-                background: hsla(0, 0%, 0%, 0.03);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .register-card {
-    display: flex;
-    column-gap: var(--column-gap);
-  }
-
-  .app-shell {
-    width: var(--app-width);
-    display: grid;
-    grid-template-areas:
-      "header header header header header header header header header header header header"
-      "sidebar main main main main main main main main main main main";
-  }
-
-  .header {
-    grid-area: header;
-  }
-
-  .sidebar {
-    grid-area: sidebar;
-
-    width: 100%;
-    padding: var(--sidebar-padding);
-  }
-
-  .main {
-    grid-area: main;
-    width: 100%;
-
-    .users-query-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      padding: var(--padding);
-      gap: var(--padding);
-      justify-content: baseline;
-      align-items: center;
-
-      .display-resource-container {
-        width: 100%;
-
-        .resource-cards-container {
-          display: flex;
-          flex-direction: column;
-
-          width: 100%;
-          padding: var(--padding);
-          gap: var(--padding);
-
-          .resource {
-            width: var(--resource-card-width);
-            display: flex;
-            flex-direction: column;
-            padding: var(--padding);
-            gap: var(--padding);
-            border-radius: var(--border-radius);
-            border: var(--border);
-            transition: all 0.17s ease-in-out;
-
-            .resource-item.odd {
-              background: var(--entry-odd-background);
-            }
-
-            .resource-item {
-              display: grid;
-              grid-template-columns: 4fr 7fr;
-              padding: 0.25em var(--padding);
-              gap: 1em;
-              width: 100%;
-              border-radius: var(--border-radius);
-              transition: all 0.17s ease-in-out;
-
-              .resource-key {
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                text-align: left;
-                width: 100%;
-                gap: var(--padding);
-
-                .resource-key-icons {
-                  display: flex;
-                  flex-direction: column;
-                }
-              }
-
-              .resource-value {
-                text-wrap: normal;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                width: fit-content;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .query-container {
-      width: 100%;
-
-      .query-chain {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-filter {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-projection {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-sort {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-search {
-        display: flex;
-        flex-direction: column;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-    }
-  }
-
-  .grid-section.calendar {
-    display: grid;
-    grid-template-areas:
-      "ti co co"
-      "bc bc bc"
-      "c0 cc cc"
-      ".. cc cc";
-    width: 100%;
-    gap: var(--padding);
-
-    .chart-controls-card {
-      grid-area: co;
-    }
-
-    .chart-titles {
-      grid-area: ti;
-    }
-
-    .chart-card.calendar {
-      grid-area: cc;
-
-      width: clamp(350px, 100%, 1024px);
-      .chart {}
-    }
-
-    .chart-card.blr {
-      grid-area: bc;
-    }
-
-    .statistics-card {}
-    .statistics-card.active {}
-  }
-
-  .grid-section.pie {
-    display: grid;
-    grid-template-areas:
-      "ti co co"
-      "bc bc bc"
-      "c0 pc pc"
-      "c1 pc pc"
-      "c2 c3 c4";
-
-    width: 100%;
-    gap: var(--padding);
-
-    .chart-controls-card {
-      grid-area: co;
-    }
-
-    .chart-titles {
-      grid-area: ti;
-    }
-
-    .chart-card.blr {
-      grid-area: bc;
-    }
-
-    .chart-card.pie {
-      grid-area: pc;
-    }
-
-    .statistics-card {}
-
-    .statistics-card.c0 {
-      grid-area: c0;
-    }
-    .statistics-card.c1 {
-      grid-area: c1;
-    }
-    .statistics-card.c2 {
-      grid-area: c2;
-    }
-    .statistics-card.c3 {
-      grid-area: c3;
-    }
-    .statistics-card.c4 {
-      grid-area: c4;
-    }
-  }
-}
-
-@media screen and (min-width: 1400px) {
-  .register-container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: flex-start;
-
-    padding: var(--padding);
-    width: 100%;
-
-    .register-card {
-      display: flex;
-      height: clamp(
-        var(--min-register-card-height),
-        var(--ideal-register-card-height),
-        var(--max-register-card-height)
-      );
-      overflow-y: auto;
-      width: clamp(
-        var(--min-register-card-width),
-        var(--ideal-register-card-width),
-        var(--max-register-card-width)
-      );
-      outline: 1px solid teal;
-
-      .register-stepper-container {
-        align-items: flex-start;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-
-        .register-stepper-header {
-          width: 100%;
-        }
-
-        .register-stepper-cards {
-          align-items: flex-start;
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          row-gap: var(--row-gap);
-          width: 100%;
-
-          .stepper-card {
-            width: var(--card-width);
-            border-radius: 1em;
-            transition: box-shadow 0.17s ease-in-out;
-          }
-
-          .stepper-card.active {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          }
-        }
-      }
-
-      .register-form-container {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        row-gap: var(--row-gap);
-        width: 100%;
-        padding: var(--padding);
-
-        .register-form-header {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          width: 100%;
-        }
-
-        .register-form-card {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          width: 100%;
-          gap: var(--padding);
-          padding: var(--padding);
-        }
-
-        .register-form-footer {
-          column-gap: var(--column-gap);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          row-gap: var(--row-gap);
-          width: 100%;
-        }
-
-        .form-review {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          row-gap: var(--row-gap);
-          padding-top: var(--padding);
-
-          .review-section-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-
-            .step-inputs-container {
-              padding: var(--padding) 0px;
-              display: flex;
-              flex-direction: column;
-              row-gap: 0.25em;
-
-              .input-section {
-                padding: 0.25em 0px;
-                display: grid;
-                grid-template-columns: 3fr 8fr;
-                column-gap: 2em;
-                border-radius: 0.38em;
-                padding: 0.38em;
-              }
-
-              .input-section.isEven {
-                background: hsla(0, 0%, 0%, 0.03);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .register-card {
-    display: flex;
-    column-gap: var(--column-gap);
-  }
-
-  .app-shell {
-    width: var(--app-width);
-    display: grid;
-    grid-template-areas:
-      "header header header header header header header header header header header header"
-      "sidebar main main main main main main main main main main main";
-  }
-
-  .header {
-    grid-area: header;
-  }
-
-  .sidebar {
-    grid-area: sidebar;
-    width: 100%;
-    padding: var(--sidebar-padding);
-  }
-
-  .main {
-    grid-area: main;
-    width: 100%;
-
-    .users-query-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      padding: var(--padding);
-      gap: var(--padding);
-      justify-content: baseline;
-      align-items: center;
-
-      .display-resource-container {
-        width: min(
-          calc(var(--app-width) - 225px - var(--padding)),
-          calc(100vw - var(--padding))
-        );
-
-        .resource-table-container {
-          width: 100%;
-          overflow-x: scroll;
-
-          .table-header {
-            .header-item {
-              .resource-key-icons {
-                display: flex;
-                flex-direction: column;
-                width: fit-content;
-              }
-
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: flex-start;
-              align-items: center;
-              min-width: 175px;
-              max-width: 275px;
-              gap: var(--padding);
-            }
-          }
-
-          .table-body {
-            .table-value {
-              padding: 0px var(--padding);
-              cursor: pointer;
-            }
-          }
-        }
-
-        .resource-cards-container {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          padding: var(--padding);
-          gap: var(--padding);
-
-          .resource {
-            width: var(--resource-card-width);
-            display: flex;
-            flex-direction: column;
-            padding: var(--padding);
-            gap: var(--padding);
-            border-radius: var(--border-radius);
-            border: var(--border);
-            transition: all 0.17s ease-in-out;
-
-            .resource-item.odd {
-              background: var(--entry-odd-background);
-            }
-
-            .resource-item {
-              display: grid;
-              grid-template-columns: 4fr 7fr;
-              padding: 0.25em var(--padding);
-              gap: 1em;
-              width: 100%;
-              border-radius: var(--border-radius);
-              transition: all 0.17s ease-in-out;
-
-              .resource-key {
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                text-align: left;
-                width: 100%;
-                gap: var(--padding);
-
-                .resource-key-icons {
-                  display: flex;
-                  flex-direction: column;
-                }
-              }
-
-              .resource-value {
-                text-wrap: normal;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                width: fit-content;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .query-container {
-      width: 100%;
-
-      .query-chain {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-filter {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-projection {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-sort {
-        display: flex;
-        flex-wrap: wrap;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-
-      .query-search {
-        display: flex;
-        flex-direction: column;
-        padding: var(--padding);
-        gap: var(--padding);
-        width: 100%;
-      }
-    }
-  }
-
-  .grid-section.calendar {
-    display: grid;
-    grid-template-areas:
-      "ti co co"
-      "bc bc bc"
-      "c0 cc cc"
-      ".. cc cc";
-    width: 100%;
-    gap: var(--padding);
-
-    .chart-controls-card {
-      grid-area: co;
-    }
-
-    .chart-titles {
-      grid-area: ti;
-    }
-
-    .chart-card.calendar {
-      grid-area: cc;
-
-      width: clamp(350px, 100%, 1024px);
-      .chart {}
-    }
-
-    .chart-card.blr {
-      grid-area: bc;
-    }
-  }
-
-  .grid-section.pie {
-    display: grid;
-    grid-template-areas:
-      "ti co co"
-      "bc bc bc"
-      "c0 pc pc"
-      "c1 pc pc"
-      "c2 c3 c4";
-
-    width: 100%;
-    gap: var(--padding);
-
-    .chart-controls-card {
-      grid-area: co;
-      justify-self: flex-end;
-      width: 100%;
-    }
-
-    .chart-titles {
-      grid-area: ti;
-    }
-
-    .chart-card.blr {
-      grid-area: bc;
-    }
-
-    .chart-card.pie {
-      grid-area: pc;
-    }
-
-    .statistics-card {}
-
-    .statistics-card.c0 {
-      grid-area: c0;
-    }
-    .statistics-card.c1 {
-      grid-area: c1;
-    }
-    .statistics-card.c2 {
-      grid-area: c2;
-    }
-    .statistics-card.c3 {
-      grid-area: c3;
-    }
-    .statistics-card.c4 {
-      grid-area: c4;
-    }
-  }
-}
-
-.resource-cards-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: var(--padding);
-  gap: var(--padding);
-
-  .resource {
-    width: var(--resource-card-width);
-    display: flex;
-    flex-direction: column;
-    padding: var(--padding);
-    gap: var(--padding);
-    border-radius: var(--border-radius);
-    border: var(--border);
-    transition: all 0.17s ease-in-out;
-
-    .resource-item.odd {
-      background: var(--entry-odd-background);
-    }
-
-    .resource-item.highlighted {
-      border: var(--border);
-      border-radius: var(--border-radius);
-    }
-
-    .resource-item {
-      display: grid;
-      grid-template-columns: 4fr 7fr;
-      padding: 0.25em var(--padding);
-      gap: 1em;
-      width: 100%;
-      border-radius: var(--border-radius);
-      transition: all 0.17s ease-in-out;
-
-      .resource-key {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        text-align: left;
-        width: 100%;
-        gap: var(--padding);
-
-        .resource-key-icons {
-          display: flex;
-          flex-direction: column;
-        }
-      }
-
-      .resource-value {
-        text-wrap: normal;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        width: fit-content;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
-  }
-}
-*/
