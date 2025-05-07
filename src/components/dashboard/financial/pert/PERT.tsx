@@ -323,6 +323,7 @@ function PERT({
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          calendarView,
           chartUnitKind,
           kind: "radial",
         })}

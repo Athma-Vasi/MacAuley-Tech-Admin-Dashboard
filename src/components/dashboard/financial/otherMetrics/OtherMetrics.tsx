@@ -258,6 +258,7 @@ function OtherMetrics({
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          calendarView,
           chartUnitKind: barLineRadialUnit,
           kind: "radial",
         })}

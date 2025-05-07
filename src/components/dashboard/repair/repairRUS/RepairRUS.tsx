@@ -252,6 +252,7 @@ function RepairRUS(
       tooltip={(arg) =>
         createChartTooltipElement({
           arg,
+          calendarView,
           chartUnitKind: barLineRadialChartUnit,
           kind: "radial",
         })}
