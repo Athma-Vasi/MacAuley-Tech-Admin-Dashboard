@@ -4,6 +4,7 @@ const initialLoginState: LoginState = {
   isLoading: false,
   isSubmitting: false,
   isSuccessful: false,
+  fetchParseWorker: null,
   password: "password123Q!",
   username: "manager",
 };

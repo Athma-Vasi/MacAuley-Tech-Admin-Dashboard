@@ -17,17 +17,22 @@ import { useErrorBoundary } from "react-error-boundary";
 import { Link, useNavigate } from "react-router-dom";
 
 import { TbCheck } from "react-icons/tb";
-import {
-  COLORS_SWATCHES,
-  FETCH_REQUEST_TIMEOUT,
-  LOGIN_URL,
-} from "../../constants";
+import { COLORS_SWATCHES, LOGIN_URL } from "../../constants";
+import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import {
+  DecodedToken,
+  FinancialMetricsDocument,
+  HttpServerResponse,
+  SafeBoxResult,
+  UserDocument,
+} from "../../types";
 import { returnThemeColors } from "../../utils";
+import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
-import { handleLoginButtonClick } from "./handlers";
+import { loginOnmessageCallback } from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
 
@@ -40,6 +45,7 @@ function Login() {
     isLoading,
     isSubmitting,
     isSuccessful,
+    fetchParseWorker,
     password,
     username,
   } = loginState;
@@ -57,8 +63,9 @@ function Login() {
     usernameRef.current?.focus();
   }, []);
 
-  const fetchAbortControllerRef = useRef<AbortController | null>(null);
-  const isComponentMountedRef = useRef(false);
+  // const fetchAbortControllerRef = useRef<AbortController | null>(null);
+  // const isComponentMountedRef = useRef(false);
+  const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
     // (async function wrapper() {
@@ -72,13 +79,41 @@ function Login() {
 
     // })();
 
-    const timerId = setTimeout(() => {
-      fetchAbortControllerRef?.current?.abort("Request timed out");
-    }, FETCH_REQUEST_TIMEOUT);
+    const newFetchParseWorker = new FetchParseWorker();
+
+    loginDispatch({
+      action: loginAction.setFetchParseWorker,
+      payload: newFetchParseWorker,
+    });
+
+    newFetchParseWorker.onmessage = async (
+      event: MessageEvent<
+        SafeBoxResult<
+          {
+            parsedServerResponse: HttpServerResponse<
+              {
+                userDocument: UserDocument;
+                financialMetricsDocument: FinancialMetricsDocument;
+              }
+            >;
+            decodedToken: DecodedToken;
+          }
+        >
+      >,
+    ) => {
+      await loginOnmessageCallback({
+        event,
+        authDispatch,
+        globalDispatch,
+        isComponentMountedRef,
+        loginDispatch,
+        navigate,
+        showBoundary,
+      });
+    };
 
     return () => {
-      clearTimeout(timerId);
-      fetchAbortControllerRef?.current?.abort("Component unmounted");
+      newFetchParseWorker.terminate();
       isComponentMountedRef.current = false;
     };
   }, []);
@@ -142,18 +177,42 @@ function Login() {
             return;
           }
 
-          await handleLoginButtonClick({
-            authDispatch,
-            fetchAbortControllerRef,
-            globalDispatch,
-            isComponentMountedRef,
-            loginDispatch,
-            navigate,
-            schema: { username, password },
-            showBoundary,
-            toLocation: "/dashboard/financials",
-            url: LOGIN_URL,
+          loginDispatch({
+            action: loginAction.setIsSubmitting,
+            payload: true,
           });
+
+          const requestInit: RequestInit = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            mode: "cors",
+            body: JSON.stringify({ schema: { username, password } }),
+          };
+
+          fetchParseWorker?.postMessage({
+            requestInit,
+            url: LOGIN_URL,
+            // zSchema: z.object({
+            //   userDocument: userDocumentOptionalsZod,
+            //   financialMetricsDocument: financialMetricsDocumentZod,
+            // }),
+            routesZodSchemaMapKey: "login",
+          });
+
+          // await handleLoginButtonClick({
+          //   authDispatch,
+          //   fetchAbortControllerRef,
+          //   globalDispatch,
+          //   isComponentMountedRef,
+          //   loginDispatch,
+          //   navigate,
+          //   schema: { username, password },
+          //   showBoundary,
+          //   toLocation: "/dashboard/financials",
+          //   url: LOGIN_URL,
+          // });
         },
         style: {
           cursor: isLoading || isSubmitting || isSuccessful

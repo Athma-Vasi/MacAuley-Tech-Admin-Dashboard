@@ -2,6 +2,7 @@ import { parseSafeSync } from "../../utils";
 import { type LoginAction, loginAction } from "./actions";
 import {
   LoginDispatch,
+  setFetchParseWorkerDispatchZod,
   setIsLoadingDispatchZod,
   setIsSubmittingDispatchZod,
   setIsSuccessfulDispatchZod,
@@ -25,6 +26,7 @@ const loginReducersMap = new Map<
   [loginAction.setIsLoading, loginReducer_setIsLoading],
   [loginAction.setIsSubmitting, loginReducer_setIsSubmitting],
   [loginAction.setIsSuccessful, loginReducer_setIsSuccessful],
+  [loginAction.setFetchParseWorker, loginReducer_setFetchParseWorker],
   [loginAction.setPassword, loginReducer_setPassword],
   [loginAction.setUsername, loginReducer_setUsername],
 ]);
@@ -89,6 +91,27 @@ function loginReducer_setIsSuccessful(
   return {
     ...state,
     isSuccessful: parsedResult.safeUnwrap().data.payload,
+  };
+}
+
+function loginReducer_setFetchParseWorker(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSafeSync(
+    {
+      object: dispatch,
+      zSchema: setFetchParseWorkerDispatchZod,
+    },
+  );
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    fetchParseWorker: parsedResult.safeUnwrap().data.payload,
   };
 }
 
