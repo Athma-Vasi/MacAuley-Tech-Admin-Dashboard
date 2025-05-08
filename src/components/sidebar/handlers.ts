@@ -38,7 +38,346 @@ import {
   DirectoryDispatch,
 } from "../directory/types";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
+import { DirectoryMessageEvent, MetricsMessageEvent } from "./types";
 import { createDirectoryForageKey } from "./utils";
+
+async function handleMetricCategoryOnmessageCallback({
+  authDispatch,
+  event,
+  globalDispatch,
+  isComponentMountedRef,
+  navigate,
+  productMetricCategory,
+  repairMetricCategory,
+  showBoundary,
+  storeLocationView,
+}: {
+  authDispatch: React.Dispatch<AuthDispatch>;
+  event: MetricsMessageEvent;
+  globalDispatch: React.Dispatch<GlobalDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
+  navigate: NavigateFunction;
+  productMetricCategory: ProductMetricCategory;
+  repairMetricCategory: RepairMetricCategory;
+  showBoundary: (error: any) => void;
+  storeLocationView: AllStoreLocations;
+}) {
+  try {
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (event.data.err) {
+      showBoundary(event.data.val.data);
+      return createSafeBoxResult({
+        message: event.data.val.message ?? "Error fetching response",
+      });
+    }
+
+    const dataUnwrapped = event.data.val.data;
+    if (dataUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
+    }
+
+    const { metricsView = "financials", parsedServerResponse, decodedToken } =
+      dataUnwrapped;
+    const { accessToken: newAccessToken, triggerLogout, kind, message } =
+      parsedServerResponse;
+
+    if (triggerLogout) {
+      authDispatch({
+        action: authAction.setAccessToken,
+        payload: "",
+      });
+      authDispatch({
+        action: authAction.setIsLoggedIn,
+        payload: false,
+      });
+      authDispatch({
+        action: authAction.setDecodedToken,
+        payload: Object.create(null),
+      });
+      authDispatch({
+        action: authAction.setUserDocument,
+        payload: Object.create(null),
+      });
+
+      await localforage.clear();
+      navigate("/");
+      return createSafeBoxResult({
+        message: "Logout triggered",
+      });
+    }
+
+    authDispatch({
+      action: authAction.setAccessToken,
+      payload: newAccessToken,
+    });
+    authDispatch({
+      action: authAction.setDecodedToken,
+      payload: decodedToken,
+    });
+
+    if (kind === "error") {
+      showBoundary(
+        new Error(
+          `Server error: ${message}`,
+        ),
+      );
+      return createSafeBoxResult({
+        message,
+        kind: "error",
+      });
+    }
+
+    console.group("handleMetricCategoryOnmessageCallback");
+    console.log("Worker received message in useEffect:", event.data);
+    console.log("event.data.val.data", event.data.val.data);
+    console.log({ dataUnwrapped });
+    console.log("metricsView", metricsView);
+    console.groupEnd();
+
+    parsedServerResponse.data.forEach(
+      async (payload: BusinessMetricsDocument) => {
+        if (metricsView === "financials") {
+          globalDispatch({
+            action: globalAction.setFinancialMetricsDocument,
+            payload: payload as FinancialMetricsDocument,
+          });
+        }
+
+        if (metricsView === "products") {
+          globalDispatch({
+            action: globalAction.setProductMetricsDocument,
+            payload: payload as ProductMetricsDocument,
+          });
+        }
+
+        if (metricsView === "customers") {
+          globalDispatch({
+            action: globalAction.setCustomerMetricsDocument,
+            payload: payload as CustomerMetricsDocument,
+          });
+        }
+
+        if (metricsView === "repairs") {
+          globalDispatch({
+            action: globalAction.setRepairMetricsDocument,
+            payload: payload as RepairMetricsDocument,
+          });
+        }
+
+        const forageKey = createMetricsForageKey({
+          metricsView,
+          productMetricCategory,
+          repairMetricCategory,
+          storeLocationView,
+        });
+
+        await setForageItemSafe<BusinessMetricsDocument>(
+          forageKey,
+          payload,
+        );
+      },
+    );
+
+    globalDispatch({
+      action: globalAction.setIsFetching,
+      payload: false,
+    });
+
+    navigate(`/dashboard/${metricsView}`);
+    return createSafeBoxResult({
+      data: {
+        accessToken: newAccessToken,
+        businessMetricsDocument: parsedServerResponse
+          .data[0] as BusinessMetricsDocument,
+      },
+      kind: "success",
+    });
+  } catch (error) {
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
+  }
+}
+
+async function handleMetricCategoryNavClick(
+  {
+    accessToken,
+    metricsFetchWorker,
+    globalDispatch,
+    isComponentMountedRef,
+    metricsUrl,
+    metricsView,
+    navigate,
+    productMetricCategory,
+    repairMetricCategory,
+    showBoundary,
+    storeLocationView,
+    toLocation,
+  }: {
+    accessToken: string;
+    metricsFetchWorker: Worker | null;
+    globalDispatch: React.Dispatch<GlobalDispatch>;
+    isComponentMountedRef: React.RefObject<boolean>;
+    metricsUrl: string;
+    metricsView: Lowercase<DashboardMetricsView>;
+    navigate: NavigateFunction;
+    productMetricCategory: ProductMetricCategory;
+    repairMetricCategory: RepairMetricCategory;
+    showBoundary: (error: any) => void;
+    storeLocationView: AllStoreLocations;
+    toLocation: string;
+  },
+) {
+  const requestInit: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+  const metricCategoryQuery = metricsView === "products"
+    ? `&metricCategory[$eq]=${productMetricCategory}`
+    : metricsView === "repairs"
+    ? `&metricCategory[$eq]=${repairMetricCategory}`
+    : "";
+  const urlWithQuery = new URL(
+    `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
+  );
+
+  const forageKey = createMetricsForageKey({
+    metricsView,
+    productMetricCategory,
+    repairMetricCategory,
+    storeLocationView,
+  });
+
+  globalDispatch({
+    action: globalAction.setIsFetching,
+    payload: true,
+  });
+
+  try {
+    const metricsDocumentResult = await getForageItemSafe<
+      BusinessMetricsDocument
+    >(forageKey);
+
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    // if (metricsDocumentResult.err) {
+    //   showBoundary(metricsDocumentResult.val.data);
+    //   return createSafeBoxResult({
+    //     message: metricsDocumentResult.val.message ?? "Error fetching response",
+    //   });
+    // }
+
+    if (
+      metricsDocumentResult.ok &&
+      metricsDocumentResult.safeUnwrap().kind === "success"
+    ) {
+      if (metricsView === "customers") {
+        globalDispatch({
+          action: globalAction.setCustomerMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as CustomerMetricsDocument,
+        });
+      }
+
+      if (metricsView === "financials") {
+        globalDispatch({
+          action: globalAction.setFinancialMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as FinancialMetricsDocument,
+        });
+      }
+
+      if (metricsView === "products") {
+        globalDispatch({
+          action: globalAction.setProductMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as ProductMetricsDocument,
+        });
+      }
+
+      if (metricsView === "repairs") {
+        globalDispatch({
+          action: globalAction.setRepairMetricsDocument,
+          payload: metricsDocumentResult.safeUnwrap()
+            .data as RepairMetricsDocument,
+        });
+      }
+
+      globalDispatch({
+        action: globalAction.setIsFetching,
+        payload: false,
+      });
+
+      navigate(toLocation);
+
+      return createSafeBoxResult({
+        data: {
+          accessToken,
+          businessMetricsDocument: metricsDocumentResult.safeUnwrap()
+            .data as BusinessMetricsDocument,
+        },
+        kind: "success",
+      });
+    }
+
+    metricsFetchWorker?.postMessage({
+      metricsView,
+      requestInit,
+      url: urlWithQuery.toString(),
+      routesZodSchemaMapKey: metricsView === "products"
+        ? "productMetrics"
+        : metricsView === "repairs"
+        ? "repairMetrics"
+        : metricsView === "financials"
+        ? "financialMetrics"
+        : "customerMetrics",
+    });
+
+    return createSafeBoxResult({
+      data: true,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
+  }
+}
 
 async function handleMetricCategoryNavlinkClick(
   {
@@ -567,6 +906,271 @@ async function handleLogoutButtonClick({
   }
 }
 
+async function handleDirectoryNavClick(
+  {
+    accessToken,
+    department,
+    directoryDispatch,
+    directoryFetchWorker,
+    directoryUrl,
+    globalDispatch,
+    isComponentMountedRef,
+    navigate,
+    showBoundary,
+    storeLocation,
+    toLocation = "/dashboard/directory",
+  }: {
+    accessToken: string;
+    department: DepartmentsWithDefaultKey;
+    directoryDispatch?: React.Dispatch<DirectoryDispatch>;
+    directoryFetchWorker: Worker | null;
+    directoryUrl: string;
+    globalDispatch: React.Dispatch<GlobalDispatch>;
+    isComponentMountedRef: React.RefObject<boolean>;
+    navigate?: NavigateFunction;
+    showBoundary: (error: any) => void;
+    storeLocation: AllStoreLocations;
+    toLocation?: string;
+  },
+) {
+  isComponentMountedRef.current = true;
+  const isComponentMounted = isComponentMountedRef.current;
+
+  const requestInit: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  const urlWithQuery = department === "All Departments"
+    ? new URL(
+      `${directoryUrl}/user/?&limit=1000&newQueryFlag=true&totalDocuments=0`,
+    )
+    : new URL(
+      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
+    );
+
+  globalDispatch({
+    action: globalAction.setIsFetching,
+    payload: true,
+  });
+
+  const directoryKey = createDirectoryForageKey(
+    department,
+    storeLocation,
+  );
+
+  try {
+    const forageResult = await getForageItemSafe<UserDocument[]>(
+      directoryKey,
+    );
+    if (!isComponentMounted) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (forageResult.ok && forageResult.safeUnwrap().kind === "success") {
+      const unwrappedData = forageResult.safeUnwrap().data;
+      if (unwrappedData === undefined) {
+        return createSafeBoxResult({
+          message: "Data is undefined",
+        });
+      }
+
+      directoryDispatch?.({
+        action: directoryAction.setDirectory,
+        payload: unwrappedData,
+      });
+
+      await setForageItemSafe<UserDocument[]>(
+        directoryKey,
+        unwrappedData,
+      );
+
+      globalDispatch({
+        action: globalAction.setIsFetching,
+        payload: false,
+      });
+
+      navigate?.(toLocation);
+      return createSafeBoxResult({
+        data: {
+          newAccessToken: accessToken,
+          userDocuments: unwrappedData,
+        },
+        kind: "success",
+      });
+    }
+
+    directoryFetchWorker?.postMessage({
+      requestInit,
+      url: urlWithQuery.toString(),
+      routesZodSchemaMapKey: "directory",
+    });
+
+    return createSafeBoxResult({
+      data: true,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMounted
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
+  }
+}
+
+async function handleDirectoryOnmessageCallback({
+  authDispatch,
+  department,
+  directoryDispatch,
+  event,
+  globalDispatch,
+  isComponentMountedRef,
+  navigate,
+  showBoundary,
+  storeLocation,
+  toLocation = "/dashboard/directory",
+}: {
+  authDispatch: React.Dispatch<AuthDispatch>;
+  department: DepartmentsWithDefaultKey;
+  directoryDispatch?: React.Dispatch<DirectoryDispatch>;
+  event: DirectoryMessageEvent;
+  globalDispatch: React.Dispatch<GlobalDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
+  navigate?: NavigateFunction;
+  showBoundary: (error: any) => void;
+  storeLocation: AllStoreLocations;
+  toLocation?: string;
+}) {
+  try {
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (event.data.err) {
+      showBoundary(event.data.val.data);
+      return createSafeBoxResult({
+        message: event.data.val.message ?? "Error fetching response",
+      });
+    }
+
+    const dataUnwrapped = event.data.val.data;
+    if (dataUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
+    }
+
+    const { parsedServerResponse, decodedToken } = dataUnwrapped;
+
+    const { accessToken: newAccessToken, triggerLogout, kind, message } =
+      parsedServerResponse;
+
+    if (triggerLogout) {
+      authDispatch({
+        action: authAction.setAccessToken,
+        payload: "",
+      });
+      authDispatch({
+        action: authAction.setIsLoggedIn,
+        payload: false,
+      });
+      authDispatch({
+        action: authAction.setDecodedToken,
+        payload: Object.create(null),
+      });
+      authDispatch({
+        action: authAction.setUserDocument,
+        payload: Object.create(null),
+      });
+
+      await localforage.clear();
+      navigate?.("/");
+      return createSafeBoxResult({
+        message: "Logout triggered",
+      });
+    }
+
+    authDispatch({
+      action: authAction.setAccessToken,
+      payload: newAccessToken,
+    });
+    authDispatch({
+      action: authAction.setDecodedToken,
+      payload: decodedToken,
+    });
+
+    if (kind === "error") {
+      showBoundary(
+        new Error(
+          `Server error: ${message}`,
+        ),
+      );
+      return createSafeBoxResult({
+        message,
+        kind: "error",
+      });
+    }
+
+    const userDocuments = parsedServerResponse.data;
+
+    directoryDispatch?.({
+      action: directoryAction.setDirectory,
+      payload: userDocuments,
+    });
+
+    const directoryKey = createDirectoryForageKey(
+      department,
+      storeLocation,
+    );
+
+    await setForageItemSafe<UserDocument[]>(
+      directoryKey,
+      userDocuments,
+    );
+
+    globalDispatch({
+      action: globalAction.setIsFetching,
+      payload: false,
+    });
+
+    navigate?.(toLocation);
+
+    return createSafeBoxResult({
+      data: true,
+      kind: "success",
+    });
+  } catch (error) {
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
+  }
+}
+
 async function handleDirectoryClicks({
   accessToken,
   authDispatch,
@@ -868,6 +1472,10 @@ async function handleDirectoryClicks({
 
 export {
   handleDirectoryClicks,
+  handleDirectoryNavClick,
+  handleDirectoryOnmessageCallback,
   handleLogoutButtonClick,
+  handleMetricCategoryNavClick,
   handleMetricCategoryNavlinkClick,
+  handleMetricCategoryOnmessageCallback,
 };

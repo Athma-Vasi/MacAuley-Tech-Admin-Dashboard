@@ -5,6 +5,7 @@ import { DirectoryAction } from "./actions";
 type DirectoryState = {
   department: DepartmentsWithDefaultKey;
   directory: UserDocument[];
+  directoryFetchWorker: Worker | null;
   orientation: Orientation;
   storeLocation: StoreLocationsWithDefaultKey;
 };
@@ -21,6 +22,10 @@ type DirectoryDispatch =
   | {
     action: DirectoryAction["setDirectory"];
     payload: UserDocument[];
+  }
+  | {
+    action: DirectoryAction["setDirectoryFetchWorker"];
+    payload: Worker;
   }
   | {
     action: DirectoryAction["setOrientation"];

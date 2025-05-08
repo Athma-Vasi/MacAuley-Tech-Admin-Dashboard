@@ -14,21 +14,27 @@ import { useNavigate } from "react-router-dom";
 import {
   API_URL,
   COLORS_SWATCHES,
-  FETCH_REQUEST_TIMEOUT,
   LOGOUT_URL,
   METRICS_URL,
 } from "../../constants";
+import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
+import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
-import { DashboardMetricsView } from "../dashboard/types";
+import { sidebarAction } from "./actions";
 import {
-  handleDirectoryClicks,
+  handleDirectoryNavClick,
+  handleDirectoryOnmessageCallback,
   handleLogoutButtonClick,
-  handleMetricCategoryNavlinkClick,
+  handleMetricCategoryNavClick,
+  handleMetricCategoryOnmessageCallback,
 } from "./handlers";
+import { sidebarReducer } from "./reducers";
+import { initialSidebarState } from "./state";
+import { DirectoryMessageEvent, MetricsMessageEvent } from "./types";
 
 type SidebarProps = {
   opened: boolean;
@@ -38,32 +44,76 @@ type SidebarProps = {
 function Sidebar({ opened, setOpened }: SidebarProps) {
   const { authState: { accessToken }, authDispatch } = useAuth();
   const {
-    globalState: {
-      themeObject,
-      productMetricCategory,
-      repairMetricCategory,
-      storeLocationView,
-      isFetching,
-    },
+    globalState,
     globalDispatch,
   } = useGlobalState();
   const navigate = useNavigate();
   const { showBoundary } = useErrorBoundary();
-
+  const [sidebarState, sidebarDispatch] = React.useReducer(
+    sidebarReducer,
+    initialSidebarState,
+  );
   const fetchAbortControllerRef = useRef<AbortController | null>(null);
-  const isComponentMountedRef = useRef(false);
-  const [clickedKind, setClickedKind] = React.useState<
-    "" | DashboardMetricsView
-  >("");
+  const isComponentMountedRef = useMountedRef();
+
+  console.log("globalState in sidebar:", globalState);
+
+  const {
+    themeObject,
+    productMetricCategory,
+    repairMetricCategory,
+    storeLocationView,
+    isFetching,
+  } = globalState;
+  const { directoryFetchWorker, metricsFetchWorker, metricsView } =
+    sidebarState;
 
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      fetchAbortControllerRef?.current?.abort("Request timed out");
-    }, FETCH_REQUEST_TIMEOUT);
+    const newMetricsFetchWorker = new FetchParseWorker();
+    sidebarDispatch({
+      action: sidebarAction.setMetricsFetchWorker,
+      payload: newMetricsFetchWorker,
+    });
+
+    newMetricsFetchWorker.onmessage = async (
+      event: MetricsMessageEvent,
+    ) => {
+      await handleMetricCategoryOnmessageCallback({
+        authDispatch,
+        event,
+        globalDispatch,
+        isComponentMountedRef,
+        navigate,
+        productMetricCategory,
+        repairMetricCategory,
+        showBoundary,
+        storeLocationView,
+      });
+    };
+
+    const newDirectoryFetchWorker = new FetchParseWorker();
+    sidebarDispatch({
+      action: sidebarAction.setDirectoryFetchWorker,
+      payload: newDirectoryFetchWorker,
+    });
+
+    newDirectoryFetchWorker.onmessage = async (
+      event: DirectoryMessageEvent,
+    ) => {
+      await handleDirectoryOnmessageCallback({
+        authDispatch,
+        department: "Executive Management",
+        event,
+        globalDispatch,
+        isComponentMountedRef,
+        showBoundary,
+        storeLocation: "All Locations",
+        navigate,
+        toLocation: "/dashboard/directory",
+      });
+    };
 
     return () => {
-      clearTimeout(timerId);
-      fetchAbortControllerRef?.current?.abort("Component unmounted");
       isComponentMountedRef.current = false;
     };
   }, []);
@@ -72,28 +122,58 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Products",
-        icon: clickedKind === "Products" && isFetching
+        icon: metricsView === "products" && isFetching
           ? <Loader size={18} />
           : <TbAffiliate size={18} />,
         name: "Products",
         onClick: async () => {
-          setClickedKind("Products");
+          sidebarDispatch({
+            action: sidebarAction.setMetricsView,
+            payload: "products",
+          });
 
-          await handleMetricCategoryNavlinkClick({
+          await handleMetricCategoryNavClick({
             accessToken,
-            authDispatch,
-            fetchAbortControllerRef,
+            metricsFetchWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "products",
             navigate,
-            toLocation: "/dashboard/products",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocationView,
+            toLocation: "/dashboard/products",
+          }).then((result) => {
+            console.log("Result:", result);
           });
+
+          // const urlWithQuery = new URL(
+          //   `${METRICS_URL}/products/?${storeLocationQuery}&metricCategory[$eq]=${productMetricCategory}`,
+          // );
+
+          // metricsFetchWorker?.postMessage({
+          //   requestInit,
+          //   url: urlWithQuery,
+          //   routesZodSchemaMapKey: "productMetrics",
+          // });
+
+          // await handleMetricCategoryNavlinkClick({
+          //   accessToken,
+          //   authDispatch,
+          //   fetchAbortControllerRef,
+          //   globalDispatch,
+          //   isComponentMountedRef,
+          //   metricsUrl: METRICS_URL,
+          //   metricsView: "products",
+          //   navigate,
+          //   toLocation: "/dashboard/products",
+          //   productMetricCategory,
+          //   repairMetricCategory,
+          //   showBoundary,
+          //   storeLocationView,
+          // });
 
           setOpened(false);
         },
@@ -105,28 +185,56 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Financials",
-        icon: clickedKind === "Financials" && isFetching
+        icon: metricsView === "financials" && isFetching
           ? <Loader size={18} />
           : <TbReportMoney size={18} />,
         name: "Financials",
         onClick: async () => {
-          setClickedKind("Financials");
+          sidebarDispatch({
+            action: sidebarAction.setMetricsView,
+            payload: "financials",
+          });
 
-          await handleMetricCategoryNavlinkClick({
+          await handleMetricCategoryNavClick({
             accessToken,
-            authDispatch,
-            fetchAbortControllerRef,
+            metricsFetchWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "financials",
             navigate,
-            toLocation: "/dashboard/financials",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocationView,
+            toLocation: "/dashboard/financials",
           });
+
+          // const urlWithQuery = new URL(
+          //   `${METRICS_URL}/financials/?${storeLocationQuery}`,
+          // );
+
+          // metricsFetchWorker?.postMessage({
+          //   requestInit,
+          //   url: urlWithQuery,
+          //   routesZodSchemaMapKey: "financialMetrics",
+          // });
+
+          // await handleMetricCategoryNavlinkClick({
+          //   accessToken,
+          //   authDispatch,
+          //   fetchAbortControllerRef,
+          //   globalDispatch,
+          //   isComponentMountedRef,
+          //   metricsUrl: METRICS_URL,
+          //   metricsView: "financials",
+          //   navigate,
+          //   toLocation: "/dashboard/financials",
+          //   productMetricCategory,
+          //   repairMetricCategory,
+          //   showBoundary,
+          //   storeLocationView,
+          // });
 
           setOpened(false);
         },
@@ -138,28 +246,56 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Customers",
-        icon: clickedKind === "Customers" && isFetching
+        icon: metricsView === "customers" && isFetching
           ? <Loader size={18} />
           : <TbUser size={18} />,
         name: "Customers",
         onClick: async () => {
-          setClickedKind("Customers");
+          sidebarDispatch({
+            action: sidebarAction.setMetricsView,
+            payload: "customers",
+          });
 
-          await handleMetricCategoryNavlinkClick({
+          await handleMetricCategoryNavClick({
             accessToken,
-            authDispatch,
-            fetchAbortControllerRef,
+            metricsFetchWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "customers",
             navigate,
-            toLocation: "/dashboard/customers",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocationView,
+            toLocation: "/dashboard/customers",
           });
+
+          // const urlWithQuery = new URL(
+          //   `${METRICS_URL}/customers/?${storeLocationQuery}`,
+          // );
+
+          // metricsFetchWorker?.postMessage({
+          //   requestInit,
+          //   url: urlWithQuery,
+          //   routesZodSchemaMapKey: "customerMetrics",
+          // });
+
+          // await handleMetricCategoryNavlinkClick({
+          //   accessToken,
+          //   authDispatch,
+          //   fetchAbortControllerRef,
+          //   globalDispatch,
+          //   isComponentMountedRef,
+          //   metricsUrl: METRICS_URL,
+          //   metricsView: "customers",
+          //   navigate,
+          //   toLocation: "/dashboard/customers",
+          //   productMetricCategory,
+          //   repairMetricCategory,
+          //   showBoundary,
+          //   storeLocationView,
+          // });
 
           setOpened(false);
         },
@@ -171,29 +307,56 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Repairs",
-        icon: clickedKind === "Repairs" && isFetching
+        icon: metricsView === "repairs" && isFetching
           ? <Loader size={18} />
           : <TbTools size={18} />,
         name: "Repairs",
         onClick: async () => {
-          setClickedKind("Repairs");
+          sidebarDispatch({
+            action: sidebarAction.setMetricsView,
+            payload: "repairs",
+          });
 
-          await handleMetricCategoryNavlinkClick({
+          await handleMetricCategoryNavClick({
             accessToken,
-            authDispatch,
-            fetchAbortControllerRef,
+            metricsFetchWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "repairs",
             navigate,
-            toLocation: "/dashboard/repairs",
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocationView,
+            toLocation: "/dashboard/repairs",
           });
-          return;
+
+          // const urlWithQuery = new URL(
+          //   `${METRICS_URL}/repairs/?${storeLocationQuery}&metricCategory[$eq]=${repairMetricCategory}`,
+          // );
+
+          // metricsFetchWorker?.postMessage({
+          //   requestInit,
+          //   url: urlWithQuery,
+          //   routesZodSchemaMapKey: "repairMetrics",
+          // });
+
+          // await handleMetricCategoryNavlinkClick({
+          //   accessToken,
+          //   authDispatch,
+          //   fetchAbortControllerRef,
+          //   globalDispatch,
+          //   isComponentMountedRef,
+          //   metricsUrl: METRICS_URL,
+          //   metricsView: "repairs",
+          //   navigate,
+          //   toLocation: "/dashboard/repairs",
+          //   productMetricCategory,
+          //   repairMetricCategory,
+          //   showBoundary,
+          //   storeLocationView,
+          // });
 
           setOpened(false);
         },
@@ -208,19 +371,32 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         icon: <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: async () => {
-          await handleDirectoryClicks({
+          await handleDirectoryNavClick({
             accessToken,
-            authDispatch,
             department: "Executive Management",
-            storeLocation: "All Locations",
+            directoryFetchWorker,
             directoryUrl: API_URL,
-            fetchAbortControllerRef,
             globalDispatch,
             isComponentMountedRef,
             navigate,
             showBoundary,
+            storeLocation: "All Locations",
             toLocation: "/dashboard/directory",
           });
+
+          // await handleDirectoryClicks({
+          //   accessToken,
+          //   authDispatch,
+          //   department: "Executive Management",
+          //   storeLocation: "All Locations",
+          //   directoryUrl: API_URL,
+          //   fetchAbortControllerRef,
+          //   globalDispatch,
+          //   isComponentMountedRef,
+          //   navigate,
+          //   showBoundary,
+          //   toLocation: "/dashboard/directory",
+          // });
           setOpened(false);
         },
       }}

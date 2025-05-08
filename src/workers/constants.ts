@@ -1,5 +1,8 @@
 import { z } from "zod";
+import { customerMetricsDocumentZod } from "../components/dashboard/customer/schemas";
 import { financialMetricsDocumentZod } from "../components/dashboard/financial/schemas";
+import { productMetricsDocumentZod } from "../components/dashboard/product/schemas";
+import { repairMetricsDocumentZod } from "../components/dashboard/repair/schemas";
 import { userDocumentOptionalsZod } from "../components/usersQuery/schemas";
 
 type RoutesZodSchemasMapKey = keyof typeof ROUTES_ZOD_SCHEMAS_MAP;
@@ -9,10 +12,15 @@ type RoutesZodSchemasMapKey = keyof typeof ROUTES_ZOD_SCHEMAS_MAP;
  * schemas to be used in the worker
  */
 const ROUTES_ZOD_SCHEMAS_MAP = {
+    directory: userDocumentOptionalsZod,
     login: z.object({
         userDocument: userDocumentOptionalsZod,
         financialMetricsDocument: financialMetricsDocumentZod,
     }),
+    productMetrics: productMetricsDocumentZod,
+    financialMetrics: financialMetricsDocumentZod,
+    customerMetrics: customerMetricsDocumentZod,
+    repairMetrics: repairMetricsDocumentZod,
 };
 
 export { ROUTES_ZOD_SCHEMAS_MAP };

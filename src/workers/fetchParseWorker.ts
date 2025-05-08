@@ -9,18 +9,20 @@ import {
     responseToJSONSafe,
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
+import { DashboardMetricsView } from "../components/dashboard/types";
 
 self.onmessage = async (
     event: MessageEvent<
         {
-            url: URL;
+            metricsView?: Lowercase<DashboardMetricsView>;
             requestInit: RequestInit;
             routesZodSchemaMapKey: RoutesZodSchemasMapKey;
+            url: string;
         }
     >,
 ) => {
     console.log("Worker received message in self:", event.data);
-    const { requestInit, url, routesZodSchemaMapKey } = event.data;
+    const { requestInit, url, routesZodSchemaMapKey, metricsView } = event.data;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
@@ -120,7 +122,7 @@ self.onmessage = async (
         }
 
         self.postMessage(createSafeBoxResult({
-            data: { parsedServerResponse, decodedToken },
+            data: { parsedServerResponse, decodedToken, metricsView },
             kind: "success",
         }));
     } catch (err) {

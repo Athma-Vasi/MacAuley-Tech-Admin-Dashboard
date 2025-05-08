@@ -1,6 +1,7 @@
 type DirectoryAction = {
   setDepartment: "setDepartment";
   setDirectory: "setDirectory";
+  setDirectoryFetchWorker: "setDirectoryFetchWorker";
   setOrientation: "setOrientation";
   setStoreLocation: "setStoreLocation";
 };
@@ -8,6 +9,7 @@ type DirectoryAction = {
 const directoryAction: DirectoryAction = {
   setDepartment: "setDepartment",
   setDirectory: "setDirectory",
+  setDirectoryFetchWorker: "setDirectoryFetchWorker",
   setOrientation: "setOrientation",
   setStoreLocation: "setStoreLocation",
 };

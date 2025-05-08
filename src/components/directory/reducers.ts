@@ -1,12 +1,19 @@
 import { Orientation } from "react-d3-tree";
 import { UserDocument } from "../../types";
+import { parseSafeSync } from "../../utils";
 import { directoryAction } from "./actions";
+import {
+  setDepartmentDirectoryDispatchZod,
+  setDirectoryDirectoryDispatchZod,
+  setDirectoryFetchWorkerDirectoryDispatchZod,
+  setOrientationDirectoryDispatchZod,
+  setStoreLocationDirectoryDispatchZod,
+} from "./schemas";
 import {
   DepartmentsWithDefaultKey,
   DirectoryAction,
   DirectoryDispatch,
   DirectoryState,
-  StoreLocationsWithDefaultKey,
 } from "./types";
 
 function directoryReducer(
@@ -23,6 +30,10 @@ const directoryReducers = new Map<
 >([
   [directoryAction.setDepartment, directoryReducer_setDepartment],
   [directoryAction.setDirectory, directoryReducer_setDirectory],
+  [
+    directoryAction.setDirectoryFetchWorker,
+    directoryReducer_setDirectoryFetchWorker,
+  ],
   [directoryAction.setOrientation, directoryReducer_setOrientation],
   [directoryAction.setStoreLocation, directoryReducer_setStoreLocation],
 ]);
@@ -31,9 +42,19 @@ function directoryReducer_setDepartment(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setDepartmentDirectoryDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    department: dispatch.payload as DepartmentsWithDefaultKey,
+    department: parsedResult.safeUnwrap().data
+      ?.payload as DepartmentsWithDefaultKey,
   };
 }
 
@@ -41,9 +62,37 @@ function directoryReducer_setDirectory(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setDirectoryDirectoryDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    directory: dispatch.payload as UserDocument[],
+    directory: parsedResult.safeUnwrap().data?.payload as UserDocument[],
+  };
+}
+
+function directoryReducer_setDirectoryFetchWorker(
+  state: DirectoryState,
+  dispatch: DirectoryDispatch,
+): DirectoryState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setDirectoryFetchWorkerDirectoryDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    directoryFetchWorker: parsedResult.safeUnwrap().data?.payload as Worker,
   };
 }
 
@@ -51,9 +100,18 @@ function directoryReducer_setOrientation(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setOrientationDirectoryDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    orientation: dispatch.payload as Orientation,
+    orientation: parsedResult.safeUnwrap().data?.payload as Orientation,
   };
 }
 
@@ -61,9 +119,17 @@ function directoryReducer_setStoreLocation(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setStoreLocationDirectoryDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    storeLocation: dispatch.payload as StoreLocationsWithDefaultKey,
   };
 }
 

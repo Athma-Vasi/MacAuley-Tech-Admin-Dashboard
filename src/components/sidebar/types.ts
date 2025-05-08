@@ -1,0 +1,56 @@
+import {
+    BusinessMetricsDocument,
+    DecodedToken,
+    HttpServerResponse,
+    SafeBoxResult,
+    UserDocument,
+} from "../../types";
+import { DashboardMetricsView } from "../dashboard/types";
+import { SidebarAction } from "./actions";
+
+type MetricsMessageEvent = MessageEvent<
+    SafeBoxResult<
+        {
+            decodedToken: DecodedToken;
+            parsedServerResponse: HttpServerResponse<
+                BusinessMetricsDocument
+            >;
+            metricsView?: Lowercase<DashboardMetricsView>;
+        }
+    >
+>;
+
+type DirectoryMessageEvent = MessageEvent<
+    SafeBoxResult<{
+        decodedToken: DecodedToken;
+        parsedServerResponse: HttpServerResponse<UserDocument>;
+        metricsView?: Lowercase<DashboardMetricsView>;
+    }>
+>;
+
+type SidebarState = {
+    directoryFetchWorker: Worker | null;
+    metricsFetchWorker: Worker | null;
+    metricsView: Lowercase<DashboardMetricsView>;
+};
+
+type SidebarDispatch =
+    | {
+        action: SidebarAction["setDirectoryFetchWorker"];
+        payload: Worker;
+    }
+    | {
+        action: SidebarAction["setMetricsFetchWorker"];
+        payload: Worker;
+    }
+    | {
+        action: SidebarAction["setMetricsView"];
+        payload: Lowercase<DashboardMetricsView>;
+    };
+
+export type {
+    DirectoryMessageEvent,
+    MetricsMessageEvent,
+    SidebarDispatch,
+    SidebarState,
+};

@@ -1,3 +1,11 @@
+import {
+  DecodedToken,
+  FinancialMetricsDocument,
+  HttpServerResponse,
+  SafeBoxResult,
+  UserDocument,
+} from "../../types";
+
 type LoginState = {
   isLoading: boolean;
   isSubmitting: boolean;
@@ -7,4 +15,18 @@ type LoginState = {
   username: string;
 };
 
-export type { LoginState };
+type LoginMessageEvent = MessageEvent<
+  SafeBoxResult<
+    {
+      parsedServerResponse: HttpServerResponse<
+        {
+          userDocument: UserDocument;
+          financialMetricsDocument: FinancialMetricsDocument;
+        }
+      >;
+      decodedToken: DecodedToken;
+    }
+  >
+>;
+
+export type { LoginMessageEvent, LoginState };

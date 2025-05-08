@@ -540,11 +540,7 @@ function createMetricsForageKey(
     repairMetricCategory: RepairMetricCategory;
   },
 ) {
-  const capitalizedMetricsView = `${metricsView?.[0].toUpperCase()}${
-    metricsView?.slice(1)
-  }`;
-
-  return `${capitalizedMetricsView}/${storeLocationView}${
+  return `${metricsView}/${storeLocationView}${
     metricsView === "repairs" ? "/" + repairMetricCategory : metricsView ===
         "products"
       ? "/" + productMetricCategory

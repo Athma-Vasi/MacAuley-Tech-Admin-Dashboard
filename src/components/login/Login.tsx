@@ -21,13 +21,6 @@ import { COLORS_SWATCHES, LOGIN_URL } from "../../constants";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import {
-  DecodedToken,
-  FinancialMetricsDocument,
-  HttpServerResponse,
-  SafeBoxResult,
-  UserDocument,
-} from "../../types";
 import { returnThemeColors } from "../../utils";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
@@ -35,6 +28,7 @@ import { loginAction } from "./actions";
 import { loginOnmessageCallback } from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
+import { LoginMessageEvent } from "./types";
 
 function Login() {
   const [loginState, loginDispatch] = useReducer(
@@ -87,19 +81,7 @@ function Login() {
     });
 
     newFetchParseWorker.onmessage = async (
-      event: MessageEvent<
-        SafeBoxResult<
-          {
-            parsedServerResponse: HttpServerResponse<
-              {
-                userDocument: UserDocument;
-                financialMetricsDocument: FinancialMetricsDocument;
-              }
-            >;
-            decodedToken: DecodedToken;
-          }
-        >
-      >,
+      event: LoginMessageEvent,
     ) => {
       await loginOnmessageCallback({
         event,
@@ -151,7 +133,7 @@ function Login() {
     />
   );
 
-  const { bgGradient, themeColorShade, grayColorShade } = returnThemeColors({
+  const { bgGradient, themeColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -194,10 +176,6 @@ function Login() {
           fetchParseWorker?.postMessage({
             requestInit,
             url: LOGIN_URL,
-            // zSchema: z.object({
-            //   userDocument: userDocumentOptionalsZod,
-            //   financialMetricsDocument: financialMetricsDocumentZod,
-            // }),
             routesZodSchemaMapKey: "login",
           });
 

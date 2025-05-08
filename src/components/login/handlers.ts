@@ -6,7 +6,6 @@ import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
-  DecodedToken,
   FinancialMetricsDocument,
   HttpServerResponse,
   SafeBoxResult,
@@ -24,6 +23,7 @@ import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
+import { LoginMessageEvent } from "./types";
 
 async function handleLoginButtonClick(
   {
@@ -252,7 +252,7 @@ async function handleLoginButtonClick(
     await setForageItemSafe<
       FinancialMetricsDocument
     >(
-      "Financials/All Locations",
+      "financials/All Locations",
       parsedServerResponse.data[0].financialMetricsDocument,
     );
 
@@ -311,19 +311,7 @@ async function loginOnmessageCallback(
     showBoundary,
   }: {
     authDispatch: React.Dispatch<AuthDispatch>;
-    event: MessageEvent<
-      SafeBoxResult<
-        {
-          parsedServerResponse: HttpServerResponse<
-            {
-              userDocument: UserDocument;
-              financialMetricsDocument: FinancialMetricsDocument;
-            }
-          >;
-          decodedToken: DecodedToken;
-        }
-      >
-    >;
+    event: LoginMessageEvent;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
     loginDispatch: React.Dispatch<LoginDispatch>;
@@ -411,7 +399,7 @@ async function loginOnmessageCallback(
   await setForageItemSafe<
     FinancialMetricsDocument
   >(
-    "Financials/All Locations",
+    "financials/All Locations",
     data[0].financialMetricsDocument,
   );
 
