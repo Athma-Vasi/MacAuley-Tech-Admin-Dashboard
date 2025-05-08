@@ -1,24 +1,26 @@
 import { Accordion, Box, Group, Pagination, Space } from "@mantine/core";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { useNavigate } from "react-router-dom";
-import {
-    API_URL,
-    COLORS_SWATCHES,
-    FETCH_REQUEST_TIMEOUT,
-} from "../../constants";
+import { API_URL, COLORS_SWATCHES } from "../../constants";
+import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
+import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { Query } from "../query/Query";
 import { usersQueryAction } from "./actions";
 import { USER_QUERY_TEMPLATES } from "./constants";
 import DisplayResource from "./DisplayResource";
-import { handleUsersQuerySubmitGET } from "./handlers";
+import {
+    handleUsersQueryOnmessageCallback,
+    handleUsersQuerySubmitGETClick,
+} from "./handlers";
 import { usersQueryReducer } from "./reducers";
 import { initialUsersQueryState } from "./state";
+import { UsersQueryMessageEvent } from "./types";
 
 type UsersQueryProps = {};
 
@@ -40,18 +42,32 @@ function UsersQuery({}: UsersQueryProps) {
         themeObject,
     });
 
-    const fetchAbortControllerRef = useRef<AbortController | null>(null);
-    const isComponentMountedRef = useRef(false);
+    const isComponentMountedRef = useMountedRef();
 
     useEffect(() => {
-        const timerId = setTimeout(() => {
-            fetchAbortControllerRef?.current?.abort("Request timed out");
-        }, FETCH_REQUEST_TIMEOUT);
+        const newUsersFetchWorker = new FetchParseWorker();
+        usersQueryDispatch({
+            action: usersQueryAction.setUsersFetchWorker,
+            payload: newUsersFetchWorker,
+        });
+
+        newUsersFetchWorker.onmessage = async (
+            event: UsersQueryMessageEvent,
+        ) => {
+            await handleUsersQueryOnmessageCallback({
+                authDispatch,
+                event,
+                isComponentMountedRef,
+                navigate,
+                showBoundary,
+                usersQueryDispatch,
+                usersQueryState,
+            });
+        };
 
         return () => {
-            clearTimeout(timerId);
-            fetchAbortControllerRef?.current?.abort("Component unmounted");
             isComponentMountedRef.current = false;
+            newUsersFetchWorker.terminate();
         };
     }, []);
 
@@ -59,11 +75,10 @@ function UsersQuery({}: UsersQueryProps) {
         arrangeByDirection,
         arrangeByField,
         currentPage,
+        usersFetchWorker,
         isError,
         isLoading,
-        newQueryFlag,
         pages,
-        queryString,
         resourceData,
         totalDocuments,
     } = usersQueryState;
@@ -78,15 +93,11 @@ function UsersQuery({}: UsersQueryProps) {
                 onClick: async (event) => {
                     event.preventDefault();
 
-                    await handleUsersQuerySubmitGET({
+                    await handleUsersQuerySubmitGETClick({
                         accessToken,
-                        authDispatch,
-                        usersQueryDispatch,
-                        fetchAbortControllerRef,
-                        isComponentMountedRef,
-                        navigate,
-                        showBoundary,
                         url: API_URL,
+                        usersFetchWorker,
+                        usersQueryDispatch,
                         usersQueryState,
                     });
                 },
@@ -139,15 +150,11 @@ function UsersQuery({}: UsersQueryProps) {
             <Pagination
                 value={currentPage}
                 onChange={async (page) => {
-                    await handleUsersQuerySubmitGET({
+                    await handleUsersQuerySubmitGETClick({
                         accessToken,
-                        authDispatch,
-                        usersQueryDispatch,
-                        fetchAbortControllerRef,
-                        isComponentMountedRef,
-                        navigate,
-                        showBoundary,
                         url: API_URL,
+                        usersFetchWorker,
+                        usersQueryDispatch,
                         usersQueryState: {
                             ...usersQueryState,
                             currentPage: page,
@@ -157,8 +164,6 @@ function UsersQuery({}: UsersQueryProps) {
                 }}
                 total={pages}
                 w="100%"
-                // withEdges
-                // withControls
             />
         </Group>
     );

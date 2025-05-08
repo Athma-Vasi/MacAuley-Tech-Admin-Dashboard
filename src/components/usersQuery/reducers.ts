@@ -2,17 +2,18 @@ import { UserDocument } from "../../types";
 import { parseSafeSync } from "../../utils";
 import { UsersQueryAction, usersQueryAction } from "./actions";
 import {
-    resetToInitialDispatchZod,
-    setArrangeByDirectionDispatchZod,
-    setArrangeByFieldDispatchZod,
-    setCurrentPageDispatchZod,
-    setIsErrorDispatchZod,
-    setIsLoadingDispatchZod,
-    setNewQueryFlagDispatchZod,
-    setPagesDispatchZod,
-    setQueryStringDispatchZod,
-    setResourceDataDispatchZod,
-    setTotalDocumentsDispatchZod,
+    resetToInitialUsersQueryDispatchZod,
+    setArrangeByDirectionUsersQueryDispatchZod,
+    setArrangeByFieldUsersQueryDispatchZod,
+    setCurrentPageUsersQueryDispatchZod,
+    setIsErrorUsersQueryDispatchZod,
+    setIsLoadingUsersQueryDispatchZod,
+    setNewQueryFlagUsersQueryDispatchZod,
+    setPagesUsersQueryDispatchZod,
+    setQueryStringUsersQueryDispatchZod,
+    setResourceDataUsersQueryDispatchZod,
+    setTotalDocumentsUsersQueryDispatchZod,
+    setUsersFetchWorkerUsersQueryDispatchZod,
     UsersQueryDispatch,
 } from "./schemas";
 import { UsersQueryState } from "./types";
@@ -40,6 +41,10 @@ const usersQueryReducers = new Map<
     ],
     [usersQueryAction.setArrangeByField, usersQueryReducer_setArrangeByField],
     [usersQueryAction.setCurrentPage, usersQueryReducer_setCurrentPage],
+    [
+        usersQueryAction.setUsersFetchWorker,
+        usersQueryReducer_setUsersFetchWorker,
+    ],
     [usersQueryAction.setIsError, usersQueryReducer_setIsError],
     [usersQueryAction.setIsLoading, usersQueryReducer_setIsLoading],
     [usersQueryAction.setNewQueryFlag, usersQueryReducer_setNewQueryFlag],
@@ -55,7 +60,7 @@ function usersQueryReducer_resetToInitial(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: resetToInitialDispatchZod,
+        zSchema: resetToInitialUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -71,7 +76,7 @@ function usersQueryReducer_setArrangeByDirection(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setArrangeByDirectionDispatchZod,
+        zSchema: setArrangeByDirectionUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -100,7 +105,7 @@ function usersQueryReducer_setArrangeByField(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setArrangeByFieldDispatchZod,
+        zSchema: setArrangeByFieldUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -130,7 +135,7 @@ function usersQueryReducer_setCurrentPage(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setCurrentPageDispatchZod,
+        zSchema: setCurrentPageUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -143,13 +148,34 @@ function usersQueryReducer_setCurrentPage(
     };
 }
 
+function usersQueryReducer_setUsersFetchWorker(
+    state: UsersQueryState,
+    dispatch: UsersQueryDispatch,
+): UsersQueryState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setUsersFetchWorkerUsersQueryDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        usersFetchWorker: parsedResult.safeUnwrap().data.payload as
+            | Worker
+            | null,
+    };
+}
+
 function usersQueryReducer_setIsError(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setIsErrorDispatchZod,
+        zSchema: setIsErrorUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -168,7 +194,7 @@ function usersQueryReducer_setIsLoading(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setIsLoadingDispatchZod,
+        zSchema: setIsLoadingUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -187,7 +213,7 @@ function usersQueryReducer_setNewQueryFlag(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setNewQueryFlagDispatchZod,
+        zSchema: setNewQueryFlagUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -206,7 +232,7 @@ function usersQueryReducer_setPages(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setPagesDispatchZod,
+        zSchema: setPagesUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -225,7 +251,7 @@ function usersQueryReducer_setQueryString(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setQueryStringDispatchZod,
+        zSchema: setQueryStringUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -244,7 +270,7 @@ function usersQueryReducer_setResourceData(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setResourceDataDispatchZod,
+        zSchema: setResourceDataUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -265,7 +291,7 @@ function usersQueryReducer_setTotalDocuments(
 ): UsersQueryState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setTotalDocumentsDispatchZod,
+        zSchema: setTotalDocumentsUsersQueryDispatchZod,
     });
 
     if (parsedResult.err) {

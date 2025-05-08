@@ -21,7 +21,10 @@ self.onmessage = async (
         }
     >,
 ) => {
-    console.log("Worker received message in self:", event.data);
+    console.log(
+        "Worker received message in self:",
+        JSON.stringify(event.data, null, 2),
+    );
     const { requestInit, url, routesZodSchemaMapKey, metricsView } = event.data;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);

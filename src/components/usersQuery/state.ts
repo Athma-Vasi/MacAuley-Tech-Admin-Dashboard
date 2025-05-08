@@ -4,6 +4,7 @@ const initialUsersQueryState: UsersQueryState = {
     arrangeByDirection: "ascending",
     arrangeByField: "username",
     currentPage: 1,
+    usersFetchWorker: null,
     isError: false,
     isLoading: false,
     newQueryFlag: false,

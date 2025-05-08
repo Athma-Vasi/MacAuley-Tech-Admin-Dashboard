@@ -1,10 +1,17 @@
-import { UserDocument } from "../../types";
+import {
+    DecodedToken,
+    HttpServerResponse,
+    SafeBoxResult,
+    UserDocument,
+} from "../../types";
+import { DashboardMetricsView } from "../dashboard/types";
 import { SortDirection } from "../query/types";
 
 type UsersQueryState = {
     arrangeByDirection: SortDirection;
     arrangeByField: keyof Omit<UserDocument, "password">;
     currentPage: number;
+    usersFetchWorker: Worker | null;
     isError: boolean;
     isLoading: boolean;
     newQueryFlag: boolean;
@@ -14,4 +21,16 @@ type UsersQueryState = {
     totalDocuments: number;
 };
 
-export type { UsersQueryState };
+type UsersQueryMessageEvent = MessageEvent<
+    SafeBoxResult<
+        {
+            decodedToken: DecodedToken;
+            parsedServerResponse: HttpServerResponse<
+                UserDocument
+            >;
+            metricsView?: Lowercase<DashboardMetricsView>;
+        }
+    >
+>;
+
+export type { UsersQueryMessageEvent, UsersQueryState };

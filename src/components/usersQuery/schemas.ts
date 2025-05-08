@@ -66,11 +66,11 @@ const userDocumentRequiredZod = z.object({
     username: z.string().regex(USERNAME_REGEX),
 });
 
-const setArrangeByDirectionDispatchZod = z.object({
+const setArrangeByDirectionUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setArrangeByDirection),
     payload: z.enum(["ascending", "descending"]),
 });
-const setArrangeByFieldDispatchZod = z.object({
+const setArrangeByFieldUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setArrangeByField),
     payload: z.enum([
         "addressLine",
@@ -98,39 +98,39 @@ const setArrangeByFieldDispatchZod = z.object({
         "__v",
     ]), // keyof UserDocument
 });
-const setCurrentPageDispatchZod = z.object({
+const setCurrentPageUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setCurrentPage),
     payload: z.number().min(0),
 });
-const setIsErrorDispatchZod = z.object({
+const setIsErrorUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setIsError),
     payload: z.boolean(),
 });
-const setIsLoadingDispatchZod = z.object({
+const setIsLoadingUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setIsLoading),
     payload: z.boolean(),
 });
-const setNewQueryFlagDispatchZod = z.object({
+const setNewQueryFlagUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setNewQueryFlag),
     payload: z.boolean(),
 });
-const setPagesDispatchZod = z.object({
+const setPagesUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setPages),
     payload: z.number().min(0),
 });
-const setQueryStringDispatchZod = z.object({
+const setQueryStringUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setQueryString),
     payload: z.string(),
 });
-const setResourceDataDispatchZod = z.object({
+const setResourceDataUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setResourceData),
     payload: z.array(userDocumentOptionalsZod),
 });
-const setTotalDocumentsDispatchZod = z.object({
+const setTotalDocumentsUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.setTotalDocuments),
     payload: z.number().min(0),
 });
-const resetToInitialDispatchZod = z.object({
+const resetToInitialUsersQueryDispatchZod = z.object({
     action: z.literal(usersQueryAction.resetToInitial),
     payload: z.object({
         arrangeByDirection: z.enum(["ascending", "descending"]),
@@ -171,31 +171,38 @@ const resetToInitialDispatchZod = z.object({
     }),
 });
 
+const setUsersFetchWorkerUsersQueryDispatchZod = z.object({
+    action: z.literal(usersQueryAction.setUsersFetchWorker),
+    payload: z.instanceof(Worker),
+});
+
 type UsersQueryDispatch =
-    | z.infer<typeof setArrangeByDirectionDispatchZod>
-    | z.infer<typeof setArrangeByFieldDispatchZod>
-    | z.infer<typeof setCurrentPageDispatchZod>
-    | z.infer<typeof setIsErrorDispatchZod>
-    | z.infer<typeof setIsLoadingDispatchZod>
-    | z.infer<typeof setNewQueryFlagDispatchZod>
-    | z.infer<typeof setPagesDispatchZod>
-    | z.infer<typeof setQueryStringDispatchZod>
-    | z.infer<typeof setResourceDataDispatchZod>
-    | z.infer<typeof setTotalDocumentsDispatchZod>
-    | z.infer<typeof resetToInitialDispatchZod>;
+    | z.infer<typeof setArrangeByDirectionUsersQueryDispatchZod>
+    | z.infer<typeof setArrangeByFieldUsersQueryDispatchZod>
+    | z.infer<typeof setCurrentPageUsersQueryDispatchZod>
+    | z.infer<typeof setIsErrorUsersQueryDispatchZod>
+    | z.infer<typeof setIsLoadingUsersQueryDispatchZod>
+    | z.infer<typeof setNewQueryFlagUsersQueryDispatchZod>
+    | z.infer<typeof setPagesUsersQueryDispatchZod>
+    | z.infer<typeof setQueryStringUsersQueryDispatchZod>
+    | z.infer<typeof setResourceDataUsersQueryDispatchZod>
+    | z.infer<typeof setTotalDocumentsUsersQueryDispatchZod>
+    | z.infer<typeof resetToInitialUsersQueryDispatchZod>
+    | z.infer<typeof setUsersFetchWorkerUsersQueryDispatchZod>;
 
 export {
-    resetToInitialDispatchZod,
-    setArrangeByDirectionDispatchZod,
-    setArrangeByFieldDispatchZod,
-    setCurrentPageDispatchZod,
-    setIsErrorDispatchZod,
-    setIsLoadingDispatchZod,
-    setNewQueryFlagDispatchZod,
-    setPagesDispatchZod,
-    setQueryStringDispatchZod,
-    setResourceDataDispatchZod,
-    setTotalDocumentsDispatchZod,
+    resetToInitialUsersQueryDispatchZod,
+    setArrangeByDirectionUsersQueryDispatchZod,
+    setArrangeByFieldUsersQueryDispatchZod,
+    setCurrentPageUsersQueryDispatchZod,
+    setIsErrorUsersQueryDispatchZod,
+    setIsLoadingUsersQueryDispatchZod,
+    setNewQueryFlagUsersQueryDispatchZod,
+    setPagesUsersQueryDispatchZod,
+    setQueryStringUsersQueryDispatchZod,
+    setResourceDataUsersQueryDispatchZod,
+    setTotalDocumentsUsersQueryDispatchZod,
+    setUsersFetchWorkerUsersQueryDispatchZod,
     userDocumentOptionalsZod,
     userDocumentRequiredZod,
 };

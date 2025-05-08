@@ -3,6 +3,7 @@ type UsersQueryAction = {
     setArrangeByDirection: "setArrangeByDirection";
     setArrangeByField: "setArrangeByField";
     setCurrentPage: "setCurrentPage";
+    setUsersFetchWorker: "setUsersFetchWorker";
     setIsError: "setIsError";
     setIsLoading: "setIsLoading";
     setNewQueryFlag: "setNewQueryFlag";
@@ -17,6 +18,7 @@ const usersQueryAction: UsersQueryAction = {
     setArrangeByDirection: "setArrangeByDirection",
     setArrangeByField: "setArrangeByField",
     setCurrentPage: "setCurrentPage",
+    setUsersFetchWorker: "setUsersFetchWorker",
     setIsError: "setIsError",
     setIsLoading: "setIsLoading",
     setNewQueryFlag: "setNewQueryFlag",

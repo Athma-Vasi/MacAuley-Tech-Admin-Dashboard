@@ -21,6 +21,7 @@ const ROUTES_ZOD_SCHEMAS_MAP = {
     financialMetrics: financialMetricsDocumentZod,
     customerMetrics: customerMetricsDocumentZod,
     repairMetrics: repairMetricsDocumentZod,
+    users: userDocumentOptionalsZod,
 };
 
 export { ROUTES_ZOD_SCHEMAS_MAP };
