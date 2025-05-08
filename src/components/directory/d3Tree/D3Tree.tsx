@@ -9,10 +9,10 @@ import { useCenteredTree } from "../../../hooks/userCenteredTree";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 // import AccessibleImage from "../../accessibleInputs/";
 
+import { useWindowSize } from "../../../hooks";
 import AccessibleImage from "../../accessibleInputs/AccessibleImage";
 import { GoldenGrid } from "../../goldenGrid";
 import type { D3TreeInput } from "./utils";
-import { useWindowSize } from "../../../hooks";
 
 function renderForeignObjectNode({
   nodeDatum,
@@ -41,11 +41,11 @@ function renderForeignObjectNode({
       attributes={{
         alt: nodeDatum.name,
         fit: "cover",
-        height: 96,
+        height: 128,
         name: nodeDatum.name,
         radius: 9999,
         src: nodeDatum.attributes.profilePictureUrl ?? "",
-        width: 96,
+        width: 128,
       }}
     />
   );
@@ -93,13 +93,29 @@ function renderForeignObjectNode({
     >
       <Stack w="100%">
         <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 50%)" }}>
-          <Flex h="100%" direction="column" align="start" justify="center">
+          <Flex
+            h="100%"
+            direction="column"
+            align="flex-end"
+            justify="center"
+            pr="lg"
+          >
             {profilePic}
           </Flex>
 
-          <Stack w="100%" align="flex-start" spacing={2}>
+          <Stack w="100%" align="flex-start" spacing={0}>
             <Text size={28} weight={600}>{firstName}</Text>
             <Text size={28} weight={600}>{lastName}</Text>
+            <Text
+              size={22}
+              weight={600}
+              color="dimmed"
+              truncate
+              w="100%"
+              pt="xs"
+            >
+              @{nodeDatum.attributes.username}
+            </Text>
           </Stack>
         </GoldenGrid>
 

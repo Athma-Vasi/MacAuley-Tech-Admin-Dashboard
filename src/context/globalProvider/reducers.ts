@@ -13,6 +13,7 @@ import {
   FontFamily,
   ProductMetricsDocument,
   RepairMetricsDocument,
+  UserDocument,
 } from "../../types";
 import { parseSafeSync } from "../../utils";
 import { type GlobalAction, globalAction } from "./actions";
@@ -21,6 +22,7 @@ import {
   setCustomerMetricsCategoryGlobalDispatchZod,
   setCustomerMetricsDocumentGlobalDispatchZod,
   setDefaultGradientGlobalDispatchZod,
+  setDirectoryGlobalDispatchZod,
   setFinancialMetricCategoryGlobalDispatchZod,
   setFinancialMetricsDocumentGlobalDispatchZod,
   setIsErrorGlobalDispatchZod,
@@ -63,6 +65,7 @@ const globalReducersMap = new Map<
   GlobalAction[keyof GlobalAction],
   (state: GlobalState, dispatch: GlobalDispatch) => GlobalState
 >([
+  [globalAction.setDirectory, globalReducer_setDirectory],
   [
     globalAction.setProductMetricCategory,
     globalReducer_setProductMetricCategory,
@@ -137,6 +140,25 @@ const globalReducersMap = new Map<
   [globalAction.setSelectedChartKind, globalReducer_setSelectedChartKind],
   [globalAction.setStoreLocationView, globalReducer_setStoreLocationView],
 ]);
+
+function globalReducer_setDirectory(
+  state: GlobalState,
+  dispatch: GlobalDispatch,
+): GlobalState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setDirectoryGlobalDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    directory: parsedResult.safeUnwrap().data?.payload as UserDocument[],
+  };
+}
 
 function globalReducer_setProductMetricCategory(
   state: GlobalState,

@@ -32,7 +32,6 @@ import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZod } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
-import { directoryAction } from "../directory/actions";
 import {
   DepartmentsWithDefaultKey,
   DirectoryDispatch,
@@ -910,32 +909,19 @@ async function handleDirectoryNavClick(
   {
     accessToken,
     department,
-    directoryDispatch,
     directoryFetchWorker,
     directoryUrl,
     globalDispatch,
-    isComponentMountedRef,
-    navigate,
-    showBoundary,
     storeLocation,
-    toLocation = "/dashboard/directory",
   }: {
     accessToken: string;
     department: DepartmentsWithDefaultKey;
-    directoryDispatch?: React.Dispatch<DirectoryDispatch>;
     directoryFetchWorker: Worker | null;
     directoryUrl: string;
     globalDispatch: React.Dispatch<GlobalDispatch>;
-    isComponentMountedRef: React.RefObject<boolean>;
-    navigate?: NavigateFunction;
-    showBoundary: (error: any) => void;
     storeLocation: AllStoreLocations;
-    toLocation?: string;
   },
 ) {
-  isComponentMountedRef.current = true;
-  const isComponentMounted = isComponentMountedRef.current;
-
   const requestInit: RequestInit = {
     method: "GET",
     headers: {
@@ -952,106 +938,33 @@ async function handleDirectoryNavClick(
       `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
     );
 
-  globalDispatch({
-    action: globalAction.setIsFetching,
-    payload: true,
+  directoryFetchWorker?.postMessage({
+    requestInit,
+    url: urlWithQuery.toString(),
+    routesZodSchemaMapKey: "directory",
   });
 
-  const directoryKey = createDirectoryForageKey(
-    department,
-    storeLocation,
-  );
-
-  try {
-    const forageResult = await getForageItemSafe<UserDocument[]>(
-      directoryKey,
-    );
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    if (forageResult.ok && forageResult.safeUnwrap().kind === "success") {
-      const unwrappedData = forageResult.safeUnwrap().data;
-      if (unwrappedData === undefined) {
-        return createSafeBoxResult({
-          message: "Data is undefined",
-        });
-      }
-
-      directoryDispatch?.({
-        action: directoryAction.setDirectory,
-        payload: unwrappedData,
-      });
-
-      await setForageItemSafe<UserDocument[]>(
-        directoryKey,
-        unwrappedData,
-      );
-
-      globalDispatch({
-        action: globalAction.setIsFetching,
-        payload: false,
-      });
-
-      navigate?.(toLocation);
-      return createSafeBoxResult({
-        data: {
-          newAccessToken: accessToken,
-          userDocuments: unwrappedData,
-        },
-        kind: "success",
-      });
-    }
-
-    directoryFetchWorker?.postMessage({
-      requestInit,
-      url: urlWithQuery.toString(),
-      routesZodSchemaMapKey: "directory",
-    });
-
-    return createSafeBoxResult({
-      data: true,
-      kind: "success",
-    });
-  } catch (error: unknown) {
-    if (
-      !isComponentMounted
-    ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    showBoundary(error);
-    return createSafeBoxResult({
-      message: "Unknown error",
-    });
-  }
+  return createSafeBoxResult({
+    data: true,
+    kind: "success",
+  });
 }
 
 async function handleDirectoryOnmessageCallback({
   authDispatch,
-  department,
-  directoryDispatch,
   event,
   globalDispatch,
   isComponentMountedRef,
   navigate,
   showBoundary,
-  storeLocation,
   toLocation = "/dashboard/directory",
 }: {
   authDispatch: React.Dispatch<AuthDispatch>;
-  department: DepartmentsWithDefaultKey;
-  directoryDispatch?: React.Dispatch<DirectoryDispatch>;
   event: DirectoryMessageEvent;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   navigate?: NavigateFunction;
   showBoundary: (error: any) => void;
-  storeLocation: AllStoreLocations;
   toLocation?: string;
 }) {
   try {
@@ -1129,21 +1042,10 @@ async function handleDirectoryOnmessageCallback({
 
     const userDocuments = parsedServerResponse.data;
 
-    directoryDispatch?.({
-      action: directoryAction.setDirectory,
+    globalDispatch({
+      action: globalAction.setDirectory,
       payload: userDocuments,
     });
-
-    const directoryKey = createDirectoryForageKey(
-      department,
-      storeLocation,
-    );
-
-    await setForageItemSafe<UserDocument[]>(
-      directoryKey,
-      userDocuments,
-    );
-
     globalDispatch({
       action: globalAction.setIsFetching,
       payload: false,
@@ -1175,7 +1077,6 @@ async function handleDirectoryClicks({
   accessToken,
   authDispatch,
   department,
-  directoryDispatch,
   directoryUrl,
   fetchAbortControllerRef,
   globalDispatch,
@@ -1188,7 +1089,6 @@ async function handleDirectoryClicks({
   accessToken: string;
   authDispatch: React.Dispatch<AuthDispatch>;
   department: DepartmentsWithDefaultKey;
-  directoryDispatch?: React.Dispatch<DirectoryDispatch>;
   directoryUrl: string;
   fetchAbortControllerRef: React.RefObject<AbortController | null>;
   globalDispatch: React.Dispatch<GlobalDispatch>;
@@ -1252,8 +1152,8 @@ async function handleDirectoryClicks({
         });
       }
 
-      directoryDispatch?.({
-        action: directoryAction.setDirectory,
+      globalDispatch({
+        action: globalAction.setDirectory,
         payload: unwrappedData,
       });
 
@@ -1430,8 +1330,8 @@ async function handleDirectoryClicks({
 
     const userDocuments = parsedServerResponse.data;
 
-    directoryDispatch?.({
-      action: directoryAction.setDirectory,
+    globalDispatch({
+      action: globalAction.setDirectory,
       payload: userDocuments,
     });
 

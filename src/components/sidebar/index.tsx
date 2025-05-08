@@ -17,6 +17,7 @@ import {
   LOGOUT_URL,
   METRICS_URL,
 } from "../../constants";
+import { globalAction } from "../../context/globalProvider";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -65,8 +66,12 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     storeLocationView,
     isFetching,
   } = globalState;
-  const { directoryFetchWorker, metricsFetchWorker, metricsView } =
-    sidebarState;
+  const {
+    clickedNavlink,
+    directoryFetchWorker,
+    metricsFetchWorker,
+    metricsView,
+  } = sidebarState;
 
   useEffect(() => {
     const newMetricsFetchWorker = new FetchParseWorker();
@@ -102,12 +107,10 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     ) => {
       await handleDirectoryOnmessageCallback({
         authDispatch,
-        department: "Executive Management",
         event,
         globalDispatch,
         isComponentMountedRef,
         showBoundary,
-        storeLocation: "All Locations",
         navigate,
         toLocation: "/dashboard/directory",
       });
@@ -122,13 +125,17 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Products",
-        icon: metricsView === "products" && isFetching
+        icon: clickedNavlink === "products" && isFetching
           ? <Loader size={18} />
           : <TbAffiliate size={18} />,
         name: "Products",
         onClick: async () => {
           sidebarDispatch({
             action: sidebarAction.setMetricsView,
+            payload: "products",
+          });
+          sidebarDispatch({
+            action: sidebarAction.setClickedNavlink,
             payload: "products",
           });
 
@@ -185,13 +192,17 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Financials",
-        icon: metricsView === "financials" && isFetching
+        icon: clickedNavlink === "financials" && isFetching
           ? <Loader size={18} />
           : <TbReportMoney size={18} />,
         name: "Financials",
         onClick: async () => {
           sidebarDispatch({
             action: sidebarAction.setMetricsView,
+            payload: "financials",
+          });
+          sidebarDispatch({
+            action: sidebarAction.setClickedNavlink,
             payload: "financials",
           });
 
@@ -246,13 +257,17 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Customers",
-        icon: metricsView === "customers" && isFetching
+        icon: clickedNavlink === "customers" && isFetching
           ? <Loader size={18} />
           : <TbUser size={18} />,
         name: "Customers",
         onClick: async () => {
           sidebarDispatch({
             action: sidebarAction.setMetricsView,
+            payload: "customers",
+          });
+          sidebarDispatch({
+            action: sidebarAction.setClickedNavlink,
             payload: "customers",
           });
 
@@ -307,13 +322,17 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Repairs",
-        icon: metricsView === "repairs" && isFetching
+        icon: clickedNavlink === "repairs" && isFetching
           ? <Loader size={18} />
           : <TbTools size={18} />,
         name: "Repairs",
         onClick: async () => {
           sidebarDispatch({
             action: sidebarAction.setMetricsView,
+            payload: "repairs",
+          });
+          sidebarDispatch({
+            action: sidebarAction.setClickedNavlink,
             payload: "repairs",
           });
 
@@ -368,20 +387,28 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     <AccessibleNavLink
       attributes={{
         description: "Directory",
-        icon: <TbFileDatabase size={18} />,
+        icon: clickedNavlink === "directory" && isFetching
+          ? <Loader size={18} />
+          : <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: async () => {
+          sidebarDispatch({
+            action: sidebarAction.setClickedNavlink,
+            payload: "directory",
+          });
+
+          globalDispatch({
+            action: globalAction.setIsFetching,
+            payload: true,
+          });
+
           await handleDirectoryNavClick({
             accessToken,
             department: "Executive Management",
             directoryFetchWorker,
             directoryUrl: API_URL,
             globalDispatch,
-            isComponentMountedRef,
-            navigate,
-            showBoundary,
             storeLocation: "All Locations",
-            toLocation: "/dashboard/directory",
           });
 
           // await handleDirectoryClicks({

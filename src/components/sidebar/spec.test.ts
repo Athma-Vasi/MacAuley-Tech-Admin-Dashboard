@@ -499,7 +499,6 @@ async function handleDirectoryClicksTestMock(
             accessToken,
             authDispatch,
             department,
-            directoryDispatch,
             directoryUrl,
             fetchAbortControllerRef,
             globalDispatch,

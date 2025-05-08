@@ -1,10 +1,8 @@
 import { Orientation } from "react-d3-tree";
-import { UserDocument } from "../../types";
 import { parseSafeSync } from "../../utils";
 import { directoryAction } from "./actions";
 import {
   setDepartmentDirectoryDispatchZod,
-  setDirectoryDirectoryDispatchZod,
   setDirectoryFetchWorkerDirectoryDispatchZod,
   setOrientationDirectoryDispatchZod,
   setStoreLocationDirectoryDispatchZod,
@@ -29,7 +27,6 @@ const directoryReducers = new Map<
   (state: DirectoryState, dispatch: DirectoryDispatch) => DirectoryState
 >([
   [directoryAction.setDepartment, directoryReducer_setDepartment],
-  [directoryAction.setDirectory, directoryReducer_setDirectory],
   [
     directoryAction.setDirectoryFetchWorker,
     directoryReducer_setDirectoryFetchWorker,
@@ -55,25 +52,6 @@ function directoryReducer_setDepartment(
     ...state,
     department: parsedResult.safeUnwrap().data
       ?.payload as DepartmentsWithDefaultKey,
-  };
-}
-
-function directoryReducer_setDirectory(
-  state: DirectoryState,
-  dispatch: DirectoryDispatch,
-): DirectoryState {
-  const parsedResult = parseSafeSync({
-    object: dispatch,
-    zSchema: setDirectoryDirectoryDispatchZod,
-  });
-
-  if (parsedResult.err) {
-    return state;
-  }
-
-  return {
-    ...state,
-    directory: parsedResult.safeUnwrap().data?.payload as UserDocument[],
   };
 }
 

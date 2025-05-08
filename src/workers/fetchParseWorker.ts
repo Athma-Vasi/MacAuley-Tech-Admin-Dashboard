@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DashboardMetricsView } from "../components/dashboard/types";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
 import { HttpServerResponse } from "../types";
 import {
@@ -9,7 +10,6 @@ import {
     responseToJSONSafe,
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
-import { DashboardMetricsView } from "../components/dashboard/types";
 
 self.onmessage = async (
     event: MessageEvent<

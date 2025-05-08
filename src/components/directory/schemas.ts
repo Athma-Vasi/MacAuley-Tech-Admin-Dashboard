@@ -27,11 +27,6 @@ const setDepartmentDirectoryDispatchZod = z.object({
     ]),
 });
 
-const setDirectoryDirectoryDispatchZod = z.object({
-    action: z.literal(directoryAction.setDirectory),
-    payload: z.array(userDocumentOptionalsZod),
-});
-
 const setOrientationDirectoryDispatchZod = z.object({
     action: z.literal(directoryAction.setOrientation),
     payload: z.enum(["horizontal", "vertical"]),
@@ -49,7 +44,6 @@ const setStoreLocationDirectoryDispatchZod = z.object({
 
 export {
     setDepartmentDirectoryDispatchZod,
-    setDirectoryDirectoryDispatchZod,
     setDirectoryFetchWorkerDirectoryDispatchZod,
     setOrientationDirectoryDispatchZod,
     setStoreLocationDirectoryDispatchZod,

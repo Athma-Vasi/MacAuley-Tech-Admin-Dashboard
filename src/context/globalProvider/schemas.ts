@@ -3,6 +3,7 @@ import { customerMetricsDocumentZod } from "../../components/dashboard/customer/
 import { financialMetricsDocumentZod } from "../../components/dashboard/financial/schemas";
 import { productMetricsDocumentZod } from "../../components/dashboard/product/schemas";
 import { repairMetricsDocumentZod } from "../../components/dashboard/repair/schemas";
+import { userDocumentOptionalsZod } from "../../components/usersQuery/schemas";
 import { globalAction } from "./actions";
 
 const setCustomerMetricsCategoryGlobalDispatchZod = z.object({
@@ -203,11 +204,17 @@ const setIsErrorGlobalDispatchZod = z.object({
     payload: z.boolean(),
 });
 
+const setDirectoryGlobalDispatchZod = z.object({
+    action: z.literal(globalAction.setDirectory),
+    payload: z.array(userDocumentOptionalsZod),
+});
+
 export {
     setColorSchemeGlobalDispatchZod,
     setCustomerMetricsCategoryGlobalDispatchZod,
     setCustomerMetricsDocumentGlobalDispatchZod,
     setDefaultGradientGlobalDispatchZod,
+    setDirectoryGlobalDispatchZod,
     setFinancialMetricCategoryGlobalDispatchZod,
     setFinancialMetricsDocumentGlobalDispatchZod,
     setIsErrorGlobalDispatchZod,

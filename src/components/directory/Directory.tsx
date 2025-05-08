@@ -27,7 +27,7 @@ import type {
   DepartmentsWithDefaultKey,
   StoreLocationsWithDefaultKey,
 } from "./types";
-import { forageDirectory, returnIsStoreLocationDisabled } from "./utils";
+import { returnIsStoreLocationDisabled } from "./utils";
 
 function Directory() {
   const [directoryState, directoryDispatch] = useReducer(
@@ -36,7 +36,6 @@ function Directory() {
   );
   const {
     directoryFetchWorker,
-    directory,
     department,
     orientation,
     storeLocation,
@@ -46,7 +45,7 @@ function Directory() {
   const navigate = useNavigate();
 
   const {
-    globalState: { themeObject },
+    globalState: { themeObject, directory },
     globalDispatch,
   } = useGlobalState();
   const {
@@ -60,12 +59,12 @@ function Directory() {
   const fetchAbortControllerRef = useFetchAbortControllerRef();
 
   useEffect(() => {
-    forageDirectory({
-      directoryDispatch,
-      fetchAbortControllerRef,
-      isComponentMountedRef,
-      showBoundary,
-    });
+    // forageDirectory({
+    //   directoryDispatch,
+    //   fetchAbortControllerRef,
+    //   isComponentMountedRef,
+    //   showBoundary,
+    // });
 
     const newDirectoryFetchWorker = new FetchParseWorker();
 
@@ -83,20 +82,18 @@ function Directory() {
     ) => {
       await handleDirectoryOnmessageCallback({
         authDispatch,
-        department,
-        directoryDispatch,
         event,
         globalDispatch,
         isComponentMountedRef,
         showBoundary,
-        storeLocation: isStoreLocationDisabled
-          ? "All Locations"
-          : "Edmonton" as AllStoreLocations,
       });
     };
 
     return () => {
       isComponentMountedRef.current = false;
+      fetchAbortControllerRef.current?.abort("Component unmounted");
+      fetchAbortControllerRef.current = null;
+      newDirectoryFetchWorker.terminate();
     };
   }, []);
 
@@ -139,12 +136,9 @@ function Directory() {
             directoryFetchWorker,
             directoryUrl: API_URL,
             globalDispatch,
-            isComponentMountedRef,
-            showBoundary,
             storeLocation: isStoreLocationDisabled
               ? "All Locations"
               : "Edmonton" as AllStoreLocations,
-            directoryDispatch,
           });
 
           // await handleDirectoryClicks({
@@ -196,14 +190,9 @@ function Directory() {
             directoryFetchWorker,
             directoryUrl: API_URL,
             globalDispatch,
-            isComponentMountedRef,
-            showBoundary,
             storeLocation: isStoreLocationDisabled
               ? "All Locations"
               : event.currentTarget.value as AllStoreLocations,
-            directoryDispatch,
-            navigate,
-            toLocation: "/dashboard/directory",
           });
 
           //   await handleDirectoryClicks({

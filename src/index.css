@@ -44,7 +44,11 @@
     var(--max-card-width)
   );
 
-  --directory-card-width: clamp(250px, 100%, 432px);
+  --directory-card-width: clamp(
+    calc(var(--min-input-width) + var(--padding-x2)),
+    calc(100% - var(--padding-x2)),
+    480px
+  );
 
   --min-resource-card-width: calc(var(--min-input-width) + var(--padding-x2));
   --ideal-resource-card-width: calc(100% - var(--padding-x2));

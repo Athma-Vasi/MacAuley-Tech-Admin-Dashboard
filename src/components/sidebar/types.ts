@@ -8,6 +8,8 @@ import {
 import { DashboardMetricsView } from "../dashboard/types";
 import { SidebarAction } from "./actions";
 
+type SidebarNavlinks = Lowercase<DashboardMetricsView> | "directory" | "users";
+
 type MetricsMessageEvent = MessageEvent<
     SafeBoxResult<
         {
@@ -29,12 +31,17 @@ type DirectoryMessageEvent = MessageEvent<
 >;
 
 type SidebarState = {
+    clickedNavlink: SidebarNavlinks;
     directoryFetchWorker: Worker | null;
     metricsFetchWorker: Worker | null;
     metricsView: Lowercase<DashboardMetricsView>;
 };
 
 type SidebarDispatch =
+    | {
+        action: SidebarAction["setClickedNavlink"];
+        payload: SidebarNavlinks;
+    }
     | {
         action: SidebarAction["setDirectoryFetchWorker"];
         payload: Worker;
@@ -52,5 +59,6 @@ export type {
     DirectoryMessageEvent,
     MetricsMessageEvent,
     SidebarDispatch,
+    SidebarNavlinks,
     SidebarState,
 };

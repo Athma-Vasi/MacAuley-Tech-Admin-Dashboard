@@ -28,7 +28,8 @@ function createTreeHelpers(
       lastName,
       orgId,
       country,
-      profilePictureUrl,
+      profilePictureUrl = "",
+      username,
     } = employee;
     const name = `${firstName} ${lastName}`;
 
@@ -38,6 +39,7 @@ function createTreeHelpers(
       country,
       nodeColor,
       profilePictureUrl,
+      username,
     };
 
     nodeMap.set(orgId, {

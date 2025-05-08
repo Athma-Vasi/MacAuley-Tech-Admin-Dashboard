@@ -21,7 +21,20 @@ const setDirectoryFetchWorkerSidebarDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const setClickedNavlinkSidebarDispatchZod = z.object({
+    action: z.literal(sidebarAction.setClickedNavlink),
+    payload: z.enum([
+        "directory",
+        "users",
+        "financials",
+        "products",
+        "customers",
+        "repairs",
+    ]),
+});
+
 export {
+    setClickedNavlinkSidebarDispatchZod,
     setDirectoryFetchWorkerSidebarDispatchZod,
     setMetricsFetchWorkerSidebarDispatchZod,
     setMetricsViewSidebarDispatchZod,

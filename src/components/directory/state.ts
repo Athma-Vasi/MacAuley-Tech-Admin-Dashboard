@@ -2,7 +2,7 @@ import { DirectoryState } from "./types";
 
 const initialDirectoryState: DirectoryState = {
   department: "Executive Management",
-  directory: [],
+  directoryFetchWorker: null,
   orientation: "horizontal",
   storeLocation: "Edmonton",
 };
