@@ -3,37 +3,38 @@ import { parseSafeSync } from "../../utils";
 import { registerAction } from "./actions";
 import {
   RegisterDispatch,
-  setActiveStepDispatchZod,
-  setAddressLineDispatchZod,
-  setCityDispatchZod,
-  setConfirmPasswordDispatchZod,
-  setCountryDispatchZod,
-  setDepartmentDispatchZod,
-  setEmailDispatchZod,
-  setErrorMessageDispatchZod,
-  setFilesInErrorRegisterDispatchZod,
-  setFirstNameDispatchZod,
-  setFormDataDispatchZod,
-  setInputsInErrorDispatchZod,
-  setIsEmailExistsDispatchZod,
-  setIsEmailExistsSubmittingDispatchZod,
-  setIsErrorDispatchZod,
-  setIsSubmittingDispatchZod,
-  setIsSuccessfulDispatchZod,
-  setIsUsernameExistsDispatchZod,
-  setIsUsernameExistsSubmittingDispatchZod,
-  setJobPositionDispatchZod,
-  setLastNameDispatchZod,
-  setPasswordDispatchZod,
-  setPostalCodeCanadaDispatchZod,
-  setPostalCodeUSDispatchZod,
-  setProfilePictureUrlDispatchZod,
-  setProvinceDispatchZod,
-  setStateDispatchZod,
-  setStepsInErrorDispatchZod,
-  setStepsWithEmptyInputsDispatchZod,
-  setStoreLocationDispatchZod,
-  setUsernameDispatchZod,
+  setActiveStepRegisterDispatchZod,
+  setAddressLineRegisterDispatchZod,
+  setCityRegisterDispatchZod,
+  setConfirmPasswordRegisterDispatchZod,
+  setCountryRegisterDispatchZod,
+  setDepartmentRegisterDispatchZod,
+  setEmailRegisterDispatchZod,
+  setErrorMessageRegisterDispatchZod,
+  setFilesInErrorRegisterRegisterDispatchZod,
+  setFirstNameRegisterDispatchZod,
+  setFormDataRegisterDispatchZod,
+  setInputsInErrorRegisterDispatchZod,
+  setIsEmailExistsRegisterDispatchZod,
+  setIsEmailExistsSubmittingRegisterDispatchZod,
+  setIsErrorRegisterDispatchZod,
+  setIsSubmittingRegisterDispatchZod,
+  setIsSuccessfulRegisterDispatchZod,
+  setIsUsernameExistsRegisterDispatchZod,
+  setIsUsernameExistsSubmittingRegisterDispatchZod,
+  setJobPositionRegisterDispatchZod,
+  setLastNameRegisterDispatchZod,
+  setPasswordRegisterDispatchZod,
+  setPostalCodeCanadaRegisterDispatchZod,
+  setPostalCodeUSRegisterDispatchZod,
+  setProfilePictureUrlRegisterDispatchZod,
+  setProvinceRegisterDispatchZod,
+  setRegisterFetchWorkerRegisterDispatchZod,
+  setStateRegisterDispatchZod,
+  setStepsInErrorRegisterDispatchZod,
+  setStepsWithEmptyInputsRegisterDispatchZod,
+  setStoreLocationRegisterDispatchZod,
+  setUsernameRegisterDispatchZod,
 } from "./schemas";
 import type { RegisterAction, RegisterState } from "./types";
 
@@ -89,6 +90,10 @@ const registerReducers = new Map<
   ],
   [registerAction.setPassword, registerReducer_setPassword],
   [registerAction.setUsername, registerReducer_setUsername],
+  [
+    registerAction.setRegisterFetchWorker,
+    registerReducer_setRegisterFetchWorker,
+  ],
 ]);
 
 function registerReducer_setInputsInError(
@@ -97,7 +102,7 @@ function registerReducer_setInputsInError(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setInputsInErrorDispatchZod,
+    zSchema: setInputsInErrorRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -121,7 +126,7 @@ function registerReducer_setStepsWithEmptyInputs(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setStepsWithEmptyInputsDispatchZod,
+    zSchema: setStepsWithEmptyInputsRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -145,7 +150,7 @@ function registerReducer_setActiveStep(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setActiveStepDispatchZod,
+    zSchema: setActiveStepRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -161,7 +166,7 @@ function registerReducer_setStepsInError(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setStepsInErrorDispatchZod,
+    zSchema: setStepsInErrorRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -187,7 +192,7 @@ function registerReducer_setDepartment(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setDepartmentDispatchZod,
+    zSchema: setDepartmentRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -203,7 +208,7 @@ function registerReducer_setFilesInError(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setFilesInErrorRegisterDispatchZod,
+    zSchema: setFilesInErrorRegisterRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -227,7 +232,7 @@ function registerReducer_setFirstName(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setFirstNameDispatchZod,
+    zSchema: setFirstNameRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -243,7 +248,7 @@ function registerReducer_setFormData(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setFormDataDispatchZod,
+    zSchema: setFormDataRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -259,7 +264,7 @@ function registerReducer_setJobPosition(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setJobPositionDispatchZod,
+    zSchema: setJobPositionRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -275,7 +280,7 @@ function registerReducer_setLastName(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setLastNameDispatchZod,
+    zSchema: setLastNameRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -291,7 +296,7 @@ function registerReducer_setProfilePictureUrl(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setProfilePictureUrlDispatchZod,
+    zSchema: setProfilePictureUrlRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -310,7 +315,7 @@ function registerReducer_setStoreLocation(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setStoreLocationDispatchZod,
+    zSchema: setStoreLocationRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -326,7 +331,7 @@ function registerReducer_setAddressLine(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setAddressLineDispatchZod,
+    zSchema: setAddressLineRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -342,7 +347,7 @@ function registerReducer_setCity(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setCityDispatchZod,
+    zSchema: setCityRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -358,7 +363,7 @@ function registerReducer_setCountry(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setCountryDispatchZod,
+    zSchema: setCountryRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -374,7 +379,7 @@ function registerReducer_setPostalCodeCanada(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setPostalCodeCanadaDispatchZod,
+    zSchema: setPostalCodeCanadaRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -393,7 +398,7 @@ function registerReducer_setPostalCodeUS(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setPostalCodeUSDispatchZod,
+    zSchema: setPostalCodeUSRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -409,7 +414,7 @@ function registerReducer_setProvince(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setProvinceDispatchZod,
+    zSchema: setProvinceRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -425,7 +430,7 @@ function registerReducer_setState(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setStateDispatchZod,
+    zSchema: setStateRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -444,7 +449,7 @@ function registerReducer_setConfirmPassword(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setConfirmPasswordDispatchZod,
+    zSchema: setConfirmPasswordRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -459,7 +464,7 @@ function registerReducer_setEmail(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setEmailDispatchZod,
+    zSchema: setEmailRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -475,7 +480,7 @@ function registerReducer_setErrorMessage(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setErrorMessageDispatchZod,
+    zSchema: setErrorMessageRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -491,7 +496,7 @@ function registerReducer_setIsEmailExists(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsEmailExistsDispatchZod,
+    zSchema: setIsEmailExistsRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -507,7 +512,7 @@ function registerReducer_setIsEmailExistsSubmitting(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsEmailExistsSubmittingDispatchZod,
+    zSchema: setIsEmailExistsSubmittingRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -526,7 +531,7 @@ function registerReducer_setIsError(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsErrorDispatchZod,
+    zSchema: setIsErrorRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -542,7 +547,7 @@ function registerReducer_setIsSubmitting(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsSubmittingDispatchZod,
+    zSchema: setIsSubmittingRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -558,7 +563,7 @@ function registerReducer_setIsSuccessful(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsSuccessfulDispatchZod,
+    zSchema: setIsSuccessfulRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -574,7 +579,7 @@ function registerReducer_setIsUsernameExists(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsUsernameExistsDispatchZod,
+    zSchema: setIsUsernameExistsRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -593,7 +598,7 @@ function registerReducer_setIsUsernameExistsSubmitting(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsUsernameExistsSubmittingDispatchZod,
+    zSchema: setIsUsernameExistsSubmittingRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -612,7 +617,7 @@ function registerReducer_setPassword(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setPasswordDispatchZod,
+    zSchema: setPasswordRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -628,7 +633,7 @@ function registerReducer_setUsername(
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setUsernameDispatchZod,
+    zSchema: setUsernameRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -636,6 +641,25 @@ function registerReducer_setUsername(
   }
 
   return { ...state, username: parsedResult.safeUnwrap().data?.payload };
+}
+
+function registerReducer_setRegisterFetchWorker(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setRegisterFetchWorkerRegisterDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    registerFetchWorker: parsedResult.safeUnwrap().data?.payload,
+  };
 }
 
 export {
@@ -664,6 +688,7 @@ export {
   registerReducer_setPostalCodeUS,
   registerReducer_setProfilePictureUrl,
   registerReducer_setProvince,
+  registerReducer_setRegisterFetchWorker,
   registerReducer_setState,
   registerReducer_setStepsInError,
   registerReducer_setStepsWithEmptyInputs,

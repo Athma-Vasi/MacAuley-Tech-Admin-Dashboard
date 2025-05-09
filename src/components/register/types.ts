@@ -1,14 +1,17 @@
 import {
   CanadianPostalCode,
   Country,
+  DecodedToken,
   Department,
+  HttpServerResponse,
   JobPosition,
   Province,
+  SafeBoxResult,
   StatesUS,
   USPostalCode,
 } from "../../types";
 import { ValidationKey } from "../../validations";
-import { AllStoreLocations } from "../dashboard/types";
+import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import type { RegisterAction } from "./actions";
 
 type RegisterState = {
@@ -49,6 +52,19 @@ type RegisterState = {
   inputsInError: Set<ValidationKey>;
   formData: FormData;
   filesInError: Map<string, boolean>;
+  registerFetchWorker: Worker | null;
 };
 
-export type { RegisterAction, RegisterState };
+type RegisterMessageEvent = MessageEvent<
+  SafeBoxResult<
+    {
+      decodedToken: DecodedToken;
+      parsedServerResponse: HttpServerResponse<
+        boolean
+      >;
+      metricsView?: Lowercase<DashboardMetricsView>;
+    }
+  >
+>;
+
+export type { RegisterAction, RegisterMessageEvent, RegisterState };

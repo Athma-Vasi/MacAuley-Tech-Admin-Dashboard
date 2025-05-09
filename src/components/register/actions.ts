@@ -25,6 +25,7 @@ type RegisterAction = {
   setPostalCodeUS: "setPostalCodeUS";
   setProfilePictureUrl: "setProfilePictureUrl";
   setProvince: "setProvince";
+  setRegisterFetchWorker: "setRegisterFetchWorker";
   setState: "setState";
   setStepsInError: "setStepsInError";
   setStepsWithEmptyInputs: "setStepsWithEmptyInputs";
@@ -59,6 +60,7 @@ const registerAction: RegisterAction = {
   setPostalCodeUS: "setPostalCodeUS",
   setProfilePictureUrl: "setProfilePictureUrl",
   setProvince: "setProvince",
+  setRegisterFetchWorker: "setRegisterFetchWorker",
   setState: "setState",
   setStepsInError: "setStepsInError",
   setStepsWithEmptyInputs: "setStepsWithEmptyInputs",

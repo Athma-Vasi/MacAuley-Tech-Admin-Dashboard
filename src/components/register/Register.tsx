@@ -9,12 +9,13 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
+import { useFetchAbortControllerRef, useMountedRef } from "../../hooks";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { FormReview, UserSchema } from "../../types";
 import { returnThemeColors } from "../../utils";
@@ -23,12 +24,7 @@ import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { AccessibleImageInput } from "../accessibleInputs/image";
 import { MAX_IMAGES } from "../accessibleInputs/image/constants";
 import { registerAction } from "./actions";
-import {
-  MAX_REGISTER_STEPS,
-  REGISTER_STEPS,
-  REGISTER_URL,
-  SAMPLE_USER_SCHEMA,
-} from "./constants";
+import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
 import { handlePrevNextStepClick, handleRegisterButtonClick } from "./handlers";
 import { registerReducer } from "./reducers";
 import { RegisterAddress } from "./RegisterAddress";
@@ -74,6 +70,7 @@ function Register() {
     postalCodeUS,
     profilePictureUrl,
     province,
+    registerFetchWorker,
     state,
     stepsInError,
     stepsWithEmptyInputs,
@@ -87,10 +84,36 @@ function Register() {
 
   const { showBoundary, resetBoundary } = useErrorBoundary();
 
-  const navigateFn = useNavigate();
+  const navigate = useNavigate();
 
-  const fetchAbortControllerRef = useRef<AbortController | null>(null);
-  const isComponentMountedRef = useRef(false);
+  // useEffect(() => {
+  //   const newRegisterFetchWorker = new FetchParseWorker();
+  //   registerDispatch({
+  //     action: registerAction.setRegisterFetchWorker,
+  //     payload: newRegisterFetchWorker,
+  //   });
+
+  //   newRegisterFetchWorker.onmessage = async (
+  //     event: RegisterMessageEvent,
+  //   ) => {
+  //     await handleRegisterButtonClickOnmessageCallback({
+  //       event,
+  //       isComponentMountedRef,
+  //       navigate,
+  //       registerDispatch,
+  //       showBoundary,
+  //       toLocation: "/login",
+  //     });
+  //   };
+
+  //   return () => {
+  //     isComponentMountedRef.current = false;
+  //     newRegisterFetchWorker.terminate();
+  //   };
+  // }, []);
+
+  const fetchAbortControllerRef = useFetchAbortControllerRef();
+  const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -163,15 +186,15 @@ function Register() {
     />
   );
 
-  // const isSubmitButtonDisabled = !username || !email || !password ||
-  //   !confirmPassword || isUsernameExists || isEmailExists ||
-  //   isError || stepsInError.size > 0 || inputsInError.size > 0 ||
-  //   Array.from(filesInError).reduce((acc, curr) => {
-  //     const [_fileName, isFileInError] = curr;
-  //     acc.add(isFileInError);
+  const isSubmitButtonDisabled = !username || !email || !password ||
+    !confirmPassword || isUsernameExists || isEmailExists ||
+    isError || stepsInError.size > 0 || inputsInError.size > 0 ||
+    Array.from(filesInError).reduce((acc, curr) => {
+      const [_fileName, isFileInError] = curr;
+      acc.add(isFileInError);
 
-  //     return acc;
-  //   }, new Set()).has(true);
+      return acc;
+    }, new Set()).has(true);
 
   const submitButton = (
     <AccessibleButton
@@ -181,7 +204,7 @@ function Register() {
             !confirmPassword
           ? "Fields cannot be empty"
           : "Please fix errors before registering.",
-        // disabled: isSubmitButtonDisabled,
+        disabled: isSubmitButtonDisabled,
         kind: "submit",
         leftIcon: isSubmitting
           ? <Loader size="xs" />
@@ -233,14 +256,21 @@ function Register() {
             JSON.stringify({ schema }),
           );
 
+          // await handleRegisterButtonSubmit({
+          //   formData,
+          //   registerDispatch,
+          //   registerFetchWorker,
+          //   url: REGISTER_URL,
+          // });
+
           await handleRegisterButtonClick({
             fetchAbortControllerRef,
-            isComponentMountedRef,
             formData,
-            navigateFn,
-            navigateTo: "/login",
+            isComponentMountedRef,
+            navigate,
             registerDispatch,
             showBoundary,
+            toLocation: "/login",
             url: REGISTER_URL,
           });
         },

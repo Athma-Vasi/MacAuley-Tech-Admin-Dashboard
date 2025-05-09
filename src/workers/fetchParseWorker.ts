@@ -17,6 +17,7 @@ self.onmessage = async (
             metricsView?: Lowercase<DashboardMetricsView>;
             requestInit: RequestInit;
             routesZodSchemaMapKey: RoutesZodSchemasMapKey;
+            skipTokenDecode?: boolean;
             url: string;
         }
     >,
@@ -25,7 +26,13 @@ self.onmessage = async (
         "Worker received message in self:",
         JSON.stringify(event.data, null, 2),
     );
-    const { requestInit, url, routesZodSchemaMapKey, metricsView } = event.data;
+    const {
+        metricsView,
+        requestInit,
+        routesZodSchemaMapKey,
+        skipTokenDecode,
+        url,
+    } = event.data;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
@@ -101,6 +108,14 @@ self.onmessage = async (
         if (parsedServerResponse === undefined) {
             self.postMessage(createSafeBoxResult({
                 message: "No data returned from server",
+            }));
+            return;
+        }
+
+        if (skipTokenDecode) {
+            self.postMessage(createSafeBoxResult({
+                data: { parsedServerResponse, metricsView },
+                kind: "success",
             }));
             return;
         }

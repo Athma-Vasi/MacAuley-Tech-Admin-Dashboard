@@ -1,11 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import { z } from "zod";
-import {
-  HttpServerResponse,
-  SafeBoxResult,
-  UserDocument,
-  UserSchema,
-} from "../../types";
+import { HttpServerResponse, SafeBoxResult } from "../../types";
 import {
   createSafeBoxResult,
   fetchSafe,
@@ -16,7 +11,7 @@ import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, STEPS_INPUTNAMES_MAP } from "./constants";
 import { RegisterDispatch } from "./schemas";
-import { RegisterState } from "./types";
+import { RegisterMessageEvent, RegisterState } from "./types";
 
 async function handleCheckEmailExists(
   {
@@ -402,24 +397,161 @@ async function handleCheckUsernameExists(
   }
 }
 
+async function handleRegisterButtonSubmit(
+  {
+    formData,
+    registerDispatch,
+    registerFetchWorker,
+    url,
+  }: {
+    formData: FormData;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    registerFetchWorker: Worker | null;
+    url: RequestInfo | URL;
+  },
+) {
+  const requestInit: RequestInit = {
+    body: formData,
+    method: "POST",
+    mode: "cors",
+  };
+
+  registerDispatch({
+    action: registerAction.setIsSubmitting,
+    payload: true,
+  });
+
+  registerFetchWorker?.postMessage({
+    requestInit,
+    routesZodSchemaMapKey: "register",
+    skipTokenDecode: true,
+    url: url.toString(),
+  });
+}
+
+async function handleRegisterButtonClickOnmessageCallback(
+  {
+    event,
+    isComponentMountedRef,
+    navigate,
+    registerDispatch,
+    showBoundary,
+    toLocation,
+  }: {
+    event: RegisterMessageEvent;
+    isComponentMountedRef: React.RefObject<boolean>;
+    navigate: NavigateFunction;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    showBoundary: (error: unknown) => void;
+    toLocation: string;
+  },
+) {
+  try {
+    console.log("Worker received message in useEffect:", event.data);
+
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (event.data.err) {
+      showBoundary(event.data.val.data);
+      return createSafeBoxResult({
+        message: event.data.val.message ?? "Error fetching response",
+      });
+    }
+
+    console.log("event.data.val.data", event.data.val.data);
+
+    const dataUnwrapped = event.data.val.data;
+    if (dataUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
+    }
+
+    console.log({ dataUnwrapped });
+    const { parsedServerResponse } = dataUnwrapped;
+
+    if (parsedServerResponse.kind === "error") {
+      registerDispatch({
+        action: registerAction.setIsSubmitting,
+        payload: false,
+      });
+      registerDispatch({
+        action: registerAction.setIsError,
+        payload: true,
+      });
+      registerDispatch({
+        action: registerAction.setErrorMessage,
+        payload: parsedServerResponse.message,
+      });
+
+      navigate("/register");
+
+      return createSafeBoxResult({
+        message: parsedServerResponse.message ?? "Error",
+      });
+    }
+
+    registerDispatch({
+      action: registerAction.setIsSubmitting,
+      payload: false,
+    });
+    registerDispatch({
+      action: registerAction.setIsSuccessful,
+      payload: true,
+    });
+    registerDispatch({
+      action: registerAction.setIsError,
+      payload: false,
+    });
+    registerDispatch({
+      action: registerAction.setErrorMessage,
+      payload: "",
+    });
+
+    navigate(toLocation);
+
+    return createSafeBoxResult({
+      data: parsedServerResponse.data,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
+  }
+}
+
 async function handleRegisterButtonClick(
   {
     fetchAbortControllerRef,
     formData,
     isComponentMountedRef,
-    navigateFn,
-    navigateTo,
+    navigate,
     registerDispatch,
     showBoundary,
+    toLocation,
     url,
   }: {
     fetchAbortControllerRef: React.RefObject<AbortController | null>;
     formData: FormData;
     isComponentMountedRef: React.RefObject<boolean>;
+    navigate: NavigateFunction;
     registerDispatch: React.Dispatch<RegisterDispatch>;
-    navigateFn: NavigateFunction;
-    navigateTo: string;
     showBoundary: (error: unknown) => void;
+    toLocation: string;
     url: RequestInfo | URL;
   },
 ): Promise<SafeBoxResult<boolean[]>> {
@@ -508,7 +640,7 @@ async function handleRegisterButtonClick(
         action: registerAction.setErrorMessage,
         payload: serverResponse.message,
       });
-      navigateFn("/register");
+      navigate("/register");
       return createSafeBoxResult({
         message: serverResponse.message ?? "Error",
       });
@@ -531,7 +663,7 @@ async function handleRegisterButtonClick(
       payload: "",
     });
 
-    navigateFn(navigateTo);
+    navigate(toLocation);
     return createSafeBoxResult({
       data: serverResponse.data,
       kind: "success",
@@ -665,4 +797,6 @@ export {
   handleCheckUsernameExists,
   handlePrevNextStepClick,
   handleRegisterButtonClick,
+  handleRegisterButtonClickOnmessageCallback,
+  handleRegisterButtonSubmit,
 };

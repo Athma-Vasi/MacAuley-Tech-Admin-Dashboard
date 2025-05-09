@@ -319,118 +319,132 @@ async function loginOnmessageCallback(
     showBoundary: (error: unknown) => void;
   },
 ) {
-  console.log("Worker received message in useEffect:", event.data);
+  try {
+    console.log("Worker received message in useEffect:", event.data);
 
-  if (!isComponentMountedRef.current) {
-    return createSafeBoxResult({
-      message: "Component unmounted",
-    });
-  }
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
 
-  if (event.data.err) {
-    showBoundary(event.data.val.data);
-    return createSafeBoxResult({
-      message: event.data.val.message ?? "Error fetching response",
-    });
-  }
+    if (event.data.err) {
+      showBoundary(event.data.val.data);
+      return createSafeBoxResult({
+        message: event.data.val.message ?? "Error fetching response",
+      });
+    }
 
-  console.log("event.data.val.data", event.data.val.data);
+    console.log("event.data.val.data", event.data.val.data);
 
-  const dataUnwrapped = event.data.val.data;
-  if (dataUnwrapped === undefined) {
-    showBoundary(new Error("No data returned from server"));
-    return createSafeBoxResult({
-      message: "Response is undefined",
-    });
-  }
+    const dataUnwrapped = event.data.val.data;
+    if (dataUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
+    }
 
-  console.log({ dataUnwrapped });
+    console.log({ dataUnwrapped });
 
-  const { parsedServerResponse, decodedToken } = dataUnwrapped;
-  const { accessToken, data, triggerLogout } = parsedServerResponse;
+    const { parsedServerResponse, decodedToken } = dataUnwrapped;
+    const { accessToken, data, triggerLogout } = parsedServerResponse;
 
-  if (triggerLogout) {
+    if (triggerLogout) {
+      authDispatch({
+        action: authAction.setAccessToken,
+        payload: "",
+      });
+      authDispatch({
+        action: authAction.setIsLoggedIn,
+        payload: false,
+      });
+      authDispatch({
+        action: authAction.setDecodedToken,
+        payload: Object.create(null),
+      });
+      authDispatch({
+        action: authAction.setUserDocument,
+        payload: Object.create(null),
+      });
+
+      await localforage.clear();
+      navigate("/");
+      return createSafeBoxResult({
+        message: "Logout triggered",
+      });
+    }
+
     authDispatch({
       action: authAction.setAccessToken,
-      payload: "",
-    });
-    authDispatch({
-      action: authAction.setIsLoggedIn,
-      payload: false,
+      payload: accessToken,
     });
     authDispatch({
       action: authAction.setDecodedToken,
-      payload: Object.create(null),
+      payload: decodedToken,
+    });
+    authDispatch({
+      action: authAction.setIsLoggedIn,
+      payload: true,
     });
     authDispatch({
       action: authAction.setUserDocument,
-      payload: Object.create(null),
+      payload: data[0].userDocument,
     });
 
-    await localforage.clear();
-    navigate("/");
+    globalDispatch({
+      action: globalAction.setFinancialMetricsDocument,
+      payload: data[0].financialMetricsDocument,
+    });
+
+    await setForageItemSafe<
+      FinancialMetricsDocument
+    >(
+      "financials/All Locations",
+      data[0].financialMetricsDocument,
+    );
+
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    // if (setForageItemResult.err) {
+    //   showBoundary(setForageItemResult.val.data);
+    //   return createSafeBoxResult({
+    //     message: setForageItemResult.val.message ?? "Error setting forage item",
+    //   });
+    // }
+
+    loginDispatch({
+      action: loginAction.setIsSubmitting,
+      payload: false,
+    });
+    loginDispatch({
+      action: loginAction.setIsSuccessful,
+      payload: true,
+    });
+
+    navigate("/dashboard/financials");
+
     return createSafeBoxResult({
-      message: "Logout triggered",
+      data: event.data,
+      kind: "success",
+      message: "Login successful",
+    });
+  } catch (error: unknown) {
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error occurred during login",
     });
   }
-
-  authDispatch({
-    action: authAction.setAccessToken,
-    payload: accessToken,
-  });
-  authDispatch({
-    action: authAction.setDecodedToken,
-    payload: decodedToken,
-  });
-  authDispatch({
-    action: authAction.setIsLoggedIn,
-    payload: true,
-  });
-  authDispatch({
-    action: authAction.setUserDocument,
-    payload: data[0].userDocument,
-  });
-
-  globalDispatch({
-    action: globalAction.setFinancialMetricsDocument,
-    payload: data[0].financialMetricsDocument,
-  });
-
-  await setForageItemSafe<
-    FinancialMetricsDocument
-  >(
-    "financials/All Locations",
-    data[0].financialMetricsDocument,
-  );
-
-  if (!isComponentMountedRef.current) {
-    return createSafeBoxResult({
-      message: "Component unmounted",
-    });
-  }
-
-  // if (setForageItemResult.err) {
-  //   showBoundary(setForageItemResult.val.data);
-  //   return createSafeBoxResult({
-  //     message: setForageItemResult.val.message ?? "Error setting forage item",
-  //   });
-  // }
-
-  loginDispatch({
-    action: loginAction.setIsSubmitting,
-    payload: false,
-  });
-  loginDispatch({
-    action: loginAction.setIsSuccessful,
-    payload: true,
-  });
-
-  navigate("/dashboard/financials");
-  return createSafeBoxResult({
-    data: event.data,
-    kind: "success",
-    message: "Login successful",
-  });
 }
 
 export { handleLoginButtonClick, loginOnmessageCallback };
