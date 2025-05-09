@@ -1,6 +1,7 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { z } from "zod";
+import { LOGIN_URL } from "../../constants";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
@@ -300,6 +301,56 @@ async function handleLoginButtonClick(
   }
 }
 
+function handleLoginClick({
+  isLoading,
+  isSubmitting,
+  isSuccessful,
+  loginFetchWorker,
+  loginDispatch,
+  schema,
+}: {
+  isLoading: boolean;
+  isSubmitting: boolean;
+  isSuccessful: boolean;
+  loginDispatch: React.Dispatch<LoginDispatch>;
+  loginFetchWorker: Worker | null;
+  schema: { username: string; password: string };
+}) {
+  try {
+    if (isLoading || isSubmitting || isSuccessful) {
+      return;
+    }
+
+    loginDispatch({
+      action: loginAction.setIsSubmitting,
+      payload: true,
+    });
+
+    const requestInit: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ schema }),
+    };
+
+    loginFetchWorker?.postMessage({
+      requestInit,
+      url: LOGIN_URL,
+      routesZodSchemaMapKey: "login",
+    });
+
+    return createSafeBoxResult({
+      kind: "success",
+      message: "Login message sent",
+    });
+  } catch (error: unknown) {
+    return createSafeBoxResult({
+      message: "Error occurred during login",
+    });
+  }
+}
+
 async function loginOnmessageCallback(
   {
     authDispatch,
@@ -447,4 +498,4 @@ async function loginOnmessageCallback(
   }
 }
 
-export { handleLoginButtonClick, loginOnmessageCallback };
+export { handleLoginButtonClick, handleLoginClick, loginOnmessageCallback };

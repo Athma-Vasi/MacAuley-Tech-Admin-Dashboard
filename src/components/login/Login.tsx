@@ -17,7 +17,7 @@ import { useErrorBoundary } from "react-error-boundary";
 import { Link, useNavigate } from "react-router-dom";
 
 import { TbCheck } from "react-icons/tb";
-import { COLORS_SWATCHES, LOGIN_URL } from "../../constants";
+import { COLORS_SWATCHES } from "../../constants";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -25,7 +25,7 @@ import { returnThemeColors } from "../../utils";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
-import { loginOnmessageCallback } from "./handlers";
+import { handleLoginClick, loginOnmessageCallback } from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
 import { LoginMessageEvent } from "./types";
@@ -39,7 +39,7 @@ function Login() {
     isLoading,
     isSubmitting,
     isSuccessful,
-    fetchParseWorker,
+    loginFetchWorker,
     password,
     username,
   } = loginState;
@@ -76,7 +76,7 @@ function Login() {
     const newFetchParseWorker = new FetchParseWorker();
 
     loginDispatch({
-      action: loginAction.setFetchParseWorker,
+      action: loginAction.setLoginFetchWorker,
       payload: newFetchParseWorker,
     });
 
@@ -157,49 +157,21 @@ function Login() {
           )
           : null,
         name: "login",
-        onClick: async (
+        onClick: (
           event:
             | React.MouseEvent<HTMLButtonElement, MouseEvent>
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           event.preventDefault();
 
-          if (isLoading || isSubmitting || isSuccessful) {
-            return;
-          }
-
-          loginDispatch({
-            action: loginAction.setIsSubmitting,
-            payload: true,
+          handleLoginClick({
+            isLoading,
+            isSubmitting,
+            isSuccessful,
+            loginDispatch,
+            loginFetchWorker,
+            schema: { username, password },
           });
-
-          const requestInit: RequestInit = {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            mode: "cors",
-            body: JSON.stringify({ schema: { username, password } }),
-          };
-
-          fetchParseWorker?.postMessage({
-            requestInit,
-            url: LOGIN_URL,
-            routesZodSchemaMapKey: "login",
-          });
-
-          // await handleLoginButtonClick({
-          //   authDispatch,
-          //   fetchAbortControllerRef,
-          //   globalDispatch,
-          //   isComponentMountedRef,
-          //   loginDispatch,
-          //   navigate,
-          //   schema: { username, password },
-          //   showBoundary,
-          //   toLocation: "/dashboard/financials",
-          //   url: LOGIN_URL,
-          // });
         },
         style: {
           cursor: isLoading || isSubmitting || isSuccessful

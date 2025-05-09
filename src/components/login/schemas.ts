@@ -21,8 +21,8 @@ const setUsernameDispatchZod = z.object({
     action: z.literal(loginAction.setUsername),
     payload: z.string(),
 });
-const setFetchParseWorkerDispatchZod = z.object({
-    action: z.literal(loginAction.setFetchParseWorker),
+const setLoginFetchWorkerDispatchZod = z.object({
+    action: z.literal(loginAction.setLoginFetchWorker),
     payload: z.instanceof(Worker),
 });
 
@@ -32,13 +32,13 @@ type LoginDispatch =
     | z.infer<typeof setIsSuccessfulDispatchZod>
     | z.infer<typeof setPasswordDispatchZod>
     | z.infer<typeof setUsernameDispatchZod>
-    | z.infer<typeof setFetchParseWorkerDispatchZod>;
+    | z.infer<typeof setLoginFetchWorkerDispatchZod>;
 
 export {
-    setFetchParseWorkerDispatchZod,
     setIsLoadingDispatchZod,
     setIsSubmittingDispatchZod,
     setIsSuccessfulDispatchZod,
+    setLoginFetchWorkerDispatchZod,
     setPasswordDispatchZod,
     setUsernameDispatchZod,
 };

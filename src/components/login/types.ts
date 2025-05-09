@@ -10,7 +10,7 @@ type LoginState = {
   isLoading: boolean;
   isSubmitting: boolean;
   isSuccessful: boolean;
-  fetchParseWorker: Worker | null;
+  loginFetchWorker: Worker | null;
   password: string;
   username: string;
 };
