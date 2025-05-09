@@ -30,9 +30,18 @@ type DirectoryMessageEvent = MessageEvent<
     }>
 >;
 
+type LogoutMessageEvent = MessageEvent<
+    SafeBoxResult<{
+        decodedToken: DecodedToken;
+        parsedServerResponse: HttpServerResponse<boolean>;
+        metricsView?: Lowercase<DashboardMetricsView>;
+    }>
+>;
+
 type SidebarState = {
     clickedNavlink: SidebarNavlinks;
     directoryFetchWorker: Worker | null;
+    logoutFetchWorker: Worker | null;
     metricsFetchWorker: Worker | null;
     metricsView: Lowercase<DashboardMetricsView>;
 };
@@ -47,6 +56,10 @@ type SidebarDispatch =
         payload: Worker;
     }
     | {
+        action: SidebarAction["setLogoutFetchWorker"];
+        payload: Worker;
+    }
+    | {
         action: SidebarAction["setMetricsFetchWorker"];
         payload: Worker;
     }
@@ -57,6 +70,7 @@ type SidebarDispatch =
 
 export type {
     DirectoryMessageEvent,
+    LogoutMessageEvent,
     MetricsMessageEvent,
     SidebarDispatch,
     SidebarNavlinks,

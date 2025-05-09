@@ -32,12 +32,13 @@ import { ProductMetricCategory } from "../dashboard/product/types";
 import { repairMetricsDocumentZod } from "../dashboard/repair/schemas";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
-import {
-  DepartmentsWithDefaultKey,
-  DirectoryDispatch,
-} from "../directory/types";
+import { DepartmentsWithDefaultKey } from "../directory/types";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
-import { DirectoryMessageEvent, MetricsMessageEvent } from "./types";
+import {
+  DirectoryMessageEvent,
+  LogoutMessageEvent,
+  MetricsMessageEvent,
+} from "./types";
 import { createDirectoryForageKey } from "./utils";
 
 async function handleMetricCategoryOnmessageCallback({
@@ -748,6 +749,112 @@ async function handleMetricCategoryNavlinkClick(
   }
 }
 
+async function handleLogoutClick({
+  accessToken,
+  globalDispatch,
+  logoutFetchWorker,
+  logoutUrl,
+}: {
+  accessToken: string;
+  globalDispatch: React.Dispatch<GlobalDispatch>;
+  logoutFetchWorker: Worker | null;
+  logoutUrl: string;
+}) {
+  const requestInit: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  globalDispatch({
+    action: globalAction.setIsFetching,
+    payload: true,
+  });
+
+  logoutFetchWorker?.postMessage({
+    requestInit,
+    routesZodSchemaMapKey: "logout",
+    skipTokenDecode: true,
+    url: logoutUrl,
+  });
+}
+
+async function handleLogoutClickOnmessageCallback({
+  event,
+  globalDispatch,
+  isComponentMountedRef,
+  localforage,
+  navigate,
+  showBoundary,
+}: {
+  event: LogoutMessageEvent;
+  globalDispatch: React.Dispatch<GlobalDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
+  localforage: LocalForage;
+  navigate: NavigateFunction;
+  showBoundary: (error: any) => void;
+}) {
+  try {
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (event.data.err) {
+      showBoundary(event.data.val.data);
+      return createSafeBoxResult({
+        message: event.data.val.message ?? "Error fetching response",
+      });
+    }
+
+    const dataUnwrapped = event.data.val.data;
+    if (dataUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
+    }
+
+    const { parsedServerResponse } = dataUnwrapped;
+
+    if (parsedServerResponse.kind === "error") {
+      showBoundary(new Error(parsedServerResponse.message));
+      return createSafeBoxResult({
+        message: parsedServerResponse.message,
+        kind: "error",
+      });
+    }
+
+    globalDispatch({
+      action: globalAction.setIsFetching,
+      payload: false,
+    });
+
+    await localforage.clear();
+    navigate("/");
+    return createSafeBoxResult({
+      data: parsedServerResponse,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
+  }
+}
+
 async function handleLogoutButtonClick({
   accessToken,
   fetchAbortControllerRef,
@@ -1375,6 +1482,8 @@ export {
   handleDirectoryNavClick,
   handleDirectoryOnmessageCallback,
   handleLogoutButtonClick,
+  handleLogoutClick,
+  handleLogoutClickOnmessageCallback,
   handleMetricCategoryNavClick,
   handleMetricCategoryNavlinkClick,
   handleMetricCategoryOnmessageCallback,

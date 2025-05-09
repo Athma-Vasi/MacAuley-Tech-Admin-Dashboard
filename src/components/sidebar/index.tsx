@@ -1,6 +1,6 @@
 import { Group, Loader, Space, Stack, Text } from "@mantine/core";
 import localforage from "localforage";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
   TbAffiliate,
@@ -29,13 +29,18 @@ import { sidebarAction } from "./actions";
 import {
   handleDirectoryNavClick,
   handleDirectoryOnmessageCallback,
-  handleLogoutButtonClick,
+  handleLogoutClick,
+  handleLogoutClickOnmessageCallback,
   handleMetricCategoryNavClick,
   handleMetricCategoryOnmessageCallback,
 } from "./handlers";
 import { sidebarReducer } from "./reducers";
 import { initialSidebarState } from "./state";
-import { DirectoryMessageEvent, MetricsMessageEvent } from "./types";
+import {
+  DirectoryMessageEvent,
+  LogoutMessageEvent,
+  MetricsMessageEvent,
+} from "./types";
 
 type SidebarProps = {
   opened: boolean;
@@ -54,7 +59,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     sidebarReducer,
     initialSidebarState,
   );
-  const fetchAbortControllerRef = useRef<AbortController | null>(null);
+
   const isComponentMountedRef = useMountedRef();
 
   console.log("globalState in sidebar:", globalState);
@@ -69,6 +74,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const {
     clickedNavlink,
     directoryFetchWorker,
+    logoutFetchWorker,
     metricsFetchWorker,
     metricsView,
   } = sidebarState;
@@ -116,8 +122,30 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       });
     };
 
+    const newLogoutFetchWorker = new FetchParseWorker();
+    sidebarDispatch({
+      action: sidebarAction.setLogoutFetchWorker,
+      payload: newLogoutFetchWorker,
+    });
+
+    newLogoutFetchWorker.onmessage = async (
+      event: LogoutMessageEvent,
+    ) => {
+      await handleLogoutClickOnmessageCallback({
+        event,
+        globalDispatch,
+        isComponentMountedRef,
+        localforage,
+        navigate,
+        showBoundary,
+      });
+    };
+
     return () => {
       isComponentMountedRef.current = false;
+      newMetricsFetchWorker.terminate();
+      newDirectoryFetchWorker.terminate();
+      newLogoutFetchWorker.terminate();
     };
   }, []);
 
@@ -155,32 +183,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           }).then((result) => {
             console.log("Result:", result);
           });
-
-          // const urlWithQuery = new URL(
-          //   `${METRICS_URL}/products/?${storeLocationQuery}&metricCategory[$eq]=${productMetricCategory}`,
-          // );
-
-          // metricsFetchWorker?.postMessage({
-          //   requestInit,
-          //   url: urlWithQuery,
-          //   routesZodSchemaMapKey: "productMetrics",
-          // });
-
-          // await handleMetricCategoryNavlinkClick({
-          //   accessToken,
-          //   authDispatch,
-          //   fetchAbortControllerRef,
-          //   globalDispatch,
-          //   isComponentMountedRef,
-          //   metricsUrl: METRICS_URL,
-          //   metricsView: "products",
-          //   navigate,
-          //   toLocation: "/dashboard/products",
-          //   productMetricCategory,
-          //   repairMetricCategory,
-          //   showBoundary,
-          //   storeLocationView,
-          // });
 
           setOpened(false);
         },
@@ -221,32 +223,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             toLocation: "/dashboard/financials",
           });
 
-          // const urlWithQuery = new URL(
-          //   `${METRICS_URL}/financials/?${storeLocationQuery}`,
-          // );
-
-          // metricsFetchWorker?.postMessage({
-          //   requestInit,
-          //   url: urlWithQuery,
-          //   routesZodSchemaMapKey: "financialMetrics",
-          // });
-
-          // await handleMetricCategoryNavlinkClick({
-          //   accessToken,
-          //   authDispatch,
-          //   fetchAbortControllerRef,
-          //   globalDispatch,
-          //   isComponentMountedRef,
-          //   metricsUrl: METRICS_URL,
-          //   metricsView: "financials",
-          //   navigate,
-          //   toLocation: "/dashboard/financials",
-          //   productMetricCategory,
-          //   repairMetricCategory,
-          //   showBoundary,
-          //   storeLocationView,
-          // });
-
           setOpened(false);
         },
       }}
@@ -285,32 +261,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             storeLocationView,
             toLocation: "/dashboard/customers",
           });
-
-          // const urlWithQuery = new URL(
-          //   `${METRICS_URL}/customers/?${storeLocationQuery}`,
-          // );
-
-          // metricsFetchWorker?.postMessage({
-          //   requestInit,
-          //   url: urlWithQuery,
-          //   routesZodSchemaMapKey: "customerMetrics",
-          // });
-
-          // await handleMetricCategoryNavlinkClick({
-          //   accessToken,
-          //   authDispatch,
-          //   fetchAbortControllerRef,
-          //   globalDispatch,
-          //   isComponentMountedRef,
-          //   metricsUrl: METRICS_URL,
-          //   metricsView: "customers",
-          //   navigate,
-          //   toLocation: "/dashboard/customers",
-          //   productMetricCategory,
-          //   repairMetricCategory,
-          //   showBoundary,
-          //   storeLocationView,
-          // });
 
           setOpened(false);
         },
@@ -351,32 +301,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             toLocation: "/dashboard/repairs",
           });
 
-          // const urlWithQuery = new URL(
-          //   `${METRICS_URL}/repairs/?${storeLocationQuery}&metricCategory[$eq]=${repairMetricCategory}`,
-          // );
-
-          // metricsFetchWorker?.postMessage({
-          //   requestInit,
-          //   url: urlWithQuery,
-          //   routesZodSchemaMapKey: "repairMetrics",
-          // });
-
-          // await handleMetricCategoryNavlinkClick({
-          //   accessToken,
-          //   authDispatch,
-          //   fetchAbortControllerRef,
-          //   globalDispatch,
-          //   isComponentMountedRef,
-          //   metricsUrl: METRICS_URL,
-          //   metricsView: "repairs",
-          //   navigate,
-          //   toLocation: "/dashboard/repairs",
-          //   productMetricCategory,
-          //   repairMetricCategory,
-          //   showBoundary,
-          //   storeLocationView,
-          // });
-
           setOpened(false);
         },
       }}
@@ -411,19 +335,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             storeLocation: "All Locations",
           });
 
-          // await handleDirectoryClicks({
-          //   accessToken,
-          //   authDispatch,
-          //   department: "Executive Management",
-          //   storeLocation: "All Locations",
-          //   directoryUrl: API_URL,
-          //   fetchAbortControllerRef,
-          //   globalDispatch,
-          //   isComponentMountedRef,
-          //   navigate,
-          //   showBoundary,
-          //   toLocation: "/dashboard/directory",
-          // });
           setOpened(false);
         },
       }}
@@ -465,15 +376,11 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         kind: "logout",
         name: "logout",
         onClick: async () => {
-          await handleLogoutButtonClick({
+          await handleLogoutClick({
             accessToken,
-            fetchAbortControllerRef,
             globalDispatch,
-            isComponentMountedRef,
-            localforage,
+            logoutFetchWorker,
             logoutUrl: LOGOUT_URL,
-            navigate,
-            showBoundary,
           });
         },
       }}

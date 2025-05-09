@@ -1,6 +1,7 @@
 type SidebarAction = {
     setClickedNavlink: "setClickedNavlink";
     setDirectoryFetchWorker: "setDirectoryFetchWorker";
+    setLogoutFetchWorker: "setLogoutFetchWorker";
     setMetricsFetchWorker: "setMetricsFetchWorker";
     setMetricsView: "setMetricsView";
 };
@@ -8,6 +9,7 @@ type SidebarAction = {
 const sidebarAction: SidebarAction = {
     setClickedNavlink: "setClickedNavlink",
     setDirectoryFetchWorker: "setDirectoryFetchWorker",
+    setLogoutFetchWorker: "setLogoutFetchWorker",
     setMetricsFetchWorker: "setMetricsFetchWorker",
     setMetricsView: "setMetricsView",
 };

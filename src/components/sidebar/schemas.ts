@@ -33,9 +33,15 @@ const setClickedNavlinkSidebarDispatchZod = z.object({
     ]),
 });
 
+const setLogoutFetchWorkerSidebarDispatchZod = z.object({
+    action: z.literal(sidebarAction.setLogoutFetchWorker),
+    payload: z.instanceof(Worker),
+});
+
 export {
     setClickedNavlinkSidebarDispatchZod,
     setDirectoryFetchWorkerSidebarDispatchZod,
+    setLogoutFetchWorkerSidebarDispatchZod,
     setMetricsFetchWorkerSidebarDispatchZod,
     setMetricsViewSidebarDispatchZod,
 };

@@ -30,6 +30,7 @@ const ROUTES_ZOD_SCHEMAS_MAP = {
         productMetricsDocumentZod,
         repairMetricsDocumentZod,
     ]),
+    logout: z.boolean(),
 };
 
 export { ROUTES_ZOD_SCHEMAS_MAP };
