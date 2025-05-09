@@ -322,7 +322,7 @@ function Dashboard() {
         name: "calendar view",
         parentDispatch: dashboardDispatch,
         validValueAction: dashboardAction.setCalendarView,
-        value: dashboardState.calendarView,
+        value: calendarView,
       }}
     />
   );
