@@ -1,6 +1,13 @@
+import { parseSafeSync } from "../../utils";
 import { dashboardAction } from "./actions";
+import {
+  setCalendarViewDashboardDispatchZod,
+  setDashboardFetchWorkerDashboardDispatchZod,
+  setIsLoadingDashboardDispatchZod,
+  setLoadingMessageDashboardDispatchZod,
+  setSelectedYYYYMMDDDashboardDispatchZod,
+} from "./schemas";
 import type {
-  AllStoreLocations,
   DashboardAction,
   DashboardCalendarView,
   DashboardDispatch,
@@ -23,15 +30,28 @@ const dashboardReducersMap = new Map<
   [dashboardAction.setIsLoading, dashboardReducer_setIsLoading],
   [dashboardAction.setLoadingMessage, dashboardReducer_setLoadingMessage],
   [dashboardAction.setCalendarView, dashboardReducer_setCalendarView],
+  [
+    dashboardAction.setDashboardFetchWorker,
+    dashboardReducer_setDashboardFetchWorker,
+  ],
 ]);
 
 function dashboardReducer_setSelectedYYYYMMDD(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setSelectedYYYYMMDDDashboardDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    selectedYYYYMMDD: dispatch.payload as string,
+    selectedYYYYMMDD: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -39,9 +59,18 @@ function dashboardReducer_setIsLoading(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setIsLoadingDashboardDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    isLoading: dispatch.payload as boolean,
+    isLoading: parsedResult.safeUnwrap().data?.payload as boolean,
   };
 }
 
@@ -49,9 +78,18 @@ function dashboardReducer_setLoadingMessage(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setLoadingMessageDashboardDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    loadingMessage: dispatch.payload as string,
+    loadingMessage: parsedResult.safeUnwrap().data?.payload as string,
   };
 }
 
@@ -59,9 +97,38 @@ function dashboardReducer_setCalendarView(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setCalendarViewDashboardDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    calendarView: dispatch.payload as DashboardCalendarView,
+    calendarView: parsedResult.safeUnwrap().data
+      ?.payload as DashboardCalendarView,
+  };
+}
+
+function dashboardReducer_setDashboardFetchWorker(
+  state: DashboardState,
+  dispatch: DashboardDispatch,
+): DashboardState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setDashboardFetchWorkerDashboardDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    dashboardFetchWorker: parsedResult.safeUnwrap().data?.payload as Worker,
   };
 }
 

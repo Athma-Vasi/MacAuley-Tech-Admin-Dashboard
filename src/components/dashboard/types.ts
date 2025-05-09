@@ -1,4 +1,10 @@
-import type { StoreLocation } from "../../types";
+import type {
+  BusinessMetricsDocument,
+  DecodedToken,
+  HttpServerResponse,
+  SafeBoxResult,
+  StoreLocation,
+} from "../../types";
 import type { DashboardAction } from "./actions";
 import {
   FinancialMetricsBarLineChartsKey,
@@ -22,15 +28,31 @@ type DashboardCustomerMetric =
 type DashboardProductMetric = ProductCategory | "All Products";
 type DashboardRepairMetric = RepairCategory | "All Repairs";
 
-type DashboardState = {
-  selectedYYYYMMDD: string;
+type DashboardMessageEvent = MessageEvent<
+  SafeBoxResult<
+    {
+      decodedToken: DecodedToken;
+      parsedServerResponse: HttpServerResponse<
+        BusinessMetricsDocument
+      >;
+      metricsView?: Lowercase<DashboardMetricsView>;
+    }
+  >
+>;
 
+type DashboardState = {
+  calendarView: DashboardCalendarView;
+  dashboardFetchWorker: Worker | null;
   isLoading: boolean;
   loadingMessage: string;
-  calendarView: DashboardCalendarView;
+  selectedYYYYMMDD: string;
 };
 
 type DashboardDispatch =
+  | {
+    action: DashboardAction["setDashboardFetchWorker"];
+    payload: Worker;
+  }
   | {
     action: DashboardAction["setSelectedYYYYMMDD"];
     payload: string;
@@ -309,6 +331,7 @@ export type {
   DashboardCustomerMetric,
   DashboardDispatch,
   DashboardFinancialMetric,
+  DashboardMessageEvent,
   DashboardMetricsView,
   DashboardProductMetric,
   DashboardRepairMetric,

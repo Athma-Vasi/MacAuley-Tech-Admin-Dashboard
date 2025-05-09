@@ -1,12 +1,8 @@
-import { Overlay, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import {
-  COLORS_SWATCHES,
-  OVERLAY_BLUR,
-  OVERLAY_OPACITY,
-} from "../../../constants";
+import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { RepairMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
@@ -203,10 +199,7 @@ function RepairMetrics(
   );
 
   const repairMetrics = (
-    <Stack w="100%" pos="relative">
-      {isGenerating
-        ? <Overlay opacity={OVERLAY_OPACITY} blur={OVERLAY_BLUR} />
-        : null}
+    <Stack w="100%">
       {revenueUnitsSold}
     </Stack>
   );

@@ -1,15 +1,17 @@
 type DashboardAction = {
-  setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
+  setCalendarView: "setCalendarView";
+  setDashboardFetchWorker: "setDashboardFetchWorker";
   setIsLoading: "setIsLoading";
   setLoadingMessage: "setLoadingMessage";
-  setCalendarView: "setCalendarView";
+  setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
 };
 
 const dashboardAction: DashboardAction = {
-  setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
+  setCalendarView: "setCalendarView",
+  setDashboardFetchWorker: "setDashboardFetchWorker",
   setIsLoading: "setIsLoading",
   setLoadingMessage: "setLoadingMessage",
-  setCalendarView: "setCalendarView",
+  setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
 };
 
 export { dashboardAction };

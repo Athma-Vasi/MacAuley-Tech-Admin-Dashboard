@@ -7,20 +7,20 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import {
   ACCORDION_BREAKPOINT,
   COLORS_SWATCHES,
   DASHBOARD_HEADER_HEIGHT_MOBILE,
-  FETCH_REQUEST_TIMEOUT,
   METRICS_URL,
 } from "../../constants";
 import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import { useNavigate, useParams } from "react-router-dom";
+import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import {
@@ -34,6 +34,7 @@ import {
   returnThemeColors,
   setForageItemSafe,
 } from "../../utils";
+import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
@@ -46,7 +47,10 @@ import { CUSTOMER_METRICS_CATEGORY_DATA } from "./customer/constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
 import { FINANCIAL_METRICS_CATEGORY_DATA } from "./financial/constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
-import { handleStoreCategoryClick } from "./handlers";
+import {
+  handleStoreAndCategoryClicks,
+  handleStoreAndCategoryClicksOnmessageCallback,
+} from "./handlers";
 import {
   PRODUCT_METRIC_CATEGORY_DATA,
   PRODUCT_METRICS_SUB_CATEGORY_DATA,
@@ -57,7 +61,11 @@ import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { RepairMetricCategory } from "./repair/types";
 import { initialDashboardState } from "./state";
-import { AllStoreLocations, DashboardMetricsView } from "./types";
+import {
+  AllStoreLocations,
+  DashboardMessageEvent,
+  DashboardMetricsView,
+} from "./types";
 import { splitSelectedCalendarDate } from "./utils";
 
 function Dashboard() {
@@ -89,12 +97,9 @@ function Dashboard() {
   } = useGlobalState();
 
   const { authState: { accessToken }, authDispatch } = useAuth();
-
   const { metricsView } = useParams();
-
   const { showBoundary } = useErrorBoundary();
 
-  const { primaryColor } = themeObject;
   const { bgGradient, stickyHeaderBgGradient } = returnThemeColors(
     {
       colorsSwatches: COLORS_SWATCHES,
@@ -104,23 +109,43 @@ function Dashboard() {
 
   const {
     calendarView,
+    dashboardFetchWorker,
     isLoading,
     loadingMessage,
     selectedYYYYMMDD,
   } = dashboardState;
 
-  const fetchAbortControllerRef = useRef<AbortController | null>(null);
-  const isComponentMountedRef = useRef(false);
+  const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      fetchAbortControllerRef?.current?.abort("Request timed out");
-    }, FETCH_REQUEST_TIMEOUT);
+    const newDashboardFetchWorker = new FetchParseWorker();
+
+    dashboardDispatch({
+      action: dashboardAction.setDashboardFetchWorker,
+      payload: newDashboardFetchWorker,
+    });
+
+    newDashboardFetchWorker.onmessage = async (
+      event: DashboardMessageEvent,
+    ) => {
+      await handleStoreAndCategoryClicksOnmessageCallback({
+        authDispatch,
+        dashboardDispatch,
+        event,
+        globalDispatch,
+        isComponentMountedRef,
+        navigateFn,
+        productMetricCategory,
+        repairMetricCategory,
+        setForageItemSafe,
+        showBoundary,
+        storeLocationView,
+      });
+    };
 
     return () => {
-      clearTimeout(timerId);
-      fetchAbortControllerRef?.current?.abort("Component unmounted");
       isComponentMountedRef.current = false;
+      newDashboardFetchWorker.terminate();
     };
   }, []);
 
@@ -170,25 +195,23 @@ function Dashboard() {
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
         name: "storeLocation",
-        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) =>
-          await handleStoreCategoryClick({
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          await handleStoreAndCategoryClicks({
             accessToken,
-            authDispatch,
             dashboardDispatch,
-            fetchAbortControllerRef,
+            dashboardFetchWorker,
             getForageItemSafe,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
-            navigateFn,
             productMetricCategory,
             repairMetricCategory,
-            setForageItemSafe,
             showBoundary,
             storeLocationView: event.currentTarget
               .value as AllStoreLocations,
-          }),
+          });
+        },
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setStoreLocationView,
         value: storeLocationView,
@@ -201,25 +224,24 @@ function Dashboard() {
       attributes={{
         data: REPAIR_METRICS_DATA,
         name: "repairs",
-        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) =>
-          await handleStoreCategoryClick({
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          await handleStoreAndCategoryClicks({
             accessToken,
-            authDispatch,
             dashboardDispatch,
-            fetchAbortControllerRef,
+            dashboardFetchWorker,
             getForageItemSafe,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
-            navigateFn,
             productMetricCategory,
             repairMetricCategory: event.currentTarget
               .value as RepairMetricCategory,
-            setForageItemSafe,
             showBoundary,
-            storeLocationView,
-          }),
+            storeLocationView: event.currentTarget
+              .value as AllStoreLocations,
+          });
+        },
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setRepairMetricCategory,
         value: repairMetricCategory,
@@ -244,25 +266,24 @@ function Dashboard() {
       attributes={{
         data: PRODUCT_METRIC_CATEGORY_DATA,
         name: "product metrics",
-        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) =>
-          await handleStoreCategoryClick({
+        onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          await handleStoreAndCategoryClicks({
             accessToken,
-            authDispatch,
             dashboardDispatch,
-            fetchAbortControllerRef,
+            dashboardFetchWorker,
             getForageItemSafe,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
-            navigateFn,
             productMetricCategory: event.currentTarget
               .value as ProductMetricCategory,
             repairMetricCategory,
-            setForageItemSafe,
             showBoundary,
-            storeLocationView,
-          }),
+            storeLocationView: event.currentTarget
+              .value as AllStoreLocations,
+          });
+        },
         parentDispatch: globalDispatch,
         validValueAction: globalAction.setProductMetricCategory,
         value: productMetricCategory,

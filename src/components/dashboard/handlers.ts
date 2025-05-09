@@ -31,8 +31,327 @@ import { RepairMetricCategory } from "./repair/types";
 import {
     AllStoreLocations,
     DashboardDispatch,
+    DashboardMessageEvent,
     DashboardMetricsView,
 } from "./types";
+
+async function handleStoreAndCategoryClicks(
+    {
+        accessToken,
+        dashboardDispatch,
+        dashboardFetchWorker,
+        getForageItemSafe,
+        globalDispatch,
+        isComponentMountedRef,
+        metricsUrl,
+        metricsView,
+        productMetricCategory,
+        repairMetricCategory,
+        showBoundary,
+        storeLocationView,
+    }: {
+        accessToken: string;
+        dashboardDispatch: React.Dispatch<DashboardDispatch>;
+        dashboardFetchWorker: Worker | null;
+        getForageItemSafe: GetForageItemSafe;
+        globalDispatch: React.Dispatch<GlobalDispatch>;
+        isComponentMountedRef: React.RefObject<boolean>;
+        metricsUrl: string;
+        metricsView: Lowercase<DashboardMetricsView>;
+        productMetricCategory: ProductMetricCategory;
+        repairMetricCategory: RepairMetricCategory;
+        showBoundary: (error: any) => void;
+        storeLocationView: AllStoreLocations;
+    },
+) {
+    const requestInit: RequestInit = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+
+    const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+
+    const metricCategoryQuery = metricsView === "products"
+        ? `&metricCategory[$eq]=${productMetricCategory}`
+        : metricsView === "repairs"
+        ? `&metricCategory[$eq]=${repairMetricCategory}`
+        : "";
+
+    const urlWithQuery = new URL(
+        `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
+    );
+
+    dashboardDispatch({
+        action: dashboardAction.setIsLoading,
+        payload: true,
+    });
+
+    const forageKey = createMetricsForageKey({
+        metricsView,
+        productMetricCategory,
+        repairMetricCategory,
+        storeLocationView,
+    });
+
+    try {
+        const metricsDocumentResult = await getForageItemSafe<
+            BusinessMetricsDocument
+        >(forageKey);
+
+        if (metricsDocumentResult.err) {
+            showBoundary(metricsDocumentResult.val.data);
+            return createSafeBoxResult({
+                message: metricsDocumentResult.val.message ??
+                    "Unable to get forage item",
+            });
+        }
+        const unwrapped = metricsDocumentResult.safeUnwrap();
+        const metricsDocument = unwrapped.data;
+
+        if (
+            unwrapped.kind === "success" && metricsDocument !== undefined
+        ) {
+            if (metricsView === "customers") {
+                globalDispatch({
+                    action: globalAction.setCustomerMetricsDocument,
+                    payload: metricsDocument as CustomerMetricsDocument,
+                });
+            }
+
+            if (metricsView === "financials") {
+                globalDispatch({
+                    action: globalAction.setFinancialMetricsDocument,
+                    payload: metricsDocument as FinancialMetricsDocument,
+                });
+            }
+
+            if (metricsView === "products") {
+                globalDispatch({
+                    action: globalAction.setProductMetricsDocument,
+                    payload: metricsDocument as ProductMetricsDocument,
+                });
+            }
+
+            if (metricsView === "repairs") {
+                globalDispatch({
+                    action: globalAction.setRepairMetricsDocument,
+                    payload: metricsDocument as RepairMetricsDocument,
+                });
+            }
+
+            dashboardDispatch({
+                action: dashboardAction.setIsLoading,
+                payload: false,
+            });
+
+            return createSafeBoxResult({
+                data: {
+                    newAccessToken: "",
+                    businessMetricsDocument: metricsDocument,
+                },
+                kind: "success",
+            });
+        }
+
+        dashboardFetchWorker?.postMessage(
+            {
+                metricsView,
+                requestInit,
+                routesZodSchemaMapKey: "dashboard",
+                url: urlWithQuery.toString(),
+            },
+        );
+
+        return createSafeBoxResult({
+            data: true,
+            kind: "success",
+        });
+    } catch (error) {
+        if (
+            !isComponentMountedRef.current
+        ) {
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
+        }
+
+        showBoundary(error);
+        return createSafeBoxResult({
+            message: (error as Error)?.message ?? "Unknown error",
+        });
+    }
+}
+
+async function handleStoreAndCategoryClicksOnmessageCallback(
+    {
+        authDispatch,
+        dashboardDispatch,
+        event,
+        globalDispatch,
+        isComponentMountedRef,
+        navigateFn,
+        productMetricCategory,
+        repairMetricCategory,
+        setForageItemSafe,
+        showBoundary,
+        storeLocationView,
+    }: {
+        authDispatch: React.Dispatch<AuthDispatch>;
+        dashboardDispatch: React.Dispatch<DashboardDispatch>;
+        event: DashboardMessageEvent;
+        globalDispatch: React.Dispatch<GlobalDispatch>;
+        isComponentMountedRef: React.RefObject<boolean>;
+        navigateFn: NavigateFunction;
+        productMetricCategory: ProductMetricCategory;
+        repairMetricCategory: RepairMetricCategory;
+        setForageItemSafe: SetForageItemSafe;
+        showBoundary: (error: any) => void;
+        storeLocationView: AllStoreLocations;
+    },
+) {
+    try {
+        if (!isComponentMountedRef.current) {
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
+        }
+
+        if (event.data.err) {
+            showBoundary(event.data.val.data);
+            return createSafeBoxResult({
+                message: event.data.val.message ?? "Error fetching response",
+            });
+        }
+
+        const dataUnwrapped = event.data.val.data;
+        if (dataUnwrapped === undefined) {
+            showBoundary(new Error("No data returned from server"));
+            return createSafeBoxResult({
+                message: "Response is undefined",
+            });
+        }
+
+        const {
+            parsedServerResponse,
+            decodedToken,
+            metricsView = "financials",
+        } = dataUnwrapped;
+
+        const { accessToken: newAccessToken, triggerLogout } =
+            parsedServerResponse;
+
+        if (triggerLogout) {
+            authDispatch({
+                action: authAction.setAccessToken,
+                payload: "",
+            });
+            authDispatch({
+                action: authAction.setIsLoggedIn,
+                payload: false,
+            });
+            authDispatch({
+                action: authAction.setDecodedToken,
+                payload: Object.create(null),
+            });
+            authDispatch({
+                action: authAction.setUserDocument,
+                payload: Object.create(null),
+            });
+
+            await localforage.clear();
+            navigateFn("/");
+            return createSafeBoxResult({
+                message: "Logout triggered",
+            });
+        }
+
+        authDispatch({
+            action: authAction.setAccessToken,
+            payload: newAccessToken,
+        });
+        authDispatch({
+            action: authAction.setDecodedToken,
+            payload: decodedToken,
+        });
+
+        const payload = parsedServerResponse.data[0];
+
+        if (metricsView === "financials") {
+            globalDispatch({
+                action: globalAction.setFinancialMetricsDocument,
+                payload: payload as FinancialMetricsDocument,
+            });
+        }
+
+        if (metricsView === "products") {
+            globalDispatch({
+                action: globalAction.setProductMetricsDocument,
+                payload: payload as ProductMetricsDocument,
+            });
+        }
+
+        if (metricsView === "customers") {
+            globalDispatch({
+                action: globalAction.setCustomerMetricsDocument,
+                payload: payload as CustomerMetricsDocument,
+            });
+        }
+
+        if (metricsView === "repairs") {
+            globalDispatch({
+                action: globalAction.setRepairMetricsDocument,
+                payload: payload as RepairMetricsDocument,
+            });
+        }
+
+        const forageKey = createMetricsForageKey({
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            storeLocationView,
+        });
+
+        const setForageItemResult = await setForageItemSafe<
+            BusinessMetricsDocument
+        >(
+            forageKey,
+            payload,
+        );
+        if (setForageItemResult.err) {
+            showBoundary(setForageItemResult.val.data);
+            return createSafeBoxResult({
+                message: setForageItemResult.val.message ??
+                    "Unable to set forage item",
+            });
+        }
+
+        dashboardDispatch({
+            action: dashboardAction.setIsLoading,
+            payload: false,
+        });
+
+        return createSafeBoxResult({
+            data: { newAccessToken, businessMetricsDocument: payload },
+            kind: "success",
+        });
+    } catch (error) {
+        if (
+            !isComponentMountedRef.current
+        ) {
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
+        }
+
+        showBoundary(error);
+        return createSafeBoxResult({
+            message: (error as Error)?.message ?? "Unknown error",
+        });
+    }
+}
 
 async function handleStoreCategoryClick(
     {
@@ -391,4 +710,8 @@ async function handleStoreCategoryClick(
     }
 }
 
-export { handleStoreCategoryClick };
+export {
+    handleStoreAndCategoryClicks,
+    handleStoreAndCategoryClicksOnmessageCallback,
+    handleStoreCategoryClick,
+};

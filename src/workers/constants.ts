@@ -24,6 +24,12 @@ const ROUTES_ZOD_SCHEMAS_MAP = {
     users: userDocumentOptionalsZod,
     checkUsername: z.boolean(),
     checkEmail: z.boolean(),
+    dashboard: z.union([
+        customerMetricsDocumentZod,
+        financialMetricsDocumentZod,
+        productMetricsDocumentZod,
+        repairMetricsDocumentZod,
+    ]),
 };
 
 export { ROUTES_ZOD_SCHEMAS_MAP };

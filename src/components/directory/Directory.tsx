@@ -59,23 +59,12 @@ function Directory() {
   const fetchAbortControllerRef = useFetchAbortControllerRef();
 
   useEffect(() => {
-    // forageDirectory({
-    //   directoryDispatch,
-    //   fetchAbortControllerRef,
-    //   isComponentMountedRef,
-    //   showBoundary,
-    // });
-
     const newDirectoryFetchWorker = new FetchParseWorker();
 
     directoryDispatch({
       action: directoryAction.setDirectoryFetchWorker,
       payload: newDirectoryFetchWorker,
     });
-
-    const isStoreLocationDisabled = returnIsStoreLocationDisabled(
-      department,
-    );
 
     newDirectoryFetchWorker.onmessage = async (
       event: DirectoryMessageEvent,
