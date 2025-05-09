@@ -143,9 +143,18 @@ function Login() {
       attributes={{
         kind: "submit",
         leftIcon: isSubmitting
-          ? <Loader size="xs" color="white" />
+          ? (
+            <Loader
+              size="xs"
+              color={themeObject.colorScheme === "light" ? "white" : ""}
+            />
+          )
           : isSuccessful
-          ? <TbCheck color="white" />
+          ? (
+            <TbCheck
+              color={themeObject.colorScheme === "light" ? "white" : ""}
+            />
+          )
           : null,
         name: "login",
         onClick: async (

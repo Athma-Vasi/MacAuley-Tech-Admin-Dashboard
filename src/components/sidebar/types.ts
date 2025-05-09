@@ -8,7 +8,11 @@ import {
 import { DashboardMetricsView } from "../dashboard/types";
 import { SidebarAction } from "./actions";
 
-type SidebarNavlinks = Lowercase<DashboardMetricsView> | "directory" | "users";
+type SidebarNavlinks =
+    | Lowercase<DashboardMetricsView>
+    | "directory"
+    | "users"
+    | "logout";
 
 type MetricsMessageEvent = MessageEvent<
     SafeBoxResult<

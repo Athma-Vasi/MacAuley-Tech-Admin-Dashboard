@@ -369,13 +369,31 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     />
   );
 
+  const { bgGradient } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   const logoutButton = (
     <AccessibleButton
       attributes={{
         enabledScreenreaderText: "Logout",
         kind: "logout",
+        leftIcon: clickedNavlink === "logout" && isFetching
+          ? (
+            <Loader
+              size={18}
+              color={themeObject.colorScheme === "light" ? "white" : ""}
+            />
+          )
+          : null,
         name: "logout",
         onClick: async () => {
+          sidebarDispatch({
+            action: sidebarAction.setClickedNavlink,
+            payload: "logout",
+          });
+
           await handleLogoutClick({
             accessToken,
             globalDispatch,
@@ -386,11 +404,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       }}
     />
   );
-
-  const { bgGradient } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
 
   return (
     <Stack

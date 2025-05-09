@@ -30,6 +30,7 @@ const setClickedNavlinkSidebarDispatchZod = z.object({
         "products",
         "customers",
         "repairs",
+        "logout",
     ]),
 });
 
