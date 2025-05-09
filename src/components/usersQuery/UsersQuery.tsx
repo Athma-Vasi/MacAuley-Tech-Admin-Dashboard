@@ -75,6 +75,7 @@ function UsersQuery({}: UsersQueryProps) {
         arrangeByDirection,
         arrangeByField,
         currentPage,
+        newQueryFlag,
         usersFetchWorker,
         isError,
         isLoading,
@@ -95,6 +96,8 @@ function UsersQuery({}: UsersQueryProps) {
 
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
+                        currentPage,
+                        newQueryFlag,
                         url: API_URL,
                         usersFetchWorker,
                         usersQueryDispatch,
@@ -152,14 +155,12 @@ function UsersQuery({}: UsersQueryProps) {
                 onChange={async (page) => {
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
+                        currentPage: page,
+                        newQueryFlag: false,
                         url: API_URL,
                         usersFetchWorker,
                         usersQueryDispatch,
-                        usersQueryState: {
-                            ...usersQueryState,
-                            currentPage: page,
-                            newQueryFlag: false,
-                        },
+                        usersQueryState,
                     });
                 }}
                 total={pages}

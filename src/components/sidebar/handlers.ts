@@ -759,26 +759,37 @@ async function handleLogoutClick({
   globalDispatch: React.Dispatch<GlobalDispatch>;
   logoutFetchWorker: Worker | null;
   logoutUrl: string;
-}) {
-  const requestInit: RequestInit = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
+}): Promise<SafeBoxResult<boolean>> {
+  try {
+    const requestInit: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
 
-  globalDispatch({
-    action: globalAction.setIsFetching,
-    payload: true,
-  });
+    globalDispatch({
+      action: globalAction.setIsFetching,
+      payload: true,
+    });
 
-  logoutFetchWorker?.postMessage({
-    requestInit,
-    routesZodSchemaMapKey: "logout",
-    skipTokenDecode: true,
-    url: logoutUrl,
-  });
+    logoutFetchWorker?.postMessage({
+      requestInit,
+      routesZodSchemaMapKey: "logout",
+      skipTokenDecode: true,
+      url: logoutUrl,
+    });
+
+    return createSafeBoxResult({
+      data: true,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return createSafeBoxResult({
+      message: "Unknown error",
+    });
+  }
 }
 
 async function handleLogoutClickOnmessageCallback({
@@ -795,7 +806,7 @@ async function handleLogoutClickOnmessageCallback({
   localforage: LocalForage;
   navigate: NavigateFunction;
   showBoundary: (error: any) => void;
-}) {
+}): Promise<SafeBoxResult<HttpServerResponse<boolean>>> {
   try {
     if (!isComponentMountedRef.current) {
       return createSafeBoxResult({

@@ -17,47 +17,64 @@ import { UsersQueryMessageEvent, UsersQueryState } from "./types";
 async function handleUsersQuerySubmitGETClick(
     {
         accessToken,
+        currentPage,
+        newQueryFlag,
         url,
         usersFetchWorker,
         usersQueryDispatch,
         usersQueryState,
     }: {
         accessToken: string;
+        currentPage: number;
+        newQueryFlag: boolean;
         url: RequestInfo | URL;
         usersFetchWorker: Worker | null;
         usersQueryDispatch: React.Dispatch<any>;
         usersQueryState: UsersQueryState;
     },
 ) {
-    const requestInit: RequestInit = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-        },
-    };
+    try {
+        const requestInit: RequestInit = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
 
-    const {
-        currentPage,
-        newQueryFlag,
-        queryString,
-        totalDocuments,
-    } = usersQueryState;
+        const {
+            queryString,
+            totalDocuments,
+        } = usersQueryState;
 
-    const urlWithQuery = new URL(
-        `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}&page=${currentPage}`,
-    );
+        const urlWithQuery = new URL(
+            `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}&page=${currentPage}`,
+        );
 
-    usersQueryDispatch({
-        action: usersQueryAction.setIsLoading,
-        payload: true,
-    });
+        usersQueryDispatch({
+            action: usersQueryAction.setCurrentPage,
+            payload: currentPage,
+        });
+        usersQueryDispatch({
+            action: usersQueryAction.setIsLoading,
+            payload: true,
+        });
 
-    usersFetchWorker?.postMessage({
-        url: urlWithQuery.toString(),
-        requestInit,
-        routesZodSchemaMapKey: "users",
-    });
+        usersFetchWorker?.postMessage({
+            url: urlWithQuery.toString(),
+            requestInit,
+            routesZodSchemaMapKey: "users",
+        });
+
+        return createSafeBoxResult({
+            data: true,
+            kind: "success",
+        });
+    } catch (error: unknown) {
+        return createSafeBoxResult({
+            message: "Error handling submit click",
+        });
+    }
 }
 
 async function handleUsersQueryOnmessageCallback(
@@ -154,8 +171,7 @@ async function handleUsersQueryOnmessageCallback(
             });
         }
 
-        const { arrangeByDirection, arrangeByField, currentPage } =
-            usersQueryState;
+        const { arrangeByDirection, arrangeByField } = usersQueryState;
 
         const sorted = userDocuments.sort((a, b) => {
             const aValue = a[arrangeByField];
@@ -209,11 +225,6 @@ async function handleUsersQueryOnmessageCallback(
         usersQueryDispatch({
             action: usersQueryAction.setNewQueryFlag,
             payload: true,
-        });
-
-        usersQueryDispatch({
-            action: usersQueryAction.setCurrentPage,
-            payload: currentPage,
         });
 
         return createSafeBoxResult({
