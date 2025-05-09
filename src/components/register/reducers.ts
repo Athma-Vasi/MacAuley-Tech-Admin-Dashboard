@@ -5,6 +5,8 @@ import {
   RegisterDispatch,
   setActiveStepRegisterDispatchZod,
   setAddressLineRegisterDispatchZod,
+  setCheckEmailWorkerRegisterDispatchZod,
+  setCheckUsernameWorkerRegisterDispatchZod,
   setCityRegisterDispatchZod,
   setConfirmPasswordRegisterDispatchZod,
   setCountryRegisterDispatchZod,
@@ -29,7 +31,6 @@ import {
   setPostalCodeUSRegisterDispatchZod,
   setProfilePictureUrlRegisterDispatchZod,
   setProvinceRegisterDispatchZod,
-  setRegisterFetchWorkerRegisterDispatchZod,
   setStateRegisterDispatchZod,
   setStepsInErrorRegisterDispatchZod,
   setStepsWithEmptyInputsRegisterDispatchZod,
@@ -91,8 +92,12 @@ const registerReducers = new Map<
   [registerAction.setPassword, registerReducer_setPassword],
   [registerAction.setUsername, registerReducer_setUsername],
   [
-    registerAction.setRegisterFetchWorker,
-    registerReducer_setRegisterFetchWorker,
+    registerAction.setCheckUsernameWorker,
+    registerReducer_setCheckUsernameWorker,
+  ],
+  [
+    registerAction.setCheckEmailWorker,
+    registerReducer_setCheckEmailWorker,
   ],
 ]);
 
@@ -643,13 +648,13 @@ function registerReducer_setUsername(
   return { ...state, username: parsedResult.safeUnwrap().data?.payload };
 }
 
-function registerReducer_setRegisterFetchWorker(
+function registerReducer_setCheckUsernameWorker(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setRegisterFetchWorkerRegisterDispatchZod,
+    zSchema: setCheckUsernameWorkerRegisterDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -658,7 +663,26 @@ function registerReducer_setRegisterFetchWorker(
 
   return {
     ...state,
-    registerFetchWorker: parsedResult.safeUnwrap().data?.payload,
+    checkUsernameWorker: parsedResult.safeUnwrap().data?.payload,
+  };
+}
+
+function registerReducer_setCheckEmailWorker(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setCheckEmailWorkerRegisterDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    checkEmailWorker: parsedResult.safeUnwrap().data?.payload,
   };
 }
 
@@ -666,6 +690,7 @@ export {
   registerReducer,
   registerReducer_setActiveStep,
   registerReducer_setAddressLine,
+  registerReducer_setCheckUsernameWorker,
   registerReducer_setCity,
   registerReducer_setConfirmPassword,
   registerReducer_setCountry,
@@ -688,7 +713,6 @@ export {
   registerReducer_setPostalCodeUS,
   registerReducer_setProfilePictureUrl,
   registerReducer_setProvince,
-  registerReducer_setRegisterFetchWorker,
   registerReducer_setState,
   registerReducer_setStepsInError,
   registerReducer_setStepsWithEmptyInputs,

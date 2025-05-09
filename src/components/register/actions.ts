@@ -1,6 +1,8 @@
 type RegisterAction = {
   setActiveStep: "setActiveStep";
   setAddressLine: "setAddressLine";
+  setCheckEmailWorker: "setCheckEmailWorker";
+  setCheckUsernameWorker: "setCheckUsernameWorker";
   setCity: "setCity";
   setConfirmPassword: "setConfirmPassword";
   setCountry: "setCountry";
@@ -25,7 +27,6 @@ type RegisterAction = {
   setPostalCodeUS: "setPostalCodeUS";
   setProfilePictureUrl: "setProfilePictureUrl";
   setProvince: "setProvince";
-  setRegisterFetchWorker: "setRegisterFetchWorker";
   setState: "setState";
   setStepsInError: "setStepsInError";
   setStepsWithEmptyInputs: "setStepsWithEmptyInputs";
@@ -36,6 +37,8 @@ type RegisterAction = {
 const registerAction: RegisterAction = {
   setActiveStep: "setActiveStep",
   setAddressLine: "setAddressLine",
+  setCheckEmailWorker: "setCheckEmailWorker",
+  setCheckUsernameWorker: "setCheckUsernameWorker",
   setCity: "setCity",
   setConfirmPassword: "setConfirmPassword",
   setCountry: "setCountry",
@@ -60,7 +63,6 @@ const registerAction: RegisterAction = {
   setPostalCodeUS: "setPostalCodeUS",
   setProfilePictureUrl: "setProfilePictureUrl",
   setProvince: "setProvince",
-  setRegisterFetchWorker: "setRegisterFetchWorker",
   setState: "setState",
   setStepsInError: "setStepsInError",
   setStepsWithEmptyInputs: "setStepsWithEmptyInputs",

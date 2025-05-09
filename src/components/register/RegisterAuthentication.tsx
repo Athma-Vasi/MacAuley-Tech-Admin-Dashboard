@@ -1,82 +1,50 @@
 import { Card, Loader, Text } from "@mantine/core";
 import { useEffect, useRef } from "react";
 import { TbExclamationCircle } from "react-icons/tb";
-import { AUTH_URL, COLORS_SWATCHES } from "../../constants";
+import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordInput";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { registerAction } from "./actions";
-import { handleCheckEmailExists, handleCheckUsernameExists } from "./handlers";
 import { RegisterDispatch } from "./schemas";
 
 type RegisterAuthenticationProps = {
     confirmPassword: string;
     email: string;
-    fetchAbortControllerRef: React.RefObject<AbortController | null>;
-    isComponentMountedRef: React.RefObject<boolean>;
     isEmailExists: boolean;
     isEmailExistsSubmitting: boolean;
-    isError: boolean;
     isUsernameExists: boolean;
     isUsernameExistsSubmitting: boolean;
     password: string;
     registerDispatch: React.Dispatch<RegisterDispatch>;
-    showBoundary: (error: unknown) => void;
     username: string;
 };
 
 function RegisterAuthentication({
     confirmPassword,
     email,
-    fetchAbortControllerRef,
-    isComponentMountedRef,
     isEmailExists,
     isEmailExistsSubmitting,
-    isError,
     isUsernameExists,
     isUsernameExistsSubmitting,
     password,
     registerDispatch,
-    showBoundary,
     username,
 }: RegisterAuthenticationProps) {
     const {
         globalState: { themeObject },
     } = useGlobalState();
 
-    const { bgGradient, redColorShade, greenColorShade, themeColorShade } =
-        returnThemeColors({
-            colorsSwatches: COLORS_SWATCHES,
-            themeObject,
-        });
+    const { redColorShade } = returnThemeColors({
+        colorsSwatches: COLORS_SWATCHES,
+        themeObject,
+    });
 
     const usernameInputRef = useRef<HTMLInputElement | null>(null);
     useEffect(() => {
         usernameInputRef.current?.focus();
     }, []);
-
-    useEffect(() => {
-        handleCheckUsernameExists({
-            fetchAbortControllerRef,
-            isComponentMountedRef,
-            registerDispatch,
-            showBoundary,
-            url: AUTH_URL,
-            username,
-        });
-    }, [username]);
-
-    useEffect(() => {
-        handleCheckEmailExists({
-            fetchAbortControllerRef,
-            isComponentMountedRef,
-            registerDispatch,
-            showBoundary,
-            url: AUTH_URL,
-            email,
-        });
-    }, [email]);
 
     const usernameTextInput = (
         <AccessibleTextInput

@@ -20,7 +20,6 @@ type RegisterPersonalProps = {
     lastName: string;
     registerAction: RegisterAction;
     registerDispatch: React.Dispatch<RegisterDispatch>;
-    profilePictureUrl: string;
     storeLocation: AllStoreLocations;
 };
 
@@ -31,7 +30,6 @@ function RegisterPersonal({
     lastName,
     registerAction,
     registerDispatch,
-    profilePictureUrl,
     storeLocation,
 }: RegisterPersonalProps) {
     const firstNameInputRef = useRef<HTMLInputElement | null>(null);

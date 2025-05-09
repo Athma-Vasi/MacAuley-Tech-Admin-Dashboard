@@ -140,8 +140,13 @@ const setFilesInErrorRegisterRegisterDispatchZod = z.object({
     ),
 });
 
-const setRegisterFetchWorkerRegisterDispatchZod = z.object({
-    action: z.literal(registerAction.setRegisterFetchWorker),
+const setCheckUsernameWorkerRegisterDispatchZod = z.object({
+    action: z.literal(registerAction.setCheckUsernameWorker),
+    payload: z.instanceof(Worker),
+});
+
+const setCheckEmailWorkerRegisterDispatchZod = z.object({
+    action: z.literal(registerAction.setCheckEmailWorker),
     payload: z.instanceof(Worker),
 });
 
@@ -177,11 +182,14 @@ type RegisterDispatch =
     | z.infer<typeof setInputsInErrorRegisterDispatchZod>
     | z.infer<typeof setFormDataRegisterDispatchZod>
     | z.infer<typeof setFilesInErrorRegisterRegisterDispatchZod>
-    | z.infer<typeof setRegisterFetchWorkerRegisterDispatchZod>;
+    | z.infer<typeof setCheckUsernameWorkerRegisterDispatchZod>
+    | z.infer<typeof setCheckEmailWorkerRegisterDispatchZod>;
 
 export {
     setActiveStepRegisterDispatchZod,
     setAddressLineRegisterDispatchZod,
+    setCheckEmailWorkerRegisterDispatchZod,
+    setCheckUsernameWorkerRegisterDispatchZod,
     setCityRegisterDispatchZod,
     setConfirmPasswordRegisterDispatchZod,
     setCountryRegisterDispatchZod,
@@ -206,7 +214,6 @@ export {
     setPostalCodeUSRegisterDispatchZod,
     setProfilePictureUrlRegisterDispatchZod,
     setProvinceRegisterDispatchZod,
-    setRegisterFetchWorkerRegisterDispatchZod,
     setStateRegisterDispatchZod,
     setStepsInErrorRegisterDispatchZod,
     setStepsWithEmptyInputsRegisterDispatchZod,

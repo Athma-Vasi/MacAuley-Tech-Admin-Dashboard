@@ -3,6 +3,8 @@ import type { RegisterState } from "./types";
 const initialRegisterState: RegisterState = {
   activeStep: 0,
   addressLine: "",
+  checkEmailWorker: null,
+  checkUsernameWorker: null,
   city: "",
   confirmPassword: "",
   country: "Canada",

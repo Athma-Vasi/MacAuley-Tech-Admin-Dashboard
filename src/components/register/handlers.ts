@@ -11,7 +11,156 @@ import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, STEPS_INPUTNAMES_MAP } from "./constants";
 import { RegisterDispatch } from "./schemas";
-import { RegisterMessageEvent, RegisterState } from "./types";
+import { CheckUsernameEmailMessageEvent, RegisterState } from "./types";
+
+async function handleCheckEmail(
+  { checkEmailWorker, email, registerDispatch, url }: {
+    checkEmailWorker: Worker | null;
+    email: string;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    url: RequestInfo | URL;
+  },
+) {
+  if (!email) {
+    return createSafeBoxResult({
+      message: "Email is empty",
+    });
+  }
+
+  const emailValidations = VALIDATION_FUNCTIONS_TABLE["email"];
+  const isEmailValid = emailValidations.every((validation) => {
+    const [regExpOrFunc, _] = validation;
+
+    return typeof regExpOrFunc === "function"
+      ? regExpOrFunc(email)
+      : regExpOrFunc.test(email);
+  });
+
+  if (!isEmailValid) {
+    return createSafeBoxResult({
+      message: "Email is invalid",
+    });
+  }
+
+  const requestInit: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "GET",
+  };
+
+  registerDispatch({
+    action: registerAction.setIsEmailExistsSubmitting,
+    payload: true,
+  });
+
+  const urlWithQuery = new URL(`${url}/check/?&email[$in]=${email}`);
+
+  checkEmailWorker?.postMessage({
+    requestInit,
+    routesZodSchemaMapKey: "checkEmail",
+    skipTokenDecode: true,
+    url: urlWithQuery.toString(),
+  });
+
+  return createSafeBoxResult({
+    data: true,
+    kind: "success",
+  });
+}
+
+async function handleCheckEmailOnmessageCallback(
+  {
+    event,
+    isComponentMountedRef,
+    registerDispatch,
+    showBoundary,
+  }: {
+    event: CheckUsernameEmailMessageEvent;
+    isComponentMountedRef: React.RefObject<boolean>;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    showBoundary: (error: unknown) => void;
+  },
+) {
+  try {
+    console.log("Worker received message in useEffect:", event.data);
+
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (event.data.err) {
+      showBoundary(event.data.val.data);
+      return createSafeBoxResult({
+        message: event.data.val.message ?? "Error fetching response",
+      });
+    }
+
+    console.log("event.data.val.data", event.data.val.data);
+
+    const dataUnwrapped = event.data.val.data;
+    if (dataUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
+    }
+
+    console.log({ dataUnwrapped });
+    const { parsedServerResponse } = dataUnwrapped;
+
+    registerDispatch({
+      action: registerAction.setIsEmailExistsSubmitting,
+      payload: false,
+    });
+
+    const { data, kind, message } = parsedServerResponse;
+
+    if (kind === "error") {
+      showBoundary(
+        new Error(
+          `Server error: ${message}`,
+        ),
+      );
+      return createSafeBoxResult({
+        message: `Server error: ${message}`,
+      });
+    }
+
+    const [isEmailExists] = data;
+
+    if (isEmailExists === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    registerDispatch({
+      action: registerAction.setIsEmailExists,
+      payload: isEmailExists,
+    });
+
+    return createSafeBoxResult({
+      data: isEmailExists,
+      kind: "success",
+    });
+  } catch (error) {
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
+  }
+}
 
 async function handleCheckEmailExists(
   {
@@ -193,6 +342,155 @@ async function handleCheckEmailExists(
     ) {
       return createSafeBoxResult({
         message: "Component unmounted or request aborted",
+      });
+    }
+    showBoundary(error);
+    return createSafeBoxResult({
+      message: "Error fetching data",
+    });
+  }
+}
+
+async function handleCheckUsername(
+  { checkUsernameWorker, registerDispatch, url, username }: {
+    checkUsernameWorker: Worker | null;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    url: RequestInfo | URL;
+    username: string;
+  },
+) {
+  if (!username) {
+    return createSafeBoxResult({
+      message: "Username is empty",
+    });
+  }
+
+  const usernameValidations = VALIDATION_FUNCTIONS_TABLE["username"];
+  const isUsernameValid = usernameValidations.every((validation) => {
+    const [regExpOrFunc, _] = validation;
+
+    return typeof regExpOrFunc === "function"
+      ? regExpOrFunc(username)
+      : regExpOrFunc.test(username);
+  });
+
+  if (!isUsernameValid) {
+    return createSafeBoxResult({
+      message: "Username is invalid",
+    });
+  }
+
+  const requestInit: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "GET",
+  };
+
+  registerDispatch({
+    action: registerAction.setIsUsernameExistsSubmitting,
+    payload: true,
+  });
+
+  const urlWithQuery = new URL(`${url}/check/?&username[$in]=${username}`);
+
+  checkUsernameWorker?.postMessage({
+    requestInit,
+    routesZodSchemaMapKey: "checkUsername",
+    skipTokenDecode: true,
+    url: urlWithQuery.toString(),
+  });
+
+  return createSafeBoxResult({
+    data: true,
+    kind: "success",
+  });
+}
+
+async function handleCheckUsernameOnmessageCallback(
+  {
+    event,
+    isComponentMountedRef,
+    registerDispatch,
+    showBoundary,
+  }: {
+    event: CheckUsernameEmailMessageEvent;
+    isComponentMountedRef: React.RefObject<boolean>;
+    registerDispatch: React.Dispatch<RegisterDispatch>;
+    showBoundary: (error: unknown) => void;
+  },
+) {
+  try {
+    console.log("Worker received message in useEffect:", event.data);
+
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+
+    if (event.data.err) {
+      showBoundary(event.data.val.data);
+      return createSafeBoxResult({
+        message: event.data.val.message ?? "Error fetching response",
+      });
+    }
+
+    console.log("event.data.val.data", event.data.val.data);
+
+    const dataUnwrapped = event.data.val.data;
+    if (dataUnwrapped === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "Response is undefined",
+      });
+    }
+
+    console.log({ dataUnwrapped });
+    const { parsedServerResponse } = dataUnwrapped;
+
+    registerDispatch({
+      action: registerAction.setIsUsernameExistsSubmitting,
+      payload: false,
+    });
+
+    const { data, kind, message } = parsedServerResponse;
+
+    if (kind === "error") {
+      showBoundary(
+        new Error(
+          `Server error: ${message}`,
+        ),
+      );
+      return createSafeBoxResult({
+        message: `Server error: ${message}`,
+      });
+    }
+
+    const [isUsernameExists] = data as unknown as boolean[];
+
+    if (isUsernameExists === undefined) {
+      showBoundary(new Error("No data returned from server"));
+      return createSafeBoxResult({
+        message: "No data returned from server",
+      });
+    }
+
+    registerDispatch({
+      action: registerAction.setIsUsernameExists,
+      payload: isUsernameExists,
+    });
+
+    return createSafeBoxResult({
+      data: isUsernameExists,
+      kind: "success",
+    });
+  } catch (error) {
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
       });
     }
     showBoundary(error);
@@ -401,12 +699,12 @@ async function handleRegisterButtonSubmit(
   {
     formData,
     registerDispatch,
-    registerFetchWorker,
+    checkUsernameWorker,
     url,
   }: {
     formData: FormData;
     registerDispatch: React.Dispatch<RegisterDispatch>;
-    registerFetchWorker: Worker | null;
+    checkUsernameWorker: Worker | null;
     url: RequestInfo | URL;
   },
 ) {
@@ -421,7 +719,7 @@ async function handleRegisterButtonSubmit(
     payload: true,
   });
 
-  registerFetchWorker?.postMessage({
+  checkUsernameWorker?.postMessage({
     requestInit,
     routesZodSchemaMapKey: "register",
     skipTokenDecode: true,
@@ -438,7 +736,7 @@ async function handleRegisterButtonClickOnmessageCallback(
     showBoundary,
     toLocation,
   }: {
-    event: RegisterMessageEvent;
+    event: MessageEvent;
     isComponentMountedRef: React.RefObject<boolean>;
     navigate: NavigateFunction;
     registerDispatch: React.Dispatch<RegisterDispatch>;
@@ -793,8 +1091,12 @@ function handlePrevNextStepClick(
 }
 
 export {
+  handleCheckEmail,
   handleCheckEmailExists,
+  handleCheckEmailOnmessageCallback,
+  handleCheckUsername,
   handleCheckUsernameExists,
+  handleCheckUsernameOnmessageCallback,
   handlePrevNextStepClick,
   handleRegisterButtonClick,
   handleRegisterButtonClickOnmessageCallback,

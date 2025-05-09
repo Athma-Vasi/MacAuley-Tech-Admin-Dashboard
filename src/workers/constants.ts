@@ -22,6 +22,8 @@ const ROUTES_ZOD_SCHEMAS_MAP = {
     customerMetrics: customerMetricsDocumentZod,
     repairMetrics: repairMetricsDocumentZod,
     users: userDocumentOptionalsZod,
+    checkUsername: z.boolean(),
+    checkEmail: z.boolean(),
 };
 
 export { ROUTES_ZOD_SCHEMAS_MAP };

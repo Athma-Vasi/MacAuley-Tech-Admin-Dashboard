@@ -52,10 +52,11 @@ type RegisterState = {
   inputsInError: Set<ValidationKey>;
   formData: FormData;
   filesInError: Map<string, boolean>;
-  registerFetchWorker: Worker | null;
+  checkUsernameWorker: Worker | null;
+  checkEmailWorker: Worker | null;
 };
 
-type RegisterMessageEvent = MessageEvent<
+type CheckUsernameEmailMessageEvent = MessageEvent<
   SafeBoxResult<
     {
       decodedToken: DecodedToken;
@@ -67,4 +68,4 @@ type RegisterMessageEvent = MessageEvent<
   >
 >;
 
-export type { RegisterAction, RegisterMessageEvent, RegisterState };
+export type { CheckUsernameEmailMessageEvent, RegisterAction, RegisterState };

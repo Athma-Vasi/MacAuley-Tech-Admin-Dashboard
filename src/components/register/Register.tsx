@@ -14,24 +14,37 @@ import { useErrorBoundary } from "react-error-boundary";
 
 import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
-import { COLORS_SWATCHES, FETCH_REQUEST_TIMEOUT } from "../../constants";
+import {
+  AUTH_URL,
+  COLORS_SWATCHES,
+  FETCH_REQUEST_TIMEOUT,
+} from "../../constants";
 import { useFetchAbortControllerRef, useMountedRef } from "../../hooks";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { FormReview, UserSchema } from "../../types";
 import { returnThemeColors } from "../../utils";
+import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { AccessibleImageInput } from "../accessibleInputs/image";
 import { MAX_IMAGES } from "../accessibleInputs/image/constants";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
-import { handlePrevNextStepClick, handleRegisterButtonClick } from "./handlers";
+import {
+  handleCheckEmail,
+  handleCheckEmailOnmessageCallback,
+  handleCheckUsername,
+  handleCheckUsernameOnmessageCallback,
+  handlePrevNextStepClick,
+  handleRegisterButtonClick,
+} from "./handlers";
 import { registerReducer } from "./reducers";
 import { RegisterAddress } from "./RegisterAddress";
 import { RegisterAuthentication } from "./RegisterAuthentication";
 import { RegisterPersonal } from "./RegisterPersonal";
 import { initialRegisterState } from "./state";
 import { StepperFormReview } from "./StepperFormReview";
+import { CheckUsernameEmailMessageEvent } from "./types";
 import {
   createFileSectionInFormReview,
   returnRegisterStepperCard,
@@ -46,6 +59,8 @@ function Register() {
   const {
     activeStep,
     addressLine,
+    checkEmailWorker,
+    checkUsernameWorker,
     city,
     confirmPassword,
     country,
@@ -70,7 +85,6 @@ function Register() {
     postalCodeUS,
     profilePictureUrl,
     province,
-    registerFetchWorker,
     state,
     stepsInError,
     stepsWithEmptyInputs,
@@ -82,35 +96,67 @@ function Register() {
     globalState: { themeObject },
   } = useGlobalState();
 
-  const { showBoundary, resetBoundary } = useErrorBoundary();
+  const { showBoundary } = useErrorBoundary();
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const newRegisterFetchWorker = new FetchParseWorker();
-  //   registerDispatch({
-  //     action: registerAction.setRegisterFetchWorker,
-  //     payload: newRegisterFetchWorker,
-  //   });
+  useEffect(() => {
+    const newCheckUsernameWorker = new FetchParseWorker();
+    registerDispatch({
+      action: registerAction.setCheckUsernameWorker,
+      payload: newCheckUsernameWorker,
+    });
+    newCheckUsernameWorker.onmessage = async (
+      event: CheckUsernameEmailMessageEvent,
+    ) => {
+      await handleCheckUsernameOnmessageCallback({
+        event,
+        isComponentMountedRef,
+        registerDispatch,
+        showBoundary,
+      });
+    };
 
-  //   newRegisterFetchWorker.onmessage = async (
-  //     event: RegisterMessageEvent,
-  //   ) => {
-  //     await handleRegisterButtonClickOnmessageCallback({
-  //       event,
-  //       isComponentMountedRef,
-  //       navigate,
-  //       registerDispatch,
-  //       showBoundary,
-  //       toLocation: "/login",
-  //     });
-  //   };
+    const newCheckEmailWorker = new FetchParseWorker();
+    registerDispatch({
+      action: registerAction.setCheckEmailWorker,
+      payload: newCheckEmailWorker,
+    });
+    newCheckEmailWorker.onmessage = async (
+      event: CheckUsernameEmailMessageEvent,
+    ) => {
+      await handleCheckEmailOnmessageCallback({
+        event,
+        isComponentMountedRef,
+        registerDispatch,
+        showBoundary,
+      });
+    };
 
-  //   return () => {
-  //     isComponentMountedRef.current = false;
-  //     newRegisterFetchWorker.terminate();
-  //   };
-  // }, []);
+    return () => {
+      isComponentMountedRef.current = false;
+      newCheckUsernameWorker.terminate();
+      newCheckEmailWorker.terminate();
+    };
+  }, []);
+
+  useEffect(() => {
+    handleCheckUsername({
+      checkUsernameWorker,
+      registerDispatch,
+      url: AUTH_URL,
+      username,
+    });
+  }, [username]);
+
+  useEffect(() => {
+    handleCheckEmail({
+      checkEmailWorker,
+      registerDispatch,
+      url: AUTH_URL,
+      email,
+    });
+  }, [email]);
 
   const fetchAbortControllerRef = useFetchAbortControllerRef();
   const isComponentMountedRef = useMountedRef();
@@ -132,7 +178,6 @@ function Register() {
     cardBgGradient,
     redColorShade,
     grayColorShade,
-    greenColorShade,
     themeColorShade,
     textColor,
   } = returnThemeColors({
@@ -255,13 +300,6 @@ function Register() {
             "schema",
             JSON.stringify({ schema }),
           );
-
-          // await handleRegisterButtonSubmit({
-          //   formData,
-          //   registerDispatch,
-          //   registerFetchWorker,
-          //   url: REGISTER_URL,
-          // });
 
           await handleRegisterButtonClick({
             fetchAbortControllerRef,
@@ -408,16 +446,12 @@ function Register() {
       <RegisterAuthentication
         confirmPassword={confirmPassword}
         email={email}
-        fetchAbortControllerRef={fetchAbortControllerRef}
-        isComponentMountedRef={isComponentMountedRef}
         isEmailExists={isEmailExists}
         isEmailExistsSubmitting={isEmailExistsSubmitting}
-        isError={isError}
         isUsernameExists={isUsernameExists}
         isUsernameExistsSubmitting={isUsernameExistsSubmitting}
         password={password}
         registerDispatch={registerDispatch}
-        showBoundary={showBoundary}
         username={username}
       />
     )
@@ -430,7 +464,6 @@ function Register() {
         lastName={lastName}
         registerAction={registerAction}
         registerDispatch={registerDispatch}
-        profilePictureUrl={profilePictureUrl}
         storeLocation={storeLocation}
       />
     )
