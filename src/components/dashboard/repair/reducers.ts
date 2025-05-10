@@ -6,6 +6,7 @@ import {
   setIsGeneratingDispatchZod,
   setRepairCalendarChartsDataDispatchZod,
   setRepairChartsDispatchZod,
+  setRepairChartsWorkerRepairMetricsDispatchZod,
 } from "./schemas";
 import { RepairMetricsDispatch, RepairMetricsState } from "./types";
 
@@ -31,6 +32,10 @@ const repairMetricsReducers = new Map<
   [repairMetricsAction.setCards, repairMetricsReducer_setCards],
   [repairMetricsAction.setCharts, repairMetricsReducer_setCharts],
   [repairMetricsAction.setIsGenerating, repairMetricsReducer_setIsGenerating],
+  [
+    repairMetricsAction.setRepairChartsWorker,
+    repairMetricsReducer_setRepairChartsWorker,
+  ],
 ]);
 
 function repairMetricsReducer_setCalendarChartsData(
@@ -107,10 +112,30 @@ function repairMetricsReducer_setIsGenerating(
   };
 }
 
+function repairMetricsReducer_setRepairChartsWorker(
+  state: RepairMetricsState,
+  dispatch: RepairMetricsDispatch,
+): RepairMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setRepairChartsWorkerRepairMetricsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    repairChartsWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+  };
+}
+
 export {
   repairMetricsReducer,
   repairMetricsReducer_setCalendarChartsData,
   repairMetricsReducer_setCards,
   repairMetricsReducer_setCharts,
   repairMetricsReducer_setIsGenerating,
+  repairMetricsReducer_setRepairChartsWorker,
 };

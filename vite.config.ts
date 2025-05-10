@@ -5,19 +5,24 @@ import { defineConfig } from "vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    watch: {
+      ignored: ["**/*.test.ts", "**/*.spec.ts"],
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",
-    // setupFiles: "./setupTests.ts",
-    css: true,
-    coverage: {
-      reporter: ["text", "html"], // generate a CLI report + an HTML report
-      exclude: [
-        "node_modules/",
-        "dist/",
-        "src/test/", // ignore test utils
-        "**/*.d.ts",
-      ],
-    },
+    setupFiles: "./setupTest.ts",
+    // css: true,
+    // coverage: {
+    //   reporter: ["text", "html"], // generate a CLI report + an HTML report
+    //   exclude: [
+    //     "node_modules/",
+    //     "dist/",
+    //     "src/test/", // ignore test utils
+    //     "**/*.d.ts",
+    //   ],
+    // },
   },
 });

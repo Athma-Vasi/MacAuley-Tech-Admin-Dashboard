@@ -1,11 +1,13 @@
 import { Stack } from "@mantine/core";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
+import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { RepairMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
+import RepairChartsWorker from "../../../workers/repairChartsWorker?worker";
 import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
@@ -15,15 +17,12 @@ import type {
 } from "../types";
 import { repairMetricsAction } from "./actions";
 import { createRepairMetricsCards } from "./cards";
-import {
-  createRepairMetricsCalendarCharts,
-  createRepairMetricsCharts,
-  returnSelectedDateRepairMetrics,
-} from "./chartsData";
+import { returnSelectedDateRepairMetrics } from "./chartsData";
+import { handleMessageEventRepairWorkerToMain } from "./handlers";
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
-import { RepairMetricCategory } from "./types";
+import { MessageEventRepairWorkerToMain, RepairMetricCategory } from "./types";
 import {
   createOverviewRepairMetricsCards,
   returnOverviewRepairMetrics,
@@ -61,6 +60,7 @@ function RepairMetrics(
     cards,
     charts,
     isGenerating,
+    repairChartsWorker,
   } = repairMetricsState;
 
   const {
@@ -75,7 +75,67 @@ function RepairMetrics(
       themeObject,
     });
 
-  const isComponentMountedRef = useRef(false);
+  const isComponentMountedRef = useMountedRef();
+
+  const selectedDateRepairMetrics = returnSelectedDateRepairMetrics({
+    repairMetricsDocument,
+    day: selectedDate,
+    month: selectedMonth,
+    months: MONTHS,
+    year: selectedYear,
+  });
+
+  console.log("RepairMetrics state", repairMetricsState);
+
+  useEffect(() => {
+    if (!repairChartsWorker) {
+      return;
+    }
+
+    if (repairMetricsDocument || !cards || !charts) {
+      repairChartsWorker.postMessage(
+        {
+          calendarView,
+          repairMetricsDocument,
+          selectedDateRepairMetrics,
+          selectedYYYYMMDD,
+        },
+      );
+    }
+  }, [
+    repairChartsWorker,
+    calendarView,
+    selectedYYYYMMDD,
+    storeLocationView,
+    repairMetricCategory,
+    repairMetricsDocument,
+  ]);
+
+  useEffect(() => {
+    const newRepairChartsWorker = new RepairChartsWorker();
+
+    repairMetricsDispatch({
+      action: repairMetricsAction.setRepairChartsWorker,
+      payload: newRepairChartsWorker,
+    });
+
+    newRepairChartsWorker.onmessage = async (
+      event: MessageEventRepairWorkerToMain,
+    ) => {
+      await handleMessageEventRepairWorkerToMain({
+        event,
+        isComponentMountedRef,
+        repairMetricsDispatch,
+        showBoundary,
+      });
+    };
+
+    return () => {
+      newRepairChartsWorker.terminate();
+      isComponentMountedRef.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     isComponentMountedRef.current = true;
     const isMounted = isComponentMountedRef.current;
@@ -87,26 +147,18 @@ function RepairMetrics(
       });
 
       try {
-        const selectedDateRepairMetrics = returnSelectedDateRepairMetrics({
-          repairMetricsDocument,
-          day: selectedDate,
-          month: selectedMonth,
-          months: MONTHS,
-          year: selectedYear,
-        });
+        // const { currentYear, previousYear } =
+        //   await createRepairMetricsCalendarCharts(
+        //     calendarView,
+        //     selectedDateRepairMetrics,
+        //     selectedYYYYMMDD,
+        //   );
 
-        const { currentYear, previousYear } =
-          await createRepairMetricsCalendarCharts(
-            calendarView,
-            selectedDateRepairMetrics,
-            selectedYYYYMMDD,
-          );
-
-        const repairMetricsCharts = await createRepairMetricsCharts({
-          repairMetricsDocument,
-          months: MONTHS,
-          selectedDateRepairMetrics,
-        });
+        // const repairMetricsCharts = await createRepairMetricsCharts({
+        //   repairMetricsDocument,
+        //   months: MONTHS,
+        //   selectedDateRepairMetrics,
+        // });
 
         const repairMetricsCards = await createRepairMetricsCards({
           cardBgGradient,
@@ -119,23 +171,23 @@ function RepairMetrics(
           return;
         }
 
-        repairMetricsDispatch({
-          action: repairMetricsAction.setCalendarChartsData,
-          payload: {
-            currentYear,
-            previousYear,
-          },
-        });
+        // repairMetricsDispatch({
+        //   action: repairMetricsAction.setCalendarChartsData,
+        //   payload: {
+        //     currentYear,
+        //     previousYear,
+        //   },
+        // });
 
         repairMetricsDispatch({
           action: repairMetricsAction.setCards,
           payload: repairMetricsCards,
         });
 
-        repairMetricsDispatch({
-          action: repairMetricsAction.setCharts,
-          payload: repairMetricsCharts,
-        });
+        // repairMetricsDispatch({
+        //   action: repairMetricsAction.setCharts,
+        //   payload: repairMetricsCharts,
+        // });
 
         repairMetricsDispatch({
           action: repairMetricsAction.setIsGenerating,
@@ -157,12 +209,12 @@ function RepairMetrics(
     return () => {
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     calendarView,
     selectedYYYYMMDD,
     storeLocationView,
     repairMetricCategory,
+    repairMetricsDocument,
     themeObject,
   ]);
 

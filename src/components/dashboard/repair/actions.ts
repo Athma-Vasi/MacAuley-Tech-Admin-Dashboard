@@ -3,6 +3,7 @@ type RepairMetricsAction = {
   setCards: "setCards";
   setCharts: "setCharts";
   setIsGenerating: "setIsGenerating";
+  setRepairChartsWorker: "setRepairChartsWorker";
 };
 
 const repairMetricsAction: RepairMetricsAction = {
@@ -10,6 +11,7 @@ const repairMetricsAction: RepairMetricsAction = {
   setCards: "setCards",
   setCharts: "setCharts",
   setIsGenerating: "setIsGenerating",
+  setRepairChartsWorker: "setRepairChartsWorker",
 };
 
 export { repairMetricsAction };

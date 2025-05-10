@@ -24,7 +24,7 @@ import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
-import { LoginMessageEvent } from "./types";
+import { LoginMessageEvent, LoginState } from "./types";
 
 async function handleLoginButtonClick(
   {
@@ -301,24 +301,30 @@ async function handleLoginButtonClick(
   }
 }
 
-function handleLoginClick({
-  isLoading,
-  isSubmitting,
-  isSuccessful,
+async function handleLoginClick({
+  loginState,
   loginFetchWorker,
   loginDispatch,
   schema,
 }: {
-  isLoading: boolean;
-  isSubmitting: boolean;
-  isSuccessful: boolean;
+  loginState: LoginState;
   loginDispatch: React.Dispatch<LoginDispatch>;
   loginFetchWorker: Worker | null;
   schema: { username: string; password: string };
-}) {
+}): Promise<SafeBoxResult<boolean>> {
+  const { isLoading, isSubmitting, isSuccessful } = loginState;
+
+  if (loginFetchWorker === null) {
+    return createSafeBoxResult({
+      message: "Login worker not initialized",
+    });
+  }
+
   try {
     if (isLoading || isSubmitting || isSuccessful) {
-      return;
+      return createSafeBoxResult({
+        message: "Login already in progress",
+      });
     }
 
     loginDispatch({
@@ -341,6 +347,7 @@ function handleLoginClick({
     });
 
     return createSafeBoxResult({
+      data: true,
       kind: "success",
       message: "Login message sent",
     });
@@ -357,6 +364,7 @@ async function loginOnmessageCallback(
     event,
     globalDispatch,
     isComponentMountedRef,
+    localforage,
     loginDispatch,
     navigate,
     showBoundary,
@@ -365,13 +373,23 @@ async function loginOnmessageCallback(
     event: LoginMessageEvent;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
+    localforage: LocalForage;
     loginDispatch: React.Dispatch<LoginDispatch>;
     navigate: NavigateFunction;
     showBoundary: (error: unknown) => void;
   },
-) {
+): Promise<
+  SafeBoxResult<
+    HttpServerResponse<
+      {
+        userDocument: UserDocument;
+        financialMetricsDocument: FinancialMetricsDocument;
+      }
+    >
+  >
+> {
   try {
-    console.log("Worker received message in useEffect:", event.data);
+    console.log("Worker received message:", event.data);
 
     if (!isComponentMountedRef.current) {
       return createSafeBoxResult({
@@ -480,7 +498,7 @@ async function loginOnmessageCallback(
     navigate("/dashboard/financials");
 
     return createSafeBoxResult({
-      data: event.data,
+      data: parsedServerResponse,
       kind: "success",
       message: "Login successful",
     });

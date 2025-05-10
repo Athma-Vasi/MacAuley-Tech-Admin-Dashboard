@@ -171,10 +171,16 @@ const setIsGeneratingDispatchZod = z.object({
     payload: z.boolean(),
 });
 
+const setRepairChartsWorkerRepairMetricsDispatchZod = z.object({
+    action: z.literal(repairMetricsAction.setRepairChartsWorker),
+    payload: z.instanceof(Worker),
+});
+
 export {
     setIsGeneratingDispatchZod,
     setRepairCalendarChartsDataDispatchZod,
     setRepairChartsDispatchZod,
+    setRepairChartsWorkerRepairMetricsDispatchZod,
 };
 
 /**

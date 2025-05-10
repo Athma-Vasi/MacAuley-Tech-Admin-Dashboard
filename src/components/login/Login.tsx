@@ -16,6 +16,7 @@ import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { Link, useNavigate } from "react-router-dom";
 
+import localforage from "localforage";
 import { TbCheck } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
 import { useMountedRef } from "../../hooks";
@@ -88,6 +89,7 @@ function Login() {
         authDispatch,
         globalDispatch,
         isComponentMountedRef,
+        localforage,
         loginDispatch,
         navigate,
         showBoundary,
@@ -165,9 +167,7 @@ function Login() {
           event.preventDefault();
 
           handleLoginClick({
-            isLoading,
-            isSubmitting,
-            isSuccessful,
+            loginState,
             loginDispatch,
             loginFetchWorker,
             schema: { username, password },
