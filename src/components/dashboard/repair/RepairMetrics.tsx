@@ -182,10 +182,10 @@ function RepairMetrics(
     };
   }, [
     calendarView,
-    selectedYYYYMMDD,
-    storeLocationView,
     repairMetricCategory,
     repairMetricsDocument,
+    selectedYYYYMMDD,
+    storeLocationView,
     themeObject,
   ]);
 

@@ -6,9 +6,10 @@ import {
   ProductMetricsCharts,
 } from "./chartsData";
 import {
-  setIsGeneratingDispatchZod,
-  setProductCalendarChartsDataDispatchZod,
-  setProductChartsDispatchZod,
+  setIsGeneratingProductDispatchZod,
+  setProductCalendarChartsDataProductDispatchZod,
+  setProductChartsProductDispatchZod,
+  setProductChartsWorkerProductDispatchZod,
 } from "./schemas";
 import { ProductMetricsDispatch, ProductMetricsState } from "./types";
 
@@ -34,6 +35,10 @@ const productMetricsReducers = new Map<
   [productMetricsAction.setCards, productMetricsReducer_setCards],
   [productMetricsAction.setCharts, productMetricsReducer_setCharts],
   [productMetricsAction.setIsGenerating, productMetricsReducer_setIsGenerating],
+  [
+    productMetricsAction.setProductChartsWorker,
+    productMetricsReducer_setProductChartsWorker,
+  ],
 ]);
 
 function productMetricsReducer_setCalendarChartsData(
@@ -42,7 +47,7 @@ function productMetricsReducer_setCalendarChartsData(
 ): ProductMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setProductCalendarChartsDataDispatchZod,
+    zSchema: setProductCalendarChartsDataProductDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -78,7 +83,7 @@ function productMetricsReducer_setCharts(
 ): ProductMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setProductChartsDispatchZod,
+    zSchema: setProductChartsProductDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -97,7 +102,7 @@ function productMetricsReducer_setIsGenerating(
 ): ProductMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsGeneratingDispatchZod,
+    zSchema: setIsGeneratingProductDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -107,6 +112,25 @@ function productMetricsReducer_setIsGenerating(
   return {
     ...state,
     isGenerating: parsedResult.safeUnwrap().data?.payload as boolean,
+  };
+}
+
+function productMetricsReducer_setProductChartsWorker(
+  state: ProductMetricsState,
+  dispatch: ProductMetricsDispatch,
+): ProductMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setProductChartsWorkerProductDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    productChartsWorker: parsedResult.safeUnwrap().data?.payload as Worker,
   };
 }
 

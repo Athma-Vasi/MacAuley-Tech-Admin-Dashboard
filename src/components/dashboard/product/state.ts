@@ -8,6 +8,7 @@ const initialProductMetricsState: ProductMetricsState = {
   cards: null,
   charts: null,
   isGenerating: false,
+  productChartsWorker: null,
 };
 
 export { initialProductMetricsState };

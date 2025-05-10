@@ -1,5 +1,4 @@
 import { parseSafeSync } from "../../../utils";
-import { setIsGeneratingDispatchZod } from "../product/schemas";
 import { FinancialMetricsAction, financialMetricsAction } from "./actions";
 import { FinancialMetricsCards } from "./cards";
 import {
@@ -9,6 +8,7 @@ import {
 import {
   setFinancialCalendarChartsDispatchZod,
   setFinancialChartsDispatchZod,
+  setIsGeneratingDispatchZod,
 } from "./schemas";
 import { FinancialMetricsDispatch, FinancialMetricsState } from "./types";
 

@@ -64,7 +64,7 @@ const productMetricsCalendarChartsZod = z.object({
     unitsSold: productMetricsRUSCalendarChartsZod,
 });
 
-const setProductCalendarChartsDataDispatchZod = z.object({
+const setProductCalendarChartsDataProductDispatchZod = z.object({
     action: z.literal(productMetricsAction.setCalendarChartsData),
     payload: z.object({
         currentYear: productMetricsCalendarChartsZod,
@@ -181,7 +181,7 @@ const productYearlyRUSBarChartsZod = z.object({
     overview: productYearlyOverviewBarChartsZod,
 });
 
-const setProductChartsDispatchZod = z.object({
+const setProductChartsProductDispatchZod = z.object({
     action: z.literal(productMetricsAction.setCharts),
     payload: z.object({
         dailyCharts: z.object({
@@ -223,14 +223,20 @@ const setProductChartsDispatchZod = z.object({
     }),
 });
 
-const setIsGeneratingDispatchZod = z.object({
+const setIsGeneratingProductDispatchZod = z.object({
     action: z.literal(productMetricsAction.setIsGenerating),
     payload: z.boolean(),
 });
 
+const setProductChartsWorkerProductDispatchZod = z.object({
+    action: z.literal(productMetricsAction.setProductChartsWorker),
+    payload: z.instanceof(Worker),
+});
+
 export {
     productMetricsDocumentZod,
-    setIsGeneratingDispatchZod,
-    setProductCalendarChartsDataDispatchZod,
-    setProductChartsDispatchZod,
+    setIsGeneratingProductDispatchZod,
+    setProductCalendarChartsDataProductDispatchZod,
+    setProductChartsProductDispatchZod,
+    setProductChartsWorkerProductDispatchZod,
 };

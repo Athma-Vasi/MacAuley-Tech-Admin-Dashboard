@@ -1,10 +1,12 @@
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
+import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { ProductMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
+import ProductChartsWorker from "../../../workers/productChartsWorker?worker";
 import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
@@ -14,15 +16,16 @@ import type {
 } from "../types";
 import { productMetricsAction } from "./actions";
 import { createProductMetricsCards } from "./cards";
-import {
-  createProductMetricsCalendarCharts,
-  createProductMetricsCharts,
-  returnSelectedDateProductMetrics,
-} from "./chartsData";
+import { returnSelectedDateProductMetrics } from "./chartsData";
+import { handleMessageEventProductWorkerToMain } from "./handlers";
 import { productMetricsReducer } from "./reducers";
 import { RUS } from "./rus/RUS";
 import { initialProductMetricsState } from "./state";
-import { ProductMetricCategory, ProductSubMetric } from "./types";
+import {
+  MessageEventProductWorkerToMain,
+  ProductMetricCategory,
+  ProductSubMetric,
+} from "./types";
 import {
   returnOverviewAllProductsMetrics,
   returnProductMetricsOverviewCards,
@@ -62,22 +65,72 @@ function ProductMetrics(
     cards,
     charts,
     isGenerating,
+    productChartsWorker,
   } = productMetricsState;
-
-  console.log({ productMetricsState });
 
   const {
     globalState: { themeObject },
   } = useGlobalState();
-
   const { showBoundary } = useErrorBoundary();
+  const isComponentMountedRef = useMountedRef();
 
-  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
+  const selectedDateProductMetrics = returnSelectedDateProductMetrics({
+    productMetricsDocument,
+    day: selectedDate,
+    month: selectedMonth,
+    months: MONTHS,
+    year: selectedYear,
   });
 
-  const isComponentMountedRef = useRef(false);
+  useEffect(() => {
+    if (!productChartsWorker) {
+      return;
+    }
+
+    if (productMetricsDocument || !cards || !charts) {
+      productChartsWorker.postMessage(
+        {
+          calendarView,
+          productMetricsDocument,
+          selectedDateProductMetrics,
+          selectedYYYYMMDD,
+        },
+      );
+    }
+  }, [
+    productChartsWorker,
+    calendarView,
+    selectedYYYYMMDD,
+    storeLocationView,
+    productMetricCategory,
+    productMetricsDocument,
+  ]);
+
+  useEffect(() => {
+    const newProductChartsWorker = new ProductChartsWorker();
+
+    productMetricsDispatch({
+      action: productMetricsAction.setProductChartsWorker,
+      payload: newProductChartsWorker,
+    });
+
+    newProductChartsWorker.onmessage = async (
+      event: MessageEventProductWorkerToMain,
+    ) => {
+      await handleMessageEventProductWorkerToMain({
+        event,
+        isComponentMountedRef,
+        productMetricsDispatch,
+        showBoundary,
+      });
+    };
+
+    return () => {
+      newProductChartsWorker.terminate();
+      isComponentMountedRef.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     isComponentMountedRef.current = true;
     const isMounted = isComponentMountedRef.current;
@@ -88,28 +141,13 @@ function ProductMetrics(
         payload: true,
       });
 
+      const { cardBgGradient, redColorShade, greenColorShade } =
+        returnThemeColors({
+          colorsSwatches: COLORS_SWATCHES,
+          themeObject,
+        });
+
       try {
-        const selectedDateProductMetrics = returnSelectedDateProductMetrics({
-          productMetricsDocument,
-          day: selectedDate,
-          month: selectedMonth,
-          months: MONTHS,
-          year: selectedYear,
-        });
-
-        const { currentYear, previousYear } =
-          await createProductMetricsCalendarCharts(
-            calendarView,
-            selectedDateProductMetrics,
-            selectedYYYYMMDD,
-          );
-
-        const productMetricsCharts = await createProductMetricsCharts({
-          productMetricsDocument,
-          months: MONTHS,
-          selectedDateProductMetrics,
-        });
-
         const productMetricsCards = await createProductMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -122,21 +160,8 @@ function ProductMetrics(
         }
 
         productMetricsDispatch({
-          action: productMetricsAction.setCalendarChartsData,
-          payload: {
-            currentYear,
-            previousYear,
-          },
-        });
-
-        productMetricsDispatch({
           action: productMetricsAction.setCards,
           payload: productMetricsCards,
-        });
-
-        productMetricsDispatch({
-          action: productMetricsAction.setCharts,
-          payload: productMetricsCharts,
         });
 
         productMetricsDispatch({
@@ -159,10 +184,10 @@ function ProductMetrics(
     return () => {
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     calendarView,
     productMetricCategory,
+    productMetricsDocument,
     selectedYYYYMMDD,
     storeLocationView,
     themeObject,

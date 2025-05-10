@@ -1,5 +1,4 @@
 import { parseSafeSync } from "../../../utils";
-import { setIsGeneratingDispatchZod } from "../product/schemas";
 import { CustomerMetricsAction, customerMetricsAction } from "./actions";
 import { CustomerMetricsCards } from "./cards";
 import {
@@ -9,6 +8,7 @@ import {
 import {
   setCustomerCalendarChartsDispatchZod,
   setCustomerChartsDispatch,
+  setCustomerIsGeneratingDispatch,
 } from "./schemas";
 import { CustomerMetricsDispatch, CustomerMetricsState } from "./types";
 
@@ -100,7 +100,7 @@ function customerMetricsReducer_setIsGenerating(
 ): CustomerMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsGeneratingDispatchZod,
+    zSchema: setCustomerIsGeneratingDispatch,
   });
 
   if (parsedResult.err) {
