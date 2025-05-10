@@ -69,11 +69,10 @@ function RepairMetrics(
 
   const { showBoundary } = useErrorBoundary();
 
-  const { bgGradient, cardBgGradient, redColorShade, greenColorShade } =
-    returnThemeColors({
-      colorsSwatches: COLORS_SWATCHES,
-      themeObject,
-    });
+  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
 
   const isComponentMountedRef = useMountedRef();
 
@@ -145,19 +144,6 @@ function RepairMetrics(
       });
 
       try {
-        // const { currentYear, previousYear } =
-        //   await createRepairMetricsCalendarCharts(
-        //     calendarView,
-        //     selectedDateRepairMetrics,
-        //     selectedYYYYMMDD,
-        //   );
-
-        // const repairMetricsCharts = await createRepairMetricsCharts({
-        //   repairMetricsDocument,
-        //   months: MONTHS,
-        //   selectedDateRepairMetrics,
-        // });
-
         const repairMetricsCards = await createRepairMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -169,23 +155,10 @@ function RepairMetrics(
           return;
         }
 
-        // repairMetricsDispatch({
-        //   action: repairMetricsAction.setCalendarChartsData,
-        //   payload: {
-        //     currentYear,
-        //     previousYear,
-        //   },
-        // });
-
         repairMetricsDispatch({
           action: repairMetricsAction.setCards,
           payload: repairMetricsCards,
         });
-
-        // repairMetricsDispatch({
-        //   action: repairMetricsAction.setCharts,
-        //   payload: repairMetricsCharts,
-        // });
 
         repairMetricsDispatch({
           action: repairMetricsAction.setIsGenerating,
