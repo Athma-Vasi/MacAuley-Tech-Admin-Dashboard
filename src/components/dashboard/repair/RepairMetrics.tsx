@@ -85,8 +85,6 @@ function RepairMetrics(
     year: selectedYear,
   });
 
-  console.log("RepairMetrics state", repairMetricsState);
-
   useEffect(() => {
     if (!repairChartsWorker) {
       return;

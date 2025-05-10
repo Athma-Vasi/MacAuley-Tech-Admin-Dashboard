@@ -21,10 +21,10 @@ type RepairMetricLineCharts = {
 };
 
 type CreateSelectedDateRepairMetricsInput = {
-  repairMetricsDocument: RepairMetricsDocument;
   day: string;
   month: Month;
   months: Month[];
+  repairMetricsDocument: RepairMetricsDocument;
   year: Year;
 };
 

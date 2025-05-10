@@ -238,8 +238,7 @@ function Dashboard() {
             repairMetricCategory: event.currentTarget
               .value as RepairMetricCategory,
             showBoundary,
-            storeLocationView: event.currentTarget
-              .value as AllStoreLocations,
+            storeLocationView,
           });
         },
         parentDispatch: globalDispatch,
@@ -280,8 +279,7 @@ function Dashboard() {
               .value as ProductMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView: event.currentTarget
-              .value as AllStoreLocations,
+            storeLocationView,
           });
         },
         parentDispatch: globalDispatch,
