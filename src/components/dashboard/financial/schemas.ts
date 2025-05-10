@@ -87,7 +87,7 @@ const financialMetricsCalendarChartsZod = z.object({
     transactions: financialPERTCalendarChartsZod,
 });
 
-const setFinancialCalendarChartsDispatchZod = z.object({
+const setCalendarChartsFinancialMetricsDispatchZod = z.object({
     action: z.literal(financialMetricsAction.setCalendarChartsData),
     payload: z.object({
         currentYear: financialMetricsCalendarChartsZod,
@@ -411,19 +411,25 @@ const financialChartsZod = z.object({
     }),
 });
 
-const setFinancialChartsDispatchZod = z.object({
+const setChartsFinancialMetricsDispatchZod = z.object({
     action: z.literal(financialMetricsAction.setCharts),
     payload: financialChartsZod,
 });
 
-const setIsGeneratingDispatchZod = z.object({
+const setIsGeneratingFinancialMetricsDispatchZod = z.object({
     action: z.literal(financialMetricsAction.setIsGenerating),
     payload: z.boolean(),
 });
 
+const setChartsWorkerFinancialMetricsDispatchZod = z.object({
+    action: z.literal(financialMetricsAction.setFinancialChartsWorker),
+    payload: z.instanceof(Worker),
+});
+
 export {
     financialMetricsDocumentZod,
-    setFinancialCalendarChartsDispatchZod,
-    setFinancialChartsDispatchZod,
-    setIsGeneratingDispatchZod,
+    setCalendarChartsFinancialMetricsDispatchZod,
+    setChartsFinancialMetricsDispatchZod,
+    setChartsWorkerFinancialMetricsDispatchZod,
+    setIsGeneratingFinancialMetricsDispatchZod,
 };

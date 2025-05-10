@@ -85,7 +85,7 @@ const customerCalendarChartsZod = z.object({
     }),
 });
 
-const setCustomerCalendarChartsDispatchZod = z.object({
+const setCalendarChartsCustomerMetricsDispatchZod = z.object({
     action: z.literal(customerMetricsAction.setCalendarChartsData),
     payload: z.object({
         currentYear: customerCalendarChartsZod,
@@ -368,20 +368,26 @@ const customerChartsZod = z.object({
     }),
 });
 
-const setCustomerChartsDispatch = z.object({
+const setChartsCustomerMetricsDispatchZod = z.object({
     action: z.literal(customerMetricsAction.setCharts),
     payload: customerChartsZod,
 });
 
-const setCustomerIsGeneratingDispatch = z.object({
+const setIsGeneratingCustomerMetricsDispatchZod = z.object({
     action: z.literal(customerMetricsAction.setIsGenerating),
     payload: z.boolean(),
+});
+
+const setChartsWorkerCustomerMetricsDispatchZod = z.object({
+    action: z.literal(customerMetricsAction.setCustomerChartsWorker),
+    payload: z.instanceof(Worker),
 });
 
 export {
     calendarChartDataZod,
     customerMetricsDocumentZod,
-    setCustomerCalendarChartsDispatchZod,
-    setCustomerChartsDispatch,
-    setCustomerIsGeneratingDispatch,
+    setCalendarChartsCustomerMetricsDispatchZod,
+    setChartsCustomerMetricsDispatchZod,
+    setChartsWorkerCustomerMetricsDispatchZod,
+    setIsGeneratingCustomerMetricsDispatchZod,
 };

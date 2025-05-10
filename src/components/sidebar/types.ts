@@ -14,18 +14,6 @@ type SidebarNavlinks =
     | "users"
     | "logout";
 
-type MetricsMessageEvent = MessageEvent<
-    SafeBoxResult<
-        {
-            decodedToken: DecodedToken;
-            parsedServerResponse: HttpServerResponse<
-                BusinessMetricsDocument
-            >;
-            metricsView?: Lowercase<DashboardMetricsView>;
-        }
-    >
->;
-
 type DirectoryMessageEvent = MessageEvent<
     SafeBoxResult<{
         decodedToken: DecodedToken;
@@ -75,7 +63,6 @@ type SidebarDispatch =
 export type {
     DirectoryMessageEvent,
     LogoutMessageEvent,
-    MetricsMessageEvent,
     SidebarDispatch,
     SidebarNavlinks,
     SidebarState,

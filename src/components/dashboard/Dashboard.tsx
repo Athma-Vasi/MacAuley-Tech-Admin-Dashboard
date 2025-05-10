@@ -34,7 +34,8 @@ import {
   returnThemeColors,
   setForageItemSafe,
 } from "../../utils";
-import FetchParseWorker from "../../workers/fetchParseWorker?worker";
+import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
+import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
@@ -61,11 +62,7 @@ import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { RepairMetricCategory } from "./repair/types";
 import { initialDashboardState } from "./state";
-import {
-  AllStoreLocations,
-  DashboardMessageEvent,
-  DashboardMetricsView,
-} from "./types";
+import { AllStoreLocations, DashboardMetricsView } from "./types";
 import { splitSelectedCalendarDate } from "./utils";
 
 function Dashboard() {
@@ -90,7 +87,7 @@ function Dashboard() {
       productSubMetricCategory,
       repairMetricCategory,
       repairMetricsDocument,
-      storeLocationView,
+      storeLocation,
       themeObject,
     },
     globalDispatch,
@@ -118,7 +115,7 @@ function Dashboard() {
   const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
-    const newDashboardFetchWorker = new FetchParseWorker();
+    const newDashboardFetchWorker = new MetricsParseWorker();
 
     dashboardDispatch({
       action: dashboardAction.setDashboardFetchWorker,
@@ -126,7 +123,7 @@ function Dashboard() {
     });
 
     newDashboardFetchWorker.onmessage = async (
-      event: DashboardMessageEvent,
+      event: MessageEventMetricsWorkerToMain,
     ) => {
       await handleStoreAndCategoryClicksOnmessageCallback({
         authDispatch,
@@ -135,11 +132,8 @@ function Dashboard() {
         globalDispatch,
         isComponentMountedRef,
         navigateFn,
-        productMetricCategory,
-        repairMetricCategory,
         setForageItemSafe,
         showBoundary,
-        storeLocationView,
       });
     };
 
@@ -162,9 +156,9 @@ function Dashboard() {
       aria-description="View metrics for selected calendar date."
       label="Calendar Date"
       max={"2025-03-31"}
-      min={storeLocationView === "Vancouver"
+      min={storeLocation === "Vancouver"
         ? new Date(2019, 0, 1).toISOString().split("T")[0]
-        : storeLocationView === "Calgary"
+        : storeLocation === "Calgary"
         ? new Date(2017, 0, 1).toISOString().split("T")[0]
         : new Date(2013, 0, 1).toISOString().split("T")[0]}
       onChange={(event) => {
@@ -184,10 +178,10 @@ function Dashboard() {
     />
   );
 
-  const isStoreLocationSegmentDisabled = (storeLocationView === "Vancouver" &&
+  const isStoreLocationSegmentDisabled = (storeLocation === "Vancouver" &&
     Number(selectedYear) < 2019) ||
-    (storeLocationView === "Calgary" && Number(selectedYear) < 2017) ||
-    (storeLocationView === "Edmonton" && Number(selectedYear) < 2013);
+    (storeLocation === "Calgary" && Number(selectedYear) < 2017) ||
+    (storeLocation === "Edmonton" && Number(selectedYear) < 2013);
 
   const storeLocationSelectInput = (
     <AccessibleSelectInput
@@ -208,13 +202,13 @@ function Dashboard() {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView: event.currentTarget
+            storeLocation: event.currentTarget
               .value as AllStoreLocations,
           });
         },
         parentDispatch: globalDispatch,
-        validValueAction: globalAction.setStoreLocationView,
-        value: storeLocationView,
+        validValueAction: globalAction.setStoreLocation,
+        value: storeLocation,
       }}
     />
   );
@@ -238,7 +232,7 @@ function Dashboard() {
             repairMetricCategory: event.currentTarget
               .value as RepairMetricCategory,
             showBoundary,
-            storeLocationView,
+            storeLocation,
           });
         },
         parentDispatch: globalDispatch,
@@ -279,7 +273,7 @@ function Dashboard() {
               .value as ProductMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView,
+            storeLocation,
           });
         },
         parentDispatch: globalDispatch,
@@ -400,7 +394,7 @@ function Dashboard() {
         financialMetricsDocument={financialMetricsDocument as FinancialMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
-        storeLocationView={storeLocationView}
+        storeLocation={storeLocation}
         selectedYYYYMMDD={selectedYYYYMMDD}
         selectedYear={selectedYear}
       />
@@ -413,7 +407,7 @@ function Dashboard() {
         customerMetricsDocument={customerMetricsDocument as CustomerMetricsDocument}
         selectedDate={selectedDate}
         selectedMonth={selectedMonth}
-        storeLocationView={storeLocationView}
+        storeLocation={storeLocation}
         selectedYYYYMMDD={selectedYYYYMMDD}
         selectedYear={selectedYear}
       />
@@ -429,7 +423,7 @@ function Dashboard() {
         selectedMonth={selectedMonth}
         selectedYYYYMMDD={selectedYYYYMMDD}
         selectedYear={selectedYear}
-        storeLocationView={storeLocationView}
+        storeLocation={storeLocation}
       />
     )
     : (
@@ -441,7 +435,7 @@ function Dashboard() {
         selectedMonth={selectedMonth}
         selectedYYYYMMDD={selectedYYYYMMDD}
         selectedYear={selectedYear}
-        storeLocationView={storeLocationView}
+        storeLocation={storeLocation}
       />
     );
 

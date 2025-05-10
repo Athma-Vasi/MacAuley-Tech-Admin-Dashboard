@@ -23,6 +23,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
+import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
+import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 import { sidebarAction } from "./actions";
@@ -36,11 +38,7 @@ import {
 } from "./handlers";
 import { sidebarReducer } from "./reducers";
 import { initialSidebarState } from "./state";
-import {
-  DirectoryMessageEvent,
-  LogoutMessageEvent,
-  MetricsMessageEvent,
-} from "./types";
+import { DirectoryMessageEvent, LogoutMessageEvent } from "./types";
 
 type SidebarProps = {
   opened: boolean;
@@ -68,7 +66,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     themeObject,
     productMetricCategory,
     repairMetricCategory,
-    storeLocationView,
+    storeLocation,
     isFetching,
   } = globalState;
   const {
@@ -80,14 +78,14 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   } = sidebarState;
 
   useEffect(() => {
-    const newMetricsFetchWorker = new FetchParseWorker();
+    const newMetricsFetchWorker = new MetricsParseWorker();
     sidebarDispatch({
       action: sidebarAction.setMetricsFetchWorker,
       payload: newMetricsFetchWorker,
     });
 
     newMetricsFetchWorker.onmessage = async (
-      event: MetricsMessageEvent,
+      event: MessageEventMetricsWorkerToMain,
     ) => {
       await handleMetricCategoryOnmessageCallback({
         authDispatch,
@@ -95,10 +93,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         globalDispatch,
         isComponentMountedRef,
         navigate,
-        productMetricCategory,
-        repairMetricCategory,
         showBoundary,
-        storeLocationView,
       });
     };
 
@@ -178,7 +173,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView,
+            storeLocation,
             toLocation: "/dashboard/products",
           }).then((result) => {
             console.log("Result:", result);
@@ -219,7 +214,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView,
+            storeLocation,
             toLocation: "/dashboard/financials",
           });
 
@@ -258,7 +253,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView,
+            storeLocation,
             toLocation: "/dashboard/customers",
           });
 
@@ -297,7 +292,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
-            storeLocationView,
+            storeLocation,
             toLocation: "/dashboard/repairs",
           });
 

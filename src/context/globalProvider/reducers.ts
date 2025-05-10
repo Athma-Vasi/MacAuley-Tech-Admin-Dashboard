@@ -138,7 +138,7 @@ const globalReducersMap = new Map<
     globalReducer_setExpandSunburstChartData,
   ],
   [globalAction.setSelectedChartKind, globalReducer_setSelectedChartKind],
-  [globalAction.setStoreLocationView, globalReducer_setStoreLocationView],
+  [globalAction.setStoreLocation, globalReducer_setStoreLocationView],
 ]);
 
 function globalReducer_setDirectory(
@@ -727,7 +727,7 @@ function globalReducer_setStoreLocationView(
 
   return {
     ...state,
-    storeLocationView: parsedResult.safeUnwrap().data
+    storeLocation: parsedResult.safeUnwrap().data
       ?.payload as AllStoreLocations,
   };
 }

@@ -60,11 +60,6 @@ async function handleMessageEventRepairWorkerToMain({
             action: repairMetricsAction.setCharts,
             payload: repairMetricsCharts,
         });
-
-        repairMetricsDispatch({
-            action: repairMetricsAction.setIsGenerating,
-            payload: false,
-        });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
             return;

@@ -24,7 +24,7 @@ type DashboardTestMockInput = {
     metricsView: Lowercase<DashboardMetricsView>;
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
     testKind: "success" | "error";
 };
 
@@ -33,7 +33,7 @@ async function handleStoreCategoryClickTestMock(
         metricsView,
         productMetricCategory,
         repairMetricCategory,
-        storeLocationView,
+        storeLocation,
         testKind,
     }: DashboardTestMockInput,
 ): Promise<
@@ -80,7 +80,7 @@ async function handleStoreCategoryClickTestMock(
             repairMetricCategory,
             setForageItemSafe,
             showBoundary,
-            storeLocationView,
+            storeLocation,
         });
         if (handleStoreCategoryClickResult.err) {
             return createSafeBoxResult({
@@ -111,7 +111,7 @@ async function handleStoreCategoryClickTestMock(
                metricsView: ${metricsView}
                productMetricCategory: ${productMetricCategory}
                repairMetricCategory: ${repairMetricCategory}
-               storeLocationView: ${storeLocationView}
+               storeLocation: ${storeLocation}
             `,
             () => {
                 if (testKind === "success") {
@@ -123,7 +123,7 @@ async function handleStoreCategoryClickTestMock(
                         expect(businessMetricsDocument).to.have
                             .property("storeLocation");
                         expect(businessMetricsDocument.storeLocation)
-                            .to.equal(storeLocationView);
+                            .to.equal(storeLocation);
                     });
                 } else {
                     it("should return undefined", () => {
@@ -159,14 +159,14 @@ await Promise.all(
             metricsView,
             productMetricCategory,
             repairMetricCategory,
-            storeLocationView,
+            storeLocation,
             testKind,
         }) => {
             await handleStoreCategoryClickTestMock({
                 metricsView,
                 productMetricCategory,
                 repairMetricCategory,
-                storeLocationView,
+                storeLocation,
                 testKind,
             });
         },
@@ -179,14 +179,14 @@ await Promise.all(
             metricsView,
             productMetricCategory,
             repairMetricCategory,
-            storeLocationView,
+            storeLocation,
             testKind,
         }) => {
             await handleStoreCategoryClickTestMock({
                 metricsView,
                 productMetricCategory,
                 repairMetricCategory,
-                storeLocationView,
+                storeLocation,
                 testKind,
             });
         },
@@ -208,7 +208,7 @@ await Promise.all(
         productMetricCategory,
         repairMetricCategory,
         showBoundary,
-        storeLocationView,
+        storeLocation,
     }: {
         accessToken: string;
         authDispatch: React.Dispatch<AuthDispatch>;
@@ -222,7 +222,7 @@ await Promise.all(
         productMetricCategory: ProductMetricCategory;
         repairMetricCategory: RepairMetricCategory;
         showBoundary: (error: any) => void;
-        storeLocationView: AllStoreLocations;
+        storeLocation: AllStoreLocations;
     },
 ): Promise<SafeBoxResult<boolean[]>> {
     fetchAbortControllerRef.current?.abort("Previous request cancelled");
@@ -241,7 +241,7 @@ await Promise.all(
         },
     };
 
-    const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+    const storeLocationQuery = `&storeLocation[$eq]=${storeLocation}`;
 
     const metricCategoryQuery = metricsView === "products"
         ? `&metricCategory[$eq]=${productMetricCategory}`
@@ -257,7 +257,7 @@ await Promise.all(
         metricsView,
         productMetricCategory,
         repairMetricCategory,
-        storeLocationView,
+        storeLocation,
     });
 
     dashboardDispatch({

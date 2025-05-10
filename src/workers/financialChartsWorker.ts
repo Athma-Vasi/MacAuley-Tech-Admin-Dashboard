@@ -1,16 +1,16 @@
 import { MONTHS } from "../components/dashboard/constants";
 import {
-    createRepairMetricsCalendarCharts,
-    createRepairMetricsCharts,
-} from "../components/dashboard/repair/chartsData";
-import { MessageEventRepairMainToWorker } from "../components/dashboard/repair/types";
+    createFinancialMetricsCalendarCharts,
+    createFinancialMetricsCharts,
+} from "../components/dashboard/financial/chartsData";
+import { MessageEventFinancialMainToWorker } from "../components/dashboard/financial/types";
 import { createSafeBoxResult } from "../utils";
 
 self.onmessage = async (
-    event: MessageEventRepairMainToWorker,
+    event: MessageEventFinancialMainToWorker,
 ) => {
     console.log(
-        "Repair Charts Worker received message in self",
+        "Financial Charts Worker received message in self",
     );
 
     if (!event.data) {
@@ -23,27 +23,29 @@ self.onmessage = async (
 
     const {
         calendarView,
-        repairMetricsDocument,
-        selectedDateRepairMetrics,
+        financialMetricsDocument,
+        selectedDateFinancialMetrics,
         selectedYYYYMMDD,
+        storeLocation,
     } = event.data;
 
     try {
         const { currentYear, previousYear } =
-            await createRepairMetricsCalendarCharts(
+            await createFinancialMetricsCalendarCharts(
                 calendarView,
-                selectedDateRepairMetrics,
+                selectedDateFinancialMetrics,
                 selectedYYYYMMDD,
             );
 
-        const repairMetricsCharts = await createRepairMetricsCharts({
-            repairMetricsDocument,
+        const financialMetricsCharts = await createFinancialMetricsCharts({
+            financialMetricsDocument,
             months: MONTHS,
-            selectedDateRepairMetrics,
+            selectedDateFinancialMetrics,
+            storeLocation,
         });
 
         self.postMessage(createSafeBoxResult({
-            data: { currentYear, previousYear, repairMetricsCharts },
+            data: { currentYear, previousYear, financialMetricsCharts },
             kind: "success",
         }));
     } catch (error) {

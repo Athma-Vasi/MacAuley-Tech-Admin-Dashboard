@@ -160,7 +160,7 @@ type GlobalState = {
   repairMetricsDocument: RepairMetricsDocument | null;
   selectedChartKind: ChartKind;
   selectedYYYYMMDD: string;
-  storeLocationView: AllStoreLocations;
+  storeLocation: AllStoreLocations;
   themeObject: ThemeObject;
 };
 
@@ -170,7 +170,7 @@ type GlobalDispatch =
     payload: UserDocument[];
   }
   | {
-    action: GlobalAction["setStoreLocationView"];
+    action: GlobalAction["setStoreLocation"];
     payload: AllStoreLocations;
   }
   | {

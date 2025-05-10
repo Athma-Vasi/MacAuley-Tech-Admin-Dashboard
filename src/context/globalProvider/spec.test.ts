@@ -684,34 +684,33 @@ describe("globalReducer", () => {
         });
     });
 
-    describe("setStoreLocationView", () => {
+    describe("setStoreLocation", () => {
         it("should allow valid string values", () => {
             ALL_STORE_LOCATIONS_DATA.forEach(({ value }) => {
                 const dispatch: GlobalDispatch = {
-                    action: globalAction.setStoreLocationView,
+                    action: globalAction.setStoreLocation,
                     payload: value,
                 };
                 const state = globalReducer_setStoreLocationView(
                     initialGlobalState,
                     dispatch,
                 );
-                expect(state.storeLocationView).toBe(value);
+                expect(state.storeLocation).toBe(value);
             });
         });
         it("should not allow invalid string values", () => {
-            const initialStoreLocationView =
-                initialGlobalState.storeLocationView;
+            const initialStoreLocationView = initialGlobalState.storeLocation;
 
             INVALID_STRINGS.forEach((value) => {
                 const dispatch: GlobalDispatch = {
-                    action: globalAction.setStoreLocationView,
+                    action: globalAction.setStoreLocation,
                     payload: value as any,
                 };
                 const state = globalReducer_setStoreLocationView(
                     initialGlobalState,
                     dispatch,
                 );
-                expect(state.storeLocationView).toBe(initialStoreLocationView);
+                expect(state.storeLocation).toBe(initialStoreLocationView);
             });
         });
     });

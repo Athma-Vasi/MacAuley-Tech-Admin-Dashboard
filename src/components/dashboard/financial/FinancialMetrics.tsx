@@ -1,10 +1,12 @@
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
+import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
+import FinancialChartsWorker from "../../../workers/financialChartsWorker?worker";
 import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
@@ -14,17 +16,17 @@ import type {
 } from "../types";
 import { financialMetricsAction } from "./actions";
 import { createFinancialMetricsCards } from "./cards";
-import {
-  createFinancialMetricsCalendarCharts,
-  createFinancialMetricsCharts,
-  returnSelectedDateFinancialMetrics,
-} from "./chartsData";
+import { returnSelectedDateFinancialMetrics } from "./chartsData";
 import { PERT_SET } from "./constants";
+import { handleMessageEventFinancialWorkerToMain } from "./handlers";
 import OtherMetrics from "./otherMetrics/OtherMetrics";
 import PERT from "./pert/PERT";
 import { financialMetricsReducer } from "./reducers";
 import { initialFinancialMetricsState } from "./state";
-import { FinancialMetricCategory } from "./types";
+import {
+  FinancialMetricCategory,
+  MessageEventFinancialWorkerToMain,
+} from "./types";
 import {
   returnFinancialMetricsOverviewCards,
   returnOverviewFinancialMetrics,
@@ -36,7 +38,7 @@ type FinancialMetricsProps = {
   financialMetricsDocument: FinancialMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
-  storeLocationView: AllStoreLocations;
+  storeLocation: AllStoreLocations;
   selectedYear: Year;
   selectedYYYYMMDD: string;
 };
@@ -50,15 +52,20 @@ function FinancialMetrics(
     selectedMonth,
     selectedYYYYMMDD,
     selectedYear,
-    storeLocationView,
+    storeLocation,
   }: FinancialMetricsProps,
 ) {
   const [financialMetricsState, financialMetricsDispatch] = useReducer(
     financialMetricsReducer,
     initialFinancialMetricsState,
   );
-  const { cards, charts, calendarChartsData, isGenerating } =
-    financialMetricsState;
+  const {
+    cards,
+    charts,
+    calendarChartsData,
+    financialChartsWorker,
+    isGenerating,
+  } = financialMetricsState;
 
   const {
     globalState: { themeObject },
@@ -70,45 +77,73 @@ function FinancialMetrics(
     themeObject,
   });
 
-  const isComponentMountedRef = useRef(false);
+  const isComponentMountedRef = useMountedRef();
+
+  const selectedDateFinancialMetrics = returnSelectedDateFinancialMetrics(
+    {
+      financialMetricsDocument,
+      day: selectedDate,
+      month: selectedMonth,
+      months: MONTHS,
+      storeLocation,
+      year: selectedYear,
+    },
+  );
+
+  useEffect(() => {
+    if (!financialChartsWorker) {
+      return;
+    }
+
+    if (financialMetricsDocument || !cards || !charts) {
+      financialChartsWorker.postMessage(
+        {
+          calendarView,
+          financialMetricsDocument,
+          selectedDateFinancialMetrics,
+          selectedYYYYMMDD,
+        },
+      );
+    }
+  }, [
+    financialChartsWorker,
+    calendarView,
+    selectedYYYYMMDD,
+    storeLocation,
+    financialMetricsDocument,
+  ]);
+
+  useEffect(() => {
+    const newFinancialChartsWorker = new FinancialChartsWorker();
+
+    financialMetricsDispatch({
+      action: financialMetricsAction.setFinancialChartsWorker,
+      payload: newFinancialChartsWorker,
+    });
+
+    newFinancialChartsWorker.onmessage = async (
+      event: MessageEventFinancialWorkerToMain,
+    ) => {
+      await handleMessageEventFinancialWorkerToMain({
+        event,
+        isComponentMountedRef,
+        financialMetricsDispatch,
+        showBoundary,
+      });
+    };
+
+    return () => {
+      newFinancialChartsWorker.terminate();
+      isComponentMountedRef.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     isComponentMountedRef.current = true;
     const isMounted = isComponentMountedRef.current;
 
     async function generateFinancialChartsCards() {
-      financialMetricsDispatch({
-        action: financialMetricsAction.setIsGenerating,
-        payload: true,
-      });
-
       try {
-        const selectedDateFinancialMetrics = returnSelectedDateFinancialMetrics(
-          {
-            financialMetricsDocument,
-            day: selectedDate,
-            month: selectedMonth,
-            months: MONTHS,
-            storeLocation: storeLocationView,
-            year: selectedYear,
-          },
-        );
-
-        const {
-          currentYear,
-          previousYear,
-        } = await createFinancialMetricsCalendarCharts(
-          calendarView,
-          selectedDateFinancialMetrics,
-          selectedYYYYMMDD,
-        );
-
-        const financialMetricsCharts = await createFinancialMetricsCharts({
-          financialMetricsDocument,
-          months: MONTHS,
-          selectedDateFinancialMetrics,
-          storeLocation: storeLocationView,
-        });
-
         const financialMetricsCards = await createFinancialMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -121,26 +156,8 @@ function FinancialMetrics(
         }
 
         financialMetricsDispatch({
-          action: financialMetricsAction.setCalendarChartsData,
-          payload: {
-            currentYear,
-            previousYear,
-          },
-        });
-
-        financialMetricsDispatch({
           action: financialMetricsAction.setCards,
           payload: financialMetricsCards,
-        });
-
-        financialMetricsDispatch({
-          action: financialMetricsAction.setCharts,
-          payload: financialMetricsCharts,
-        });
-
-        financialMetricsDispatch({
-          action: financialMetricsAction.setIsGenerating,
-          payload: false,
         });
       } catch (error: any) {
         if (!isMounted) {
@@ -158,16 +175,25 @@ function FinancialMetrics(
     return () => {
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendarView, selectedYYYYMMDD, storeLocationView, themeObject]);
+  }, [
+    calendarView,
+    financialChartsWorker,
+    selectedYYYYMMDD,
+    storeLocation,
+    themeObject,
+    financialMetricsDocument,
+  ]);
 
-  if (!financialMetricsDocument || !cards || !charts) {
+  if (
+    !calendarChartsData.currentYear || !calendarChartsData.previousYear ||
+    !financialMetricsDocument || !cards || !charts || isGenerating
+  ) {
     return null;
   }
 
   const overviewMetrics = returnOverviewFinancialMetrics(
     financialMetricsDocument,
-    storeLocationView,
+    storeLocation,
     selectedYYYYMMDD,
   );
 
@@ -175,7 +201,7 @@ function FinancialMetrics(
     returnFinancialMetricsOverviewCards({
       overviewMetrics,
       selectedYYYYMMDD,
-      storeLocationView,
+      storeLocation,
     });
 
   const subCategoryPage = PERT_SET.has(financialMetricCategory)
@@ -190,7 +216,7 @@ function FinancialMetrics(
         metricCategory={financialMetricCategory}
         metricsView="Financials"
         pertOverviewCards={pertOverviewCards[calendarView]}
-        storeLocation={storeLocationView}
+        storeLocation={storeLocation}
         year={selectedYear}
       />
     )
@@ -205,7 +231,7 @@ function FinancialMetrics(
         metricCategory={financialMetricCategory}
         metricsView="Financials"
         otherMetricsOverviewCards={otherMetricsOverviewCards[calendarView]}
-        storeLocation={storeLocationView}
+        storeLocation={storeLocation}
         year={selectedYear}
       />
     );

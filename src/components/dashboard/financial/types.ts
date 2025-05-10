@@ -1,8 +1,11 @@
+import { FinancialMetricsDocument, SafeBoxResult } from "../../../types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { FinancialMetricsAction } from "./actions";
 import { FinancialMetricsCards } from "./cards";
 import {
   FinancialMetricsCalendarCharts,
   FinancialMetricsCharts,
+  SelectedDateFinancialMetrics,
 } from "./chartsData";
 
 type FinancialMetricCategory =
@@ -19,8 +22,28 @@ type FinancialMetricsState = {
   };
   cards: FinancialMetricsCards | null;
   charts: FinancialMetricsCharts | null;
+  financialChartsWorker: Worker | null;
   isGenerating: boolean;
 };
+
+type MessageEventFinancialWorkerToMain = MessageEvent<
+  SafeBoxResult<
+    {
+      currentYear: FinancialMetricsCalendarCharts;
+      previousYear: FinancialMetricsCalendarCharts;
+      financialMetricsCharts: FinancialMetricsCharts;
+    }
+  >
+>;
+type MessageEventFinancialMainToWorker = MessageEvent<
+  {
+    calendarView: DashboardCalendarView;
+    financialMetricsDocument: FinancialMetricsDocument;
+    selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
+    selectedYYYYMMDD: string;
+    storeLocation: AllStoreLocations;
+  }
+>;
 
 type FinancialMetricsDispatch =
   | {
@@ -37,6 +60,10 @@ type FinancialMetricsDispatch =
   | {
     action: FinancialMetricsAction["setCharts"];
     payload: FinancialMetricsCharts;
+  }
+  | {
+    action: FinancialMetricsAction["setFinancialChartsWorker"];
+    payload: Worker;
   }
   | {
     action: FinancialMetricsAction["setIsGenerating"];
@@ -74,4 +101,6 @@ export type {
   FinancialMetricsDispatch,
   FinancialMetricsState,
   FinancialYAxisVariables,
+  MessageEventFinancialMainToWorker,
+  MessageEventFinancialWorkerToMain,
 };

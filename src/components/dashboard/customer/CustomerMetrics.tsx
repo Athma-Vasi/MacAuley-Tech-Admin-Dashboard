@@ -1,10 +1,13 @@
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
 import { COLORS_SWATCHES } from "../../../constants";
+import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { CustomerMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
+import { MessageEventCustomerWorkerToMain } from "../../../workers/customerChartsWorker";
+import CustomerChartsWorker from "../../../workers/customerChartsWorker?worker";
 import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
@@ -14,12 +17,9 @@ import type {
 } from "../types";
 import { customerMetricsAction } from "./actions";
 import { createCustomerMetricsCards } from "./cards";
-import {
-  createCustomerMetricsCalendarCharts,
-  createCustomerMetricsCharts,
-  returnSelectedDateCustomerMetrics,
-} from "./chartsData";
+import { returnSelectedDateCustomerMetrics } from "./chartsData";
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
+import { handleMessageEventCustomerWorkerToMain } from "./handlers";
 import New from "./new/New";
 import { customerMetricsReducer } from "./reducers";
 import Returning from "./returning/Returning";
@@ -36,7 +36,7 @@ type CustomerMetricsProps = {
   customerMetricsDocument: CustomerMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
-  storeLocationView: AllStoreLocations;
+  storeLocation: AllStoreLocations;
   selectedYear: Year;
   selectedYYYYMMDD: string;
 };
@@ -50,15 +50,20 @@ function CustomerMetrics(
     selectedMonth,
     selectedYYYYMMDD,
     selectedYear,
-    storeLocationView,
+    storeLocation,
   }: CustomerMetricsProps,
 ) {
   const [customerMetricsState, customerMetricsDispatch] = useReducer(
     customerMetricsReducer,
     initialCustomerMetricsState,
   );
-  const { calendarChartsData, cards, charts, isGenerating } =
-    customerMetricsState;
+  const {
+    calendarChartsData,
+    cards,
+    charts,
+    customerChartsWorker,
+    isGenerating,
+  } = customerMetricsState;
 
   const {
     globalState: { themeObject },
@@ -71,39 +76,73 @@ function CustomerMetrics(
     themeObject,
   });
 
-  const isComponentMountedRef = useRef(false);
+  const isComponentMountedRef = useMountedRef();
+
+  const selectedDateCustomerMetrics = returnSelectedDateCustomerMetrics({
+    customerMetricsDocument,
+    day: selectedDate,
+    month: selectedMonth,
+    months: MONTHS,
+    year: selectedYear,
+  });
+
+  console.log("selectedDateCustomerMetrics", selectedDateCustomerMetrics);
+
+  useEffect(() => {
+    if (!customerChartsWorker) {
+      return;
+    }
+
+    if (customerMetricsDocument || !cards || !charts) {
+      customerChartsWorker.postMessage(
+        {
+          calendarView,
+          customerMetricsDocument,
+          selectedDateCustomerMetrics,
+          selectedYYYYMMDD,
+        },
+      );
+    }
+  }, [
+    customerChartsWorker,
+    calendarView,
+    selectedYYYYMMDD,
+    storeLocation,
+    customerMetricsDocument,
+    themeObject,
+  ]);
+
+  useEffect(() => {
+    const newCustomerChartsWorker = new CustomerChartsWorker();
+
+    customerMetricsDispatch({
+      action: customerMetricsAction.setCustomerChartsWorker,
+      payload: newCustomerChartsWorker,
+    });
+
+    newCustomerChartsWorker.onmessage = async (
+      event: MessageEventCustomerWorkerToMain,
+    ) => {
+      await handleMessageEventCustomerWorkerToMain({
+        event,
+        isComponentMountedRef,
+        customerMetricsDispatch,
+        showBoundary,
+      });
+    };
+
+    return () => {
+      newCustomerChartsWorker.terminate();
+      isComponentMountedRef.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     isComponentMountedRef.current = true;
     const isMounted = isComponentMountedRef.current;
 
     async function generateCustomerChartsCards() {
-      customerMetricsDispatch({
-        action: customerMetricsAction.setIsGenerating,
-        payload: true,
-      });
-
       try {
-        const selectedDateCustomerMetrics = returnSelectedDateCustomerMetrics({
-          customerMetricsDocument,
-          day: selectedDate,
-          month: selectedMonth,
-          months: MONTHS,
-          year: selectedYear,
-        });
-
-        const { currentYear, previousYear } =
-          await createCustomerMetricsCalendarCharts(
-            calendarView,
-            selectedDateCustomerMetrics,
-            selectedYYYYMMDD,
-          );
-
-        const customerMetricsCharts = await createCustomerMetricsCharts({
-          customerMetricsDocument,
-          months: MONTHS,
-          selectedDateCustomerMetrics,
-        });
-
         const customerMetricsCards = await createCustomerMetricsCards({
           cardBgGradient,
           greenColorShade,
@@ -116,26 +155,8 @@ function CustomerMetrics(
         }
 
         customerMetricsDispatch({
-          action: customerMetricsAction.setCalendarChartsData,
-          payload: {
-            currentYear,
-            previousYear,
-          },
-        });
-
-        customerMetricsDispatch({
           action: customerMetricsAction.setCards,
           payload: customerMetricsCards,
-        });
-
-        customerMetricsDispatch({
-          action: customerMetricsAction.setCharts,
-          payload: customerMetricsCharts,
-        });
-
-        customerMetricsDispatch({
-          action: customerMetricsAction.setIsGenerating,
-          payload: false,
         });
       } catch (error: any) {
         if (!isMounted) {
@@ -146,15 +167,20 @@ function CustomerMetrics(
       }
     }
 
-    if (!cards || !charts) {
+    if (customerMetricsDocument || !cards || !charts) {
       generateCustomerChartsCards();
     }
 
     return () => {
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendarView, selectedYYYYMMDD, storeLocationView, themeObject]);
+  }, [
+    customerMetricsDocument,
+    calendarView,
+    selectedYYYYMMDD,
+    storeLocation,
+    themeObject,
+  ]);
 
   if (!customerMetricsDocument || !cards || !charts) {
     return null;
@@ -169,7 +195,7 @@ function CustomerMetrics(
     returnCustomerMetricsOverviewCards({
       overviewMetrics,
       selectedYYYYMMDD,
-      storeLocationView,
+      storeLocation,
     });
 
   const newCustomers = (
@@ -183,7 +209,7 @@ function CustomerMetrics(
       metricCategory={customerMetricsCategory}
       metricsView="Customers"
       newOverviewCards={newOverviewCards[calendarView]}
-      storeLocation={storeLocationView}
+      storeLocation={storeLocation}
       year={selectedYear}
     />
   );
@@ -199,7 +225,7 @@ function CustomerMetrics(
       metricCategory={customerMetricsCategory}
       metricsView="Customers"
       returningOverviewCards={returningOverviewCards[calendarView]}
-      storeLocation={storeLocationView}
+      storeLocation={storeLocation}
       year={selectedYear}
     />
   );
@@ -215,7 +241,7 @@ function CustomerMetrics(
       month={selectedYYYYMMDD.split("-")[1]}
       metricCategory={customerMetricsCategory}
       metricsView="Customers"
-      storeLocation={storeLocationView}
+      storeLocation={storeLocation}
       year={selectedYear}
     />
   );

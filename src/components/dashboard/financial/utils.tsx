@@ -13,7 +13,7 @@ type OverviewFinancialMetrics = {
 
 function returnOverviewFinancialMetrics(
   financialMetricsDocument: FinancialMetricsDocument,
-  storeLocationView: AllStoreLocations,
+  storeLocation: AllStoreLocations,
   selectedYYYYMMDD: string,
 ) {
   const defaultValue: OverviewFinancialMetrics = {
@@ -53,7 +53,7 @@ function returnOverviewFinancialMetrics(
     string,
   ];
   // const financialMetrics = businessMetrics.find(
-  //   (bmetric) => bmetric.storeLocation === storeLocationView,
+  //   (bmetric) => bmetric.storeLocation === storeLocation,
   // )?.financialMetrics;
   // if (financialMetrics === null || financialMetrics === undefined) {
   //   return defaultValue;
@@ -114,11 +114,11 @@ function returnFinancialMetricsOverviewCards(
   {
     overviewMetrics,
     selectedYYYYMMDD,
-    storeLocationView,
+    storeLocation,
   }: {
     overviewMetrics: OverviewFinancialMetrics;
     selectedYYYYMMDD: string;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
   },
 ) {
   const initialAcc: {
@@ -161,7 +161,7 @@ function returnFinancialMetricsOverviewCards(
             const overviewRevenueCard = createOverviewMetricCard({
               calendarView,
               selectedYYYYMMDD,
-              storeLocationView,
+              storeLocation,
               subMetric: "Revenue",
               unit: "CAD",
               value: metric.revenue,
@@ -169,7 +169,7 @@ function returnFinancialMetricsOverviewCards(
             const overviewProfitCard = createOverviewMetricCard({
               calendarView,
               selectedYYYYMMDD,
-              storeLocationView,
+              storeLocation,
               subMetric: "Profit",
               unit: "CAD",
               value: metric.profit,
@@ -196,7 +196,7 @@ function returnFinancialMetricsOverviewCards(
             const overviewNetProfitMarginCard = createOverviewMetricCard({
               calendarView,
               selectedYYYYMMDD,
-              storeLocationView,
+              storeLocation,
               subMetric: "Net Profit Margin",
               unit: "%",
               value: metric.netProfitMargin,
@@ -204,7 +204,7 @@ function returnFinancialMetricsOverviewCards(
             const overviewAverageOrderValueCard = createOverviewMetricCard({
               calendarView,
               selectedYYYYMMDD,
-              storeLocationView,
+              storeLocation,
               subMetric: "Average Order Value",
               unit: "CAD",
               value: metric.averageOrderValue,

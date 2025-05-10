@@ -532,15 +532,15 @@ function createMetricsForageKey(
     metricsView,
     productMetricCategory,
     repairMetricCategory,
-    storeLocationView,
+    storeLocation,
   }: {
     metricsView: string;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
   },
 ) {
-  return `${metricsView}/${storeLocationView}${
+  return `${metricsView}/${storeLocation}${
     metricsView === "repairs" ? "/" + repairMetricCategory : metricsView ===
         "products"
       ? "/" + productMetricCategory

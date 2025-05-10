@@ -13,6 +13,7 @@ import type { DashboardState } from "./types";
 const initialDashboardState: DashboardState = {
   // selectedYYYYMMDD:
   //   `${initialSelectedYear}-${initialSelectedMonth}-${initialSelectedDate}`,
+  dashboardFetchWorker: null,
   selectedYYYYMMDD: "2025-03-31",
   isLoading: false,
   loadingMessage: "Generating metrics... Please wait...",

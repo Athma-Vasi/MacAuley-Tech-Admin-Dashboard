@@ -40,7 +40,7 @@ type ProductMetricsProps = {
   selectedMonth: Month;
   selectedYYYYMMDD: string;
   selectedYear: Year;
-  storeLocationView: AllStoreLocations;
+  storeLocation: AllStoreLocations;
 };
 
 function ProductMetrics(
@@ -53,7 +53,7 @@ function ProductMetrics(
     selectedMonth,
     selectedYYYYMMDD,
     selectedYear,
-    storeLocationView,
+    storeLocation,
   }: ProductMetricsProps,
 ) {
   const [productMetricsState, productMetricsDispatch] = useReducer(
@@ -101,7 +101,7 @@ function ProductMetrics(
     productChartsWorker,
     calendarView,
     selectedYYYYMMDD,
-    storeLocationView,
+    storeLocation,
     productMetricCategory,
     productMetricsDocument,
   ]);
@@ -136,11 +136,6 @@ function ProductMetrics(
     const isMounted = isComponentMountedRef.current;
 
     async function generateProductChartsCards() {
-      productMetricsDispatch({
-        action: productMetricsAction.setIsGenerating,
-        payload: true,
-      });
-
       const { cardBgGradient, redColorShade, greenColorShade } =
         returnThemeColors({
           colorsSwatches: COLORS_SWATCHES,
@@ -163,11 +158,6 @@ function ProductMetrics(
           action: productMetricsAction.setCards,
           payload: productMetricsCards,
         });
-
-        productMetricsDispatch({
-          action: productMetricsAction.setIsGenerating,
-          payload: false,
-        });
       } catch (error: any) {
         if (!isMounted) {
           return;
@@ -189,7 +179,7 @@ function ProductMetrics(
     productMetricCategory,
     productMetricsDocument,
     selectedYYYYMMDD,
-    storeLocationView,
+    storeLocation,
     themeObject,
   ]);
 
@@ -206,7 +196,7 @@ function ProductMetrics(
   const overviewCards = returnProductMetricsOverviewCards({
     overviewMetrics,
     selectedYYYYMMDD,
-    storeLocationView,
+    storeLocation,
   });
 
   const revenueUnitsSold = (
@@ -220,7 +210,7 @@ function ProductMetrics(
       productCategory={productMetricCategory}
       productMetricsCards={cards}
       productMetricsCharts={charts}
-      storeLocation={storeLocationView}
+      storeLocation={storeLocation}
       subMetric={productSubMetricCategory}
       year={selectedYear}
     />

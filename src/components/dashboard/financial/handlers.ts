@@ -1,19 +1,19 @@
 import { createSafeBoxResult } from "../../../utils";
-import { productMetricsAction } from "./actions";
+import { financialMetricsAction } from "./actions";
 import {
-    MessageEventProductWorkerToMain,
-    ProductMetricsDispatch,
+    FinancialMetricsDispatch,
+    MessageEventFinancialWorkerToMain,
 } from "./types";
 
-async function handleMessageEventProductWorkerToMain({
+async function handleMessageEventFinancialWorkerToMain({
     event,
     isComponentMountedRef,
-    productMetricsDispatch,
+    financialMetricsDispatch,
     showBoundary,
 }: {
-    event: MessageEventProductWorkerToMain;
+    event: MessageEventFinancialWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
-    productMetricsDispatch: React.Dispatch<ProductMetricsDispatch>;
+    financialMetricsDispatch: React.Dispatch<FinancialMetricsDispatch>;
     showBoundary: (error: unknown) => void;
 }) {
     try {
@@ -44,24 +44,24 @@ async function handleMessageEventProductWorkerToMain({
 
         console.log({ dataUnwrapped });
 
-        const { currentYear, previousYear, productMetricsCharts } =
+        const { currentYear, previousYear, financialMetricsCharts } =
             dataUnwrapped;
 
         if (!isComponentMountedRef.current) {
             return;
         }
 
-        productMetricsDispatch({
-            action: productMetricsAction.setCalendarChartsData,
+        financialMetricsDispatch({
+            action: financialMetricsAction.setCalendarChartsData,
             payload: {
                 currentYear,
                 previousYear,
             },
         });
 
-        productMetricsDispatch({
-            action: productMetricsAction.setCharts,
-            payload: productMetricsCharts,
+        financialMetricsDispatch({
+            action: financialMetricsAction.setCharts,
+            payload: financialMetricsCharts,
         });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
@@ -72,4 +72,4 @@ async function handleMessageEventProductWorkerToMain({
     }
 }
 
-export { handleMessageEventProductWorkerToMain };
+export { handleMessageEventFinancialWorkerToMain };

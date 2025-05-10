@@ -6,9 +6,10 @@ import {
   CustomerMetricsCharts,
 } from "./chartsData";
 import {
-  setCustomerCalendarChartsDispatchZod,
-  setCustomerChartsDispatch,
-  setCustomerIsGeneratingDispatch,
+  setCalendarChartsCustomerMetricsDispatchZod,
+  setChartsCustomerMetricsDispatchZod,
+  setChartsWorkerCustomerMetricsDispatchZod,
+  setIsGeneratingCustomerMetricsDispatchZod,
 } from "./schemas";
 import { CustomerMetricsDispatch, CustomerMetricsState } from "./types";
 
@@ -34,6 +35,10 @@ const customerMetricsReducers = new Map<
   [customerMetricsAction.setCards, customerMetricsReducer_setCards],
   [customerMetricsAction.setCharts, customerMetricsReducer_setCharts],
   [
+    customerMetricsAction.setCustomerChartsWorker,
+    customerMetricsReducer_setCustomerChartsWorker,
+  ],
+  [
     customerMetricsAction.setIsGenerating,
     customerMetricsReducer_setIsGenerating,
   ],
@@ -45,7 +50,7 @@ function customerMetricsReducer_setCalendarChartsData(
 ): CustomerMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setCustomerCalendarChartsDispatchZod,
+    zSchema: setCalendarChartsCustomerMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -81,7 +86,7 @@ function customerMetricsReducer_setCharts(
 ): CustomerMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setCustomerChartsDispatch,
+    zSchema: setChartsCustomerMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -94,13 +99,32 @@ function customerMetricsReducer_setCharts(
   };
 }
 
+function customerMetricsReducer_setCustomerChartsWorker(
+  state: CustomerMetricsState,
+  dispatch: CustomerMetricsDispatch,
+): CustomerMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setChartsWorkerCustomerMetricsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    customerChartsWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+  };
+}
+
 function customerMetricsReducer_setIsGenerating(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setCustomerIsGeneratingDispatch,
+    zSchema: setIsGeneratingCustomerMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -118,5 +142,6 @@ export {
   customerMetricsReducer_setCalendarChartsData,
   customerMetricsReducer_setCards,
   customerMetricsReducer_setCharts,
+  customerMetricsReducer_setCustomerChartsWorker,
   customerMetricsReducer_setIsGenerating,
 };

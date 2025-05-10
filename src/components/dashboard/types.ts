@@ -5,12 +5,15 @@ import type {
   SafeBoxResult,
   StoreLocation,
 } from "../../types";
+import { RoutesZodSchemasMapKey } from "../../workers/constants";
 import type { DashboardAction } from "./actions";
 import {
   FinancialMetricsBarLineChartsKey,
   FinancialMetricsCalendarChartsKeyPERT,
   FinancialMetricsPieChartsKey,
 } from "./financial/chartsData";
+import { ProductMetricCategory } from "./product/types";
+import { RepairMetricCategory } from "./repair/types";
 
 type DashboardCalendarView = "Daily" | "Monthly" | "Yearly";
 type DashboardMetricsView = "Financials" | "Customers" | "Products" | "Repairs";
@@ -27,18 +30,6 @@ type DashboardCustomerMetric =
   | "Other Metrics";
 type DashboardProductMetric = ProductCategory | "All Products";
 type DashboardRepairMetric = RepairCategory | "All Repairs";
-
-type DashboardMessageEvent = MessageEvent<
-  SafeBoxResult<
-    {
-      decodedToken: DecodedToken;
-      parsedServerResponse: HttpServerResponse<
-        BusinessMetricsDocument
-      >;
-      metricsView?: Lowercase<DashboardMetricsView>;
-    }
-  >
->;
 
 type DashboardState = {
   calendarView: DashboardCalendarView;
@@ -241,7 +232,7 @@ type ProductMetric = {
   yearlyMetrics: ProductYearlyMetric[];
 };
 
-type ProductMetricCategory = {
+type ProductMetricCategoryBase = {
   total: number;
   online: number;
   inStore: number;
@@ -249,24 +240,24 @@ type ProductMetricCategory = {
 
 type ProductYearlyMetric = {
   year: Year;
-  revenue: ProductMetricCategory;
-  unitsSold: ProductMetricCategory;
+  revenue: ProductMetricCategoryBase;
+  unitsSold: ProductMetricCategoryBase;
 
   monthlyMetrics: ProductMonthlyMetric[];
 };
 
 type ProductMonthlyMetric = {
   month: Month;
-  revenue: ProductMetricCategory;
-  unitsSold: ProductMetricCategory;
+  revenue: ProductMetricCategoryBase;
+  unitsSold: ProductMetricCategoryBase;
 
   dailyMetrics: ProductDailyMetric[];
 };
 
 type ProductDailyMetric = {
   day: string;
-  revenue: ProductMetricCategory;
-  unitsSold: ProductMetricCategory;
+  revenue: ProductMetricCategoryBase;
+  unitsSold: ProductMetricCategoryBase;
 };
 
 type RepairMetric = {
@@ -331,7 +322,6 @@ export type {
   DashboardCustomerMetric,
   DashboardDispatch,
   DashboardFinancialMetric,
-  DashboardMessageEvent,
   DashboardMetricsView,
   DashboardProductMetric,
   DashboardRepairMetric,

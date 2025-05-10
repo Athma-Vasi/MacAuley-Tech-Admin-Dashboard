@@ -6,9 +6,10 @@ import {
   FinancialMetricsCharts,
 } from "./chartsData";
 import {
-  setFinancialCalendarChartsDispatchZod,
-  setFinancialChartsDispatchZod,
-  setIsGeneratingDispatchZod,
+  setCalendarChartsFinancialMetricsDispatchZod,
+  setChartsFinancialMetricsDispatchZod,
+  setChartsWorkerFinancialMetricsDispatchZod,
+  setIsGeneratingFinancialMetricsDispatchZod,
 } from "./schemas";
 import { FinancialMetricsDispatch, FinancialMetricsState } from "./types";
 
@@ -34,6 +35,10 @@ const financialMetricsReducers = new Map<
   [financialMetricsAction.setCards, financialMetricsReducer_setCards],
   [financialMetricsAction.setCharts, financialMetricsReducer_setCharts],
   [
+    financialMetricsAction.setFinancialChartsWorker,
+    financialMetricsReducer_setFinancialChartsWorker,
+  ],
+  [
     financialMetricsAction.setIsGenerating,
     financialMetricsReducer_setIsGenerating,
   ],
@@ -45,7 +50,7 @@ function financialMetricsReducer_setCalendarChartsData(
 ): FinancialMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setFinancialCalendarChartsDispatchZod,
+    zSchema: setCalendarChartsFinancialMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -81,7 +86,7 @@ function financialMetricsReducer_setCharts(
 ): FinancialMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setFinancialChartsDispatchZod,
+    zSchema: setChartsFinancialMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -94,13 +99,32 @@ function financialMetricsReducer_setCharts(
   };
 }
 
+function financialMetricsReducer_setFinancialChartsWorker(
+  state: FinancialMetricsState,
+  dispatch: FinancialMetricsDispatch,
+): FinancialMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setChartsWorkerFinancialMetricsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    financialChartsWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+  };
+}
+
 function financialMetricsReducer_setIsGenerating(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsGeneratingDispatchZod,
+    zSchema: setIsGeneratingFinancialMetricsDispatchZod,
   });
 
   if (parsedResult.err) {

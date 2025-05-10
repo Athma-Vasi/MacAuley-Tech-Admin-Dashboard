@@ -1,19 +1,17 @@
 import { createSafeBoxResult } from "../../../utils";
-import { productMetricsAction } from "./actions";
-import {
-    MessageEventProductWorkerToMain,
-    ProductMetricsDispatch,
-} from "./types";
+import { MessageEventCustomerWorkerToMain } from "../../../workers/customerChartsWorker";
+import { customerMetricsAction } from "./actions";
+import { CustomerMetricsDispatch } from "./types";
 
-async function handleMessageEventProductWorkerToMain({
+async function handleMessageEventCustomerWorkerToMain({
     event,
     isComponentMountedRef,
-    productMetricsDispatch,
+    customerMetricsDispatch,
     showBoundary,
 }: {
-    event: MessageEventProductWorkerToMain;
+    event: MessageEventCustomerWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
-    productMetricsDispatch: React.Dispatch<ProductMetricsDispatch>;
+    customerMetricsDispatch: React.Dispatch<CustomerMetricsDispatch>;
     showBoundary: (error: unknown) => void;
 }) {
     try {
@@ -44,32 +42,46 @@ async function handleMessageEventProductWorkerToMain({
 
         console.log({ dataUnwrapped });
 
-        const { currentYear, previousYear, productMetricsCharts } =
+        const { currentYear, previousYear, customerMetricsCharts } =
             dataUnwrapped;
 
         if (!isComponentMountedRef.current) {
-            return;
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
         }
 
-        productMetricsDispatch({
-            action: productMetricsAction.setCalendarChartsData,
+        customerMetricsDispatch({
+            action: customerMetricsAction.setCalendarChartsData,
             payload: {
                 currentYear,
                 previousYear,
             },
         });
 
-        productMetricsDispatch({
-            action: productMetricsAction.setCharts,
-            payload: productMetricsCharts,
+        customerMetricsDispatch({
+            action: customerMetricsAction.setCharts,
+            payload: customerMetricsCharts,
+        });
+
+        return createSafeBoxResult({
+            data: true,
+            kind: "success",
         });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
-            return;
+            return createSafeBoxResult({
+                data: error,
+                kind: "error",
+            });
         }
 
         showBoundary(error);
+        return createSafeBoxResult({
+            data: error,
+            kind: "error",
+        });
     }
 }
 
-export { handleMessageEventProductWorkerToMain };
+export { handleMessageEventCustomerWorkerToMain };

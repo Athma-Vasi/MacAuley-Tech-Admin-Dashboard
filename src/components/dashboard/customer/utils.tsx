@@ -70,7 +70,7 @@ function returnOverviewCustomerMetrics(
     string,
   ];
   // const customerMetrics = businessMetrics.find(
-  //   (bmetric) => bmetric.storeLocation === storeLocationView,
+  //   (bmetric) => bmetric.storeLocation === storeLocation,
   // )?.customerMetrics;
   // if (customerMetrics === null || customerMetrics === undefined) {
   //   return defaultValue;
@@ -134,10 +134,10 @@ function returnOverviewCustomerMetrics(
 }
 
 function returnCustomerMetricsOverviewCards(
-  { overviewMetrics, selectedYYYYMMDD, storeLocationView }: {
+  { overviewMetrics, selectedYYYYMMDD, storeLocation }: {
     overviewMetrics: OverviewCustomerMetrics;
     selectedYYYYMMDD: string;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
   },
 ) {
   const initialAcc: {
@@ -184,7 +184,7 @@ function returnCustomerMetricsOverviewCards(
         const overviewTotalCard = createOverviewMetricCard({
           calendarView,
           selectedYYYYMMDD,
-          storeLocationView,
+          storeLocation,
           subMetric: metricType === "newOverview"
             ? "New Customers"
             : "Returning Customers",
@@ -195,7 +195,7 @@ function returnCustomerMetricsOverviewCards(
         const overviewSalesCard = createOverviewMetricCard({
           calendarView,
           selectedYYYYMMDD,
-          storeLocationView,
+          storeLocation,
           subMetric: metricType === "newOverview"
             ? "New Customers Sales"
             : "Returning Customers Sales",
@@ -223,7 +223,7 @@ function returnCustomerMetricsOverviewCards(
         const overviewChurnRateCard = createOverviewMetricCard({
           calendarView,
           selectedYYYYMMDD,
-          storeLocationView,
+          storeLocation,
           subMetric: "Churn Rate",
           unit: "",
           value: metrics.churnRate,
@@ -232,7 +232,7 @@ function returnCustomerMetricsOverviewCards(
         const overviewRetentionRateCard = createOverviewMetricCard({
           calendarView,
           selectedYYYYMMDD,
-          storeLocationView,
+          storeLocation,
           subMetric: "Retention Rate",
           unit: "",
           value: metrics.retentionRate,

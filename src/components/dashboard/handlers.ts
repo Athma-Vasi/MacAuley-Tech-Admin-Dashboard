@@ -21,6 +21,7 @@ import {
     responseToJSONSafe,
     SetForageItemSafe,
 } from "../../utils";
+import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import { dashboardAction } from "./actions";
 import { customerMetricsDocumentZod } from "./customer/schemas";
 import { financialMetricsDocumentZod } from "./financial/schemas";
@@ -31,7 +32,6 @@ import { RepairMetricCategory } from "./repair/types";
 import {
     AllStoreLocations,
     DashboardDispatch,
-    DashboardMessageEvent,
     DashboardMetricsView,
 } from "./types";
 
@@ -48,7 +48,7 @@ async function handleStoreAndCategoryClicks(
         productMetricCategory,
         repairMetricCategory,
         showBoundary,
-        storeLocationView,
+        storeLocation,
     }: {
         accessToken: string;
         dashboardDispatch: React.Dispatch<DashboardDispatch>;
@@ -61,7 +61,7 @@ async function handleStoreAndCategoryClicks(
         productMetricCategory: ProductMetricCategory;
         repairMetricCategory: RepairMetricCategory;
         showBoundary: (error: any) => void;
-        storeLocationView: AllStoreLocations;
+        storeLocation: AllStoreLocations;
     },
 ) {
     const requestInit: RequestInit = {
@@ -72,7 +72,7 @@ async function handleStoreAndCategoryClicks(
         },
     };
 
-    const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+    const storeLocationQuery = `&storeLocation[$eq]=${storeLocation}`;
 
     const metricCategoryQuery = metricsView === "products"
         ? `&metricCategory[$eq]=${productMetricCategory}`
@@ -93,7 +93,7 @@ async function handleStoreAndCategoryClicks(
         metricsView,
         productMetricCategory,
         repairMetricCategory,
-        storeLocationView,
+        storeLocation,
     });
 
     try {
@@ -149,18 +149,34 @@ async function handleStoreAndCategoryClicks(
 
             return createSafeBoxResult({
                 data: {
-                    newAccessToken: "",
+                    newAccessToken: accessToken,
                     businessMetricsDocument: metricsDocument,
                 },
                 kind: "success",
             });
         }
 
+        /**
+         * {
+        metricsView: Lowercase<DashboardMetricsView>;
+        productMetricCategory?: ProductMetricCategory;
+        repairMetricCategory?: RepairMetricCategory;
+        requestInit: RequestInit;
+        routesZodSchemaMapKey: RoutesZodSchemasMapKey;
+        skipTokenDecode?: boolean;
+        storeLocation: AllStoreLocations;
+        url: string;
+    }
+         */
+
         dashboardFetchWorker?.postMessage(
             {
                 metricsView,
+                productMetricCategory,
+                repairMetricCategory,
                 requestInit,
                 routesZodSchemaMapKey: "dashboard",
+                storeLocation,
                 url: urlWithQuery.toString(),
             },
         );
@@ -193,23 +209,17 @@ async function handleStoreAndCategoryClicksOnmessageCallback(
         globalDispatch,
         isComponentMountedRef,
         navigateFn,
-        productMetricCategory,
-        repairMetricCategory,
         setForageItemSafe,
         showBoundary,
-        storeLocationView,
     }: {
         authDispatch: React.Dispatch<AuthDispatch>;
         dashboardDispatch: React.Dispatch<DashboardDispatch>;
-        event: DashboardMessageEvent;
+        event: MessageEventMetricsWorkerToMain;
         globalDispatch: React.Dispatch<GlobalDispatch>;
         isComponentMountedRef: React.RefObject<boolean>;
         navigateFn: NavigateFunction;
-        productMetricCategory: ProductMetricCategory;
-        repairMetricCategory: RepairMetricCategory;
         setForageItemSafe: SetForageItemSafe;
         showBoundary: (error: any) => void;
-        storeLocationView: AllStoreLocations;
     },
 ) {
     try {
@@ -234,10 +244,20 @@ async function handleStoreAndCategoryClicksOnmessageCallback(
             });
         }
 
+        console.log(
+            "handleStoreAndCategoryClicksOnmessageCallback dataUnwrapped",
+            {
+                dataUnwrapped,
+            },
+        );
+
         const {
             parsedServerResponse,
             decodedToken,
-            metricsView = "financials",
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            storeLocation,
         } = dataUnwrapped;
 
         const { accessToken: newAccessToken, triggerLogout } =
@@ -307,12 +327,24 @@ async function handleStoreAndCategoryClicksOnmessageCallback(
             });
         }
 
+        console.log(
+            "handleStoreAndCategoryClicksOnmessageCallback",
+            {
+                metricsView,
+                productMetricCategory,
+                repairMetricCategory,
+                storeLocation,
+            },
+        );
+
         const forageKey = createMetricsForageKey({
             metricsView,
             productMetricCategory,
             repairMetricCategory,
-            storeLocationView,
+            storeLocation,
         });
+
+        console.log({ forageKey });
 
         const setForageItemResult = await setForageItemSafe<
             BusinessMetricsDocument
@@ -369,7 +401,7 @@ async function handleStoreCategoryClick(
         repairMetricCategory,
         setForageItemSafe,
         showBoundary,
-        storeLocationView,
+        storeLocation,
     }: {
         accessToken: string;
         authDispatch: React.Dispatch<AuthDispatch>;
@@ -385,7 +417,7 @@ async function handleStoreCategoryClick(
         repairMetricCategory: RepairMetricCategory;
         setForageItemSafe: SetForageItemSafe;
         showBoundary: (error: any) => void;
-        storeLocationView: AllStoreLocations;
+        storeLocation: AllStoreLocations;
     },
 ): Promise<
     SafeBoxResult<
@@ -411,7 +443,7 @@ async function handleStoreCategoryClick(
         },
     };
 
-    const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+    const storeLocationQuery = `&storeLocation[$eq]=${storeLocation}`;
 
     const metricCategoryQuery = metricsView === "products"
         ? `&metricCategory[$eq]=${productMetricCategory}`
@@ -427,7 +459,7 @@ async function handleStoreCategoryClick(
         metricsView,
         productMetricCategory,
         repairMetricCategory,
-        storeLocationView,
+        storeLocation,
     });
 
     dashboardDispatch({

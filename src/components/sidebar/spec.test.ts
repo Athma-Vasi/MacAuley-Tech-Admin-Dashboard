@@ -32,7 +32,7 @@ type DashboardTestMockInput = {
     metricsView: Lowercase<DashboardMetricsView>;
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
     testKind: "success" | "error";
 };
 
@@ -41,7 +41,7 @@ async function handleMetricCategoryNavlinkClickTestMock(
         metricsView,
         productMetricCategory,
         repairMetricCategory,
-        storeLocationView,
+        storeLocation,
         testKind,
     }: DashboardTestMockInput,
 ): Promise<
@@ -89,7 +89,7 @@ async function handleMetricCategoryNavlinkClickTestMock(
                 productMetricCategory,
                 repairMetricCategory,
                 showBoundary,
-                storeLocationView,
+                storeLocation,
             });
 
         if (handleMetricCategoryNavlinkClickResult.err) {
@@ -122,7 +122,7 @@ async function handleMetricCategoryNavlinkClickTestMock(
             metricsView: ${metricsView}
             productMetricCategory: ${productMetricCategory}
             repairMetricCategory: ${repairMetricCategory}
-            storeLocationView: ${storeLocationView}
+            storeLocation: ${storeLocation}
             `,
             () => {
                 if (testKind === "success") {
@@ -134,7 +134,7 @@ async function handleMetricCategoryNavlinkClickTestMock(
                         expect(businessMetricsDocument).to.have
                             .property("storeLocation");
                         expect(businessMetricsDocument.storeLocation)
-                            .to.equal(storeLocationView);
+                            .to.equal(storeLocation);
                     });
                 } else {
                     it("should return undefined", () => {
@@ -218,12 +218,12 @@ function generateDashbaordQueryParamsPermutations(): DashboardQueryParamsPermuta
                 shuffledRepairMetricCategories.forEach(
                     (repairMetricCategory) => {
                         shuffledStoreLocationViews.forEach(
-                            (storeLocationView) => {
+                            (storeLocation) => {
                                 acc.validPermutations.push({
                                     metricsView,
                                     productMetricCategory,
                                     repairMetricCategory,
-                                    storeLocationView,
+                                    storeLocation,
                                     testKind: "success",
                                 });
 
@@ -238,7 +238,7 @@ function generateDashbaordQueryParamsPermutations(): DashboardQueryParamsPermuta
                                         .toLowerCase() as ProductMetricCategory,
                                     repairMetricCategory: repairMetricCategory
                                         .toLowerCase() as RepairMetricCategory,
-                                    storeLocationView: storeLocationView
+                                    storeLocation: storeLocation
                                         .toLowerCase() as AllStoreLocations,
                                     testKind: "error",
                                 });
@@ -274,14 +274,14 @@ await Promise.all(
             metricsView,
             productMetricCategory,
             repairMetricCategory,
-            storeLocationView,
+            storeLocation,
             testKind,
         }) => {
             await handleMetricCategoryNavlinkClickTestMock({
                 metricsView,
                 productMetricCategory,
                 repairMetricCategory,
-                storeLocationView,
+                storeLocation,
                 testKind,
             });
         },
@@ -294,14 +294,14 @@ await Promise.all(
             metricsView,
             productMetricCategory,
             repairMetricCategory,
-            storeLocationView,
+            storeLocation,
             testKind,
         }) => {
             await handleMetricCategoryNavlinkClickTestMock({
                 metricsView,
                 productMetricCategory,
                 repairMetricCategory,
-                storeLocationView,
+                storeLocation,
                 testKind,
             });
         },

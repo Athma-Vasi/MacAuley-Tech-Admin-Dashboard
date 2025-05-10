@@ -699,15 +699,14 @@ function returnStatisticsModals(
 }
 
 function createOverviewMetricCard(
-  { calendarView, selectedYYYYMMDD, storeLocationView, subMetric, unit, value }:
-    {
-      calendarView: DashboardCalendarView;
-      selectedYYYYMMDD: string;
-      storeLocationView: AllStoreLocations;
-      subMetric: string;
-      unit: "CAD" | "%" | "Units" | "";
-      value: number;
-    },
+  { calendarView, selectedYYYYMMDD, storeLocation, subMetric, unit, value }: {
+    calendarView: DashboardCalendarView;
+    selectedYYYYMMDD: string;
+    storeLocation: AllStoreLocations;
+    subMetric: string;
+    unit: "CAD" | "%" | "Units" | "";
+    value: number;
+  },
 ) {
   const [year, month, _day] = selectedYYYYMMDD.split("-");
   const date = calendarView === "Daily"
@@ -737,7 +736,7 @@ function createOverviewMetricCard(
           {splitCamelCase(subMetric)}
         </Text>
         <Text size={20} mb={5}>
-          {storeLocationView}
+          {storeLocation}
         </Text>
         <Text size={16} mb={5}>
           {date}

@@ -1,6 +1,17 @@
 import { z } from "zod";
+import { ProductMetricCategory } from "../components/dashboard/product/types";
+import { RepairMetricCategory } from "../components/dashboard/repair/types";
+import {
+    AllStoreLocations,
+    DashboardMetricsView,
+} from "../components/dashboard/types";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
-import { HttpServerResponse } from "../types";
+import {
+    BusinessMetricsDocument,
+    DecodedToken,
+    HttpServerResponse,
+    SafeBoxResult,
+} from "../types";
 import {
     createSafeBoxResult,
     decodeJWTSafe,
@@ -10,24 +21,42 @@ import {
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
+type MessageEventMetricsMainToWorker = MessageEvent<
+    {
+        metricsView: Lowercase<DashboardMetricsView>;
+        productMetricCategory: ProductMetricCategory;
+        repairMetricCategory: RepairMetricCategory;
+        requestInit: RequestInit;
+        routesZodSchemaMapKey: RoutesZodSchemasMapKey;
+        storeLocation: AllStoreLocations;
+        url: string;
+    }
+>;
+
+type MessageEventMetricsWorkerToMain = MessageEvent<
+    SafeBoxResult<{
+        decodedToken: DecodedToken;
+        metricsView: Lowercase<DashboardMetricsView>;
+        parsedServerResponse: HttpServerResponse<BusinessMetricsDocument>;
+        productMetricCategory: ProductMetricCategory;
+        repairMetricCategory: RepairMetricCategory;
+        storeLocation: AllStoreLocations;
+    }>
+>;
+
 self.onmessage = async (
-    event: MessageEvent<
-        {
-            requestInit: RequestInit;
-            routesZodSchemaMapKey: RoutesZodSchemasMapKey;
-            skipTokenDecode?: boolean;
-            url: string;
-        }
-    >,
+    event: MessageEventMetricsMainToWorker,
 ) => {
     console.log(
-        "Worker received message in self:",
-        JSON.stringify(event.data, null, 2),
+        "Worker received message in self",
     );
     const {
+        metricsView,
+        productMetricCategory,
+        repairMetricCategory,
         requestInit,
         routesZodSchemaMapKey,
-        skipTokenDecode,
+        storeLocation,
         url,
     } = event.data;
     const controller = new AbortController();
@@ -109,14 +138,6 @@ self.onmessage = async (
             return;
         }
 
-        if (skipTokenDecode) {
-            self.postMessage(createSafeBoxResult({
-                data: { parsedServerResponse },
-                kind: "success",
-            }));
-            return;
-        }
-
         const { accessToken } = parsedServerResponse;
 
         const decodedTokenResult = await decodeJWTSafe(accessToken);
@@ -137,7 +158,14 @@ self.onmessage = async (
         }
 
         self.postMessage(createSafeBoxResult({
-            data: { parsedServerResponse, decodedToken },
+            data: {
+                decodedToken,
+                metricsView,
+                parsedServerResponse,
+                productMetricCategory,
+                repairMetricCategory,
+                storeLocation,
+            },
             kind: "success",
         }));
     } catch (err) {
@@ -148,4 +176,9 @@ self.onmessage = async (
     } finally {
         clearTimeout(timeout);
     }
+};
+
+export type {
+    MessageEventMetricsMainToWorker,
+    MessageEventMetricsWorkerToMain,
 };

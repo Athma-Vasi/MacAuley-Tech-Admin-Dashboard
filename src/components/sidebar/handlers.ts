@@ -25,6 +25,7 @@ import {
   responseToJSONSafe,
   setForageItemSafe,
 } from "../../utils";
+import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import { customerMetricsDocumentZod } from "../dashboard/customer/schemas";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { productMetricsDocumentZod } from "../dashboard/product/schemas";
@@ -34,11 +35,7 @@ import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { DepartmentsWithDefaultKey } from "../directory/types";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
-import {
-  DirectoryMessageEvent,
-  LogoutMessageEvent,
-  MetricsMessageEvent,
-} from "./types";
+import { DirectoryMessageEvent, LogoutMessageEvent } from "./types";
 import { createDirectoryForageKey } from "./utils";
 
 async function handleMetricCategoryOnmessageCallback({
@@ -47,20 +44,14 @@ async function handleMetricCategoryOnmessageCallback({
   globalDispatch,
   isComponentMountedRef,
   navigate,
-  productMetricCategory,
-  repairMetricCategory,
   showBoundary,
-  storeLocationView,
 }: {
   authDispatch: React.Dispatch<AuthDispatch>;
-  event: MetricsMessageEvent;
+  event: MessageEventMetricsWorkerToMain;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   navigate: NavigateFunction;
-  productMetricCategory: ProductMetricCategory;
-  repairMetricCategory: RepairMetricCategory;
   showBoundary: (error: any) => void;
-  storeLocationView: AllStoreLocations;
 }) {
   try {
     if (!isComponentMountedRef.current) {
@@ -84,8 +75,14 @@ async function handleMetricCategoryOnmessageCallback({
       });
     }
 
-    const { metricsView = "financials", parsedServerResponse, decodedToken } =
-      dataUnwrapped;
+    const {
+      metricsView,
+      parsedServerResponse,
+      decodedToken,
+      productMetricCategory,
+      repairMetricCategory,
+      storeLocation,
+    } = dataUnwrapped;
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;
 
@@ -176,7 +173,7 @@ async function handleMetricCategoryOnmessageCallback({
           metricsView,
           productMetricCategory,
           repairMetricCategory,
-          storeLocationView,
+          storeLocation,
         });
 
         await setForageItemSafe<BusinessMetricsDocument>(
@@ -228,7 +225,7 @@ async function handleMetricCategoryNavClick(
     productMetricCategory,
     repairMetricCategory,
     showBoundary,
-    storeLocationView,
+    storeLocation,
     toLocation,
   }: {
     accessToken: string;
@@ -241,7 +238,7 @@ async function handleMetricCategoryNavClick(
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: any) => void;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
     toLocation: string;
   },
 ) {
@@ -253,7 +250,7 @@ async function handleMetricCategoryNavClick(
     },
   };
 
-  const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+  const storeLocationQuery = `&storeLocation[$eq]=${storeLocation}`;
   const metricCategoryQuery = metricsView === "products"
     ? `&metricCategory[$eq]=${productMetricCategory}`
     : metricsView === "repairs"
@@ -267,7 +264,7 @@ async function handleMetricCategoryNavClick(
     metricsView,
     productMetricCategory,
     repairMetricCategory,
-    storeLocationView,
+    storeLocation,
   });
 
   globalDispatch({
@@ -348,8 +345,9 @@ async function handleMetricCategoryNavClick(
 
     metricsFetchWorker?.postMessage({
       metricsView,
+      productMetricCategory,
+      repairMetricCategory,
       requestInit,
-      url: urlWithQuery.toString(),
       routesZodSchemaMapKey: metricsView === "products"
         ? "productMetrics"
         : metricsView === "repairs"
@@ -357,6 +355,8 @@ async function handleMetricCategoryNavClick(
         : metricsView === "financials"
         ? "financialMetrics"
         : "customerMetrics",
+      storeLocation,
+      url: urlWithQuery.toString(),
     });
 
     return createSafeBoxResult({
@@ -392,7 +392,7 @@ async function handleMetricCategoryNavlinkClick(
     productMetricCategory,
     repairMetricCategory,
     showBoundary,
-    storeLocationView,
+    storeLocation,
     toLocation,
   }: {
     accessToken: string;
@@ -406,7 +406,7 @@ async function handleMetricCategoryNavlinkClick(
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: any) => void;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
     toLocation: string;
   },
 ): Promise<
@@ -431,7 +431,7 @@ async function handleMetricCategoryNavlinkClick(
     },
   };
 
-  const storeLocationQuery = `&storeLocation[$eq]=${storeLocationView}`;
+  const storeLocationQuery = `&storeLocation[$eq]=${storeLocation}`;
 
   const metricCategoryQuery = metricsView === "products"
     ? `&metricCategory[$eq]=${productMetricCategory}`
@@ -447,7 +447,7 @@ async function handleMetricCategoryNavlinkClick(
     metricsView,
     productMetricCategory,
     repairMetricCategory,
-    storeLocationView,
+    storeLocation,
   });
 
   globalDispatch({

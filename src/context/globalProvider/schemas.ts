@@ -111,7 +111,7 @@ const setSelectedYYYYMMDDGlobalDispatchZod = z.object({
 });
 
 const setStoreLocationViewGlobalDispatchZod = z.object({
-    action: z.literal(globalAction.setStoreLocationView),
+    action: z.literal(globalAction.setStoreLocation),
     payload: z.enum([
         "All Locations",
         "Calgary",

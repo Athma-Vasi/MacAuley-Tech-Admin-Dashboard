@@ -83,10 +83,10 @@ function returnOverviewAllProductsMetrics(
 }
 
 function returnProductMetricsOverviewCards(
-  { overviewMetrics, selectedYYYYMMDD, storeLocationView }: {
+  { overviewMetrics, selectedYYYYMMDD, storeLocation }: {
     overviewMetrics: OverviewAllProductsMetrics;
     selectedYYYYMMDD: string;
-    storeLocationView: AllStoreLocations;
+    storeLocation: AllStoreLocations;
   },
 ) {
   const initialAcc: Record<DashboardCalendarView, React.JSX.Element> = {
@@ -106,7 +106,7 @@ function returnProductMetricsOverviewCards(
       const overviewRevenueCard = createOverviewMetricCard({
         calendarView,
         selectedYYYYMMDD,
-        storeLocationView,
+        storeLocation,
         subMetric: "Revenue",
         unit: "CAD",
         value: revenue,
@@ -114,7 +114,7 @@ function returnProductMetricsOverviewCards(
       const overviewUnitsSoldCard = createOverviewMetricCard({
         calendarView,
         selectedYYYYMMDD,
-        storeLocationView,
+        storeLocation,
         subMetric: "Units Sold",
         unit: "Units",
         value: unitsSold,

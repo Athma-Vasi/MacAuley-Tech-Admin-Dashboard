@@ -22,6 +22,7 @@ type CustomerMetricsState = {
   };
   cards: CustomerMetricsCards | null;
   charts: CustomerMetricsCharts | null;
+  customerChartsWorker: Worker | null;
   isGenerating: boolean;
 };
 
@@ -40,6 +41,10 @@ type CustomerMetricsDispatch =
   | {
     action: CustomerMetricsAction["setCharts"];
     payload: CustomerMetricsCharts;
+  }
+  | {
+    action: CustomerMetricsAction["setCustomerChartsWorker"];
+    payload: Worker;
   }
   | {
     action: CustomerMetricsAction["setIsGenerating"];

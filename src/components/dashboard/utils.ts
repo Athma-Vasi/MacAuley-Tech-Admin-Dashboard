@@ -3704,12 +3704,12 @@ function splitSelectedCalendarDate({
 }
 
 function returnIsTabDisabled(
-  storeLocationView: AllStoreLocations,
+  storeLocation: AllStoreLocations,
   selectedYear: Year,
 ) {
   const yearNumber = isNaN(Number(selectedYear)) ? 0 : Number(selectedYear);
 
-  switch (storeLocationView) {
+  switch (storeLocation) {
     case "Calgary": {
       return yearNumber < 2017;
     }

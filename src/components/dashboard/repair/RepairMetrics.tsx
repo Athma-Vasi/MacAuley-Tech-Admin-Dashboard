@@ -34,7 +34,7 @@ type RepairMetricsProps = {
   repairMetricsDocument: RepairMetricsDocument;
   selectedDate: string;
   selectedMonth: Month;
-  storeLocationView: AllStoreLocations;
+  storeLocation: AllStoreLocations;
   selectedYear: Year;
   selectedYYYYMMDD: string;
 };
@@ -48,7 +48,7 @@ function RepairMetrics(
     selectedMonth,
     selectedYYYYMMDD,
     selectedYear,
-    storeLocationView,
+    storeLocation,
   }: RepairMetricsProps,
 ) {
   const [repairMetricsState, repairMetricsDispatch] = useReducer(
@@ -103,7 +103,7 @@ function RepairMetrics(
     repairChartsWorker,
     calendarView,
     selectedYYYYMMDD,
-    storeLocationView,
+    storeLocation,
     repairMetricCategory,
     repairMetricsDocument,
   ]);
@@ -138,11 +138,6 @@ function RepairMetrics(
     const isMounted = isComponentMountedRef.current;
 
     async function generateRepairChartsCards() {
-      repairMetricsDispatch({
-        action: repairMetricsAction.setIsGenerating,
-        payload: true,
-      });
-
       try {
         const repairMetricsCards = await createRepairMetricsCards({
           cardBgGradient,
@@ -158,11 +153,6 @@ function RepairMetrics(
         repairMetricsDispatch({
           action: repairMetricsAction.setCards,
           payload: repairMetricsCards,
-        });
-
-        repairMetricsDispatch({
-          action: repairMetricsAction.setIsGenerating,
-          payload: false,
         });
       } catch (error: any) {
         if (!isMounted) {
@@ -185,7 +175,7 @@ function RepairMetrics(
     repairMetricCategory,
     repairMetricsDocument,
     selectedYYYYMMDD,
-    storeLocationView,
+    storeLocation,
     themeObject,
   ]);
 
@@ -202,7 +192,7 @@ function RepairMetrics(
   const overviewCards = createOverviewRepairMetricsCards({
     overviewMetrics,
     selectedYYYYMMDD,
-    storeLocationView,
+    storeLocation,
   });
 
   const revenueUnitsSold = (
@@ -216,7 +206,7 @@ function RepairMetrics(
       repairMetricsCards={cards}
       repairMetricsCharts={charts}
       repairOverviewCards={overviewCards[calendarView]}
-      storeLocation={storeLocationView}
+      storeLocation={storeLocation}
       year={selectedYear}
     />
   );

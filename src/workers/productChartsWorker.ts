@@ -10,8 +10,7 @@ self.onmessage = async (
     event: MessageEventProductMainToWorker,
 ) => {
     console.log(
-        "Product Charts Worker received message in self:",
-        JSON.stringify(event.data),
+        "Product Charts Worker received message in self",
     );
 
     if (!event.data) {
