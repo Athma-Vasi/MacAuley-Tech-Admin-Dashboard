@@ -6,6 +6,7 @@ import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
+import { MessageEventFinancialWorkerToMain } from "../../../workers/financialChartsWorker";
 import FinancialChartsWorker from "../../../workers/financialChartsWorker?worker";
 import { MONTHS } from "../constants";
 import type {
@@ -23,10 +24,7 @@ import OtherMetrics from "./otherMetrics/OtherMetrics";
 import PERT from "./pert/PERT";
 import { financialMetricsReducer } from "./reducers";
 import { initialFinancialMetricsState } from "./state";
-import {
-  FinancialMetricCategory,
-  MessageEventFinancialWorkerToMain,
-} from "./types";
+import { FinancialMetricCategory } from "./types";
 import {
   returnFinancialMetricsOverviewCards,
   returnOverviewFinancialMetrics,
@@ -105,6 +103,7 @@ function FinancialMetrics(
         },
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     financialChartsWorker,
     calendarView,
@@ -136,6 +135,7 @@ function FinancialMetrics(
       newFinancialChartsWorker.terminate();
       isComponentMountedRef.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -175,6 +175,7 @@ function FinancialMetrics(
     return () => {
       isComponentMountedRef.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     calendarView,
     financialChartsWorker,

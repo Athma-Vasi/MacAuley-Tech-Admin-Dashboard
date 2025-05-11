@@ -2,9 +2,35 @@ import { MONTHS } from "../components/dashboard/constants";
 import {
     createFinancialMetricsCalendarCharts,
     createFinancialMetricsCharts,
+    FinancialMetricsCalendarCharts,
+    FinancialMetricsCharts,
+    SelectedDateFinancialMetrics,
 } from "../components/dashboard/financial/chartsData";
-import { MessageEventFinancialMainToWorker } from "../components/dashboard/financial/types";
+import {
+    AllStoreLocations,
+    DashboardCalendarView,
+} from "../components/dashboard/types";
+import { FinancialMetricsDocument, SafeBoxResult } from "../types";
 import { createSafeBoxResult } from "../utils";
+
+type MessageEventFinancialWorkerToMain = MessageEvent<
+    SafeBoxResult<
+        {
+            currentYear: FinancialMetricsCalendarCharts;
+            previousYear: FinancialMetricsCalendarCharts;
+            financialMetricsCharts: FinancialMetricsCharts;
+        }
+    >
+>;
+type MessageEventFinancialMainToWorker = MessageEvent<
+    {
+        calendarView: DashboardCalendarView;
+        financialMetricsDocument: FinancialMetricsDocument;
+        selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
+        selectedYYYYMMDD: string;
+        storeLocation: AllStoreLocations;
+    }
+>;
 
 self.onmessage = async (
     event: MessageEventFinancialMainToWorker,
@@ -73,3 +99,8 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
         message: `Promise error: ${event.reason?.message || event.reason}`,
     }));
 });
+
+export type {
+    MessageEventFinancialMainToWorker,
+    MessageEventFinancialWorkerToMain,
+};

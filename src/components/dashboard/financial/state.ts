@@ -7,6 +7,7 @@ const initialFinancialMetricsState: FinancialMetricsState = {
   },
   cards: null,
   charts: null,
+  financialChartsWorker: null,
   isGenerating: false,
 };
 

@@ -26,25 +26,6 @@ type FinancialMetricsState = {
   isGenerating: boolean;
 };
 
-type MessageEventFinancialWorkerToMain = MessageEvent<
-  SafeBoxResult<
-    {
-      currentYear: FinancialMetricsCalendarCharts;
-      previousYear: FinancialMetricsCalendarCharts;
-      financialMetricsCharts: FinancialMetricsCharts;
-    }
-  >
->;
-type MessageEventFinancialMainToWorker = MessageEvent<
-  {
-    calendarView: DashboardCalendarView;
-    financialMetricsDocument: FinancialMetricsDocument;
-    selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
-    selectedYYYYMMDD: string;
-    storeLocation: AllStoreLocations;
-  }
->;
-
 type FinancialMetricsDispatch =
   | {
     action: FinancialMetricsAction["setCalendarChartsData"];
@@ -101,6 +82,4 @@ export type {
   FinancialMetricsDispatch,
   FinancialMetricsState,
   FinancialYAxisVariables,
-  MessageEventFinancialMainToWorker,
-  MessageEventFinancialWorkerToMain,
 };

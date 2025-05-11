@@ -1,9 +1,7 @@
 import { createSafeBoxResult } from "../../../utils";
+import { MessageEventFinancialWorkerToMain } from "../../../workers/financialChartsWorker";
 import { financialMetricsAction } from "./actions";
-import {
-    FinancialMetricsDispatch,
-    MessageEventFinancialWorkerToMain,
-} from "./types";
+import { FinancialMetricsDispatch } from "./types";
 
 async function handleMessageEventFinancialWorkerToMain({
     event,
@@ -63,12 +61,24 @@ async function handleMessageEventFinancialWorkerToMain({
             action: financialMetricsAction.setCharts,
             payload: financialMetricsCharts,
         });
+
+        return createSafeBoxResult({
+            data: true,
+            kind: "success",
+        });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
-            return;
+            return createSafeBoxResult({
+                data: error,
+                message: "Component unmounted",
+            });
         }
 
         showBoundary(error);
+        return createSafeBoxResult({
+            data: error,
+            message: "Error in worker",
+        });
     }
 }
 

@@ -7,6 +7,7 @@ const initialCustomerMetricsState: CustomerMetricsState = {
   },
   cards: null,
   charts: null,
+  customerChartsWorker: null,
   isGenerating: false,
 };
 
