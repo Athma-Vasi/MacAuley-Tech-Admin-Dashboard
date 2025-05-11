@@ -7,6 +7,7 @@ import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { RepairMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
+import { MessageEventRepairWorkerToMain } from "../../../workers/repairChartsWorker";
 import RepairChartsWorker from "../../../workers/repairChartsWorker?worker";
 import { MONTHS } from "../constants";
 import type {
@@ -22,7 +23,7 @@ import { handleMessageEventRepairWorkerToMain } from "./handlers";
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
-import { MessageEventRepairWorkerToMain, RepairMetricCategory } from "./types";
+import { RepairMetricCategory } from "./types";
 import {
   createOverviewRepairMetricsCards,
   returnOverviewRepairMetrics,

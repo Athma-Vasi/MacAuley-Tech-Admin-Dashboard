@@ -38,7 +38,7 @@ const repairMetricsDocumentZod = z.object({
     ),
 });
 
-const setRepairCalendarChartsDataDispatchZod = z.object({
+const setCalendarChartsDataRepairMetricsDispatchZod = z.object({
     action: z.literal(repairMetricsAction.setCalendarChartsData),
     payload: z.object({
         currentYear: z.object({
@@ -148,7 +148,7 @@ const repairMetricsLineChartsZod = z.object({
     ),
 });
 
-const setRepairChartsDispatchZod = z.object({
+const setChartsRepairMetricsDispatchZod = z.object({
     action: z.literal(repairMetricsAction.setCharts),
     payload: z.object({
         dailyCharts: z.object({
@@ -166,21 +166,21 @@ const setRepairChartsDispatchZod = z.object({
     }),
 });
 
-const setIsGeneratingDispatchZod = z.object({
+const setIsGeneratingRepairMetricsDispatchZod = z.object({
     action: z.literal(repairMetricsAction.setIsGenerating),
     payload: z.boolean(),
 });
 
-const setRepairChartsWorkerRepairMetricsDispatchZod = z.object({
+const setChartsWorkerRepairMetricsDispatchZod = z.object({
     action: z.literal(repairMetricsAction.setRepairChartsWorker),
     payload: z.instanceof(Worker),
 });
 
 export {
-    setIsGeneratingDispatchZod,
-    setRepairCalendarChartsDataDispatchZod,
-    setRepairChartsDispatchZod,
-    setRepairChartsWorkerRepairMetricsDispatchZod,
+    setCalendarChartsDataRepairMetricsDispatchZod,
+    setChartsRepairMetricsDispatchZod,
+    setChartsWorkerRepairMetricsDispatchZod,
+    setIsGeneratingRepairMetricsDispatchZod,
 };
 
 /**

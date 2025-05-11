@@ -1,6 +1,7 @@
 import { createSafeBoxResult } from "../../../utils";
+import { MessageEventRepairWorkerToMain } from "../../../workers/repairChartsWorker";
 import { repairMetricsAction } from "./actions";
-import { MessageEventRepairWorkerToMain, RepairMetricsDispatch } from "./types";
+import { RepairMetricsDispatch } from "./types";
 
 async function handleMessageEventRepairWorkerToMain({
     event,
@@ -60,12 +61,24 @@ async function handleMessageEventRepairWorkerToMain({
             action: repairMetricsAction.setCharts,
             payload: repairMetricsCharts,
         });
+
+        return createSafeBoxResult({
+            data: true,
+            kind: "success",
+        });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
-            return;
+            return createSafeBoxResult({
+                data: error,
+                message: "Component unmounted",
+            });
         }
 
         showBoundary(error);
+        return createSafeBoxResult({
+            data: error,
+            message: "Error in worker",
+        });
     }
 }
 

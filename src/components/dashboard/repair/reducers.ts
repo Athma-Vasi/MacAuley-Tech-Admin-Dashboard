@@ -3,11 +3,12 @@ import { RepairMetricsAction, repairMetricsAction } from "./actions";
 import { RepairMetricsCards } from "./cards";
 import { RepairMetricCalendarCharts, RepairMetricsCharts } from "./chartsData";
 import {
-  setIsGeneratingDispatchZod,
-  setRepairCalendarChartsDataDispatchZod,
-  setRepairChartsDispatchZod,
-  setRepairChartsWorkerRepairMetricsDispatchZod,
+  setCalendarChartsDataRepairMetricsDispatchZod,
+  setChartsRepairMetricsDispatchZod,
+  setChartsWorkerRepairMetricsDispatchZod,
+  setIsGeneratingRepairMetricsDispatchZod,
 } from "./schemas";
+
 import { RepairMetricsDispatch, RepairMetricsState } from "./types";
 
 function repairMetricsReducer(
@@ -44,7 +45,7 @@ function repairMetricsReducer_setCalendarChartsData(
 ): RepairMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setRepairCalendarChartsDataDispatchZod,
+    zSchema: setCalendarChartsDataRepairMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -80,7 +81,7 @@ function repairMetricsReducer_setCharts(
 ): RepairMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setRepairChartsDispatchZod,
+    zSchema: setChartsRepairMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -99,7 +100,7 @@ function repairMetricsReducer_setIsGenerating(
 ): RepairMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsGeneratingDispatchZod,
+    zSchema: setIsGeneratingRepairMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -118,7 +119,7 @@ function repairMetricsReducer_setRepairChartsWorker(
 ): RepairMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setRepairChartsWorkerRepairMetricsDispatchZod,
+    zSchema: setChartsWorkerRepairMetricsDispatchZod,
   });
 
   if (parsedResult.err) {

@@ -2,9 +2,31 @@ import { MONTHS } from "../components/dashboard/constants";
 import {
     createRepairMetricsCalendarCharts,
     createRepairMetricsCharts,
+    RepairMetricCalendarCharts,
+    RepairMetricsCharts,
+    SelectedDateRepairMetrics,
 } from "../components/dashboard/repair/chartsData";
-import { MessageEventRepairMainToWorker } from "../components/dashboard/repair/types";
+import { DashboardCalendarView } from "../components/dashboard/types";
+import { RepairMetricsDocument, SafeBoxResult } from "../types";
 import { createSafeBoxResult } from "../utils";
+
+type MessageEventRepairWorkerToMain = MessageEvent<
+    SafeBoxResult<
+        {
+            currentYear: RepairMetricCalendarCharts;
+            previousYear: RepairMetricCalendarCharts;
+            repairMetricsCharts: RepairMetricsCharts;
+        }
+    >
+>;
+type MessageEventRepairMainToWorker = MessageEvent<
+    {
+        calendarView: DashboardCalendarView;
+        repairMetricsDocument: RepairMetricsDocument;
+        selectedDateRepairMetrics: SelectedDateRepairMetrics;
+        selectedYYYYMMDD: string;
+    }
+>;
 
 self.onmessage = async (
     event: MessageEventRepairMainToWorker,
@@ -71,3 +93,5 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
         message: `Promise error: ${event.reason?.message || event.reason}`,
     }));
 });
+
+export type { MessageEventRepairMainToWorker, MessageEventRepairWorkerToMain };
