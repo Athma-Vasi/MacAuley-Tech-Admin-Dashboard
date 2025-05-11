@@ -23,13 +23,13 @@ import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
+import { MessageEventLoginWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
 import { handleLoginClick, loginOnmessageCallback } from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
-import { LoginMessageEvent } from "./types";
 
 function Login() {
   const [loginState, loginDispatch] = useReducer(
@@ -37,6 +37,7 @@ function Login() {
     initialLoginState,
   );
   const {
+    errorMessage,
     isLoading,
     isSubmitting,
     isSuccessful,
@@ -58,8 +59,6 @@ function Login() {
     usernameRef.current?.focus();
   }, []);
 
-  // const fetchAbortControllerRef = useRef<AbortController | null>(null);
-  // const isComponentMountedRef = useRef(false);
   const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
@@ -82,7 +81,7 @@ function Login() {
     });
 
     newFetchParseWorker.onmessage = async (
-      event: LoginMessageEvent,
+      event: MessageEventLoginWorkerToMain,
     ) => {
       await loginOnmessageCallback({
         event,
@@ -113,6 +112,10 @@ function Login() {
           action: loginAction.setUsername,
           payload: event.currentTarget.value,
         });
+        loginDispatch({
+          action: loginAction.setErrorMessage,
+          payload: "",
+        });
       }}
       ref={usernameRef}
       required
@@ -130,12 +133,16 @@ function Login() {
           action: loginAction.setPassword,
           payload: event.currentTarget.value,
         });
+        loginDispatch({
+          action: loginAction.setErrorMessage,
+          payload: "",
+        });
       }}
       required
     />
   );
 
-  const { bgGradient, themeColorShade } = returnThemeColors({
+  const { redColorShade, bgGradient, themeColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -143,6 +150,7 @@ function Login() {
   const loginButton = (
     <AccessibleButton
       attributes={{
+        dataTestId: "login-button",
         kind: "submit",
         leftIcon: isSubmitting
           ? (
@@ -216,12 +224,30 @@ function Login() {
     <Flex align="center" justify="center" columnGap="sm">
       <Text>Don&apos;t have an account?</Text>
       <Text>
-        <Link to="/register" style={{ color: themeColorShade }}>
+        <Link
+          to="/register"
+          style={{ color: themeColorShade }}
+          data-testid="register-link"
+        >
           Create one!
         </Link>
       </Text>
     </Flex>
   );
+
+  const errorMessageElem = errorMessage
+    ? (
+      <Text
+        color={redColorShade}
+        data-testid="login-error-message"
+        truncate
+        w="100%"
+        pl="md"
+      >
+        Invalid credentials
+      </Text>
+    )
+    : null;
 
   const card = (
     <Card
@@ -237,6 +263,8 @@ function Login() {
       </Text>
 
       {displayInputs}
+
+      {errorMessageElem}
 
       <Group w="100%" position="center">{displayLoginButton}</Group>
       <Group w="100%" position="center">{displayLinkToRegister}</Group>

@@ -2,12 +2,13 @@ import { parseSafeSync } from "../../utils";
 import { type LoginAction, loginAction } from "./actions";
 import {
   LoginDispatch,
-  setIsLoadingDispatchZod,
-  setIsSubmittingDispatchZod,
-  setIsSuccessfulDispatchZod,
-  setLoginFetchWorkerDispatchZod,
-  setPasswordDispatchZod,
-  setUsernameDispatchZod,
+  setErrorMessageLoginDispatchZod,
+  setIsLoadingLoginDispatchZod,
+  setIsSubmittingLoginDispatchZod,
+  setIsSuccessfulLoginDispatchZod,
+  setLoginFetchWorkerLoginDispatchZod,
+  setPasswordLoginDispatchZod,
+  setUsernameLoginDispatchZod,
 } from "./schemas";
 import type { LoginState } from "./types";
 
@@ -23,6 +24,7 @@ const loginReducersMap = new Map<
   LoginAction[keyof LoginAction],
   (state: LoginState, dispatch: LoginDispatch) => LoginState
 >([
+  [loginAction.setErrorMessage, loginReducer_setErrorMessage],
   [loginAction.setIsLoading, loginReducer_setIsLoading],
   [loginAction.setIsSubmitting, loginReducer_setIsSubmitting],
   [loginAction.setIsSuccessful, loginReducer_setIsSuccessful],
@@ -31,6 +33,27 @@ const loginReducersMap = new Map<
   [loginAction.setUsername, loginReducer_setUsername],
 ]);
 
+function loginReducer_setErrorMessage(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSafeSync(
+    {
+      object: dispatch,
+      zSchema: setErrorMessageLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return {
+    ...state,
+    errorMessage: parsedResult.safeUnwrap().data.payload,
+  };
+}
+
 function loginReducer_setIsLoading(
   state: LoginState,
   dispatch: LoginDispatch,
@@ -38,7 +61,7 @@ function loginReducer_setIsLoading(
   const parsedResult = parseSafeSync(
     {
       object: dispatch,
-      zSchema: setIsLoadingDispatchZod,
+      zSchema: setIsLoadingLoginDispatchZod,
     },
   );
 
@@ -59,7 +82,7 @@ function loginReducer_setIsSubmitting(
   const parsedResult = parseSafeSync(
     {
       object: dispatch,
-      zSchema: setIsSubmittingDispatchZod,
+      zSchema: setIsSubmittingLoginDispatchZod,
     },
   );
 
@@ -80,7 +103,7 @@ function loginReducer_setIsSuccessful(
   const parsedResult = parseSafeSync(
     {
       object: dispatch,
-      zSchema: setIsSuccessfulDispatchZod,
+      zSchema: setIsSuccessfulLoginDispatchZod,
     },
   );
 
@@ -101,7 +124,7 @@ function loginReducer_setLoginFetchWorker(
   const parsedResult = parseSafeSync(
     {
       object: dispatch,
-      zSchema: setLoginFetchWorkerDispatchZod,
+      zSchema: setLoginFetchWorkerLoginDispatchZod,
     },
   );
 
@@ -122,7 +145,7 @@ function loginReducer_setPassword(
   const parsedResult = parseSafeSync(
     {
       object: dispatch,
-      zSchema: setPasswordDispatchZod,
+      zSchema: setPasswordLoginDispatchZod,
     },
   );
 
@@ -143,7 +166,7 @@ function loginReducer_setUsername(
   const parsedResult = parseSafeSync(
     {
       object: dispatch,
-      zSchema: setUsernameDispatchZod,
+      zSchema: setUsernameLoginDispatchZod,
     },
   );
 

@@ -84,6 +84,7 @@ type AccessibleButtonKind =
 
 type AccessibleButtonAttributes = ButtonProps & {
   compact?: boolean;
+  dataTestId?: string;
   disabled?: boolean;
   disabledScreenreaderText?: string;
   enabledScreenreaderText?: string;
@@ -133,6 +134,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     compact = false,
     disabled = false,
     disabledScreenreaderText,
+    dataTestId,
     enabledScreenreaderText,
     index,
     isTooltip = true,
@@ -220,6 +222,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
       aria-label={name}
       color={color}
       compact={compact}
+      data-testid={dataTestId}
       disabled={disabled}
       leftIcon={leftIcon}
       name={name}

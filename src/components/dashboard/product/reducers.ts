@@ -6,10 +6,10 @@ import {
   ProductMetricsCharts,
 } from "./chartsData";
 import {
-  setIsGeneratingProductDispatchZod,
-  setProductCalendarChartsDataProductDispatchZod,
-  setProductChartsProductDispatchZod,
-  setProductChartsWorkerProductDispatchZod,
+  setCalendarChartsDataProductMetricsDispatchZod,
+  setChartsProductMetricsDispatchZod,
+  setChartsWorkerProductMetricsDispatchZod,
+  setIsGeneratingProductMetricsDispatchZod,
 } from "./schemas";
 import { ProductMetricsDispatch, ProductMetricsState } from "./types";
 
@@ -47,7 +47,7 @@ function productMetricsReducer_setCalendarChartsData(
 ): ProductMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setProductCalendarChartsDataProductDispatchZod,
+    zSchema: setCalendarChartsDataProductMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -83,7 +83,7 @@ function productMetricsReducer_setCharts(
 ): ProductMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setProductChartsProductDispatchZod,
+    zSchema: setChartsProductMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -102,7 +102,7 @@ function productMetricsReducer_setIsGenerating(
 ): ProductMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setIsGeneratingProductDispatchZod,
+    zSchema: setIsGeneratingProductMetricsDispatchZod,
   });
 
   if (parsedResult.err) {
@@ -121,7 +121,7 @@ function productMetricsReducer_setProductChartsWorker(
 ): ProductMetricsState {
   const parsedResult = parseSafeSync({
     object: dispatch,
-    zSchema: setProductChartsWorkerProductDispatchZod,
+    zSchema: setChartsWorkerProductMetricsDispatchZod,
   });
 
   if (parsedResult.err) {

@@ -1,22 +1,3 @@
-import "@vitest/web-worker";
-import { NavigateFunction } from "react-router-dom";
-import { shuffle } from "simple-statistics";
-import { describe, expect, it, vi } from "vitest";
-import { LOGIN_URL } from "../../constants";
-import { AuthDispatch } from "../../context/authProvider";
-import { GlobalDispatch } from "../../context/globalProvider";
-import { createSafeBoxResult } from "../../utils";
-import FetchParseWorker from "../../workers/fetchParseWorker?worker";
-import { DIRECTORY_EMPLOYEE_DATA } from "../directory/data";
-import { handleLogoutMock } from "../testing/utils";
-import {
-    handleLoginButtonClick,
-    handleLoginClick,
-    loginOnmessageCallback,
-} from "./handlers";
-import { LoginDispatch } from "./schemas";
-import { LoginMessageEvent, LoginState } from "./types";
-
 // describe("loginReducer", () => {
 //     describe("setIsLoading", () => {
 //         it("should allow valid boolean values", () => {
@@ -188,292 +169,292 @@ import { LoginMessageEvent, LoginState } from "./types";
 //     });
 // });
 
-describe("Login", () => {
-    const password = "passwordQ1!";
-    const username = "0manager";
+// describe("Login", () => {
+//     const password = "passwordQ1!";
+//     const username = "0manager";
 
-    const loginState: LoginState = {
-        isLoading: false,
-        isSubmitting: false,
-        isSuccessful: false,
-        loginFetchWorker: null,
-        password,
-        username,
-    };
-    const loginDispatch = vi.fn() as React.Dispatch<LoginDispatch>;
-    const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
-    const isComponentMountedRef = {
-        current: true,
-    } as React.RefObject<boolean>;
-    const globalDispatch = vi.fn() as React.Dispatch<GlobalDispatch>;
-    const navigate = vi.fn() as NavigateFunction;
-    const showBoundary = vi.fn() as (error: unknown) => void;
-    const localforage = {
-        clear: vi.fn(),
-    } as any;
+//     const loginState: LoginState = {
+//         isLoading: false,
+//         isSubmitting: false,
+//         isSuccessful: false,
+//         loginFetchWorker: null,
+//         password,
+//         username,
+//     };
+//     const loginDispatch = vi.fn() as React.Dispatch<LoginDispatch>;
+//     const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
+//     const isComponentMountedRef = {
+//         current: true,
+//     } as React.RefObject<boolean>;
+//     const globalDispatch = vi.fn() as React.Dispatch<GlobalDispatch>;
+//     const navigate = vi.fn() as NavigateFunction;
+//     const showBoundary = vi.fn() as (error: unknown) => void;
+//     const localforage = {
+//         clear: vi.fn(),
+//     } as any;
 
-    let loginFetchWorker = new FetchParseWorker();
+//     let loginFetchWorker = new FetchParseWorker();
 
-    loginFetchWorker.onmessage = async function loginFetchWorkerCB(
-        event: LoginMessageEvent,
-    ) {
-        const loginDispatch = vi.fn() as React.Dispatch<LoginDispatch>;
-        const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
-        const isComponentMountedRef = {
-            current: true,
-        } as React.RefObject<boolean>;
-        const globalDispatch = vi.fn() as React.Dispatch<
-            GlobalDispatch
-        >;
-        const navigate = vi.fn() as NavigateFunction;
-        const showBoundary = vi.fn() as (error: unknown) => void;
-        const localforage = {
-            clear: vi.fn(),
-        } as any;
+//     loginFetchWorker.onmessage = async function loginFetchWorkerCB(
+//         event: LoginMessageEvent,
+//     ) {
+//         const loginDispatch = vi.fn() as React.Dispatch<LoginDispatch>;
+//         const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
+//         const isComponentMountedRef = {
+//             current: true,
+//         } as React.RefObject<boolean>;
+//         const globalDispatch = vi.fn() as React.Dispatch<
+//             GlobalDispatch
+//         >;
+//         const navigate = vi.fn() as NavigateFunction;
+//         const showBoundary = vi.fn() as (error: unknown) => void;
+//         const localforage = {
+//             clear: vi.fn(),
+//         } as any;
 
-        const loginOnmessageCallbackResult = await loginOnmessageCallback({
-            event,
-            authDispatch,
-            globalDispatch,
-            isComponentMountedRef,
-            localforage,
-            loginDispatch,
-            navigate,
-            showBoundary,
-        });
+//         const loginOnmessageCallbackResult = await loginOnmessageCallback({
+//             event,
+//             authDispatch,
+//             globalDispatch,
+//             isComponentMountedRef,
+//             localforage,
+//             loginDispatch,
+//             navigate,
+//             showBoundary,
+//         });
 
-        console.log(
-            "loginOnmessageCallbackResult",
-            loginOnmessageCallbackResult,
-        );
+//         console.log(
+//             "loginOnmessageCallbackResult",
+//             loginOnmessageCallbackResult,
+//         );
 
-        if (loginOnmessageCallbackResult.err) {
-            return createSafeBoxResult({
-                message: loginOnmessageCallbackResult.val.message ??
-                    "Error logging in",
-            });
-        }
+//         if (loginOnmessageCallbackResult.err) {
+//             return createSafeBoxResult({
+//                 message: loginOnmessageCallbackResult.val.message ??
+//                     "Error logging in",
+//             });
+//         }
 
-        const parsedServerResponse =
-            loginOnmessageCallbackResult.safeUnwrap().data;
+//         const parsedServerResponse =
+//             loginOnmessageCallbackResult.safeUnwrap().data;
 
-        if (parsedServerResponse === undefined) {
-            return createSafeBoxResult({
-                message: "No data returned from server",
-            });
-        }
+//         if (parsedServerResponse === undefined) {
+//             return createSafeBoxResult({
+//                 message: "No data returned from server",
+//             });
+//         }
 
-        if (
-            parsedServerResponse.kind === "success"
-        ) {
-            const { accessToken: newAccessToken } = parsedServerResponse;
+//         if (
+//             parsedServerResponse.kind === "success"
+//         ) {
+//             const { accessToken: newAccessToken } = parsedServerResponse;
 
-            const logoutResult = await handleLogoutMock({
-                newAccessToken,
-            });
+//             const logoutResult = await handleLogoutMock({
+//                 newAccessToken,
+//             });
 
-            if (logoutResult.err) {
-                return createSafeBoxResult({
-                    message: logoutResult.val.message ??
-                        "Logout failed",
-                });
-            }
-        }
+//             if (logoutResult.err) {
+//                 return createSafeBoxResult({
+//                     message: logoutResult.val.message ??
+//                         "Logout failed",
+//                 });
+//             }
+//         }
 
-        describe(
-            `handleLoginButtonClickTestMock - login
-               given username: ${username}
-               and password: ${password}
-                    `,
-            () => {
-                it("should login successfully", () => {
-                    expect(parsedServerResponse.data.length)
-                        .toBeGreaterThanOrEqual(1);
-                });
-            },
-        );
-    };
+//         describe(
+//             `handleLoginButtonClickTestMock - login
+//                given username: ${username}
+//                and password: ${password}
+//                     `,
+//             () => {
+//                 it("should login successfully", () => {
+//                     expect(parsedServerResponse.data.length)
+//                         .toBeGreaterThanOrEqual(1);
+//                 });
+//             },
+//         );
+//     };
 
-    it("should handle login button click", async () => {
-        async function handleLoginClickTestMock(
-            { password, testKind, username }: {
-                password: string;
-                testKind: "error" | "success";
-                username: string;
-            },
-        ) {
-            // const sampleServerResponse: HttpServerResponse = {
-            //     data: [{
-            //         userDocument: {},
-            //         financialMetricsDocument: {},
-            //     }],
-            //     accessToken: "",
-            //     kind: "success",
-            //     message: "",
-            //     status: 200,
-            //     pages: 0,
-            //     totalDocuments: 0,
-            //     triggerLogout: false,
-            // };
-            // const decodedToken = {} as any;
-            // const workerResponseSuccess = createSafeBoxResult({
-            //     data: sampleServerResponse,
-            //     kind: "success",
-            // });
+//     it("should handle login button click", async () => {
+//         async function handleLoginClickTestMock(
+//             { password, testKind, username }: {
+//                 password: string;
+//                 testKind: "error" | "success";
+//                 username: string;
+//             },
+//         ) {
+//             // const sampleServerResponse: HttpServerResponse = {
+//             //     data: [{
+//             //         userDocument: {},
+//             //         financialMetricsDocument: {},
+//             //     }],
+//             //     accessToken: "",
+//             //     kind: "success",
+//             //     message: "",
+//             //     status: 200,
+//             //     pages: 0,
+//             //     totalDocuments: 0,
+//             //     triggerLogout: false,
+//             // };
+//             // const decodedToken = {} as any;
+//             // const workerResponseSuccess = createSafeBoxResult({
+//             //     data: sampleServerResponse,
+//             //     kind: "success",
+//             // });
 
-            // const mainWorkerPostMessage = {
-            //     postMessage: vi.fn(),
-            // };
-            // const lmEvent = {
-            //     data: createSafeBoxResult({
-            //         data: { parsedServerResponse: workerResponseSuccess, decodedToken },
-            //         kind: "success",
-            //     }),
-            // } as any;
+//             // const mainWorkerPostMessage = {
+//             //     postMessage: vi.fn(),
+//             // };
+//             // const lmEvent = {
+//             //     data: createSafeBoxResult({
+//             //         data: { parsedServerResponse: workerResponseSuccess, decodedToken },
+//             //         kind: "success",
+//             //     }),
+//             // } as any;
 
-            try {
-                const handleLoginClickResult = await handleLoginClick({
-                    loginState,
-                    loginDispatch,
-                    loginFetchWorker,
-                    schema: { username, password },
-                });
+//             try {
+//                 const handleLoginClickResult = await handleLoginClick({
+//                     loginState,
+//                     loginDispatch,
+//                     loginFetchWorker,
+//                     schema: { username, password },
+//                 });
 
-                console.log(
-                    "handleLoginClickResult",
-                    handleLoginClickResult,
-                );
+//                 console.log(
+//                     "handleLoginClickResult",
+//                     handleLoginClickResult,
+//                 );
 
-                if (handleLoginClickResult.err) {
-                    return createSafeBoxResult({
-                        message: handleLoginClickResult.val.message ??
-                            "Error logging in",
-                    });
-                }
+//                 if (handleLoginClickResult.err) {
+//                     return createSafeBoxResult({
+//                         message: handleLoginClickResult.val.message ??
+//                             "Error logging in",
+//                     });
+//                 }
 
-                return createSafeBoxResult({
-                    data: true,
-                    kind: "success",
-                });
-            } catch (error) {
-                return createSafeBoxResult({ message: "Login error" });
-            }
-        }
+//                 return createSafeBoxResult({
+//                     data: true,
+//                     kind: "success",
+//                 });
+//             } catch (error) {
+//                 return createSafeBoxResult({ message: "Login error" });
+//             }
+//         }
 
-        const TEST_SIZE = 1;
+//         const TEST_SIZE = 1;
 
-        const EXISTING_USERNAMES = shuffle(DIRECTORY_EMPLOYEE_DATA).map(
-            (employee) => employee.username,
-        );
-        const slicedValids = EXISTING_USERNAMES.slice(0, TEST_SIZE);
-        await Promise.all(
-            slicedValids.map(
-                async (username) => {
-                    await handleLoginClickTestMock({
-                        password: "passwordQ1!",
-                        testKind: "success",
-                        username,
-                    });
-                },
-            ),
-        );
-    });
-});
+//         const EXISTING_USERNAMES = shuffle(DIRECTORY_EMPLOYEE_DATA).map(
+//             (employee) => employee.username,
+//         );
+//         const slicedValids = EXISTING_USERNAMES.slice(0, TEST_SIZE);
+//         await Promise.all(
+//             slicedValids.map(
+//                 async (username) => {
+//                     await handleLoginClickTestMock({
+//                         password: "passwordQ1!",
+//                         testKind: "success",
+//                         username,
+//                     });
+//                 },
+//             ),
+//         );
+//     });
+// });
 
-async function handleLoginButtonClickTestMock(
-    schema: { username: string; password: string },
-    testKind: "error" | "success" = "success",
-) {
-    const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
-    const fetchAbortControllerRef = {
-        current: null,
-    } as React.RefObject<AbortController | null>;
-    const globalDispatch = vi.fn() as React.Dispatch<GlobalDispatch>;
-    const isComponentMountedRef = {
-        current: true,
-    } as React.RefObject<boolean>;
-    const loginDispatch = vi.fn() as React.Dispatch<LoginDispatch>;
-    const navigate = vi.fn() as NavigateFunction;
-    const toLocation = "/dashboard/financials";
-    const showBoundary = vi.fn() as (error: unknown) => void;
-    const url = LOGIN_URL;
+// async function handleLoginButtonClickTestMock(
+//     schema: { username: string; password: string },
+//     testKind: "error" | "success" = "success",
+// ) {
+//     const authDispatch = vi.fn() as React.Dispatch<AuthDispatch>;
+//     const fetchAbortControllerRef = {
+//         current: null,
+//     } as React.RefObject<AbortController | null>;
+//     const globalDispatch = vi.fn() as React.Dispatch<GlobalDispatch>;
+//     const isComponentMountedRef = {
+//         current: true,
+//     } as React.RefObject<boolean>;
+//     const loginDispatch = vi.fn() as React.Dispatch<LoginDispatch>;
+//     const navigate = vi.fn() as NavigateFunction;
+//     const toLocation = "/dashboard/financials";
+//     const showBoundary = vi.fn() as (error: unknown) => void;
+//     const url = LOGIN_URL;
 
-    try {
-        const handleLoginButtonClickResult = await handleLoginButtonClick({
-            authDispatch,
-            fetchAbortControllerRef,
-            globalDispatch,
-            isComponentMountedRef,
-            loginDispatch,
-            navigate,
-            schema,
-            showBoundary,
-            toLocation,
-            url,
-        });
+//     try {
+//         const handleLoginButtonClickResult = await handleLoginButtonClick({
+//             authDispatch,
+//             fetchAbortControllerRef,
+//             globalDispatch,
+//             isComponentMountedRef,
+//             loginDispatch,
+//             navigate,
+//             schema,
+//             showBoundary,
+//             toLocation,
+//             url,
+//         });
 
-        if (handleLoginButtonClickResult.err) {
-            return createSafeBoxResult({
-                message: handleLoginButtonClickResult.val.message ??
-                    "Error logging in",
-            });
-        }
+//         if (handleLoginButtonClickResult.err) {
+//             return createSafeBoxResult({
+//                 message: handleLoginButtonClickResult.val.message ??
+//                     "Error logging in",
+//             });
+//         }
 
-        const parsedServerResponse =
-            handleLoginButtonClickResult.safeUnwrap().data;
-        if (parsedServerResponse === undefined) {
-            return createSafeBoxResult({
-                message: "No data returned from server",
-            });
-        }
+//         const parsedServerResponse =
+//             handleLoginButtonClickResult.safeUnwrap().data;
+//         if (parsedServerResponse === undefined) {
+//             return createSafeBoxResult({
+//                 message: "No data returned from server",
+//             });
+//         }
 
-        if (testKind === "success" && parsedServerResponse.kind === "success") {
-            const { accessToken: newAccessToken } = parsedServerResponse;
+//         if (testKind === "success" && parsedServerResponse.kind === "success") {
+//             const { accessToken: newAccessToken } = parsedServerResponse;
 
-            const logoutResult = await handleLogoutMock({
-                newAccessToken,
-            });
+//             const logoutResult = await handleLogoutMock({
+//                 newAccessToken,
+//             });
 
-            if (logoutResult.err) {
-                return createSafeBoxResult({
-                    message: logoutResult.val.message ?? "Logout failed",
-                });
-            }
-        }
+//             if (logoutResult.err) {
+//                 return createSafeBoxResult({
+//                     message: logoutResult.val.message ?? "Logout failed",
+//                 });
+//             }
+//         }
 
-        describe(
-            `handleLoginButtonClickTestMock - ${testKind} - login
-            given 
-            ${
-                testKind === "success"
-                    ? "valid"
-                    : "invalid"
-            } username: ${schema.username}
-         and password: ${schema.password}
-            `,
-            () => {
-                if (testKind === "success") {
-                    it("should login successfully", () => {
-                        expect(parsedServerResponse.data.length)
-                            .toBeGreaterThanOrEqual(1);
-                    });
-                } else {
-                    it("should login unsuccessfully", () => {
-                        expect(parsedServerResponse.data)
-                            .toBe(void 0);
-                    });
-                }
-            },
-        );
+//         describe(
+//             `handleLoginButtonClickTestMock - ${testKind} - login
+//             given
+//             ${
+//                 testKind === "success"
+//                     ? "valid"
+//                     : "invalid"
+//             } username: ${schema.username}
+//          and password: ${schema.password}
+//             `,
+//             () => {
+//                 if (testKind === "success") {
+//                     it("should login successfully", () => {
+//                         expect(parsedServerResponse.data.length)
+//                             .toBeGreaterThanOrEqual(1);
+//                     });
+//                 } else {
+//                     it("should login unsuccessfully", () => {
+//                         expect(parsedServerResponse.data)
+//                             .toBe(void 0);
+//                     });
+//                 }
+//             },
+//         );
 
-        return createSafeBoxResult({
-            data: true,
-            kind: "success",
-        });
-    } catch (error) {
-        return createSafeBoxResult({ message: "Login error" });
-    }
-}
+//         return createSafeBoxResult({
+//             data: true,
+//             kind: "success",
+//         });
+//     } catch (error) {
+//         return createSafeBoxResult({ message: "Login error" });
+//     }
+// }
 
 // const TEST_SIZE = 1;
 

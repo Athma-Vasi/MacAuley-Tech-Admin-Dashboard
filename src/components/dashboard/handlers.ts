@@ -156,19 +156,6 @@ async function handleStoreAndCategoryClicks(
             });
         }
 
-        /**
-         * {
-        metricsView: Lowercase<DashboardMetricsView>;
-        productMetricCategory?: ProductMetricCategory;
-        repairMetricCategory?: RepairMetricCategory;
-        requestInit: RequestInit;
-        routesZodSchemaMapKey: RoutesZodSchemasMapKey;
-        skipTokenDecode?: boolean;
-        storeLocation: AllStoreLocations;
-        url: string;
-    }
-         */
-
         dashboardFetchWorker?.postMessage(
             {
                 metricsView,

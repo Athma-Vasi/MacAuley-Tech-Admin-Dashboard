@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
-import { HttpServerResponse } from "../types";
+import {
+    DecodedToken,
+    FinancialMetricsDocument,
+    HttpServerResponse,
+    SafeBoxResult,
+    UserDocument,
+} from "../types";
 import {
     createSafeBoxResult,
     decodeJWTSafe,
@@ -10,15 +16,31 @@ import {
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
-self.onmessage = async (
-    event: MessageEvent<
+type MessageEventLoginWorkerToMain = MessageEvent<
+    SafeBoxResult<
         {
-            requestInit: RequestInit;
-            routesZodSchemaMapKey: RoutesZodSchemasMapKey;
-            skipTokenDecode?: boolean;
-            url: string;
+            parsedServerResponse: HttpServerResponse<
+                {
+                    userDocument: UserDocument;
+                    financialMetricsDocument: FinancialMetricsDocument;
+                }
+            >;
+            decodedToken: DecodedToken;
         }
-    >,
+    >
+>;
+
+type MessageEventLoginMainToWorker = MessageEvent<
+    {
+        requestInit: RequestInit;
+        routesZodSchemaMapKey: RoutesZodSchemasMapKey;
+        skipTokenDecode?: boolean;
+        url: string;
+    }
+>;
+
+self.onmessage = async (
+    event: MessageEventLoginMainToWorker,
 ) => {
     console.log(
         "Worker received message in self:",
@@ -78,10 +100,12 @@ self.onmessage = async (
             return;
         }
 
-        if (serverResponse.message === "User not found") {
+        console.log("fetchParseWorker serverResponse", serverResponse);
+
+        if (serverResponse.message === "Invalid credentials") {
             self.postMessage(createSafeBoxResult({
                 kind: "notFound",
-                message: "User not found",
+                message: "Invalid credentials",
                 data: serverResponse,
             }));
 
@@ -149,3 +173,22 @@ self.onmessage = async (
         clearTimeout(timeout);
     }
 };
+
+self.onerror = (event: string | Event) => {
+    console.error("Worker error:", event);
+    self.postMessage(createSafeBoxResult({
+        data: event,
+        kind: "error",
+    }));
+    return true; // Prevents default logging to console
+};
+
+self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
+    console.error("Unhandled promise rejection in worker:", event.reason);
+    self.postMessage(createSafeBoxResult({
+        kind: "error",
+        message: `Promise error: ${event.reason?.message || event.reason}`,
+    }));
+});
+
+export type { MessageEventLoginMainToWorker, MessageEventLoginWorkerToMain };

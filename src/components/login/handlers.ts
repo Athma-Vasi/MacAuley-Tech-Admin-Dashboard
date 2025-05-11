@@ -20,11 +20,12 @@ import {
   responseToJSONSafe,
   setForageItemSafe,
 } from "../../utils";
+import { MessageEventLoginWorkerToMain } from "../../workers/fetchParseWorker";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
-import { LoginMessageEvent, LoginState } from "./types";
+import { LoginState } from "./types";
 
 async function handleLoginButtonClick(
   {
@@ -370,7 +371,7 @@ async function loginOnmessageCallback(
     showBoundary,
   }: {
     authDispatch: React.Dispatch<AuthDispatch>;
-    event: LoginMessageEvent;
+    event: MessageEventLoginWorkerToMain;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
     localforage: LocalForage;
@@ -405,6 +406,26 @@ async function loginOnmessageCallback(
     }
 
     console.log("event.data.val.data", event.data.val.data);
+
+    if (event.data.val.kind === "notFound") {
+      loginDispatch({
+        action: loginAction.setErrorMessage,
+        payload: event.data.val.message ?? "Invalid credentials",
+      });
+      loginDispatch({
+        action: loginAction.setIsSubmitting,
+        payload: false,
+      });
+      loginDispatch({
+        action: loginAction.setIsSuccessful,
+        payload: false,
+      });
+
+      return createSafeBoxResult({
+        kind: "notFound",
+        message: event.data.val.message ?? "Invalid credentials",
+      });
+    }
 
     const dataUnwrapped = event.data.val.data;
     if (dataUnwrapped === undefined) {
