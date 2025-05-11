@@ -1,9 +1,7 @@
 import { createSafeBoxResult } from "../../../utils";
+import { MessageEventProductWorkerToMain } from "../../../workers/productChartsWorker";
 import { productMetricsAction } from "./actions";
-import {
-    MessageEventProductWorkerToMain,
-    ProductMetricsDispatch,
-} from "./types";
+import { ProductMetricsDispatch } from "./types";
 
 async function handleMessageEventProductWorkerToMain({
     event,
@@ -63,12 +61,24 @@ async function handleMessageEventProductWorkerToMain({
             action: productMetricsAction.setCharts,
             payload: productMetricsCharts,
         });
+
+        return createSafeBoxResult({
+            data: true,
+            kind: "success",
+        });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
-            return;
+            return createSafeBoxResult({
+                data: error,
+                message: "Component unmounted",
+            });
         }
 
         showBoundary(error);
+        return createSafeBoxResult({
+            data: error,
+            message: "Error handling message event",
+        });
     }
 }
 

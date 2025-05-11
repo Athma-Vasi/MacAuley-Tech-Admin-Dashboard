@@ -6,6 +6,7 @@ import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { ProductMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
+import { MessageEventProductWorkerToMain } from "../../../workers/productChartsWorker";
 import ProductChartsWorker from "../../../workers/productChartsWorker?worker";
 import { MONTHS } from "../constants";
 import type {
@@ -21,11 +22,7 @@ import { handleMessageEventProductWorkerToMain } from "./handlers";
 import { productMetricsReducer } from "./reducers";
 import { RUS } from "./rus/RUS";
 import { initialProductMetricsState } from "./state";
-import {
-  MessageEventProductWorkerToMain,
-  ProductMetricCategory,
-  ProductSubMetric,
-} from "./types";
+import { ProductMetricCategory, ProductSubMetric } from "./types";
 import {
   returnOverviewAllProductsMetrics,
   returnProductMetricsOverviewCards,

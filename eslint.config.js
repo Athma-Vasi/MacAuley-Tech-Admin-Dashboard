@@ -39,6 +39,8 @@ export default tseslint.config(
         },
       ],
 
+      "react-hooks/exhaustive-deps": "off",
+
       "prefer-const": "off",
     },
   },

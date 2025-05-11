@@ -2,9 +2,31 @@ import { MONTHS } from "../components/dashboard/constants";
 import {
     createProductMetricsCalendarCharts,
     createProductMetricsCharts,
+    ProductMetricsCalendarCharts,
+    ProductMetricsCharts,
+    SelectedDateProductMetrics,
 } from "../components/dashboard/product/chartsData";
-import { MessageEventProductMainToWorker } from "../components/dashboard/product/types";
+import { DashboardCalendarView } from "../components/dashboard/types";
+import { ProductMetricsDocument, SafeBoxResult } from "../types";
 import { createSafeBoxResult } from "../utils";
+
+type MessageEventProductWorkerToMain = MessageEvent<
+    SafeBoxResult<
+        {
+            currentYear: ProductMetricsCalendarCharts;
+            previousYear: ProductMetricsCalendarCharts;
+            productMetricsCharts: ProductMetricsCharts;
+        }
+    >
+>;
+type MessageEventProductMainToWorker = MessageEvent<
+    {
+        calendarView: DashboardCalendarView;
+        productMetricsDocument: ProductMetricsDocument;
+        selectedDateProductMetrics: SelectedDateProductMetrics;
+        selectedYYYYMMDD: string;
+    }
+>;
 
 self.onmessage = async (
     event: MessageEventProductMainToWorker,
@@ -71,3 +93,8 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
         message: `Promise error: ${event.reason?.message || event.reason}`,
     }));
 });
+
+export type {
+    MessageEventProductMainToWorker,
+    MessageEventProductWorkerToMain,
+};
