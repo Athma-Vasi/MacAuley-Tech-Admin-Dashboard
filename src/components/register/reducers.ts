@@ -114,7 +114,12 @@ function registerReducer_setInputsInError(
     return state;
   }
 
-  const { kind, name } = parsedResult.safeUnwrap().data?.payload;
+  const data = parsedResult.safeUnwrap().data;
+  if (data === undefined) {
+    return state;
+  }
+
+  const { kind, name } = data;
   const inputsInError = new Set(state.inputsInError);
   if (kind === "add") {
     inputsInError.add(name);
@@ -138,7 +143,12 @@ function registerReducer_setStepsWithEmptyInputs(
     return state;
   }
 
-  const { kind, step } = parsedResult.safeUnwrap().data?.payload;
+  const data = parsedResult.safeUnwrap().data;
+  if (data === undefined) {
+    return state;
+  }
+
+  const { kind, step } = data;
   const stepsWithEmptyInputs = new Set(state.stepsWithEmptyInputs);
   if (kind === "add") {
     stepsWithEmptyInputs.add(step);

@@ -13,7 +13,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: "./setupTest.ts",
     // css: true,
     // coverage: {
     //   reporter: ["text", "html"], // generate a CLI report + an HTML report

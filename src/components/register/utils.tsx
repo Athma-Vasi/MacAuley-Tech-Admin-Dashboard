@@ -1,7 +1,9 @@
 import { Card, Flex, Stack, Text, Title } from "@mantine/core";
 import { TbAlertCircle, TbX } from "react-icons/tb";
 import { TEXT_SHADOW } from "../../constants";
+import { UserSchema } from "../../types";
 import { REGISTER_STEPS } from "./constants";
+import { SAMPLE_USER_DOCUMENT } from "./testData";
 
 function returnRegisterStepperCard(
     {
@@ -139,4 +141,38 @@ function createFileSectionInFormReview(filesInError: Map<string, boolean>) {
     }, Object.create(null));
 }
 
-export { createFileSectionInFormReview, returnRegisterStepperCard };
+function generateUserSchemas(amount = 20): UserSchema[] {
+    return Array.from({ length: amount }, (_, idx) => {
+        const EXCLUDED_KEYS = new Set([
+            "_id",
+            "createdAt",
+            "updatedAt",
+            "__v",
+        ]);
+        const sampleUserSchema = Object.entries(SAMPLE_USER_DOCUMENT).reduce(
+            (acc, [key, value]) => {
+                if (EXCLUDED_KEYS.has(key)) {
+                    return acc;
+                }
+
+                acc[key as keyof UserSchema] = value;
+                return acc;
+            },
+            Object.create(null),
+        );
+        const { email, username } = sampleUserSchema;
+
+        return {
+            ...sampleUserSchema,
+            email: `${idx}${email}`,
+            username: `${idx}${username}`,
+            password: "passwordQ1!",
+        };
+    });
+}
+
+export {
+    createFileSectionInFormReview,
+    generateUserSchemas,
+    returnRegisterStepperCard,
+};

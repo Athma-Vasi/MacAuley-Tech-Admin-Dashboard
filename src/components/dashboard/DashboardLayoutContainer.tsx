@@ -134,7 +134,11 @@ function DashboardLayoutContainer(
       key={`${yAxisKeyChartHeading}-${calendarView}`}
     >
       <Box bg={bgGradient} className="header">
-        <Title order={3} size={28}>
+        <Title
+          order={3}
+          size={28}
+          data-testid={`dashboard-${calendarView}-${sectionHeading}`}
+        >
           {calendarView}{"  "}{sectionHeading}
         </Title>
       </Box>

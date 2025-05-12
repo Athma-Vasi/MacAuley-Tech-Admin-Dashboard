@@ -104,6 +104,7 @@ function Login() {
   const usernameTextInput = (
     <TextInput
       className="accessible-input"
+      data-testid="username-textInput"
       label="Username"
       placeholder="Enter your username"
       value={username}
@@ -125,6 +126,7 @@ function Login() {
   const passwordTextInput = (
     <PasswordInput
       className="accessible-input"
+      data-testid="password-textInput"
       label="Password"
       placeholder="Enter your password"
       value={password}

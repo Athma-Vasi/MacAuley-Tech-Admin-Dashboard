@@ -147,9 +147,10 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const productsNavlink = (
     <AccessibleNavLink
       attributes={{
+        dataTestId: "products-navlink",
         description: "Products",
         icon: clickedNavlink === "products" && isFetching
-          ? <Loader size={18} />
+          ? <Loader data-testid={`products-navlink-loader-icon`} size={18} />
           : <TbAffiliate size={18} />,
         name: "Products",
         onClick: async () => {
@@ -188,6 +189,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const financialsNavlink = (
     <AccessibleNavLink
       attributes={{
+        dataTestId: "financials-navlink",
         description: "Financials",
         icon: clickedNavlink === "financials" && isFetching
           ? <Loader size={18} />
@@ -227,6 +229,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const customersNavlink = (
     <AccessibleNavLink
       attributes={{
+        dataTestId: "customers-navlink",
         description: "Customers",
         icon: clickedNavlink === "customers" && isFetching
           ? <Loader size={18} />
@@ -266,6 +269,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const repairsNavlink = (
     <AccessibleNavLink
       attributes={{
+        dataTestId: "repairs-navlink",
         description: "Repairs",
         icon: clickedNavlink === "repairs" && isFetching
           ? <Loader size={18} />
@@ -305,6 +309,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const directoryNavlink = (
     <AccessibleNavLink
       attributes={{
+        dataTestId: "directory-navlink",
         description: "Directory",
         icon: clickedNavlink === "directory" && isFetching
           ? <Loader size={18} />
@@ -339,6 +344,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const testingNavlink = (
     <AccessibleNavLink
       attributes={{
+        dataTestId: "testing-navlink",
         description: "Testing",
         icon: <TbTestPipe size={18} />,
         name: "Testing",
@@ -353,6 +359,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const usersNavlink = (
     <AccessibleNavLink
       attributes={{
+        dataTestId: "users-navlink",
         description: "Users",
         icon: <TbUser size={18} />,
         name: "Users",
@@ -372,6 +379,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
   const logoutButton = (
     <AccessibleButton
       attributes={{
+        dataTestId: "logout-button",
         enabledScreenreaderText: "Logout",
         kind: "logout",
         leftIcon: clickedNavlink === "logout" && isFetching

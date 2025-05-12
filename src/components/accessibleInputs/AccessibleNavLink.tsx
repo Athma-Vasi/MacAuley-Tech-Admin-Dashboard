@@ -11,6 +11,7 @@ type AccessibleNavLinkAttributes = {
   children?: ReactNode;
   childrenOffset?: number | "xs" | "sm" | "md" | "lg" | "xl";
   color?: MantineColor;
+  dataTestId?: string;
   defaultOpened?: boolean;
   description: string;
   disableRightSectionRotation?: boolean;
@@ -47,6 +48,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
     children = null,
     childrenOffset = 0,
     color = textColor,
+    dataTestId,
     defaultOpened = false,
     description,
     disableRightSectionRotation = false,
@@ -75,6 +77,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
       active={active}
       childrenOffset={childrenOffset}
       color={color}
+      data-testid={dataTestId}
       defaultOpened={defaultOpened}
       // description={description}
       disableRightSectionRotation={disableRightSectionRotation}
