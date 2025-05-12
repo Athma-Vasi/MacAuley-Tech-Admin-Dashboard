@@ -85,6 +85,7 @@ function AccessibleSelectInput<
         aria-required={required}
         color={color}
         data={data}
+        data-testid={`${name}-selectInput`}
         disabled={disabled}
         label={hideLabel ? null : label}
         name={name}

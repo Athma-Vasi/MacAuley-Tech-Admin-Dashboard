@@ -128,18 +128,6 @@ function AccessibleDateTimeInput<
         redColorShade,
     } = returnThemeColors({ colorsSwatches: COLORS_SWATCHES, themeObject });
 
-    // const { partials } = returnPartialValidations({
-    //     name,
-    //     stepperPages,
-    //     validationFunctionsTable,
-    // });
-
-    // const isValueBufferValid = partials.every((
-    //     [regexOrFunc, _validationText],
-    // ) => typeof regexOrFunc === "function"
-    //     ? regexOrFunc(valueBuffer)
-    //     : regexOrFunc.test(valueBuffer)
-    // );
     const regexesArray = validationFunctionsTable[name];
     const isValueBufferValid = valueBuffer.length > 0 && regexesArray.every(
         ([regexOrFunc, _validationText]: [any, any]) =>

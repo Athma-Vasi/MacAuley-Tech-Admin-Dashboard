@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { PASSWORD_REGEX } from "../../regexes";
 import { registerAction } from "./actions";
 
 const setConfirmPasswordRegisterDispatchZod = z.object({
     action: z.literal(registerAction.setConfirmPassword),
-    payload: z.string().regex(PASSWORD_REGEX),
+    payload: z.string(),
 });
 const setEmailRegisterDispatchZod = z.object({
     action: z.literal(registerAction.setEmail),

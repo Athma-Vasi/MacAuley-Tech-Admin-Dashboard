@@ -137,10 +137,22 @@ function AccessiblePasswordInput<
 
   const leftIcon = icon ??
     (isValueBufferValid
-      ? <TbCheck color={greenColorShade} size={18} />
+      ? (
+        <TbCheck
+          color={greenColorShade}
+          data-testid={`${name}-input-valid-icon`}
+          size={18}
+        />
+      )
       : valueBuffer.length === 0
       ? null
-      : <TbExclamationCircle color={redColorShade} size={18} />);
+      : (
+        <TbExclamationCircle
+          color={redColorShade}
+          data-testid={`${name}-input-invalid-icon`}
+          size={18}
+        />
+      ));
 
   const validationTexts = returnValidationTexts({
     name,
@@ -182,6 +194,7 @@ function AccessiblePasswordInput<
             aria-invalid={!isValueBufferValid}
             aria-label={name}
             aria-required={required}
+            data-testid={`${name}-input`}
             error={!isValueBufferValid && value !== initialInputValue}
             icon={leftIcon}
             label={label}

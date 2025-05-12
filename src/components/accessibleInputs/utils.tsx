@@ -3,7 +3,7 @@ import { TbCheck, TbInfoCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
 import type { ThemeObject } from "../../context/globalProvider/types";
-import { StepperPage, Validation, ValidationFunctionsTable } from "../../types";
+import { ValidationFunctionsTable } from "../../types";
 import {
   capitalizeJoinWithAnd,
   returnThemeColors,
@@ -53,6 +53,7 @@ function createAccessibleValueValidationTextElements({
 
   const invalidValueTextElement = (
     <Text
+      aria-live="polite"
       id={`${name}-invalid`}
       style={{
         display: isPopoverOpened && valueBuffer && !isValueBufferValid
@@ -60,7 +61,6 @@ function createAccessibleValueValidationTextElements({
           : "none",
       }}
       w="100%"
-      aria-live="polite"
     >
       {
         /* <Grid columns={14}>
@@ -76,7 +76,7 @@ function createAccessibleValueValidationTextElements({
         </Grid.Col>
       </Grid> */
       }
-      <Text color={redColorShade}>
+      <Text color={redColorShade} data-testid={`${name}-input-invalid-text`}>
         {valueInvalidText}
         {arePasswordsDifferent ? "Passwords do not match." : ""}
       </Text>
@@ -138,10 +138,11 @@ function createAccessibleNavLinkTextElement({
 
   const screenreaderTextElement = (
     <Text
-      id={`${name}-selected`}
-      color={active ? textColor : greenColorShade}
-      w="100%"
       aria-live="polite"
+      color={active ? textColor : greenColorShade}
+      data-testid={`${name}-navlink-selected-screenreader-text`}
+      id={`${name}-selected`}
+      w="100%"
     >
       {description}
     </Text>
@@ -203,6 +204,7 @@ function createAccessibleCheckboxSelectionsTextElements({
     <Text
       aria-live="polite"
       color={textColor}
+      data-testid={`${name}-checkbox-selected-text`}
       id={`${name}-selected`}
       style={{ display: checked ? "block" : "none" }}
     >
@@ -222,6 +224,7 @@ function createAccessibleCheckboxSelectionsTextElements({
     <Text
       aria-live="polite"
       color={theme === "default" ? textColor : grayColorShade}
+      data-testid={`${name}-checkbox-deselected-text`}
       id={`${name}-deselected`}
       style={{ display: !checked ? "block" : "none" }}
     >
@@ -273,11 +276,12 @@ function createAccessibleButtonScreenreaderTextElements({
 
   const enabledTextElement = (
     <Text
+      aria-live="polite"
+      color={theme === "muted" ? textColor : greenColorShade}
+      data-testid={`${name}-button-enabled-screenreader-text`}
       id={`${name}-enabled`}
       style={{ display: isEnabled ? "block" : "none" }}
-      color={theme === "muted" ? textColor : greenColorShade}
       w="100%"
-      aria-live="polite"
     >
       {enabledIcon}
       {enabledScreenreaderText ?? defaultEnabledText}
@@ -293,13 +297,14 @@ function createAccessibleButtonScreenreaderTextElements({
 
   const disabledTextElement = (
     <Text
-      id={`${name}-disabled`}
-      style={{ display: !isEnabled ? "block" : "none" }}
+      aria-live="polite"
       color={theme === "default"
         ? (!isEnabled ? redColorShade : textColor)
         : grayColorShade}
+      data-testid={`${name}-button-disabled-screenreader-text`}
+      id={`${name}-disabled`}
+      style={{ display: !isEnabled ? "block" : "none" }}
       w="100%"
-      aria-live="polite"
     >
       {disabledIcon}
       {disabledScreenreaderText ?? defaultDisabledText}
@@ -322,9 +327,10 @@ function createAccessibleImageTextElement(
 } {
   const screenreaderTextElement = (
     <Text
+      aria-live="polite"
+      data-testid={`${name}-image-screenreader-text`}
       id={`${name}-selected`}
       w="100%"
-      aria-live="polite"
     >
       {description}
     </Text>
@@ -360,10 +366,11 @@ function createAccessibleSliderScreenreaderTextElements({
 
   const screenreaderTextElement = (
     <Text
-      id={`${name}-selected`}
-      color={theme === "muted" ? textColor : greenColorShade}
-      w="100%"
       aria-live="polite"
+      color={theme === "muted" ? textColor : greenColorShade}
+      data-testid={`${name}-slider-screenreader-text`}
+      id={`${name}-selected`}
+      w="100%"
     >
       {icon}
       {`For ${name}, ${value} selected.`}
@@ -405,10 +412,11 @@ function createAccessibleSwitchOnOffTextElements({
 
   const switchOnTextElement = (
     <Text
-      id={`${name}-on`}
-      color={grayColorShade}
-      w="100%"
       aria-live="polite"
+      color={grayColorShade}
+      data-testid={`${name}-switch-on-screenreader-text`}
+      id={`${name}-on`}
+      w="100%"
     >
       {switchOnText}
     </Text>
@@ -418,10 +426,11 @@ function createAccessibleSwitchOnOffTextElements({
 
   const switchOffTextElement = (
     <Text
-      id={`${name}-off`}
-      color={theme === "default" ? redColorShade : grayColorShade}
-      w="100%"
       aria-live="polite"
+      color={theme === "default" ? redColorShade : grayColorShade}
+      data-testid={`${name}-switch-off-screenreader-text`}
+      id={`${name}-off`}
+      w="100%"
     >
       {switchOffText}
     </Text>
@@ -457,11 +466,9 @@ function createAccessibleButtons(
 
 function createAccessibleSwitchInputs<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
 >(
   attributesArray: AccessibleSwitchInputAttributes<
-    ValidValueAction,
-    InvalidValueAction
+    ValidValueAction
   >[],
 ): React.JSX.Element[] {
   return attributesArray.map((attributes, index) => (
@@ -508,98 +515,6 @@ function returnValidationTexts(
   };
 }
 
-// function returnValidationTexts({
-//   name,
-//   stepperPages,
-//   validationFunctionsTable,
-//   valueBuffer,
-// }: {
-//   name: string;
-//   stepperPages: StepperPage[];
-//   validationFunctionsTable: ValidationFunctionsTable;
-//   valueBuffer: string;
-// }): ValidationTexts {
-//   const initialValidationTexts = {
-//     valueInvalidText: "",
-//     valueValidText: "",
-//   };
-
-//   return stepperPages.reduce<ValidationTexts>((validationTextsAcc, page) => {
-//     const { kind, children } = page;
-
-//     if (kind && kind === "review") {
-//       return validationTextsAcc;
-//     }
-
-//     children.forEach((child) => {
-//       const { name: inputName, validationKey } = child;
-//       if (inputName !== name) {
-//         return;
-//       }
-
-//       const partials = validationFunctionsTable[validationKey ?? "allowAll"];
-
-//       const partialInvalidText = partials.length
-//         ? partials
-//           .map(([regexOrFunc, errorMessage]) => {
-//             if (typeof regexOrFunc === "function") {
-//               return regexOrFunc(valueBuffer) ? "" : errorMessage;
-//             }
-
-//             return regexOrFunc.test(valueBuffer) ? "" : errorMessage;
-//           })
-//           .join(" ")
-//         : "";
-
-//       validationTextsAcc.valueInvalidText = `${
-//         splitCamelCase(
-//           name,
-//         )
-//       } is invalid. ${partialInvalidText}`;
-//       validationTextsAcc.valueValidText = `${splitCamelCase(name)} is valid.`;
-//     });
-
-//     return validationTextsAcc;
-//   }, initialValidationTexts);
-// }
-
-function returnPartialValidations({
-  name,
-  stepperPages,
-  validationFunctionsTable,
-}: {
-  name: string;
-  stepperPages: StepperPage[];
-  validationFunctionsTable: ValidationFunctionsTable;
-}): { partials: Validation } {
-  const initial = { partials: [] };
-
-  return stepperPages.reduce<{ partials: Validation }>(
-    (regexAcc, page) => {
-      const { children, kind } = page;
-
-      if (kind && kind === "review") {
-        return regexAcc;
-      }
-
-      children.forEach((child) => {
-        const { name: inputName, validationKey } = child;
-
-        if (inputName !== name) {
-          return;
-        }
-
-        const partials = validationFunctionsTable[validationKey ?? "allowAll"];
-
-        regexAcc.partials = partials;
-      });
-
-      return regexAcc;
-    },
-    initial,
-  );
-}
-
 export {
   createAccessibleButtons,
   createAccessibleButtonScreenreaderTextElements,
@@ -611,6 +526,5 @@ export {
   createAccessibleSwitchInputs,
   createAccessibleSwitchOnOffTextElements,
   createAccessibleValueValidationTextElements,
-  returnPartialValidations,
   returnValidationTexts,
 };

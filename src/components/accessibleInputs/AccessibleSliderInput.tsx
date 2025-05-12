@@ -139,15 +139,17 @@ function AccessibleSliderInput<
       name={name}
       onBlur={onBlur}
       onChange={(value: Payload) => {
-        index === undefined
-          ? parentDispatch?.({
+        if (index === undefined) {
+          parentDispatch?.({
             action: validValueAction,
             payload: value,
-          })
-          : parentDynamicDispatch?.({
+          });
+        } else {
+          parentDynamicDispatch?.({
             action: validValueAction,
             payload: { index, value },
           });
+        }
 
         onChange?.(value);
       }}

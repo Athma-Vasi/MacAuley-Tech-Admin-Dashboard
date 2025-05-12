@@ -176,10 +176,22 @@ function AccessibleTextInput<
 
   const leftIcon = icon ??
     (isValueBufferValid && valueBuffer.length > 0
-      ? <TbCheck color={greenColorShade} size={18} />
+      ? (
+        <TbCheck
+          color={greenColorShade}
+          data-testid={`${name}-input-valid-icon`}
+          size={18}
+        />
+      )
       : valueBuffer.length === 0
       ? null
-      : <TbX color={redColorShade} size={18} />);
+      : (
+        <TbX
+          color={redColorShade}
+          data-testid={`${name}-input-invalid-icon`}
+          size={18}
+        />
+      ));
 
   const validationTexts = returnValidationTexts({
     name,
@@ -223,6 +235,7 @@ function AccessibleTextInput<
             aria-required={required}
             autoComplete={autoComplete}
             // color={grayColorShade}
+            data-testid={`${name}-textInput`}
             disabled={disabled}
             error={!isValueBufferValid && valueBuffer !== initialInputValue}
             icon={leftIcon}

@@ -63,18 +63,6 @@ function RegisterPersonal({
         />
     );
 
-    // const profilePictureUrlTextInput = (
-    //     <AccessibleTextInput
-    //         attributes={{
-    //             invalidValueAction: registerAction.setIsError,
-    //             name: "profilePictureUrl",
-    //             parentDispatch: registerDispatch,
-    //             validValueAction: registerAction.setProfilePictureUrl,
-    //             value: profilePictureUrl,
-    //         }}
-    //     />
-    // );
-
     const jobPositionSelectInput = (
         <AccessibleSelectInput
             attributes={{
@@ -116,7 +104,6 @@ function RegisterPersonal({
             <Text size={24}>Personal</Text>
             {firstNameTextInput}
             {lastNameTextInput}
-            {/* {profilePictureUrlTextInput} */}
             {jobPositionSelectInput}
             {departmentSelectInput}
             {storeLocationSelectInput}

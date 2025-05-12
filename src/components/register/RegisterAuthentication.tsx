@@ -113,7 +113,10 @@ function RegisterAuthentication({
             {usernameTextInput}
             {isUsernameExists && username
                 ? (
-                    <Text color={redColorShade}>
+                    <Text
+                        color={redColorShade}
+                        data-testid="username-exists-text"
+                    >
                         Username already exists!
                     </Text>
                 )
@@ -121,7 +124,7 @@ function RegisterAuthentication({
             {emailTextInput}
             {isEmailExists && email
                 ? (
-                    <Text color={redColorShade}>
+                    <Text color={redColorShade} data-testid="email-exists-text">
                         Email already exists!
                     </Text>
                 )

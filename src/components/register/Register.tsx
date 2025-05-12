@@ -188,6 +188,7 @@ function Register() {
   const nextStepButton = (
     <AccessibleButton
       attributes={{
+        dataTestId: "next-step-button",
         enabledScreenreaderText: `Click to proceed to ${
           REGISTER_STEPS[activeStep + 1]
         }`,
@@ -211,6 +212,7 @@ function Register() {
   const prevStepButton = (
     <AccessibleButton
       attributes={{
+        dataTestId: "prev-step-button",
         enabledScreenreaderText: `Click to go back to ${
           REGISTER_STEPS[activeStep - 1]
         }`,
@@ -244,6 +246,9 @@ function Register() {
   const submitButton = (
     <AccessibleButton
       attributes={{
+        dataTestId: `register-submit-button-${
+          isSubmitButtonDisabled ? "disabled" : "enabled"
+        }`,
         enabledScreenreaderText: "All inputs are valid. Click to Register.",
         disabledScreenreaderText: !username || !email || !password ||
             !confirmPassword
@@ -320,7 +325,11 @@ function Register() {
     <Flex align="center" justify="center" columnGap="sm">
       <Text>Already have an account?</Text>
       <Text>
-        <Link to="/login" style={{ color: themeColorShade }}>
+        <Link
+          to="/login"
+          style={{ color: themeColorShade }}
+          data-testid="login-link"
+        >
           Login!
         </Link>
       </Text>

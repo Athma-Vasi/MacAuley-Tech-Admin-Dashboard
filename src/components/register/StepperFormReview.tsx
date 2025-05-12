@@ -67,24 +67,32 @@ function StepperFormReview(
                                     ? inputValue.trim() === ""
                                     : inputValue === undefined);
 
+                            const testIdStr = isInputEmpty
+                                ? "empty"
+                                : isInputInError
+                                ? "invalid"
+                                : "valid";
+
                             const inputNameElem = (
                                 <Text
-                                    size={15}
+                                    data-testid={`${inputName}-formReview-key-${testIdStr}`}
                                     color={isInputEmpty
                                         ? grayColorShade
                                         : isInputInError
                                         ? redColorShade
                                         : textColor}
+                                    size={15}
                                 >
                                     {splitCamelCase(inputName)}
                                 </Text>
                             );
                             const inputValueElem = (
                                 <Text
-                                    size={15}
+                                    data-testid={`${inputName}-formReview-value-${testIdStr}`}
                                     color={isInputInError
                                         ? redColorShade
                                         : textColor}
+                                    size={15}
                                 >
                                     {inputValue?.toString() ?? ""}
                                 </Text>

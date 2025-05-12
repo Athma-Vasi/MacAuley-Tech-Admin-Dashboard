@@ -15,45 +15,39 @@ import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import type { RegisterAction } from "./actions";
 
 type RegisterState = {
-  // register personal
+  activeStep: number;
+  addressLine: string;
+  checkEmailWorker: Worker | null;
+  checkUsernameWorker: Worker | null;
+  city: string;
   confirmPassword: string;
+  country: Country;
+  department: Department;
   email: string;
+  errorMessage: string;
+  filesInError: Map<string, boolean>;
+  firstName: string;
+  formData: FormData;
+  inputsInError: Set<ValidationKey>;
   isEmailExists: boolean;
   isEmailExistsSubmitting: boolean;
-  isUsernameExists: boolean;
-  isUsernameExistsSubmitting: boolean;
-  password: string;
-  username: string;
-
-  // register address
-  addressLine: string;
-  city: string;
-  country: Country;
-  postalCodeCanada: CanadianPostalCode;
-  postalCodeUS: USPostalCode;
-  province: Province;
-  state: StatesUS;
-
-  // register additional
-  department: Department;
-  firstName: string;
-  jobPosition: JobPosition;
-  lastName: string;
-  profilePictureUrl: string;
-  storeLocation: AllStoreLocations;
-
-  errorMessage: string;
   isError: boolean;
   isSubmitting: boolean;
   isSuccessful: boolean;
-  activeStep: number;
+  isUsernameExists: boolean;
+  isUsernameExistsSubmitting: boolean;
+  jobPosition: JobPosition;
+  lastName: string;
+  password: string;
+  postalCodeCanada: CanadianPostalCode;
+  postalCodeUS: USPostalCode;
+  profilePictureUrl: string;
+  province: Province;
+  state: StatesUS;
   stepsInError: Set<number>;
   stepsWithEmptyInputs: Set<number>;
-  inputsInError: Set<ValidationKey>;
-  formData: FormData;
-  filesInError: Map<string, boolean>;
-  checkUsernameWorker: Worker | null;
-  checkEmailWorker: Worker | null;
+  storeLocation: AllStoreLocations;
+  username: string;
 };
 
 type CheckUsernameEmailMessageEvent = MessageEvent<
