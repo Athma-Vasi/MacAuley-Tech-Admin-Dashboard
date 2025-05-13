@@ -82,26 +82,5 @@ function buildD3Tree(
   }, []);
 }
 
-function returnD3TreeChildren(d3Tree: Array<D3TreeInput>, orgId: number) {
-  function traverseTree(
-    node: D3TreeInput,
-  ): Array<D3TreeInput> {
-    if (node.attributes.orgId === orgId) {
-      return node.children;
-    }
-
-    node.children.forEach((child) => {
-      const foundChildren = traverseTree(child);
-      if (foundChildren.length) {
-        return foundChildren;
-      }
-    });
-
-    return [];
-  }
-
-  return traverseTree(d3Tree[0]);
-}
-
-export { buildD3Tree, returnD3TreeChildren };
+export { buildD3Tree };
 export type { D3TreeInput };

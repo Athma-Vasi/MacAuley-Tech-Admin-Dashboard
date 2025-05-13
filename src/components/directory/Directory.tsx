@@ -166,34 +166,6 @@ function Directory() {
     />
   );
 
-  const d3tree = buildD3Tree(directory, themeColorShade);
-  console.log("D3 tree", d3tree);
-
-  function findUsers(
-    userDocuments: Array<Omit<UserDocument, "password">>,
-    department: DepartmentsWithDefaultKey,
-    storeLocation: StoreLocationsWithDefaultKey,
-  ) {
-    return userDocuments.reduce((acc, user) => {
-      if (
-        user.department === department &&
-        user.storeLocation === storeLocation
-      ) {
-        acc.push(user);
-      }
-      return acc;
-    }, [] as Array<Omit<UserDocument, "password">>);
-  }
-  const users = findUsers(
-    DIRECTORY_USER_DOCUMENTS,
-    "Accounting",
-    "All Locations",
-  );
-  console.log("Users", users);
-
-  const createdTree = buildD3Tree(users, themeColorShade);
-  console.log("D3 tree", createdTree);
-
   const d3Tree = directory.length > 0
     ? (
       <D3Tree

@@ -178,8 +178,6 @@ test.describe("Directory", () => {
                             : storeLocation,
                     );
 
-                    console.log({ foundUsers });
-
                     await Promise.all(
                         foundUsers.map(async (user) => {
                             const usernameElement = page.getByTestId(
