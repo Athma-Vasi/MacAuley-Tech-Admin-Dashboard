@@ -201,19 +201,6 @@ function PERT({
     />
   );
 
-  const barLineRadialChartKindSegmentedControl = (
-    <AccessibleSegmentedControl
-      attributes={{
-        data: CHART_KIND_DATA,
-        name: "chartKind",
-        parentDispatch: pertDispatch,
-        validValueAction: pertAction.setBarLineRadialChartKind,
-        value: barLineRadialChartKind,
-        defaultValue: "bar",
-      }}
-    />
-  );
-
   const barChartIndexBy = calendarView === "Daily"
     ? "Days"
     : calendarView === "Monthly"

@@ -193,7 +193,11 @@ function ResponsiveCalendarChart({
 
   if (hideControls) {
     return (
-      <Box className="chart" onClick={onClick}>
+      <Box
+        className="chart"
+        data-testid="responsive-calendar-chart"
+        onClick={onClick}
+      >
         {displayCalendarChart}
       </Box>
     );

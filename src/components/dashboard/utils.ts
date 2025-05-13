@@ -13,8 +13,8 @@ import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
 import { FinancialMetricCategory } from "./financial/types";
-import { ProductSubMetric } from "./product/types";
-import { RepairSubMetric } from "./repair/types";
+import { ProductMetricCategory, ProductSubMetric } from "./product/types";
+import { RepairMetricCategory, RepairSubMetric } from "./repair/types";
 import type {
   AllStoreLocations,
   BusinessMetric,
@@ -3854,6 +3854,211 @@ function returnSelectedCalendarCharts<
     : defaultValue;
 }
 
+function generateDashboardProductsQueryParamsPermutations() {
+  const storeLocations: AllStoreLocations[] = [
+    "All Locations",
+    "Calgary",
+    "Edmonton",
+    "Vancouver",
+  ];
+
+  const productMetricCategories: Array<ProductMetricCategory> = [
+    "Accessory",
+    "All Products",
+    "Central Processing Unit (CPU)",
+    "Computer Case",
+    "Desktop Computer",
+    "Display",
+    "Graphics Processing Unit (GPU)",
+    "Headphone",
+    "Keyboard",
+    "Memory (RAM)",
+    "Microphone",
+    "Motherboard",
+    "Mouse",
+    "Power Supply Unit (PSU)",
+    "Speaker",
+    "Storage",
+    "Webcam",
+  ];
+
+  const productSubMetricCategories: Array<ProductSubMetric> = [
+    "unitsSold",
+    "revenue",
+  ];
+
+  const calendarViews: DashboardCalendarView[] = [
+    "Daily",
+    "Monthly",
+    "Yearly",
+  ];
+
+  return storeLocations.reduce<
+    Array<{
+      storeLocation: AllStoreLocations;
+      productMetricCategory: ProductMetricCategory;
+      productSubMetricCategory: ProductSubMetric;
+      calendarView: DashboardCalendarView;
+    }>
+  >((acc, storeLocation) => {
+    calendarViews.forEach((calendarView) => {
+      productMetricCategories.forEach((productMetricCategory) => {
+        productSubMetricCategories.forEach((productSubMetricCategory) => {
+          acc.push({
+            storeLocation,
+            productMetricCategory,
+            productSubMetricCategory,
+            calendarView,
+          });
+        });
+      });
+    });
+
+    return acc;
+  }, []);
+}
+
+function generateDashboardRepairsQueryParamsPermutations() {
+  const storeLocations: AllStoreLocations[] = [
+    "All Locations",
+    "Calgary",
+    "Edmonton",
+    "Vancouver",
+  ];
+
+  const repairMetricCategories: Array<RepairMetricCategory> = [
+    "Accessory",
+    "All Repairs",
+    "Audio/Video",
+    "Computer Component",
+    "Electronic Device",
+    "Mobile Device",
+    "Peripheral",
+  ];
+
+  const repairSubMetricCategories: Array<RepairSubMetric> = [
+    "unitsRepaired",
+    "revenue",
+  ];
+
+  const calendarViews: DashboardCalendarView[] = [
+    "Daily",
+    "Monthly",
+    "Yearly",
+  ];
+
+  return storeLocations.reduce<
+    Array<{
+      storeLocation: AllStoreLocations;
+      repairMetricCategory: RepairMetricCategory;
+      repairSubMetricCategory: RepairSubMetric;
+      calendarView: DashboardCalendarView;
+    }>
+  >((acc, storeLocation) => {
+    calendarViews.forEach((calendarView) => {
+      repairMetricCategories.forEach((repairMetricCategory) => {
+        repairSubMetricCategories.forEach((repairSubMetricCategory) => {
+          acc.push({
+            storeLocation,
+            repairMetricCategory,
+            repairSubMetricCategory,
+            calendarView,
+          });
+        });
+      });
+    });
+
+    return acc;
+  }, []);
+}
+
+function generateDashboardCustomersQueryParamsPermutations() {
+  const storeLocations: AllStoreLocations[] = [
+    "All Locations",
+    "Calgary",
+    "Edmonton",
+    "Vancouver",
+  ];
+
+  const customerMetricCategories: CustomerMetricsCategory[] = [
+    "new",
+    "returning",
+    "churn",
+  ];
+
+  const calendarViews: DashboardCalendarView[] = [
+    "Daily",
+    "Monthly",
+    "Yearly",
+  ];
+
+  return storeLocations.reduce<
+    Array<{
+      storeLocation: AllStoreLocations;
+      customerMetricCategory: CustomerMetricsCategory;
+      calendarView: DashboardCalendarView;
+    }>
+  >((acc, storeLocation) => {
+    calendarViews.forEach((calendarView) => {
+      customerMetricCategories.forEach((customerMetricCategory) => {
+        acc.push({
+          storeLocation,
+          customerMetricCategory,
+          calendarView,
+        });
+      });
+    });
+
+    return acc;
+  }, []);
+}
+
+function generateDashboardFinancialsQueryParamsPermutations() {
+  const storeLocations: AllStoreLocations[] = [
+    "All Locations",
+    "Calgary",
+    "Edmonton",
+    "Vancouver",
+  ];
+
+  const financialMetricCategories: FinancialMetricCategory[] = [
+    "expenses",
+    "profit",
+    "revenue",
+    "transactions",
+    "otherMetrics",
+  ];
+
+  const calendarViews: DashboardCalendarView[] = [
+    "Daily",
+    "Monthly",
+    "Yearly",
+  ];
+
+  return storeLocations.reduce<
+    Array<{
+      storeLocation: AllStoreLocations;
+      financialMetricCategory: FinancialMetricCategory;
+      calendarView: DashboardCalendarView;
+    }>
+  >(
+    (acc, storeLocation) => {
+      calendarViews.forEach((calendarView) => {
+        financialMetricCategories.forEach((financialMetricCategory) => {
+          acc.push({
+            storeLocation,
+            financialMetricCategory,
+            calendarView,
+          });
+        });
+      });
+
+      return acc;
+    },
+    [],
+  );
+}
+
 export {
   createAggregatedProductMetrics,
   createAggregatedRepairMetrics,
@@ -3871,6 +4076,10 @@ export {
   createRandomRepairMetrics,
   createRepairCategoryUnitsRepairedRevenueTuple,
   excludeTodayFromCalendarView,
+  generateDashboardCustomersQueryParamsPermutations,
+  generateDashboardFinancialsQueryParamsPermutations,
+  generateDashboardProductsQueryParamsPermutations,
+  generateDashboardRepairsQueryParamsPermutations,
   returnChartTitleNavigateLinks,
   returnChartTitles,
   returnDaysInMonthsInYears,

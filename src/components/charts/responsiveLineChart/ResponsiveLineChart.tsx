@@ -357,7 +357,11 @@ function ResponsiveLineChart({
 
   if (hideControls) {
     return (
-      <Box className="chart" onClick={onClick}>
+      <Box
+        className="chart"
+        data-testid="responsive-line-chart"
+        onClick={onClick}
+      >
         {displayResponsiveLine}
       </Box>
     );

@@ -97,11 +97,8 @@ function returnDashboardCardElement(
 
   const createdChartCard = (
     <div
-      // bg={cardBgGradient}
       className={`statistics-card c${idx ?? 0} ${isActive ? "active" : ""}`}
-      // shadow="xs"
-      // radius="md"
-      // withBorder
+      data-testid={`statistics-card-${heading}`}
     >
       {cardHeading}
       {cardBody}

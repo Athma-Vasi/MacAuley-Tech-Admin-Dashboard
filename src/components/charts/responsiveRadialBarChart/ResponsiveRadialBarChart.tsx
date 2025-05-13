@@ -314,7 +314,11 @@ function ResponsiveRadialBarChart(
 
   if (hideControls) {
     return (
-      <Box className="chart radial" onClick={onClick}>
+      <Box
+        className="chart radial"
+        data-testid="responsive-radial-bar-chart"
+        onClick={onClick}
+      >
         {displayResponsiveRadialBar}
       </Box>
     );

@@ -93,7 +93,7 @@ function DashboardLayoutContainer(
   );
 
   const yAxisKeyChartHeadingTitle = (
-    <div className="chart-titles">
+    <div className="chart-titles" data-testid="chart-titles">
       {yAxisKeyChartHeading?.split(" ").map((word, idx) => (
         <Title order={5} size={24} key={`${idx}-${word}-${calendarView}`}>
           {word}
@@ -103,7 +103,7 @@ function DashboardLayoutContainer(
   );
 
   const yAxisKeyControlsCard = (
-    <div className="chart-controls-card">
+    <div className="chart-controls-card" data-testid="chart-controls-card">
       <Group w="100%" position="left">
         <Text size={24} weight={500}>Data Mapping</Text>
       </Group>

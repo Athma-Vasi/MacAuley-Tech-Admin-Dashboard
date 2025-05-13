@@ -355,7 +355,11 @@ function ResponsiveBarChart({
 
   if (hideControls) {
     return (
-      <Box className="chart" onClick={onClick}>
+      <Box
+        className="chart"
+        data-testid="responsive-bar-chart"
+        onClick={onClick}
+      >
         {displayResponsiveBar}
       </Box>
     );

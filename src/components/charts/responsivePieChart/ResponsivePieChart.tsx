@@ -256,7 +256,11 @@ function ResponsivePieChart({
 
   if (hideControls) {
     return (
-      <Box className="chart" onClick={onClick}>
+      <Box
+        className="chart"
+        data-testid="responsive-pie-chart"
+        onClick={onClick}
+      >
         {displayResponsivePie}
       </Box>
     );
