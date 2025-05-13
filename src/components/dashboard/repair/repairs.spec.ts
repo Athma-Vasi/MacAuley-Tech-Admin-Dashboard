@@ -1,9 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { shuffle } from "simple-statistics";
-import { ProductMetricsChartKey } from "./product/chartsData";
-import { PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP } from "./product/constants";
-import { ProductMetricCategory, ProductSubMetric } from "./product/types";
-import { AllStoreLocations, DashboardCalendarView } from "./types";
+import { REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP } from "./constants";
+import { RepairMetricCategory, RepairSubMetric } from "./types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 
 test.beforeEach(async ({ page }) => {
     await page.goto("http://localhost:5173/login");
@@ -14,9 +13,9 @@ test.beforeEach(async ({ page }) => {
     await passwordInput.fill("passwordQ1!");
     await loginButton.click();
     await page.waitForURL("http://localhost:5173/dashboard/financials");
-    const productsNavlink = page.getByTestId("products-navlink");
-    await productsNavlink.click();
-    await page.waitForURL("http://localhost:5173/dashboard/products");
+    const repairsNavlink = page.getByTestId("repairs-navlink");
+    await repairsNavlink.click();
+    await page.waitForURL("http://localhost:5173/dashboard/repairs");
 });
 
 test.afterEach(async ({ page }) => {
@@ -31,7 +30,7 @@ test.afterEach(async ({ page }) => {
     expect(await loginButton.isVisible());
 });
 
-function generateDashboardProductsQueryParamsPermutations<
+function generateDashboardRepairsQueryParamsPermutations<
     YAxisKey extends string = string,
 >() {
     const storeLocations: AllStoreLocations[] = [
@@ -42,34 +41,16 @@ function generateDashboardProductsQueryParamsPermutations<
     ];
     const shuffledStoreLocations = shuffle(storeLocations);
 
-    const productMetricCategories: Array<ProductMetricCategory> = [
+    const repairMetricCategories: Array<RepairMetricCategory> = [
         "Accessory",
-        "All Products",
-        "Central Processing Unit (CPU)",
-        "Computer Case",
-        "Desktop Computer",
-        "Display",
-        "Graphics Processing Unit (GPU)",
-        "Headphone",
-        "Keyboard",
-        "Memory (RAM)",
-        "Microphone",
-        "Motherboard",
-        "Mouse",
-        "Power Supply Unit (PSU)",
-        "Speaker",
-        "Storage",
-        "Webcam",
+        "All Repairs",
+        "Audio/Video",
+        "Computer Component",
+        "Electronic Device",
+        "Mobile Device",
+        "Peripheral",
     ];
-    const shuffledProductMetricCategories = shuffle(productMetricCategories);
-
-    const productSubMetricCategories: Array<ProductSubMetric> = [
-        "unitsSold",
-        "revenue",
-    ];
-    const shuffledProductSubMetricCategories = shuffle(
-        productSubMetricCategories,
-    );
+    const shuffledRepairMetricCategories = shuffle(repairMetricCategories);
 
     const calendarViews: DashboardCalendarView[] = [
         "Daily",
@@ -79,39 +60,31 @@ function generateDashboardProductsQueryParamsPermutations<
     const shuffledCalendarViews = shuffle(calendarViews);
 
     const yAxisKeys = [
-        "total",
-        "overview",
-        "inStore",
-        "online",
+        "revenue",
+        "unitsRepaired",
     ];
     const shuffledYAxisKeys = shuffle(yAxisKeys);
 
     return shuffledStoreLocations.reduce<
         Array<{
             calendarView: DashboardCalendarView;
-            productMetricCategory: ProductMetricCategory;
-            productSubMetricCategory: ProductSubMetric;
+            repairMetricCategory: RepairMetricCategory;
             storeLocation: AllStoreLocations;
             yAxisKey: YAxisKey;
         }>
     >(
         (acc, storeLocation) => {
             shuffledCalendarViews.forEach((calendarView) => {
-                shuffledProductMetricCategories.forEach(
-                    (productMetricCategory) => {
-                        shuffledProductSubMetricCategories.forEach(
-                            (productSubMetricCategory) => {
-                                shuffledYAxisKeys.forEach((yAxisKey) => {
-                                    acc.push({
-                                        storeLocation,
-                                        productMetricCategory,
-                                        productSubMetricCategory,
-                                        calendarView,
-                                        yAxisKey: yAxisKey as YAxisKey,
-                                    });
-                                });
-                            },
-                        );
+                shuffledRepairMetricCategories.forEach(
+                    (repairMetricCategory) => {
+                        shuffledYAxisKeys.forEach((yAxisKey) => {
+                            acc.push({
+                                storeLocation,
+                                repairMetricCategory,
+                                calendarView,
+                                yAxisKey: yAxisKey as YAxisKey,
+                            });
+                        });
                     },
                 );
             });
@@ -122,23 +95,22 @@ function generateDashboardProductsQueryParamsPermutations<
     );
 }
 
-const productsPermutations = generateDashboardProductsQueryParamsPermutations<
-    ProductMetricsChartKey
+const repairsPermutations = generateDashboardRepairsQueryParamsPermutations<
+    RepairSubMetric
 >();
 
 test.describe("Dashboard", () => {
-    test.describe("Products", () => {
+    test.describe("Repairs", () => {
         test("should correctly handle a valid random permutation", async ({ page }) => {
             await Promise.all(
-                productsPermutations.slice(0, 1).map(
-                    async (productsPermutation) => {
+                repairsPermutations.slice(0, 1).map(
+                    async (repairsPermutation) => {
                         const {
                             calendarView,
-                            productMetricCategory,
-                            productSubMetricCategory,
+                            repairMetricCategory,
                             storeLocation,
                             yAxisKey,
-                        } = productsPermutation;
+                        } = repairsPermutation;
 
                         const storeLocationSelectInput = page.getByTestId(
                             "storeLocation-selectInput",
@@ -149,11 +121,11 @@ test.describe("Dashboard", () => {
                             storeLocation,
                         );
                         await page.waitForURL(
-                            "http://localhost:5173/dashboard/products",
+                            "http://localhost:5173/dashboard/repairs",
                         );
 
                         const titleHeadingTestId =
-                            `dashboard-${calendarView}-Products`;
+                            `dashboard-${calendarView}-Repairs`;
                         const titleHeadingSL = page.getByTestId(
                             titleHeadingTestId,
                         );
@@ -229,15 +201,15 @@ test.describe("Dashboard", () => {
                         );
                         expect(await chartControlsCardCV.isVisible());
 
-                        // product metric category
-                        const productMetricCategorySelectInput = page
+                        // repair metric category
+                        const repairMetricCategorySelectInput = page
                             .getByTestId(
-                                "product metrics-selectInput",
+                                "repairs-selectInput",
                             );
-                        await expect(productMetricCategorySelectInput)
+                        await expect(repairMetricCategorySelectInput)
                             .toBeVisible();
-                        productMetricCategorySelectInput.selectOption(
-                            productMetricCategory,
+                        repairMetricCategorySelectInput.selectOption(
+                            repairMetricCategory,
                         );
 
                         const titleHeadingFMC = page.getByTestId(
@@ -270,47 +242,10 @@ test.describe("Dashboard", () => {
                         );
                         expect(await chartControlsCardFMC.isVisible());
 
-                        // product sub metric category
-                        const productSubMetricCategorySelectInput = page
-                            .getByTestId(
-                                "product sub-metrics-selectInput",
+                        const headings = REPAIR_YAXIS_KEY_TO_CARDS_KEY_MAP
+                            .get(
+                                yAxisKey,
                             );
-                        await expect(
-                            productSubMetricCategorySelectInput,
-                        ).toBeVisible();
-                        productSubMetricCategorySelectInput.selectOption(
-                            productSubMetricCategory,
-                        );
-                        const titleHeadingFMSC = page.getByTestId(
-                            titleHeadingTestId,
-                        );
-                        expect(await titleHeadingFMSC.isVisible());
-                        const barChartFMSC = page.getByTestId(
-                            "responsive-bar-chart",
-                        );
-                        expect(await barChartFMSC.isVisible());
-                        const lineChartFMSC = page.getByTestId(
-                            "responsive-line-chart",
-                        );
-                        expect(await lineChartFMSC.isVisible());
-                        const radialChartFMSC = page.getByTestId(
-                            "responsive-radial-bar-chart",
-                        );
-                        expect(await radialChartFMSC.isVisible());
-                        const chartTitlesFMSC = page.getByTestId(
-                            "chart-titles",
-                        );
-                        expect(await chartTitlesFMSC.isVisible());
-                        const chartControlsCardFMSC = page.getByTestId(
-                            "chart-controls-card",
-                        );
-                        expect(await chartControlsCardFMSC.isVisible());
-
-                        const headings =
-                            PRODUCT_BAR_LINE_YAXIS_KEY_TO_CARDS_KEY_MAP
-                                .get(
-                                    yAxisKey,
-                                );
                         if (headings) {
                             await Promise.all(
                                 Array.from(headings).map(

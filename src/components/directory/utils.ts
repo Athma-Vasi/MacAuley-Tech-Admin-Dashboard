@@ -1,8 +1,4 @@
-import { UserDocument } from "../../types";
-import { createSafeBoxResult, getForageItemSafe } from "../../utils";
-import { createDirectoryForageKey } from "../sidebar/utils";
-import { directoryAction } from "./actions";
-import { DepartmentsWithDefaultKey, DirectoryDispatch } from "./types";
+import { DepartmentsWithDefaultKey } from "./types";
 
 function returnIsStoreLocationDisabled(department: DepartmentsWithDefaultKey) {
   const disabledSet = new Set<DepartmentsWithDefaultKey>([

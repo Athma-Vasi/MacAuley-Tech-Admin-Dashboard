@@ -1,10 +1,4 @@
-import {
-    BusinessMetricsDocument,
-    DecodedToken,
-    HttpServerResponse,
-    SafeBoxResult,
-    UserDocument,
-} from "../../types";
+import { DecodedToken, HttpServerResponse, SafeBoxResult } from "../../types";
 import { DashboardMetricsView } from "../dashboard/types";
 import { SidebarAction } from "./actions";
 
@@ -13,22 +7,6 @@ type SidebarNavlinks =
     | "directory"
     | "users"
     | "logout";
-
-type DirectoryMessageEvent = MessageEvent<
-    SafeBoxResult<{
-        decodedToken: DecodedToken;
-        parsedServerResponse: HttpServerResponse<UserDocument>;
-        metricsView?: Lowercase<DashboardMetricsView>;
-    }>
->;
-
-type LogoutMessageEvent = MessageEvent<
-    SafeBoxResult<{
-        decodedToken: DecodedToken;
-        parsedServerResponse: HttpServerResponse<boolean>;
-        metricsView?: Lowercase<DashboardMetricsView>;
-    }>
->;
 
 type SidebarState = {
     clickedNavlink: SidebarNavlinks;
@@ -60,10 +38,4 @@ type SidebarDispatch =
         payload: Lowercase<DashboardMetricsView>;
     };
 
-export type {
-    DirectoryMessageEvent,
-    LogoutMessageEvent,
-    SidebarDispatch,
-    SidebarNavlinks,
-    SidebarState,
-};
+export type { SidebarDispatch, SidebarNavlinks, SidebarState };

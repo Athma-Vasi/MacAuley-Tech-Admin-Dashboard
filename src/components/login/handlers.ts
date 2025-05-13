@@ -20,7 +20,7 @@ import {
   responseToJSONSafe,
   setForageItemSafe,
 } from "../../utils";
-import { MessageEventLoginWorkerToMain } from "../../workers/fetchParseWorker";
+import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
@@ -371,7 +371,7 @@ async function loginOnmessageCallback(
     showBoundary,
   }: {
     authDispatch: React.Dispatch<AuthDispatch>;
-    event: MessageEventLoginWorkerToMain;
+    event: MessageEventFetchWorkerToMain;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
     localforage: LocalForage;

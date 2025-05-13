@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { directoryAction } from "./actions";
 
 const setDirectoryFetchWorkerDirectoryDispatchZod = z.object({

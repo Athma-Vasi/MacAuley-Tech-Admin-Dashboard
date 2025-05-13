@@ -12,6 +12,7 @@ import {
   DirectoryAction,
   DirectoryDispatch,
   DirectoryState,
+  StoreLocationsWithDefaultKey,
 } from "./types";
 
 function directoryReducer(
@@ -108,6 +109,8 @@ function directoryReducer_setStoreLocation(
 
   return {
     ...state,
+    storeLocation: parsedResult.safeUnwrap().data
+      ?.payload as StoreLocationsWithDefaultKey,
   };
 }
 

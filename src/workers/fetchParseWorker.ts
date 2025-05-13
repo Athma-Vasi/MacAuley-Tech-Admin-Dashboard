@@ -1,12 +1,6 @@
 import { z } from "zod";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
-import {
-    DecodedToken,
-    FinancialMetricsDocument,
-    HttpServerResponse,
-    SafeBoxResult,
-    UserDocument,
-} from "../types";
+import { DecodedToken, HttpServerResponse, SafeBoxResult } from "../types";
 import {
     createSafeBoxResult,
     decodeJWTSafe,
@@ -16,21 +10,16 @@ import {
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
-type MessageEventLoginWorkerToMain = MessageEvent<
+type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
     SafeBoxResult<
         {
-            parsedServerResponse: HttpServerResponse<
-                {
-                    userDocument: UserDocument;
-                    financialMetricsDocument: FinancialMetricsDocument;
-                }
-            >;
+            parsedServerResponse: HttpServerResponse<Data>;
             decodedToken: DecodedToken;
         }
     >
 >;
 
-type MessageEventLoginMainToWorker = MessageEvent<
+type MessageEventFetchMainToWorker = MessageEvent<
     {
         requestInit: RequestInit;
         routesZodSchemaMapKey: RoutesZodSchemasMapKey;
@@ -40,7 +29,7 @@ type MessageEventLoginMainToWorker = MessageEvent<
 >;
 
 self.onmessage = async (
-    event: MessageEventLoginMainToWorker,
+    event: MessageEventFetchMainToWorker,
 ) => {
     console.log(
         "Worker received message in self:",
@@ -191,4 +180,4 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     }));
 });
 
-export type { MessageEventLoginMainToWorker, MessageEventLoginWorkerToMain };
+export type { MessageEventFetchMainToWorker, MessageEventFetchWorkerToMain };

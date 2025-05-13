@@ -35,8 +35,8 @@ import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { DepartmentsWithDefaultKey } from "../directory/types";
 import { userDocumentOptionalsZod } from "../usersQuery/schemas";
-import { DirectoryMessageEvent, LogoutMessageEvent } from "./types";
 import { createDirectoryForageKey } from "./utils";
+import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 
 async function handleMetricCategoryOnmessageCallback({
   authDispatch,
@@ -800,7 +800,7 @@ async function handleLogoutClickOnmessageCallback({
   navigate,
   showBoundary,
 }: {
-  event: LogoutMessageEvent;
+  event: MessageEventFetchWorkerToMain<boolean>;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   localforage: LocalForage;
@@ -846,6 +846,7 @@ async function handleLogoutClickOnmessageCallback({
 
     await localforage.clear();
     navigate("/");
+
     return createSafeBoxResult({
       data: parsedServerResponse,
       kind: "success",
@@ -1078,7 +1079,7 @@ async function handleDirectoryOnmessageCallback({
   toLocation = "/dashboard/directory",
 }: {
   authDispatch: React.Dispatch<AuthDispatch>;
-  event: DirectoryMessageEvent;
+  event: MessageEventFetchWorkerToMain<UserDocument>;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   navigate?: NavigateFunction;

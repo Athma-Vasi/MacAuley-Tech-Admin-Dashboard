@@ -16,7 +16,6 @@ import {
   handleDirectoryNavClick,
   handleDirectoryOnmessageCallback,
 } from "../sidebar/handlers";
-import { DirectoryMessageEvent } from "../sidebar/types";
 import { directoryAction } from "./actions";
 import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
@@ -28,6 +27,7 @@ import type {
   StoreLocationsWithDefaultKey,
 } from "./types";
 import { returnIsStoreLocationDisabled } from "./utils";
+import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 
 function Directory() {
   const [directoryState, directoryDispatch] = useReducer(
@@ -53,8 +53,6 @@ function Directory() {
     cardBgGradient,
   } = returnThemeColors({ colorsSwatches: COLORS_SWATCHES, themeObject });
 
-  // const fetchAbortControllerRef = useRef<AbortController | null>(null);
-  // const isComponentMountedRef = useRef(false);
   const isComponentMountedRef = useMountedRef();
   const fetchAbortControllerRef = useFetchAbortControllerRef();
 
@@ -67,7 +65,7 @@ function Directory() {
     });
 
     newDirectoryFetchWorker.onmessage = async (
-      event: DirectoryMessageEvent,
+      event: MessageEventFetchWorkerToMain,
     ) => {
       await handleDirectoryOnmessageCallback({
         authDispatch,
@@ -85,25 +83,6 @@ function Directory() {
       newDirectoryFetchWorker.terminate();
     };
   }, []);
-
-  // useEffect(() => {
-  //   forageDirectory({
-  //     directoryDispatch,
-  //     fetchAbortControllerRef,
-  //     isComponentMountedRef,
-  //     showBoundary,
-  //   });
-
-  //   const timerId = setTimeout(() => {
-  //     fetchAbortControllerRef?.current?.abort("Request timed out");
-  //   }, FETCH_REQUEST_TIMEOUT);
-
-  //   return () => {
-  //     clearTimeout(timerId);
-  //     fetchAbortControllerRef?.current?.abort("Component unmounted");
-  //     isComponentMountedRef.current = false;
-  //   };
-  // }, []);
 
   if (directory === null || directory === undefined || directory.length === 0) {
     return null;
@@ -129,21 +108,6 @@ function Directory() {
               ? "All Locations"
               : "Edmonton" as AllStoreLocations,
           });
-
-          // await handleDirectoryClicks({
-          //   accessToken,
-          //   authDispatch,
-          //   department: event.currentTarget.value as DepartmentsWithDefaultKey,
-          //   directoryDispatch,
-          //   directoryUrl: API_URL,
-          //   fetchAbortControllerRef,
-          //   globalDispatch,
-          //   isComponentMountedRef,
-          //   showBoundary,
-          //   storeLocation: isStoreLocationDisabled
-          //     ? "All Locations"
-          //     : "Edmonton" as AllStoreLocations,
-          // });
         },
         value: department,
         parentDispatch: directoryDispatch,
@@ -183,21 +147,6 @@ function Directory() {
               ? "All Locations"
               : event.currentTarget.value as AllStoreLocations,
           });
-
-          //   await handleDirectoryClicks({
-          //     accessToken,
-          //     authDispatch,
-          //     department,
-          //     directoryDispatch,
-          //     directoryUrl: API_URL,
-          //     fetchAbortControllerRef,
-          //     globalDispatch,
-          //     isComponentMountedRef,
-          //     showBoundary,
-          //     storeLocation: isStoreLocationDisabled
-          //       ? "All Locations"
-          //       : event.currentTarget.value as AllStoreLocations,
-          //   });
         },
         value: storeLocation,
         parentDispatch: directoryDispatch,

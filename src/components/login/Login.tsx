@@ -23,7 +23,7 @@ import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
-import { MessageEventLoginWorkerToMain } from "../../workers/fetchParseWorker";
+import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
@@ -81,7 +81,7 @@ function Login() {
     });
 
     newFetchParseWorker.onmessage = async (
-      event: MessageEventLoginWorkerToMain,
+      event: MessageEventFetchWorkerToMain,
     ) => {
       await loginOnmessageCallback({
         event,

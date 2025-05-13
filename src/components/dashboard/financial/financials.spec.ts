@@ -5,10 +5,10 @@ import {
     FinancialMetricsCalendarChartsKeyPERT,
     FinancialMetricsOtherMetricsChartsKey,
     FinancialMetricsPieChartsKey,
-} from "./financial/chartsData";
-import { FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP } from "./financial/constants";
-import { FinancialMetricCategory } from "./financial/types";
-import { AllStoreLocations, DashboardCalendarView } from "./types";
+} from "./chartsData";
+import { FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP } from "./constants";
+import { FinancialMetricCategory } from "./types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 
 test.beforeEach(async ({ page }) => {
     await page.goto("http://localhost:5173/login");

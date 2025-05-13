@@ -3,14 +3,14 @@ import { shuffle } from "simple-statistics";
 import {
     CustomerChurnRetentionCalendarChartsKey,
     CustomerMetricsNewReturningChartsKey,
-} from "./customer/chartsData";
+} from "./chartsData";
 import {
     CUSTOMER_CHURN_RETENTION_YAXIS_KEY_TO_CARDS_KEY_MAP,
     CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
     CUSTOMER_RETURNING_YAXIS_KEY_TO_CARDS_KEY_MAP,
-} from "./customer/constants";
-import { CustomerMetricsCategory } from "./customer/types";
-import { AllStoreLocations, DashboardCalendarView } from "./types";
+} from "./constants";
+import { CustomerMetricsCategory } from "./types";
+import { AllStoreLocations, DashboardCalendarView } from "../types";
 
 test.beforeEach(async ({ page }) => {
     await page.goto("http://localhost:5173/login");
