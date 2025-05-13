@@ -1,7 +1,7 @@
 import { UserDocument } from "../../../types";
 
 type D3TreeInput = {
-  attributes: Record<string, string>;
+  attributes: Record<string, string | number>;
   children: Array<D3TreeInput>;
   name: string;
 };
@@ -11,7 +11,7 @@ type TreeHelpers = {
 };
 
 function createTreeHelpers(
-  employees: Array<UserDocument>,
+  employees: Array<Omit<UserDocument, "password">>,
   nodeColor: string,
 ): TreeHelpers {
   const initialAcc = {
@@ -38,6 +38,7 @@ function createTreeHelpers(
       city,
       country,
       nodeColor,
+      orgId,
       profilePictureUrl,
       username,
     };
@@ -55,7 +56,7 @@ function createTreeHelpers(
 }
 
 function buildD3Tree(
-  employees: Array<UserDocument>,
+  employees: Array<Omit<UserDocument, "password">>,
   nodeColor: string,
 ): Array<D3TreeInput> {
   const { minOrgId, nodeMap } = createTreeHelpers(employees, nodeColor);
@@ -77,5 +78,33 @@ function buildD3Tree(
   }, []);
 }
 
-export { buildD3Tree };
+function returnD3TreeChildren(d3Tree: Array<D3TreeInput>, orgId: number) {
+  function helper(
+    result: Array<D3TreeInput>,
+    currNode: D3TreeInput | undefined,
+    isFound: boolean,
+  ): Array<D3TreeInput> {
+    if (!currNode || isFound) {
+      return result;
+    }
+
+    const node = d3Tree.find((node) => node.attributes.orgId === orgId);
+    if (!node) {
+      return result;
+    }
+
+    const children = node.children;
+    if (!children || children.length === 0) {
+      return result;
+    }
+
+    return node.attributes.orgId === orgId
+      ? helper(children, node, true)
+      : helper(result, currNode, isFound);
+  }
+
+  return helper([], d3Tree[0], false);
+}
+
+export { buildD3Tree, returnD3TreeChildren };
 export type { D3TreeInput };

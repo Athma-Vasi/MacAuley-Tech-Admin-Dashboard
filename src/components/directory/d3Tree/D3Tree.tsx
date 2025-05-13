@@ -7,7 +7,6 @@ import Tree, {
 
 import { useCenteredTree } from "../../../hooks/userCenteredTree";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
-// import AccessibleImage from "../../accessibleInputs/";
 
 import { useWindowSize } from "../../../hooks";
 import AccessibleImage from "../../accessibleInputs/AccessibleImage";
@@ -50,32 +49,19 @@ function renderForeignObjectNode({
     />
   );
 
-  // const foreignChild = (
-  //   <Flex direction="column" gap={4}>
-  //     {Object.entries(nodeDatum.attributes).map(([key, value], index) => {
-  //       const disallowedKeysSet = new Set(["profilePictureUrl", "nodeColor"]);
-
-  //       return disallowedKeysSet.has(key) ? null : (
-  //         <Text
-  //           key={`${key}-${value}-${index.toString()}`}
-  //           size={index === 0 ? 22 : 19}
-  //           style={{ textAlign: "center" }}
-  //           pb={index === 0 ? "xs" : 0}
-  //         >
-  //           {value as string}
-  //         </Text>
-  //       );
-  //     })}
-  //   </Flex>
-  // );
-
   const foreignChild = (
-    <Flex direction="column" rowGap={2} align="center" justify="center">
-      <Text size={24}>
+    <Flex direction="column" gap="sm" align="center" justify="center">
+      <Text
+        data-testid={`directory-card-jobPosition-${nodeDatum.attributes.jobPosition}`}
+        size={26}
+      >
         {nodeDatum.attributes.jobPosition}
       </Text>
 
-      <Text size={20}>
+      <Text
+        data-testid={`directory-card-location-${nodeDatum.attributes.city}-${nodeDatum.attributes.country}`}
+        size={20}
+      >
         {nodeDatum.attributes.city}, {nodeDatum.attributes.country}
       </Text>
     </Flex>
@@ -92,7 +78,7 @@ function renderForeignObjectNode({
       withBorder
     >
       <Stack w="100%">
-        <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 50%)" }}>
+        <GoldenGrid style={{ borderBottom: "1px solid hsl(0, 0%, 62%)" }}>
           <Flex
             h="100%"
             direction="column"
@@ -104,15 +90,28 @@ function renderForeignObjectNode({
           </Flex>
 
           <Stack w="100%" align="flex-start" spacing={0}>
-            <Text size={28} weight={600}>{firstName}</Text>
-            <Text size={28} weight={600}>{lastName}</Text>
             <Text
+              data-testid={`directory-card-firstName-${firstName}`}
+              size={28}
+              weight={600}
+            >
+              {firstName}
+            </Text>
+            <Text
+              data-testid={`directory-card-lastName-${lastName}`}
+              size={28}
+              weight={600}
+            >
+              {lastName}
+            </Text>
+            <Text
+              data-testid={`directory-card-username-${nodeDatum.attributes.username}`}
               size={22}
               weight={600}
               color="dimmed"
               truncate
               w="100%"
-              pt="xs"
+              pt="sm"
             >
               @{nodeDatum.attributes.username}
             </Text>

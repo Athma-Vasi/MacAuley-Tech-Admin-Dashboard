@@ -2,13 +2,13 @@ import { Box, Group, Stack } from "@mantine/core";
 import { useEffect, useReducer } from "react";
 
 import { useErrorBoundary } from "react-error-boundary";
-import { useNavigate } from "react-router-dom";
 import { API_URL, COLORS_SWATCHES, STORE_LOCATIONS } from "../../constants";
 import { useFetchAbortControllerRef, useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import type { CheckboxRadioSelectData } from "../../types";
+import type { CheckboxRadioSelectData, UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
+import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AllStoreLocations } from "../dashboard/types";
@@ -19,7 +19,7 @@ import {
 import { directoryAction } from "./actions";
 import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
-import { buildD3Tree } from "./d3Tree/utils";
+import { buildD3Tree, returnD3TreeChildren } from "./d3Tree/utils";
 import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";
 import type {
@@ -27,7 +27,6 @@ import type {
   StoreLocationsWithDefaultKey,
 } from "./types";
 import { returnIsStoreLocationDisabled } from "./utils";
-import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 
 function Directory() {
   const [directoryState, directoryDispatch] = useReducer(
@@ -42,7 +41,6 @@ function Directory() {
   } = directoryState;
   const { showBoundary } = useErrorBoundary();
   const { authState: { accessToken }, authDispatch } = useAuth();
-  const navigate = useNavigate();
 
   const {
     globalState: { themeObject, directory },
@@ -65,7 +63,7 @@ function Directory() {
     });
 
     newDirectoryFetchWorker.onmessage = async (
-      event: MessageEventFetchWorkerToMain,
+      event: MessageEventFetchWorkerToMain<UserDocument>,
     ) => {
       await handleDirectoryOnmessageCallback({
         authDispatch,
@@ -167,6 +165,11 @@ function Directory() {
     />
   );
 
+  const d3tree = buildD3Tree(directory, themeColorShade);
+  console.log("D3 tree", d3tree);
+  const children = returnD3TreeChildren(d3tree, 1);
+  console.log("D3 tree children", children);
+
   const d3Tree = directory.length > 0
     ? (
       <D3Tree
@@ -178,7 +181,7 @@ function Directory() {
 
   return (
     <Stack w="100%" align="center" bg={cardBgGradient}>
-      <Group w="100%" position="center" py="md" align="baseline">
+      <Group w="100%" position="center" p="md" align="baseline">
         {departmentSelectInput}
         {storeLocationSelectInput}
         {orientationSelectInput}

@@ -141,7 +141,7 @@ type ChartKind = "bar" | "calendar" | "line" | "pie" | "radial" | "sunburst";
 type GlobalState = {
   customerMetricsCategory: CustomerMetricsCategory;
   customerMetricsDocument: CustomerMetricsDocument | null;
-  directory: UserDocument[];
+  directory: Array<Omit<UserDocument, "password">>;
   expandBarChartData: ExpandBarChartData | null;
   expandCalendarChartData: ExpandCalendarChartData | null;
   expandLineChartData: ExpandLineChartData | null;

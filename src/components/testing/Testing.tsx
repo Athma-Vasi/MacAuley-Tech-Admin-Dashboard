@@ -5,7 +5,7 @@ import { Err, Ok } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { CanadianPostalCode, UserSchema } from "../../types";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
-import { DIRECTORY_EMPLOYEE_DATA } from "../directory/data";
+import { DIRECTORY_USER_DOCUMENTS } from "../directory/data";
 import { postUsersToDB } from "./handlers";
 
 function Testing() {
@@ -85,7 +85,7 @@ function Testing() {
             "Prairie Winds Drive",
         ];
 
-        const userSchemas = DIRECTORY_EMPLOYEE_DATA.map(
+        const userSchemas = DIRECTORY_USER_DOCUMENTS.map(
             (employee) => {
                 const {
                     city,
@@ -98,7 +98,7 @@ function Testing() {
                     orgId,
                     parentOrgId,
                     profilePictureUrl,
-                    role,
+                    roles,
                     storeLocation,
                     username,
                     province,
@@ -151,7 +151,7 @@ function Testing() {
                     province: country === "Canada" && province
                         ? province
                         : "Not Applicable",
-                    roles: role,
+                    roles,
                     state: country === "United States" && state
                         ? state
                         : "Not Applicable",
