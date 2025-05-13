@@ -127,16 +127,8 @@ function generateDashboardFinancialsQueryParamsPermutations(
     );
 }
 
-const financialsPERTPermutations: {
-    storeLocation: AllStoreLocations;
-    financialMetricCategory: FinancialMetricCategory;
-    calendarView: DashboardCalendarView;
-    yAxisKey:
-        | FinancialMetricsPieChartsKey
-        | FinancialMetricsBarLineChartsKey
-        | FinancialMetricsCalendarChartsKeyPERT
-        | FinancialMetricsOtherMetricsChartsKey;
-}[] = generateDashboardFinancialsQueryParamsPermutations("pert");
+const financialsPERTPermutations =
+    generateDashboardFinancialsQueryParamsPermutations("pert");
 
 const financialsOtherMetricsPermutations =
     generateDashboardFinancialsQueryParamsPermutations("otherMetrics");
@@ -305,6 +297,118 @@ test.describe("Dashboard", () => {
                                     ),
                                 );
                             }
+                        },
+                    ),
+                );
+            });
+        });
+
+        test.describe("Other Metrics", () => {
+            test("should correctly handle a valid random permutation", async ({ page }) => {
+                await Promise.all(
+                    financialsOtherMetricsPermutations.slice(0, 1).map(
+                        async (financialsOtherMetricsPermutation) => {
+                            const {
+                                calendarView,
+                                financialMetricCategory,
+                                storeLocation,
+                                yAxisKey,
+                            } = financialsOtherMetricsPermutation;
+
+                            const storeLocationSelectInput = page.getByTestId(
+                                "storeLocation-selectInput",
+                            );
+                            await expect(storeLocationSelectInput)
+                                .toBeVisible();
+                            storeLocationSelectInput.selectOption(
+                                storeLocation,
+                            );
+                            await page.waitForURL(
+                                "http://localhost:5173/dashboard/financials",
+                            );
+
+                            const titleHeadingTestId =
+                                `dashboard-${calendarView}-Financials`;
+                            const titleHeadingSL = page.getByTestId(
+                                titleHeadingTestId,
+                            );
+                            expect(await titleHeadingSL.isVisible());
+
+                            const yAxisSelectInput = page.getByTestId(
+                                "Y-Axis-selectInput",
+                            );
+                            await expect(yAxisSelectInput).toBeVisible();
+                            yAxisSelectInput.selectOption(yAxisKey);
+
+                            const barChartSL = page.getByTestId(
+                                "responsive-bar-chart",
+                            );
+                            await expect(barChartSL).toBeVisible();
+
+                            const lineChartSL = page.getByTestId(
+                                "responsive-line-chart",
+                            );
+                            await expect(lineChartSL).toBeVisible();
+
+                            const radialChartSL = page.getByTestId(
+                                "responsive-radial-bar-chart",
+                            );
+                            await expect(radialChartSL).toBeVisible();
+
+                            const chartTitlesSL = page.getByTestId(
+                                "chart-titles",
+                            );
+                            await expect(chartTitlesSL).toBeVisible();
+
+                            const chartControlsCardSL = page.getByTestId(
+                                "chart-controls-card",
+                            );
+                            await expect(chartControlsCardSL).toBeVisible();
+
+                            const calendarViewSelectInput = page.getByTestId(
+                                "calendar view-selectInput",
+                            );
+                            await expect(calendarViewSelectInput).toBeVisible();
+                            calendarViewSelectInput.selectOption(
+                                calendarView,
+                            );
+
+                            // const titleHeadingTestId =
+                            //     `dashboard-${calendarView}-Financials`;
+                            const titleHeadingCV = page.getByTestId(
+                                titleHeadingTestId,
+                            );
+                            expect(await titleHeadingCV.isVisible());
+                            const barChartCV = page.getByTestId(
+                                "responsive-bar-chart",
+                            );
+                            expect(await barChartCV.isVisible());
+                            const lineChartCV = page.getByTestId(
+                                "responsive-line-chart",
+                            );
+                            expect(await lineChartCV.isVisible());
+                            const radialChartCV = page.getByTestId(
+                                "responsive-radial-bar-chart",
+                            );
+                            expect(await radialChartCV.isVisible());
+                            const chartTitlesCV = page.getByTestId(
+                                "chart-titles",
+                            );
+                            expect(await chartTitlesCV.isVisible());
+                            const chartControlsCardCV = page.getByTestId(
+                                "chart-controls-card",
+                            );
+                            expect(await chartControlsCardCV.isVisible());
+                            // financial metric category
+                            const financialMetricCategorySelectInput = page
+                                .getByTestId(
+                                    "financial metrics-selectInput",
+                                );
+                            await expect(financialMetricCategorySelectInput)
+                                .toBeVisible();
+                            financialMetricCategorySelectInput.selectOption(
+                                financialMetricCategory,
+                            );
                         },
                     ),
                 );

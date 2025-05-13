@@ -18,7 +18,7 @@ const CUSTOMER_METRICS_CATEGORY_DATA: CheckboxRadioSelectData<
 const CUSTOMER_CHURN_RETENTION_Y_AXIS_DATA: CheckboxRadioSelectData<
   CustomerMetricsChurnRetentionChartsKey
 > = [
-  { label: "Overview", value: "overview" },
+  // { label: "Overview", value: "overview" },
   { label: "Churn Rate", value: "churnRate" },
   { label: "Retention Rate", value: "retentionRate" },
 ];
