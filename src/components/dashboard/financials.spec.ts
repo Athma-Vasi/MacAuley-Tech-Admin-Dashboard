@@ -293,6 +293,21 @@ test.describe("Dashboard", () => {
                                                 );
                                             await expect(statisticsCard)
                                                 .toBeVisible();
+
+                                            const statisticsButton = page
+                                                .getByTestId(
+                                                    `statistics-button-${heading}`,
+                                                );
+                                            await expect(statisticsButton)
+                                                .toBeVisible();
+                                            await statisticsButton.click();
+
+                                            const statisticsModal = page
+                                                .getByTestId(
+                                                    `statistics-modal-${heading}`,
+                                                );
+                                            await expect(statisticsModal)
+                                                .toBeVisible();
                                         },
                                     ),
                                 );
@@ -409,6 +424,41 @@ test.describe("Dashboard", () => {
                             financialMetricCategorySelectInput.selectOption(
                                 financialMetricCategory,
                             );
+
+                            const headings =
+                                FINANCIAL_YAXIS_KEY_TO_CARDS_KEY_MAP
+                                    .get(
+                                        yAxisKey,
+                                    );
+                            if (headings) {
+                                await Promise.all(
+                                    Array.from(headings).map(
+                                        async (heading) => {
+                                            const statisticsCard = page
+                                                .getByTestId(
+                                                    `statistics-card-${heading}`,
+                                                );
+                                            await expect(statisticsCard)
+                                                .toBeVisible();
+
+                                            const statisticsButton = page
+                                                .getByTestId(
+                                                    `statistics-button-${heading}`,
+                                                );
+                                            await expect(statisticsButton)
+                                                .toBeVisible();
+                                            await statisticsButton.click();
+
+                                            const statisticsModal = page
+                                                .getByTestId(
+                                                    `statistics-modal-${heading}`,
+                                                );
+                                            await expect(statisticsModal)
+                                                .toBeVisible();
+                                        },
+                                    ),
+                                );
+                            }
                         },
                     ),
                 );

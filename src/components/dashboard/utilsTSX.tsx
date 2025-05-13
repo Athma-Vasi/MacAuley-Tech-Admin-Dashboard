@@ -597,6 +597,7 @@ function consolidateCardsAndStatisticsModals(
     const statisticsButton = (
       <AccessibleButton
         attributes={{
+          dataTestId: `statistics-button-${key}`,
           kind: "open",
           leftIcon: modalsOpenedState.get(key)
             ? <TbFolderCancel size={20} />
@@ -684,7 +685,7 @@ function returnStatisticsModals(
           maw={400}
           miw={250}
         >
-          <Group>{element}</Group>
+          <Group data-testid={`statistics-modal-${key}`}>{element}</Group>
         </Modal>
       );
       acc.push(modal);

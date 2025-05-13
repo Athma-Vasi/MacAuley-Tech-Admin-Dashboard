@@ -321,6 +321,21 @@ test.describe("Dashboard", () => {
                                             );
                                         await expect(statisticsCard)
                                             .toBeVisible();
+
+                                        const statisticsButton = page
+                                            .getByTestId(
+                                                `statistics-button-${heading}`,
+                                            );
+                                        await expect(statisticsButton)
+                                            .toBeVisible();
+                                        await statisticsButton.click();
+
+                                        const statisticsModal = page
+                                            .getByTestId(
+                                                `statistics-modal-${heading}`,
+                                            );
+                                        await expect(statisticsModal)
+                                            .toBeVisible();
                                     },
                                 ),
                             );
