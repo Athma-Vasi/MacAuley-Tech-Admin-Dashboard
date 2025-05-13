@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { Orientation } from "react-d3-tree";
-import { buildD3Tree } from "./d3Tree/utils";
+import { shuffle } from "simple-statistics";
+import { UserDocument } from "../../types";
 import { DIRECTORY_USER_DOCUMENTS } from "./data";
 import {
     DepartmentsWithDefaultKey,
@@ -11,8 +12,11 @@ import { returnIsStoreLocationDisabled } from "./utils";
 test.beforeEach(async ({ page }) => {
     await page.goto("http://localhost:5173/login");
     const usernameInput = page.getByTestId("username-textInput");
+    await expect(usernameInput).toBeVisible();
     const passwordInput = page.getByTestId("password-textInput");
+    await expect(passwordInput).toBeVisible();
     const loginButton = page.getByTestId("login-button");
+    await expect(loginButton).toBeVisible();
     await usernameInput.fill("manager");
     await passwordInput.fill("passwordQ1!");
     await loginButton.click();
@@ -24,6 +28,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async ({ page }) => {
     const logoutButton = page.getByTestId("logout-button");
+    await expect(logoutButton).toBeVisible();
     await logoutButton.click();
     await page.waitForURL("http://localhost:5173/");
     const usernameInput = page.getByTestId("username-textInput");
@@ -51,6 +56,7 @@ function generateDirectoryInputsPermutations() {
         "Customer Service",
         "Maintenance",
     ];
+    const shuffledDepartments = shuffle(departments);
 
     const storeLocations: StoreLocationsWithDefaultKey[] = [
         "All Locations",
@@ -58,18 +64,20 @@ function generateDirectoryInputsPermutations() {
         "Calgary",
         "Vancouver",
     ];
+    const shuffledStoreLocations = shuffle(storeLocations);
 
     const orientations: Orientation[] = ["horizontal", "vertical"];
+    const shuffledOrientations = shuffle(orientations);
 
-    return departments.reduce<
+    return shuffledDepartments.reduce<
         Array<{
             department: DepartmentsWithDefaultKey;
             storeLocation: StoreLocationsWithDefaultKey;
             orientation: Orientation;
         }>
     >((acc, department) => {
-        storeLocations.forEach((storeLocation) => {
-            orientations.forEach((orientation) => {
+        shuffledStoreLocations.forEach((storeLocation) => {
+            shuffledOrientations.forEach((orientation) => {
                 const isStoreLocationDisabled = returnIsStoreLocationDisabled(
                     department,
                 );
@@ -89,8 +97,27 @@ function generateDirectoryInputsPermutations() {
     }, []);
 }
 
+function findUsers(
+    userDocuments: Array<Omit<UserDocument, "password">>,
+    department: DepartmentsWithDefaultKey,
+    storeLocation: StoreLocationsWithDefaultKey,
+) {
+    return userDocuments.reduce<Array<Omit<UserDocument, "password">>>(
+        (acc, user) => {
+            if (
+                user.department === department &&
+                user.storeLocation === storeLocation
+            ) {
+                acc.push(user);
+            }
+
+            return acc;
+        },
+        [],
+    );
+}
+
 const directoryInputsPermutations = generateDirectoryInputsPermutations();
-const d3Tree = buildD3Tree(DIRECTORY_USER_DOCUMENTS, "teal");
 
 test.describe("Directory", () => {
     test("should render the ceo card", async ({ page }) => {
@@ -112,7 +139,7 @@ test.describe("Directory", () => {
         await expect(locationElement).toBeVisible();
     });
 
-    test("should handle all department inputs permutations", async ({ page }) => {
+    test("should handle a random inputs permutation", async ({ page }) => {
         await Promise.all(
             directoryInputsPermutations.slice(0, 1).map(
                 async ({ department, storeLocation, orientation }) => {
@@ -128,6 +155,39 @@ test.describe("Directory", () => {
                         "orientation-selectInput",
                     );
                     await expect(orientationSelectInput).toBeVisible();
+                    await departmentSelectInput.selectOption(department);
+
+                    const isStoreLocationDisabled =
+                        returnIsStoreLocationDisabled(
+                            department,
+                        );
+
+                    if (!isStoreLocationDisabled) {
+                        await storeLocationSelectInput.selectOption(
+                            storeLocation,
+                        );
+                    }
+
+                    await orientationSelectInput.selectOption(orientation);
+
+                    const foundUsers = findUsers(
+                        DIRECTORY_USER_DOCUMENTS,
+                        department,
+                        isStoreLocationDisabled
+                            ? "All Locations"
+                            : storeLocation,
+                    );
+
+                    console.log({ foundUsers });
+
+                    await Promise.all(
+                        foundUsers.map(async (user) => {
+                            const usernameElement = page.getByTestId(
+                                `directory-card-username-${user.username}`,
+                            );
+                            await expect(usernameElement).toBeVisible();
+                        }),
+                    );
                 },
             ),
         );

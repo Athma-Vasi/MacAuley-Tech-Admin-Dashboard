@@ -7,6 +7,7 @@ import { createAccessibleImageTextElement } from "./utils";
 type AccessibleImageAttributes = {
   alt: string;
   caption?: ReactNode;
+  dataTestId?: string;
   fit?: React.CSSProperties["objectFit"];
   height?: number | string;
   imageRef?: React.ForwardedRef<HTMLImageElement>;
@@ -30,6 +31,7 @@ function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
   const {
     alt,
     caption = null,
+    dataTestId,
     fit,
     height,
     imageRef,
@@ -78,6 +80,7 @@ function AccessibleImage({ attributes, uniqueId }: AccessibleImageProps) {
     <Image
       alt={isImageLoadFailed ? fallbackAlt : alt}
       caption={caption}
+      data-testid={dataTestId}
       fit={fit}
       height={height}
       onError={() => setIsImageLoadFailed(true)}

@@ -4388,7 +4388,7 @@ const DIRECTORY_USER_DOCUMENTS: Array<Omit<UserDocument, "password">> = [
       "https://images.pexels.com/photos/4777025/pexels-photo-4777025.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     "storeLocation": "All Locations",
     "orgId": 161,
-    "parentOrgId": 76,
+    "parentOrgId": 25,
     "roles": [
       "Manager",
     ],

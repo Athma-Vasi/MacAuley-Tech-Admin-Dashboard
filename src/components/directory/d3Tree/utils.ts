@@ -23,6 +23,8 @@ function createTreeHelpers(
     const { minOrgId, nodeMap } = helpersAcc;
     const {
       city,
+      department,
+      storeLocation,
       firstName,
       jobPosition,
       lastName,
@@ -34,6 +36,8 @@ function createTreeHelpers(
     const name = `${firstName} ${lastName}`;
 
     const attributes = {
+      department,
+      storeLocation,
       jobPosition,
       city,
       country,
@@ -79,31 +83,24 @@ function buildD3Tree(
 }
 
 function returnD3TreeChildren(d3Tree: Array<D3TreeInput>, orgId: number) {
-  function helper(
-    result: Array<D3TreeInput>,
-    currNode: D3TreeInput | undefined,
-    isFound: boolean,
+  function traverseTree(
+    node: D3TreeInput,
   ): Array<D3TreeInput> {
-    if (!currNode || isFound) {
-      return result;
+    if (node.attributes.orgId === orgId) {
+      return node.children;
     }
 
-    const node = d3Tree.find((node) => node.attributes.orgId === orgId);
-    if (!node) {
-      return result;
-    }
+    node.children.forEach((child) => {
+      const foundChildren = traverseTree(child);
+      if (foundChildren.length) {
+        return foundChildren;
+      }
+    });
 
-    const children = node.children;
-    if (!children || children.length === 0) {
-      return result;
-    }
-
-    return node.attributes.orgId === orgId
-      ? helper(children, node, true)
-      : helper(result, currNode, isFound);
+    return [];
   }
 
-  return helper([], d3Tree[0], false);
+  return traverseTree(d3Tree[0]);
 }
 
 export { buildD3Tree, returnD3TreeChildren };

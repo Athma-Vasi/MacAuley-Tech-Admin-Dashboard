@@ -52,14 +52,12 @@ function renderForeignObjectNode({
   const foreignChild = (
     <Flex direction="column" gap="sm" align="center" justify="center">
       <Text
-        data-testid={`directory-card-jobPosition-${nodeDatum.attributes.jobPosition}`}
         size={26}
       >
         {nodeDatum.attributes.jobPosition}
       </Text>
 
       <Text
-        data-testid={`directory-card-location-${nodeDatum.attributes.city}-${nodeDatum.attributes.country}`}
         size={20}
       >
         {nodeDatum.attributes.city}, {nodeDatum.attributes.country}
@@ -91,14 +89,12 @@ function renderForeignObjectNode({
 
           <Stack w="100%" align="flex-start" spacing={0}>
             <Text
-              data-testid={`directory-card-firstName-${firstName}`}
               size={28}
               weight={600}
             >
               {firstName}
             </Text>
             <Text
-              data-testid={`directory-card-lastName-${lastName}`}
               size={28}
               weight={600}
             >

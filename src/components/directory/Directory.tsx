@@ -19,7 +19,8 @@ import {
 import { directoryAction } from "./actions";
 import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
-import { buildD3Tree, returnD3TreeChildren } from "./d3Tree/utils";
+import { buildD3Tree } from "./d3Tree/utils";
+import { DIRECTORY_USER_DOCUMENTS } from "./data";
 import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";
 import type {
@@ -167,8 +168,31 @@ function Directory() {
 
   const d3tree = buildD3Tree(directory, themeColorShade);
   console.log("D3 tree", d3tree);
-  const children = returnD3TreeChildren(d3tree, 1);
-  console.log("D3 tree children", children);
+
+  function findUsers(
+    userDocuments: Array<Omit<UserDocument, "password">>,
+    department: DepartmentsWithDefaultKey,
+    storeLocation: StoreLocationsWithDefaultKey,
+  ) {
+    return userDocuments.reduce((acc, user) => {
+      if (
+        user.department === department &&
+        user.storeLocation === storeLocation
+      ) {
+        acc.push(user);
+      }
+      return acc;
+    }, [] as Array<Omit<UserDocument, "password">>);
+  }
+  const users = findUsers(
+    DIRECTORY_USER_DOCUMENTS,
+    "Accounting",
+    "All Locations",
+  );
+  console.log("Users", users);
+
+  const createdTree = buildD3Tree(users, themeColorShade);
+  console.log("D3 tree", createdTree);
 
   const d3Tree = directory.length > 0
     ? (
