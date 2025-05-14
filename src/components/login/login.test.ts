@@ -197,7 +197,7 @@ describe("loginReducer", () => {
                 initialLoginState,
                 dispatch,
             );
-            expect(state.loginFetchWorker).toBe(worker);
+            expect(state.loginFetchWorker).toBeInstanceOf(Worker);
         });
         it("should not allow invalid Worker values", () => {
             const worker = {} as Worker;

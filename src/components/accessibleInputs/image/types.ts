@@ -41,6 +41,7 @@ type AccessibleImageInputState = {
     /** blobs do not have name property */
     fileNames: string[];
     imageFileBlobs: Array<ModifiedFile>;
+    imageWorker: Worker | null;
     isErrors: boolean[];
     isLoading: boolean;
     isModalOpen: boolean;

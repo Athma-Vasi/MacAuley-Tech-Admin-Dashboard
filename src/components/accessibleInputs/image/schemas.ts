@@ -74,6 +74,11 @@ const setIsErrorsImageDispatchZod = z.object({
     }),
 });
 
+const setImageWorkerImageDispatchZod = z.object({
+    action: z.literal(accessibleImageInputAction.setImageWorker),
+    payload: z.instanceof(Worker),
+});
+
 export {
     addImageFileBlobDispatchZod,
     addImageFileNameDispatchZod,
@@ -81,6 +86,7 @@ export {
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,
     setImageFileBlobDispatchZod,
+    setImageWorkerImageDispatchZod,
     setIsErrorsImageDispatchZod,
     setIsLoadingImageDispatchZod,
     setIsModalOpenImageDispatchZod,
