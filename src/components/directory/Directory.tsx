@@ -20,7 +20,6 @@ import { directoryAction } from "./actions";
 import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
-import { DIRECTORY_USER_DOCUMENTS } from "./data";
 import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";
 import type {
@@ -102,7 +101,6 @@ function Directory() {
             department: event.currentTarget.value as DepartmentsWithDefaultKey,
             directoryFetchWorker,
             directoryUrl: API_URL,
-            globalDispatch,
             storeLocation: isStoreLocationDisabled
               ? "All Locations"
               : "Edmonton" as AllStoreLocations,
@@ -141,7 +139,6 @@ function Directory() {
             department,
             directoryFetchWorker,
             directoryUrl: API_URL,
-            globalDispatch,
             storeLocation: isStoreLocationDisabled
               ? "All Locations"
               : event.currentTarget.value as AllStoreLocations,

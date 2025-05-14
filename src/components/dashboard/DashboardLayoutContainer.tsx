@@ -11,8 +11,6 @@ type DashboardLayoutContainerProps = {
   pieChart?: React.JSX.Element;
   radialChart: React.JSX.Element;
   calendarChart?: React.JSX.Element;
-  // barLineRadialChart: React.JSX.Element;
-  // barLineRadialChartKindSegmentedControl: React.JSX.Element;
   calendarView: DashboardCalendarView;
   consolidatedCards: React.JSX.Element[];
   chartsToYAxisKeysMap: ChartsToYAxisKeysMap;
@@ -26,8 +24,6 @@ type DashboardLayoutContainerProps = {
 
 function DashboardLayoutContainer(
   {
-    // barLineRadialChart,
-    // barLineRadialChartKindSegmentedControl,
     calendarChart,
     calendarView,
     radialChart,

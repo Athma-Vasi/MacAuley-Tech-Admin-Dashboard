@@ -93,7 +93,6 @@ function OtherMetrics({
   );
 
   const {
-    barLineRadialChartKind,
     yAxisKey,
   } = otherMetricsState;
 

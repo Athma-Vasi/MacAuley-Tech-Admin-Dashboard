@@ -194,7 +194,6 @@ function FinancialMetrics(
 
   const overviewMetrics = returnOverviewFinancialMetrics(
     financialMetricsDocument,
-    storeLocation,
     selectedYYYYMMDD,
   );
 

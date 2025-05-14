@@ -2,7 +2,6 @@ import { RepairMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
 import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
-import { RepairMetricCategory } from "./types";
 
 type OverviewRevenueMetrics = Record<
   DashboardCalendarView,
@@ -12,7 +11,6 @@ type OverviewRevenueMetrics = Record<
 function returnOverviewRepairMetrics(
   repairMetricsDocument: RepairMetricsDocument,
   selectedYYYYMMDD: string,
-  category: RepairMetricCategory,
 ) {
   const defaultValue: OverviewRevenueMetrics = {
     Daily: {

@@ -32,7 +32,6 @@ function Chain(
 ) {
     const { globalState: { themeObject } } = useGlobalState();
     const {
-        generalSearchCase,
         generalSearchExclusionValue,
         generalSearchInclusionValue,
         projectionFields,

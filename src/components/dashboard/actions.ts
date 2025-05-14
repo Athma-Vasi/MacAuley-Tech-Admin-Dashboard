@@ -3,7 +3,6 @@ type DashboardAction = {
   setDashboardFetchWorker: "setDashboardFetchWorker";
   setIsLoading: "setIsLoading";
   setLoadingMessage: "setLoadingMessage";
-  setSelectedYYYYMMDD: "setSelectedYYYYMMDD";
 };
 
 const dashboardAction: DashboardAction = {
@@ -11,7 +10,6 @@ const dashboardAction: DashboardAction = {
   setDashboardFetchWorker: "setDashboardFetchWorker",
   setIsLoading: "setIsLoading",
   setLoadingMessage: "setLoadingMessage",
-  setSelectedYYYYMMDD: "setSelectedYYYYMMDD",
 };
 
 export { dashboardAction };

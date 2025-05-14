@@ -434,9 +434,7 @@ async function handleImageQualityOrientationSliderChange<
         fileNames,
         getForageItemSafe,
         isComponentMountedRef,
-        imageFileBlobs,
         invalidValueAction,
-        maxImagesAmount,
         maxImageSize,
         modifyImageSafe,
         orientations,
@@ -456,9 +454,7 @@ async function handleImageQualityOrientationSliderChange<
         fileNames: string[];
         getForageItemSafe: GetForageItemSafe;
         isComponentMountedRef: React.RefObject<boolean>;
-        imageFileBlobs: Array<ModifiedFile>;
         invalidValueAction: InvalidValueAction;
-        maxImagesAmount: number;
         maxImageSize: number;
         modifyImageSafe: ModifyImageSafe;
         orientations: number[];
@@ -601,7 +597,6 @@ async function handleImageQualityOrientationSliderChange<
         const { areImagesInvalid } = validateImages({
             allowedFileExtensionsRegex: ALLOWED_FILE_EXTENSIONS_REGEX,
             imageFileBlobs: updatedModifiedFiles,
-            maxImagesAmount,
             maxImageSize,
         });
 

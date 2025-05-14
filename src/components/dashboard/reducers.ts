@@ -5,7 +5,6 @@ import {
   setDashboardFetchWorkerDashboardDispatchZod,
   setIsLoadingDashboardDispatchZod,
   setLoadingMessageDashboardDispatchZod,
-  setSelectedYYYYMMDDDashboardDispatchZod,
 } from "./schemas";
 import type {
   DashboardAction,
@@ -26,7 +25,6 @@ const dashboardReducersMap = new Map<
   DashboardAction[keyof DashboardAction],
   (state: DashboardState, dispatch: DashboardDispatch) => DashboardState
 >([
-  [dashboardAction.setSelectedYYYYMMDD, dashboardReducer_setSelectedYYYYMMDD],
   [dashboardAction.setIsLoading, dashboardReducer_setIsLoading],
   [dashboardAction.setLoadingMessage, dashboardReducer_setLoadingMessage],
   [dashboardAction.setCalendarView, dashboardReducer_setCalendarView],
@@ -35,25 +33,6 @@ const dashboardReducersMap = new Map<
     dashboardReducer_setDashboardFetchWorker,
   ],
 ]);
-
-function dashboardReducer_setSelectedYYYYMMDD(
-  state: DashboardState,
-  dispatch: DashboardDispatch,
-): DashboardState {
-  const parsedResult = parseSafeSync({
-    object: dispatch,
-    zSchema: setSelectedYYYYMMDDDashboardDispatchZod,
-  });
-
-  if (parsedResult.err) {
-    return state;
-  }
-
-  return {
-    ...state,
-    selectedYYYYMMDD: parsedResult.safeUnwrap().data?.payload,
-  };
-}
 
 function dashboardReducer_setIsLoading(
   state: DashboardState,
@@ -138,5 +117,4 @@ export {
   dashboardReducer_setDashboardFetchWorker,
   dashboardReducer_setIsLoading,
   dashboardReducer_setLoadingMessage,
-  dashboardReducer_setSelectedYYYYMMDD,
 };

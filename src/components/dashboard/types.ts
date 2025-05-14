@@ -27,17 +27,12 @@ type DashboardState = {
   dashboardFetchWorker: Worker | null;
   isLoading: boolean;
   loadingMessage: string;
-  selectedYYYYMMDD: string;
 };
 
 type DashboardDispatch =
   | {
     action: DashboardAction["setDashboardFetchWorker"];
     payload: Worker;
-  }
-  | {
-    action: DashboardAction["setSelectedYYYYMMDD"];
-    payload: string;
   }
   | {
     action: DashboardAction["setIsLoading"];

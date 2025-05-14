@@ -1,11 +1,6 @@
 import { z } from "zod";
 import { dashboardAction } from "./actions";
 
-const setSelectedYYYYMMDDDashboardDispatchZod = z.object({
-    action: z.literal(dashboardAction.setSelectedYYYYMMDD),
-    payload: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-});
-
 const setIsLoadingDashboardDispatchZod = z.object({
     action: z.literal(dashboardAction.setIsLoading),
     payload: z.boolean(),
@@ -31,5 +26,4 @@ export {
     setDashboardFetchWorkerDashboardDispatchZod,
     setIsLoadingDashboardDispatchZod,
     setLoadingMessageDashboardDispatchZod,
-    setSelectedYYYYMMDDDashboardDispatchZod,
 };

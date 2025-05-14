@@ -12,7 +12,6 @@ import {
     dashboardReducer_setDashboardFetchWorker,
     dashboardReducer_setIsLoading,
     dashboardReducer_setLoadingMessage,
-    dashboardReducer_setSelectedYYYYMMDD,
 } from "./reducers";
 import { initialDashboardState } from "./state";
 import { DashboardCalendarView, DashboardDispatch } from "./types";
@@ -65,36 +64,6 @@ describe("dashboardReducer", () => {
                 dispatch,
             );
             expect(state.dashboardFetchWorker).toBeInstanceOf(Worker);
-        });
-    });
-
-    describe(dashboardAction.setSelectedYYYYMMDD, () => {
-        it("should set the selected date", () => {
-            const date = "2025-03-31";
-            const dispatch: DashboardDispatch = {
-                action: dashboardAction.setSelectedYYYYMMDD,
-                payload: date,
-            };
-            const state = dashboardReducer_setSelectedYYYYMMDD(
-                initialDashboardState,
-                dispatch,
-            );
-            expect(state.selectedYYYYMMDD).toBe(date);
-        });
-
-        it("should not allow invalid date values", () => {
-            const initialSelectedDate = initialDashboardState.selectedYYYYMMDD;
-            INVALID_STRINGS.forEach((date) => {
-                const dispatch: DashboardDispatch = {
-                    action: dashboardAction.setSelectedYYYYMMDD,
-                    payload: date as any,
-                };
-                const state = dashboardReducer_setSelectedYYYYMMDD(
-                    initialDashboardState,
-                    dispatch,
-                );
-                expect(state.selectedYYYYMMDD).toBe(initialSelectedDate);
-            });
         });
     });
 

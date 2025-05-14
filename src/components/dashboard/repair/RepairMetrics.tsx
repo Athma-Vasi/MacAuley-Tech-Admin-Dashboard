@@ -187,7 +187,6 @@ function RepairMetrics(
   const overviewMetrics = returnOverviewRepairMetrics(
     repairMetricsDocument,
     selectedYYYYMMDD,
-    repairMetricCategory,
   );
 
   const overviewCards = createOverviewRepairMetricsCards({

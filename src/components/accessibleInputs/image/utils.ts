@@ -1,24 +1,17 @@
 import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, getForageItemSafe } from "../../../utils";
+import { createSafeBoxResult } from "../../../utils";
 import { ModifiedFile } from "../AccessibleFileInput";
-import { accessibleImageInputAction } from "./actions";
-import {
-    ALLOWED_FILE_EXTENSIONS_REGEX,
-    ALLOWED_FILE_TYPES_REGEX,
-    MAX_IMAGES,
-} from "./constants";
-import { AccessibleImageInputDispatch, SetFilesInErrorPayload } from "./types";
+import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
+import { SetFilesInErrorPayload } from "./types";
 
 function validateImages({
     allowedFileExtensionsRegex,
     imageFileBlobs,
     maxImageSize,
-    maxImagesAmount = MAX_IMAGES,
 }: {
     allowedFileExtensionsRegex: RegExp;
     imageFileBlobs: Array<ModifiedFile>;
     maxImageSize: number;
-    maxImagesAmount: number;
 }) {
     const areImagesInvalid = imageFileBlobs.reduce<Array<boolean>>(
         (invalidAcc, fileBlob, idx) => {
@@ -48,28 +41,6 @@ function validateImages({
         },
         Array.from({ length: imageFileBlobs.length }, () => false),
     );
-    // const areImagesInvalid = imageFileBlobs.length > maxImagesAmount ||
-    //     imageFileBlobs.reduce((invalidAcc, fileBlob) => {
-    //         if (fileBlob === null) {
-    //             return true;
-    //         }
-
-    //         const { size, type } = fileBlob;
-    //         if (size > maxImageSize) {
-    //             return true;
-    //         }
-
-    //         if (!type.length) {
-    //             return true;
-    //         }
-
-    //         const extension = type.split("/")[1];
-    //         if (!allowedFileExtensionsRegex.test(extension)) {
-    //             return true;
-    //         }
-
-    //         return invalidAcc;
-    //     }, false);
 
     return { areImagesInvalid };
 }
@@ -82,165 +53,6 @@ function createImageInputForageKeys(storageKey: string) {
         originalFilesForageKey: `${storageKey}/originalFiles`,
         qualitiesForageKey: `${storageKey}/qualities`,
     };
-}
-
-async function retrieveStoredImagesValues(
-    {
-        accessibleImageInputDispatch,
-        isComponentMountedRef,
-        maxImagesAmount,
-        showBoundary,
-        storageKey,
-    }: {
-        accessibleImageInputDispatch: React.Dispatch<
-            AccessibleImageInputDispatch
-        >;
-        isComponentMountedRef: React.RefObject<boolean>;
-        maxImagesAmount: number;
-        showBoundary: (error: Error) => void;
-        storageKey: string;
-    },
-): Promise<SafeBoxResult> {
-    const isComponentMounted = isComponentMountedRef.current;
-    if (!isComponentMounted) {
-        return createSafeBoxResult({
-            message: "Component is not mounted",
-        });
-    }
-
-    const {
-        fileNamesForageKey,
-        modifiedFilesForageKey,
-        orientationsForageKey,
-        qualitiesForageKey,
-    } = createImageInputForageKeys(
-        storageKey,
-    );
-
-    try {
-        accessibleImageInputDispatch({
-            action: accessibleImageInputAction.setIsLoading,
-            payload: true,
-        });
-
-        const modifiedFilesResult = await getForageItemSafe<
-            Array<ModifiedFile>
-        >(
-            modifiedFilesForageKey,
-        );
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Component is not mounted",
-            });
-        }
-        if (modifiedFilesResult.err) {
-            return createSafeBoxResult({
-                kind: "notFound",
-            });
-        }
-        const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
-
-        const fileNamesResult = await getForageItemSafe<Array<string>>(
-            fileNamesForageKey,
-        );
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Component is not mounted",
-            });
-        }
-        if (fileNamesResult.err) {
-            return createSafeBoxResult({
-                kind: "notFound",
-            });
-        }
-        const fileNames = fileNamesResult.safeUnwrap().data ?? [];
-
-        const qualitiesResult = await getForageItemSafe<Array<number>>(
-            qualitiesForageKey,
-        );
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Component is not mounted",
-            });
-        }
-        if (qualitiesResult.err) {
-            return createSafeBoxResult({
-                kind: "notFound",
-            });
-        }
-        const qualities = qualitiesResult.safeUnwrap().data ?? Array.from(
-            { length: maxImagesAmount },
-            () => 10,
-        );
-
-        const orientationsResult = await getForageItemSafe<Array<number>>(
-            orientationsForageKey,
-        );
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Component is not mounted",
-            });
-        }
-        if (orientationsResult.err) {
-            return createSafeBoxResult({
-                kind: "notFound",
-            });
-        }
-        const orientations = orientationsResult.safeUnwrap().data ?? Array.from(
-            { length: maxImagesAmount },
-            () => 1,
-        );
-
-        modifiedFiles?.forEach((modifiedFile: ModifiedFile, index) => {
-            if (!modifiedFile) {
-                return;
-            }
-
-            accessibleImageInputDispatch({
-                action: accessibleImageInputAction.setImageFileBlob,
-                payload: { fileBlob: modifiedFile, index },
-            });
-
-            accessibleImageInputDispatch({
-                action: accessibleImageInputAction.addFileName,
-                payload: {
-                    index,
-                    value: fileNames[index],
-                },
-            });
-
-            accessibleImageInputDispatch({
-                action: accessibleImageInputAction.setQuality,
-                payload: { index, value: qualities[index] },
-            });
-
-            accessibleImageInputDispatch({
-                action: accessibleImageInputAction.setOrientation,
-                payload: { index, value: orientations[index] },
-            });
-        });
-
-        accessibleImageInputDispatch({
-            action: accessibleImageInputAction.setIsLoading,
-            payload: false,
-        });
-
-        return createSafeBoxResult({
-            kind: "success",
-            data: true,
-        });
-    } catch (error: any) {
-        if (!isComponentMounted) {
-            return createSafeBoxResult({
-                message: "Error: Component is not mounted",
-            });
-        }
-
-        showBoundary(error);
-        return createSafeBoxResult({
-            message: "Unknown error",
-        });
-    }
 }
 
 function checkImageFileBlobs<
@@ -334,9 +146,4 @@ function checkImageFileBlobs<
     });
 }
 
-export {
-    checkImageFileBlobs,
-    createImageInputForageKeys,
-    retrieveStoredImagesValues,
-    validateImages,
-};
+export { checkImageFileBlobs, createImageInputForageKeys, validateImages };

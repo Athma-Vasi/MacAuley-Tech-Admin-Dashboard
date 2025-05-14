@@ -1,16 +1,7 @@
 import { Burger, Flex, Group, Title } from "@mantine/core";
-import localforage from "localforage";
-import { useEffect, useRef } from "react";
-import { useErrorBoundary } from "react-error-boundary";
-import {
-  COLORS_SWATCHES,
-  FETCH_REQUEST_TIMEOUT,
-  LOGOUT_URL,
-  TEXT_SHADOW,
-} from "../../constants";
-import { useAuth } from "../../hooks/useAuth";
+import { COLORS_SWATCHES, TEXT_SHADOW } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { fetchSafe, returnThemeColors } from "../../utils";
+import { returnThemeColors } from "../../utils";
 import Settings from "./settings";
 
 type HeaderProps = {
@@ -19,55 +10,11 @@ type HeaderProps = {
 };
 
 function Header({ opened, setOpened }: HeaderProps) {
-  const { authState: { accessToken } } = useAuth();
   const { globalState: { themeObject } } = useGlobalState();
   const { headerBgGradient, grayColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
-  const { showBoundary } = useErrorBoundary();
-
-  const fetchAbortControllerRef = useRef<AbortController | null>(null);
-  const isComponentMountedRef = useRef(false);
-
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      fetchAbortControllerRef?.current?.abort("Request timed out");
-    }, FETCH_REQUEST_TIMEOUT);
-
-    return () => {
-      clearTimeout(timerId);
-      fetchAbortControllerRef?.current?.abort("Component unmounted");
-      isComponentMountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    async function checkAccessToken() {
-      if (!accessToken) {
-        const requestInit: RequestInit = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer ",
-          },
-          signal: fetchAbortControllerRef.current?.signal,
-        };
-
-        await fetchSafe(LOGOUT_URL, requestInit);
-        await localforage.clear();
-        showBoundary(new Error("Access token is not available"));
-        return;
-      }
-    }
-
-    checkAccessToken();
-
-    return () => {
-      fetchAbortControllerRef.current?.abort("Component unmounted");
-      isComponentMountedRef.current = false;
-    };
-  }, [accessToken]);
 
   const burger = (
     <Burger
@@ -102,7 +49,6 @@ function Header({ opened, setOpened }: HeaderProps) {
       p="md"
       w="100%"
       bg={headerBgGradient}
-      // style={{ borderBottom: "1px solid hsl(0, 0%, 50%)" }}
     >
       <Flex align="flex-end" w="62%">
         {burger}

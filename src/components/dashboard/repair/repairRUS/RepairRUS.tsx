@@ -92,7 +92,6 @@ function RepairRUS(
     initialRepairRUSState,
   );
   const {
-    barLineRadialChartKind,
     yAxisKey,
   } = repairRUSState;
 

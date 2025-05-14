@@ -13,7 +13,6 @@ type OverviewFinancialMetrics = {
 
 function returnOverviewFinancialMetrics(
   financialMetricsDocument: FinancialMetricsDocument,
-  storeLocation: AllStoreLocations,
   selectedYYYYMMDD: string,
 ) {
   const defaultValue: OverviewFinancialMetrics = {

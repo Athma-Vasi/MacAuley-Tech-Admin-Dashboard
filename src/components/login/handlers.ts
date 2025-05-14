@@ -1,6 +1,4 @@
-import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
-import { z } from "zod";
 import { LOGIN_URL } from "../../constants";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
@@ -12,295 +10,11 @@ import {
   SafeBoxResult,
   UserDocument,
 } from "../../types";
-import {
-  createSafeBoxResult,
-  decodeJWTSafe,
-  fetchSafe,
-  parseServerResponseAsyncSafe,
-  responseToJSONSafe,
-  setForageItemSafe,
-} from "../../utils";
+import { createSafeBoxResult, setForageItemSafe } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
-import { financialMetricsDocumentZod } from "../dashboard/financial/schemas";
-import { userDocumentOptionalsZod } from "../usersQuery/schemas";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
 import { LoginState } from "./types";
-
-async function handleLoginButtonClick(
-  {
-    authDispatch,
-    fetchAbortControllerRef,
-    globalDispatch,
-    isComponentMountedRef,
-    loginDispatch,
-    navigate,
-    schema,
-    showBoundary,
-    toLocation,
-    url,
-  }: {
-    authDispatch: React.Dispatch<AuthDispatch>;
-    fetchAbortControllerRef: React.RefObject<AbortController | null>;
-    globalDispatch: React.Dispatch<GlobalDispatch>;
-    isComponentMountedRef: React.RefObject<boolean>;
-    loginDispatch: React.Dispatch<LoginDispatch>;
-    navigate: NavigateFunction;
-    schema: { username: string; password: string };
-    showBoundary: (error: unknown) => void;
-    toLocation: string;
-    url: RequestInfo | URL;
-  },
-): Promise<
-  SafeBoxResult<
-    HttpServerResponse<
-      {
-        userDocument: UserDocument;
-        financialMetricsDocument: FinancialMetricsDocument;
-      }
-    >
-  >
-> {
-  fetchAbortControllerRef.current?.abort("Previous request cancelled");
-  fetchAbortControllerRef.current = new AbortController();
-  const fetchAbortController = fetchAbortControllerRef.current;
-
-  isComponentMountedRef.current = true;
-  const isComponentMounted = isComponentMountedRef.current;
-
-  const requestInit: RequestInit = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    mode: "cors",
-    body: JSON.stringify({ schema }),
-    signal: fetchAbortController.signal,
-  };
-
-  loginDispatch({
-    action: loginAction.setIsSubmitting,
-    payload: true,
-  });
-
-  try {
-    const responseResult = await fetchSafe(url, requestInit);
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    if (responseResult.err) {
-      showBoundary(responseResult.val.data);
-      return createSafeBoxResult({
-        message: responseResult.val.message ?? "Error fetching response",
-      });
-    }
-
-    const responseUnwrapped = responseResult.safeUnwrap().data;
-    if (responseUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
-      });
-    }
-
-    const jsonResult = await responseToJSONSafe<
-      HttpServerResponse<
-        {
-          userDocument: UserDocument;
-          financialMetricsDocument: FinancialMetricsDocument;
-        }
-      >
-    >(
-      responseUnwrapped,
-    );
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    if (jsonResult.err) {
-      showBoundary(jsonResult.val.data);
-      return createSafeBoxResult({
-        message: jsonResult.val.message ?? "Error parsing JSON",
-      });
-    }
-
-    const serverResponse = jsonResult.safeUnwrap().data;
-    if (serverResponse === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    if (serverResponse.message === "User not found") {
-      return createSafeBoxResult({
-        kind: "notFound",
-        message: "User not found",
-        data: serverResponse,
-      });
-    }
-
-    console.time("---parsing---");
-    const parsedResult = await parseServerResponseAsyncSafe({
-      object: serverResponse,
-      zSchema: z.object({
-        userDocument: userDocumentOptionalsZod,
-        financialMetricsDocument: financialMetricsDocumentZod,
-      }),
-    });
-    console.timeEnd("---parsing---");
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-    if (parsedResult.err) {
-      showBoundary(parsedResult.val.data);
-      return createSafeBoxResult({
-        message: parsedResult.val.message ?? "Error parsing server response",
-      });
-    }
-
-    const parsedServerResponse = parsedResult.safeUnwrap().data;
-    if (parsedServerResponse === undefined) {
-      showBoundary(
-        new Error("No data returned from server"),
-      );
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
-
-    const { accessToken, triggerLogout } = parsedServerResponse;
-
-    if (triggerLogout) {
-      authDispatch({
-        action: authAction.setAccessToken,
-        payload: "",
-      });
-      authDispatch({
-        action: authAction.setIsLoggedIn,
-        payload: false,
-      });
-      authDispatch({
-        action: authAction.setDecodedToken,
-        payload: Object.create(null),
-      });
-      authDispatch({
-        action: authAction.setUserDocument,
-        payload: Object.create(null),
-      });
-
-      await localforage.clear();
-      navigate("/");
-      return createSafeBoxResult({
-        message: "Logout triggered",
-      });
-    }
-
-    const decodedTokenResult = await decodeJWTSafe(accessToken);
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    if (decodedTokenResult.err) {
-      showBoundary(decodedTokenResult.val.data);
-      return createSafeBoxResult({
-        message: decodedTokenResult.val.message ?? "Error decoding token",
-      });
-    }
-
-    const decodedToken = decodedTokenResult.safeUnwrap().data;
-    if (decodedToken === undefined) {
-      showBoundary(new Error("Invalid token"));
-      return createSafeBoxResult({
-        message: "Invalid token",
-      });
-    }
-
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: accessToken,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
-    authDispatch({
-      action: authAction.setIsLoggedIn,
-      payload: true,
-    });
-    authDispatch({
-      action: authAction.setUserDocument,
-      payload: parsedServerResponse.data[0].userDocument,
-    });
-
-    globalDispatch({
-      action: globalAction.setFinancialMetricsDocument,
-      payload: parsedServerResponse.data[0].financialMetricsDocument,
-    });
-
-    await setForageItemSafe<
-      FinancialMetricsDocument
-    >(
-      "financials/All Locations",
-      parsedServerResponse.data[0].financialMetricsDocument,
-    );
-
-    if (!isComponentMounted) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
-      });
-    }
-
-    // if (setForageItemResult.err) {
-    //   showBoundary(setForageItemResult.val.data);
-    //   return createSafeBoxResult({
-    //     message: setForageItemResult.val.message ?? "Error setting forage item",
-    //   });
-    // }
-
-    loginDispatch({
-      action: loginAction.setIsSubmitting,
-      payload: false,
-    });
-    loginDispatch({
-      action: loginAction.setIsSuccessful,
-      payload: true,
-    });
-
-    navigate(toLocation);
-    return createSafeBoxResult({
-      data: parsedServerResponse,
-      kind: "success",
-      message: "Login successful",
-    });
-  } catch (error: unknown) {
-    if (
-      !isComponentMounted || fetchAbortController?.signal.aborted
-    ) {
-      return createSafeBoxResult({
-        message: "Component unmounted or request aborted",
-      });
-    }
-
-    showBoundary(error);
-    return createSafeBoxResult({
-      message: "Error occurred during login",
-    });
-  }
-}
 
 async function handleLoginClick({
   loginState,
@@ -371,7 +85,12 @@ async function loginOnmessageCallback(
     showBoundary,
   }: {
     authDispatch: React.Dispatch<AuthDispatch>;
-    event: MessageEventFetchWorkerToMain;
+    event: MessageEventFetchWorkerToMain<
+      {
+        userDocument: UserDocument;
+        financialMetricsDocument: FinancialMetricsDocument;
+      }
+    >;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
     localforage: LocalForage;
@@ -487,7 +206,7 @@ async function loginOnmessageCallback(
       payload: data[0].financialMetricsDocument,
     });
 
-    await setForageItemSafe<
+    const setForageItemResult = await setForageItemSafe<
       FinancialMetricsDocument
     >(
       "financials/All Locations",
@@ -499,13 +218,12 @@ async function loginOnmessageCallback(
         message: "Component unmounted",
       });
     }
-
-    // if (setForageItemResult.err) {
-    //   showBoundary(setForageItemResult.val.data);
-    //   return createSafeBoxResult({
-    //     message: setForageItemResult.val.message ?? "Error setting forage item",
-    //   });
-    // }
+    if (setForageItemResult.err) {
+      showBoundary(setForageItemResult.val.data);
+      return createSafeBoxResult({
+        message: setForageItemResult.val.message ?? "Error setting forage item",
+      });
+    }
 
     loginDispatch({
       action: loginAction.setIsSubmitting,
@@ -537,4 +255,4 @@ async function loginOnmessageCallback(
   }
 }
 
-export { handleLoginButtonClick, handleLoginClick, loginOnmessageCallback };
+export { handleLoginClick, loginOnmessageCallback };

@@ -22,6 +22,7 @@ import { COLORS_SWATCHES } from "../../constants";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { FinancialMetricsDocument, UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
@@ -81,7 +82,12 @@ function Login() {
     });
 
     newFetchParseWorker.onmessage = async (
-      event: MessageEventFetchWorkerToMain,
+      event: MessageEventFetchWorkerToMain<
+        {
+          userDocument: UserDocument;
+          financialMetricsDocument: FinancialMetricsDocument;
+        }
+      >,
     ) => {
       await loginOnmessageCallback({
         event,

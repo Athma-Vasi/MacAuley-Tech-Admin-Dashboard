@@ -27,7 +27,7 @@ function Settings() {
   const { colorScheme, primaryColor, primaryShade, fontFamily } = themeObject;
   const [popoverOpened, setPopoverOpened] = React.useState(false);
 
-  const { themeColorShade, textColorSliderLabel } = returnThemeColors({
+  const { textColorSliderLabel } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -162,7 +162,7 @@ function Settings() {
       attributes={{
         data: FONT_FAMILY_DATA,
         name: "fontFamily",
-        parentDispatch: globalDispatch as any,
+        parentDispatch: globalDispatch,
         validValueAction: globalAction.setFontFamily,
         value: fontFamily,
         defaultValue: "Work Sans",
@@ -191,20 +191,10 @@ function Settings() {
               size={30}
             />
           </Box>
-          {
-            /* <ColorSwatch
-            color={Object.entries(COLORS_SWATCHES).find(
-              ([colorName]) => colorName === primaryColor,
-            )?.[1][primaryShade.dark] ?? "violet"}
-            onClick={() => setPopoverOpened((o) => !o)}
-            style={{ cursor: "pointer" }}
-          /> */
-          }
         </Popover.Target>
 
         <Popover.Dropdown h="auto">
           <Stack spacing="md" align="flex-start">
-            {/* <Title order={4}>Colors</Title> */}
             {themeSwitch}
             <Group spacing="1em">{colorSwatches}</Group>
             <Text size="sm" weight={500}>

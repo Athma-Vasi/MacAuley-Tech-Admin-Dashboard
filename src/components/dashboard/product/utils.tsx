@@ -2,7 +2,6 @@ import { ProductMetricsDocument } from "../../../types";
 import { MONTHS } from "../constants";
 import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { createOverviewMetricCard } from "../utilsTSX";
-import { ProductMetricCategory } from "./types";
 
 type OverviewAllProductsMetrics = Record<
   DashboardCalendarView,
@@ -11,7 +10,6 @@ type OverviewAllProductsMetrics = Record<
 
 function returnOverviewAllProductsMetrics(
   productMetricsDocument: ProductMetricsDocument,
-  productCategory: ProductMetricCategory,
   selectedYYYYMMDD: string,
 ) {
   const defaultValue: OverviewAllProductsMetrics = {

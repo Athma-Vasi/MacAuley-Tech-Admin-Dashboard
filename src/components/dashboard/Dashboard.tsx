@@ -89,6 +89,7 @@ function Dashboard() {
       repairMetricsDocument,
       storeLocation,
       themeObject,
+      selectedYYYYMMDD,
     },
     globalDispatch,
   } = useGlobalState();
@@ -109,7 +110,6 @@ function Dashboard() {
     dashboardFetchWorker,
     isLoading,
     loadingMessage,
-    selectedYYYYMMDD,
   } = dashboardState;
 
   const isComponentMountedRef = useMountedRef();
@@ -163,10 +163,6 @@ function Dashboard() {
         : new Date(2013, 0, 1).toISOString().split("T")[0]}
       onChange={(event) => {
         const { value } = event.currentTarget;
-        dashboardDispatch({
-          action: dashboardAction.setSelectedYYYYMMDD,
-          payload: value,
-        });
 
         globalDispatch({
           action: globalAction.setSelectedYYYYMMDD,

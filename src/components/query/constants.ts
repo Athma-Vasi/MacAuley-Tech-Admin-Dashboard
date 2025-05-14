@@ -23,12 +23,6 @@ const COMPARISON_OPERATORS_DATA: CheckboxRadioSelectData<ComparisonOperator> = [
     { label: "greater than or equal to", value: "greater than or equal to" },
     { label: "less than", value: "less than" },
     { label: "less than or equal to", value: "less than or equal to" },
-    // { label: "contains", value: "contains" },
-    // { label: "does not contain", value: "does not contain" },
-    // { label: "starts with", value: "starts with" },
-    // { label: "ends with", value: "ends with" },
-    // { label: "is empty", value: "is empty" },
-    // { label: "is not empty", value: "is not empty" },
 ];
 
 const IN_OPERATOR_DATA: CheckboxRadioSelectData = [{

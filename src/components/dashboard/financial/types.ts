@@ -1,11 +1,8 @@
-import { FinancialMetricsDocument, SafeBoxResult } from "../../../types";
-import { AllStoreLocations, DashboardCalendarView } from "../types";
 import { FinancialMetricsAction } from "./actions";
 import { FinancialMetricsCards } from "./cards";
 import {
   FinancialMetricsCalendarCharts,
   FinancialMetricsCharts,
-  SelectedDateFinancialMetrics,
 } from "./chartsData";
 
 type FinancialMetricCategory =

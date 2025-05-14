@@ -3,7 +3,6 @@ import { ValidationKey } from "../../validations";
 import { AccessibleDateTimeInputAttributes } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInputAttributes } from "../accessibleInputs/AccessibleSelectInput";
 import { AccessibleTextInputAttributes } from "../accessibleInputs/AccessibleTextInput";
-import { QueryAction } from "./actions";
 
 type InputKind =
     | "date"
