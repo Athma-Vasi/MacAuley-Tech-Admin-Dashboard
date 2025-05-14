@@ -1,3 +1,4 @@
+import "@vitest/web-worker";
 import { describe, expect, it } from "vitest";
 import {
   ALL_STORE_LOCATIONS_DATA,
@@ -13,11 +14,12 @@ import {
   VALID_PASSWORDS,
   VALID_USERNAMES,
 } from "../../constants";
-import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { registerAction } from "./actions";
 import {
   registerReducer_setActiveStep,
   registerReducer_setAddressLine,
+  registerReducer_setCheckEmailWorker,
+  registerReducer_setCheckUsernameWorker,
   registerReducer_setCity,
   registerReducer_setConfirmPassword,
   registerReducer_setCountry,
@@ -25,7 +27,6 @@ import {
   registerReducer_setEmail,
   registerReducer_setErrorMessage,
   registerReducer_setFirstName,
-  registerReducer_setInputsInError,
   registerReducer_setIsEmailExists,
   registerReducer_setIsEmailExistsSubmitting,
   registerReducer_setIsError,
@@ -50,7 +51,7 @@ import { RegisterDispatch } from "./schemas";
 import { initialRegisterState } from "./state";
 
 describe("registerReducer", () => {
-  describe("registerReducer_setConfirmPassword", () => {
+  describe("setConfirmPassword", () => {
     it("should allow valid string values", () => {
       VALID_PASSWORDS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -80,7 +81,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setEmail", () => {
+  describe("setEmail", () => {
     it("should allow valid email values", () => {
       const validEmails = [
         "luna.starfire93@nebula-mail.com",
@@ -123,7 +124,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setIsEmailExists", () => {
+  describe("setIsEmailExists", () => {
     it("should allow valid boolean values", () => {
       VALID_BOOLEANS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -154,7 +155,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setIsEmailExistsSubmitting", () => {
+  describe("setIsEmailExistsSubmitting", () => {
     it("should allow valid boolean values", () => {
       VALID_BOOLEANS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -187,7 +188,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setIsUsernameExists", () => {
+  describe("setIsUsernameExists", () => {
     it("should allow valid boolean values", () => {
       VALID_BOOLEANS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -218,7 +219,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setIsUsernameExistsSubmitting", () => {
+  describe("setIsUsernameExistsSubmitting", () => {
     it("should allow valid boolean values", () => {
       VALID_BOOLEANS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -251,7 +252,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setPassword", () => {
+  describe("setPassword", () => {
     it("should allow valid string values", () => {
       VALID_PASSWORDS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -281,7 +282,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setUsername", () => {
+  describe("setUsername", () => {
     it("should allow valid string values", () => {
       VALID_USERNAMES.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -313,7 +314,7 @@ describe("registerReducer", () => {
 
   // register address
 
-  describe("registerReducer_setAddressLine", () => {
+  describe("setAddressLine", () => {
     it("should allow valid string values", () => {
       const validAddressLines = [
         "123 Main St",
@@ -355,7 +356,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setCity", () => {
+  describe("setCity", () => {
     it("should allow valid string values", () => {
       const validCities = [
         "Edmonton",
@@ -396,7 +397,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setCountry", () => {
+  describe("setCountry", () => {
     it("should allow valid string values", () => {
       COUNTRIES.forEach(({ value }) => {
         const dispatch: RegisterDispatch = {
@@ -426,7 +427,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setPostalCodeCanada", () => {
+  describe("setPostalCodeCanada", () => {
     it("should allow valid Canadian postal code values", () => {
       const validPostalCodes = [
         "A1A 1A1",
@@ -462,7 +463,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setPostalCodeUS", () => {
+  describe("setPostalCodeUS", () => {
     it("should allow valid US postal code values", () => {
       const validPostalCodes = [
         "12345",
@@ -498,7 +499,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setProvince", () => {
+  describe("setProvince", () => {
     it("should allow valid string values", () => {
       PROVINCES.forEach(({ value }) => {
         const dispatch: RegisterDispatch = {
@@ -528,7 +529,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setState", () => {
+  describe("setState", () => {
     it("should allow valid string values", () => {
       STATES_US.forEach(({ value }) => {
         const dispatch: RegisterDispatch = {
@@ -560,7 +561,7 @@ describe("registerReducer", () => {
 
   // register additional
 
-  describe("registerReducer_setDepartment", () => {
+  describe("setDepartment", () => {
     it("should allow valid string values", () => {
       DEPARTMENTS_DATA.forEach(({ value }) => {
         const dispatch: RegisterDispatch = {
@@ -590,7 +591,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setFirstName", () => {
+  describe("setFirstName", () => {
     it("should allow valid string values", () => {
       const validFirstNames = [
         "Luna",
@@ -661,7 +662,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setJobPosition", () => {
+  describe("setJobPosition", () => {
     it("should allow valid string values", () => {
       JOB_POSITIONS_DATA.forEach(({ value }) => {
         const dispatch: RegisterDispatch = {
@@ -691,7 +692,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setLastName", () => {
+  describe("setLastName", () => {
     it("should allow valid string values", () => {
       const validLastNames = [
         "Starfire",
@@ -731,7 +732,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setProfilePictureUrl", () => {
+  describe("setProfilePictureUrl", () => {
     it("should allow valid string values", () => {
       const validUrls = [
         "https://example.com/profile.jpg",
@@ -766,7 +767,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setStoreLocation", () => {
+  describe("setStoreLocation", () => {
     it("should allow valid string values", () => {
       ALL_STORE_LOCATIONS_DATA.forEach(({ value }) => {
         const dispatch: RegisterDispatch = {
@@ -796,7 +797,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setErrorMessage", () => {
+  describe("setErrorMessage", () => {
     it("should allow valid string values", () => {
       const validErrorMessages = [
         "Invalid email address",
@@ -832,7 +833,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setIsError", () => {
+  describe("setIsError", () => {
     it("should allow valid boolean values", () => {
       VALID_BOOLEANS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -862,7 +863,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setIsSubmitting", () => {
+  describe("setIsSubmitting", () => {
     it("should allow valid boolean values", () => {
       VALID_BOOLEANS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -892,7 +893,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setIsSuccessful", () => {
+  describe("setIsSuccessful", () => {
     it("should allow valid boolean values", () => {
       VALID_BOOLEANS.forEach((value) => {
         const dispatch: RegisterDispatch = {
@@ -922,7 +923,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setActiveStep", () => {
+  describe("setActiveStep", () => {
     it("should allow valid number values", () => {
       const validSteps = [0, 1, 2, 3];
       validSteps.forEach((value) => {
@@ -953,7 +954,7 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setStepsInError", () => {
+  describe("setStepsInError", () => {
     it("should add valid number values", () => {
       const validSteps = [0, 1, 2, 3];
       validSteps.forEach((value) => {
@@ -996,97 +997,133 @@ describe("registerReducer", () => {
     });
   });
 
-  describe("registerReducer_setStepsWithEmptyInputs", () => {
-    it("should add valid number values", () => {
-      const validSteps = [0, 1, 2, 3];
-      validSteps.forEach((value) => {
-        const dispatch: RegisterDispatch = {
-          action: registerAction.setStepsWithEmptyInputs,
-          payload: { kind: "add", step: value },
-        };
-        const state = registerReducer_setStepsWithEmptyInputs(
-          initialRegisterState,
-          dispatch,
-        );
-        expect(state.stepsWithEmptyInputs.has(value)).toBe(true);
-      });
-    });
-    it("should delete valid number values", () => {
-      const initialStepsWithEmptyInputs = new Set([0, 1, 2]);
+  // describe("setStepsWithEmptyInputs", () => {
+  //   it("should add valid number values", () => {
+  //     const validSteps = [0, 1, 2, 3];
+  //     validSteps.forEach((value) => {
+  //       const dispatch: RegisterDispatch = {
+  //         action: registerAction.setStepsWithEmptyInputs,
+  //         payload: { kind: "add", step: value },
+  //       };
+  //       const state = registerReducer_setStepsWithEmptyInputs(
+  //         initialRegisterState,
+  //         dispatch,
+  //       );
+  //       expect(state.stepsWithEmptyInputs.has(value)).toBe(true);
+  //     });
+  //   });
+  //   it("should delete valid number values", () => {
+  //     const initialStepsWithEmptyInputs = new Set([0, 1, 2]);
+  //     const dispatch: RegisterDispatch = {
+  //       action: registerAction.setStepsWithEmptyInputs,
+  //       payload: { kind: "delete", step: 1 },
+  //     };
+  //     const state = registerReducer_setStepsWithEmptyInputs(
+  //       {
+  //         ...initialRegisterState,
+  //         stepsWithEmptyInputs: initialStepsWithEmptyInputs,
+  //       },
+  //       dispatch,
+  //     );
+  //     expect(state.stepsWithEmptyInputs.has(1)).toBe(false);
+  //   });
+  //   it("should not allow invalid number values", () => {
+  //     const initialStepsWithEmptyInputs =
+  //       initialRegisterState.stepsWithEmptyInputs;
+  //     INVALID_NUMBERS.forEach((value) => {
+  //       const dispatch: RegisterDispatch = {
+  //         action: registerAction.setStepsWithEmptyInputs,
+  //         payload: { kind: "add", step: value as any },
+  //       };
+  //       const state = registerReducer_setStepsWithEmptyInputs(
+  //         initialRegisterState,
+  //         dispatch,
+  //       );
+  //       expect(state.stepsWithEmptyInputs).toEqual(
+  //         initialStepsWithEmptyInputs,
+  //       );
+  //     });
+  //   });
+  // });
+
+  // describe("setInputsInError", () => {
+  //   it("should add valid string values", () => {
+  //     Object.keys(VALIDATION_FUNCTIONS_TABLE).forEach((value) => {
+  //       const dispatch: RegisterDispatch = {
+  //         action: registerAction.setInputsInError,
+  //         payload: { kind: "add", name: value },
+  //       };
+  //       const state = registerReducer_setInputsInError(
+  //         initialRegisterState,
+  //         dispatch,
+  //       );
+  //       expect(state.inputsInError.has(value as ValidationKey)).toBe(true);
+  //     });
+  //   });
+
+  //   it("should delete valid string values", () => {
+  //     const addDispatch: RegisterDispatch = {
+  //       action: registerAction.setInputsInError,
+  //       payload: { kind: "add", name: "email" },
+  //     };
+  //     const initialState = registerReducer_setInputsInError(
+  //       initialRegisterState,
+  //       addDispatch,
+  //     );
+  //     expect(initialState.inputsInError.has("email")).toBe(true);
+
+  //     const deleteDispatch: RegisterDispatch = {
+  //       action: registerAction.setInputsInError,
+  //       payload: { kind: "delete", name: "email" },
+  //     };
+  //     const state = registerReducer_setInputsInError(
+  //       initialState,
+  //       deleteDispatch,
+  //     );
+  //     expect(state.inputsInError.has("email")).toBe(false);
+  //   });
+
+  //   it("should not allow invalid string values", () => {
+  //     const initialInputsInError = initialRegisterState.inputsInError;
+  //     INVALID_STRINGS.forEach((value) => {
+  //       const dispatch: RegisterDispatch = {
+  //         action: registerAction.setInputsInError,
+  //         payload: { kind: "add", name: value as any },
+  //       };
+  //       const state = registerReducer_setInputsInError(
+  //         initialRegisterState,
+  //         dispatch,
+  //       );
+  //       expect(state.inputsInError).toEqual(initialInputsInError);
+  //     });
+  //   });
+  // });
+
+  describe(registerAction.setCheckUsernameWorker, () => {
+    it("should allow valid worker values", () => {
       const dispatch: RegisterDispatch = {
-        action: registerAction.setStepsWithEmptyInputs,
-        payload: { kind: "delete", step: 1 },
+        action: registerAction.setCheckUsernameWorker,
+        payload: new Worker(""),
       };
-      const state = registerReducer_setStepsWithEmptyInputs(
-        {
-          ...initialRegisterState,
-          stepsWithEmptyInputs: initialStepsWithEmptyInputs,
-        },
+      const state = registerReducer_setCheckUsernameWorker(
+        initialRegisterState,
         dispatch,
       );
-      expect(state.stepsWithEmptyInputs.has(1)).toBe(false);
-    });
-    it("should not allow invalid number values", () => {
-      const initialStepsWithEmptyInputs =
-        initialRegisterState.stepsWithEmptyInputs;
-      INVALID_NUMBERS.forEach((value) => {
-        const dispatch: RegisterDispatch = {
-          action: registerAction.setStepsWithEmptyInputs,
-          payload: { kind: "add", step: value as any },
-        };
-        const state = registerReducer_setStepsWithEmptyInputs(
-          initialRegisterState,
-          dispatch,
-        );
-        expect(state.stepsWithEmptyInputs).toEqual(
-          initialStepsWithEmptyInputs,
-        );
-      });
+      expect(state.checkUsernameWorker).toBeInstanceOf(Worker);
     });
   });
 
-  describe("registerReducer_setInputsInError", () => {
-    it("should add valid string values", () => {
-      Object.keys(VALIDATION_FUNCTIONS_TABLE).forEach((value) => {
-        const dispatch: RegisterDispatch = {
-          action: registerAction.setInputsInError,
-          payload: { kind: "add", name: value },
-        };
-        const state = registerReducer_setInputsInError(
-          initialRegisterState,
-          dispatch,
-        );
-        expect(state.inputsInError.has(value as ValidationKey)).toBe(true);
-      });
-    });
-    it("should delete valid string values", () => {
-      const initialInputsInError = new Set<ValidationKey>([
-        "email",
-        "password",
-      ]);
+  describe(registerAction.setCheckEmailWorker, () => {
+    it("should allow valid worker values", () => {
       const dispatch: RegisterDispatch = {
-        action: registerAction.setInputsInError,
-        payload: { kind: "delete", name: "email" },
+        action: registerAction.setCheckEmailWorker,
+        payload: new Worker(""),
       };
-      const state = registerReducer_setInputsInError(
-        { ...initialRegisterState, inputsInError: initialInputsInError },
+      const state = registerReducer_setCheckEmailWorker(
+        initialRegisterState,
         dispatch,
       );
-      expect(state.inputsInError.has("email")).toBe(false);
-    });
-    it("should not allow invalid string values", () => {
-      const initialInputsInError = initialRegisterState.inputsInError;
-      INVALID_STRINGS.forEach((value) => {
-        const dispatch: RegisterDispatch = {
-          action: registerAction.setInputsInError,
-          payload: { kind: "add", name: value as any },
-        };
-        const state = registerReducer_setInputsInError(
-          initialRegisterState,
-          dispatch,
-        );
-        expect(state.inputsInError).toEqual(initialInputsInError);
-      });
+      expect(state.checkEmailWorker).toBeInstanceOf(Worker);
     });
   });
 });

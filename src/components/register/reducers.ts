@@ -700,6 +700,7 @@ export {
   registerReducer,
   registerReducer_setActiveStep,
   registerReducer_setAddressLine,
+  registerReducer_setCheckEmailWorker,
   registerReducer_setCheckUsernameWorker,
   registerReducer_setCity,
   registerReducer_setConfirmPassword,
