@@ -1,19 +1,10 @@
-import type {
-  BusinessMetricsDocument,
-  DecodedToken,
-  HttpServerResponse,
-  SafeBoxResult,
-  StoreLocation,
-} from "../../types";
-import { RoutesZodSchemasMapKey } from "../../workers/constants";
+import type { StoreLocation } from "../../types";
 import type { DashboardAction } from "./actions";
 import {
   FinancialMetricsBarLineChartsKey,
   FinancialMetricsCalendarChartsKeyPERT,
   FinancialMetricsPieChartsKey,
 } from "./financial/chartsData";
-import { ProductMetricCategory } from "./product/types";
-import { RepairMetricCategory } from "./repair/types";
 
 type DashboardCalendarView = "Daily" | "Monthly" | "Yearly";
 type DashboardMetricsView = "Financials" | "Customers" | "Products" | "Repairs";

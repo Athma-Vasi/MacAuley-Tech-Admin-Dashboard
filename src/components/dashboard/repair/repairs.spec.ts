@@ -7,8 +7,11 @@ import { AllStoreLocations, DashboardCalendarView } from "../types";
 test.beforeEach(async ({ page }) => {
     await page.goto("http://localhost:5173/login");
     const usernameInput = page.getByTestId("username-textInput");
+    await expect(usernameInput).toBeVisible();
     const passwordInput = page.getByTestId("password-textInput");
+    await expect(passwordInput).toBeVisible();
     const loginButton = page.getByTestId("login-button");
+    await expect(loginButton).toBeVisible();
     await usernameInput.fill("manager");
     await passwordInput.fill("passwordQ1!");
     await loginButton.click();
@@ -20,6 +23,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async ({ page }) => {
     const logoutButton = page.getByTestId("logout-button");
+    await expect(logoutButton).toBeVisible();
     await logoutButton.click();
     await page.waitForURL("http://localhost:5173/");
     const usernameInput = page.getByTestId("username-textInput");
