@@ -12,12 +12,13 @@ import {
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,
     setImageFileBlobDispatchZod,
-    setImageWorkerImageDispatchZod,
     setIsErrorsImageDispatchZod,
     setIsLoadingImageDispatchZod,
     setIsModalOpenImageDispatchZod,
+    setModifyImagesWorkerDispatchZod,
     setOrientationImageDispatchZod,
     setQualityImageDispatchZod,
+    setRetrieveImagesWorkerDispatchZod,
 } from "./schemas";
 import {
     AccessibleImageInputDispatch,
@@ -64,8 +65,12 @@ const accessibleImageInputReducersMap = new Map<
         accessibleImageInputReducer_setImageFileBlob,
     ],
     [
-        accessibleImageInputAction.setImageWorker,
-        accessibleImageInputReducer_setImageWorker,
+        accessibleImageInputAction.setModifyImagesWorker,
+        accessibleImageInputReducer_setModifyImagesWorker,
+    ],
+    [
+        accessibleImageInputAction.setRetrieveImagesWorker,
+        accessibleImageInputReducer_setRetrieveImagesWorker,
     ],
     [
         accessibleImageInputAction.setIsErrors,
@@ -275,13 +280,13 @@ function accessibleImageInputReducer_setImageFileBlob(
     };
 }
 
-function accessibleImageInputReducer_setImageWorker(
+function accessibleImageInputReducer_setModifyImagesWorker(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
     const parsedResult = parseSafeSync({
         object: dispatch,
-        zSchema: setImageWorkerImageDispatchZod,
+        zSchema: setModifyImagesWorkerDispatchZod,
     });
 
     if (parsedResult.err) {
@@ -290,7 +295,26 @@ function accessibleImageInputReducer_setImageWorker(
 
     return {
         ...state,
-        imageWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+        modifyImagesWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+    };
+}
+
+function accessibleImageInputReducer_setRetrieveImagesWorker(
+    state: AccessibleImageInputState,
+    dispatch: AccessibleImageInputDispatch,
+): AccessibleImageInputState {
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setRetrieveImagesWorkerDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    return {
+        ...state,
+        retrieveImagesWorker: parsedResult.safeUnwrap().data?.payload as Worker,
     };
 }
 
@@ -416,9 +440,11 @@ export {
     accessibleImageInputReducer_resetImageFileBlob,
     accessibleImageInputReducer_setCurrentImageIndex,
     accessibleImageInputReducer_setImageFileBlob,
-    accessibleImageInputReducer_setImageWorker,
+    accessibleImageInputReducer_setIsErrors,
     accessibleImageInputReducer_setIsLoading,
     accessibleImageInputReducer_setIsModalOpen,
+    accessibleImageInputReducer_setModifyImagesWorker,
     accessibleImageInputReducer_setOrientation,
     accessibleImageInputReducer_setQuality,
+    accessibleImageInputReducer_setRetrieveImagesWorker,
 };

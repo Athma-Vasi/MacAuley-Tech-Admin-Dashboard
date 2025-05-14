@@ -74,8 +74,13 @@ const setIsErrorsImageDispatchZod = z.object({
     }),
 });
 
-const setImageWorkerImageDispatchZod = z.object({
-    action: z.literal(accessibleImageInputAction.setImageWorker),
+const setRetrieveImagesWorkerDispatchZod = z.object({
+    action: z.literal(accessibleImageInputAction.setRetrieveImagesWorker),
+    payload: z.instanceof(Worker),
+});
+
+const setModifyImagesWorkerDispatchZod = z.object({
+    action: z.literal(accessibleImageInputAction.setModifyImagesWorker),
     payload: z.instanceof(Worker),
 });
 
@@ -86,12 +91,13 @@ export {
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,
     setImageFileBlobDispatchZod,
-    setImageWorkerImageDispatchZod,
     setIsErrorsImageDispatchZod,
     setIsLoadingImageDispatchZod,
     setIsModalOpenImageDispatchZod,
+    setModifyImagesWorkerDispatchZod,
     setOrientationImageDispatchZod,
     setQualityImageDispatchZod,
+    setRetrieveImagesWorkerDispatchZod,
 };
 
 /**

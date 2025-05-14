@@ -1,4 +1,3 @@
-import { DecodedToken, HttpServerResponse, SafeBoxResult } from "../../types";
 import { DashboardMetricsView } from "../dashboard/types";
 import { SidebarAction } from "./actions";
 
@@ -13,7 +12,6 @@ type SidebarState = {
     directoryFetchWorker: Worker | null;
     logoutFetchWorker: Worker | null;
     metricsFetchWorker: Worker | null;
-    metricsView: Lowercase<DashboardMetricsView>;
 };
 
 type SidebarDispatch =
@@ -32,10 +30,6 @@ type SidebarDispatch =
     | {
         action: SidebarAction["setMetricsFetchWorker"];
         payload: Worker;
-    }
-    | {
-        action: SidebarAction["setMetricsView"];
-        payload: Lowercase<DashboardMetricsView>;
     };
 
 export type { SidebarDispatch, SidebarNavlinks, SidebarState };

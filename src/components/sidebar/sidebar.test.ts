@@ -1,14 +1,12 @@
 import "@vitest/web-worker";
 import { describe, expect, it } from "vitest";
 import { INVALID_STRINGS } from "../../constants";
-import { DashboardMetricsView } from "../dashboard/types";
 import { sidebarAction } from "./actions";
 import {
     sidebarReducer_setClickedNavlink,
     sidebarReducer_setDirectoryFetchWorker,
     sidebarReducer_setLogoutFetchWorker,
     sidebarReducer_setMetricsFetchWorker,
-    sidebarReducer_setMetricsView,
 } from "./reducers";
 import { initialSidebarState } from "./state";
 import { SidebarDispatch, SidebarNavlinks } from "./types";
@@ -138,45 +136,6 @@ describe("Sidebar", () => {
                 expect(state.metricsFetchWorker).toBe(
                     initialSidebarState.metricsFetchWorker,
                 );
-            });
-        });
-
-        describe(sidebarAction.setMetricsView, () => {
-            const validValues: Lowercase<DashboardMetricsView>[] = [
-                "financials",
-                "products",
-                "customers",
-                "repairs",
-            ];
-
-            validValues.forEach((value) => {
-                it(`should allow valid value: ${value}`, () => {
-                    const dispatch: SidebarDispatch = {
-                        action: sidebarAction.setMetricsView,
-                        payload: value,
-                    };
-                    const state = sidebarReducer_setMetricsView(
-                        initialSidebarState,
-                        dispatch,
-                    );
-                    expect(state.metricsView).toBe(value);
-                });
-            });
-
-            INVALID_STRINGS.forEach((value) => {
-                it(`should not allow invalid value: ${value}`, () => {
-                    const dispatch: SidebarDispatch = {
-                        action: sidebarAction.setMetricsView,
-                        payload: value as any,
-                    };
-                    const state = sidebarReducer_setMetricsView(
-                        initialSidebarState,
-                        dispatch,
-                    );
-                    expect(state.metricsView).toBe(
-                        initialSidebarState.metricsView,
-                    );
-                });
             });
         });
     });

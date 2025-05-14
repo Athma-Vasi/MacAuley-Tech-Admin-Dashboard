@@ -21,7 +21,9 @@ import { globalAction } from "../../context/globalProvider";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
+import { UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
+import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
@@ -38,7 +40,6 @@ import {
 } from "./handlers";
 import { sidebarReducer } from "./reducers";
 import { initialSidebarState } from "./state";
-import { DirectoryMessageEvent, LogoutMessageEvent } from "./types";
 
 type SidebarProps = {
   opened: boolean;
@@ -74,7 +75,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     directoryFetchWorker,
     logoutFetchWorker,
     metricsFetchWorker,
-    metricsView,
   } = sidebarState;
 
   useEffect(() => {
@@ -104,7 +104,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     });
 
     newDirectoryFetchWorker.onmessage = async (
-      event: DirectoryMessageEvent,
+      event: MessageEventFetchWorkerToMain<UserDocument>,
     ) => {
       await handleDirectoryOnmessageCallback({
         authDispatch,
@@ -124,7 +124,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     });
 
     newLogoutFetchWorker.onmessage = async (
-      event: LogoutMessageEvent,
+      event: MessageEventFetchWorkerToMain<boolean>,
     ) => {
       await handleLogoutClickOnmessageCallback({
         event,
@@ -154,10 +154,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           : <TbAffiliate size={18} />,
         name: "Products",
         onClick: async () => {
-          sidebarDispatch({
-            action: sidebarAction.setMetricsView,
-            payload: "products",
-          });
           sidebarDispatch({
             action: sidebarAction.setClickedNavlink,
             payload: "products",
@@ -197,10 +193,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         name: "Financials",
         onClick: async () => {
           sidebarDispatch({
-            action: sidebarAction.setMetricsView,
-            payload: "financials",
-          });
-          sidebarDispatch({
             action: sidebarAction.setClickedNavlink,
             payload: "financials",
           });
@@ -237,10 +229,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         name: "Customers",
         onClick: async () => {
           sidebarDispatch({
-            action: sidebarAction.setMetricsView,
-            payload: "customers",
-          });
-          sidebarDispatch({
             action: sidebarAction.setClickedNavlink,
             payload: "customers",
           });
@@ -276,10 +264,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           : <TbTools size={18} />,
         name: "Repairs",
         onClick: async () => {
-          sidebarDispatch({
-            action: sidebarAction.setMetricsView,
-            payload: "repairs",
-          });
           sidebarDispatch({
             action: sidebarAction.setClickedNavlink,
             payload: "repairs",
@@ -331,7 +315,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             department: "Executive Management",
             directoryFetchWorker,
             directoryUrl: API_URL,
-            globalDispatch,
             storeLocation: "All Locations",
           });
 

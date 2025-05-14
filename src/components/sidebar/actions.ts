@@ -3,7 +3,6 @@ type SidebarAction = {
     setDirectoryFetchWorker: "setDirectoryFetchWorker";
     setLogoutFetchWorker: "setLogoutFetchWorker";
     setMetricsFetchWorker: "setMetricsFetchWorker";
-    setMetricsView: "setMetricsView";
 };
 
 const sidebarAction: SidebarAction = {
@@ -11,7 +10,6 @@ const sidebarAction: SidebarAction = {
     setDirectoryFetchWorker: "setDirectoryFetchWorker",
     setLogoutFetchWorker: "setLogoutFetchWorker",
     setMetricsFetchWorker: "setMetricsFetchWorker",
-    setMetricsView: "setMetricsView",
 };
 
 export { sidebarAction };

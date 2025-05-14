@@ -1,10 +1,12 @@
-import { ModifiedFile } from "../components/accessibleInputs/AccessibleFileInput";
+import {
+    ModifiedFile,
+} from "../components/accessibleInputs/AccessibleFileInput";
 import { MAX_IMAGES } from "../components/accessibleInputs/image/constants";
 import { createImageInputForageKeys } from "../components/accessibleInputs/image/utils";
 import { SafeBoxResult } from "../types";
 import { createSafeBoxResult, getForageItemSafe } from "../utils";
 
-type MessageEventImageWorkerToMain = MessageEvent<
+type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
     SafeBoxResult<
         {
             fileNames: Array<string>;
@@ -14,17 +16,17 @@ type MessageEventImageWorkerToMain = MessageEvent<
         }
     >
 >;
-type MessageEventImageMainToWorker = MessageEvent<
+type MessageEventRetrieveImagesMainToWorker = MessageEvent<
     {
         storageKey: string;
     }
 >;
 
 self.onmessage = async (
-    event: MessageEventImageMainToWorker,
+    event: MessageEventRetrieveImagesMainToWorker,
 ) => {
     console.log(
-        "Image Worker received message in self",
+        "Retrieve Image Worker received message in self",
     );
 
     if (!event.data) {
@@ -53,10 +55,11 @@ self.onmessage = async (
             modifiedFilesForageKey,
         );
         if (modifiedFilesResult.err) {
-            return self.postMessage(createSafeBoxResult({
+            self.postMessage(createSafeBoxResult({
                 message: modifiedFilesResult.val.message ??
                     "Error getting modified files",
             }));
+            return;
         }
         const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
 
@@ -64,10 +67,11 @@ self.onmessage = async (
             fileNamesForageKey,
         );
         if (fileNamesResult.err) {
-            return self.postMessage(createSafeBoxResult({
+            self.postMessage(createSafeBoxResult({
                 message: fileNamesResult.val.message ??
                     "Error getting file names",
             }));
+            return;
         }
         const fileNames = fileNamesResult.safeUnwrap().data ?? [];
 
@@ -75,10 +79,11 @@ self.onmessage = async (
             qualitiesForageKey,
         );
         if (qualitiesResult.err) {
-            return self.postMessage(createSafeBoxResult({
+            self.postMessage(createSafeBoxResult({
                 message: qualitiesResult.val.message ??
                     "Error getting qualities",
             }));
+            return;
         }
         const qualities = qualitiesResult.safeUnwrap().data ?? Array.from(
             { length: MAX_IMAGES },
@@ -89,15 +94,17 @@ self.onmessage = async (
             orientationsForageKey,
         );
         if (orientationsResult.err) {
-            return self.postMessage(createSafeBoxResult({
+            self.postMessage(createSafeBoxResult({
                 message: orientationsResult.val.message ??
                     "Error getting orientations",
             }));
+            return;
         }
-        const orientations = orientationsResult.safeUnwrap().data ?? Array.from(
-            { length: MAX_IMAGES },
-            () => 1,
-        );
+        const orientations = orientationsResult.safeUnwrap().data ??
+            Array.from(
+                { length: MAX_IMAGES },
+                () => 1,
+            );
 
         self.postMessage(createSafeBoxResult({
             data: {
@@ -134,4 +141,7 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     }));
 });
 
-export type { MessageEventImageMainToWorker, MessageEventImageWorkerToMain };
+export type {
+    MessageEventRetrieveImagesMainToWorker,
+    MessageEventRetrieveImagesWorkerToMain,
+};

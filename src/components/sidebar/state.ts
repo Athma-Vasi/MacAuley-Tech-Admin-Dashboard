@@ -5,7 +5,6 @@ const initialSidebarState: SidebarState = {
     directoryFetchWorker: null,
     logoutFetchWorker: null,
     metricsFetchWorker: null,
-    metricsView: "financials",
 };
 
 export { initialSidebarState };

@@ -23,8 +23,8 @@ import {
     returnThemeColors,
     setForageItemSafe,
 } from "../../../utils";
-import { MessageEventImageWorkerToMain } from "../../../workers/imageWorker";
-import ImageWorker from "../../../workers/imageWorker?worker";
+import { MessageEventRetrieveImagesWorkerToMain } from "../../../workers/retrieveImagesWorker";
+import RetrieveImagesWorker from "../../../workers/retrieveImagesWorker?worker";
 import { GoldenGrid } from "../../goldenGrid";
 import { AccessibleFileInput, ModifiedFile } from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
@@ -43,7 +43,7 @@ import {
 } from "./constants";
 import {
     handleImageQualityOrientationSliderChange,
-    handleMessageEventImageWorkerToMain,
+    handleMessageEventRetrieveImagesWorkerToMain,
     handleRemoveImageClick,
     handleResetImageClick,
 } from "./handlers";
@@ -82,7 +82,7 @@ function AccessibleImageInput<
         currentImageIndex,
         fileNames,
         imageFileBlobs,
-        imageWorker,
+        retrieveImagesWorker,
         isErrors,
         isLoading,
         isModalOpen,
@@ -99,17 +99,17 @@ function AccessibleImageInput<
     const isComponentMountedRef = useMountedRef();
 
     useEffect(() => {
-        const newImageWorker = new ImageWorker();
+        const newRetrieveImagesWorker = new RetrieveImagesWorker();
 
         accessibleImageInputDispatch({
-            action: accessibleImageInputAction.setImageWorker,
-            payload: newImageWorker,
+            action: accessibleImageInputAction.setRetrieveImagesWorker,
+            payload: newRetrieveImagesWorker,
         });
 
-        newImageWorker.onmessage = async (
-            event: MessageEventImageWorkerToMain,
+        newRetrieveImagesWorker.onmessage = async (
+            event: MessageEventRetrieveImagesWorkerToMain,
         ) => {
-            await handleMessageEventImageWorkerToMain({
+            await handleMessageEventRetrieveImagesWorkerToMain({
                 event,
                 accessibleImageInputDispatch,
                 isComponentMountedRef,
@@ -118,33 +118,25 @@ function AccessibleImageInput<
         };
 
         return () => {
-            newImageWorker.terminate();
+            newRetrieveImagesWorker.terminate();
             isComponentMountedRef.current = false;
         };
     }, []);
 
     useEffect(() => {
-        if (!imageWorker) {
+        if (!retrieveImagesWorker) {
             return;
         }
 
-        // accessibleImageInputDispatch({
-        //     action: accessibleImageInputAction.setIsLoading,
-        //     payload: true,
-        // });
-
-        imageWorker.postMessage({
-            storageKey,
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setIsLoading,
+            payload: true,
         });
 
-        // retrieveStoredImagesValues({
-        //     accessibleImageInputDispatch,
-        //     isComponentMountedRef,
-        //     maxImagesAmount,
-        //     showBoundary,
-        //     storageKey,
-        // });
-    }, [imageWorker]);
+        retrieveImagesWorker.postMessage({
+            storageKey,
+        });
+    }, [retrieveImagesWorker]);
 
     useEffect(() => {
         checkImageFileBlobs({
@@ -375,6 +367,28 @@ function AccessibleImageInput<
                         min: 1,
                         name: "quality",
                         onChange: async (value: number) => {
+                            // if (!modifyImagesWorker) {
+                            //     return;
+                            // }
+
+                            // accessibleImageInputDispatch({
+                            //     action: accessibleImageInputAction.setIsLoading,
+                            //     payload: true,
+                            // });
+
+                            // modifyImagesWorker.postMessage(
+                            //     {
+                            //         currentImageIndex: index,
+                            //         maxImagesAmount,
+                            //         maxImageSize,
+                            //         orientations,
+                            //         orientation: orientations[index],
+                            //         qualities,
+                            //         quality: value,
+                            //         storageKey,
+                            //     },
+                            // );
+
                             await handleImageQualityOrientationSliderChange({
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
@@ -425,6 +439,28 @@ function AccessibleImageInput<
                         min: 1,
                         name: "orientation",
                         onChange: async (value: number) => {
+                            // if (!modifyImagesWorker) {
+                            //     return;
+                            // }
+
+                            // accessibleImageInputDispatch({
+                            //     action: accessibleImageInputAction.setIsLoading,
+                            //     payload: true,
+                            // });
+
+                            // modifyImagesWorker.postMessage(
+                            //     {
+                            //         currentImageIndex: index,
+                            //         maxImagesAmount,
+                            //         maxImageSize,
+                            //         orientation: value,
+                            //         orientations,
+                            //         qualities,
+                            //         quality: qualities[index],
+                            //         storageKey,
+                            //     },
+                            // );
+
                             await handleImageQualityOrientationSliderChange({
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,

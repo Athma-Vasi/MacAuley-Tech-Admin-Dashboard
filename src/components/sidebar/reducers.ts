@@ -1,12 +1,10 @@
 import { parseSafeSync } from "../../utils";
-import { DashboardMetricsView } from "../dashboard/types";
 import { SidebarAction, sidebarAction } from "./actions";
 import {
     setClickedNavlinkSidebarDispatchZod,
     setDirectoryFetchWorkerSidebarDispatchZod,
     setLogoutFetchWorkerSidebarDispatchZod,
     setMetricsFetchWorkerSidebarDispatchZod,
-    setMetricsViewSidebarDispatchZod,
 } from "./schemas";
 import { SidebarDispatch, SidebarNavlinks, SidebarState } from "./types";
 
@@ -26,7 +24,6 @@ const reducersMap = new Map<
     ],
     [sidebarAction.setLogoutFetchWorker, sidebarReducer_setLogoutFetchWorker],
     [sidebarAction.setMetricsFetchWorker, sidebarReducer_setMetricsFetchWorker],
-    [sidebarAction.setMetricsView, sidebarReducer_setMetricsView],
 ]);
 
 function sidebarReducer_setClickedNavlink(
@@ -106,32 +103,10 @@ function sidebarReducer_setMetricsFetchWorker(
     };
 }
 
-function sidebarReducer_setMetricsView(
-    state: SidebarState,
-    dispatch: SidebarDispatch,
-) {
-    const parsedResult = parseSafeSync({
-        object: dispatch,
-        zSchema: setMetricsViewSidebarDispatchZod,
-    });
-
-    if (parsedResult.err) {
-        return state;
-    }
-
-    return {
-        ...state,
-        metricsView: parsedResult.safeUnwrap().data?.payload as Lowercase<
-            DashboardMetricsView
-        >,
-    };
-}
-
 export {
     sidebarReducer,
     sidebarReducer_setClickedNavlink,
     sidebarReducer_setDirectoryFetchWorker,
     sidebarReducer_setLogoutFetchWorker,
     sidebarReducer_setMetricsFetchWorker,
-    sidebarReducer_setMetricsView,
 };

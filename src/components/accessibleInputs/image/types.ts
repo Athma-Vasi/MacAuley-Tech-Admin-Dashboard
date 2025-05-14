@@ -41,7 +41,8 @@ type AccessibleImageInputState = {
     /** because blobs do not have name property */
     fileNames: string[];
     imageFileBlobs: Array<ModifiedFile>;
-    imageWorker: Worker | null;
+    modifyImagesWorker: Worker | null;
+    retrieveImagesWorker: Worker | null;
     isErrors: boolean[];
     isLoading: boolean;
     isModalOpen: boolean;
@@ -118,7 +119,11 @@ type AccessibleImageInputDispatch =
         };
     }
     | {
-        action: AccessibleImageInputAction["setImageWorker"];
+        action: AccessibleImageInputAction["setRetrieveImagesWorker"];
+        payload: Worker;
+    }
+    | {
+        action: AccessibleImageInputAction["setModifyImagesWorker"];
         payload: Worker;
     };
 

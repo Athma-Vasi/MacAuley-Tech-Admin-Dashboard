@@ -10,7 +10,12 @@ import { z } from "zod";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
-import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
+import {
+  DecodedToken,
+  HttpServerResponse,
+  SafeBoxResult,
+  ThemeObject,
+} from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -445,7 +450,7 @@ function parseSafeSync(
   }
 }
 
-function createSafeBoxResult<Data extends unknown = unknown>(
+function createSafeBoxResult<Data = unknown>(
   { data, kind = "error", message = "Unknown error" }: {
     data?: Data;
     kind?: "error" | "success" | "notFound";
@@ -609,55 +614,6 @@ function debounce<T extends (...args: any[]) => void>(
   } as T;
 }
 
-// function throttle<T extends (...args: any[]) => void>(
-//   func: T,
-//   limit: number,
-// ): T {
-//   let lastCall = 0;
-
-//   return function (this: any, ...args: any[]) {
-//     const now = Date.now();
-
-//     if (now - lastCall >= limit) {
-//       lastCall = now;
-//       func.apply(this, args);
-//     }
-//   } as T;
-// }
-
-function throttle<T extends (...args: any[]) => void>(
-  func: T,
-  limit: number,
-): (...args: Parameters<T>) => void {
-  let lastCall = 0;
-  let lastRan: number | null = null;
-  let lastArgs: Parameters<T> | null = null;
-  let lastThis: any = null;
-
-  return function (this: any, ...args: Parameters<T>) {
-    const now = Date.now();
-    const remaining = limit - (now - lastCall);
-
-    lastArgs = args;
-    lastThis = this;
-
-    if (remaining <= 0) {
-      lastCall = now;
-      func.apply(this, args);
-      lastRan = now;
-    } else if (!lastRan) {
-      setTimeout(() => {
-        if (now - lastCall >= limit) {
-          lastCall = Date.now();
-          func.apply(lastThis, lastArgs!);
-          lastRan = Date.now();
-        }
-      }, remaining);
-      lastRan = now;
-    }
-  };
-}
-
 export {
   addCommaSeparator,
   capitalizeAll,
@@ -684,7 +640,6 @@ export {
   setForageItemSafe,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
-  throttle,
   toFixedFloat,
   urlBuilder,
 };

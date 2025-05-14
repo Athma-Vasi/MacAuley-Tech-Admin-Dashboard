@@ -279,9 +279,11 @@ function Login() {
       className="login-container"
     >
       {displayTitle}
-      <Space h="xl" />
-      <Space h="xl" />
-      <Space h="xl" />
+
+      {Array.from(
+        { length: 3 },
+        (_, idx) => <Space h="xl" key={`space-${idx}`} />,
+      )}
       {card}
     </Box>
   );

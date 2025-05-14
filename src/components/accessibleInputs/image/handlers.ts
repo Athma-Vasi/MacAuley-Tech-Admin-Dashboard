@@ -6,7 +6,8 @@ import {
     ModifyImageSafe,
     SetForageItemSafe,
 } from "../../../utils";
-import { MessageEventImageWorkerToMain } from "../../../workers/imageWorker";
+import { MessageEventModifyImagesWorkerToMain } from "../../../workers/modifyImagesWorker";
+import { MessageEventRetrieveImagesWorkerToMain } from "../../../workers/retrieveImagesWorker";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
@@ -260,6 +261,165 @@ async function handleRemoveImageClick<
         return createSafeBoxResult({
             kind: "error",
             message: "Error removing image",
+        });
+    }
+}
+
+async function handleMessageEventModifyImagesWorkerToMain<
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
+>(
+    {
+        accessibleImageInputDispatch,
+        event,
+        isComponentMountedRef,
+        invalidValueAction,
+        parentDispatch,
+        showBoundary,
+        storageKey,
+        validValueAction,
+    }: {
+        accessibleImageInputDispatch: React.Dispatch<
+            AccessibleImageInputDispatch
+        >;
+        event: MessageEventModifyImagesWorkerToMain;
+        isComponentMountedRef: React.RefObject<boolean>;
+        invalidValueAction: InvalidValueAction;
+        parentDispatch?: React.Dispatch<
+            | {
+                action: ValidValueAction;
+                payload: FormData;
+            }
+            | {
+                action: InvalidValueAction;
+                payload: SetFilesInErrorPayload;
+            }
+        >;
+        showBoundary: (error: unknown) => void;
+        storageKey: string;
+        validValueAction: ValidValueAction;
+    },
+) {
+    console.log("isComponentMountedRef", isComponentMountedRef);
+    const isComponentMounted = isComponentMountedRef.current;
+    if (!isComponentMounted) {
+        return createSafeBoxResult({
+            message: "Component is not mounted",
+        });
+    }
+
+    try {
+        console.log("Worker received message:", event.data);
+
+        if (event.data.err) {
+            showBoundary(event.data.val.data);
+            return createSafeBoxResult({
+                message: event.data.val.message ?? "Error fetching response",
+            });
+        }
+
+        console.log("event.data.val.data", event.data.val.data);
+
+        const dataUnwrapped = event.data.val.data;
+        if (dataUnwrapped === undefined) {
+            showBoundary(new Error("No data returned from server"));
+            return createSafeBoxResult({
+                message: "Response is undefined",
+            });
+        }
+
+        console.log({ dataUnwrapped });
+
+        const {
+            areImagesInvalid,
+            currentImageIndex,
+            fileBlob,
+            fileNames,
+            updatedModifiedFiles,
+            orientation,
+            quality,
+        } = dataUnwrapped;
+
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
+        }
+
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setImageFileBlob,
+            payload: {
+                fileBlob,
+                index: currentImageIndex,
+            },
+        });
+
+        areImagesInvalid.forEach(
+            (isImageInvalid, index) => {
+                parentDispatch?.({
+                    action: invalidValueAction,
+                    payload: {
+                        kind: isImageInvalid ? "isError" : "notError",
+                        name: fileNames[index],
+                    },
+                });
+            },
+        );
+
+        const { modifiedFilesForageKey } = createImageInputForageKeys(
+            storageKey,
+        );
+
+        const formData = updatedModifiedFiles.reduce<FormData>(
+            (formDataAcc, modifiedFile, index) => {
+                if (modifiedFile) {
+                    formDataAcc.append(
+                        modifiedFilesForageKey,
+                        modifiedFile,
+                        fileNames[index],
+                    );
+                }
+
+                return formDataAcc;
+            },
+            new FormData(),
+        );
+
+        parentDispatch?.({
+            action: validValueAction,
+            payload: formData,
+        });
+
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setQuality,
+            payload: { index: currentImageIndex, value: quality },
+        });
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setOrientation,
+            payload: { index: currentImageIndex, value: orientation },
+        });
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setCurrentImageIndex,
+            payload: currentImageIndex,
+        });
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setIsLoading,
+            payload: false,
+        });
+
+        return createSafeBoxResult({
+            kind: "success",
+            data: true,
+        });
+    } catch (error: unknown) {
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Component is not mounted",
+            });
+        }
+        showBoundary(error);
+        return createSafeBoxResult({
+            message: "Unknown error",
         });
     }
 }
@@ -541,14 +701,14 @@ async function handleImageQualityOrientationSliderChange<
     }
 }
 
-async function handleMessageEventImageWorkerToMain(
+async function handleMessageEventRetrieveImagesWorkerToMain(
     {
         accessibleImageInputDispatch,
         event,
         isComponentMountedRef,
         showBoundary,
     }: {
-        event: MessageEventImageWorkerToMain;
+        event: MessageEventRetrieveImagesWorkerToMain;
         isComponentMountedRef: React.RefObject<boolean>;
         showBoundary: (error: unknown) => void;
         accessibleImageInputDispatch: React.Dispatch<
@@ -623,10 +783,10 @@ async function handleMessageEventImageWorkerToMain(
             });
         });
 
-        // accessibleImageInputDispatch({
-        //     action: accessibleImageInputAction.setIsLoading,
-        //     payload: false,
-        // });
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setIsLoading,
+            payload: false,
+        });
 
         return createSafeBoxResult({
             kind: "success",
@@ -648,7 +808,8 @@ async function handleMessageEventImageWorkerToMain(
 
 export {
     handleImageQualityOrientationSliderChange,
-    handleMessageEventImageWorkerToMain,
+    handleMessageEventModifyImagesWorkerToMain,
+    handleMessageEventRetrieveImagesWorkerToMain,
     handleRemoveImageClick,
     handleResetImageClick,
 };
