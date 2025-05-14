@@ -69,6 +69,20 @@ describe("Sidebar", () => {
                 );
                 expect(state.directoryFetchWorker).toBeInstanceOf(Worker);
             });
+
+            it("should not allow invalid value", () => {
+                const dispatch: SidebarDispatch = {
+                    action: sidebarAction.setDirectoryFetchWorker,
+                    payload: {} as any,
+                };
+                const state = sidebarReducer_setDirectoryFetchWorker(
+                    initialSidebarState,
+                    dispatch,
+                );
+                expect(state.directoryFetchWorker).toBe(
+                    initialSidebarState.directoryFetchWorker,
+                );
+            });
         });
 
         describe(sidebarAction.setLogoutFetchWorker, () => {
@@ -83,6 +97,20 @@ describe("Sidebar", () => {
                 );
                 expect(state.logoutFetchWorker).toBeInstanceOf(Worker);
             });
+
+            it("should not allow invalid value", () => {
+                const dispatch: SidebarDispatch = {
+                    action: sidebarAction.setLogoutFetchWorker,
+                    payload: {} as any,
+                };
+                const state = sidebarReducer_setLogoutFetchWorker(
+                    initialSidebarState,
+                    dispatch,
+                );
+                expect(state.logoutFetchWorker).toBe(
+                    initialSidebarState.logoutFetchWorker,
+                );
+            });
         });
 
         describe(sidebarAction.setMetricsFetchWorker, () => {
@@ -96,6 +124,20 @@ describe("Sidebar", () => {
                     dispatch,
                 );
                 expect(state.metricsFetchWorker).toBeInstanceOf(Worker);
+            });
+
+            it("should not allow invalid value", () => {
+                const dispatch: SidebarDispatch = {
+                    action: sidebarAction.setMetricsFetchWorker,
+                    payload: {} as any,
+                };
+                const state = sidebarReducer_setMetricsFetchWorker(
+                    initialSidebarState,
+                    dispatch,
+                );
+                expect(state.metricsFetchWorker).toBe(
+                    initialSidebarState.metricsFetchWorker,
+                );
             });
         });
 
