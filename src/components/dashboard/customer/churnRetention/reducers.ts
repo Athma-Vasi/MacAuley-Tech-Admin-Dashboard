@@ -1,6 +1,7 @@
-import { ChartKindSegment } from "../../types";
+import { parseSafeSync } from "../../../../utils";
 import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
 import { ChurnRetentionAction, churnRetentionAction } from "./actions";
+import { setYAxisKeyChurnRetentionDispatchZod } from "./schemas";
 import { ChurnRetentionDispatch, ChurnRetentionState } from "./types";
 
 function churnRetentionReducer(
@@ -18,31 +19,27 @@ const churnRetentionReducers = new Map<
     dispatch: ChurnRetentionDispatch,
   ) => ChurnRetentionState
 >([
-  [
-    churnRetentionAction.setBarLineRadialChartKind,
-    churnRetentionReducer_setBarLineRadialChartKind,
-  ],
   [churnRetentionAction.setYAxisKey, churnRetentionReducer_setYAxisKey],
 ]);
-
-function churnRetentionReducer_setBarLineRadialChartKind(
-  state: ChurnRetentionState,
-  dispatch: ChurnRetentionDispatch,
-): ChurnRetentionState {
-  return {
-    ...state,
-    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
-  };
-}
 
 function churnRetentionReducer_setYAxisKey(
   state: ChurnRetentionState,
   dispatch: ChurnRetentionDispatch,
 ): ChurnRetentionState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setYAxisKeyChurnRetentionDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    yAxisKey: dispatch.payload as CustomerMetricsChurnRetentionChartsKey,
+    yAxisKey: parsedResult.safeUnwrap().data
+      ?.payload as CustomerMetricsChurnRetentionChartsKey,
   };
 }
 
-export { churnRetentionReducer };
+export { churnRetentionReducer, churnRetentionReducer_setYAxisKey };

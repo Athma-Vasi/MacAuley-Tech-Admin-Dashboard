@@ -1,6 +1,7 @@
-import { ChartKindSegment } from "../../types";
+import { parseSafeSync } from "../../../../utils";
 import { CustomerNewReturningYAxisKey } from "../types";
 import { ReturningAction, returningAction } from "./actions";
+import { setYAxisKeyReturningDispatchZod } from "./schemas";
 import { ReturningDispatch, ReturningState } from "./types";
 
 function returningReducer(state: ReturningState, dispatch: ReturningDispatch) {
@@ -12,31 +13,27 @@ const returningReducers = new Map<
   ReturningAction[keyof ReturningAction],
   (state: ReturningState, dispatch: ReturningDispatch) => ReturningState
 >([
-  [
-    returningAction.setBarLineRadialChartKind,
-    returningReducer_setBarLineRadialChartKind,
-  ],
   [returningAction.setYAxisKey, returningReducer_setYAxisKey],
 ]);
-
-function returningReducer_setBarLineRadialChartKind(
-  state: ReturningState,
-  dispatch: ReturningDispatch,
-): ReturningState {
-  return {
-    ...state,
-    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
-  };
-}
 
 function returningReducer_setYAxisKey(
   state: ReturningState,
   dispatch: ReturningDispatch,
 ): ReturningState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setYAxisKeyReturningDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    yAxisKey: dispatch.payload as CustomerNewReturningYAxisKey,
+    yAxisKey: parsedResult.safeUnwrap().data
+      ?.payload as CustomerNewReturningYAxisKey,
   };
 }
 
-export { returningReducer };
+export { returningReducer, returningReducer_setYAxisKey };

@@ -96,7 +96,6 @@ function ChurnRetention(
   );
 
   const {
-    barLineRadialChartKind,
     yAxisKey,
   } = churnRetentionState;
 

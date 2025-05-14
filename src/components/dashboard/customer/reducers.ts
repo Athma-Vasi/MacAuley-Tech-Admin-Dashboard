@@ -70,7 +70,7 @@ function customerMetricsReducer_setCards(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
-  if (!dispatch) {
+  if (!dispatch.payload) {
     return state;
   }
 

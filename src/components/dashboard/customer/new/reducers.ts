@@ -1,6 +1,7 @@
-import { ChartKindSegment } from "../../types";
+import { parseSafeSync } from "../../../../utils";
 import { CustomerNewReturningYAxisKey } from "../types";
 import { NewAction, newAction } from "./actions";
+import { setYAxisKeyNewDispatchZod } from "./schemas";
 import { NewDispatch, NewState } from "./types";
 
 function newReducer(state: NewState, dispatch: NewDispatch) {
@@ -12,31 +13,27 @@ const newReducers = new Map<
   NewAction[keyof NewAction],
   (state: NewState, dispatch: NewDispatch) => NewState
 >([
-  [
-    newAction.setBarLineRadialChartKind,
-    newReducer_setBarLineRadialChartKind,
-  ],
   [newAction.setYAxisKey, newReducer_setYAxisKey],
 ]);
-
-function newReducer_setBarLineRadialChartKind(
-  state: NewState,
-  dispatch: NewDispatch,
-): NewState {
-  return {
-    ...state,
-    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
-  };
-}
 
 function newReducer_setYAxisKey(
   state: NewState,
   dispatch: NewDispatch,
 ): NewState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setYAxisKeyNewDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    yAxisKey: dispatch.payload as CustomerNewReturningYAxisKey,
+    yAxisKey: parsedResult.safeUnwrap().data
+      ?.payload as CustomerNewReturningYAxisKey,
   };
 }
 
-export { newReducer };
+export { newReducer, newReducer_setYAxisKey };

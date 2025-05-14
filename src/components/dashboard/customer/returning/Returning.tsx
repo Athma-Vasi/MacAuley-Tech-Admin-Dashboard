@@ -93,7 +93,6 @@ function Returning(
   );
 
   const {
-    barLineRadialChartKind,
     yAxisKey,
   } = returningState;
 

@@ -1,10 +1,8 @@
 type NewAction = {
-  setBarLineRadialChartKind: "setBarLineRadialChartKind";
   setYAxisKey: "setYAxisKey";
 };
 
 const newAction: NewAction = {
-  setBarLineRadialChartKind: "setBarLineRadialChartKind",
   setYAxisKey: "setYAxisKey",
 };
 

@@ -95,7 +95,6 @@ function New(
   );
 
   const {
-    barLineRadialChartKind,
     yAxisKey,
   } = newState;
 
