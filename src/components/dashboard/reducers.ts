@@ -132,4 +132,11 @@ function dashboardReducer_setDashboardFetchWorker(
   };
 }
 
-export { dashboardReducer };
+export {
+  dashboardReducer,
+  dashboardReducer_setCalendarView,
+  dashboardReducer_setDashboardFetchWorker,
+  dashboardReducer_setIsLoading,
+  dashboardReducer_setLoadingMessage,
+  dashboardReducer_setSelectedYYYYMMDD,
+};
