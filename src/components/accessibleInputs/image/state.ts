@@ -5,6 +5,7 @@ const initialAccessibleImageInputState: AccessibleImageInputState = {
     currentImageIndex: 0,
     fileNames: [],
     imageFileBlobs: [],
+    imageWorker: null,
     isErrors: [],
     isLoading: false,
     isModalOpen: false,

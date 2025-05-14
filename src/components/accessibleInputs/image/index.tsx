@@ -23,6 +23,8 @@ import {
     returnThemeColors,
     setForageItemSafe,
 } from "../../../utils";
+import { MessageEventImageWorkerToMain } from "../../../workers/imageWorker";
+import ImageWorker from "../../../workers/imageWorker?worker";
 import { GoldenGrid } from "../../goldenGrid";
 import { AccessibleFileInput, ModifiedFile } from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
@@ -41,13 +43,14 @@ import {
 } from "./constants";
 import {
     handleImageQualityOrientationSliderChange,
+    handleMessageEventImageWorkerToMain,
     handleRemoveImageClick,
     handleResetImageClick,
 } from "./handlers";
 import { accessibleImageInputReducer } from "./reducers";
 import { initialAccessibleImageInputState } from "./state";
 import type { AccessibleImageInputProps } from "./types";
-import { checkImageFileBlobs, retrieveStoredImagesValues } from "./utils";
+import { checkImageFileBlobs } from "./utils";
 
 function AccessibleImageInput<
     ValidValueAction extends string = string,
@@ -79,6 +82,8 @@ function AccessibleImageInput<
         currentImageIndex,
         fileNames,
         imageFileBlobs,
+        imageWorker,
+        isErrors,
         isLoading,
         isModalOpen,
         orientations,
@@ -91,24 +96,55 @@ function AccessibleImageInput<
 
     const { showBoundary } = useErrorBoundary();
 
-    const {
-        redColorShade,
-        textColor,
-        greenColorShade,
-        themeColorShade,
-    } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
-
     const isComponentMountedRef = useMountedRef();
 
     useEffect(() => {
-        retrieveStoredImagesValues({
-            accessibleImageInputDispatch,
-            isComponentMountedRef,
-            maxImagesAmount,
-            showBoundary,
+        const newImageWorker = new ImageWorker();
+
+        accessibleImageInputDispatch({
+            action: accessibleImageInputAction.setImageWorker,
+            payload: newImageWorker,
+        });
+
+        newImageWorker.onmessage = async (
+            event: MessageEventImageWorkerToMain,
+        ) => {
+            await handleMessageEventImageWorkerToMain({
+                event,
+                accessibleImageInputDispatch,
+                isComponentMountedRef,
+                showBoundary,
+            });
+        };
+
+        return () => {
+            newImageWorker.terminate();
+            isComponentMountedRef.current = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!imageWorker) {
+            return;
+        }
+
+        // accessibleImageInputDispatch({
+        //     action: accessibleImageInputAction.setIsLoading,
+        //     payload: true,
+        // });
+
+        imageWorker.postMessage({
             storageKey,
         });
-    }, []);
+
+        // retrieveStoredImagesValues({
+        //     accessibleImageInputDispatch,
+        //     isComponentMountedRef,
+        //     maxImagesAmount,
+        //     showBoundary,
+        //     storageKey,
+        // });
+    }, [imageWorker]);
 
     useEffect(() => {
         checkImageFileBlobs({
@@ -138,6 +174,13 @@ function AccessibleImageInput<
             }}
         />
     );
+
+    const {
+        redColorShade,
+        textColor,
+        greenColorShade,
+        themeColorShade,
+    } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
     const fileBlobCards = imageFileBlobs.map(
         (fileBlob: ModifiedFile, index) => {

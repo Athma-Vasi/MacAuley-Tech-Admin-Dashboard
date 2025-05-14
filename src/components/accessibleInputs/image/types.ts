@@ -38,7 +38,7 @@ type AccessibleImageInputProps<
 
 type AccessibleImageInputState = {
     currentImageIndex: number;
-    /** blobs do not have name property */
+    /** because blobs do not have name property */
     fileNames: string[];
     imageFileBlobs: Array<ModifiedFile>;
     imageWorker: Worker | null;
@@ -116,6 +116,10 @@ type AccessibleImageInputDispatch =
             index: number;
             value: number;
         };
+    }
+    | {
+        action: AccessibleImageInputAction["setImageWorker"];
+        payload: Worker;
     };
 
 export type {

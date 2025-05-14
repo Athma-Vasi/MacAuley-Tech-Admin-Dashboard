@@ -6,6 +6,7 @@ import {
     ModifyImageSafe,
     SetForageItemSafe,
 } from "../../../utils";
+import { MessageEventImageWorkerToMain } from "../../../workers/imageWorker";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
@@ -540,8 +541,114 @@ async function handleImageQualityOrientationSliderChange<
     }
 }
 
+async function handleMessageEventImageWorkerToMain(
+    {
+        accessibleImageInputDispatch,
+        event,
+        isComponentMountedRef,
+        showBoundary,
+    }: {
+        event: MessageEventImageWorkerToMain;
+        isComponentMountedRef: React.RefObject<boolean>;
+        showBoundary: (error: unknown) => void;
+        accessibleImageInputDispatch: React.Dispatch<
+            AccessibleImageInputDispatch
+        >;
+    },
+) {
+    const isComponentMounted = isComponentMountedRef.current;
+    if (!isComponentMounted) {
+        return createSafeBoxResult({
+            message: "Component is not mounted",
+        });
+    }
+
+    try {
+        console.log("Worker received message:", event.data);
+
+        if (event.data.err) {
+            showBoundary(event.data.val.data);
+            return createSafeBoxResult({
+                message: event.data.val.message ?? "Error fetching response",
+            });
+        }
+
+        console.log("event.data.val.data", event.data.val.data);
+
+        const dataUnwrapped = event.data.val.data;
+        if (dataUnwrapped === undefined) {
+            showBoundary(new Error("No data returned from server"));
+            return createSafeBoxResult({
+                message: "Response is undefined",
+            });
+        }
+
+        console.log({ dataUnwrapped });
+
+        const { fileNames, modifiedFiles, orientations, qualities } =
+            dataUnwrapped;
+
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
+        }
+
+        modifiedFiles?.forEach((modifiedFile: ModifiedFile, index) => {
+            if (!modifiedFile) {
+                return;
+            }
+
+            accessibleImageInputDispatch({
+                action: accessibleImageInputAction.setImageFileBlob,
+                payload: { fileBlob: modifiedFile, index },
+            });
+
+            accessibleImageInputDispatch({
+                action: accessibleImageInputAction.addFileName,
+                payload: {
+                    index,
+                    value: fileNames[index],
+                },
+            });
+
+            accessibleImageInputDispatch({
+                action: accessibleImageInputAction.setQuality,
+                payload: { index, value: qualities[index] },
+            });
+
+            accessibleImageInputDispatch({
+                action: accessibleImageInputAction.setOrientation,
+                payload: { index, value: orientations[index] },
+            });
+        });
+
+        // accessibleImageInputDispatch({
+        //     action: accessibleImageInputAction.setIsLoading,
+        //     payload: false,
+        // });
+
+        return createSafeBoxResult({
+            kind: "success",
+            data: true,
+        });
+    } catch (error: any) {
+        if (!isComponentMounted) {
+            return createSafeBoxResult({
+                message: "Error: Component is not mounted",
+            });
+        }
+
+        showBoundary(error);
+        return createSafeBoxResult({
+            message: "Unknown error",
+        });
+    }
+}
+
 export {
     handleImageQualityOrientationSliderChange,
+    handleMessageEventImageWorkerToMain,
     handleRemoveImageClick,
     handleResetImageClick,
 };
