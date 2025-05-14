@@ -97,7 +97,6 @@ function RUS(
   const [rusState, rusDispatch] = React.useReducer(rusReducer, initialRUSState);
 
   const {
-    barLineRadialChartKind,
     yAxisKey,
   } = rusState;
 

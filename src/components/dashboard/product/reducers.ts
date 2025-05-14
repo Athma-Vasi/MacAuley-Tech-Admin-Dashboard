@@ -140,5 +140,5 @@ export {
   productMetricsReducer_setCards,
   productMetricsReducer_setCharts,
   productMetricsReducer_setIsGenerating,
-  productMetricsReducers,
+  productMetricsReducer_setProductChartsWorker,
 };

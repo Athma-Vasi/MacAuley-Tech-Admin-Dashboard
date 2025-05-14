@@ -1,6 +1,7 @@
-import { ChartKindSegment } from "../../types";
+import { parseSafeSync } from "../../../../utils";
 import { ProductMetricsChartKey } from "../chartsData";
 import { RUSAction, rusAction } from "./actions";
+import { setYAxisKeyRUSDispatchZod } from "./schemas";
 import { RUSDispatch, RUSState } from "./types";
 
 function rusReducer(state: RUSState, dispatch: RUSDispatch): RUSState {
@@ -12,28 +13,26 @@ const rusReducers = new Map<
   RUSAction[keyof RUSAction],
   (state: RUSState, dispatch: RUSDispatch) => RUSState
 >([
-  [rusAction.setBarLineRadialChartKind, rusReducer_setBarLineChartKind],
   [rusAction.setYAxisKey, rusReducer_setYAxisKey],
 ]);
-
-function rusReducer_setBarLineChartKind(
-  state: RUSState,
-  dispatch: RUSDispatch,
-): RUSState {
-  return {
-    ...state,
-    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
-  };
-}
 
 function rusReducer_setYAxisKey(
   state: RUSState,
   dispatch: RUSDispatch,
 ): RUSState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setYAxisKeyRUSDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    yAxisKey: dispatch.payload as ProductMetricsChartKey,
+    yAxisKey: parsedResult.safeUnwrap().data?.payload as ProductMetricsChartKey,
   };
 }
 
-export { rusReducer };
+export { rusReducer, rusReducer_setYAxisKey };
