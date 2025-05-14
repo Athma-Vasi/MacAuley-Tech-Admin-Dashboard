@@ -11,6 +11,7 @@ import {
     removeImageFileBlobDispatchZod,
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,
+    setImageFileBlobDispatchZod,
     setImageWorkerImageDispatchZod,
     setIsErrorsImageDispatchZod,
     setIsLoadingImageDispatchZod,
@@ -238,17 +239,39 @@ function accessibleImageInputReducer_setImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const { fileBlob, index } = dispatch.payload as {
-        index: number;
-        fileBlob: ModifiedFile;
-    };
+    // const { fileBlob, index } = dispatch.payload as {
+    //     index: number;
+    //     fileBlob: ModifiedFile;
+    // };
 
+    // const imageFileBlobs = structuredClone(state.imageFileBlobs);
+    // imageFileBlobs[index] = fileBlob;
+
+    // return {
+    //     ...state,
+    //     imageFileBlobs,
+    // };
+    const parsedResult = parseSafeSync({
+        object: dispatch,
+        zSchema: setImageFileBlobDispatchZod,
+    });
+
+    if (parsedResult.err) {
+        return state;
+    }
+
+    const { index, fileBlob } = parsedResult.safeUnwrap().data
+        ?.payload as {
+            index: number;
+            fileBlob: ModifiedFile;
+        };
     const imageFileBlobs = structuredClone(state.imageFileBlobs);
     imageFileBlobs[index] = fileBlob;
 
     return {
         ...state,
         imageFileBlobs,
+        currentImageIndex: index,
     };
 }
 
@@ -348,7 +371,8 @@ function accessibleImageInputReducer_setQuality(
         return state;
     }
 
-    const { index, value } = dispatch.payload as DynamicSliderInputPayload;
+    const { index, value } = parsedResult.safeUnwrap().data
+        ?.payload as DynamicSliderInputPayload;
     const qualities = structuredClone(state.qualities);
     qualities[index] = value;
 
@@ -372,7 +396,8 @@ function accessibleImageInputReducer_setOrientation(
         return state;
     }
 
-    const { index, value } = dispatch.payload as DynamicSliderInputPayload;
+    const { index, value } = parsedResult.safeUnwrap().data
+        ?.payload as DynamicSliderInputPayload;
     const orientations = state.orientations.slice();
     orientations[index] = value;
 
