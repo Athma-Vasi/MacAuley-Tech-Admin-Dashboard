@@ -127,4 +127,11 @@ function sidebarReducer_setMetricsView(
     };
 }
 
-export { sidebarReducer };
+export {
+    sidebarReducer,
+    sidebarReducer_setClickedNavlink,
+    sidebarReducer_setDirectoryFetchWorker,
+    sidebarReducer_setLogoutFetchWorker,
+    sidebarReducer_setMetricsFetchWorker,
+    sidebarReducer_setMetricsView,
+};

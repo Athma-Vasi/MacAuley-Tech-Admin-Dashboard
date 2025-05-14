@@ -3,7 +3,7 @@ import { sidebarAction } from "./actions";
 
 const setMetricsFetchWorkerSidebarDispatchZod = z.object({
     action: z.literal(sidebarAction.setMetricsFetchWorker),
-    payload: z.instanceof(Worker),
+    payload: z.any(),
 });
 
 const setMetricsViewSidebarDispatchZod = z.object({
@@ -18,7 +18,7 @@ const setMetricsViewSidebarDispatchZod = z.object({
 
 const setDirectoryFetchWorkerSidebarDispatchZod = z.object({
     action: z.literal(sidebarAction.setDirectoryFetchWorker),
-    payload: z.instanceof(Worker),
+    payload: z.any(),
 });
 
 const setClickedNavlinkSidebarDispatchZod = z.object({
@@ -36,7 +36,7 @@ const setClickedNavlinkSidebarDispatchZod = z.object({
 
 const setLogoutFetchWorkerSidebarDispatchZod = z.object({
     action: z.literal(sidebarAction.setLogoutFetchWorker),
-    payload: z.instanceof(Worker),
+    payload: z.any(),
 });
 
 export {

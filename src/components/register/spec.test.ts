@@ -13,7 +13,6 @@ import {
   VALID_PASSWORDS,
   VALID_USERNAMES,
 } from "../../constants";
-import { UserSchema } from "../../types";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import { registerAction } from "./actions";
 import {
@@ -49,7 +48,6 @@ import {
 } from "./reducers";
 import { RegisterDispatch } from "./schemas";
 import { initialRegisterState } from "./state";
-import { SAMPLE_USER_DOCUMENT } from "./testData";
 
 describe("registerReducer", () => {
   describe("registerReducer_setConfirmPassword", () => {
