@@ -1,5 +1,7 @@
-import { ChartKindSegment, FinancialYAxisKey } from "../../types";
+import { parseSafeSync } from "../../../../utils";
+import { FinancialYAxisKey } from "../../types";
 import { PERTAction, pertAction } from "./actions";
+import { setYAxisKeyPERTDispatchZod } from "./schemas";
 import { PERTDispatch, PERTState } from "./types";
 
 function pertReducer(state: PERTState, dispatch: PERTDispatch): PERTState {
@@ -11,28 +13,26 @@ const pertReducers = new Map<
   PERTAction[keyof PERTAction],
   (state: PERTState, dispatch: PERTDispatch) => PERTState
 >([
-  [pertAction.setBarLineRadialChartKind, pertReducer_setBarLineRadialChartKind],
   [pertAction.setYAxisKey, pertReducer_setYAxisKey],
 ]);
-
-function pertReducer_setBarLineRadialChartKind(
-  state: PERTState,
-  dispatch: PERTDispatch,
-): PERTState {
-  return {
-    ...state,
-    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
-  };
-}
 
 function pertReducer_setYAxisKey(
   state: PERTState,
   dispatch: PERTDispatch,
 ): PERTState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setYAxisKeyPERTDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    yAxisKey: dispatch.payload as FinancialYAxisKey,
+    yAxisKey: parsedResult.safeUnwrap().data?.payload as FinancialYAxisKey,
   };
 }
 
-export { pertReducer };
+export { pertReducer, pertReducer_setYAxisKey };

@@ -1,10 +1,8 @@
 type OtherMetricsAction = {
-  setBarLineRadialChartKind: "setBarLineRadialChartKind";
   setYAxisKey: "setYAxisKey";
 };
 
 const otherMetricsAction: OtherMetricsAction = {
-  setBarLineRadialChartKind: "setBarLineRadialChartKind",
   setYAxisKey: "setYAxisKey",
 };
 

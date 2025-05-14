@@ -9,7 +9,6 @@ import {
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
-import { AccessibleSegmentedControl } from "../../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
@@ -20,7 +19,6 @@ import {
 } from "../../../charts";
 import { ChartUnitKind } from "../../../charts/types";
 import { createChartTooltipElement } from "../../../charts/utils";
-import { CHART_KIND_DATA } from "../../constants";
 import DashboardLayoutContainer from "../../DashboardLayoutContainer";
 import type {
   AllStoreLocations,
@@ -101,7 +99,6 @@ function PERT({
   );
 
   const {
-    barLineRadialChartKind,
     yAxisKey,
   } = pertState;
 

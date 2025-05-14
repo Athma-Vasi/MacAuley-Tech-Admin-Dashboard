@@ -142,5 +142,6 @@ export {
   financialMetricsReducer_setCalendarChartsData,
   financialMetricsReducer_setCards,
   financialMetricsReducer_setCharts,
+  financialMetricsReducer_setFinancialChartsWorker,
   financialMetricsReducer_setIsGenerating,
 };

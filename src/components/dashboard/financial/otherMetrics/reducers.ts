@@ -1,9 +1,7 @@
-import { ChartKindSegment } from "../../types";
-import {
-  FinancialMetricsCalendarChartsKeyOtherMetrics,
-  FinancialMetricsOtherMetricsChartsKey,
-} from "../chartsData";
+import { parseSafeSync } from "../../../../utils";
+import { FinancialMetricsOtherMetricsChartsKey } from "../chartsData";
 import { OtherMetricsAction, otherMetricsAction } from "./actions";
+import { setYAxisKeyOtherMetricsDispatchZod } from "./schemas";
 import { OtherMetricsDispatch, OtherMetricsState } from "./types";
 
 function otherMetricsReducer(
@@ -22,33 +20,29 @@ const otherMetricsReducers = new Map<
   ) => OtherMetricsState
 >([
   [
-    otherMetricsAction.setBarLineRadialChartKind,
-    otherMetricsReducer_setBarLineRadialChartKind,
-  ],
-  [
     otherMetricsAction.setYAxisKey,
     otherMetricsReducer_setYAxisKey,
   ],
 ]);
 
-function otherMetricsReducer_setBarLineRadialChartKind(
-  state: OtherMetricsState,
-  dispatch: OtherMetricsDispatch,
-): OtherMetricsState {
-  return {
-    ...state,
-    barLineRadialChartKind: dispatch.payload as ChartKindSegment,
-  };
-}
-
 function otherMetricsReducer_setYAxisKey(
   state: OtherMetricsState,
   dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setYAxisKeyOtherMetricsDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
   return {
     ...state,
-    yAxisKey: dispatch.payload as FinancialMetricsOtherMetricsChartsKey,
+    yAxisKey: parsedResult.safeUnwrap().data
+      ?.payload as FinancialMetricsOtherMetricsChartsKey,
   };
 }
 
-export { otherMetricsReducer };
+export { otherMetricsReducer, otherMetricsReducer_setYAxisKey };

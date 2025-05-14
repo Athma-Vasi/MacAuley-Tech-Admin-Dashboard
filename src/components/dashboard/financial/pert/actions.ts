@@ -1,10 +1,8 @@
 type PERTAction = {
-  setBarLineRadialChartKind: "setBarLineRadialChartKind";
   setYAxisKey: "setYAxisKey";
 };
 
 const pertAction: PERTAction = {
-  setBarLineRadialChartKind: "setBarLineRadialChartKind",
   setYAxisKey: "setYAxisKey",
 };
 
