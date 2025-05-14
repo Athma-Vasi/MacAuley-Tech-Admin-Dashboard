@@ -114,4 +114,10 @@ function directoryReducer_setStoreLocation(
   };
 }
 
-export { directoryReducer };
+export {
+  directoryReducer,
+  directoryReducer_setDepartment,
+  directoryReducer_setDirectoryFetchWorker,
+  directoryReducer_setOrientation,
+  directoryReducer_setStoreLocation,
+};
