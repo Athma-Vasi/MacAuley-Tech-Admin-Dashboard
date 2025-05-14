@@ -185,6 +185,7 @@ export {
   loginReducer_setIsLoading,
   loginReducer_setIsSubmitting,
   loginReducer_setIsSuccessful,
+  loginReducer_setLoginFetchWorker,
   loginReducer_setPassword,
   loginReducer_setUsername,
 };
