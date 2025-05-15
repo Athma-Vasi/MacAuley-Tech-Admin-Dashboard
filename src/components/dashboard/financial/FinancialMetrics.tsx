@@ -16,7 +16,6 @@ import type {
   Year,
 } from "../types";
 import { financialMetricsAction } from "./actions";
-import { createFinancialMetricsCards } from "./cards";
 import { returnSelectedDateFinancialMetrics } from "./chartsData";
 import { PERT_SET } from "./constants";
 import { handleMessageEventFinancialWorkerToMain } from "./handlers";
@@ -83,7 +82,6 @@ function FinancialMetrics(
       day: selectedDate,
       month: selectedMonth,
       months: MONTHS,
-      storeLocation,
       year: selectedYear,
     },
   );
@@ -97,7 +95,10 @@ function FinancialMetrics(
       financialChartsWorker.postMessage(
         {
           calendarView,
+          cardBgGradient,
           financialMetricsDocument,
+          greenColorShade,
+          redColorShade,
           selectedDateFinancialMetrics,
           selectedYYYYMMDD,
         },
@@ -136,57 +137,9 @@ function FinancialMetrics(
     };
   }, []);
 
-  useEffect(() => {
-    isComponentMountedRef.current = true;
-    const isMounted = isComponentMountedRef.current;
-
-    async function generateFinancialChartsCards() {
-      try {
-        const financialMetricsCards = await createFinancialMetricsCards({
-          cardBgGradient,
-          greenColorShade,
-          redColorShade,
-          selectedDateFinancialMetrics,
-        });
-
-        if (!isMounted) {
-          return;
-        }
-
-        financialMetricsDispatch({
-          action: financialMetricsAction.setCards,
-          payload: financialMetricsCards,
-        });
-      } catch (error: any) {
-        if (!isMounted) {
-          return;
-        }
-
-        showBoundary(error);
-      }
-    }
-
-    if (financialMetricsDocument || !cards || !charts) {
-      generateFinancialChartsCards();
-    }
-
-    return () => {
-      isComponentMountedRef.current = false;
-    };
-  }, [
-    calendarView,
-    financialChartsWorker,
-    selectedYYYYMMDD,
-    storeLocation,
-    themeObject,
-    financialMetricsDocument,
-  ]);
-
-  console.log("financialMetricsState", financialMetricsState);
-
   if (
     !calendarChartsData.currentYear || !calendarChartsData.previousYear ||
-    !financialMetricsDocument || !cards || !charts || isGenerating
+    !financialMetricsDocument || !cards || !charts
   ) {
     return null;
   }

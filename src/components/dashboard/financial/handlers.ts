@@ -42,8 +42,12 @@ async function handleMessageEventFinancialWorkerToMain({
 
         console.log({ dataUnwrapped });
 
-        const { currentYear, previousYear, financialMetricsCharts } =
-            dataUnwrapped;
+        const {
+            currentYear,
+            previousYear,
+            financialMetricsCards,
+            financialMetricsCharts,
+        } = dataUnwrapped;
 
         if (!isComponentMountedRef.current) {
             return;
@@ -60,6 +64,11 @@ async function handleMessageEventFinancialWorkerToMain({
         financialMetricsDispatch({
             action: financialMetricsAction.setCharts,
             payload: financialMetricsCharts,
+        });
+
+        financialMetricsDispatch({
+            action: financialMetricsAction.setCards,
+            payload: financialMetricsCards,
         });
 
         return createSafeBoxResult({

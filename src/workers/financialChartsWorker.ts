@@ -1,15 +1,16 @@
 import { MONTHS } from "../components/dashboard/constants";
 import {
+    createFinancialMetricsCards,
+    FinancialMetricsCards,
+} from "../components/dashboard/financial/cards";
+import {
     createFinancialMetricsCalendarCharts,
     createFinancialMetricsCharts,
     FinancialMetricsCalendarCharts,
     FinancialMetricsCharts,
     SelectedDateFinancialMetrics,
 } from "../components/dashboard/financial/chartsData";
-import {
-    AllStoreLocations,
-    DashboardCalendarView,
-} from "../components/dashboard/types";
+import { DashboardCalendarView } from "../components/dashboard/types";
 import { FinancialMetricsDocument, SafeBoxResult } from "../types";
 import { createSafeBoxResult } from "../utils";
 
@@ -18,6 +19,7 @@ type MessageEventFinancialWorkerToMain = MessageEvent<
         {
             currentYear: FinancialMetricsCalendarCharts;
             previousYear: FinancialMetricsCalendarCharts;
+            financialMetricsCards: FinancialMetricsCards;
             financialMetricsCharts: FinancialMetricsCharts;
         }
     >
@@ -25,10 +27,12 @@ type MessageEventFinancialWorkerToMain = MessageEvent<
 type MessageEventFinancialMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
+        cardBgGradient: string;
         financialMetricsDocument: FinancialMetricsDocument;
+        greenColorShade: string;
+        redColorShade: string;
         selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
         selectedYYYYMMDD: string;
-        storeLocation: AllStoreLocations;
     }
 >;
 
@@ -49,29 +53,42 @@ self.onmessage = async (
 
     const {
         calendarView,
+        cardBgGradient,
         financialMetricsDocument,
+        greenColorShade,
+        redColorShade,
         selectedDateFinancialMetrics,
         selectedYYYYMMDD,
-        storeLocation,
     } = event.data;
 
     try {
         const { currentYear, previousYear } =
-            await createFinancialMetricsCalendarCharts(
+            createFinancialMetricsCalendarCharts(
                 calendarView,
                 selectedDateFinancialMetrics,
                 selectedYYYYMMDD,
             );
 
-        const financialMetricsCharts = await createFinancialMetricsCharts({
+        const financialMetricsCharts = createFinancialMetricsCharts({
             financialMetricsDocument,
             months: MONTHS,
             selectedDateFinancialMetrics,
-            storeLocation,
+        });
+
+        const financialMetricsCards = createFinancialMetricsCards({
+            cardBgGradient,
+            greenColorShade,
+            redColorShade,
+            selectedDateFinancialMetrics,
         });
 
         self.postMessage(createSafeBoxResult({
-            data: { currentYear, previousYear, financialMetricsCharts },
+            data: {
+                currentYear,
+                previousYear,
+                financialMetricsCards,
+                financialMetricsCharts,
+            },
             kind: "success",
         }));
     } catch (error) {
