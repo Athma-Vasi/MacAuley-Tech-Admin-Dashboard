@@ -16,7 +16,6 @@ import type {
   Year,
 } from "../types";
 import { customerMetricsAction } from "./actions";
-import { createCustomerMetricsCards } from "./cards";
 import { returnSelectedDateCustomerMetrics } from "./chartsData";
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
 import { handleMessageEventCustomerWorkerToMain } from "./handlers";
@@ -86,8 +85,6 @@ function CustomerMetrics(
     year: selectedYear,
   });
 
-  console.log("selectedDateCustomerMetrics", selectedDateCustomerMetrics);
-
   useEffect(() => {
     if (!customerChartsWorker) {
       return;
@@ -97,7 +94,10 @@ function CustomerMetrics(
       customerChartsWorker.postMessage(
         {
           calendarView,
+          cardBgGradient,
           customerMetricsDocument,
+          greenColorShade,
+          redColorShade,
           selectedDateCustomerMetrics,
           selectedYYYYMMDD,
         },
@@ -137,51 +137,6 @@ function CustomerMetrics(
     };
   }, []);
 
-  useEffect(() => {
-    isComponentMountedRef.current = true;
-    const isMounted = isComponentMountedRef.current;
-
-    async function generateCustomerChartsCards() {
-      try {
-        const customerMetricsCards = await createCustomerMetricsCards({
-          cardBgGradient,
-          greenColorShade,
-          redColorShade,
-          selectedDateCustomerMetrics,
-        });
-
-        if (!isMounted) {
-          return;
-        }
-
-        customerMetricsDispatch({
-          action: customerMetricsAction.setCards,
-          payload: customerMetricsCards,
-        });
-      } catch (error: any) {
-        if (!isMounted) {
-          return;
-        }
-
-        showBoundary(error);
-      }
-    }
-
-    if (customerMetricsDocument || !cards || !charts) {
-      generateCustomerChartsCards();
-    }
-
-    return () => {
-      isComponentMountedRef.current = false;
-    };
-  }, [
-    customerMetricsDocument,
-    calendarView,
-    selectedYYYYMMDD,
-    storeLocation,
-    themeObject,
-  ]);
-
   if (!customerMetricsDocument || !cards || !charts) {
     return null;
   }
@@ -198,70 +153,53 @@ function CustomerMetrics(
       storeLocation,
     });
 
-  const newCustomers = (
-    <New
-      calendarChartsData={calendarChartsData}
-      calendarView={calendarView}
-      customerMetricsCards={cards}
-      customerMetricsCharts={charts}
-      day={selectedDate}
-      month={selectedYYYYMMDD.split("-")[1]}
-      metricCategory={customerMetricsCategory}
-      metricsView="Customers"
-      newOverviewCards={newOverviewCards[calendarView]}
-      storeLocation={storeLocation}
-      year={selectedYear}
-    />
-  );
-
-  const returningCustomers = (
-    <Returning
-      calendarChartsData={calendarChartsData}
-      calendarView={calendarView}
-      customerMetricsCards={cards}
-      customerMetricsCharts={charts}
-      day={selectedDate}
-      month={selectedYYYYMMDD.split("-")[1]}
-      metricCategory={customerMetricsCategory}
-      metricsView="Customers"
-      returningOverviewCards={returningOverviewCards[calendarView]}
-      storeLocation={storeLocation}
-      year={selectedYear}
-    />
-  );
-
-  const churnRetention = (
-    <ChurnRetention
-      calendarChartsData={calendarChartsData}
-      calendarView={calendarView}
-      churnOverviewCards={churnOverviewCards[calendarView]}
-      customerMetricsCards={cards}
-      customerMetricsCharts={charts}
-      day={selectedDate}
-      month={selectedYYYYMMDD.split("-")[1]}
-      metricCategory={customerMetricsCategory}
-      metricsView="Customers"
-      storeLocation={storeLocation}
-      year={selectedYear}
-    />
-  );
-
-  // const customerMetrics = (
-  //   <Stack w="100%" pos="relative">
-  //     <LoadingOverlay visible={isGenerating} />
-  //     {customerMetricsCategory === "new"
-  //       ? newCustomers
-  //       : customerMetricsCategory === "returning"
-  //       ? returningCustomers
-  //       : churnRetention}
-  //   </Stack>
-  // );
-
   return customerMetricsCategory === "new"
-    ? newCustomers
+    ? (
+      <New
+        calendarChartsData={calendarChartsData}
+        calendarView={calendarView}
+        customerMetricsCards={cards}
+        customerMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory={customerMetricsCategory}
+        metricsView="Customers"
+        newOverviewCards={newOverviewCards[calendarView]}
+        storeLocation={storeLocation}
+        year={selectedYear}
+      />
+    )
     : customerMetricsCategory === "returning"
-    ? returningCustomers
-    : churnRetention;
+    ? (
+      <Returning
+        calendarChartsData={calendarChartsData}
+        calendarView={calendarView}
+        customerMetricsCards={cards}
+        customerMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory={customerMetricsCategory}
+        metricsView="Customers"
+        returningOverviewCards={returningOverviewCards[calendarView]}
+        storeLocation={storeLocation}
+        year={selectedYear}
+      />
+    )
+    : (
+      <ChurnRetention
+        calendarChartsData={calendarChartsData}
+        calendarView={calendarView}
+        churnOverviewCards={churnOverviewCards[calendarView]}
+        customerMetricsCards={cards}
+        customerMetricsCharts={charts}
+        day={selectedDate}
+        month={selectedYYYYMMDD.split("-")[1]}
+        metricCategory={customerMetricsCategory}
+        metricsView="Customers"
+        storeLocation={storeLocation}
+        year={selectedYear}
+      />
+    );
 }
 
 export { CustomerMetrics };

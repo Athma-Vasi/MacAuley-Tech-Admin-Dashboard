@@ -42,8 +42,12 @@ async function handleMessageEventCustomerWorkerToMain({
 
         console.log({ dataUnwrapped });
 
-        const { currentYear, previousYear, customerMetricsCharts } =
-            dataUnwrapped;
+        const {
+            currentYear,
+            previousYear,
+            customerMetricsCards,
+            customerMetricsCharts,
+        } = dataUnwrapped;
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
@@ -62,6 +66,11 @@ async function handleMessageEventCustomerWorkerToMain({
         customerMetricsDispatch({
             action: customerMetricsAction.setCharts,
             payload: customerMetricsCharts,
+        });
+
+        customerMetricsDispatch({
+            action: customerMetricsAction.setCards,
+            payload: customerMetricsCards,
         });
 
         return createSafeBoxResult({

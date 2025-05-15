@@ -1,5 +1,9 @@
 import { MONTHS } from "../components/dashboard/constants";
 import {
+    createCustomerMetricsCards,
+    CustomerMetricsCards,
+} from "../components/dashboard/customer/cards";
+import {
     createCustomerMetricsCalendarCharts,
     createCustomerMetricsCharts,
     CustomerMetricsCalendarCharts,
@@ -15,6 +19,7 @@ type MessageEventCustomerWorkerToMain = MessageEvent<
         {
             currentYear: CustomerMetricsCalendarCharts;
             previousYear: CustomerMetricsCalendarCharts;
+            customerMetricsCards: CustomerMetricsCards;
             customerMetricsCharts: CustomerMetricsCharts;
         }
     >
@@ -22,7 +27,10 @@ type MessageEventCustomerWorkerToMain = MessageEvent<
 type MessageEventCustomerMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
+        cardBgGradient: string;
         customerMetricsDocument: CustomerMetricsDocument;
+        greenColorShade: string;
+        redColorShade: string;
         selectedDateCustomerMetrics: SelectedDateCustomerMetrics;
         selectedYYYYMMDD: string;
     }
@@ -45,27 +53,42 @@ self.onmessage = async (
 
     const {
         calendarView,
+        cardBgGradient,
         customerMetricsDocument,
+        greenColorShade,
+        redColorShade,
         selectedDateCustomerMetrics,
         selectedYYYYMMDD,
     } = event.data;
 
     try {
         const { currentYear, previousYear } =
-            await createCustomerMetricsCalendarCharts(
+            createCustomerMetricsCalendarCharts(
                 calendarView,
                 selectedDateCustomerMetrics,
                 selectedYYYYMMDD,
             );
 
-        const customerMetricsCharts = await createCustomerMetricsCharts({
+        const customerMetricsCharts = createCustomerMetricsCharts({
             customerMetricsDocument,
             months: MONTHS,
             selectedDateCustomerMetrics,
         });
 
+        const customerMetricsCards = createCustomerMetricsCards({
+            cardBgGradient,
+            greenColorShade,
+            redColorShade,
+            selectedDateCustomerMetrics,
+        });
+
         self.postMessage(createSafeBoxResult({
-            data: { currentYear, previousYear, customerMetricsCharts },
+            data: {
+                currentYear,
+                previousYear,
+                customerMetricsCards,
+                customerMetricsCharts,
+            },
             kind: "success",
         }));
     } catch (error) {
