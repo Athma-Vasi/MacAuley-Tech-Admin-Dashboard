@@ -135,58 +135,6 @@ function ProductMetrics(
     };
   }, []);
 
-  // useEffect(() => {
-  //   isComponentMountedRef.current = true;
-  //   const isMounted = isComponentMountedRef.current;
-
-  //   async function generateProductChartsCards() {
-  //     const { cardBgGradient, redColorShade, greenColorShade } =
-  //       returnThemeColors({
-  //         colorsSwatches: COLORS_SWATCHES,
-  //         themeObject,
-  //       });
-
-  //     try {
-  //       const productMetricsCards = await createProductMetricsCards({
-  //         cardBgGradient,
-  //         greenColorShade,
-  //         redColorShade,
-  //         selectedDateProductMetrics,
-  //       });
-
-  //       if (!isMounted) {
-  //         return;
-  //       }
-
-  //       productMetricsDispatch({
-  //         action: productMetricsAction.setCards,
-  //         payload: productMetricsCards,
-  //       });
-  //     } catch (error: any) {
-  //       if (!isMounted) {
-  //         return;
-  //       }
-
-  //       showBoundary(error);
-  //     }
-  //   }
-
-  //   if (productMetricsDocument || !cards || !charts) {
-  //     generateProductChartsCards();
-  //   }
-
-  //   return () => {
-  //     isComponentMountedRef.current = false;
-  //   };
-  // }, [
-  //   calendarView,
-  //   productMetricCategory,
-  //   productMetricsDocument,
-  //   selectedYYYYMMDD,
-  //   storeLocation,
-  //   themeObject,
-  // ]);
-
   if (!productMetricsDocument || !cards || !charts) {
     return null;
   }
@@ -202,7 +150,7 @@ function ProductMetrics(
     storeLocation,
   });
 
-  const revenueUnitsSold = (
+  return (
     <RUS
       calendarChartsData={calendarChartsData}
       calendarView={calendarView}
@@ -218,8 +166,6 @@ function ProductMetrics(
       year={selectedYear}
     />
   );
-
-  return revenueUnitsSold;
 }
 
 export { ProductMetrics };

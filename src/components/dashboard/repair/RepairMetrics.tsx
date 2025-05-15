@@ -110,7 +110,7 @@ function RepairMetrics(
 
   useEffect(() => {
     if (
-      repairMetricsDocument
+      repairMetricsDocument || !cards || !charts
     ) {
       console.log("Repair Charts Worker Main sending message");
       repairChartsWorker?.postMessage(
