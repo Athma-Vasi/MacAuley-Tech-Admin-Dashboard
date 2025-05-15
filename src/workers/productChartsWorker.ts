@@ -1,5 +1,9 @@
 import { MONTHS } from "../components/dashboard/constants";
 import {
+    createProductMetricsCards,
+    ProductMetricsCards,
+} from "../components/dashboard/product/cards";
+import {
     createProductMetricsCalendarCharts,
     createProductMetricsCharts,
     ProductMetricsCalendarCharts,
@@ -15,6 +19,7 @@ type MessageEventProductWorkerToMain = MessageEvent<
         {
             currentYear: ProductMetricsCalendarCharts;
             previousYear: ProductMetricsCalendarCharts;
+            productMetricsCards: ProductMetricsCards;
             productMetricsCharts: ProductMetricsCharts;
         }
     >
@@ -22,7 +27,10 @@ type MessageEventProductWorkerToMain = MessageEvent<
 type MessageEventProductMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
+        cardBgGradient: string;
+        greenColorShade: string;
         productMetricsDocument: ProductMetricsDocument;
+        redColorShade: string;
         selectedDateProductMetrics: SelectedDateProductMetrics;
         selectedYYYYMMDD: string;
     }
@@ -45,27 +53,42 @@ self.onmessage = async (
 
     const {
         calendarView,
+        cardBgGradient,
+        greenColorShade,
         productMetricsDocument,
+        redColorShade,
         selectedDateProductMetrics,
         selectedYYYYMMDD,
     } = event.data;
 
     try {
         const { currentYear, previousYear } =
-            await createProductMetricsCalendarCharts(
+            createProductMetricsCalendarCharts(
                 calendarView,
                 selectedDateProductMetrics,
                 selectedYYYYMMDD,
             );
 
-        const productMetricsCharts = await createProductMetricsCharts({
+        const productMetricsCharts = createProductMetricsCharts({
             productMetricsDocument,
             months: MONTHS,
             selectedDateProductMetrics,
         });
 
+        const productMetricsCards = createProductMetricsCards({
+            cardBgGradient,
+            greenColorShade,
+            redColorShade,
+            selectedDateProductMetrics,
+        });
+
         self.postMessage(createSafeBoxResult({
-            data: { currentYear, previousYear, productMetricsCharts },
+            data: {
+                currentYear,
+                previousYear,
+                productMetricsCards,
+                productMetricsCharts,
+            },
             kind: "success",
         }));
     } catch (error) {

@@ -135,52 +135,6 @@ function RepairMetrics(
     themeObject,
   ]);
 
-  // useEffect(() => {
-  //   isComponentMountedRef.current = true;
-  //   const isMounted = isComponentMountedRef.current;
-
-  //   async function generateRepairChartsCards() {
-  //     try {
-  //       const repairMetricsCards = await createRepairMetricsCards({
-  //         cardBgGradient,
-  //         greenColorShade,
-  //         redColorShade,
-  //         selectedDateRepairMetrics,
-  //       });
-
-  //       if (!isMounted) {
-  //         return;
-  //       }
-
-  //       repairMetricsDispatch({
-  //         action: repairMetricsAction.setCards,
-  //         payload: repairMetricsCards,
-  //       });
-  //     } catch (error: any) {
-  //       if (!isMounted) {
-  //         return;
-  //       }
-
-  //       showBoundary(error);
-  //     }
-  //   }
-
-  //   if (repairMetricsDocument || !cards || !charts) {
-  //     generateRepairChartsCards();
-  //   }
-
-  //   return () => {
-  //     isComponentMountedRef.current = false;
-  //   };
-  // }, [
-  //   calendarView,
-  //   repairMetricCategory,
-  //   repairMetricsDocument,
-  //   selectedYYYYMMDD,
-  //   storeLocation,
-  //   themeObject,
-  // ]);
-
   if (!repairMetricsDocument || !cards || !charts) {
     return null;
   }

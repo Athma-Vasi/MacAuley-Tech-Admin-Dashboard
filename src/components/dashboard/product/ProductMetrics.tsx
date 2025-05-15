@@ -16,7 +16,6 @@ import type {
   Year,
 } from "../types";
 import { productMetricsAction } from "./actions";
-import { createProductMetricsCards } from "./cards";
 import { returnSelectedDateProductMetrics } from "./chartsData";
 import { handleMessageEventProductWorkerToMain } from "./handlers";
 import { productMetricsReducer } from "./reducers";
@@ -79,6 +78,11 @@ function ProductMetrics(
     year: selectedYear,
   });
 
+  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
+
   useEffect(() => {
     if (!productChartsWorker) {
       return;
@@ -88,7 +92,10 @@ function ProductMetrics(
       productChartsWorker.postMessage(
         {
           calendarView,
+          cardBgGradient,
+          greenColorShade,
           productMetricsDocument,
+          redColorShade,
           selectedDateProductMetrics,
           selectedYYYYMMDD,
         },
@@ -128,57 +135,57 @@ function ProductMetrics(
     };
   }, []);
 
-  useEffect(() => {
-    isComponentMountedRef.current = true;
-    const isMounted = isComponentMountedRef.current;
+  // useEffect(() => {
+  //   isComponentMountedRef.current = true;
+  //   const isMounted = isComponentMountedRef.current;
 
-    async function generateProductChartsCards() {
-      const { cardBgGradient, redColorShade, greenColorShade } =
-        returnThemeColors({
-          colorsSwatches: COLORS_SWATCHES,
-          themeObject,
-        });
+  //   async function generateProductChartsCards() {
+  //     const { cardBgGradient, redColorShade, greenColorShade } =
+  //       returnThemeColors({
+  //         colorsSwatches: COLORS_SWATCHES,
+  //         themeObject,
+  //       });
 
-      try {
-        const productMetricsCards = await createProductMetricsCards({
-          cardBgGradient,
-          greenColorShade,
-          redColorShade,
-          selectedDateProductMetrics,
-        });
+  //     try {
+  //       const productMetricsCards = await createProductMetricsCards({
+  //         cardBgGradient,
+  //         greenColorShade,
+  //         redColorShade,
+  //         selectedDateProductMetrics,
+  //       });
 
-        if (!isMounted) {
-          return;
-        }
+  //       if (!isMounted) {
+  //         return;
+  //       }
 
-        productMetricsDispatch({
-          action: productMetricsAction.setCards,
-          payload: productMetricsCards,
-        });
-      } catch (error: any) {
-        if (!isMounted) {
-          return;
-        }
+  //       productMetricsDispatch({
+  //         action: productMetricsAction.setCards,
+  //         payload: productMetricsCards,
+  //       });
+  //     } catch (error: any) {
+  //       if (!isMounted) {
+  //         return;
+  //       }
 
-        showBoundary(error);
-      }
-    }
+  //       showBoundary(error);
+  //     }
+  //   }
 
-    if (productMetricsDocument || !cards || !charts) {
-      generateProductChartsCards();
-    }
+  //   if (productMetricsDocument || !cards || !charts) {
+  //     generateProductChartsCards();
+  //   }
 
-    return () => {
-      isComponentMountedRef.current = false;
-    };
-  }, [
-    calendarView,
-    productMetricCategory,
-    productMetricsDocument,
-    selectedYYYYMMDD,
-    storeLocation,
-    themeObject,
-  ]);
+  //   return () => {
+  //     isComponentMountedRef.current = false;
+  //   };
+  // }, [
+  //   calendarView,
+  //   productMetricCategory,
+  //   productMetricsDocument,
+  //   selectedYYYYMMDD,
+  //   storeLocation,
+  //   themeObject,
+  // ]);
 
   if (!productMetricsDocument || !cards || !charts) {
     return null;
