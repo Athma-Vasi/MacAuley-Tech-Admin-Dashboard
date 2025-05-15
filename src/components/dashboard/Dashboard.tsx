@@ -49,8 +49,8 @@ import { CustomerMetrics } from "./customer/CustomerMetrics";
 import { FINANCIAL_METRICS_CATEGORY_DATA } from "./financial/constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
 import {
+  handleMessageEventStoreAndCategoryFetchWorkerToMain,
   handleStoreAndCategoryClicks,
-  handleStoreAndCategoryClicksOnmessageCallback,
 } from "./handlers";
 import {
   PRODUCT_METRIC_CATEGORY_DATA,
@@ -125,7 +125,7 @@ function Dashboard() {
     newDashboardFetchWorker.onmessage = async (
       event: MessageEventMetricsWorkerToMain,
     ) => {
-      await handleStoreAndCategoryClicksOnmessageCallback({
+      await handleMessageEventStoreAndCategoryFetchWorkerToMain({
         authDispatch,
         dashboardDispatch,
         event,

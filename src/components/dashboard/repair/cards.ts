@@ -1,6 +1,6 @@
 import { DashboardCalendarView } from "../types";
+import { createDashboardMetricsCards } from "../utils";
 import {
-  createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";
@@ -23,7 +23,7 @@ type RepairMetricsCards = {
 function createRepairMetricsCards(
   { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
     createRepairMetricsCardsInput,
-): Promise<RepairMetricsCards> {
+): RepairMetricsCards {
   const {
     dayRepairMetrics: { prevDayMetrics, selectedDayMetrics },
     monthRepairMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -38,91 +38,85 @@ function createRepairMetricsCards(
     !selectedDayMetrics ||
     !prevDayMetrics
   ) {
-    return new Promise<RepairMetricsCards>((resolve) => {
-      resolve({
-        dailyCards: [],
-        monthlyCards: [],
-        yearlyCards: [],
-      });
-    });
+    return {
+      dailyCards: [],
+      monthlyCards: [],
+      yearlyCards: [],
+    };
   }
 
-  return new Promise<RepairMetricsCards>((resolve) => {
-    setTimeout(() => {
-      const currentYear = selectedYearMetrics.year;
-      const prevYear = prevYearMetrics.year;
-      const currentMonth = selectedMonthMetrics.month;
-      const prevMonth = prevMonthMetrics.month;
-      const prevDay = prevDayMetrics.day;
+  const currentYear = selectedYearMetrics.year;
+  const prevYear = prevYearMetrics.year;
+  const currentMonth = selectedMonthMetrics.month;
+  const prevMonth = prevMonthMetrics.month;
+  const prevDay = prevDayMetrics.day;
 
-      const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
-        cardBgGradient,
-        currentMonth,
-        currentYear,
-        greenColorShade,
-        heading: "Revenue",
-        kind: "day",
-        prevDay,
-        prevMonth,
-        prevValue: 1,
-        prevYear,
-        redColorShade,
-        selectedValue: 1,
-      };
+  const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
+    cardBgGradient,
+    currentMonth,
+    currentYear,
+    greenColorShade,
+    heading: "Revenue",
+    kind: "day",
+    prevDay,
+    prevMonth,
+    prevValue: 1,
+    prevYear,
+    redColorShade,
+    selectedValue: 1,
+  };
 
-      const dayRevenueCardInfo = createDashboardMetricsCards({
-        ...DASHBOARD_CARD_TEMPLATE,
-        isDisplayValueAsCurrency: true,
-        prevValue: prevDayMetrics.revenue,
-        selectedValue: selectedDayMetrics.revenue,
-      });
-
-      const dayUnitsRepairedCardInfo = createDashboardMetricsCards({
-        ...DASHBOARD_CARD_TEMPLATE,
-        heading: "Units Repaired",
-        prevValue: prevDayMetrics.unitsRepaired,
-        selectedValue: selectedDayMetrics.unitsRepaired,
-      });
-
-      const monthRevenueCardInfo = createDashboardMetricsCards({
-        ...DASHBOARD_CARD_TEMPLATE,
-        kind: "month",
-        isDisplayValueAsCurrency: true,
-        prevValue: prevMonthMetrics.revenue,
-        selectedValue: selectedMonthMetrics.revenue,
-      });
-
-      const monthUnitsRepairedCardInfo = createDashboardMetricsCards({
-        ...DASHBOARD_CARD_TEMPLATE,
-        heading: "Units Repaired",
-        kind: "month",
-        prevValue: prevMonthMetrics.unitsRepaired,
-        selectedValue: selectedMonthMetrics.unitsRepaired,
-      });
-
-      const yearRevenueCardInfo = createDashboardMetricsCards({
-        ...DASHBOARD_CARD_TEMPLATE,
-        kind: "year",
-        isDisplayValueAsCurrency: true,
-        prevValue: prevYearMetrics.revenue,
-        selectedValue: selectedYearMetrics.revenue,
-      });
-
-      const yearUnitsRepairedCardInfo = createDashboardMetricsCards({
-        ...DASHBOARD_CARD_TEMPLATE,
-        heading: "Units Repaired",
-        kind: "year",
-        prevValue: prevYearMetrics.unitsRepaired,
-        selectedValue: selectedYearMetrics.unitsRepaired,
-      });
-
-      resolve({
-        dailyCards: [dayRevenueCardInfo, dayUnitsRepairedCardInfo],
-        monthlyCards: [monthRevenueCardInfo, monthUnitsRepairedCardInfo],
-        yearlyCards: [yearRevenueCardInfo, yearUnitsRepairedCardInfo],
-      });
-    }, 0);
+  const dayRevenueCardInfo = createDashboardMetricsCards({
+    ...DASHBOARD_CARD_TEMPLATE,
+    isDisplayValueAsCurrency: true,
+    prevValue: prevDayMetrics.revenue,
+    selectedValue: selectedDayMetrics.revenue,
   });
+
+  const dayUnitsRepairedCardInfo = createDashboardMetricsCards({
+    ...DASHBOARD_CARD_TEMPLATE,
+    heading: "Units Repaired",
+    prevValue: prevDayMetrics.unitsRepaired,
+    selectedValue: selectedDayMetrics.unitsRepaired,
+  });
+
+  const monthRevenueCardInfo = createDashboardMetricsCards({
+    ...DASHBOARD_CARD_TEMPLATE,
+    kind: "month",
+    isDisplayValueAsCurrency: true,
+    prevValue: prevMonthMetrics.revenue,
+    selectedValue: selectedMonthMetrics.revenue,
+  });
+
+  const monthUnitsRepairedCardInfo = createDashboardMetricsCards({
+    ...DASHBOARD_CARD_TEMPLATE,
+    heading: "Units Repaired",
+    kind: "month",
+    prevValue: prevMonthMetrics.unitsRepaired,
+    selectedValue: selectedMonthMetrics.unitsRepaired,
+  });
+
+  const yearRevenueCardInfo = createDashboardMetricsCards({
+    ...DASHBOARD_CARD_TEMPLATE,
+    kind: "year",
+    isDisplayValueAsCurrency: true,
+    prevValue: prevYearMetrics.revenue,
+    selectedValue: selectedYearMetrics.revenue,
+  });
+
+  const yearUnitsRepairedCardInfo = createDashboardMetricsCards({
+    ...DASHBOARD_CARD_TEMPLATE,
+    heading: "Units Repaired",
+    kind: "year",
+    prevValue: prevYearMetrics.unitsRepaired,
+    selectedValue: selectedYearMetrics.unitsRepaired,
+  });
+
+  return {
+    dailyCards: [dayRevenueCardInfo, dayUnitsRepairedCardInfo],
+    monthlyCards: [monthRevenueCardInfo, monthUnitsRepairedCardInfo],
+    yearlyCards: [yearRevenueCardInfo, yearUnitsRepairedCardInfo],
+  };
 }
 
 function returnRepairMetricsCards(

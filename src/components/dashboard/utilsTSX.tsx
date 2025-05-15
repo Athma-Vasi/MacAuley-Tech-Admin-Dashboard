@@ -8,8 +8,6 @@ import {
   Text,
 } from "@mantine/core";
 import type { ReactNode } from "react";
-import { MdCalendarMonth, MdDateRange } from "react-icons/md";
-import { RiCalendarLine } from "react-icons/ri";
 
 import React from "react";
 import { TbFolderCancel, TbFolderOpen } from "react-icons/tb";
@@ -126,80 +124,6 @@ type CreateDashboardMetricsCardsInput = {
   redColorShade: string;
   selectedValue: number;
 };
-
-function createDashboardMetricsCards({
-  cardBgGradient,
-  currentMonth,
-  currentYear,
-  greenColorShade,
-  heading,
-  isDisplayValueAsCurrency = false,
-  isDisplayValueAsPercentage = false,
-  isFlipColor = false,
-  kind,
-  prevDay,
-  prevMonth,
-  prevValue,
-  prevYear,
-  redColorShade,
-  selectedValue,
-}: CreateDashboardMetricsCardsInput): DashboardCardInfo {
-  const icon = kind === "day"
-    ? <MdDateRange size={20} />
-    : kind === "month"
-    ? <MdCalendarMonth size={20} />
-    : <RiCalendarLine size={20} />;
-
-  const deltaPercentage = toFixedFloat(
-    ((selectedValue - prevValue) / prevValue) * 100,
-    2,
-  );
-  const deltaFormatted = Number.isFinite(deltaPercentage)
-    ? `${deltaPercentage > 0 ? "+" : ""} ${toFixedFloat(deltaPercentage, 2)} %`
-    : "N/A";
-
-  const deltaTextColor = deltaPercentage > 0
-    ? isFlipColor ? redColorShade : greenColorShade
-    : deltaPercentage < 0
-    ? isFlipColor ? greenColorShade : redColorShade
-    : "inherit";
-
-  const dateEndMonthSet = new Set(["31", "30", "29", "28"]);
-
-  const date = kind === "day"
-    ? `Since ${prevDay} ${
-      // display the previous month if the previous day is the last day of the month
-      dateEndMonthSet.has(prevDay) ? prevMonth : currentMonth} ${
-      // display the previous year if the previous day is 31st December of the previous year
-      currentMonth === "January" ? prevYear : currentYear}`
-    : kind === "month"
-    ? `Since ${prevMonth} ${
-      currentMonth === "January" ? prevYear : currentYear
-    }`
-    : `Since ${prevYear}`;
-
-  const valueStr = selectedValue < 1
-    ? toFixedFloat(selectedValue * 100, 2)
-    : toFixedFloat(selectedValue, 2);
-
-  const displayValue = isDisplayValueAsPercentage
-    ? `${valueStr} %`
-    : `${
-      selectedValue.toString().includes(".")
-        ? valueStr
-        : addCommaSeparator(selectedValue.toString())
-    } ${isDisplayValueAsCurrency ? "CAD" : ""}`;
-
-  return {
-    cardBgGradient,
-    date,
-    heading,
-    icon,
-    percentage: deltaFormatted,
-    value: displayValue,
-    deltaTextColor,
-  };
-}
 
 function returnMinMaxSectionElement(
   { data, kind, style = {}, unitSymbol }: {
@@ -753,7 +677,6 @@ function createOverviewMetricCard(
 
 export {
   consolidateCardsAndStatisticsModals,
-  createDashboardMetricsCards,
   createFinancialStatisticsElements,
   createOverviewMetricCard,
   createStatisticsElements,

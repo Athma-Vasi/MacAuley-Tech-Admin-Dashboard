@@ -1,4 +1,3 @@
-import { Stack } from "@mantine/core";
 import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
@@ -17,7 +16,6 @@ import type {
   Year,
 } from "../types";
 import { repairMetricsAction } from "./actions";
-import { createRepairMetricsCards } from "./cards";
 import { returnSelectedDateRepairMetrics } from "./chartsData";
 import { handleMessageEventRepairWorkerToMain } from "./handlers";
 import { repairMetricsReducer } from "./reducers";
@@ -86,30 +84,6 @@ function RepairMetrics(
   });
 
   useEffect(() => {
-    if (!repairChartsWorker) {
-      return;
-    }
-
-    if (repairMetricsDocument || !cards || !charts) {
-      repairChartsWorker.postMessage(
-        {
-          calendarView,
-          repairMetricsDocument,
-          selectedDateRepairMetrics,
-          selectedYYYYMMDD,
-        },
-      );
-    }
-  }, [
-    repairChartsWorker,
-    calendarView,
-    selectedYYYYMMDD,
-    storeLocation,
-    repairMetricCategory,
-    repairMetricsDocument,
-  ]);
-
-  useEffect(() => {
     const newRepairChartsWorker = new RepairChartsWorker();
 
     repairMetricsDispatch({
@@ -135,50 +109,77 @@ function RepairMetrics(
   }, []);
 
   useEffect(() => {
-    isComponentMountedRef.current = true;
-    const isMounted = isComponentMountedRef.current;
-
-    async function generateRepairChartsCards() {
-      try {
-        const repairMetricsCards = await createRepairMetricsCards({
+    if (
+      repairMetricsDocument
+    ) {
+      console.log("Repair Charts Worker Main sending message");
+      repairChartsWorker?.postMessage(
+        {
+          calendarView,
           cardBgGradient,
           greenColorShade,
           redColorShade,
+          repairMetricsDocument,
           selectedDateRepairMetrics,
-        });
-
-        if (!isMounted) {
-          return;
-        }
-
-        repairMetricsDispatch({
-          action: repairMetricsAction.setCards,
-          payload: repairMetricsCards,
-        });
-      } catch (error: any) {
-        if (!isMounted) {
-          return;
-        }
-
-        showBoundary(error);
-      }
+          selectedYYYYMMDD,
+        },
+      );
     }
-
-    if (repairMetricsDocument || !cards || !charts) {
-      generateRepairChartsCards();
-    }
-
-    return () => {
-      isComponentMountedRef.current = false;
-    };
   }, [
+    repairChartsWorker,
     calendarView,
-    repairMetricCategory,
-    repairMetricsDocument,
     selectedYYYYMMDD,
     storeLocation,
+    repairMetricCategory,
+    repairMetricsDocument,
     themeObject,
   ]);
+
+  // useEffect(() => {
+  //   isComponentMountedRef.current = true;
+  //   const isMounted = isComponentMountedRef.current;
+
+  //   async function generateRepairChartsCards() {
+  //     try {
+  //       const repairMetricsCards = await createRepairMetricsCards({
+  //         cardBgGradient,
+  //         greenColorShade,
+  //         redColorShade,
+  //         selectedDateRepairMetrics,
+  //       });
+
+  //       if (!isMounted) {
+  //         return;
+  //       }
+
+  //       repairMetricsDispatch({
+  //         action: repairMetricsAction.setCards,
+  //         payload: repairMetricsCards,
+  //       });
+  //     } catch (error: any) {
+  //       if (!isMounted) {
+  //         return;
+  //       }
+
+  //       showBoundary(error);
+  //     }
+  //   }
+
+  //   if (repairMetricsDocument || !cards || !charts) {
+  //     generateRepairChartsCards();
+  //   }
+
+  //   return () => {
+  //     isComponentMountedRef.current = false;
+  //   };
+  // }, [
+  //   calendarView,
+  //   repairMetricCategory,
+  //   repairMetricsDocument,
+  //   selectedYYYYMMDD,
+  //   storeLocation,
+  //   themeObject,
+  // ]);
 
   if (!repairMetricsDocument || !cards || !charts) {
     return null;
@@ -195,7 +196,7 @@ function RepairMetrics(
     storeLocation,
   });
 
-  const revenueUnitsSold = (
+  return (
     <RepairRUS
       calendarChartsData={calendarChartsData}
       calendarView={calendarView}
@@ -210,14 +211,6 @@ function RepairMetrics(
       year={selectedYear}
     />
   );
-
-  const repairMetrics = (
-    <Stack w="100%">
-      {revenueUnitsSold}
-    </Stack>
-  );
-
-  return repairMetrics;
 }
 
 export { RepairMetrics };

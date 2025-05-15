@@ -48,7 +48,8 @@ self.onmessage = async (
     event: MessageEventMetricsMainToWorker,
 ) => {
     console.log(
-        "Worker received message in self",
+        "Metrics Worker received message in self",
+        event.data,
     );
     const {
         metricsView,
@@ -100,6 +101,7 @@ self.onmessage = async (
         }
 
         const serverResponse = jsonResult.safeUnwrap().data;
+        console.log("metricsParseWorker serverResponse", serverResponse);
         if (serverResponse === undefined) {
             self.postMessage(createSafeBoxResult({
                 message: "No data returned from server",

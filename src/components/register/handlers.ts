@@ -7,7 +7,7 @@ import {
   parseServerResponseAsyncSafe,
   responseToJSONSafe,
 } from "../../utils";
-import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
+import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, STEPS_INPUTNAMES_MAP } from "./constants";
 import { RegisterDispatch } from "./schemas";
@@ -1002,51 +1002,62 @@ function handlePrevNextStepClick(
   const stepInputNames = STEPS_INPUTNAMES_MAP.get(activeStep) ??
     [];
 
-  const [stepInError, isStepWithEmptyInputs, inputsInError, inputsNotInError] =
-    stepInputNames
-      .reduce(
-        (acc, inputName) => {
-          const inputValidation = VALIDATION_FUNCTIONS_TABLE[inputName];
+  const {
+    stepInError,
+    isStepWithEmptyInputs,
+    inputsInError,
+    inputsNotInError,
+  } = stepInputNames
+    .reduce(
+      (acc, inputName) => {
+        const inputValidation = VALIDATION_FUNCTIONS_TABLE[inputName];
 
-          const isInputValid = inputValidation.every((validation) => {
-            const [regExpOrFunc, _] = validation;
-            const stateValue = Object.entries(registerState).find(([key]) =>
-              key === inputName
-            )?.[1] ?? "";
-            if (stateValue === null || stateValue === undefined) {
-              return acc;
-            }
-
-            if (
-              typeof stateValue === "string" && stateValue?.length === 0
-            ) {
-              acc[1].add(true);
-
-              // ignore empty inputs from validation error
-              return acc;
-            }
-
-            return typeof regExpOrFunc === "function"
-              ? regExpOrFunc(stateValue as string)
-              : regExpOrFunc.test(stateValue as string);
-          });
-
-          if (!isInputValid) {
-            acc[0].add(!isInputValid);
-            acc[2].add(inputName);
-          } else {
-            acc[3].add(inputName);
+        const isInputValid = inputValidation.every((validation) => {
+          const [regExpOrFunc, _] = validation;
+          const stateValue = Object.entries(registerState).find(([key]) =>
+            key === inputName
+          )?.[1] ?? "";
+          if (stateValue === null || stateValue === undefined) {
+            return acc;
           }
 
-          return acc;
-        },
-        [
-          new Set<boolean>(),
-          new Set<boolean>(),
-          new Set<ValidationKey>(),
-          new Set<ValidationKey>(),
-        ],
-      );
+          if (
+            typeof stateValue === "string" && stateValue?.length === 0
+          ) {
+            acc.isStepWithEmptyInputs = true;
+
+            // ignore empty inputs from validation error
+            return acc;
+          }
+
+          return typeof regExpOrFunc === "function"
+            ? regExpOrFunc(stateValue as string)
+            : regExpOrFunc.test(stateValue as string);
+        });
+
+        if (isInputValid) {
+          acc.inputsNotInError.add(inputName);
+        } else {
+          acc.inputsInError.add(inputName);
+          acc.stepInError = true;
+        }
+
+        return acc;
+      },
+      {
+        stepInError: false,
+        isStepWithEmptyInputs: false,
+        inputsInError: new Set<string>(),
+        inputsNotInError: new Set<string>(),
+      },
+    );
+
+  console.log({
+    stepInError,
+    isStepWithEmptyInputs,
+    inputsInError,
+    inputsNotInError,
+  });
 
   inputsInError.forEach((inputName) => {
     registerDispatch({
@@ -1071,7 +1082,7 @@ function handlePrevNextStepClick(
   registerDispatch({
     action: registerAction.setStepsInError,
     payload: {
-      kind: stepInError.has(true) ? "add" : "delete",
+      kind: stepInError ? "add" : "delete",
       step: activeStep,
     },
   });
@@ -1079,7 +1090,7 @@ function handlePrevNextStepClick(
   registerDispatch({
     action: registerAction.setStepsWithEmptyInputs,
     payload: {
-      kind: isStepWithEmptyInputs.has(true) ? "add" : "delete",
+      kind: isStepWithEmptyInputs ? "add" : "delete",
       step: activeStep,
     },
   });

@@ -1,5 +1,9 @@
 import { MONTHS } from "../components/dashboard/constants";
 import {
+    createRepairMetricsCards,
+    RepairMetricsCards,
+} from "../components/dashboard/repair/cards";
+import {
     createRepairMetricsCalendarCharts,
     createRepairMetricsCharts,
     RepairMetricCalendarCharts,
@@ -16,12 +20,16 @@ type MessageEventRepairWorkerToMain = MessageEvent<
             currentYear: RepairMetricCalendarCharts;
             previousYear: RepairMetricCalendarCharts;
             repairMetricsCharts: RepairMetricsCharts;
+            repairMetricsCards: RepairMetricsCards;
         }
     >
 >;
 type MessageEventRepairMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
+        cardBgGradient: string;
+        greenColorShade: string;
+        redColorShade: string;
         repairMetricsDocument: RepairMetricsDocument;
         selectedDateRepairMetrics: SelectedDateRepairMetrics;
         selectedYYYYMMDD: string;
@@ -45,27 +53,48 @@ self.onmessage = async (
 
     const {
         calendarView,
+        cardBgGradient,
+        greenColorShade,
+        redColorShade,
         repairMetricsDocument,
         selectedDateRepairMetrics,
         selectedYYYYMMDD,
     } = event.data;
 
     try {
-        const { currentYear, previousYear } =
-            await createRepairMetricsCalendarCharts(
-                calendarView,
-                selectedDateRepairMetrics,
-                selectedYYYYMMDD,
-            );
+        const { currentYear, previousYear } = createRepairMetricsCalendarCharts(
+            calendarView,
+            selectedDateRepairMetrics,
+            selectedYYYYMMDD,
+        );
 
-        const repairMetricsCharts = await createRepairMetricsCharts({
+        const repairMetricsCharts = createRepairMetricsCharts({
             repairMetricsDocument,
             months: MONTHS,
             selectedDateRepairMetrics,
         });
 
+        const repairMetricsCards = createRepairMetricsCards({
+            cardBgGradient,
+            greenColorShade,
+            redColorShade,
+            selectedDateRepairMetrics,
+        });
+
+        console.log({
+            currentYear,
+            previousYear,
+            repairMetricsCharts,
+            repairMetricsCards,
+        });
+
         self.postMessage(createSafeBoxResult({
-            data: { currentYear, previousYear, repairMetricsCharts },
+            data: {
+                currentYear,
+                previousYear,
+                repairMetricsCharts,
+                repairMetricsCards,
+            },
             kind: "success",
         }));
     } catch (error) {

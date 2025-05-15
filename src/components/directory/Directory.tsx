@@ -14,7 +14,7 @@ import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput
 import { AllStoreLocations } from "../dashboard/types";
 import {
   handleDirectoryNavClick,
-  handleDirectoryOnmessageCallback,
+  handleMessageEventDirectoryFetchWorkerToMain,
 } from "../sidebar/handlers";
 import { directoryAction } from "./actions";
 import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
@@ -65,7 +65,7 @@ function Directory() {
     newDirectoryFetchWorker.onmessage = async (
       event: MessageEventFetchWorkerToMain<UserDocument>,
     ) => {
-      await handleDirectoryOnmessageCallback({
+      await handleMessageEventDirectoryFetchWorkerToMain({
         authDispatch,
         event,
         globalDispatch,

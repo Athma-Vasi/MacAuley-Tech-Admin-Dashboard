@@ -103,7 +103,6 @@ function FinancialMetrics(
         },
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     financialChartsWorker,
     calendarView,
@@ -135,7 +134,6 @@ function FinancialMetrics(
       newFinancialChartsWorker.terminate();
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -175,7 +173,6 @@ function FinancialMetrics(
     return () => {
       isComponentMountedRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     calendarView,
     financialChartsWorker,
@@ -184,6 +181,8 @@ function FinancialMetrics(
     themeObject,
     financialMetricsDocument,
   ]);
+
+  console.log("financialMetricsState", financialMetricsState);
 
   if (
     !calendarChartsData.currentYear || !calendarChartsData.previousYear ||

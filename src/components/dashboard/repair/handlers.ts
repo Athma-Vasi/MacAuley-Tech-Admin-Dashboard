@@ -15,7 +15,7 @@ async function handleMessageEventRepairWorkerToMain({
     showBoundary: (error: unknown) => void;
 }) {
     try {
-        console.log("Worker received message:", event.data);
+        console.log("Repair Worker received message:", event.data);
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
@@ -42,8 +42,12 @@ async function handleMessageEventRepairWorkerToMain({
 
         console.log({ dataUnwrapped });
 
-        const { currentYear, previousYear, repairMetricsCharts } =
-            dataUnwrapped;
+        const {
+            currentYear,
+            previousYear,
+            repairMetricsCharts,
+            repairMetricsCards,
+        } = dataUnwrapped;
 
         if (!isComponentMountedRef.current) {
             return;
@@ -60,6 +64,11 @@ async function handleMessageEventRepairWorkerToMain({
         repairMetricsDispatch({
             action: repairMetricsAction.setCharts,
             payload: repairMetricsCharts,
+        });
+
+        repairMetricsDispatch({
+            action: repairMetricsAction.setCards,
+            payload: repairMetricsCards,
         });
 
         return createSafeBoxResult({

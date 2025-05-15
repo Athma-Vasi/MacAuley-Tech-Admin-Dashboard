@@ -32,11 +32,11 @@ import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 import { sidebarAction } from "./actions";
 import {
   handleDirectoryNavClick,
-  handleDirectoryOnmessageCallback,
   handleLogoutClick,
-  handleLogoutClickOnmessageCallback,
+  handleMessageEventDirectoryFetchWorkerToMain,
+  handleMessageEventLogoutFetchWorkerToMain,
+  handleMessageEventMetricsFetchWorkerToMain,
   handleMetricCategoryNavClick,
-  handleMetricCategoryOnmessageCallback,
 } from "./handlers";
 import { sidebarReducer } from "./reducers";
 import { initialSidebarState } from "./state";
@@ -69,6 +69,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     repairMetricCategory,
     storeLocation,
     isFetching,
+    selectedYYYYMMDD,
   } = globalState;
   const {
     clickedNavlink,
@@ -87,7 +88,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     newMetricsFetchWorker.onmessage = async (
       event: MessageEventMetricsWorkerToMain,
     ) => {
-      await handleMetricCategoryOnmessageCallback({
+      await handleMessageEventMetricsFetchWorkerToMain({
         authDispatch,
         event,
         globalDispatch,
@@ -106,7 +107,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     newDirectoryFetchWorker.onmessage = async (
       event: MessageEventFetchWorkerToMain<UserDocument>,
     ) => {
-      await handleDirectoryOnmessageCallback({
+      await handleMessageEventDirectoryFetchWorkerToMain({
         authDispatch,
         event,
         globalDispatch,
@@ -126,7 +127,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     newLogoutFetchWorker.onmessage = async (
       event: MessageEventFetchWorkerToMain<boolean>,
     ) => {
-      await handleLogoutClickOnmessageCallback({
+      await handleMessageEventLogoutFetchWorkerToMain({
         event,
         globalDispatch,
         isComponentMountedRef,

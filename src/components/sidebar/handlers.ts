@@ -27,7 +27,7 @@ import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { DepartmentsWithDefaultKey } from "../directory/types";
 
-async function handleMetricCategoryOnmessageCallback({
+async function handleMessageEventMetricsFetchWorkerToMain({
   authDispatch,
   event,
   globalDispatch,
@@ -412,7 +412,7 @@ async function handleLogoutClick({
   }
 }
 
-async function handleLogoutClickOnmessageCallback({
+async function handleMessageEventLogoutFetchWorkerToMain({
   event,
   globalDispatch,
   isComponentMountedRef,
@@ -530,7 +530,7 @@ async function handleDirectoryNavClick(
   });
 }
 
-async function handleDirectoryOnmessageCallback({
+async function handleMessageEventDirectoryFetchWorkerToMain({
   authDispatch,
   event,
   globalDispatch,
@@ -655,9 +655,9 @@ async function handleDirectoryOnmessageCallback({
 
 export {
   handleDirectoryNavClick,
-  handleDirectoryOnmessageCallback,
   handleLogoutClick,
-  handleLogoutClickOnmessageCallback,
+  handleMessageEventDirectoryFetchWorkerToMain,
+  handleMessageEventLogoutFetchWorkerToMain,
+  handleMessageEventMetricsFetchWorkerToMain,
   handleMetricCategoryNavClick,
-  handleMetricCategoryOnmessageCallback,
 };

@@ -73,7 +73,7 @@ async function handleLoginClick({
   }
 }
 
-async function loginOnmessageCallback(
+async function handleMessageEventLoginFetchWorkerToMain(
   {
     authDispatch,
     event,
@@ -255,4 +255,4 @@ async function loginOnmessageCallback(
   }
 }
 
-export { handleLoginClick, loginOnmessageCallback };
+export { handleLoginClick, handleMessageEventLoginFetchWorkerToMain };

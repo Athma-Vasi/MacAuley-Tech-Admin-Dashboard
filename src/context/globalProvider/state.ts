@@ -53,7 +53,7 @@ const initialGlobalState: GlobalState = {
   repairMetricCategory: "All Repairs",
   repairMetricsDocument: null,
   selectedChartKind: "bar",
-  selectedYYYYMMDD: new Date().toISOString().split("T")[0],
+  selectedYYYYMMDD: "2025-03-31",
   storeLocation: "All Locations",
   themeObject: initialThemeObject,
 };

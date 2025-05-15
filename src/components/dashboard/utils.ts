@@ -7,14 +7,14 @@ import {
 } from "simple-statistics";
 
 import type { StoreLocation } from "../../types";
-import { splitCamelCase, toFixedFloat } from "../../utils";
+import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
 import type { BarChartData } from "../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
 import { FinancialMetricCategory } from "./financial/types";
-import { ProductMetricCategory, ProductSubMetric } from "./product/types";
-import { RepairMetricCategory, RepairSubMetric } from "./repair/types";
+import { ProductSubMetric } from "./product/types";
+import { RepairSubMetric } from "./repair/types";
 import type {
   AllStoreLocations,
   BusinessMetric,
@@ -43,6 +43,10 @@ import type {
   Year,
   YearlyFinancialMetric,
 } from "./types";
+import {
+  CreateDashboardMetricsCardsInput,
+  DashboardCardInfo,
+} from "./utilsTSX";
 
 type ReturnDaysInMonthsInYearsInput = {
   daysPerMonth: number[];
@@ -3854,209 +3858,72 @@ function returnSelectedCalendarCharts<
     : defaultValue;
 }
 
-function generateDashboardProductsQueryParamsPermutations() {
-  const storeLocations: AllStoreLocations[] = [
-    "All Locations",
-    "Calgary",
-    "Edmonton",
-    "Vancouver",
-  ];
-
-  const productMetricCategories: Array<ProductMetricCategory> = [
-    "Accessory",
-    "All Products",
-    "Central Processing Unit (CPU)",
-    "Computer Case",
-    "Desktop Computer",
-    "Display",
-    "Graphics Processing Unit (GPU)",
-    "Headphone",
-    "Keyboard",
-    "Memory (RAM)",
-    "Microphone",
-    "Motherboard",
-    "Mouse",
-    "Power Supply Unit (PSU)",
-    "Speaker",
-    "Storage",
-    "Webcam",
-  ];
-
-  const productSubMetricCategories: Array<ProductSubMetric> = [
-    "unitsSold",
-    "revenue",
-  ];
-
-  const calendarViews: DashboardCalendarView[] = [
-    "Daily",
-    "Monthly",
-    "Yearly",
-  ];
-
-  return storeLocations.reduce<
-    Array<{
-      storeLocation: AllStoreLocations;
-      productMetricCategory: ProductMetricCategory;
-      productSubMetricCategory: ProductSubMetric;
-      calendarView: DashboardCalendarView;
-    }>
-  >((acc, storeLocation) => {
-    calendarViews.forEach((calendarView) => {
-      productMetricCategories.forEach((productMetricCategory) => {
-        productSubMetricCategories.forEach((productSubMetricCategory) => {
-          acc.push({
-            storeLocation,
-            productMetricCategory,
-            productSubMetricCategory,
-            calendarView,
-          });
-        });
-      });
-    });
-
-    return acc;
-  }, []);
-}
-
-function generateDashboardRepairsQueryParamsPermutations() {
-  const storeLocations: AllStoreLocations[] = [
-    "All Locations",
-    "Calgary",
-    "Edmonton",
-    "Vancouver",
-  ];
-
-  const repairMetricCategories: Array<RepairMetricCategory> = [
-    "Accessory",
-    "All Repairs",
-    "Audio/Video",
-    "Computer Component",
-    "Electronic Device",
-    "Mobile Device",
-    "Peripheral",
-  ];
-
-  const repairSubMetricCategories: Array<RepairSubMetric> = [
-    "unitsRepaired",
-    "revenue",
-  ];
-
-  const calendarViews: DashboardCalendarView[] = [
-    "Daily",
-    "Monthly",
-    "Yearly",
-  ];
-
-  return storeLocations.reduce<
-    Array<{
-      storeLocation: AllStoreLocations;
-      repairMetricCategory: RepairMetricCategory;
-      repairSubMetricCategory: RepairSubMetric;
-      calendarView: DashboardCalendarView;
-    }>
-  >((acc, storeLocation) => {
-    calendarViews.forEach((calendarView) => {
-      repairMetricCategories.forEach((repairMetricCategory) => {
-        repairSubMetricCategories.forEach((repairSubMetricCategory) => {
-          acc.push({
-            storeLocation,
-            repairMetricCategory,
-            repairSubMetricCategory,
-            calendarView,
-          });
-        });
-      });
-    });
-
-    return acc;
-  }, []);
-}
-
-function generateDashboardCustomersQueryParamsPermutations() {
-  const storeLocations: AllStoreLocations[] = [
-    "All Locations",
-    "Calgary",
-    "Edmonton",
-    "Vancouver",
-  ];
-
-  const customerMetricCategories: CustomerMetricsCategory[] = [
-    "new",
-    "returning",
-    "churn",
-  ];
-
-  const calendarViews: DashboardCalendarView[] = [
-    "Daily",
-    "Monthly",
-    "Yearly",
-  ];
-
-  return storeLocations.reduce<
-    Array<{
-      storeLocation: AllStoreLocations;
-      customerMetricCategory: CustomerMetricsCategory;
-      calendarView: DashboardCalendarView;
-    }>
-  >((acc, storeLocation) => {
-    calendarViews.forEach((calendarView) => {
-      customerMetricCategories.forEach((customerMetricCategory) => {
-        acc.push({
-          storeLocation,
-          customerMetricCategory,
-          calendarView,
-        });
-      });
-    });
-
-    return acc;
-  }, []);
-}
-
-function generateDashboardFinancialsQueryParamsPermutations() {
-  const storeLocations: AllStoreLocations[] = [
-    "All Locations",
-    "Calgary",
-    "Edmonton",
-    "Vancouver",
-  ];
-
-  const financialMetricCategories: FinancialMetricCategory[] = [
-    "expenses",
-    "profit",
-    "revenue",
-    "transactions",
-    "otherMetrics",
-  ];
-
-  const calendarViews: DashboardCalendarView[] = [
-    "Daily",
-    "Monthly",
-    "Yearly",
-  ];
-
-  return storeLocations.reduce<
-    Array<{
-      storeLocation: AllStoreLocations;
-      financialMetricCategory: FinancialMetricCategory;
-      calendarView: DashboardCalendarView;
-    }>
-  >(
-    (acc, storeLocation) => {
-      calendarViews.forEach((calendarView) => {
-        financialMetricCategories.forEach((financialMetricCategory) => {
-          acc.push({
-            storeLocation,
-            financialMetricCategory,
-            calendarView,
-          });
-        });
-      });
-
-      return acc;
-    },
-    [],
+function createDashboardMetricsCards({
+  cardBgGradient,
+  currentMonth,
+  currentYear,
+  greenColorShade,
+  heading,
+  isDisplayValueAsCurrency = false,
+  isDisplayValueAsPercentage = false,
+  isFlipColor = false,
+  kind,
+  prevDay,
+  prevMonth,
+  prevValue,
+  prevYear,
+  redColorShade,
+  selectedValue,
+}: CreateDashboardMetricsCardsInput): DashboardCardInfo {
+  const deltaPercentage = toFixedFloat(
+    ((selectedValue - prevValue) / prevValue) * 100,
+    2,
   );
+  const deltaFormatted = Number.isFinite(deltaPercentage)
+    ? `${deltaPercentage > 0 ? "+" : ""} ${toFixedFloat(deltaPercentage, 2)} %`
+    : "N/A";
+
+  const deltaTextColor = deltaPercentage > 0
+    ? isFlipColor ? redColorShade : greenColorShade
+    : deltaPercentage < 0
+    ? isFlipColor ? greenColorShade : redColorShade
+    : "inherit";
+
+  const dateEndMonthSet = new Set(["31", "30", "29", "28"]);
+
+  const date = kind === "day"
+    ? `Since ${prevDay} ${
+      // display the previous month if the previous day is the last day of the month
+      dateEndMonthSet.has(prevDay) ? prevMonth : currentMonth} ${
+      // display the previous year if the previous day is 31st December of the previous year
+      currentMonth === "January" ? prevYear : currentYear}`
+    : kind === "month"
+    ? `Since ${prevMonth} ${
+      currentMonth === "January" ? prevYear : currentYear
+    }`
+    : `Since ${prevYear}`;
+
+  const valueStr = selectedValue < 1
+    ? toFixedFloat(selectedValue * 100, 2)
+    : toFixedFloat(selectedValue, 2);
+
+  const displayValue = isDisplayValueAsPercentage
+    ? `${valueStr} %`
+    : `${
+      selectedValue.toString().includes(".")
+        ? valueStr
+        : addCommaSeparator(selectedValue.toString())
+    } ${isDisplayValueAsCurrency ? "CAD" : ""}`;
+
+  return {
+    cardBgGradient,
+    date,
+    heading,
+    icon: null,
+    percentage: deltaFormatted,
+    value: displayValue,
+    deltaTextColor,
+  };
 }
 
 export {
@@ -4066,6 +3933,7 @@ export {
   createAllLocationsAggregatedFinancialMetrics,
   createAllLocationsAggregatedProductMetrics,
   createAllLocationsAggregatedRepairMetrics,
+  createDashboardMetricsCards,
   createExpandChartNavigateLinks,
   createProductCategoryUnitsRevenueTuple,
   createRandomBusinessMetrics,
@@ -4076,10 +3944,6 @@ export {
   createRandomRepairMetrics,
   createRepairCategoryUnitsRepairedRevenueTuple,
   excludeTodayFromCalendarView,
-  generateDashboardCustomersQueryParamsPermutations,
-  generateDashboardFinancialsQueryParamsPermutations,
-  generateDashboardProductsQueryParamsPermutations,
-  generateDashboardRepairsQueryParamsPermutations,
   returnChartTitleNavigateLinks,
   returnChartTitles,
   returnDaysInMonthsInYears,

@@ -1,6 +1,6 @@
 import { DashboardCalendarView } from "../types";
+import { createDashboardMetricsCards } from "../utils";
 import {
-  createDashboardMetricsCards,
   type CreateDashboardMetricsCardsInput,
   type DashboardCardInfo,
 } from "../utilsTSX";

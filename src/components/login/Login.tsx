@@ -28,7 +28,10 @@ import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
-import { handleLoginClick, loginOnmessageCallback } from "./handlers";
+import {
+  handleLoginClick,
+  handleMessageEventLoginFetchWorkerToMain,
+} from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
 
@@ -89,7 +92,7 @@ function Login() {
         }
       >,
     ) => {
-      await loginOnmessageCallback({
+      await handleMessageEventLoginFetchWorkerToMain({
         event,
         authDispatch,
         globalDispatch,

@@ -173,6 +173,8 @@ function Register() {
     };
   }, []);
 
+  console.log("registerState", registerState);
+
   const {
     bgGradient,
     cardBgGradient,
