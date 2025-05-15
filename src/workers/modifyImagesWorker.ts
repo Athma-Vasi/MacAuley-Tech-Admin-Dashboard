@@ -178,7 +178,6 @@ self.onmessage = async (
         const { areImagesInvalid } = validateImages({
             allowedFileExtensionsRegex: ALLOWED_FILE_EXTENSIONS_REGEX,
             imageFileBlobs: updatedModifiedFiles,
-            maxImagesAmount,
             maxImageSize,
         });
 

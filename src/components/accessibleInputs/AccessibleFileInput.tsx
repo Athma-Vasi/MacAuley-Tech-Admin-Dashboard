@@ -96,6 +96,7 @@ function AccessibleFileInput<
             aria-disabled={disabled}
             aria-label={splitCamelCase(name)}
             aria-required={required}
+            data-testid={`${name}-fileInput`}
             disabled={disabled}
             label={label}
             name={name}

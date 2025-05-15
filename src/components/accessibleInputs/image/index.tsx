@@ -189,7 +189,11 @@ function AccessibleImageInput<
                     <Group position="right">
                         <TbCheck color={greenColorShade} size={22} />
                     </Group>
-                    <Text color={greenColorShade} aria-live="polite">
+                    <Text
+                        color={greenColorShade}
+                        data-testid="image-valid-text"
+                        aria-live="polite"
+                    >
                         Image is valid
                     </Text>
                 </GoldenGrid>
@@ -213,7 +217,11 @@ function AccessibleImageInput<
                         <TbExclamationCircle color={redColorShade} size={22} />
                     </Group>
 
-                    <Text color={redColorShade} aria-live="polite">
+                    <Text
+                        color={redColorShade}
+                        aria-live="polite"
+                        data-testid="image-invalid-text"
+                    >
                         {invalidImageDescription}
                     </Text>
                 </GoldenGrid>
@@ -224,6 +232,7 @@ function AccessibleImageInput<
                     alt={isImageInvalid
                         ? "Invalid image"
                         : fileNames[index] ?? "Image"}
+                    data-testid="image-preview"
                     key={index.toString()}
                     // maw={300}
                     src={URL.createObjectURL(fileBlob ?? new Blob([]))}
@@ -253,6 +262,7 @@ function AccessibleImageInput<
                         {fileNames[index]?.split(" ").map((char, charIndex) => {
                             return (
                                 <Text
+                                    data-testid="image-name"
                                     key={`${index}-${charIndex}`}
                                     color={textColor}
                                 >
@@ -295,6 +305,7 @@ function AccessibleImageInput<
 
             const [removeButton, resetButton] = createAccessibleButtons([
                 {
+                    dataTestId: "remove-image-button",
                     disabledScreenreaderText:
                         `Image ${fileName} ${ellipsis} is invalid`,
                     enabledScreenreaderText: `Remove ${fileName} ${ellipsis}`,
@@ -319,6 +330,7 @@ function AccessibleImageInput<
                     },
                 },
                 {
+                    dataTestId: "reset-image-button",
                     disabled: isImageTypeInvalid,
                     disabledScreenreaderText:
                         `Image ${fileName} ${ellipsis} is invalid`,

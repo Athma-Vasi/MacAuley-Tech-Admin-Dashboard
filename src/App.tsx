@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import CustomFonts from "./components/customFonts";
 import Dashboard from "./components/dashboard/Dashboard";
 
-import { ReactNode } from "react";
 import DisplayResponsiveChartWrapper from "./components/charts/display";
 import DirectoryWrapper from "./components/directory";
 import HomeWrapper from "./components/home";
@@ -11,7 +10,6 @@ import LoginWrapper from "./components/login";
 import RegisterWrapper from "./components/register";
 import Testing from "./components/testing";
 import UsersQuery from "./components/usersQuery/UsersQuery";
-import withAuth from "./context/authProvider/WithAuth";
 import { useGlobalState } from "./hooks/useGlobalState";
 
 function App() {
@@ -26,7 +24,7 @@ function App() {
         <Route path="/" element={<LoginWrapper />} />
         <Route
           path="dashboard"
-          element={withAuth(HomeWrapper, "/")({}) as ReactNode}
+          element={<HomeWrapper />}
         >
           <Route path=":metricsView" element={<Dashboard />} />
           <Route path="directory" element={<DirectoryWrapper />} />

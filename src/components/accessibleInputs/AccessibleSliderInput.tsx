@@ -127,6 +127,7 @@ function AccessibleSliderInput<
       aria-describedby={`${name}-selected`}
       aria-label={name}
       color={color}
+      data-testid={`${name}-sliderInput`}
       defaultValue={sliderDefaultValue}
       disabled={disabled}
       label={label}
