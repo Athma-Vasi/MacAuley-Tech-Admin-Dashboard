@@ -447,16 +447,35 @@ function parseSafeSync(
   }
 }
 
+type SafeBoxResultSuccess<Data = unknown> = {
+  data: Data;
+  kind?: "success";
+  message?: string;
+};
+type SafeBoxResultError<Data = unknown> = {
+  data?: Data;
+  kind?: "error";
+  message?: string;
+};
+type SafeBoxResultNotFound = {
+  data?: [];
+  kind?: "notFound";
+  message?: string;
+};
+
 function createSafeBoxResult<Data = unknown>(
-  { data, kind = "error", message = "Unknown error" }: {
-    data?: Data;
-    kind?: "error" | "success" | "notFound";
-    message?: string;
-  },
+  {
+    data,
+    kind = "error",
+    message = "Unknown",
+  }:
+    | SafeBoxResultSuccess<Data>
+    | SafeBoxResultError<Data>
+    | SafeBoxResultNotFound,
 ): SafeBoxResult<Data> {
   if (kind === "success") {
     return new Ok({
-      data,
+      data: data as Data,
       kind,
       message,
     });
@@ -543,6 +562,22 @@ function createDirectoryURLCacheKey(
     : new URL(
       `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
     );
+
+  return urlWithQuery.toString();
+}
+
+function createUsersURLCacheKey(
+  { currentPage, newQueryFlag, queryString, totalDocuments, url }: {
+    url: string;
+    queryString: string;
+    totalDocuments: number;
+    newQueryFlag: boolean;
+    currentPage: number;
+  },
+) {
+  const urlWithQuery = new URL(
+    `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}&page=${currentPage}`,
+  );
 
   return urlWithQuery.toString();
 }
@@ -670,6 +705,7 @@ export {
   createMetricsForageKey,
   createMetricsURLCacheKey,
   createSafeBoxResult,
+  createUsersURLCacheKey,
   debounce,
   decodeJWTSafe,
   fetchSafe,

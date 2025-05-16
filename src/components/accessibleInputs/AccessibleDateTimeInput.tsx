@@ -32,6 +32,7 @@ type AccessibleDateTimeInputAttributes<
 > = {
     ariaAutoComplete?: "both" | "list" | "none" | "inline";
     autoComplete?: "on" | "off";
+    dataTestId?: string;
     disabled?: boolean;
     icon?: ReactNode;
     initialInputValue?: string;
@@ -80,6 +81,7 @@ function AccessibleDateTimeInput<
     const {
         ariaAutoComplete = "none",
         autoComplete = "off",
+        dataTestId = `${attributes.name}-dateTimeInput`,
         disabled = false,
         icon = null,
         initialInputValue = "",
@@ -188,6 +190,7 @@ function AccessibleDateTimeInput<
                         aria-required={required}
                         autoComplete={autoComplete}
                         color="dark"
+                        data-testid={dataTestId}
                         error={!isValueBufferValid &&
                             valueBuffer !== initialInputValue}
                         icon={leftIcon}

@@ -16,6 +16,7 @@ type AccessibleSegmentedControlAttributes<
 > = {
   color?: MantineColor;
   data: CheckboxRadioSelectData<Payload>;
+  dataTestId?: string;
   defaultValue?: Payload;
   disabled?: boolean;
   fullWidth?: boolean;
@@ -53,6 +54,7 @@ function AccessibleSegmentedControl<
   const {
     color = primaryColor,
     data,
+    dataTestId = `${attributes.name}-segmentedControl`,
     defaultValue,
     disabled = false,
     fullWidth = false,
@@ -90,6 +92,7 @@ function AccessibleSegmentedControl<
         aria-label={name}
         color={color}
         data={data}
+        data-testid={dataTestId}
         defaultValue={defaultValue}
         disabled={disabled}
         fullWidth={fullWidth}

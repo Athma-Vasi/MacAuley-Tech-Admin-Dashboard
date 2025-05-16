@@ -79,9 +79,10 @@ function QuerySort({
     const addSortLinkButton = (
         <AccessibleButton
             attributes={{
-                enabledScreenreaderText: "Add sort link to chain",
+                dataTestId: "add-sort-link-button",
                 disabledScreenreaderText: "Max query links amount reached",
                 // disabled: disabled || sortChainLength === MAX_LINKS_AMOUNT,
+                enabledScreenreaderText: "Add sort link to chain",
                 kind: "add",
                 onClick: (
                     _event:

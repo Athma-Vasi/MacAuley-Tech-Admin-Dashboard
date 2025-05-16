@@ -35,6 +35,7 @@ type AccessibleTextInputAttributes<
 > = {
   ariaAutoComplete?: "both" | "list" | "none" | "inline";
   autoComplete?: "on" | "off";
+  dataTestId?: string;
   disabled?: boolean;
   // if different from parentDispatch which sets value
   errorDispatch?: Dispatch<{
@@ -100,6 +101,7 @@ function AccessibleTextInput<
   const {
     ariaAutoComplete = "none",
     autoComplete = "off",
+    dataTestId = `${attributes.name}-textInput`,
     disabled = false,
     errorDispatch,
     hideLabel = false,
@@ -235,7 +237,7 @@ function AccessibleTextInput<
             aria-required={required}
             autoComplete={autoComplete}
             // color={grayColorShade}
-            data-testid={`${name}-textInput`}
+            data-testid={dataTestId}
             disabled={disabled}
             error={!isValueBufferValid && valueBuffer !== initialInputValue}
             icon={leftIcon}

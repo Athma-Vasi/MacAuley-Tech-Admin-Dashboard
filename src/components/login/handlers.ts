@@ -115,7 +115,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
   >
 > {
   try {
-    console.log("Worker received message:", event.data);
+    console.log("Login Worker received message:", event.data);
 
     if (!isComponentMountedRef.current) {
       return createSafeBoxResult({

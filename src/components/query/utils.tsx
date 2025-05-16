@@ -191,7 +191,7 @@ function createDynamicInput(
         return <></>;
     }
 
-    const { comparisonOperators, kind, name } = filteredQueryTemplate;
+    const { kind, name } = filteredQueryTemplate;
 
     if (kind === "select") {
         const attributes = filteredQueryTemplate
@@ -203,6 +203,7 @@ function createDynamicInput(
                 attributes={{
                     ...attributes,
                     data,
+                    dataTestId: "dynamicValue-input",
                     name,
                     validValueAction: queryAction.setFilterValue,
                     parentDispatch: queryDispatch,
@@ -220,6 +221,7 @@ function createDynamicInput(
             <AccessibleTextInput
                 attributes={{
                     ...attributes,
+                    dataTestId: "dynamicValue-input",
                     invalidValueAction: queryAction.setIsError,
                     name,
                     parentDispatch: queryDispatch,
@@ -238,6 +240,7 @@ function createDynamicInput(
             <AccessibleTextInput
                 attributes={{
                     ...attributes,
+                    dataTestId: "dynamicValue-input",
                     name,
                     invalidValueAction: queryAction.setIsError,
                     parentDispatch: queryDispatch,
@@ -256,9 +259,10 @@ function createDynamicInput(
             <AccessibleDateTimeInput
                 attributes={{
                     ...attributes,
+                    dataTestId: "dynamicValue-input",
                     name,
                     validValueAction: queryAction.setFilterValue,
-                    parentDispatch: queryDispatch as any,
+                    parentDispatch: queryDispatch,
                     value: filterValue as string,
                 }}
             />
@@ -625,7 +629,6 @@ function returnTimelineBullet(
         queryChainKind,
         queryDispatch,
         queryLinkStatement,
-        textColorSliderLabel,
     }: {
         linkIndex: number;
         logicalOperator: LogicalOperator;

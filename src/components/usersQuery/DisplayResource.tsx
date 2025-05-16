@@ -236,11 +236,13 @@ function DisplayResource(
             pos="relative"
         >
             <Group w="100%" position="apart" p="md">
-                <Title order={3} className="resource-title">
+                <Title order={3} color={textColor} className="resource-title">
                     Resources
                 </Title>
 
-                <Text>Total Documents: {totalDocuments || 0}</Text>
+                <Text color={textColor} data-testid="usersQuery-totalDocuments">
+                    Total Documents: {totalDocuments || 0}
+                </Text>
             </Group>
 
             {resourceData.length === 0

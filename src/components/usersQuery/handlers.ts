@@ -2,23 +2,26 @@ import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
-import { HttpServerResponse, SafeBoxResult, UserDocument } from "../../types";
+import { UserDocument } from "../../types";
 import {
     createSafeBoxResult,
-    decodeJWTSafe,
-    fetchSafe,
-    parseServerResponseAsyncSafe,
-    responseToJSONSafe,
+    createUsersURLCacheKey,
+    getForageItemSafe,
+    setForageItemSafe,
 } from "../../utils";
+import { MessageEventUsersQueryWorkerToMain } from "../../workers/usersQueryWorker";
 import { usersQueryAction } from "./actions";
-import { userDocumentOptionalsZod } from "./schemas";
-import { UsersQueryMessageEvent, UsersQueryState } from "./types";
+import { UsersQueryDispatch } from "./schemas";
+import { UsersQueryState } from "./types";
+import { None, Some } from "ts-results";
 
 async function handleUsersQuerySubmitGETClick(
     {
         accessToken,
         currentPage,
+        isComponentMountedRef,
         newQueryFlag,
+        showBoundary,
         url,
         usersFetchWorker,
         usersQueryDispatch,
@@ -26,44 +29,125 @@ async function handleUsersQuerySubmitGETClick(
     }: {
         accessToken: string;
         currentPage: number;
+        isComponentMountedRef: React.RefObject<boolean>;
         newQueryFlag: boolean;
-        url: RequestInfo | URL;
+        showBoundary: (error: unknown) => void;
+        url: string;
         usersFetchWorker: Worker | null;
-        usersQueryDispatch: React.Dispatch<any>;
+        usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
         usersQueryState: UsersQueryState;
     },
 ) {
+    const requestInit: RequestInit = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+
+    const {
+        queryString,
+        totalDocuments,
+    } = usersQueryState;
+
+    const cacheKey = createUsersURLCacheKey({
+        currentPage,
+        newQueryFlag,
+        queryString,
+        totalDocuments,
+        url,
+    });
+
+    console.log("handleUsersQuerySubmitGETClick cacheKey", cacheKey);
+
+    usersQueryDispatch({
+        action: usersQueryAction.setCurrentPage,
+        payload: currentPage,
+    });
+    usersQueryDispatch({
+        action: usersQueryAction.setIsLoading,
+        payload: true,
+    });
+
     try {
-        const requestInit: RequestInit = {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-        };
+        const userDocumentsResult = await getForageItemSafe<
+            UserDocument[]
+        >(cacheKey);
 
-        const {
-            queryString,
-            totalDocuments,
-        } = usersQueryState;
+        if (!isComponentMountedRef.current) {
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
+        }
+        if (userDocumentsResult.err) {
+            showBoundary(userDocumentsResult.val.data);
+            return createSafeBoxResult({
+                message: userDocumentsResult.val.message ??
+                    "Error fetching response",
+            });
+        }
 
-        const urlWithQuery = new URL(
-            `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}&page=${currentPage}`,
-        );
+        if (
+            userDocumentsResult.ok &&
+            userDocumentsResult.safeUnwrap().kind === "success"
+        ) {
+            const { arrangeByDirection, arrangeByField } = usersQueryState;
+            const userDocuments = userDocumentsResult.safeUnwrap()
+                .data as UserDocument[];
 
-        usersQueryDispatch({
-            action: usersQueryAction.setCurrentPage,
-            payload: currentPage,
-        });
-        usersQueryDispatch({
-            action: usersQueryAction.setIsLoading,
-            payload: true,
-        });
+            const sorted = userDocuments.sort((a, b) => {
+                const aValue = a[arrangeByField];
+                const bValue = b[arrangeByField];
+
+                if (aValue === undefined && bValue === undefined) return 0;
+                if (aValue === undefined) return 1;
+                if (bValue === undefined) return -1;
+
+                if (arrangeByDirection === "ascending") {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+
+            const withFUIAndPPUFieldsAdded = sorted.map(
+                (userDocument) => {
+                    return {
+                        ...userDocument,
+                        fileUploadId: userDocument.fileUploadId
+                            ? userDocument.fileUploadId
+                            : "",
+                        profilePictureUrl: userDocument.profilePictureUrl
+                            ? userDocument.profilePictureUrl
+                            : "",
+                    };
+                },
+            );
+
+            usersQueryDispatch({
+                action: usersQueryAction.setResourceData,
+                payload: withFUIAndPPUFieldsAdded,
+            });
+
+            return createSafeBoxResult({
+                data: {
+                    accessToken,
+                    userDocuments: userDocumentsResult.safeUnwrap()
+                        .data as UserDocument[],
+                },
+                kind: "success",
+            });
+        }
 
         usersFetchWorker?.postMessage({
-            url: urlWithQuery.toString(),
+            currentPage,
+            newQueryFlag,
+            queryString,
             requestInit,
             routesZodSchemaMapKey: "users",
+            totalDocuments,
+            url: cacheKey,
         });
 
         return createSafeBoxResult({
@@ -72,6 +156,7 @@ async function handleUsersQuerySubmitGETClick(
         });
     } catch (error: unknown) {
         return createSafeBoxResult({
+            data: error,
             message: "Error handling submit click",
         });
     }
@@ -84,16 +169,18 @@ async function handleUsersQueryOnmessageCallback(
         isComponentMountedRef,
         navigate,
         showBoundary,
+        url,
         usersQueryDispatch,
         usersQueryState,
     }: {
         authDispatch: React.Dispatch<AuthDispatch>;
-        event: UsersQueryMessageEvent;
-        usersQueryDispatch: React.Dispatch<any>;
-        usersQueryState: UsersQueryState;
+        event: MessageEventUsersQueryWorkerToMain;
         isComponentMountedRef: React.RefObject<boolean>;
         navigate: NavigateFunction;
         showBoundary: (error: unknown) => void;
+        url: string;
+        usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
+        usersQueryState: UsersQueryState;
     },
 ) {
     try {
@@ -106,6 +193,7 @@ async function handleUsersQueryOnmessageCallback(
         if (event.data.err) {
             showBoundary(event.data.val.data);
             return createSafeBoxResult({
+                data: event.data.val.data,
                 message: event.data.val.message ?? "Error fetching response",
             });
         }
@@ -118,7 +206,14 @@ async function handleUsersQueryOnmessageCallback(
             });
         }
 
-        const { parsedServerResponse, decodedToken } = dataUnwrapped;
+        const {
+            parsedServerResponse,
+            decodedToken,
+            currentPage,
+            newQueryFlag,
+            queryString,
+            totalDocuments,
+        } = dataUnwrapped;
         const {
             accessToken: newAccessToken,
             kind,
@@ -202,29 +297,51 @@ async function handleUsersQueryOnmessageCallback(
             },
         );
 
+        const cacheKey = createUsersURLCacheKey({
+            currentPage,
+            newQueryFlag,
+            queryString,
+            totalDocuments,
+            url,
+        });
+
+        const setItemCacheResult = await setForageItemSafe(
+            cacheKey,
+            withFUIAndPPUFieldsAdded,
+        );
+        if (!isComponentMountedRef.current) {
+            return createSafeBoxResult({
+                message: "Component unmounted",
+            });
+        }
+        if (setItemCacheResult.err) {
+            showBoundary(setItemCacheResult.val.data);
+            return createSafeBoxResult({
+                data: setItemCacheResult.val.data,
+                message: setItemCacheResult.val.message ??
+                    "Error setting forage item",
+            });
+        }
+
         usersQueryDispatch({
             action: usersQueryAction.setResourceData,
             payload: withFUIAndPPUFieldsAdded,
         });
-
         usersQueryDispatch({
             action: usersQueryAction.setTotalDocuments,
             payload: parsedServerResponse.totalDocuments,
         });
-
-        usersQueryDispatch({
-            action: usersQueryAction.setIsLoading,
-            payload: false,
-        });
-
         usersQueryDispatch({
             action: usersQueryAction.setPages,
             payload: parsedServerResponse.pages,
         });
-
         usersQueryDispatch({
             action: usersQueryAction.setNewQueryFlag,
             payload: true,
+        });
+        usersQueryDispatch({
+            action: usersQueryAction.setIsLoading,
+            payload: false,
         });
 
         return createSafeBoxResult({
@@ -237,312 +354,17 @@ async function handleUsersQueryOnmessageCallback(
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
+                data: error,
                 message: "Component unmounted",
             });
         }
+
         showBoundary(error);
         return createSafeBoxResult({
+            data: error,
             message: "Error handling message",
         });
     }
 }
 
-async function handleUsersQuerySubmitGET(
-    {
-        accessToken,
-        authDispatch,
-        usersQueryDispatch,
-        fetchAbortControllerRef,
-        isComponentMountedRef,
-        navigate,
-        showBoundary,
-        url,
-        usersQueryState,
-    }: {
-        accessToken: string;
-        authDispatch: React.Dispatch<AuthDispatch>;
-        usersQueryDispatch: React.Dispatch<any>;
-        fetchAbortControllerRef: React.RefObject<
-            AbortController | null
-        >;
-        isComponentMountedRef: React.RefObject<boolean>;
-        navigate: NavigateFunction;
-        showBoundary: (error: unknown) => void;
-        url: RequestInfo | URL;
-        usersQueryState: UsersQueryState;
-    },
-): Promise<
-    SafeBoxResult<
-        {
-            userDocuments: Array<UserDocument>;
-            newAccessToken: string;
-        }
-    >
-> {
-    fetchAbortControllerRef.current?.abort(
-        "Previous request cancelled",
-    );
-    fetchAbortControllerRef.current = new AbortController();
-    const fetchAbortController = fetchAbortControllerRef.current;
-
-    isComponentMountedRef.current = true;
-    const isComponentMounted = isComponentMountedRef.current;
-
-    const {
-        arrangeByDirection,
-        arrangeByField,
-        currentPage,
-        newQueryFlag,
-        queryString,
-        totalDocuments,
-    } = usersQueryState;
-
-    const requestInit: RequestInit = {
-        method: "GET",
-        signal: fetchAbortController.signal,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-        },
-        mode: "cors",
-    };
-
-    const urlWithQuery = new URL(
-        `${url}/user/${queryString}&totalDocuments=${totalDocuments}&newQueryFlag=${newQueryFlag}&page=${currentPage}`,
-    );
-
-    usersQueryDispatch({
-        action: usersQueryAction.setIsLoading,
-        payload: true,
-    });
-
-    try {
-        const responseResult = await fetchSafe(
-            urlWithQuery,
-            requestInit,
-        );
-
-        if (!isComponentMounted) {
-            return createSafeBoxResult({ message: "Component unmounted" });
-        }
-
-        if (responseResult.err) {
-            showBoundary(responseResult.val.data);
-            return createSafeBoxResult({ message: "Error fetching data" });
-        }
-
-        const responseUnwrapped = responseResult.safeUnwrap().data;
-
-        if (responseUnwrapped === undefined) {
-            showBoundary(
-                new Error("No data returned from server"),
-            );
-            return createSafeBoxResult({
-                message: "No data returned from server",
-            });
-        }
-
-        const jsonResult = await responseToJSONSafe<
-            HttpServerResponse<UserDocument>
-        >(
-            responseUnwrapped,
-        );
-
-        if (!isComponentMounted) {
-            return createSafeBoxResult({ message: "Component unmounted" });
-        }
-
-        if (jsonResult.err) {
-            showBoundary(jsonResult.val.data);
-            return createSafeBoxResult({ message: "Error parsing response" });
-        }
-
-        const serverResponse = jsonResult.safeUnwrap().data;
-
-        if (serverResponse === undefined) {
-            showBoundary(
-                new Error("No data returned from server"),
-            );
-            return createSafeBoxResult({
-                message: "No data returned from server",
-            });
-        }
-
-        console.time("--PARSING--");
-        const parsedResult = await parseServerResponseAsyncSafe({
-            object: serverResponse,
-            zSchema: userDocumentOptionalsZod,
-        });
-        console.timeEnd("--PARSING--");
-
-        if (!isComponentMounted) {
-            return createSafeBoxResult({ message: "Component unmounted" });
-        }
-        if (parsedResult.err) {
-            showBoundary(parsedResult.val.data);
-            return createSafeBoxResult({
-                message: "Error parsing server response",
-            });
-        }
-
-        const parsedServerResponse = parsedResult.safeUnwrap().data;
-        if (parsedServerResponse === undefined) {
-            showBoundary(
-                new Error("No data returned from server"),
-            );
-            return createSafeBoxResult({
-                message: "No data returned from server",
-            });
-        }
-
-        const { accessToken: newAccessToken, kind, message, triggerLogout } =
-            parsedServerResponse;
-
-        if (triggerLogout) {
-            authDispatch({
-                action: authAction.setAccessToken,
-                payload: "",
-            });
-            authDispatch({
-                action: authAction.setIsLoggedIn,
-                payload: false,
-            });
-            authDispatch({
-                action: authAction.setDecodedToken,
-                payload: Object.create(null),
-            });
-            authDispatch({
-                action: authAction.setUserDocument,
-                payload: Object.create(null),
-            });
-
-            await localforage.clear();
-            navigate("/");
-            return createSafeBoxResult({ message: "Logout triggered" });
-        }
-
-        const decodedTokenResult = await decodeJWTSafe(
-            newAccessToken,
-        );
-
-        if (!isComponentMounted) {
-            return createSafeBoxResult({ message: "Component unmounted" });
-        }
-
-        if (decodedTokenResult.err) {
-            showBoundary(decodedTokenResult.val.data);
-            return createSafeBoxResult({ message: "Error decoding token" });
-        }
-
-        const decodedToken = decodedTokenResult.safeUnwrap().data;
-        if (!decodedToken) {
-            showBoundary(new Error("Invalid token"));
-            return createSafeBoxResult({ message: "Invalid token" });
-        }
-
-        authDispatch({
-            action: authAction.setAccessToken,
-            payload: newAccessToken,
-        });
-        authDispatch({
-            action: authAction.setDecodedToken,
-            payload: decodedToken,
-        });
-
-        if (kind === "error") {
-            showBoundary(
-                new Error(
-                    `Server error: ${message}`,
-                ),
-            );
-            return createSafeBoxResult({
-                message,
-                kind: "error",
-            });
-        }
-
-        const data = parsedServerResponse.data as unknown as UserDocument[];
-
-        const sorted = data.sort((a, b) => {
-            const aValue = a[arrangeByField];
-            const bValue = b[arrangeByField];
-
-            if (aValue === undefined && bValue === undefined) return 0;
-            if (aValue === undefined) return 1;
-            if (bValue === undefined) return -1;
-
-            if (arrangeByDirection === "ascending") {
-                return aValue > bValue ? 1 : -1;
-            } else {
-                return aValue < bValue ? 1 : -1;
-            }
-        });
-
-        const withFUIAndPPUFieldsAdded = sorted.map(
-            (userDocument) => {
-                return {
-                    ...userDocument,
-                    fileUploadId: userDocument.fileUploadId
-                        ? userDocument.fileUploadId
-                        : "",
-                    profilePictureUrl: userDocument.profilePictureUrl
-                        ? userDocument.profilePictureUrl
-                        : "",
-                };
-            },
-        );
-
-        usersQueryDispatch({
-            action: usersQueryAction.setResourceData,
-            payload: withFUIAndPPUFieldsAdded,
-        });
-
-        usersQueryDispatch({
-            action: usersQueryAction.setTotalDocuments,
-            payload: parsedServerResponse.totalDocuments,
-        });
-
-        usersQueryDispatch({
-            action: usersQueryAction.setIsLoading,
-            payload: false,
-        });
-
-        usersQueryDispatch({
-            action: usersQueryAction.setPages,
-            payload: parsedServerResponse.pages,
-        });
-
-        usersQueryDispatch({
-            action: usersQueryAction.setNewQueryFlag,
-            payload: true,
-        });
-
-        usersQueryDispatch({
-            action: usersQueryAction.setCurrentPage,
-            payload: currentPage,
-        });
-
-        return createSafeBoxResult({
-            data: {
-                userDocuments: sorted,
-                newAccessToken,
-            },
-            kind: "success",
-        });
-    } catch (error: unknown) {
-        if (
-            !isComponentMounted ||
-            fetchAbortController.signal.aborted
-        ) {
-            return createSafeBoxResult({});
-        }
-        showBoundary(error);
-        return createSafeBoxResult({});
-    }
-}
-
-export {
-    handleUsersQueryOnmessageCallback,
-    handleUsersQuerySubmitGET,
-    handleUsersQuerySubmitGETClick,
-};
+export { handleUsersQueryOnmessageCallback, handleUsersQuerySubmitGETClick };

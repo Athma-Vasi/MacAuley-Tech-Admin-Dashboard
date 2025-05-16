@@ -80,20 +80,6 @@ describe("queryReducer_modifyQueryChains", () => {
     });
 });
 
-// describe("queryReducer_resetToInitial", () => {
-//     it("should reset the state to initial state", () => {
-//         const dispatch: QueryDispatch = {
-//             action: queryAction.resetToInitial,
-//             payload: initialQueryState,
-//         };
-//         const state = queryReducer_modifyQueryChains(
-//             initialQueryState,
-//             dispatch,
-//         );
-//         expect(state).toEqual(initialQueryState);
-//     });
-// });
-
 describe("queryReducer_setFilterComparisonOperator", () => {
     it("should set the filter comparison operator correctly", () => {
         const queryOperators: Array<QueryOperator> = [

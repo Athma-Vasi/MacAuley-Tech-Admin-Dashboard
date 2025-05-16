@@ -1,10 +1,4 @@
-import {
-    DecodedToken,
-    HttpServerResponse,
-    SafeBoxResult,
-    UserDocument,
-} from "../../types";
-import { DashboardMetricsView } from "../dashboard/types";
+import { UserDocument } from "../../types";
 import { SortDirection } from "../query/types";
 
 type UsersQueryState = {
@@ -21,16 +15,4 @@ type UsersQueryState = {
     totalDocuments: number;
 };
 
-type UsersQueryMessageEvent = MessageEvent<
-    SafeBoxResult<
-        {
-            decodedToken: DecodedToken;
-            parsedServerResponse: HttpServerResponse<
-                UserDocument
-            >;
-            metricsView?: Lowercase<DashboardMetricsView>;
-        }
-    >
->;
-
-export type { UsersQueryMessageEvent, UsersQueryState };
+export type { UsersQueryState };

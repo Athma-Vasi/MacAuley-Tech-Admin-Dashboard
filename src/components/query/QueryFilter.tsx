@@ -120,7 +120,7 @@ function QueryFilter(
     const addFilterLinkButton = (
         <AccessibleButton
             attributes={{
-                enabledScreenreaderText: "Add filter link to chain",
+                dataTestId: "add-filter-link-button",
                 disabledScreenreaderText: chainLength === MAX_LINKS_AMOUNT
                     ? "Max query links amount reached"
                     : isError
@@ -128,6 +128,7 @@ function QueryFilter(
                     : "Value cannot be empty",
                 disabled: isError ||
                     chainLength === MAX_LINKS_AMOUNT,
+                enabledScreenreaderText: "Add filter link to chain",
                 kind: "add",
                 onClick: (
                     _event:
@@ -156,9 +157,10 @@ function QueryFilter(
     const filterHelpButton = (
         <AccessibleButton
             attributes={{
-                enabledScreenreaderText: "Open filter help modal",
+                dataTestId: "filter-help-modal-button",
                 disabledScreenreaderText: "Filter help modal is already open",
                 disabled: openedFilterHelpModal,
+                enabledScreenreaderText: "Open filter help modal",
                 kind: "help",
                 onClick: (
                     _event:
@@ -175,7 +177,11 @@ function QueryFilter(
         <Modal
             opened={openedFilterHelpModal}
             onClose={closeFilterHelpModal}
-            title={<Text size="xl">🛠 How to Use the Filter Builder</Text>}
+            title={
+                <Text data-testid="filter-help-modal-title" size="xl">
+                    🛠 How to Use the Filter Builder
+                </Text>
+            }
         >
             {FILTER_HELP_MODAL_CONTENT}
         </Modal>

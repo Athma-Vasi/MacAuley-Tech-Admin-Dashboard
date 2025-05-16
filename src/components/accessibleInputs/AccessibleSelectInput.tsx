@@ -15,6 +15,7 @@ type AccessibleSelectInputAttributes<
 > = {
   color?: MantineColor;
   data: CheckboxRadioSelectData<Payload>;
+  dataTestId?: string;
   describedBy?: string;
   description?: string;
   disabled?: boolean;
@@ -57,6 +58,7 @@ function AccessibleSelectInput<
   const {
     color = primaryColor,
     data,
+    dataTestId = `${attributes.name}-selectInput`,
     describedBy = "",
     description,
     disabled = false,
@@ -85,7 +87,7 @@ function AccessibleSelectInput<
         aria-required={required}
         color={color}
         data={data}
-        data-testid={`${name}-selectInput`}
+        data-testid={dataTestId}
         disabled={disabled}
         label={hideLabel ? null : label}
         name={name}

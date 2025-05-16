@@ -21,7 +21,10 @@ import {
 } from "./schemas";
 import type {
     LimitPerPage,
+    LogicalOperator,
     ModifyQueryChainPayload,
+    QueryChain,
+    QueryChainKind,
     QueryKind,
     QueryState,
     SortDirection,
@@ -79,10 +82,7 @@ function queryReducer_resetToInitial(
         return state;
     }
 
-    return {
-        ...state,
-        ...parsedResult.safeUnwrap().data?.payload,
-    };
+    return parsedResult.safeUnwrap().data?.payload;
 }
 
 function queryReducer_setProjectionFields(
@@ -148,100 +148,116 @@ function queryReducer_modifyQueryChains(
                 return state;
             }
 
-            const {
-                isAndLinkExists,
-                isNorLinkExists,
-                isOrLinkExists,
-                isSortLinkExists,
-            } = Object
+            const operations = Object
                 .entries(
                     queryChains,
-                ).reduce((acc, curr) => {
-                    const [queryChainKind, queryChains] = curr;
+                ).reduce<
+                {
+                    filter: Record<
+                        LogicalOperator,
+                        "block" | "update" | "insert"
+                    >;
+                    sort: Record<
+                        LogicalOperator,
+                        "block" | "update" | "insert"
+                    >;
+                }
+            >((acc, curr) => {
+                const [qChainKind, qChains] = curr as [
+                    QueryChainKind,
+                    Record<LogicalOperator, QueryChain>,
+                ];
 
-                    Object.entries(queryChains).forEach((chain) => {
-                        const [logOper, qchain] = chain;
-
-                        qchain.forEach((queryLink) => {
-                            const [qLField, _qLOperator, qLValue] = queryLink;
-
-                            if (queryChainKind === "filter") {
-                                if (
-                                    field === qLField &&
-                                    value === qLValue
-                                ) {
-                                    if (logOper === "nor") {
-                                        acc.isNorLinkExists = true;
-                                    }
-
-                                    if (logOper === "and") {
-                                        acc.isAndLinkExists = true;
-                                    }
-
-                                    if (logOper === "or") {
-                                        acc.isOrLinkExists = true;
-                                    }
-                                }
-                            }
-
-                            if (queryChainKind === "sort") {
-                                if (field === qLField) {
-                                    if (logOper === "and") {
-                                        acc.isSortLinkExists = true;
-                                    }
-                                }
-                            }
-                        });
-                    });
-
+                if (qChainKind !== queryChainKind) {
                     return acc;
-                }, {
-                    isNorLinkExists: false,
-                    isAndLinkExists: false,
-                    isOrLinkExists: false,
-                    isSortLinkExists: false,
-                });
-
-            if (isNorLinkExists && logicalOperator === "nor") {
-                return state;
-            }
-            if (isAndLinkExists && logicalOperator === "and") {
-                return state;
-            }
-            if (isOrLinkExists && logicalOperator === "or") {
-                return state;
-            }
-            if (isSortLinkExists && queryChainKind === "sort") {
-                // find the existing link and update it
-                const existingQueryChain =
-                    queryChains[queryChainKind][logicalOperator];
-
-                const existingQueryLink = existingQueryChain.find(
-                    (queryLink) => queryLink[0] === field,
-                );
-                if (existingQueryLink === undefined) {
-                    return state;
                 }
 
-                existingQueryLink[1] = comparisonOperator;
-                existingQueryLink[2] = value;
-                queryChains[queryChainKind][logicalOperator] =
-                    existingQueryChain;
+                Object.entries(qChains).forEach((chain) => {
+                    const [logOper, qchain] = chain as [
+                        LogicalOperator,
+                        QueryChain,
+                    ];
 
-                return {
-                    ...state,
-                    queryChains,
-                };
-            }
+                    if (qchain.length === 0) {
+                        acc[qChainKind][logOper] = "insert";
+                        return acc;
+                    }
 
-            const existingQueryLinks =
-                queryChains[queryChainKind][logicalOperator];
+                    qchain.forEach((queryLink) => {
+                        const [qLField, _qLOperator, _qLValue] = queryLink;
 
-            existingQueryLinks.push([
-                field,
-                comparisonOperator,
-                value,
-            ]);
+                        const areFieldsSame = field === qLField;
+
+                        if (areFieldsSame) {
+                            if (logOper === "and") {
+                                acc[qChainKind][logOper] = "update";
+                            } else {
+                                acc[qChainKind][logOper] = "insert";
+                            }
+                        } else {
+                            acc[qChainKind][logOper] = "insert";
+                        }
+                    });
+                });
+
+                return acc;
+            }, {
+                filter: {
+                    and: "block",
+                    nor: "block",
+                    or: "block",
+                },
+                sort: {
+                    and: "block",
+                    nor: "block",
+                    or: "block",
+                },
+            });
+
+            Object.entries(operations).forEach((curr) => {
+                const [qChainKind, logicalOpers] = curr as [
+                    QueryChainKind,
+                    Record<LogicalOperator, "block" | "update" | "insert">,
+                ];
+                Object.entries(logicalOpers).forEach((chain) => {
+                    const [logicalOper, operation] = chain as [
+                        LogicalOperator,
+                        "block" | "update" | "insert",
+                    ];
+
+                    if (
+                        qChainKind !== queryChainKind ||
+                        logicalOper !== logicalOperator ||
+                        operation === "block"
+                    ) {
+                        return;
+                    }
+
+                    if (operation === "update") {
+                        const existingQueryChain =
+                            queryChains[queryChainKind][logicalOper];
+
+                        const existingQueryLink = existingQueryChain.find(
+                            (queryLink) => queryLink[0] === field,
+                        );
+                        if (existingQueryLink === undefined) {
+                            return;
+                        }
+
+                        existingQueryLink[1] = comparisonOperator;
+                        existingQueryLink[2] = value;
+                    } else { // insert
+                        const existingQueryLinks =
+                            queryChains[queryChainKind][logicalOperator];
+
+                        existingQueryLinks.push([
+                            field,
+                            comparisonOperator,
+                            value,
+                        ]);
+                    }
+                });
+            });
 
             return {
                 ...state,

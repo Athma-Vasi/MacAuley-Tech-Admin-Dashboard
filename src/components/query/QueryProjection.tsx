@@ -32,10 +32,11 @@ function QueryProjection({
     const projectionHelpButton = (
         <AccessibleButton
             attributes={{
-                enabledScreenreaderText: "Open projection help modal",
+                dataTestId: "projection-help-button",
                 disabledScreenreaderText:
                     "Projection help modal is already open",
                 disabled: openedProjectionHelpModal,
+                enabledScreenreaderText: "Open projection help modal",
                 kind: "help",
                 onClick: (
                     _event:

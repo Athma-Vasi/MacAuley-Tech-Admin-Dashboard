@@ -8,7 +8,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
-import FetchParseWorker from "../../workers/fetchParseWorker?worker";
+import { MessageEventUsersQueryWorkerToMain } from "../../workers/usersQueryWorker";
+import UsersQueryWorker from "../../workers/usersQueryWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { Query } from "../query/Query";
 import { usersQueryAction } from "./actions";
@@ -20,11 +21,8 @@ import {
 } from "./handlers";
 import { usersQueryReducer } from "./reducers";
 import { initialUsersQueryState } from "./state";
-import { UsersQueryMessageEvent } from "./types";
 
-type UsersQueryProps = {};
-
-function UsersQuery({}: UsersQueryProps) {
+function UsersQuery() {
     const { windowWidth } = useWindowSize();
     const { authState: { accessToken }, authDispatch } = useAuth();
     const { showBoundary } = useErrorBoundary();
@@ -45,14 +43,14 @@ function UsersQuery({}: UsersQueryProps) {
     const isComponentMountedRef = useMountedRef();
 
     useEffect(() => {
-        const newUsersFetchWorker = new FetchParseWorker();
+        const newUsersFetchWorker = new UsersQueryWorker();
         usersQueryDispatch({
             action: usersQueryAction.setUsersFetchWorker,
             payload: newUsersFetchWorker,
         });
 
         newUsersFetchWorker.onmessage = async (
-            event: UsersQueryMessageEvent,
+            event: MessageEventUsersQueryWorkerToMain,
         ) => {
             await handleUsersQueryOnmessageCallback({
                 authDispatch,
@@ -60,6 +58,7 @@ function UsersQuery({}: UsersQueryProps) {
                 isComponentMountedRef,
                 navigate,
                 showBoundary,
+                url: API_URL,
                 usersQueryDispatch,
                 usersQueryState,
             });
@@ -87,17 +86,20 @@ function UsersQuery({}: UsersQueryProps) {
     const submitButton = (
         <AccessibleButton
             attributes={{
-                kind: "submit",
+                dataTestId: "usersQuery-submit-button",
                 disabledScreenreaderText: "Please fix errors before submitting",
                 disabled: isLoading || isError,
                 enabledScreenreaderText: "Submit query",
+                kind: "submit",
                 onClick: async (event) => {
                     event.preventDefault();
 
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
                         currentPage,
+                        isComponentMountedRef,
                         newQueryFlag,
+                        showBoundary,
                         url: API_URL,
                         usersFetchWorker,
                         usersQueryDispatch,
@@ -156,7 +158,9 @@ function UsersQuery({}: UsersQueryProps) {
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
                         currentPage: page,
+                        isComponentMountedRef,
                         newQueryFlag: false,
+                        showBoundary,
                         url: API_URL,
                         usersFetchWorker,
                         usersQueryDispatch,

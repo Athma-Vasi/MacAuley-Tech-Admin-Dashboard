@@ -119,10 +119,11 @@ function QuerySearch({
     const addSearchLinkButton = (
         <AccessibleButton
             attributes={{
-                enabledScreenreaderText: "Add filter link to chain",
+                dataTestId: "add-search-link-button",
                 disabledScreenreaderText:
                     "Please fix error(s) before proceeding",
                 disabled: queryState.isError,
+                enabledScreenreaderText: "Add filter link to chain",
                 kind: "add",
                 onClick: (
                     _event:

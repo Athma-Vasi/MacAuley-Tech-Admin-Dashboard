@@ -144,6 +144,7 @@ type AccessibleCheckboxInputGroupAttributes<
     ValidValueAction extends string = string,
     Payload extends string = string,
 > = {
+    dataTestId?: string;
     /**
      * Set of values that should be disabled. Used by QueryBuilder component to disable values from projection exclusion if they have already been queued for inclusion (by Filter, Sort, or Search).
      */
@@ -187,6 +188,7 @@ function AccessibleCheckboxInputGroup<
     >,
 ) {
     const {
+        dataTestId = `${attributes.name}-checkboxInputGroup`,
         disabledValuesSet = new Set(),
         inputData,
         name,
@@ -226,17 +228,7 @@ function AccessibleCheckboxInputGroup<
             value={value}
         />
     ));
-    // const [leftStack, rightStack] = checkboxes.reduce(
-    //     (acc, checkbox, idx) => {
-    //         if (idx % 2 === 0) {
-    //             acc[0].push(checkbox);
-    //         } else {
-    //             acc[1].push(checkbox);
-    //         }
-    //         return acc;
-    //     },
-    //     [[], []] as [React.JSX.Element[], React.JSX.Element[]],
-    // );
+
     const [leftStack, middleStack, rightStack] = checkboxes.reduce(
         (acc, checkbox, idx) => {
             if (idx % 3 === 0) {
@@ -269,6 +261,7 @@ function AccessibleCheckboxInputGroup<
                     : `${name}-deselected`}
                 aria-label={name}
                 aria-required={required}
+                data-testid={dataTestId}
                 description={value.length > 0
                     ? selectedTextElement
                     : deselectedTextElement}
