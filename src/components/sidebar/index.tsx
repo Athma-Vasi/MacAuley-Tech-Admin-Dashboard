@@ -21,8 +21,9 @@ import { globalAction } from "../../context/globalProvider";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
+import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
+import DirectoryFetchWorker from "../../workers/directoryFetchWorker?worker";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
@@ -99,17 +100,18 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       });
     };
 
-    const newDirectoryFetchWorker = new FetchParseWorker();
+    const newDirectoryFetchWorker = new DirectoryFetchWorker();
     sidebarDispatch({
       action: sidebarAction.setDirectoryFetchWorker,
       payload: newDirectoryFetchWorker,
     });
 
     newDirectoryFetchWorker.onmessage = async (
-      event: MessageEventFetchWorkerToMain<UserDocument>,
+      event: MessageEventDirectoryFetchWorkerToMain,
     ) => {
       await handleMessageEventDirectoryFetchWorkerToMain({
         authDispatch,
+        directoryUrl: API_URL,
         event,
         globalDispatch,
         isComponentMountedRef,
@@ -315,6 +317,11 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             department: "Executive Management",
             directoryFetchWorker,
             directoryUrl: API_URL,
+            globalDispatch,
+            isComponentMountedRef,
+            navigate,
+            showBoundary,
+            toLocation: "/dashboard/directory",
             storeLocation: "All Locations",
           });
 

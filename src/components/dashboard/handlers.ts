@@ -10,8 +10,8 @@ import {
     RepairMetricsDocument,
 } from "../../types";
 import {
+    createMetricsURLCacheKey,
     createSafeBoxResult,
-    createURLCacheKey,
     GetForageItemSafe,
     SetForageItemSafe,
 } from "../../utils";
@@ -62,7 +62,7 @@ async function handleStoreAndCategoryClicks(
         },
     };
 
-    const cacheKey = createURLCacheKey({
+    const cacheKey = createMetricsURLCacheKey({
         metricsUrl,
         metricsView,
         productMetricCategory,
@@ -295,7 +295,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             });
         }
 
-        const cacheKey = createURLCacheKey({
+        const cacheKey = createMetricsURLCacheKey({
             metricsUrl,
             metricsView,
             productMetricCategory,

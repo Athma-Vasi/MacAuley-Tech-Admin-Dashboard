@@ -11,8 +11,8 @@ import {
   UserDocument,
 } from "../../types";
 import {
+  createMetricsURLCacheKey,
   createSafeBoxResult,
-  createURLCacheKey,
   setForageItemSafe,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
@@ -212,7 +212,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
       payload: data[0].financialMetricsDocument,
     });
 
-    const cacheKey = createURLCacheKey({
+    const cacheKey = createMetricsURLCacheKey({
       metricsUrl,
       metricsView: "financials",
       productMetricCategory: "All Products",

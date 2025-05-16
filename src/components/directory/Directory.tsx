@@ -6,20 +6,20 @@ import { API_URL, COLORS_SWATCHES, STORE_LOCATIONS } from "../../constants";
 import { useFetchAbortControllerRef, useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import type { CheckboxRadioSelectData, UserDocument } from "../../types";
+import type { CheckboxRadioSelectData } from "../../types";
 import { returnThemeColors } from "../../utils";
-import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
-import FetchParseWorker from "../../workers/fetchParseWorker?worker";
+import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
+import DirectoryFetchWorker from "../../workers/directoryFetchWorker?worker";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AllStoreLocations } from "../dashboard/types";
 import {
-  handleDirectoryNavClick,
   handleMessageEventDirectoryFetchWorkerToMain,
 } from "../sidebar/handlers";
 import { directoryAction } from "./actions";
 import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
+import { handleDirectoryDepartmentAndLocationClicks } from "./handlers";
 import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";
 import type {
@@ -55,7 +55,7 @@ function Directory() {
   const fetchAbortControllerRef = useFetchAbortControllerRef();
 
   useEffect(() => {
-    const newDirectoryFetchWorker = new FetchParseWorker();
+    const newDirectoryFetchWorker = new DirectoryFetchWorker();
 
     directoryDispatch({
       action: directoryAction.setDirectoryFetchWorker,
@@ -63,10 +63,11 @@ function Directory() {
     });
 
     newDirectoryFetchWorker.onmessage = async (
-      event: MessageEventFetchWorkerToMain<UserDocument>,
+      event: MessageEventDirectoryFetchWorkerToMain,
     ) => {
       await handleMessageEventDirectoryFetchWorkerToMain({
         authDispatch,
+        directoryUrl: API_URL,
         event,
         globalDispatch,
         isComponentMountedRef,
@@ -96,11 +97,14 @@ function Directory() {
             event.currentTarget.value as DepartmentsWithDefaultKey,
           );
 
-          await handleDirectoryNavClick({
+          await handleDirectoryDepartmentAndLocationClicks({
             accessToken,
             department: event.currentTarget.value as DepartmentsWithDefaultKey,
             directoryFetchWorker,
             directoryUrl: API_URL,
+            globalDispatch,
+            isComponentMountedRef,
+            showBoundary,
             storeLocation: isStoreLocationDisabled
               ? "All Locations"
               : "Edmonton" as AllStoreLocations,
@@ -134,11 +138,14 @@ function Directory() {
         disabled: isStoreLocationDisabled,
         name: "storeLocation",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
-          await handleDirectoryNavClick({
+          await handleDirectoryDepartmentAndLocationClicks({
             accessToken,
             department,
             directoryFetchWorker,
             directoryUrl: API_URL,
+            globalDispatch,
+            isComponentMountedRef,
+            showBoundary,
             storeLocation: isStoreLocationDisabled
               ? "All Locations"
               : event.currentTarget.value as AllStoreLocations,

@@ -10,6 +10,7 @@ import { z } from "zod";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
+import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
 
@@ -528,7 +529,25 @@ async function parseServerResponseAsyncSafe(
   }
 }
 
-function createURLCacheKey(
+function createDirectoryURLCacheKey(
+  { department, directoryUrl, storeLocation }: {
+    department: DepartmentsWithDefaultKey;
+    directoryUrl: string;
+    storeLocation: AllStoreLocations;
+  },
+) {
+  const urlWithQuery = department === "All Departments"
+    ? new URL(
+      `${directoryUrl}/user/?&limit=1000&newQueryFlag=true&totalDocuments=0`,
+    )
+    : new URL(
+      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
+    );
+
+  return urlWithQuery.toString();
+}
+
+function createMetricsURLCacheKey(
   {
     metricsUrl,
     metricsView,
@@ -647,9 +666,10 @@ export {
   capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
+  createDirectoryURLCacheKey,
   createMetricsForageKey,
+  createMetricsURLCacheKey,
   createSafeBoxResult,
-  createURLCacheKey,
   debounce,
   decodeJWTSafe,
   fetchSafe,

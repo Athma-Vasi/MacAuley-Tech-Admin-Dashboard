@@ -15,11 +15,13 @@ import {
   UserDocument,
 } from "../../types";
 import {
+  createDirectoryURLCacheKey,
+  createMetricsURLCacheKey,
   createSafeBoxResult,
-  createURLCacheKey,
   getForageItemSafe,
   setForageItemSafe,
 } from "../../utils";
+import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import { ProductMetricCategory } from "../dashboard/product/types";
@@ -153,7 +155,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
           });
         }
 
-        const cacheKey = createURLCacheKey({
+        const cacheKey = createMetricsURLCacheKey({
           metricsView,
           metricsUrl,
           productMetricCategory,
@@ -244,7 +246,7 @@ async function handleMetricCategoryNavClick(
     },
   };
 
-  const cacheKey = createURLCacheKey({
+  const cacheKey = createMetricsURLCacheKey({
     metricsView,
     metricsUrl,
     productMetricCategory,
@@ -487,13 +489,23 @@ async function handleDirectoryNavClick(
     department,
     directoryFetchWorker,
     directoryUrl,
+    globalDispatch,
+    isComponentMountedRef,
+    navigate,
+    showBoundary,
     storeLocation,
+    toLocation,
   }: {
     accessToken: string;
     department: DepartmentsWithDefaultKey;
     directoryFetchWorker: Worker | null;
     directoryUrl: string;
+    globalDispatch: React.Dispatch<GlobalDispatch>;
+    isComponentMountedRef: React.RefObject<boolean>;
+    navigate: NavigateFunction;
+    showBoundary: (error: unknown) => void;
     storeLocation: AllStoreLocations;
+    toLocation: string;
   },
 ) {
   const requestInit: RequestInit = {
@@ -512,20 +524,77 @@ async function handleDirectoryNavClick(
       `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
     );
 
-  directoryFetchWorker?.postMessage({
-    requestInit,
-    url: urlWithQuery.toString(),
-    routesZodSchemaMapKey: "directory",
+  globalDispatch({
+    action: globalAction.setIsFetching,
+    payload: true,
   });
 
-  return createSafeBoxResult({
-    data: true,
-    kind: "success",
-  });
+  try {
+    const userDocumentsResult = await getForageItemSafe<
+      UserDocument[]
+    >(urlWithQuery.toString());
+
+    if (!isComponentMountedRef.current) {
+      return createSafeBoxResult({
+        message: "Component unmounted",
+      });
+    }
+    if (userDocumentsResult.err) {
+      showBoundary(userDocumentsResult.val.data);
+      return createSafeBoxResult({
+        message: userDocumentsResult.val.message ?? "Error fetching response",
+      });
+    }
+
+    if (
+      userDocumentsResult.ok &&
+      userDocumentsResult.safeUnwrap().kind === "success"
+    ) {
+      globalDispatch({
+        action: globalAction.setDirectory,
+        payload: userDocumentsResult.safeUnwrap()
+          .data as UserDocument[],
+      });
+
+      globalDispatch({
+        action: globalAction.setIsFetching,
+        payload: false,
+      });
+
+      navigate(toLocation);
+
+      return createSafeBoxResult({
+        data: {
+          accessToken,
+          userDocuments: userDocumentsResult.safeUnwrap()
+            .data as UserDocument[],
+        },
+        kind: "success",
+      });
+    }
+
+    directoryFetchWorker?.postMessage({
+      department,
+      requestInit,
+      routesZodSchemaMapKey: "directory",
+      storeLocation,
+      url: urlWithQuery.toString(),
+    });
+
+    return createSafeBoxResult({
+      data: true,
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return createSafeBoxResult({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
 }
 
 async function handleMessageEventDirectoryFetchWorkerToMain({
   authDispatch,
+  directoryUrl,
   event,
   globalDispatch,
   isComponentMountedRef,
@@ -534,7 +603,8 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
   toLocation = "/dashboard/directory",
 }: {
   authDispatch: React.Dispatch<AuthDispatch>;
-  event: MessageEventFetchWorkerToMain<UserDocument>;
+  directoryUrl: string;
+  event: MessageEventDirectoryFetchWorkerToMain;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   navigate?: NavigateFunction;
@@ -563,7 +633,8 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
       });
     }
 
-    const { parsedServerResponse, decodedToken } = dataUnwrapped;
+    const { parsedServerResponse, decodedToken, department, storeLocation } =
+      dataUnwrapped;
 
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;
@@ -615,6 +686,24 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
     }
 
     const userDocuments = parsedServerResponse.data;
+
+    const cacheKey = createDirectoryURLCacheKey({
+      department,
+      directoryUrl,
+      storeLocation,
+    });
+
+    const setForageItemResult = await setForageItemSafe<UserDocument[]>(
+      cacheKey,
+      userDocuments,
+    );
+    if (setForageItemResult.err) {
+      showBoundary(setForageItemResult.val.data);
+      return createSafeBoxResult({
+        message: setForageItemResult.val.message ??
+          "Error setting forage item",
+      });
+    }
 
     globalDispatch({
       action: globalAction.setDirectory,
