@@ -131,6 +131,7 @@ function Dashboard() {
         event,
         globalDispatch,
         isComponentMountedRef,
+        metricsUrl: METRICS_URL,
         navigateFn,
         setForageItemSafe,
         showBoundary,

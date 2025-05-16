@@ -10,7 +10,11 @@ import {
   SafeBoxResult,
   UserDocument,
 } from "../../types";
-import { createSafeBoxResult, setForageItemSafe } from "../../utils";
+import {
+  createSafeBoxResult,
+  createURLCacheKey,
+  setForageItemSafe,
+} from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { loginAction } from "./actions";
 import { LoginDispatch } from "./schemas";
@@ -81,6 +85,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
     isComponentMountedRef,
     localforage,
     loginDispatch,
+    metricsUrl,
     navigate,
     showBoundary,
   }: {
@@ -95,6 +100,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
     isComponentMountedRef: React.RefObject<boolean>;
     localforage: LocalForage;
     loginDispatch: React.Dispatch<LoginDispatch>;
+    metricsUrl: string;
     navigate: NavigateFunction;
     showBoundary: (error: unknown) => void;
   },
@@ -206,10 +212,18 @@ async function handleMessageEventLoginFetchWorkerToMain(
       payload: data[0].financialMetricsDocument,
     });
 
+    const cacheKey = createURLCacheKey({
+      metricsUrl,
+      metricsView: "financials",
+      productMetricCategory: "All Products",
+      repairMetricCategory: "All Repairs",
+      storeLocation: "All Locations",
+    });
+
     const setForageItemResult = await setForageItemSafe<
       FinancialMetricsDocument
     >(
-      "financials/All Locations",
+      cacheKey,
       data[0].financialMetricsDocument,
     );
 

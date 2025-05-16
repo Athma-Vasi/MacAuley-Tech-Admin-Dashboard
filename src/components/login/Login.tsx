@@ -18,7 +18,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import localforage from "localforage";
 import { TbCheck } from "react-icons/tb";
-import { COLORS_SWATCHES } from "../../constants";
+import { COLORS_SWATCHES, METRICS_URL } from "../../constants";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
@@ -99,6 +99,7 @@ function Login() {
         isComponentMountedRef,
         localforage,
         loginDispatch,
+        metricsUrl: METRICS_URL,
         navigate,
         showBoundary,
       });

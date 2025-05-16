@@ -15,8 +15,8 @@ import {
   UserDocument,
 } from "../../types";
 import {
-  createMetricsForageKey,
   createSafeBoxResult,
+  createURLCacheKey,
   getForageItemSafe,
   setForageItemSafe,
 } from "../../utils";
@@ -32,6 +32,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
   event,
   globalDispatch,
   isComponentMountedRef,
+  metricsUrl,
   navigate,
   showBoundary,
 }: {
@@ -39,6 +40,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
   event: MessageEventMetricsWorkerToMain;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
+  metricsUrl: string;
   navigate: NavigateFunction;
   showBoundary: (error: unknown) => void;
 }) {
@@ -151,8 +153,9 @@ async function handleMessageEventMetricsFetchWorkerToMain({
           });
         }
 
-        const forageKey = createMetricsForageKey({
+        const cacheKey = createURLCacheKey({
           metricsView,
+          metricsUrl,
           productMetricCategory,
           repairMetricCategory,
           storeLocation,
@@ -161,7 +164,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
         const setForageItemResult = await setForageItemSafe<
           BusinessMetricsDocument
         >(
-          forageKey,
+          cacheKey,
           payload,
         );
         if (setForageItemResult.err) {
@@ -241,18 +244,9 @@ async function handleMetricCategoryNavClick(
     },
   };
 
-  const storeLocationQuery = `&storeLocation[$eq]=${storeLocation}`;
-  const metricCategoryQuery = metricsView === "products"
-    ? `&metricCategory[$eq]=${productMetricCategory}`
-    : metricsView === "repairs"
-    ? `&metricCategory[$eq]=${repairMetricCategory}`
-    : "";
-  const urlWithQuery = new URL(
-    `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
-  );
-
-  const forageKey = createMetricsForageKey({
+  const cacheKey = createURLCacheKey({
     metricsView,
+    metricsUrl,
     productMetricCategory,
     repairMetricCategory,
     storeLocation,
@@ -266,7 +260,7 @@ async function handleMetricCategoryNavClick(
   try {
     const metricsDocumentResult = await getForageItemSafe<
       BusinessMetricsDocument
-    >(forageKey);
+    >(cacheKey);
 
     if (!isComponentMountedRef.current) {
       return createSafeBoxResult({
@@ -346,7 +340,7 @@ async function handleMetricCategoryNavClick(
         ? "financialMetrics"
         : "customerMetrics",
       storeLocation,
-      url: urlWithQuery.toString(),
+      url: cacheKey,
     });
 
     return createSafeBoxResult({

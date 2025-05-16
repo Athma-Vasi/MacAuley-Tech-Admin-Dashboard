@@ -10,8 +10,8 @@ import {
     RepairMetricsDocument,
 } from "../../types";
 import {
-    createMetricsForageKey,
     createSafeBoxResult,
+    createURLCacheKey,
     GetForageItemSafe,
     SetForageItemSafe,
 } from "../../utils";
@@ -62,34 +62,23 @@ async function handleStoreAndCategoryClicks(
         },
     };
 
-    const storeLocationQuery = `&storeLocation[$eq]=${storeLocation}`;
-
-    const metricCategoryQuery = metricsView === "products"
-        ? `&metricCategory[$eq]=${productMetricCategory}`
-        : metricsView === "repairs"
-        ? `&metricCategory[$eq]=${repairMetricCategory}`
-        : "";
-
-    const urlWithQuery = new URL(
-        `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
-    );
-
-    dashboardDispatch({
-        action: dashboardAction.setIsLoading,
-        payload: true,
-    });
-
-    const forageKey = createMetricsForageKey({
+    const cacheKey = createURLCacheKey({
+        metricsUrl,
         metricsView,
         productMetricCategory,
         repairMetricCategory,
         storeLocation,
     });
 
+    dashboardDispatch({
+        action: dashboardAction.setIsLoading,
+        payload: true,
+    });
+
     try {
         const metricsDocumentResult = await getForageItemSafe<
             BusinessMetricsDocument
-        >(forageKey);
+        >(cacheKey);
 
         if (metricsDocumentResult.err) {
             showBoundary(metricsDocumentResult.val.data);
@@ -154,7 +143,7 @@ async function handleStoreAndCategoryClicks(
                 requestInit,
                 routesZodSchemaMapKey: "dashboard",
                 storeLocation,
-                url: urlWithQuery.toString(),
+                url: cacheKey,
             },
         );
 
@@ -185,6 +174,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         event,
         globalDispatch,
         isComponentMountedRef,
+        metricsUrl,
         navigateFn,
         setForageItemSafe,
         showBoundary,
@@ -194,6 +184,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         event: MessageEventMetricsWorkerToMain;
         globalDispatch: React.Dispatch<GlobalDispatch>;
         isComponentMountedRef: React.RefObject<boolean>;
+        metricsUrl: string;
         navigateFn: NavigateFunction;
         setForageItemSafe: SetForageItemSafe;
         showBoundary: (error: any) => void;
@@ -304,29 +295,18 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             });
         }
 
-        console.log(
-            "handleMessageEventStoreAndCategoryFetchWorkerToMain",
-            {
-                metricsView,
-                productMetricCategory,
-                repairMetricCategory,
-                storeLocation,
-            },
-        );
-
-        const forageKey = createMetricsForageKey({
+        const cacheKey = createURLCacheKey({
+            metricsUrl,
             metricsView,
             productMetricCategory,
             repairMetricCategory,
             storeLocation,
         });
 
-        console.log({ forageKey });
-
         const setForageItemResult = await setForageItemSafe<
             BusinessMetricsDocument
         >(
-            forageKey,
+            cacheKey,
             payload,
         );
         if (setForageItemResult.err) {

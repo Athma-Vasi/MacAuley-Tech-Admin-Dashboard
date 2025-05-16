@@ -93,6 +93,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         event,
         globalDispatch,
         isComponentMountedRef,
+        metricsUrl: METRICS_URL,
         navigate,
         showBoundary,
       });
@@ -151,7 +152,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         dataTestId: "products-navlink",
         description: "Products",
         icon: clickedNavlink === "products" && isFetching
-          ? <Loader data-testid={`products-navlink-loader-icon`} size={18} />
+          ? <Loader data-testid={"products-navlink-loader-icon"} size={18} />
           : <TbAffiliate size={18} />,
         name: "Products",
         onClick: async () => {
@@ -173,8 +174,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             showBoundary,
             storeLocation,
             toLocation: "/dashboard/products",
-          }).then((result) => {
-            console.log("Result:", result);
           });
 
           setOpened(false);

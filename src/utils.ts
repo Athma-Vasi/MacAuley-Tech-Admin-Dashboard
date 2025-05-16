@@ -10,12 +10,8 @@ import { z } from "zod";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
-import {
-  DecodedToken,
-  HttpServerResponse,
-  SafeBoxResult,
-  ThemeObject,
-} from "./types";
+import { SidebarNavlinks } from "./components/sidebar/types";
+import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -532,6 +528,38 @@ async function parseServerResponseAsyncSafe(
   }
 }
 
+function createURLCacheKey(
+  {
+    metricsUrl,
+    metricsView,
+    productMetricCategory,
+    repairMetricCategory,
+    storeLocation,
+  }: {
+    metricsUrl: string;
+    metricsView: SidebarNavlinks;
+    productMetricCategory: ProductMetricCategory;
+    repairMetricCategory: RepairMetricCategory;
+    storeLocation: AllStoreLocations;
+  },
+) {
+  const storeLocationQuery =
+    metricsView === "directory" || metricsView === "users" ||
+      metricsView === "logout"
+      ? ""
+      : `&storeLocation[$eq]=${storeLocation}`;
+  const metricCategoryQuery = metricsView === "products"
+    ? `&metricCategory[$eq]=${productMetricCategory}`
+    : metricsView === "repairs"
+    ? `&metricCategory[$eq]=${repairMetricCategory}`
+    : "";
+  const urlWithQuery = new URL(
+    `${metricsUrl}/${metricsView}/?${storeLocationQuery}${metricCategoryQuery}`,
+  );
+
+  return urlWithQuery.toString();
+}
+
 function createMetricsForageKey(
   {
     metricsView,
@@ -621,6 +649,7 @@ export {
   captureScreenshot,
   createMetricsForageKey,
   createSafeBoxResult,
+  createURLCacheKey,
   debounce,
   decodeJWTSafe,
   fetchSafe,
