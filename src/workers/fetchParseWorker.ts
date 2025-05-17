@@ -1,9 +1,9 @@
-import { Some } from "ts-results";
+import { None, Ok, Some } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    SafeBoxResult,
+    ResultSafeBox,
     UserDocument,
 } from "../types";
 import {
@@ -17,7 +17,7 @@ import {
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
 type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             parsedServerResponse: HttpServerResponse<Data>;
             decodedToken: DecodedToken;
@@ -56,7 +56,12 @@ self.onmessage = async (
             signal: controller.signal,
         });
         if (responseResult.err || responseResult.val.data.none) {
-            self.postMessage(responseResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: responseResult.val.data,
+                    message: Some("Error fetching data"),
+                }),
+            );
             return;
         }
 
@@ -64,14 +69,19 @@ self.onmessage = async (
             HttpServerResponse<UserDocument>
         >(responseResult.val.data.val);
         if (jsonResult.err || jsonResult.val.data.none) {
-            self.postMessage(jsonResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: jsonResult.val.data,
+                    message: Some("Error extracting JSON from response"),
+                }),
+            );
             return;
         }
 
         if (jsonResult.val.data.val.message === "Invalid credentials") {
-            self.postMessage(createResultSafeBox({
-                data: Some(new Error("Invalid credentials")),
-            }));
+            self.postMessage(
+                new Ok({ data: None, kind: "success" }),
+            );
             return;
         }
 
@@ -108,7 +118,12 @@ self.onmessage = async (
 
         const decodedTokenResult = await decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
-            self.postMessage(decodedTokenResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: decodedTokenResult.val.data,
+                    message: Some("Error decoding JWT"),
+                }),
+            );
             return;
         }
 
@@ -119,10 +134,17 @@ self.onmessage = async (
             }),
             kind: "success",
         }));
-    } catch (err) {
+    } catch (error: unknown) {
         self.postMessage(
             createResultSafeBox({
-                data: Some(err),
+                data: Some(error),
+                message: Some(
+                    error instanceof Error
+                        ? error.message
+                        : typeof error === "string"
+                        ? error
+                        : "Unknown error",
+                ),
             }),
         );
     } finally {

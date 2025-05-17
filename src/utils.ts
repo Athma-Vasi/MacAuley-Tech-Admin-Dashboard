@@ -368,7 +368,7 @@ function createResultSafeBox<Data = unknown>({
   data?: Option<Data>;
   kind?: "error" | "success";
   message?: Option<string>;
-}) {
+}): ResultSafeBox<Data> {
   if (kind === "success") {
     return new Ok({
       data,

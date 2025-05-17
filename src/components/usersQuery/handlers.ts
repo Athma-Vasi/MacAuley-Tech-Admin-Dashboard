@@ -1,9 +1,11 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
+import { Some } from "ts-results";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
-import { UserDocument } from "../../types";
+import { ResultSafeBox, UserDocument } from "../../types";
 import {
+    createResultSafeBox,
     createSafeBoxResult,
     createUsersURLCacheKey,
     getCachedItemSafeAsync,
@@ -181,27 +183,20 @@ async function handleUsersQueryOnmessageCallback(
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
         usersQueryState: UsersQueryState;
     },
-) {
+): Promise<ResultSafeBox<string>> {
     try {
+        const messageEventResult = event.data;
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                message: "Component unmounted",
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
             });
         }
 
-        if (event.data.err) {
-            showBoundary(event.data.val.data);
-            return createSafeBoxResult({
-                data: event.data.val.data,
-                message: event.data.val.message ?? "Error fetching response",
-            });
-        }
-
-        const dataUnwrapped = event.data.val.data;
-        if (dataUnwrapped === undefined) {
-            showBoundary(new Error("No data returned from server"));
-            return createSafeBoxResult({
-                message: "Response is undefined",
+        if (messageEventResult.err || messageEventResult.val.data.none) {
+            showBoundary(messageEventResult.val.data);
+            return createResultSafeBox({
+                data: messageEventResult.val.message,
+                message: messageEventResult.val.message,
             });
         }
 
@@ -212,7 +207,7 @@ async function handleUsersQueryOnmessageCallback(
             newQueryFlag,
             queryString,
             totalDocuments,
-        } = dataUnwrapped;
+        } = messageEventResult.val.data.val;
         const {
             accessToken: newAccessToken,
             kind,
@@ -241,7 +236,9 @@ async function handleUsersQueryOnmessageCallback(
 
             await localforage.clear();
             navigate("/");
-            return createSafeBoxResult({ message: "Logout triggered" });
+            return createResultSafeBox({
+                data: Some("Logout triggered"),
+            });
         }
 
         authDispatch({
@@ -259,9 +256,8 @@ async function handleUsersQueryOnmessageCallback(
                     `Server error: ${message}`,
                 ),
             );
-            return createSafeBoxResult({
-                message,
-                kind: "error",
+            return createResultSafeBox({
+                data: Some(message),
             });
         }
 
@@ -309,16 +305,14 @@ async function handleUsersQueryOnmessageCallback(
             withFUIAndPPUFieldsAdded,
         );
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                message: "Component unmounted",
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
             });
         }
         if (setItemCacheResult.err) {
             showBoundary(setItemCacheResult.val.data);
-            return createSafeBoxResult({
-                data: setItemCacheResult.val.data,
-                message: setItemCacheResult.val.message ??
-                    "Error setting forage item",
+            return createResultSafeBox({
+                data: Some("Error setting cached item"),
             });
         }
 
@@ -343,25 +337,26 @@ async function handleUsersQueryOnmessageCallback(
             payload: false,
         });
 
-        return createSafeBoxResult({
-            data: {
-                userDocuments: sorted,
-                newAccessToken,
-            },
+        return createResultSafeBox({
+            data: Some("User documents fetched successfully"),
             kind: "success",
         });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: error,
-                message: "Component unmounted",
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
             });
         }
 
         showBoundary(error);
-        return createSafeBoxResult({
-            data: error,
-            message: "Error handling message",
+        return createResultSafeBox({
+            data: Some(
+                error instanceof Error
+                    ? error.message
+                    : typeof error === "string"
+                    ? error
+                    : "Unknown error",
+            ),
         });
     }
 }

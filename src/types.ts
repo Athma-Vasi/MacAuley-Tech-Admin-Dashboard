@@ -261,6 +261,7 @@ type HttpServerResponse<Data = unknown> = {
 type SafeBoxSuccess<Data = unknown> = {
   data: Option<Data>;
   kind: "success";
+  message?: Option<string>;
 };
 type SafeBoxError<Error_ = any> = {
   data?: Option<Error_>;

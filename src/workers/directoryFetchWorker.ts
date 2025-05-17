@@ -5,6 +5,7 @@ import { FETCH_REQUEST_TIMEOUT } from "../constants";
 import {
     DecodedToken,
     HttpServerResponse,
+    ResultSafeBox,
     SafeBoxResult,
     UserDocument,
 } from "../types";
@@ -19,7 +20,7 @@ import {
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
 type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             decodedToken: DecodedToken;
             department: DepartmentsWithDefaultKey;
@@ -62,7 +63,12 @@ self.onmessage = async (
             signal: controller.signal,
         });
         if (responseResult.err || responseResult.val.data.none) {
-            self.postMessage(responseResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: responseResult.val.data,
+                    message: Some("Error fetching data"),
+                }),
+            );
             return;
         }
 
@@ -70,7 +76,12 @@ self.onmessage = async (
             HttpServerResponse<UserDocument>
         >(responseResult.val.data.val);
         if (jsonResult.err || jsonResult.val.data.none) {
-            self.postMessage(jsonResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: jsonResult.val.data,
+                    message: Some("Error extracting JSON from response"),
+                }),
+            );
             return;
         }
 
@@ -99,7 +110,12 @@ self.onmessage = async (
 
         const decodedTokenResult = await decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
-            self.postMessage(decodedTokenResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: Some(decodedTokenResult.val.data),
+                    message: Some("Error decoding JWT"),
+                }),
+            );
             return;
         }
 
@@ -116,6 +132,13 @@ self.onmessage = async (
         self.postMessage(
             createResultSafeBox({
                 data: Some(err),
+                message: Some(
+                    err instanceof Error
+                        ? err.message
+                        : typeof err === "string"
+                        ? err
+                        : "Unknown error",
+                ),
             }),
         );
     } finally {

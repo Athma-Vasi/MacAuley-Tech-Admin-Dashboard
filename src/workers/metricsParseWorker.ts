@@ -10,6 +10,7 @@ import {
     BusinessMetricsDocument,
     DecodedToken,
     HttpServerResponse,
+    ResultSafeBox,
     SafeBoxResult,
     UserDocument,
 } from "../types";
@@ -36,7 +37,7 @@ type MessageEventMetricsMainToWorker = MessageEvent<
 >;
 
 type MessageEventMetricsWorkerToMain = MessageEvent<
-    SafeBoxResult<{
+    ResultSafeBox<{
         decodedToken: DecodedToken;
         metricsView: Lowercase<DashboardMetricsView>;
         parsedServerResponse: HttpServerResponse<BusinessMetricsDocument>;
@@ -71,7 +72,12 @@ self.onmessage = async (
             signal: controller.signal,
         });
         if (responseResult.err || responseResult.val.data.none) {
-            self.postMessage(responseResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: responseResult.val.data,
+                    message: Some("Error fetching data"),
+                }),
+            );
             return;
         }
 
@@ -79,14 +85,10 @@ self.onmessage = async (
             HttpServerResponse<UserDocument>
         >(responseResult.val.data.val);
         if (jsonResult.err || jsonResult.val.data.none) {
-            self.postMessage(jsonResult);
-            return;
-        }
-
-        if (jsonResult.val.data.val.message === "User not found") {
             self.postMessage(
                 createResultSafeBox({
-                    data: Some(new Error("User not found")),
+                    data: jsonResult.val.data,
+                    message: Some("Error extracting JSON from response"),
                 }),
             );
             return;
@@ -117,7 +119,12 @@ self.onmessage = async (
 
         const decodedTokenResult = await decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
-            self.postMessage(decodedTokenResult);
+            self.postMessage(
+                createResultSafeBox({
+                    data: decodedTokenResult.val.data,
+                    message: Some("Error decoding JWT"),
+                }),
+            );
             return;
         }
 
@@ -135,6 +142,13 @@ self.onmessage = async (
     } catch (err) {
         self.postMessage(createResultSafeBox({
             data: Some(err),
+            message: Some(
+                err instanceof Error
+                    ? err.message
+                    : typeof err === "string"
+                    ? err
+                    : "Unknown error",
+            ),
         }));
     } finally {
         clearTimeout(timeout);

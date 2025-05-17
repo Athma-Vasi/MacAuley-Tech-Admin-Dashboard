@@ -1,5 +1,6 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
+import { Some } from "ts-results";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
@@ -8,15 +9,16 @@ import {
   BusinessMetricsDocument,
   CustomerMetricsDocument,
   FinancialMetricsDocument,
-  HttpServerResponse,
   ProductMetricsDocument,
   RepairMetricsDocument,
+  ResultSafeBox,
   SafeBoxResult,
   UserDocument,
 } from "../../types";
 import {
   createDirectoryURLCacheKey,
   createMetricsURLCacheKey,
+  createResultSafeBox,
   createSafeBoxResult,
   getCachedItemSafeAsync,
   setCachedItemSafeAsync,
@@ -47,24 +49,18 @@ async function handleMessageEventMetricsFetchWorkerToMain({
   showBoundary: (error: unknown) => void;
 }) {
   try {
+    const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
-    if (event.data.err) {
-      showBoundary(event.data.val.data);
-      return createSafeBoxResult({
-        message: event.data.val.message ?? "Error fetching response",
-      });
-    }
-
-    const dataUnwrapped = event.data.val.data;
-    if (dataUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
+    if (messageEventResult.err || messageEventResult.val.data.none) {
+      showBoundary(messageEventResult.val.data);
+      return createResultSafeBox({
+        data: messageEventResult.val.message,
+        message: messageEventResult.val.message,
       });
     }
 
@@ -75,7 +71,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
       productMetricCategory,
       repairMetricCategory,
       storeLocation,
-    } = dataUnwrapped;
+    } = messageEventResult.val.data.val;
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;
 
@@ -422,36 +418,29 @@ async function handleMessageEventLogoutFetchWorkerToMain({
   localforage: LocalForage;
   navigate: NavigateFunction;
   showBoundary: (error: unknown) => void;
-}): Promise<SafeBoxResult<HttpServerResponse<boolean>>> {
+}): Promise<ResultSafeBox<string>> {
   try {
+    const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
-    if (event.data.err) {
-      showBoundary(event.data.val.data);
-      return createSafeBoxResult({
-        message: event.data.val.message ?? "Error fetching response",
+    if (messageEventResult.err || messageEventResult.val.data.none) {
+      showBoundary(messageEventResult.val.data);
+      return createResultSafeBox({
+        data: messageEventResult.val.message,
+        message: messageEventResult.val.message,
       });
     }
 
-    const dataUnwrapped = event.data.val.data;
-    if (dataUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
-      });
-    }
-
-    const { parsedServerResponse } = dataUnwrapped;
+    const { parsedServerResponse } = messageEventResult.val.data.val;
 
     if (parsedServerResponse.kind === "error") {
       showBoundary(new Error(parsedServerResponse.message));
-      return createSafeBoxResult({
-        message: parsedServerResponse.message,
-        kind: "error",
+      return createResultSafeBox({
+        data: Some(parsedServerResponse.message),
       });
     }
 
@@ -463,22 +452,28 @@ async function handleMessageEventLogoutFetchWorkerToMain({
     await localforage.clear();
     navigate("/");
 
-    return createSafeBoxResult({
-      data: parsedServerResponse,
+    return createResultSafeBox({
+      data: Some("Logout successful"),
       kind: "success",
     });
   } catch (error: unknown) {
     if (
       !isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
     showBoundary(error);
-    return createSafeBoxResult({
-      message: error instanceof Error ? error.message : "Unknown error",
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -610,31 +605,25 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
   navigate?: NavigateFunction;
   showBoundary: (error: unknown) => void;
   toLocation?: string;
-}) {
+}): Promise<ResultSafeBox<string>> {
   try {
+    const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
-    if (event.data.err) {
-      showBoundary(event.data.val.data);
-      return createSafeBoxResult({
-        message: event.data.val.message ?? "Error fetching response",
-      });
-    }
-
-    const dataUnwrapped = event.data.val.data;
-    if (dataUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
+    if (messageEventResult.err || messageEventResult.val.data.none) {
+      showBoundary(messageEventResult.val.data);
+      return createResultSafeBox({
+        data: messageEventResult.val.message,
+        message: messageEventResult.val.message,
       });
     }
 
     const { parsedServerResponse, decodedToken, department, storeLocation } =
-      dataUnwrapped;
+      messageEventResult.val.data.val;
 
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;
@@ -659,8 +648,8 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
 
       await localforage.clear();
       navigate?.("/");
-      return createSafeBoxResult({
-        message: "Logout triggered",
+      return createResultSafeBox({
+        data: Some("Logout triggered"),
       });
     }
 
@@ -679,9 +668,8 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
           `Server error: ${message}`,
         ),
       );
-      return createSafeBoxResult({
-        message,
-        kind: "error",
+      return createResultSafeBox({
+        data: Some(message),
       });
     }
 
@@ -699,9 +687,10 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
     );
     if (setForageItemResult.err) {
       showBoundary(setForageItemResult.val.data);
-      return createSafeBoxResult({
-        message: setForageItemResult.val.message ??
-          "Error setting forage item",
+      return createResultSafeBox({
+        data: Some(
+          setForageItemResult.val.message ?? "Error setting forage item",
+        ),
       });
     }
 
@@ -716,22 +705,28 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
 
     navigate?.(toLocation);
 
-    return createSafeBoxResult({
-      data: true,
+    return createResultSafeBox({
+      data: Some("Directory fetch successful"),
       kind: "success",
     });
   } catch (error) {
     if (
       !isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
     showBoundary(error);
-    return createSafeBoxResult({
-      message: error instanceof Error ? error.message : "Unknown error",
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }

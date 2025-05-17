@@ -1,4 +1,5 @@
 import { NavigateFunction } from "react-router-dom";
+import { Some } from "ts-results";
 import { LOGIN_URL } from "../../constants";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
@@ -6,12 +7,13 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   FinancialMetricsDocument,
-  HttpServerResponse,
+  ResultSafeBox,
   SafeBoxResult,
   UserDocument,
 } from "../../types";
 import {
   createMetricsURLCacheKey,
+  createResultSafeBox,
   createSafeBoxResult,
   setCachedItemSafeAsync,
 } from "../../utils";
@@ -104,38 +106,30 @@ async function handleMessageEventLoginFetchWorkerToMain(
     navigate: NavigateFunction;
     showBoundary: (error: unknown) => void;
   },
-): Promise<
-  SafeBoxResult<
-    HttpServerResponse<
-      {
-        userDocument: UserDocument;
-        financialMetricsDocument: FinancialMetricsDocument;
-      }
-    >
-  >
-> {
+): Promise<ResultSafeBox<string>> {
   try {
+    const messageEventResult = event.data;
     console.log("Login Worker received message:", event.data);
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
-    if (event.data.err) {
-      showBoundary(event.data.val.data);
-      return createSafeBoxResult({
-        message: event.data.val.message ?? "Error fetching response",
+    if (messageEventResult.err) {
+      showBoundary(messageEventResult.val.data);
+      return createResultSafeBox({
+        data: Some("Error from worker"),
       });
     }
 
     console.log("event.data.val.data", event.data.val.data);
 
-    if (event.data.val.kind === "notFound") {
+    if (messageEventResult.val.data.none) {
       loginDispatch({
         action: loginAction.setErrorMessage,
-        payload: event.data.val.message ?? "Invalid credentials",
+        payload: "Invalid credentials",
       });
       loginDispatch({
         action: loginAction.setIsSubmitting,
@@ -146,23 +140,13 @@ async function handleMessageEventLoginFetchWorkerToMain(
         payload: false,
       });
 
-      return createSafeBoxResult({
-        kind: "notFound",
-        message: event.data.val.message ?? "Invalid credentials",
+      return createResultSafeBox({
+        data: Some("Invalid credentials"),
       });
     }
 
-    const dataUnwrapped = event.data.val.data;
-    if (dataUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
-      });
-    }
-
-    console.log({ dataUnwrapped });
-
-    const { parsedServerResponse, decodedToken } = dataUnwrapped;
+    const { parsedServerResponse, decodedToken } =
+      messageEventResult.val.data.val;
     const { accessToken, data, triggerLogout } = parsedServerResponse;
 
     if (triggerLogout) {
@@ -185,8 +169,8 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
       await localforage.clear();
       navigate("/");
-      return createSafeBoxResult({
-        message: "Logout triggered",
+      return createResultSafeBox({
+        data: Some("Logout triggered"),
       });
     }
 
@@ -220,7 +204,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
       storeLocation: "All Locations",
     });
 
-    const setForageItemResult = await setCachedItemSafeAsync<
+    const setCachedItemResult = await setCachedItemSafeAsync<
       FinancialMetricsDocument
     >(
       cacheKey,
@@ -228,14 +212,14 @@ async function handleMessageEventLoginFetchWorkerToMain(
     );
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
-    if (setForageItemResult.err) {
-      showBoundary(setForageItemResult.val.data);
-      return createSafeBoxResult({
-        message: setForageItemResult.val.message ?? "Error setting forage item",
+    if (setCachedItemResult.err) {
+      showBoundary(setCachedItemResult.val.data);
+      return createResultSafeBox({
+        data: Some("Error setting cached item"),
       });
     }
 
@@ -250,21 +234,20 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
     navigate("/dashboard/financials");
 
-    return createSafeBoxResult({
-      data: parsedServerResponse,
+    return createResultSafeBox({
+      data: Some("Login successful"),
       kind: "success",
-      message: "Login successful",
     });
   } catch (error: unknown) {
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
     showBoundary(error);
-    return createSafeBoxResult({
-      message: "Error occurred during login",
+    return createResultSafeBox({
+      data: Some("Error occurred during login"),
     });
   }
 }

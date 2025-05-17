@@ -1,5 +1,7 @@
 import { NavigateFunction } from "react-router-dom";
-import { createSafeBoxResult } from "../../utils";
+import { Some } from "ts-results";
+import { ResultSafeBox } from "../../types";
+import { createResultSafeBox, createSafeBoxResult } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { registerAction } from "./actions";
@@ -75,35 +77,27 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
   },
-) {
+): Promise<ResultSafeBox<string>> {
   try {
+    const messageEventResult = event.data;
     console.log("Worker received message in useEffect:", event.data);
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
-    if (event.data.err) {
-      showBoundary(event.data.val.data);
-      return createSafeBoxResult({
-        message: event.data.val.message ?? "Error fetching response",
+    if (messageEventResult.err || messageEventResult.val.data.none) {
+      showBoundary(messageEventResult.val.data);
+      return createResultSafeBox({
+        data: Some("Error from worker"),
       });
     }
 
     console.log("event.data.val.data", event.data.val.data);
 
-    const dataUnwrapped = event.data.val.data;
-    if (dataUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
-      });
-    }
-
-    console.log({ dataUnwrapped });
-    const { parsedServerResponse } = dataUnwrapped;
+    const { parsedServerResponse } = messageEventResult.val.data.val;
 
     registerDispatch({
       action: registerAction.setIsEmailExistsSubmitting,
@@ -118,40 +112,33 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
           `Server error: ${message}`,
         ),
       );
-      return createSafeBoxResult({
-        message: `Server error: ${message}`,
+      return createResultSafeBox({
+        data: Some(`Server error: ${message}`),
       });
     }
 
-    const [isEmailExists] = data;
-
-    if (isEmailExists === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
+    const [isEmailExists] = data as unknown as [boolean];
 
     registerDispatch({
       action: registerAction.setIsEmailExists,
-      payload: isEmailExists as boolean,
+      payload: isEmailExists,
     });
 
-    return createSafeBoxResult({
-      data: isEmailExists,
+    return createResultSafeBox({
+      data: Some(isEmailExists.toString()),
       kind: "success",
     });
   } catch (error) {
     if (
       !isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
     showBoundary(error);
-    return createSafeBoxResult({
-      message: "Error fetching data",
+    return createResultSafeBox({
+      data: Some("Error fetching data"),
     });
   }
 }
@@ -224,35 +211,27 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
   },
-) {
+): Promise<ResultSafeBox<string>> {
   try {
+    const messageEventResult = event.data;
     console.log("Worker received message in useEffect:", event.data);
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
-    if (event.data.err) {
-      showBoundary(event.data.val.data);
-      return createSafeBoxResult({
-        message: event.data.val.message ?? "Error fetching response",
+    if (messageEventResult.err || messageEventResult.val.data.none) {
+      showBoundary(messageEventResult.val.data);
+      return createResultSafeBox({
+        data: Some("Error from worker"),
       });
     }
 
     console.log("event.data.val.data", event.data.val.data);
 
-    const dataUnwrapped = event.data.val.data;
-    if (dataUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
-      });
-    }
-
-    console.log({ dataUnwrapped });
-    const { parsedServerResponse } = dataUnwrapped;
+    const { parsedServerResponse } = messageEventResult.val.data.val;
 
     registerDispatch({
       action: registerAction.setIsUsernameExistsSubmitting,
@@ -267,40 +246,33 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
           `Server error: ${message}`,
         ),
       );
-      return createSafeBoxResult({
-        message: `Server error: ${message}`,
+      return createResultSafeBox({
+        data: Some(`Server error: ${message}`),
       });
     }
 
-    const [isUsernameExists] = data;
-
-    if (isUsernameExists === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "No data returned from server",
-      });
-    }
+    const [isUsernameExists] = data as unknown as [boolean];
 
     registerDispatch({
       action: registerAction.setIsUsernameExists,
-      payload: isUsernameExists as boolean,
+      payload: isUsernameExists,
     });
 
-    return createSafeBoxResult({
-      data: isUsernameExists,
+    return createResultSafeBox({
+      data: Some(isUsernameExists.toString()),
       kind: "success",
     });
   } catch (error) {
     if (
       !isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
     showBoundary(error);
-    return createSafeBoxResult({
-      message: "Error fetching data",
+    return createResultSafeBox({
+      data: Some("Error fetching data"),
     });
   }
 }
@@ -353,35 +325,27 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
     showBoundary: (error: unknown) => void;
     toLocation: string;
   },
-) {
+): Promise<ResultSafeBox<string>> {
   try {
+    const messageEventResult = event.data;
     console.log("Worker received message in useEffect:", event.data);
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
-    if (event.data.err) {
-      showBoundary(event.data.val.data);
-      return createSafeBoxResult({
-        message: event.data.val.message ?? "Error fetching response",
+    if (messageEventResult.err || messageEventResult.val.data.none) {
+      showBoundary(messageEventResult.val.data);
+      return createResultSafeBox({
+        data: Some("Error from worker"),
       });
     }
 
     console.log("event.data.val.data", event.data.val.data);
 
-    const dataUnwrapped = event.data.val.data;
-    if (dataUnwrapped === undefined) {
-      showBoundary(new Error("No data returned from server"));
-      return createSafeBoxResult({
-        message: "Response is undefined",
-      });
-    }
-
-    console.log({ dataUnwrapped });
-    const { parsedServerResponse } = dataUnwrapped;
+    const { parsedServerResponse } = messageEventResult.val.data.val;
 
     if (parsedServerResponse.kind === "error") {
       registerDispatch({
@@ -399,8 +363,8 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
 
       navigate("/login");
 
-      return createSafeBoxResult({
-        message: parsedServerResponse.message ?? "Error",
+      return createResultSafeBox({
+        data: Some(parsedServerResponse.message),
       });
     }
 
@@ -423,21 +387,21 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
 
     navigate(toLocation);
 
-    return createSafeBoxResult({
-      data: parsedServerResponse.data,
+    return createResultSafeBox({
+      data: Some("Registration successful"),
       kind: "success",
     });
   } catch (error: unknown) {
     if (
       !isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
     showBoundary(error);
-    return createSafeBoxResult({
-      message: "Error fetching data",
+    return createResultSafeBox({
+      data: Some("Error fetching data"),
     });
   }
 }
