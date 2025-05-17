@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { shuffle } from "simple-statistics";
 import { UserDocument } from "../../types";
 import {
     SAMPLE_USER_DOCUMENT,
@@ -478,11 +479,11 @@ function generateFilterPermutations() {
         "storeLocation",
     ]);
 
-    const logicalOperators: Array<LogicalOperator> = [
+    const logicalOperators: Array<LogicalOperator> = shuffle([
         "and",
         "nor",
         "or",
-    ];
+    ]);
 
     return Object.entries(SAMPLE_USER_DOCUMENT).reduce<
         Array<{
@@ -529,14 +530,14 @@ function generateFilterPermutations() {
 }
 
 function generateSearchPermutations() {
-    const generalSearchExclusionValues = [
+    const generalSearchExclusionValues = shuffle([
         "Atlas",
         "Echo",
         "Ember",
         "Luna",
         "Nova",
         "Zephyr",
-    ];
+    ]);
     const generalSearchInclusionValues = Object.entries(SAMPLE_USER_DOCUMENT)
         .reduce(
             (acc, [_key, value]) => {
@@ -548,10 +549,10 @@ function generateSearchPermutations() {
             [] as Array<string>,
         );
 
-    const generalSearchCases: Array<GeneralSearchCase> = [
+    const generalSearchCases: Array<GeneralSearchCase> = shuffle([
         "case-sensitive",
         "case-insensitive",
-    ];
+    ]);
 
     return generalSearchExclusionValues.reduce<
         Array<{
@@ -587,10 +588,10 @@ function generateSearchPermutations() {
 }
 
 function generateSortPermutations() {
-    const sortDirections: Array<SortDirection> = [
+    const sortDirections: Array<SortDirection> = shuffle([
         "ascending",
         "descending",
-    ];
+    ]);
 
     return Object.entries(SAMPLE_USER_DOCUMENT).reduce<
         Array<{
