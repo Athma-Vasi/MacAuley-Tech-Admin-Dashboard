@@ -20,6 +20,7 @@ import {
 } from "./components/dashboard/types";
 import { ValidationKey } from "./validations";
 
+// gives the final flattened type after mapping, intersecting, or conditional logic
 type Prettify<T> =
   & {
     [K in keyof T]: T[K];
