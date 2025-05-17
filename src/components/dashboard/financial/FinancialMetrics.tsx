@@ -76,22 +76,22 @@ function FinancialMetrics(
 
   const isComponentMountedRef = useMountedRef();
 
-  const selectedDateFinancialMetrics = returnSelectedDateFinancialMetrics(
-    {
-      financialMetricsDocument,
-      day: selectedDate,
-      month: selectedMonth,
-      months: MONTHS,
-      year: selectedYear,
-    },
-  );
-
   useEffect(() => {
     if (!financialChartsWorker) {
       return;
     }
 
     if (financialMetricsDocument || !cards || !charts) {
+      const selectedDateFinancialMetrics = returnSelectedDateFinancialMetrics(
+        {
+          financialMetricsDocument,
+          day: selectedDate,
+          month: selectedMonth,
+          months: MONTHS,
+          year: selectedYear,
+        },
+      );
+
       financialChartsWorker.postMessage(
         {
           calendarView,
