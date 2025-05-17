@@ -1,9 +1,12 @@
-type DashboardAction = {
-  setCalendarView: "setCalendarView";
-  setDashboardFetchWorker: "setDashboardFetchWorker";
-  setIsLoading: "setIsLoading";
-  setLoadingMessage: "setLoadingMessage";
-};
+import { Prettify } from "../../types";
+import { DashboardState } from "./types";
+
+type DashboardAction = Prettify<
+  {
+    [K in keyof DashboardState as `set${Capitalize<string & K>}`]:
+      `set${Capitalize<string & K>}`;
+  }
+>;
 
 const dashboardAction: DashboardAction = {
   setCalendarView: "setCalendarView",
