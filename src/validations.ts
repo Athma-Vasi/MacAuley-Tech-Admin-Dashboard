@@ -65,13 +65,25 @@ type ValidationKey =
   | "userDefinedValue"
   | "userId"
   | "username"
-  | "weight";
+  | "weight"
+  | "_id"
+  | "__v";
 
 /**
  * - Validation functions for input fields.
  * - validation === false ? message : ""
  */
 const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
+  _id: [
+    [/^[0-9a-fA-F]$/, "Must contain only hexadecimal characters."],
+    [/^.{24}$/, "Must be 24 characters length."],
+  ],
+
+  __v: [
+    [/^[0-9]+$/, "Must contain only numbers."],
+    [/^.{1,6}$/, "Must be between 1 and 6 characters length."],
+  ],
+
   accessoryType: [
     [
       /^[a-zA-Z0-9\s.,'-]+$/,

@@ -107,7 +107,7 @@ function Chain(
                                     );
 
                                     const timelineText = (
-                                        <Text>
+                                        <Text data-testid="query-link-text">
                                             {`${queryLinkStatement}${
                                                 linkIndex ===
                                                         queryChain.length - 1
@@ -237,7 +237,7 @@ function Chain(
             ? null
             : (
                 <Stack>
-                    <Text size="md">
+                    <Text size="md" data-testid="general-search-link">
                         {`Search ${
                             splitCamelCase(
                                 collectionName,
@@ -263,7 +263,7 @@ function Chain(
         ? null
         : (
             <Stack>
-                <Text size="md">
+                <Text size="md" data-testid="projection-link">
                     {`Return selected ${
                         splitCamelCase(collectionName)
                     } with field${projectionFields.length === 1 ? "" : "s"}:`}

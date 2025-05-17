@@ -7,16 +7,6 @@ import {
     VALID_BOOLEANS,
 } from "../../constants";
 import { UserDocument } from "../../types";
-import { DIRECTORY_USER_DOCUMENTS } from "../directory/data";
-import { initialQueryState } from "../query/state";
-import {
-    GeneralSearchCase,
-    LimitPerPage,
-    LogicalOperator,
-    QueryChains,
-    QueryLink,
-} from "../query/types";
-import { createQueryString } from "../query/utils";
 import { usersQueryAction } from "./actions";
 import { SAMPLE_USER_DOCUMENT } from "./constants";
 import {
@@ -34,7 +24,6 @@ import {
 } from "./reducers";
 import { UsersQueryDispatch } from "./schemas";
 import { initialUsersQueryState } from "./state";
-import { UsersQueryState } from "./types";
 
 describe("usersQueryReducer", () => {
     describe("usersQueryReducer_resetToInitial", () => {

@@ -186,6 +186,20 @@ const USER_QUERY_TEMPLATES: QueryTemplate[] = [
         kind: "date",
         name: "updatedAt",
     },
+
+    {
+        attributes: {} as AccessibleTextInputAttributes,
+        comparisonOperators: new Set(["in"]),
+        kind: "text",
+        name: "_id",
+    },
+
+    {
+        attributes: {} as AccessibleTextInputAttributes,
+        comparisonOperators: new Set(["in"]),
+        kind: "text",
+        name: "__v",
+    },
 ];
 
 const SAMPLE_USER_DOCUMENT = {

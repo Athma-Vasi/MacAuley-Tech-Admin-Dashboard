@@ -88,7 +88,7 @@ function UsersQuery() {
             attributes={{
                 dataTestId: "usersQuery-submit-button",
                 disabledScreenreaderText: "Please fix errors before submitting",
-                disabled: isLoading || isError,
+                // disabled: isLoading,
                 enabledScreenreaderText: "Submit query",
                 kind: "submit",
                 onClick: async (event) => {

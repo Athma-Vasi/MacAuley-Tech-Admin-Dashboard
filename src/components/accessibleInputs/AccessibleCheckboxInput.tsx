@@ -188,7 +188,7 @@ function AccessibleCheckboxInputGroup<
     >,
 ) {
     const {
-        dataTestId = `${attributes.name}-checkboxInputGroup`,
+        dataTestId,
         disabledValuesSet = new Set(),
         inputData,
         name,
@@ -220,6 +220,7 @@ function AccessibleCheckboxInputGroup<
 
     const checkboxes = inputData?.map(({ value, label }, idx) => (
         <Checkbox
+            data-testid={dataTestId ?? `${name}-${value}-checkboxInputGroup`}
             disabled={disabledValuesSet.has(value) ||
                 disabledValuesSet.has(label)}
             key={`${value}-${idx.toString()}`}
@@ -261,7 +262,6 @@ function AccessibleCheckboxInputGroup<
                     : `${name}-deselected`}
                 aria-label={name}
                 aria-required={required}
-                data-testid={dataTestId}
                 description={value.length > 0
                     ? selectedTextElement
                     : deselectedTextElement}
