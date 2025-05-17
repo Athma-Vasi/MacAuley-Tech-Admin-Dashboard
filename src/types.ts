@@ -20,6 +20,12 @@ import {
 } from "./components/dashboard/types";
 import { ValidationKey } from "./validations";
 
+type Prettify<T> =
+  & {
+    [K in keyof T]: T[K];
+  }
+  & {};
+
 type CheckboxRadioSelectData<Payload extends string = string> = Array<{
   label: string;
   value: Payload;
@@ -488,6 +494,7 @@ export type {
   Marketing,
   OfficeAdministration,
   PostalCode,
+  Prettify,
   ProductMetricsDocument,
   Province,
   RepairMetricsDocument,
