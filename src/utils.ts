@@ -412,25 +412,17 @@ async function fetchResponseSafe(
   }
 }
 
-async function fetchSafe(input: RequestInfo | URL, init?: RequestInit): Promise<
-  SafeBoxResult<Response>
-> {
-  try {
-    const response: Response = await fetch(input, init);
-    return new Ok({ data: response, kind: "success" });
-  } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
-  }
-}
-
-async function responseToJSONSafe<Data = unknown>(
+async function extractJSONFromResponseSafe<Data = unknown>(
   response: Response,
-): Promise<SafeBoxResult<Data>> {
+): Promise<ResultSafeBox<Data>> {
   try {
     const data: Data = await response.json();
-    return new Ok({ data, kind: "success" });
+    return new Ok({
+      data: data === null || data === undefined ? None : Some(data),
+      kind: "success",
+    });
   } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
+    return new Err({ data: Some(error), kind: "error" });
   }
 }
 
@@ -755,8 +747,8 @@ export {
   createUsersURLCacheKey,
   debounce,
   decodeJWTSafe,
+  extractJSONFromResponseSafe,
   fetchResponseSafe,
-  fetchSafe,
   formatDate,
   getCachedItemSafeAsync,
   hexToHSL,
@@ -766,7 +758,6 @@ export {
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,
-  responseToJSONSafe,
   returnSliderMarks,
   returnThemeColors,
   returnTimeToRead,

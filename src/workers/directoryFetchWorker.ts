@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { AllStoreLocations } from "../components/dashboard/types";
 import { DepartmentsWithDefaultKey } from "../components/directory/types";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
@@ -11,9 +10,9 @@ import {
 import {
     createSafeBoxResult,
     decodeJWTSafe,
+    extractJSONFromResponseSafe,
     fetchResponseSafe,
     parseServerResponseAsyncSafe,
-    responseToJSONSafe,
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
@@ -60,44 +59,22 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err) {
-            self.postMessage(responseResult);
-            return;
-        }
-        if (responseResult.val.data.none) {
+        if (responseResult.err || responseResult.val.data.none) {
             self.postMessage(responseResult);
             return;
         }
 
-        const zSchema = ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey];
-
-        const jsonResult = await responseToJSONSafe<
-            HttpServerResponse<
-                z.infer<typeof zSchema>
-            >
+        const jsonResult = await extractJSONFromResponseSafe<
+            HttpServerResponse<UserDocument>
         >(responseResult.val.data.val);
-
-        if (jsonResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: jsonResult.val.message ??
-                    "Error parsing JSON",
-            }));
+        if (jsonResult.err || jsonResult.val.data.none) {
+            self.postMessage(jsonResult);
             return;
         }
-
-        const serverResponse = jsonResult.safeUnwrap().data;
-        if (serverResponse === undefined) {
-            self.postMessage(createSafeBoxResult({
-                message: "No data returned from server",
-            }));
-            return;
-        }
-
-        console.log("directoryFetchWorker serverResponse", serverResponse);
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: serverResponse,
-            zSchema,
+            object: jsonResult.val.data.val,
+            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
         if (parsedResult.err) {

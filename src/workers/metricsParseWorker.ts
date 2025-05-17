@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { Some } from "ts-results";
 import { ProductMetricCategory } from "../components/dashboard/product/types";
 import { RepairMetricCategory } from "../components/dashboard/repair/types";
 import {
@@ -11,13 +11,15 @@ import {
     DecodedToken,
     HttpServerResponse,
     SafeBoxResult,
+    UserDocument,
 } from "../types";
 import {
+    createResultSafeBox,
     createSafeBoxResult,
     decodeJWTSafe,
+    extractJSONFromResponseSafe,
     fetchResponseSafe,
     parseServerResponseAsyncSafe,
-    responseToJSONSafe,
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
@@ -68,52 +70,31 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err) {
-            self.postMessage(responseResult);
-            return;
-        }
-        if (responseResult.val.data.none) {
+        if (responseResult.err || responseResult.val.data.none) {
             self.postMessage(responseResult);
             return;
         }
 
-        const zSchema = ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey];
-
-        const jsonResult = await responseToJSONSafe<
-            HttpServerResponse<
-                z.infer<typeof zSchema>
-            >
+        const jsonResult = await extractJSONFromResponseSafe<
+            HttpServerResponse<UserDocument>
         >(responseResult.val.data.val);
-
-        if (jsonResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: jsonResult.val.message ??
-                    "Error parsing JSON",
-            }));
+        if (jsonResult.err || jsonResult.val.data.none) {
+            self.postMessage(jsonResult);
             return;
         }
 
-        const serverResponse = jsonResult.safeUnwrap().data;
-        console.log("metricsParseWorker serverResponse", serverResponse);
-        if (serverResponse === undefined) {
-            self.postMessage(createSafeBoxResult({
-                message: "No data returned from server",
-            }));
-            return;
-        }
-
-        if (serverResponse.message === "User not found") {
-            self.postMessage(createSafeBoxResult({
-                message: "User not found",
-                data: serverResponse,
-            }));
-
+        if (jsonResult.val.data.val.message === "User not found") {
+            self.postMessage(
+                createResultSafeBox({
+                    data: Some(new Error("User not found")),
+                }),
+            );
             return;
         }
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: serverResponse,
-            zSchema,
+            object: jsonResult.val.data.val,
+            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
         if (parsedResult.err) {

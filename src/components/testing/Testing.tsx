@@ -1,12 +1,10 @@
 import { Center, Loader, Stack } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useErrorBoundary } from "react-error-boundary";
-import { Err, Ok } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { CanadianPostalCode, UserSchema } from "../../types";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { DIRECTORY_USER_DOCUMENTS } from "../directory/data";
-import { postUsersToDB } from "./handlers";
 
 function Testing() {
     const { showBoundary } = useErrorBoundary();
@@ -174,28 +172,14 @@ function Testing() {
                 uploadedCount + BATCH,
             );
 
-            const result = await postUsersToDB({
-                body: JSON.stringify({ "schemas": slicedSchemas }),
-                fetchAbortControllerRef,
-                isComponentMountedRef,
-                setIsSubmitting,
-                showBoundary,
-                url: "http://localhost:5000/api/v1/user/bulk",
-            });
-
-            if (result?.err) {
-                showBoundary(
-                    "Error occurred while posting user data",
-                );
-                return new Err(
-                    "Error occurred while posting user data",
-                );
-            }
-
-            const responseResult = result?.val;
-            return new Ok(
-                responseResult,
-            );
+            // const result = await postUsersToDB({
+            //     body: JSON.stringify({ "schemas": slicedSchemas }),
+            //     fetchAbortControllerRef,
+            //     isComponentMountedRef,
+            //     setIsSubmitting,
+            //     showBoundary,
+            //     url: "http://localhost:5000/api/v1/user/bulk",
+            // });
         }
 
         if (schemas.length === 0 || uploadedCount >= schemas.length) {

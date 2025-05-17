@@ -1,12 +1,18 @@
-import { z } from "zod";
+import { Some } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
-import { DecodedToken, HttpServerResponse, SafeBoxResult } from "../types";
 import {
+    DecodedToken,
+    HttpServerResponse,
+    SafeBoxResult,
+    UserDocument,
+} from "../types";
+import {
+    createResultSafeBox,
     createSafeBoxResult,
     decodeJWTSafe,
+    extractJSONFromResponseSafe,
     fetchResponseSafe,
     parseServerResponseAsyncSafe,
-    responseToJSONSafe,
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
@@ -49,68 +55,29 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err) {
-            console.log("err: responseResult.val", responseResult.val);
-            console.log(
-                "err: responseResult.val.data",
-                responseResult.val.data,
-            );
+        if (responseResult.err || responseResult.val.data.none) {
             self.postMessage(responseResult);
             return;
         }
 
-        if (responseResult.val.data.none) {
-            console.log(
-                "none: responseResult.val.data",
-                responseResult.val.data,
-            );
-            self.postMessage(responseResult);
-            return;
-        }
-
-        console.log(
-            "exists : responseResult.val.data",
-            responseResult.val.data,
-        );
-
-        const zSchema = ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey];
-
-        const jsonResult = await responseToJSONSafe<
-            HttpServerResponse<
-                z.infer<typeof zSchema>
-            >
+        const jsonResult = await extractJSONFromResponseSafe<
+            HttpServerResponse<UserDocument>
         >(responseResult.val.data.val);
-
-        if (jsonResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: jsonResult.val.message ??
-                    "Error parsing JSON",
-            }));
+        if (jsonResult.err || jsonResult.val.data.none) {
+            self.postMessage(jsonResult);
             return;
         }
 
-        const serverResponse = jsonResult.safeUnwrap().data;
-        if (serverResponse === undefined) {
-            self.postMessage(createSafeBoxResult({
-                message: "No data returned from server",
+        if (jsonResult.val.data.val.message === "Invalid credentials") {
+            self.postMessage(createResultSafeBox({
+                data: Some(new Error("Invalid credentials")),
             }));
-            return;
-        }
-
-        console.log("fetchParseWorker serverResponse", serverResponse);
-
-        if (serverResponse.message === "Invalid credentials") {
-            self.postMessage(createSafeBoxResult({
-                message: serverResponse.message,
-                data: serverResponse,
-            }));
-
             return;
         }
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: serverResponse,
-            zSchema,
+            object: jsonResult.val.data.val,
+            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
         if (parsedResult.err) {
