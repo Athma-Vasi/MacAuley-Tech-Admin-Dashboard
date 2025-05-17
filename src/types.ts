@@ -5,7 +5,7 @@ import {
   MantineTheme,
   MantineThemeOverride,
 } from "@mantine/core";
-import type { Result } from "ts-results";
+import type { Option, Result } from "ts-results";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import {
@@ -258,6 +258,21 @@ type HttpServerResponse<Data = unknown> = {
   triggerLogout: boolean;
 };
 
+type SafeBoxSuccess<Data = unknown> = {
+  data: Option<Data>;
+  kind: "success";
+};
+type SafeBoxError<Data = any> = {
+  data: Option<Data>;
+  kind: "error";
+  message: Option<string>;
+};
+
+type ResultSafeBox<Data = unknown> = Result<
+  SafeBoxSuccess<Data>,
+  SafeBoxError<Data>
+>;
+
 type SafeBox<Data = unknown> = {
   data?: Data;
   kind: "error" | "notFound" | "success";
@@ -500,6 +515,7 @@ export type {
   Province,
   RepairMetricsDocument,
   RepairTechnicians,
+  ResultSafeBox,
   SafeBox,
   SafeBoxResult,
   Sales,

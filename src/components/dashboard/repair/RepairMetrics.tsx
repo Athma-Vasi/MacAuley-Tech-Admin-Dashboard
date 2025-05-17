@@ -75,14 +75,6 @@ function RepairMetrics(
 
   const isComponentMountedRef = useMountedRef();
 
-  const selectedDateRepairMetrics = returnSelectedDateRepairMetrics({
-    repairMetricsDocument,
-    day: selectedDate,
-    month: selectedMonth,
-    months: MONTHS,
-    year: selectedYear,
-  });
-
   useEffect(() => {
     const newRepairChartsWorker = new RepairChartsWorker();
 
@@ -112,7 +104,16 @@ function RepairMetrics(
     if (
       repairMetricsDocument || !cards || !charts
     ) {
+      const selectedDateRepairMetrics = returnSelectedDateRepairMetrics({
+        repairMetricsDocument,
+        day: selectedDate,
+        month: selectedMonth,
+        months: MONTHS,
+        year: selectedYear,
+      });
+
       console.log("Repair Charts Worker Main sending message");
+
       repairChartsWorker?.postMessage(
         {
           calendarView,

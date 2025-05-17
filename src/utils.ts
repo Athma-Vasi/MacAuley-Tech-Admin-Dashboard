@@ -1,6 +1,6 @@
 import html2canvas from "html2canvas";
 import jwtDecode from "jwt-decode";
-import { Err, Ok } from "ts-results";
+import { Err, None, Ok, Option } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
 import { ColorsSwatches } from "./constants";
 
@@ -447,6 +447,30 @@ function parseSafeSync(
   }
 }
 
+function createResultSafeBox<Data = unknown>({
+  data = None,
+  kind = "error",
+  message = None,
+}: {
+  data: Option<Data>;
+  kind?: "error" | "success";
+  message?: Option<string>;
+}) {
+  if (kind === "success") {
+    return new Ok({
+      data: data as Data,
+      kind,
+      message,
+    });
+  }
+
+  return new Err({
+    data,
+    kind,
+    message,
+  });
+}
+
 type SafeBoxResultSuccess<Data = unknown> = {
   data: Data;
   kind?: "success";
@@ -704,6 +728,7 @@ export {
   createDirectoryURLCacheKey,
   createMetricsForageKey,
   createMetricsURLCacheKey,
+  createResultSafeBox,
   createSafeBoxResult,
   createUsersURLCacheKey,
   debounce,
