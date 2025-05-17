@@ -37,6 +37,7 @@ const registerAction: RegisterAction = {
   setPostalCodeUS: "setPostalCodeUS",
   setProfilePictureUrl: "setProfilePictureUrl",
   setProvince: "setProvince",
+  setRegisterWorker: "setRegisterWorker",
   setState: "setState",
   setStepsInError: "setStepsInError",
   setStepsWithEmptyInputs: "setStepsWithEmptyInputs",

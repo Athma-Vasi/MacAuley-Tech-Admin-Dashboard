@@ -2,6 +2,7 @@ import { Card, Flex, Stack, Text, Title } from "@mantine/core";
 import { TbAlertCircle, TbX } from "react-icons/tb";
 import { TEXT_SHADOW } from "../../constants";
 import { UserSchema } from "../../types";
+import { ValidationKey } from "../../validations";
 import { REGISTER_STEPS } from "./constants";
 import { SAMPLE_USER_DOCUMENT } from "./testData";
 
@@ -171,8 +172,53 @@ function generateUserSchemas(amount = 20): UserSchema[] {
     });
 }
 
+function returnIsRegisterSubmitButtonDisabled(
+    {
+        confirmPassword,
+        email,
+        filesInError,
+        inputsInError,
+        isEmailExists,
+        isEmailExistsSubmitting,
+        isError,
+        isSubmitting,
+        isUsernameExists,
+        isUsernameExistsSubmitting,
+        password,
+        stepsInError,
+        username,
+    }: {
+        confirmPassword: string;
+        email: string;
+        password: string;
+        username: string;
+        filesInError: Map<string, boolean>;
+        inputsInError: Set<ValidationKey>;
+        isEmailExists: boolean;
+        isEmailExistsSubmitting: boolean;
+        isError: boolean;
+        isSubmitting: boolean;
+        isUsernameExists: boolean;
+        isUsernameExistsSubmitting: boolean;
+        stepsInError: Set<number>;
+    },
+) {
+    return !username || !email || !password ||
+        !confirmPassword || isUsernameExists || isEmailExists ||
+        isError || stepsInError.size > 0 || inputsInError.size > 0 ||
+        isEmailExistsSubmitting || isUsernameExistsSubmitting ||
+        isSubmitting ||
+        Array.from(filesInError).reduce((acc, curr) => {
+            const [_fileName, isFileInError] = curr;
+            acc.add(isFileInError);
+
+            return acc;
+        }, new Set()).has(true);
+}
+
 export {
     createFileSectionInFormReview,
     generateUserSchemas,
+    returnIsRegisterSubmitButtonDisabled,
     returnRegisterStepperCard,
 };

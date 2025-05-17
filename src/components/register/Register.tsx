@@ -14,15 +14,12 @@ import { useErrorBoundary } from "react-error-boundary";
 
 import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  AUTH_URL,
-  COLORS_SWATCHES,
-  FETCH_REQUEST_TIMEOUT,
-} from "../../constants";
-import { useFetchAbortControllerRef, useMountedRef } from "../../hooks";
+import { AUTH_URL, COLORS_SWATCHES } from "../../constants";
+import { useMountedRef } from "../../hooks";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { FormReview, UserSchema } from "../../types";
 import { returnThemeColors } from "../../utils";
+import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
@@ -32,11 +29,12 @@ import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
 import {
   handleCheckEmail,
-  handleCheckEmailOnmessageCallback,
   handleCheckUsername,
-  handleCheckUsernameOnmessageCallback,
+  handleMessageEventCheckEmailWorkerToMain,
+  handleMessageEventCheckUsernameWorkerToMain,
+  handleMessageEventRegisterFetchWorkerToMain,
   handlePrevNextStepClick,
-  handleRegisterButtonClick,
+  handleRegisterButtonSubmit,
 } from "./handlers";
 import { registerReducer } from "./reducers";
 import { RegisterAddress } from "./RegisterAddress";
@@ -44,9 +42,9 @@ import { RegisterAuthentication } from "./RegisterAuthentication";
 import { RegisterPersonal } from "./RegisterPersonal";
 import { initialRegisterState } from "./state";
 import { StepperFormReview } from "./StepperFormReview";
-import { CheckUsernameEmailMessageEvent } from "./types";
 import {
   createFileSectionInFormReview,
+  returnIsRegisterSubmitButtonDisabled,
   returnRegisterStepperCard,
 } from "./utils";
 
@@ -85,6 +83,7 @@ function Register() {
     postalCodeUS,
     profilePictureUrl,
     province,
+    registerWorker,
     state,
     stepsInError,
     stepsWithEmptyInputs,
@@ -97,19 +96,37 @@ function Register() {
   } = useGlobalState();
 
   const { showBoundary } = useErrorBoundary();
-
+  const isComponentMountedRef = useMountedRef();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const newRegisterWorker = new FetchParseWorker();
+    registerDispatch({
+      action: registerAction.setRegisterWorker,
+      payload: newRegisterWorker,
+    });
+    newRegisterWorker.onmessage = async (
+      event: MessageEventFetchWorkerToMain<boolean>,
+    ) => {
+      await handleMessageEventRegisterFetchWorkerToMain({
+        event,
+        isComponentMountedRef,
+        navigate,
+        registerDispatch,
+        showBoundary,
+        toLocation: "/login",
+      });
+    };
+
     const newCheckUsernameWorker = new FetchParseWorker();
     registerDispatch({
       action: registerAction.setCheckUsernameWorker,
       payload: newCheckUsernameWorker,
     });
     newCheckUsernameWorker.onmessage = async (
-      event: CheckUsernameEmailMessageEvent,
+      event: MessageEventFetchWorkerToMain<boolean>,
     ) => {
-      await handleCheckUsernameOnmessageCallback({
+      await handleMessageEventCheckUsernameWorkerToMain({
         event,
         isComponentMountedRef,
         registerDispatch,
@@ -123,9 +140,9 @@ function Register() {
       payload: newCheckEmailWorker,
     });
     newCheckEmailWorker.onmessage = async (
-      event: CheckUsernameEmailMessageEvent,
+      event: MessageEventFetchWorkerToMain<boolean>,
     ) => {
-      await handleCheckEmailOnmessageCallback({
+      await handleMessageEventCheckEmailWorkerToMain({
         event,
         isComponentMountedRef,
         registerDispatch,
@@ -137,6 +154,7 @@ function Register() {
       isComponentMountedRef.current = false;
       newCheckUsernameWorker.terminate();
       newCheckEmailWorker.terminate();
+      newRegisterWorker.terminate();
     };
   }, []);
 
@@ -157,21 +175,6 @@ function Register() {
       email,
     });
   }, [email]);
-
-  const fetchAbortControllerRef = useFetchAbortControllerRef();
-  const isComponentMountedRef = useMountedRef();
-
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      fetchAbortControllerRef?.current?.abort("Request timed out");
-    }, FETCH_REQUEST_TIMEOUT);
-
-    return () => {
-      clearTimeout(timerId);
-      fetchAbortControllerRef?.current?.abort("Component unmounted");
-      isComponentMountedRef.current = false;
-    };
-  }, []);
 
   console.log("registerState", registerState);
 
@@ -235,15 +238,21 @@ function Register() {
     />
   );
 
-  const isSubmitButtonDisabled = !username || !email || !password ||
-    !confirmPassword || isUsernameExists || isEmailExists ||
-    isError || stepsInError.size > 0 || inputsInError.size > 0 ||
-    Array.from(filesInError).reduce((acc, curr) => {
-      const [_fileName, isFileInError] = curr;
-      acc.add(isFileInError);
-
-      return acc;
-    }, new Set()).has(true);
+  const isSubmitButtonDisabled = returnIsRegisterSubmitButtonDisabled({
+    confirmPassword,
+    email,
+    filesInError,
+    inputsInError,
+    isEmailExists,
+    isEmailExistsSubmitting,
+    isError,
+    isSubmitting,
+    isUsernameExists,
+    isUsernameExistsSubmitting,
+    password,
+    stepsInError,
+    username,
+  });
 
   const submitButton = (
     <AccessibleButton
@@ -308,14 +317,10 @@ function Register() {
             JSON.stringify({ schema }),
           );
 
-          await handleRegisterButtonClick({
-            fetchAbortControllerRef,
+          await handleRegisterButtonSubmit({
             formData,
-            isComponentMountedRef,
-            navigate,
             registerDispatch,
-            showBoundary,
-            toLocation: "/login",
+            registerWorker,
             url: REGISTER_URL,
           });
         },

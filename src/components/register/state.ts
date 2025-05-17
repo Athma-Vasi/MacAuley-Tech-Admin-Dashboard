@@ -29,6 +29,7 @@ const initialRegisterState: RegisterState = {
   postalCodeUS: "12345",
   profilePictureUrl: "",
   province: "Alberta",
+  registerWorker: null,
   state: "Alabama",
   stepsInError: new Set(),
   stepsWithEmptyInputs: new Set(),

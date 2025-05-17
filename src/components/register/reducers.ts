@@ -31,6 +31,7 @@ import {
   setPostalCodeUSRegisterDispatchZod,
   setProfilePictureUrlRegisterDispatchZod,
   setProvinceRegisterDispatchZod,
+  setRegisterWorkerRegisterDispatchZod,
   setStateRegisterDispatchZod,
   setStepsInErrorRegisterDispatchZod,
   setStepsWithEmptyInputsRegisterDispatchZod,
@@ -99,6 +100,7 @@ const registerReducers = new Map<
     registerAction.setCheckEmailWorker,
     registerReducer_setCheckEmailWorker,
   ],
+  [registerAction.setRegisterWorker, registerReducer_setRegisterWorker],
 ]);
 
 function registerReducer_setInputsInError(
@@ -696,6 +698,22 @@ function registerReducer_setCheckEmailWorker(
   };
 }
 
+function registerReducer_setRegisterWorker(
+  state: RegisterState,
+  dispatch: RegisterDispatch,
+): RegisterState {
+  const parsedResult = parseSafeSync({
+    object: dispatch,
+    zSchema: setRegisterWorkerRegisterDispatchZod,
+  });
+
+  if (parsedResult.err) {
+    return state;
+  }
+
+  return { ...state, registerWorker: parsedResult.safeUnwrap().data?.payload };
+}
+
 export {
   registerReducer,
   registerReducer_setActiveStep,
@@ -724,6 +742,7 @@ export {
   registerReducer_setPostalCodeUS,
   registerReducer_setProfilePictureUrl,
   registerReducer_setProvince,
+  registerReducer_setRegisterWorker,
   registerReducer_setState,
   registerReducer_setStepsInError,
   registerReducer_setStepsWithEmptyInputs,

@@ -1,17 +1,14 @@
 import {
   CanadianPostalCode,
   Country,
-  DecodedToken,
   Department,
-  HttpServerResponse,
   JobPosition,
   Province,
-  SafeBoxResult,
   StatesUS,
   USPostalCode,
 } from "../../types";
 import { ValidationKey } from "../../validations";
-import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
+import { AllStoreLocations } from "../dashboard/types";
 import type { RegisterAction } from "./actions";
 
 type RegisterState = {
@@ -43,6 +40,7 @@ type RegisterState = {
   postalCodeUS: USPostalCode;
   profilePictureUrl: string;
   province: Province;
+  registerWorker: Worker | null;
   state: StatesUS;
   stepsInError: Set<number>;
   stepsWithEmptyInputs: Set<number>;
@@ -50,16 +48,4 @@ type RegisterState = {
   username: string;
 };
 
-type CheckUsernameEmailMessageEvent = MessageEvent<
-  SafeBoxResult<
-    {
-      decodedToken: DecodedToken;
-      parsedServerResponse: HttpServerResponse<
-        boolean
-      >;
-      metricsView?: Lowercase<DashboardMetricsView>;
-    }
-  >
->;
-
-export type { CheckUsernameEmailMessageEvent, RegisterAction, RegisterState };
+export type { RegisterAction, RegisterState };

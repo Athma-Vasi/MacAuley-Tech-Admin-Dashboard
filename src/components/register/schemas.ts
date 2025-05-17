@@ -149,7 +149,13 @@ const setCheckEmailWorkerRegisterDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const setRegisterWorkerRegisterDispatchZod = z.object({
+    action: z.literal(registerAction.setRegisterWorker),
+    payload: z.instanceof(Worker),
+});
+
 type RegisterDispatch =
+    | z.infer<typeof setRegisterWorkerRegisterDispatchZod>
     | z.infer<typeof setConfirmPasswordRegisterDispatchZod>
     | z.infer<typeof setEmailRegisterDispatchZod>
     | z.infer<typeof setIsEmailExistsRegisterDispatchZod>
@@ -213,6 +219,7 @@ export {
     setPostalCodeUSRegisterDispatchZod,
     setProfilePictureUrlRegisterDispatchZod,
     setProvinceRegisterDispatchZod,
+    setRegisterWorkerRegisterDispatchZod,
     setStateRegisterDispatchZod,
     setStepsInErrorRegisterDispatchZod,
     setStepsWithEmptyInputsRegisterDispatchZod,
