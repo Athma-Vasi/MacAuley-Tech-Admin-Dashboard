@@ -2,8 +2,8 @@ import { FileInput, MantineNumberSize, MantineSize, Text } from "@mantine/core";
 import { Dispatch } from "react";
 
 import {
-    getForageItemSafe,
-    setForageItemSafe,
+    getCachedItemSafeAsync,
+    setCachedItemSafeAsync,
     splitCamelCase,
 } from "../../utils";
 import { createImageInputForageKeys } from "./image/utils";
@@ -102,7 +102,7 @@ function AccessibleFileInput<
             name={name}
             onBlur={onBlur}
             onChange={async (payload: OriginalFile) => {
-                const originalFilesResult = await getForageItemSafe<
+                const originalFilesResult = await getCachedItemSafeAsync<
                     Array<OriginalFile>
                 >(
                     originalFilesForageKey,
@@ -112,13 +112,13 @@ function AccessibleFileInput<
                         originalFilesResult.safeUnwrap().data ?? [];
                     originalFiles.push(payload);
 
-                    await setForageItemSafe(
+                    await setCachedItemSafeAsync(
                         originalFilesForageKey,
                         originalFiles,
                     );
                 }
 
-                const modifiedFilesResult = await getForageItemSafe<
+                const modifiedFilesResult = await getCachedItemSafeAsync<
                     Array<ModifiedFile>
                 >(
                     modifiedFilesForageKey,
@@ -129,12 +129,12 @@ function AccessibleFileInput<
                             [];
                     modifiedFiles.push(payload);
 
-                    await setForageItemSafe(
+                    await setCachedItemSafeAsync(
                         modifiedFilesForageKey,
                         modifiedFiles,
                     );
                 }
-                const fileNamesResult = await getForageItemSafe<
+                const fileNamesResult = await getCachedItemSafeAsync<
                     Array<string>
                 >(
                     fileNamesForageKey,
@@ -146,7 +146,7 @@ function AccessibleFileInput<
                         payload?.name ?? "Unknown file name",
                     );
 
-                    await setForageItemSafe(
+                    await setCachedItemSafeAsync(
                         fileNamesForageKey,
                         fileNamesUnwrapped,
                     );

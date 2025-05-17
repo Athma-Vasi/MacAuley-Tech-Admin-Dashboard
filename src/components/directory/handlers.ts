@@ -3,7 +3,7 @@ import { UserDocument } from "../../types";
 import {
     createDirectoryURLCacheKey,
     createSafeBoxResult,
-    getForageItemSafe,
+    getCachedItemSafeAsync,
 } from "../../utils";
 import { AllStoreLocations } from "../dashboard/types";
 import { DepartmentsWithDefaultKey } from "./types";
@@ -49,7 +49,7 @@ async function handleDirectoryDepartmentAndLocationClicks(
     });
 
     try {
-        const userDocumentsResult = await getForageItemSafe<
+        const userDocumentsResult = await getCachedItemSafeAsync<
             UserDocument[]
         >(cacheKey);
 

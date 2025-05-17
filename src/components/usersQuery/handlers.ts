@@ -6,14 +6,13 @@ import { UserDocument } from "../../types";
 import {
     createSafeBoxResult,
     createUsersURLCacheKey,
-    getForageItemSafe,
-    setForageItemSafe,
+    getCachedItemSafeAsync,
+    setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventUsersQueryWorkerToMain } from "../../workers/usersQueryWorker";
 import { usersQueryAction } from "./actions";
 import { UsersQueryDispatch } from "./schemas";
 import { UsersQueryState } from "./types";
-import { None, Some } from "ts-results";
 
 async function handleUsersQuerySubmitGETClick(
     {
@@ -71,7 +70,7 @@ async function handleUsersQuerySubmitGETClick(
     });
 
     try {
-        const userDocumentsResult = await getForageItemSafe<
+        const userDocumentsResult = await getCachedItemSafeAsync<
             UserDocument[]
         >(cacheKey);
 
@@ -305,7 +304,7 @@ async function handleUsersQueryOnmessageCallback(
             url,
         });
 
-        const setItemCacheResult = await setForageItemSafe(
+        const setItemCacheResult = await setCachedItemSafeAsync(
             cacheKey,
             withFUIAndPPUFieldsAdded,
         );

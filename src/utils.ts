@@ -388,11 +388,11 @@ async function responseToJSONSafe<Data = unknown>(
   }
 }
 
-type GetForageItemSafe = <Data = unknown>(
+type GetCachedItemSafeAsync = <Data = unknown>(
   key: string,
 ) => Promise<SafeBoxResult<Data>>;
 
-async function getForageItemSafe<Data = unknown>(
+async function getCachedItemSafeAsync<Data = unknown>(
   key: string,
 ): Promise<SafeBoxResult<Data>> {
   try {
@@ -407,12 +407,12 @@ async function getForageItemSafe<Data = unknown>(
   }
 }
 
-type SetForageItemSafe = <Data = unknown>(
+type SetCachedItemSafeAsync = <Data = unknown>(
   key: string,
   value: Data,
 ) => Promise<SafeBoxResult<undefined>>;
 
-async function setForageItemSafe<Data = unknown>(
+async function setCachedItemSafeAsync<Data = unknown>(
   key: string,
   value: Data,
 ): Promise<SafeBoxResult<undefined>> {
@@ -710,7 +710,7 @@ export {
   decodeJWTSafe,
   fetchSafe,
   formatDate,
-  getForageItemSafe,
+  getCachedItemSafeAsync,
   hexToHSL,
   modifyImageSafe,
   parseSafeSync,
@@ -722,10 +722,10 @@ export {
   returnSliderMarks,
   returnThemeColors,
   returnTimeToRead,
-  setForageItemSafe,
+  setCachedItemSafeAsync,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
   toFixedFloat,
   urlBuilder,
 };
-export type { GetForageItemSafe, ModifyImageSafe, SetForageItemSafe };
+export type { GetCachedItemSafeAsync, ModifyImageSafe, SetCachedItemSafeAsync };

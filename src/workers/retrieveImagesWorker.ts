@@ -4,7 +4,7 @@ import {
 import { MAX_IMAGES } from "../components/accessibleInputs/image/constants";
 import { createImageInputForageKeys } from "../components/accessibleInputs/image/utils";
 import { SafeBoxResult } from "../types";
-import { createSafeBoxResult, getForageItemSafe } from "../utils";
+import { createSafeBoxResult, getCachedItemSafeAsync } from "../utils";
 
 type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
     SafeBoxResult<
@@ -49,7 +49,7 @@ self.onmessage = async (
     );
 
     try {
-        const modifiedFilesResult = await getForageItemSafe<
+        const modifiedFilesResult = await getCachedItemSafeAsync<
             Array<ModifiedFile>
         >(
             modifiedFilesForageKey,
@@ -63,7 +63,7 @@ self.onmessage = async (
         }
         const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
 
-        const fileNamesResult = await getForageItemSafe<Array<string>>(
+        const fileNamesResult = await getCachedItemSafeAsync<Array<string>>(
             fileNamesForageKey,
         );
         if (fileNamesResult.err) {
@@ -75,7 +75,7 @@ self.onmessage = async (
         }
         const fileNames = fileNamesResult.safeUnwrap().data ?? [];
 
-        const qualitiesResult = await getForageItemSafe<Array<number>>(
+        const qualitiesResult = await getCachedItemSafeAsync<Array<number>>(
             qualitiesForageKey,
         );
         if (qualitiesResult.err) {
@@ -90,7 +90,7 @@ self.onmessage = async (
             () => 10,
         );
 
-        const orientationsResult = await getForageItemSafe<Array<number>>(
+        const orientationsResult = await getCachedItemSafeAsync<Array<number>>(
             orientationsForageKey,
         );
         if (orientationsResult.err) {

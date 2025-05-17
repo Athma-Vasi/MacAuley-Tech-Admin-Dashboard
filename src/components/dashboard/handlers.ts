@@ -12,8 +12,8 @@ import {
 import {
     createMetricsURLCacheKey,
     createSafeBoxResult,
-    GetForageItemSafe,
-    SetForageItemSafe,
+    GetCachedItemSafeAsync,
+    SetCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import { dashboardAction } from "./actions";
@@ -30,7 +30,7 @@ async function handleStoreAndCategoryClicks(
         accessToken,
         dashboardDispatch,
         dashboardFetchWorker,
-        getForageItemSafe,
+        getCachedItemSafeAsync,
         globalDispatch,
         isComponentMountedRef,
         metricsUrl,
@@ -43,7 +43,7 @@ async function handleStoreAndCategoryClicks(
         accessToken: string;
         dashboardDispatch: React.Dispatch<DashboardDispatch>;
         dashboardFetchWorker: Worker | null;
-        getForageItemSafe: GetForageItemSafe;
+        getCachedItemSafeAsync: GetCachedItemSafeAsync;
         globalDispatch: React.Dispatch<GlobalDispatch>;
         isComponentMountedRef: React.RefObject<boolean>;
         metricsUrl: string;
@@ -76,7 +76,7 @@ async function handleStoreAndCategoryClicks(
     });
 
     try {
-        const metricsDocumentResult = await getForageItemSafe<
+        const metricsDocumentResult = await getCachedItemSafeAsync<
             BusinessMetricsDocument
         >(cacheKey);
 
@@ -176,7 +176,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         isComponentMountedRef,
         metricsUrl,
         navigateFn,
-        setForageItemSafe,
+        setCachedItemSafeAsync,
         showBoundary,
     }: {
         authDispatch: React.Dispatch<AuthDispatch>;
@@ -186,7 +186,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         isComponentMountedRef: React.RefObject<boolean>;
         metricsUrl: string;
         navigateFn: NavigateFunction;
-        setForageItemSafe: SetForageItemSafe;
+        setCachedItemSafeAsync: SetCachedItemSafeAsync;
         showBoundary: (error: any) => void;
     },
 ) {
@@ -303,7 +303,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             storeLocation,
         });
 
-        const setForageItemResult = await setForageItemSafe<
+        const setForageItemResult = await setCachedItemSafeAsync<
             BusinessMetricsDocument
         >(
             cacheKey,

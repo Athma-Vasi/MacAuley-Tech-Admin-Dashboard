@@ -11,9 +11,9 @@ import {
 import { SafeBoxResult } from "../types";
 import {
     createSafeBoxResult,
-    getForageItemSafe,
+    getCachedItemSafeAsync,
     modifyImageSafe,
-    setForageItemSafe,
+    setCachedItemSafeAsync,
 } from "../utils";
 
 type MessageEventModifyImagesWorkerToMain = MessageEvent<
@@ -80,7 +80,7 @@ self.onmessage = async (
     );
 
     try {
-        const originalFilesResult = await getForageItemSafe<
+        const originalFilesResult = await getCachedItemSafeAsync<
             Array<OriginalFile>
         >(originalFilesForageKey);
         console.log(
@@ -139,7 +139,7 @@ self.onmessage = async (
             });
         }
 
-        const modifiedFilesResult = await getForageItemSafe<
+        const modifiedFilesResult = await getCachedItemSafeAsync<
             Array<ModifiedFile>
         >(modifiedFilesForageKey);
         console.log(
@@ -159,7 +159,7 @@ self.onmessage = async (
                 index === currentImageIndex ? fileBlob : modifiedFile,
         );
 
-        const setForageItemSafeResult = await setForageItemSafe(
+        const setForageItemSafeResult = await setCachedItemSafeAsync(
             modifiedFilesForageKey,
             updatedModifiedFiles,
         );
@@ -186,7 +186,7 @@ self.onmessage = async (
             index === currentImageIndex ? quality : q
         );
 
-        const setQualitiesResult = await setForageItemSafe(
+        const setQualitiesResult = await setCachedItemSafeAsync(
             qualitiesForageKey,
             clonedQualities,
         );
@@ -208,7 +208,7 @@ self.onmessage = async (
             index === currentImageIndex ? orientation : o
         );
 
-        const setOrientationsResult = await setForageItemSafe(
+        const setOrientationsResult = await setCachedItemSafeAsync(
             orientationsForageKey,
             clonedOrientations,
         );
@@ -224,7 +224,7 @@ self.onmessage = async (
             return;
         }
 
-        const fileNamesResult = await getForageItemSafe<
+        const fileNamesResult = await getCachedItemSafeAsync<
             Array<string>
         >(fileNamesForageKey);
         console.log(

@@ -2,9 +2,9 @@ import { EImageType } from "image-conversion";
 import { SafeBoxResult } from "../../../types";
 import {
     createSafeBoxResult,
-    GetForageItemSafe,
+    GetCachedItemSafeAsync,
     ModifyImageSafe,
-    SetForageItemSafe,
+    SetCachedItemSafeAsync,
 } from "../../../utils";
 import { MessageEventModifyImagesWorkerToMain } from "../../../workers/modifyImagesWorker";
 import { MessageEventRetrieveImagesWorkerToMain } from "../../../workers/retrieveImagesWorker";
@@ -17,7 +17,7 @@ import { createImageInputForageKeys, validateImages } from "./utils";
 async function handleResetImageClick(
     {
         accessibleImageInputDispatch,
-        getForageItemSafe,
+        getCachedItemSafeAsync,
         index,
         isComponentMountedRef,
         storageKey,
@@ -25,7 +25,7 @@ async function handleResetImageClick(
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
-        getForageItemSafe: GetForageItemSafe;
+        getCachedItemSafeAsync: GetCachedItemSafeAsync;
         index: number;
         isComponentMountedRef: React.RefObject<boolean>;
         storageKey: string;
@@ -45,7 +45,7 @@ async function handleResetImageClick(
     );
 
     try {
-        const originalFilesResult = await getForageItemSafe<
+        const originalFilesResult = await getCachedItemSafeAsync<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (!isComponentMounted) {
@@ -94,19 +94,19 @@ async function handleRemoveImageClick<
 >(
     {
         accessibleImageInputDispatch,
-        getForageItemSafe,
+        getCachedItemSafeAsync,
         index,
         invalidValueAction,
         isComponentMountedRef,
         parentDispatch,
-        setForageItemSafe,
+        setCachedItemSafeAsync,
         storageKey,
         validValueAction,
     }: {
         accessibleImageInputDispatch: React.Dispatch<
             AccessibleImageInputDispatch
         >;
-        getForageItemSafe: GetForageItemSafe;
+        getCachedItemSafeAsync: GetCachedItemSafeAsync;
         index: number;
         invalidValueAction: InvalidValueAction;
         isComponentMountedRef: React.RefObject<boolean>;
@@ -120,7 +120,7 @@ async function handleRemoveImageClick<
                 payload: SetFilesInErrorPayload;
             }
         >;
-        setForageItemSafe: SetForageItemSafe;
+        setCachedItemSafeAsync: SetCachedItemSafeAsync;
         storageKey: string;
         validValueAction: ValidValueAction;
     },
@@ -141,7 +141,7 @@ async function handleRemoveImageClick<
     );
 
     try {
-        const modifiedFilesResult = await getForageItemSafe<
+        const modifiedFilesResult = await getCachedItemSafeAsync<
             Array<ModifiedFile>
         >(modifiedFilesForageKey);
         if (!isComponentMounted) {
@@ -157,7 +157,7 @@ async function handleRemoveImageClick<
         const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
         modifiedFiles?.splice(index, 1);
 
-        const setModifiedFilesResult = await setForageItemSafe(
+        const setModifiedFilesResult = await setCachedItemSafeAsync(
             modifiedFilesForageKey,
             modifiedFiles,
         );
@@ -172,7 +172,7 @@ async function handleRemoveImageClick<
             });
         }
 
-        const originalFilesResult = await getForageItemSafe<
+        const originalFilesResult = await getCachedItemSafeAsync<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (!isComponentMounted) {
@@ -189,7 +189,7 @@ async function handleRemoveImageClick<
         const originalFiles = originalFilesResult.safeUnwrap().data ?? [];
         originalFiles?.splice(index, 1);
 
-        await setForageItemSafe(
+        await setCachedItemSafeAsync(
             originalFilesForageKey,
             originalFiles,
         );
@@ -199,7 +199,7 @@ async function handleRemoveImageClick<
             });
         }
 
-        const fileNamesResult = await getForageItemSafe<Array<string>>(
+        const fileNamesResult = await getCachedItemSafeAsync<Array<string>>(
             fileNamesForageKey,
         );
         if (!isComponentMounted) {
@@ -217,7 +217,7 @@ async function handleRemoveImageClick<
         const existingFileName = fileNames[index];
         fileNames?.splice(index, 1);
 
-        await setForageItemSafe(
+        await setCachedItemSafeAsync(
             fileNamesForageKey,
             fileNames,
         );
@@ -432,7 +432,7 @@ async function handleImageQualityOrientationSliderChange<
         accessibleImageInputDispatch,
         currentImageIndex,
         fileNames,
-        getForageItemSafe,
+        getCachedItemSafeAsync,
         isComponentMountedRef,
         invalidValueAction,
         maxImageSize,
@@ -442,7 +442,7 @@ async function handleImageQualityOrientationSliderChange<
         parentDispatch,
         qualities,
         qualityValue,
-        setForageItemSafe,
+        setCachedItemSafeAsync,
         showBoundary,
         storageKey,
         validValueAction,
@@ -452,7 +452,7 @@ async function handleImageQualityOrientationSliderChange<
         >;
         currentImageIndex: number;
         fileNames: string[];
-        getForageItemSafe: GetForageItemSafe;
+        getCachedItemSafeAsync: GetCachedItemSafeAsync;
         isComponentMountedRef: React.RefObject<boolean>;
         invalidValueAction: InvalidValueAction;
         maxImageSize: number;
@@ -471,7 +471,7 @@ async function handleImageQualityOrientationSliderChange<
         >;
         qualities: number[];
         qualityValue?: number;
-        setForageItemSafe: SetForageItemSafe;
+        setCachedItemSafeAsync: SetCachedItemSafeAsync;
         showBoundary: (error: Error) => void;
         storageKey: string;
         validValueAction: ValidValueAction;
@@ -494,7 +494,7 @@ async function handleImageQualityOrientationSliderChange<
     );
 
     try {
-        const originalFilesResult = await getForageItemSafe<
+        const originalFilesResult = await getCachedItemSafeAsync<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (!isComponentMounted) {
@@ -563,7 +563,7 @@ async function handleImageQualityOrientationSliderChange<
             },
         });
 
-        const modifiedFilesResult = await getForageItemSafe<
+        const modifiedFilesResult = await getCachedItemSafeAsync<
             Array<ModifiedFile>
         >(modifiedFilesForageKey);
         if (!isComponentMounted) {
@@ -584,7 +584,7 @@ async function handleImageQualityOrientationSliderChange<
                 index === currentImageIndex ? fileBlob : modifiedFile,
         );
 
-        await setForageItemSafe(
+        await setCachedItemSafeAsync(
             modifiedFilesForageKey,
             updatedModifiedFiles,
         );
@@ -637,7 +637,7 @@ async function handleImageQualityOrientationSliderChange<
             const clonedQualities = structuredClone(qualities);
             clonedQualities[currentImageIndex] = qualityValue;
 
-            await setForageItemSafe(
+            await setCachedItemSafeAsync(
                 qualitiesForageKey,
                 clonedQualities,
             );
@@ -657,7 +657,7 @@ async function handleImageQualityOrientationSliderChange<
             const clonedOrientations = structuredClone(orientations);
             clonedOrientations[currentImageIndex] = orientationValue;
 
-            await setForageItemSafe(
+            await setCachedItemSafeAsync(
                 orientationsForageKey,
                 clonedOrientations,
             );

@@ -18,8 +18,8 @@ import {
   createDirectoryURLCacheKey,
   createMetricsURLCacheKey,
   createSafeBoxResult,
-  getForageItemSafe,
-  setForageItemSafe,
+  getCachedItemSafeAsync,
+  setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
@@ -163,7 +163,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
           storeLocation,
         });
 
-        const setForageItemResult = await setForageItemSafe<
+        const setForageItemResult = await setCachedItemSafeAsync<
           BusinessMetricsDocument
         >(
           cacheKey,
@@ -260,7 +260,7 @@ async function handleMetricCategoryNavClick(
   });
 
   try {
-    const metricsDocumentResult = await getForageItemSafe<
+    const metricsDocumentResult = await getCachedItemSafeAsync<
       BusinessMetricsDocument
     >(cacheKey);
 
@@ -530,7 +530,7 @@ async function handleDirectoryNavClick(
   });
 
   try {
-    const userDocumentsResult = await getForageItemSafe<
+    const userDocumentsResult = await getCachedItemSafeAsync<
       UserDocument[]
     >(urlWithQuery.toString());
 
@@ -693,7 +693,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
       storeLocation,
     });
 
-    const setForageItemResult = await setForageItemSafe<UserDocument[]>(
+    const setForageItemResult = await setCachedItemSafeAsync<UserDocument[]>(
       cacheKey,
       userDocuments,
     );

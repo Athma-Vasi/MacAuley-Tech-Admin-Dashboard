@@ -30,9 +30,9 @@ import {
   RepairMetricsDocument,
 } from "../../types";
 import {
-  getForageItemSafe,
+  getCachedItemSafeAsync,
   returnThemeColors,
-  setForageItemSafe,
+  setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
@@ -133,7 +133,7 @@ function Dashboard() {
         isComponentMountedRef,
         metricsUrl: METRICS_URL,
         navigateFn,
-        setForageItemSafe,
+        setCachedItemSafeAsync,
         showBoundary,
       });
     };
@@ -191,7 +191,7 @@ function Dashboard() {
             accessToken,
             dashboardDispatch,
             dashboardFetchWorker,
-            getForageItemSafe,
+            getCachedItemSafeAsync,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
@@ -220,7 +220,7 @@ function Dashboard() {
             accessToken,
             dashboardDispatch,
             dashboardFetchWorker,
-            getForageItemSafe,
+            getCachedItemSafeAsync,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
@@ -261,7 +261,7 @@ function Dashboard() {
             accessToken,
             dashboardDispatch,
             dashboardFetchWorker,
-            getForageItemSafe,
+            getCachedItemSafeAsync,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,

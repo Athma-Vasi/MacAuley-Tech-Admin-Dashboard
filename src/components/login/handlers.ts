@@ -13,7 +13,7 @@ import {
 import {
   createMetricsURLCacheKey,
   createSafeBoxResult,
-  setForageItemSafe,
+  setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { loginAction } from "./actions";
@@ -220,7 +220,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
       storeLocation: "All Locations",
     });
 
-    const setForageItemResult = await setForageItemSafe<
+    const setForageItemResult = await setCachedItemSafeAsync<
       FinancialMetricsDocument
     >(
       cacheKey,

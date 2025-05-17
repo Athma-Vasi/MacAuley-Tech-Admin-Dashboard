@@ -18,10 +18,10 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useMountedRef } from "../../../hooks/useMountedRef";
 import {
     addCommaSeparator,
-    getForageItemSafe,
+    getCachedItemSafeAsync,
     modifyImageSafe,
     returnThemeColors,
-    setForageItemSafe,
+    setCachedItemSafeAsync,
 } from "../../../utils";
 import { MessageEventRetrieveImagesWorkerToMain } from "../../../workers/retrieveImagesWorker";
 import RetrieveImagesWorker from "../../../workers/retrieveImagesWorker?worker";
@@ -318,12 +318,12 @@ function AccessibleImageInput<
                     ) => {
                         await handleRemoveImageClick({
                             accessibleImageInputDispatch,
-                            getForageItemSafe,
+                            getCachedItemSafeAsync,
                             index,
                             invalidValueAction,
                             isComponentMountedRef,
                             parentDispatch,
-                            setForageItemSafe,
+                            setCachedItemSafeAsync,
                             storageKey,
                             validValueAction,
                         });
@@ -345,7 +345,7 @@ function AccessibleImageInput<
                         isComponentMountedRef.current = true;
                         await handleResetImageClick({
                             accessibleImageInputDispatch,
-                            getForageItemSafe,
+                            getCachedItemSafeAsync,
                             index,
                             isComponentMountedRef,
                             storageKey,
@@ -405,7 +405,7 @@ function AccessibleImageInput<
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
                                 fileNames,
-                                getForageItemSafe,
+                                getCachedItemSafeAsync,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
@@ -414,7 +414,7 @@ function AccessibleImageInput<
                                 parentDispatch,
                                 qualities,
                                 qualityValue: value,
-                                setForageItemSafe,
+                                setCachedItemSafeAsync,
                                 showBoundary,
                                 storageKey,
                                 validValueAction,
@@ -475,7 +475,7 @@ function AccessibleImageInput<
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
                                 fileNames,
-                                getForageItemSafe,
+                                getCachedItemSafeAsync,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
@@ -484,7 +484,7 @@ function AccessibleImageInput<
                                 orientationValue: value,
                                 parentDispatch,
                                 qualities,
-                                setForageItemSafe,
+                                setCachedItemSafeAsync,
                                 showBoundary,
                                 storageKey,
                                 validValueAction,
