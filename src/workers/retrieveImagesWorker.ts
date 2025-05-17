@@ -1,10 +1,15 @@
+import { Some } from "ts-results";
 import {
     ModifiedFile,
 } from "../components/accessibleInputs/AccessibleFileInput";
 import { MAX_IMAGES } from "../components/accessibleInputs/image/constants";
 import { createImageInputForageKeys } from "../components/accessibleInputs/image/utils";
 import { SafeBoxResult } from "../types";
-import { createSafeBoxResult, getCachedItemSafeAsync } from "../utils";
+import {
+    createResultSafeBox,
+    createSafeBoxResult,
+    getCachedItemSafeAsync,
+} from "../utils";
 
 type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
     SafeBoxResult<
@@ -125,19 +130,31 @@ self.onmessage = async (
 };
 
 self.onerror = (event: string | Event) => {
-    console.error("Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: event,
-        kind: "error",
+    console.error("Repair Charts Worker error:", event);
+    self.postMessage(createResultSafeBox({
+        data: Some(event),
+        message: Some(
+            event instanceof Error
+                ? event.message
+                : typeof event === "string"
+                ? event
+                : "Unknown error",
+        ),
     }));
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        kind: "error",
-        message: `Promise error: ${event.reason?.message || event.reason}`,
+    self.postMessage(createResultSafeBox({
+        data: Some(event.reason),
+        message: Some(
+            event.reason instanceof Error
+                ? event.reason.message
+                : typeof event.reason === "string"
+                ? event.reason
+                : "Unknown error",
+        ),
     }));
 });
 

@@ -384,17 +384,6 @@ function createResultSafeBox<Data = unknown>({
   });
 }
 
-async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
-  token: string,
-): Promise<SafeBoxResult<Decoded>> {
-  try {
-    const decoded: Decoded = jwtDecode(token);
-    return new Ok({ data: decoded, kind: "success" });
-  } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
-  }
-}
-
 async function fetchResponseSafe(
   input: RequestInfo | URL,
   init?: RequestInit,
@@ -419,6 +408,20 @@ async function extractJSONFromResponseSafe<Data = unknown>(
     const data: Data = await response.json();
     return new Ok({
       data: data === null || data === undefined ? None : Some(data),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({ data: Some(error), kind: "error" });
+  }
+}
+
+async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
+  token: string,
+): Promise<ResultSafeBox<Decoded>> {
+  try {
+    const decoded: Decoded = jwtDecode(token);
+    return new Ok({
+      data: decoded === null || decoded === undefined ? None : Some(decoded),
       kind: "success",
     });
   } catch (error: unknown) {

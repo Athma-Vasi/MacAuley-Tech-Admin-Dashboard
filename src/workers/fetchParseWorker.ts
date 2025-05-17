@@ -107,50 +107,55 @@ self.onmessage = async (
         const { accessToken } = parsedServerResponse;
 
         const decodedTokenResult = await decodeJWTSafe(accessToken);
-        if (decodedTokenResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: decodedTokenResult.val.message ??
-                    "Error decoding JWT",
-            }));
+        if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
+            self.postMessage(decodedTokenResult);
             return;
         }
 
-        const decodedToken = decodedTokenResult.safeUnwrap().data;
-        if (decodedToken === undefined) {
-            self.postMessage(createSafeBoxResult({
-                message: "No data returned from JWT",
-            }));
-            return;
-        }
-
-        self.postMessage(createSafeBoxResult({
-            data: { parsedServerResponse, decodedToken },
+        self.postMessage(createResultSafeBox({
+            data: Some({
+                parsedServerResponse,
+                decodedToken: decodedTokenResult.val.data.val,
+            }),
             kind: "success",
         }));
     } catch (err) {
-        self.postMessage(createSafeBoxResult({
-            data: err,
-            kind: "error",
-        }));
+        self.postMessage(
+            createResultSafeBox({
+                data: Some(err),
+            }),
+        );
     } finally {
         clearTimeout(timeout);
     }
 };
 
 self.onerror = (event: string | Event) => {
-    console.error("Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: event,
-        kind: "error",
+    console.error("Fetch Parse Worker error:", event);
+    self.postMessage(createResultSafeBox({
+        data: Some(event),
+        message: Some(
+            event instanceof Error
+                ? event.message
+                : typeof event === "string"
+                ? event
+                : "Unknown error",
+        ),
     }));
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        kind: "error",
-        message: `Promise error: ${event.reason?.message || event.reason}`,
+    self.postMessage(createResultSafeBox({
+        data: Some(event.reason),
+        message: Some(
+            event.reason instanceof Error
+                ? event.reason.message
+                : typeof event.reason === "string"
+                ? event.reason
+                : "Unknown error",
+        ),
     }));
 });
 
