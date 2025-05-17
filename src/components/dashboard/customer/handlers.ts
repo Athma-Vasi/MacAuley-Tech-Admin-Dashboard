@@ -1,4 +1,5 @@
-import { createSafeBoxResult } from "../../../utils";
+import { Some } from "ts-results";
+import { createResultSafeBox } from "../../../utils";
 import { MessageEventCustomerWorkerToMain } from "../../../workers/customerChartsWorker";
 import { customerMetricsAction } from "./actions";
 import { CustomerMetricsDispatch } from "./types";
@@ -15,44 +16,43 @@ async function handleMessageEventCustomerWorkerToMain({
     showBoundary: (error: unknown) => void;
 }) {
     try {
-        console.log("Worker received message:", event.data);
+        console.log("Customer Worker received message:", event.data);
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                message: "Component unmounted",
+            return createResultSafeBox({
+                data: Some(new Error("Component unmounted")),
             });
         }
 
-        if (event.data.err) {
-            showBoundary(event.data.val.data);
-            return createSafeBoxResult({
-                message: event.data.val.message ?? "Error fetching response",
+        const { err, val } = event.data;
+
+        if (err) {
+            showBoundary(val);
+
+            return createResultSafeBox({
+                data: Some(val),
+                message: val.message,
             });
         }
 
-        console.log("event.data.val.data", event.data.val.data);
+        if (val.data.none) {
+            const error = new Error("No data from worker");
+            showBoundary(error);
 
-        const dataUnwrapped = event.data.val.data;
-        if (dataUnwrapped === undefined) {
-            showBoundary(new Error("No data returned from server"));
-            return createSafeBoxResult({
-                message: "Response is undefined",
+            return createResultSafeBox({
+                data: Some(error),
             });
         }
-
-        console.log({ dataUnwrapped });
 
         const {
             currentYear,
             previousYear,
-            customerMetricsCards,
             customerMetricsCharts,
-        } = dataUnwrapped;
+            customerMetricsCards,
+        } = val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                message: "Component unmounted",
-            });
+            return;
         }
 
         customerMetricsDispatch({
@@ -73,22 +73,21 @@ async function handleMessageEventCustomerWorkerToMain({
             payload: customerMetricsCards,
         });
 
-        return createSafeBoxResult({
-            data: true,
+        return createResultSafeBox({
+            data: event.data.val.data,
             kind: "success",
         });
     } catch (error: unknown) {
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: error,
-                kind: "error",
+            return createResultSafeBox({
+                data: Some(new Error("Component unmounted")),
             });
         }
 
         showBoundary(error);
-        return createSafeBoxResult({
-            data: error,
-            kind: "error",
+        return createResultSafeBox({
+            data: Some(error),
+            message: Some("Error in worker"),
         });
     }
 }

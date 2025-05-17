@@ -77,20 +77,20 @@ function CustomerMetrics(
 
   const isComponentMountedRef = useMountedRef();
 
-  const selectedDateCustomerMetrics = returnSelectedDateCustomerMetrics({
-    customerMetricsDocument,
-    day: selectedDate,
-    month: selectedMonth,
-    months: MONTHS,
-    year: selectedYear,
-  });
-
   useEffect(() => {
     if (!customerChartsWorker) {
       return;
     }
 
     if (customerMetricsDocument || !cards || !charts) {
+      const selectedDateCustomerMetrics = returnSelectedDateCustomerMetrics({
+        customerMetricsDocument,
+        day: selectedDate,
+        month: selectedMonth,
+        months: MONTHS,
+        year: selectedYear,
+      });
+
       customerChartsWorker.postMessage(
         {
           calendarView,
