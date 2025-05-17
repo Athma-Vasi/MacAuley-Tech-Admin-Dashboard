@@ -262,15 +262,15 @@ type SafeBoxSuccess<Data = unknown> = {
   data: Option<Data>;
   kind: "success";
 };
-type SafeBoxError<Data = any> = {
-  data: Option<Data>;
+type SafeBoxError<Error_ = any> = {
+  data?: Option<Error_>;
   kind: "error";
-  message: Option<string>;
+  message?: Option<string>;
 };
 
-type ResultSafeBox<Data = unknown> = Result<
+type ResultSafeBox<Data = unknown, Error_ = any> = Result<
   SafeBoxSuccess<Data>,
-  SafeBoxError<Data>
+  SafeBoxError<Error_>
 >;
 
 type SafeBox<Data = unknown> = {

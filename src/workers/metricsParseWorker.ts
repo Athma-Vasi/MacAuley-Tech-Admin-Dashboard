@@ -15,7 +15,7 @@ import {
 import {
     createSafeBoxResult,
     decodeJWTSafe,
-    fetchSafe,
+    fetchResponseSafe,
     parseServerResponseAsyncSafe,
     responseToJSONSafe,
 } from "../utils";
@@ -64,23 +64,16 @@ self.onmessage = async (
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
     try {
-        const responseResult = await fetchSafe(url, {
+        const responseResult = await fetchResponseSafe(url, {
             ...requestInit,
             signal: controller.signal,
         });
         if (responseResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: responseResult.val.message ??
-                    "Error fetching response",
-            }));
+            self.postMessage(responseResult);
             return;
         }
-
-        const responseUnwrapped = responseResult.safeUnwrap().data;
-        if (responseUnwrapped === undefined) {
-            self.postMessage(createSafeBoxResult({
-                message: "Response is undefined",
-            }));
+        if (responseResult.val.data.none) {
+            self.postMessage(responseResult);
             return;
         }
 
@@ -90,7 +83,7 @@ self.onmessage = async (
             HttpServerResponse<
                 z.infer<typeof zSchema>
             >
-        >(responseUnwrapped);
+        >(responseResult.val.data.val);
 
         if (jsonResult.err) {
             self.postMessage(createSafeBoxResult({
@@ -111,7 +104,6 @@ self.onmessage = async (
 
         if (serverResponse.message === "User not found") {
             self.postMessage(createSafeBoxResult({
-                kind: "notFound",
                 message: "User not found",
                 data: serverResponse,
             }));

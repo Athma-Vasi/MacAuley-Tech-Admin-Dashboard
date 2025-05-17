@@ -1,6 +1,6 @@
 import html2canvas from "html2canvas";
 import jwtDecode from "jwt-decode";
-import { Err, None, Ok, Option } from "ts-results";
+import { Err, None, Ok, Option, Some } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
 import { ColorsSwatches } from "./constants";
 
@@ -12,7 +12,12 @@ import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
 import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
-import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
+import {
+  DecodedToken,
+  ResultSafeBox,
+  SafeBoxResult,
+  ThemeObject,
+} from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -355,6 +360,30 @@ function urlBuilder({
   return new URL(`${protocol}://${host}:${port}/api/v1/${path}${query}${hash}`);
 }
 
+function createResultSafeBox<Data = unknown>({
+  data = None,
+  kind = "error",
+  message = None,
+}: {
+  data?: Option<Data>;
+  kind?: "error" | "success";
+  message?: Option<string>;
+}) {
+  if (kind === "success") {
+    return new Ok({
+      data,
+      kind,
+      message,
+    });
+  }
+
+  return new Err({
+    data,
+    kind,
+    message,
+  });
+}
+
 async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
   token: string,
 ): Promise<SafeBoxResult<Decoded>> {
@@ -363,6 +392,23 @@ async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
     return new Ok({ data: decoded, kind: "success" });
   } catch (error: unknown) {
     return new Err({ data: error, kind: "error" });
+  }
+}
+
+async function fetchResponseSafe(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<
+  ResultSafeBox<Response>
+> {
+  try {
+    const response: Response = await fetch(input, init);
+    return new Ok({
+      data: response === null || response === undefined ? None : Some(response),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({ data: Some(error), kind: "error" });
   }
 }
 
@@ -445,30 +491,6 @@ function parseSafeSync(
   } catch (error: unknown) {
     return new Err({ data: error, kind: "error" });
   }
-}
-
-function createResultSafeBox<Data = unknown>({
-  data = None,
-  kind = "error",
-  message = None,
-}: {
-  data: Option<Data>;
-  kind?: "error" | "success";
-  message?: Option<string>;
-}) {
-  if (kind === "success") {
-    return new Ok({
-      data: data as Data,
-      kind,
-      message,
-    });
-  }
-
-  return new Err({
-    data,
-    kind,
-    message,
-  });
 }
 
 type SafeBoxResultSuccess<Data = unknown> = {
@@ -733,6 +755,7 @@ export {
   createUsersURLCacheKey,
   debounce,
   decodeJWTSafe,
+  fetchResponseSafe,
   fetchSafe,
   formatDate,
   getCachedItemSafeAsync,
