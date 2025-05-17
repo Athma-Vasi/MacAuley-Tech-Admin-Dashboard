@@ -70,14 +70,6 @@ function ProductMetrics(
   const { showBoundary } = useErrorBoundary();
   const isComponentMountedRef = useMountedRef();
 
-  const selectedDateProductMetrics = returnSelectedDateProductMetrics({
-    productMetricsDocument,
-    day: selectedDate,
-    month: selectedMonth,
-    months: MONTHS,
-    year: selectedYear,
-  });
-
   const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
@@ -89,6 +81,14 @@ function ProductMetrics(
     }
 
     if (productMetricsDocument || !cards || !charts) {
+      const selectedDateProductMetrics = returnSelectedDateProductMetrics({
+        productMetricsDocument,
+        day: selectedDate,
+        month: selectedMonth,
+        months: MONTHS,
+        year: selectedYear,
+      });
+
       productChartsWorker.postMessage(
         {
           calendarView,

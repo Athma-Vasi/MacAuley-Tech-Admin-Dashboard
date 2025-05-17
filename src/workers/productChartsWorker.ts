@@ -1,3 +1,4 @@
+import { Some } from "ts-results";
 import { MONTHS } from "../components/dashboard/constants";
 import {
     createProductMetricsCards,
@@ -11,16 +12,16 @@ import {
     SelectedDateProductMetrics,
 } from "../components/dashboard/product/chartsData";
 import { DashboardCalendarView } from "../components/dashboard/types";
-import { ProductMetricsDocument, SafeBoxResult } from "../types";
-import { createSafeBoxResult } from "../utils";
+import { ProductMetricsDocument, ResultSafeBox } from "../types";
+import { createResultSafeBox } from "../utils";
 
 type MessageEventProductWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             currentYear: ProductMetricsCalendarCharts;
             previousYear: ProductMetricsCalendarCharts;
-            productMetricsCards: ProductMetricsCards;
             productMetricsCharts: ProductMetricsCharts;
+            productMetricsCards: ProductMetricsCards;
         }
     >
 >;
@@ -29,8 +30,8 @@ type MessageEventProductMainToWorker = MessageEvent<
         calendarView: DashboardCalendarView;
         cardBgGradient: string;
         greenColorShade: string;
-        productMetricsDocument: ProductMetricsDocument;
         redColorShade: string;
+        productMetricsDocument: ProductMetricsDocument;
         selectedDateProductMetrics: SelectedDateProductMetrics;
         selectedYYYYMMDD: string;
     }
@@ -40,13 +41,12 @@ self.onmessage = async (
     event: MessageEventProductMainToWorker,
 ) => {
     console.log(
-        "Product Charts Worker received message in self",
+        "Product Charts Worker received message",
     );
 
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: new Error("No data received"),
-            kind: "error",
+        self.postMessage(createResultSafeBox({
+            data: Some(new Error("No data received")),
         }));
         return;
     }
@@ -55,8 +55,8 @@ self.onmessage = async (
         calendarView,
         cardBgGradient,
         greenColorShade,
-        productMetricsDocument,
         redColorShade,
+        productMetricsDocument,
         selectedDateProductMetrics,
         selectedYYYYMMDD,
     } = event.data;
@@ -82,38 +82,52 @@ self.onmessage = async (
             selectedDateProductMetrics,
         });
 
-        self.postMessage(createSafeBoxResult({
-            data: {
+        self.postMessage(createResultSafeBox({
+            data: Some({
                 currentYear,
                 previousYear,
-                productMetricsCards,
                 productMetricsCharts,
-            },
+                productMetricsCards,
+            }),
             kind: "success",
         }));
     } catch (error) {
-        console.error("Worker error:", error);
-        self.postMessage(createSafeBoxResult({
-            data: error,
-            kind: "error",
+        console.error("Product Charts Worker error:", error);
+        self.postMessage(createResultSafeBox({
+            data: Some(error),
+            message: Some(
+                error instanceof Error ? error.message : "Unknown error",
+            ),
         }));
     }
 };
 
 self.onerror = (event: string | Event) => {
-    console.error("Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: event,
-        kind: "error",
+    console.error("Product Charts Worker error:", event);
+    self.postMessage(createResultSafeBox({
+        data: Some(event),
+        message: Some(
+            event instanceof Error
+                ? event.message
+                : typeof event === "string"
+                ? event
+                : "Unknown error",
+        ),
     }));
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        kind: "error",
-        message: `Promise error: ${event.reason?.message || event.reason}`,
+    self.postMessage(createResultSafeBox({
+        data: Some(event.reason),
+        message: Some(
+            event.reason instanceof Error
+                ? event.reason.message
+                : typeof event.reason === "string"
+                ? event.reason
+                : "Unknown error",
+        ),
     }));
 });
 

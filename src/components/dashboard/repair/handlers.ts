@@ -25,8 +25,6 @@ async function handleMessageEventRepairWorkerToMain({
         }
 
         const { err, val } = event.data;
-        console.log("err:", err);
-        console.log("val:", val);
 
         if (err) {
             showBoundary(val);
@@ -38,7 +36,7 @@ async function handleMessageEventRepairWorkerToMain({
         }
 
         if (val.data.none) {
-            const error = new Error("No data returned from worker");
+            const error = new Error("No data from worker");
             showBoundary(error);
 
             return createResultSafeBox({

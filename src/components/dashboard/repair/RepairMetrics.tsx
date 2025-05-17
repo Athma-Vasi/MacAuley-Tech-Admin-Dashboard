@@ -101,6 +101,10 @@ function RepairMetrics(
   }, []);
 
   useEffect(() => {
+    if (!repairChartsWorker) {
+      return;
+    }
+
     if (
       repairMetricsDocument || !cards || !charts
     ) {
@@ -114,7 +118,7 @@ function RepairMetrics(
 
       console.log("Repair Charts Worker Main sending message");
 
-      repairChartsWorker?.postMessage(
+      repairChartsWorker.postMessage(
         {
           calendarView,
           cardBgGradient,

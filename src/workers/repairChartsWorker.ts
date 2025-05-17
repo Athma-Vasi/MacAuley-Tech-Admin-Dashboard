@@ -81,13 +81,6 @@ self.onmessage = async (
             selectedDateRepairMetrics,
         });
 
-        console.log({
-            currentYear,
-            previousYear,
-            repairMetricsCharts,
-            repairMetricsCards,
-        });
-
         self.postMessage(createResultSafeBox({
             data: Some({
                 currentYear,
