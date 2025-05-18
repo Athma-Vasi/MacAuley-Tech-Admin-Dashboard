@@ -35,14 +35,14 @@ function sidebarReducer_setClickedNavlink(
         zSchema: setClickedNavlinkSidebarDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        clickedNavlink: parsedResult.safeUnwrap().data
-            ?.payload as SidebarNavlinks,
+        clickedNavlink: parsedResult.val.data.val
+            .payload as SidebarNavlinks,
     };
 }
 
@@ -55,13 +55,13 @@ function sidebarReducer_setDirectoryFetchWorker(
         zSchema: setDirectoryFetchWorkerSidebarDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        directoryFetchWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+        directoryFetchWorker: parsedResult.val.data.val.payload as Worker,
     };
 }
 
@@ -74,13 +74,13 @@ function sidebarReducer_setLogoutFetchWorker(
         zSchema: setLogoutFetchWorkerSidebarDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        logoutFetchWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+        logoutFetchWorker: parsedResult.val.data.val.payload as Worker,
     };
 }
 
@@ -93,13 +93,13 @@ function sidebarReducer_setMetricsFetchWorker(
         zSchema: setMetricsFetchWorkerSidebarDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        metricsFetchWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+        metricsFetchWorker: parsedResult.val.data.val.payload as Worker,
     };
 }
 
