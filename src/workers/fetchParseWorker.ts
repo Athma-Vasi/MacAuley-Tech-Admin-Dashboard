@@ -90,31 +90,25 @@ self.onmessage = async (
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
-        if (parsedResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: parsedResult.val.message ??
-                    "Error parsing server response",
-            }));
-            return;
-        }
-
-        const parsedServerResponse = parsedResult.safeUnwrap().data;
-        if (parsedServerResponse === undefined) {
-            self.postMessage(createSafeBoxResult({
-                message: "No data returned from server",
-            }));
+        if (parsedResult.err || parsedResult.val.data.none) {
+            self.postMessage(
+                createResultSafeBox({
+                    data: parsedResult.val.data,
+                    message: Some("Error parsing server response"),
+                }),
+            );
             return;
         }
 
         if (skipTokenDecode) {
             self.postMessage(createSafeBoxResult({
-                data: { parsedServerResponse },
+                data: { parsedServerResponse: parsedResult.val.data.val },
                 kind: "success",
             }));
             return;
         }
 
-        const { accessToken } = parsedServerResponse;
+        const { accessToken } = parsedResult.val.data.val;
 
         const decodedTokenResult = await decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
@@ -129,7 +123,7 @@ self.onmessage = async (
 
         self.postMessage(createResultSafeBox({
             data: Some({
-                parsedServerResponse,
+                parsedServerResponse: parsedResult.val.data.val,
                 decodedToken: decodedTokenResult.val.data.val,
             }),
             kind: "success",

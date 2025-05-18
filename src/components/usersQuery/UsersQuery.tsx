@@ -165,6 +165,8 @@ function UsersQuery() {
                         usersFetchWorker,
                         usersQueryDispatch,
                         usersQueryState,
+                    }).then((result) => {
+                        console.log("Result from pagination", result);
                     });
                 }}
                 total={pages}

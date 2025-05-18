@@ -563,7 +563,7 @@ async function parseServerResponseAsyncSafe(
     zSchema: z.ZodSchema;
     object: Record<string, unknown>;
   },
-): Promise<SafeBoxResult<z.infer<typeof zSchema>>> {
+): Promise<ResultSafeBox<z.infer<typeof zSchema>>> {
   try {
     const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema
@@ -584,12 +584,12 @@ async function parseServerResponseAsyncSafe(
     );
 
     if (parsed.success) {
-      return new Ok({ data: parsed.data, kind: "success" });
+      return new Ok({ data: Some(parsed.data), kind: "success" });
     } else {
-      return new Err({ data: parsed.error, kind: "error" });
+      return new Err({ data: Some(parsed.error), kind: "error" });
     }
   } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
+    return new Err({ data: Some(error), kind: "error" });
   }
 }
 
