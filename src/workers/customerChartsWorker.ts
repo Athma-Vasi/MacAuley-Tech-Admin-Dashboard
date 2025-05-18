@@ -5,8 +5,8 @@ import {
     CustomerMetricsCards,
 } from "../components/dashboard/customer/cards";
 import {
-    createCustomerMetricsCalendarCharts,
-    createCustomerMetricsCharts,
+    createCustomerMetricsCalendarChartsSafe,
+    createCustomerMetricsChartsSafe,
     CustomerMetricsCalendarCharts,
     CustomerMetricsCharts,
     SelectedDateCustomerMetrics,
@@ -63,7 +63,7 @@ self.onmessage = async (
 
     try {
         const createCustomerMetricsCalendarChartsResult =
-            createCustomerMetricsCalendarCharts(
+            createCustomerMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateCustomerMetrics,
                 selectedYYYYMMDD,
@@ -83,11 +83,24 @@ self.onmessage = async (
         const { currentYear, previousYear } =
             createCustomerMetricsCalendarChartsResult.val.data.val;
 
-        const customerMetricsCharts = createCustomerMetricsCharts({
+        const customerMetricsChartsResult = createCustomerMetricsChartsSafe({
             customerMetricsDocument,
             months: MONTHS,
             selectedDateCustomerMetrics,
         });
+        if (
+            customerMetricsChartsResult.err ||
+            customerMetricsChartsResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: customerMetricsChartsResult.val.data,
+                message: Some(
+                    "Error creating customer metrics charts",
+                ),
+            }));
+            return;
+        }
+        const customerMetricsCharts = customerMetricsChartsResult.val.data.val;
 
         const customerMetricsCards = createCustomerMetricsCards({
             cardBgGradient,
