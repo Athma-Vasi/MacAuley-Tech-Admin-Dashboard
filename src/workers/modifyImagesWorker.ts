@@ -46,14 +46,10 @@ type MessageEventModifyImagesMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventModifyImagesMainToWorker,
 ) => {
-    console.log(
-        "Modify Image Worker received message in self",
-        event.data,
-    );
-
     if (!event.data) {
         self.postMessage(createResultSafeBox({
             data: Some(new Error("No data received")),
+            message: Some("No data received"),
         }));
         return;
     }

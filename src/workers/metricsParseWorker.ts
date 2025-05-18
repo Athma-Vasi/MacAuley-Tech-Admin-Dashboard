@@ -48,10 +48,19 @@ type MessageEventMetricsWorkerToMain = MessageEvent<
 self.onmessage = async (
     event: MessageEventMetricsMainToWorker,
 ) => {
+    if (!event.data) {
+        self.postMessage(createResultSafeBox({
+            data: Some(new Error("No data received")),
+            message: Some("No data received"),
+        }));
+        return;
+    }
+
     console.log(
         "Metrics Worker received message in self",
         event.data,
     );
+
     const {
         metricsView,
         productMetricCategory,

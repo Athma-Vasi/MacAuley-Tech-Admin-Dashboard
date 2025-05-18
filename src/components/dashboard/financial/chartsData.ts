@@ -303,6 +303,138 @@ function createFinancialMetricsChartsSafe({
   months,
   selectedDateFinancialMetrics,
 }: ReturnFinancialMetricsChartsInput): ResultSafeBox<FinancialMetricsCharts> {
+  const BAR_CHARTS_TEMPLATE: FinancialMetricsBarCharts = {
+    total: [],
+    all: [],
+    overview: [],
+    repair: [],
+    sales: [],
+    inStore: [],
+    online: [],
+  };
+
+  const LINE_CHARTS_TEMPLATE: FinancialMetricLineCharts = {
+    total: [{ id: "Total", data: [] }],
+    all: [
+      { id: "Repair", data: [] },
+      { id: "In-Store", data: [] },
+      { id: "Online", data: [] },
+    ],
+    overview: [
+      { id: "Repair", data: [] },
+      { id: "Sales", data: [] },
+    ],
+    repair: [{ id: "Repair", data: [] }],
+    sales: [
+      { id: "In-Store", data: [] },
+      { id: "Online", data: [] },
+    ],
+    inStore: [{ id: "In-Store", data: [] }],
+    online: [{ id: "Online", data: [] }],
+  };
+
+  const OTHER_METRICS_BAR_CHARTS_TEMPLATE: FinancialOtherMetricsBarCharts = {
+    averageOrderValue: [],
+    conversionRate: [],
+    netProfitMargin: [],
+  };
+
+  const OTHER_METRICS_LINE_CHARTS_TEMPLATE: FinancialOtherMetricsLineCharts = {
+    averageOrderValue: [{ id: "Average Order Value", data: [] }],
+    conversionRate: [{ id: "Conversion Rate", data: [] }],
+    netProfitMargin: [{ id: "Net Profit Margin", data: [] }],
+  };
+
+  const PIE_CHARTS_TEMPLATE: FinancialMetricsPieCharts = {
+    overview: [],
+    all: [],
+  };
+
+  if (!financialMetricsDocument || !selectedDateFinancialMetrics) {
+    return createResultSafeBox({
+      data: Some({
+        dailyCharts: {
+          profit: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          expenses: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          revenue: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          transactions: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          otherMetrics: {
+            bar: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
+            line: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
+          },
+        },
+        monthlyCharts: {
+          profit: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          expenses: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          revenue: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          transactions: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          otherMetrics: {
+            bar: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
+            line: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
+          },
+        },
+        yearlyCharts: {
+          profit: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          expenses: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          revenue: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          transactions: {
+            bar: BAR_CHARTS_TEMPLATE,
+            line: LINE_CHARTS_TEMPLATE,
+            pie: PIE_CHARTS_TEMPLATE,
+          },
+          otherMetrics: {
+            bar: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
+            line: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
+          },
+        },
+      }),
+    });
+  }
+
   try {
     const {
       yearFinancialMetrics: { selectedYearMetrics },
@@ -317,58 +449,10 @@ function createFinancialMetricsChartsSafe({
       dayFinancialMetrics: { selectedDayMetrics },
     } = selectedDateFinancialMetrics;
 
-    const BAR_CHARTS_TEMPLATE: FinancialMetricsBarCharts = {
-      total: [],
-      all: [],
-      overview: [],
-      repair: [],
-      sales: [],
-      inStore: [],
-      online: [],
-    };
-
-    const LINE_CHARTS_TEMPLATE: FinancialMetricLineCharts = {
-      total: [{ id: "Total", data: [] }],
-      all: [
-        { id: "Repair", data: [] },
-        { id: "In-Store", data: [] },
-        { id: "Online", data: [] },
-      ],
-      overview: [
-        { id: "Repair", data: [] },
-        { id: "Sales", data: [] },
-      ],
-      repair: [{ id: "Repair", data: [] }],
-      sales: [
-        { id: "In-Store", data: [] },
-        { id: "Online", data: [] },
-      ],
-      inStore: [{ id: "In-Store", data: [] }],
-      online: [{ id: "Online", data: [] }],
-    };
-
-    const OTHER_METRICS_BAR_CHARTS_TEMPLATE: FinancialOtherMetricsBarCharts = {
-      averageOrderValue: [],
-      conversionRate: [],
-      netProfitMargin: [],
-    };
-
-    const OTHER_METRICS_LINE_CHARTS_TEMPLATE: FinancialOtherMetricsLineCharts =
-      {
-        averageOrderValue: [{ id: "Average Order Value", data: [] }],
-        conversionRate: [{ id: "Conversion Rate", data: [] }],
-        netProfitMargin: [{ id: "Net Profit Margin", data: [] }],
-      };
-
-    const PIE_CHARTS_TEMPLATE: FinancialMetricsPieCharts = {
-      overview: [],
-      all: [],
-    };
-
     const [
-      dailyFinancialChartsResult,
-      monthlyFinancialChartsResult,
-      yearlyFinancialChartsResult,
+      dailyFinancialChartsSafeResult,
+      monthlyFinancialChartsSafeResult,
+      yearlyFinancialChartsSafeResult,
     ] = [
       createDailyFinancialChartsSafe({
         barChartsTemplate: BAR_CHARTS_TEMPLATE,
@@ -402,37 +486,38 @@ function createFinancialMetricsChartsSafe({
     ];
 
     if (
-      dailyFinancialChartsResult.err || dailyFinancialChartsResult.val.data.none
+      dailyFinancialChartsSafeResult.err ||
+      dailyFinancialChartsSafeResult.val.data.none
     ) {
       return createResultSafeBox({
-        data: dailyFinancialChartsResult.val.data,
+        data: dailyFinancialChartsSafeResult.val.data,
         message: Some("Error creating daily financial charts"),
       });
     }
     if (
-      monthlyFinancialChartsResult.err ||
-      monthlyFinancialChartsResult.val.data.none
+      monthlyFinancialChartsSafeResult.err ||
+      monthlyFinancialChartsSafeResult.val.data.none
     ) {
       return createResultSafeBox({
-        data: monthlyFinancialChartsResult.val.data,
+        data: monthlyFinancialChartsSafeResult.val.data,
         message: Some("Error creating monthly financial charts"),
       });
     }
     if (
-      yearlyFinancialChartsResult.err ||
-      yearlyFinancialChartsResult.val.data.none
+      yearlyFinancialChartsSafeResult.err ||
+      yearlyFinancialChartsSafeResult.val.data.none
     ) {
       return createResultSafeBox({
-        data: yearlyFinancialChartsResult.val.data,
+        data: yearlyFinancialChartsSafeResult.val.data,
         message: Some("Error creating yearly financial charts"),
       });
     }
 
     return createResultSafeBox({
       data: Some({
-        dailyCharts: dailyFinancialChartsResult.val.data.val,
-        monthlyCharts: monthlyFinancialChartsResult.val.data.val,
-        yearlyCharts: yearlyFinancialChartsResult.val.data.val,
+        dailyCharts: dailyFinancialChartsSafeResult.val.data.val,
+        monthlyCharts: monthlyFinancialChartsSafeResult.val.data.val,
+        yearlyCharts: yearlyFinancialChartsSafeResult.val.data.val,
       }),
       kind: "success",
     });
@@ -3567,7 +3652,7 @@ function createFinancialMetricsCalendarChartsSafe(
     return createResultSafeBox({
       data: Some({
         currentYear: calendarChartsTemplate,
-        previousYear: structuredClone(calendarChartsTemplate),
+        previousYear: calendarChartsTemplate,
       }),
     });
   }

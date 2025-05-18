@@ -41,6 +41,14 @@ type MessageEventDirectoryFetchMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventDirectoryFetchMainToWorker,
 ) => {
+    if (!event.data) {
+        self.postMessage(createResultSafeBox({
+            data: Some(new Error("No data received")),
+            message: Some("No data received"),
+        }));
+        return;
+    }
+
     console.log(
         "Directory Fetch Worker received message in self:",
         JSON.stringify(event.data, null, 2),

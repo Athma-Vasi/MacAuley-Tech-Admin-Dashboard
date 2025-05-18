@@ -36,10 +36,19 @@ type MessageEventFetchMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventFetchMainToWorker,
 ) => {
+    if (!event.data) {
+        self.postMessage(createResultSafeBox({
+            data: Some(new Error("No data received")),
+            message: Some("No data received"),
+        }));
+        return;
+    }
+
     console.log(
         "Worker received message in self:",
         JSON.stringify(event.data, null, 2),
     );
+
     const {
         requestInit,
         routesZodSchemaMapKey,

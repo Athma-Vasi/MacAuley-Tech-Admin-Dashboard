@@ -26,13 +26,10 @@ type MessageEventRetrieveImagesMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventRetrieveImagesMainToWorker,
 ) => {
-    console.log(
-        "Retrieve Image Worker received message in self",
-    );
-
     if (!event.data) {
         self.postMessage(createResultSafeBox({
             data: Some(new Error("No data received")),
+            message: Some("No data received"),
         }));
         return;
     }

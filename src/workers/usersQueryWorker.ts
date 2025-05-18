@@ -43,10 +43,14 @@ type MessageEventUsersQueryMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventUsersQueryMainToWorker,
 ) => {
-    console.log(
-        "UsersQueryWorker received message in self:",
-        JSON.stringify(event.data, null, 2),
-    );
+    if (!event.data) {
+        self.postMessage(createResultSafeBox({
+            data: Some(new Error("No data received")),
+            message: Some("No data received"),
+        }));
+        return;
+    }
+
     const {
         requestInit,
         routesZodSchemaMapKey,

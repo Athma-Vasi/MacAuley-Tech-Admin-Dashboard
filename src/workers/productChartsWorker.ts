@@ -40,13 +40,10 @@ type MessageEventProductMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventProductMainToWorker,
 ) => {
-    console.log(
-        "Product Charts Worker received message",
-    );
-
     if (!event.data) {
         self.postMessage(createResultSafeBox({
             data: Some(new Error("No data received")),
+            message: Some("No data received"),
         }));
         return;
     }

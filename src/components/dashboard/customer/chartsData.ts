@@ -242,6 +242,110 @@ function createCustomerMetricsChartsSafe({
   months,
   selectedDateCustomerMetrics,
 }: ReturnCustomerMetricsChartsInput): ResultSafeBox<CustomerMetricsCharts> {
+  const NEW_RETURNING_BAR_CHART_TEMPLATE: CustomerNewReturningBarCharts = {
+    total: [],
+    all: [],
+    overview: [],
+    sales: [],
+    online: [],
+    inStore: [],
+    repair: [],
+  };
+
+  const NEW_RETURNING_LINE_CHART_TEMPLATE: CustomerNewReturningLineCharts = {
+    total: [{ id: "Total", data: [] }],
+    all: [
+      { id: "Online", data: [] },
+      { id: "In Store", data: [] },
+      { id: "Repair", data: [] },
+    ],
+    overview: [
+      { id: "Repair", data: [] },
+      { id: "Sales", data: [] },
+    ],
+    sales: [
+      { id: "Online", data: [] },
+      { id: "In Store", data: [] },
+    ],
+    online: [{ id: "Online", data: [] }],
+    inStore: [{ id: "In Store", data: [] }],
+    repair: [{ id: "Repair", data: [] }],
+  };
+
+  const CHURN_RETENTION_BAR_CHART_TEMPLATE: CustomerChurnRetentionBarCharts = {
+    overview: [],
+    churnRate: [],
+    retentionRate: [],
+  };
+
+  const CHURN_RETENTION_LINE_CHART_TEMPLATE: CustomerChurnRetentionLineCharts =
+    {
+      overview: [
+        { id: "Churn Rate", data: [] },
+        { id: "Retention Rate", data: [] },
+      ],
+      churnRate: [{ id: "Churn Rate", data: [] }],
+      retentionRate: [{ id: "Retention Rate", data: [] }],
+    };
+
+  if (!customerMetricsDocument || !selectedDateCustomerMetrics) {
+    return createResultSafeBox({
+      data: Some({
+        dailyCharts: {
+          new: {
+            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
+            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
+            pie: { overview: [], all: [] },
+          },
+          returning: {
+            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
+            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
+            pie: { overview: [], all: [] },
+          },
+          churnRetention: {
+            bar: CHURN_RETENTION_BAR_CHART_TEMPLATE,
+            line: CHURN_RETENTION_LINE_CHART_TEMPLATE,
+            pie: [],
+          },
+        },
+        monthlyCharts: {
+          new: {
+            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
+            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
+            pie: { overview: [], all: [] },
+          },
+          returning: {
+            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
+            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
+            pie: { overview: [], all: [] },
+          },
+          churnRetention: {
+            bar: CHURN_RETENTION_BAR_CHART_TEMPLATE,
+            line: CHURN_RETENTION_LINE_CHART_TEMPLATE,
+            pie: [],
+          },
+        },
+        yearlyCharts: {
+          new: {
+            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
+            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
+            pie: { overview: [], all: [] },
+          },
+          returning: {
+            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
+            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
+            pie: { overview: [], all: [] },
+          },
+          churnRetention: {
+            bar: CHURN_RETENTION_BAR_CHART_TEMPLATE,
+            line: CHURN_RETENTION_LINE_CHART_TEMPLATE,
+            pie: [],
+          },
+        },
+      }),
+    });
+  }
+
   try {
     const {
       yearCustomerMetrics: { selectedYearMetrics },
@@ -256,59 +360,12 @@ function createCustomerMetricsChartsSafe({
       dayCustomerMetrics: { selectedDayMetrics },
     } = selectedDateCustomerMetrics;
 
-    const NEW_RETURNING_BAR_CHART_TEMPLATE: CustomerNewReturningBarCharts = {
-      total: [],
-      all: [],
-      overview: [],
-      sales: [],
-      online: [],
-      inStore: [],
-      repair: [],
-    };
-
-    const NEW_RETURNING_LINE_CHART_TEMPLATE: CustomerNewReturningLineCharts = {
-      total: [{ id: "Total", data: [] }],
-      all: [
-        { id: "Online", data: [] },
-        { id: "In Store", data: [] },
-        { id: "Repair", data: [] },
-      ],
-      overview: [
-        { id: "Repair", data: [] },
-        { id: "Sales", data: [] },
-      ],
-      sales: [
-        { id: "Online", data: [] },
-        { id: "In Store", data: [] },
-      ],
-      online: [{ id: "Online", data: [] }],
-      inStore: [{ id: "In Store", data: [] }],
-      repair: [{ id: "Repair", data: [] }],
-    };
-
-    const CHURN_RETENTION_BAR_CHART_TEMPLATE: CustomerChurnRetentionBarCharts =
-      {
-        overview: [],
-        churnRate: [],
-        retentionRate: [],
-      };
-
-    const CHURN_RETENTION_LINE_CHART_TEMPLATE:
-      CustomerChurnRetentionLineCharts = {
-        overview: [
-          { id: "Churn Rate", data: [] },
-          { id: "Retention Rate", data: [] },
-        ],
-        churnRate: [{ id: "Churn Rate", data: [] }],
-        retentionRate: [{ id: "Retention Rate", data: [] }],
-      };
-
     const [
-      dailyCustomerChartsResult,
-      monthlyCustomerChartsResult,
-      yearlyCustomerChartsResult,
+      dailyCustomerChartsSafeResult,
+      monthlyCustomerChartsSafeResult,
+      yearlyCustomerChartsSafeResult,
     ] = [
-      createDailyCustomerCharts({
+      createDailyCustomerChartsSafe({
         dailyMetrics: selectedMonthMetrics?.dailyMetrics,
         newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
         newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
@@ -318,7 +375,7 @@ function createCustomerMetricsChartsSafe({
         churnRetentionLineChartsTemplate: CHURN_RETENTION_LINE_CHART_TEMPLATE,
         selectedDayMetrics,
       }),
-      createMonthlyCustomerCharts({
+      createMonthlyCustomerChartsSafe({
         monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
         newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
         newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
@@ -330,7 +387,7 @@ function createCustomerMetricsChartsSafe({
         selectedYear,
         selectedMonthMetrics,
       }),
-      createYearlyCustomerCharts({
+      createYearlyCustomerChartsSafe({
         yearlyMetrics: customerMetricsDocument.customerMetrics.yearlyMetrics,
         newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
         newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
@@ -343,36 +400,38 @@ function createCustomerMetricsChartsSafe({
     ];
 
     if (
-      dailyCustomerChartsResult.err || dailyCustomerChartsResult.val.data.none
+      dailyCustomerChartsSafeResult.err ||
+      dailyCustomerChartsSafeResult.val.data.none
     ) {
       return createResultSafeBox({
-        data: dailyCustomerChartsResult.val.data,
+        data: dailyCustomerChartsSafeResult.val.data,
         message: Some("Error creating daily customer charts"),
       });
     }
     if (
-      monthlyCustomerChartsResult.err ||
-      monthlyCustomerChartsResult.val.data.none
+      monthlyCustomerChartsSafeResult.err ||
+      monthlyCustomerChartsSafeResult.val.data.none
     ) {
       return createResultSafeBox({
-        data: monthlyCustomerChartsResult.val.data,
+        data: monthlyCustomerChartsSafeResult.val.data,
         message: Some("Error creating monthly customer charts"),
       });
     }
     if (
-      yearlyCustomerChartsResult.err || yearlyCustomerChartsResult.val.data.none
+      yearlyCustomerChartsSafeResult.err ||
+      yearlyCustomerChartsSafeResult.val.data.none
     ) {
       return createResultSafeBox({
-        data: yearlyCustomerChartsResult.val.data,
+        data: yearlyCustomerChartsSafeResult.val.data,
         message: Some("Error creating yearly customer charts"),
       });
     }
 
     return createResultSafeBox({
       data: Some({
-        dailyCharts: dailyCustomerChartsResult.val.data.val,
-        monthlyCharts: monthlyCustomerChartsResult.val.data.val,
-        yearlyCharts: yearlyCustomerChartsResult.val.data.val,
+        dailyCharts: dailyCustomerChartsSafeResult.val.data.val,
+        monthlyCharts: monthlyCustomerChartsSafeResult.val.data.val,
+        yearlyCharts: yearlyCustomerChartsSafeResult.val.data.val,
       }),
       kind: "success",
     });
@@ -401,7 +460,7 @@ type CreateDailyCustomerChartsInput = {
   selectedDayMetrics?: CustomerDailyMetric;
 };
 
-function createDailyCustomerCharts({
+function createDailyCustomerChartsSafe({
   churnRetentionBarChartsTemplate,
   churnRetentionLineChartsTemplate,
   dailyMetrics,
@@ -964,7 +1023,7 @@ type CreateMonthlyCustomerChartsInput = {
   selectedYear: Year;
 };
 
-function createMonthlyCustomerCharts({
+function createMonthlyCustomerChartsSafe({
   churnRetentionBarChartsTemplate,
   churnRetentionLineChartsTemplate,
   monthlyMetrics,
@@ -1557,7 +1616,7 @@ type CreateYearlyCustomerChartsInput = {
   yearlyMetrics?: CustomerYearlyMetric[];
 };
 
-function createYearlyCustomerCharts({
+function createYearlyCustomerChartsSafe({
   churnRetentionBarChartsTemplate,
   churnRetentionLineChartsTemplate,
   newBarChartsTemplate,
@@ -2170,28 +2229,37 @@ function createCustomerMetricsCalendarChartsSafe(
   currentYear: CustomerMetricsCalendarCharts;
   previousYear: CustomerMetricsCalendarCharts;
 }> {
+  const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
+    total: [],
+    repair: [],
+    sales: [],
+    inStore: [],
+    online: [],
+  };
+
+  const calendarChartsTemplateChurnRetention = {
+    churnRate: [],
+    retentionRate: [],
+  };
+
+  const calendarChartsTemplate: CustomerMetricsCalendarCharts = {
+    new: structuredClone(calendarChartsTemplateNewReturning),
+    returning: structuredClone(calendarChartsTemplateNewReturning),
+    churn: structuredClone(calendarChartsTemplateChurnRetention),
+  };
+
+  if (!selectedDateCustomerMetrics) {
+    return createResultSafeBox({
+      data: Some({
+        currentYear: calendarChartsTemplate,
+        previousYear: calendarChartsTemplate,
+      }),
+    });
+  }
+
   try {
     const { yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics } } =
       selectedDateCustomerMetrics;
-
-    const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
-      total: [],
-      repair: [],
-      sales: [],
-      inStore: [],
-      online: [],
-    };
-
-    const calendarChartsTemplateChurnRetention = {
-      churnRate: [],
-      retentionRate: [],
-    };
-
-    const calendarChartsTemplate: CustomerMetricsCalendarCharts = {
-      new: structuredClone(calendarChartsTemplateNewReturning),
-      returning: structuredClone(calendarChartsTemplateNewReturning),
-      churn: structuredClone(calendarChartsTemplateChurnRetention),
-    };
 
     const [currentYear, previousYear] = [
       createDailyCustomerCalendarCharts(

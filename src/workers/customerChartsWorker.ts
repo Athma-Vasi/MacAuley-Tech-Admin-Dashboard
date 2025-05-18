@@ -47,6 +47,7 @@ self.onmessage = async (
     if (!event.data) {
         self.postMessage(createResultSafeBox({
             data: Some(new Error("No data received")),
+            message: Some("No data received"),
         }));
         return;
     }
@@ -62,18 +63,18 @@ self.onmessage = async (
     } = event.data;
 
     try {
-        const createCustomerMetricsCalendarChartsResult =
+        const createCustomerMetricsCalendarChartsSafeResult =
             createCustomerMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateCustomerMetrics,
                 selectedYYYYMMDD,
             );
         if (
-            createCustomerMetricsCalendarChartsResult.err ||
-            createCustomerMetricsCalendarChartsResult.val.data.none
+            createCustomerMetricsCalendarChartsSafeResult.err ||
+            createCustomerMetricsCalendarChartsSafeResult.val.data.none
         ) {
             self.postMessage(createResultSafeBox({
-                data: createCustomerMetricsCalendarChartsResult.val.data,
+                data: createCustomerMetricsCalendarChartsSafeResult.val.data,
                 message: Some(
                     "Error creating customer metrics calendar charts",
                 ),
@@ -81,46 +82,50 @@ self.onmessage = async (
             return;
         }
         const { currentYear, previousYear } =
-            createCustomerMetricsCalendarChartsResult.val.data.val;
+            createCustomerMetricsCalendarChartsSafeResult.val.data.val;
 
-        const customerMetricsChartsResult = createCustomerMetricsChartsSafe({
-            customerMetricsDocument,
-            months: MONTHS,
-            selectedDateCustomerMetrics,
-        });
+        const customerMetricsChartsSafeResult = createCustomerMetricsChartsSafe(
+            {
+                customerMetricsDocument,
+                months: MONTHS,
+                selectedDateCustomerMetrics,
+            },
+        );
         if (
-            customerMetricsChartsResult.err ||
-            customerMetricsChartsResult.val.data.none
+            customerMetricsChartsSafeResult.err ||
+            customerMetricsChartsSafeResult.val.data.none
         ) {
             self.postMessage(createResultSafeBox({
-                data: customerMetricsChartsResult.val.data,
+                data: customerMetricsChartsSafeResult.val.data,
                 message: Some(
                     "Error creating customer metrics charts",
                 ),
             }));
             return;
         }
-        const customerMetricsCharts = customerMetricsChartsResult.val.data.val;
+        const customerMetricsCharts =
+            customerMetricsChartsSafeResult.val.data.val;
 
-        const customerMetricsCardsResult = createCustomerMetricsCardsSafe({
+        const customerMetricsCardsSafeResult = createCustomerMetricsCardsSafe({
             cardBgGradient,
             greenColorShade,
             redColorShade,
             selectedDateCustomerMetrics,
         });
         if (
-            customerMetricsCardsResult.err ||
-            customerMetricsCardsResult.val.data.none
+            customerMetricsCardsSafeResult.err ||
+            customerMetricsCardsSafeResult.val.data.none
         ) {
             self.postMessage(createResultSafeBox({
-                data: customerMetricsCardsResult.val.data,
+                data: customerMetricsCardsSafeResult.val.data,
                 message: Some(
                     "Error creating customer metrics cards",
                 ),
             }));
             return;
         }
-        const customerMetricsCards = customerMetricsCardsResult.val.data.val;
+        const customerMetricsCards =
+            customerMetricsCardsSafeResult.val.data.val;
 
         self.postMessage(createResultSafeBox({
             data: Some({

@@ -40,13 +40,10 @@ type MessageEventRepairMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventRepairMainToWorker,
 ) => {
-    console.log(
-        "Repair Charts Worker received message",
-    );
-
     if (!event.data) {
         self.postMessage(createResultSafeBox({
             data: Some(new Error("No data received")),
+            message: Some("No data received"),
         }));
         return;
     }

@@ -80,15 +80,6 @@ function createFinancialMetricsCardsSafe(
     },
   };
 
-  if (!selectedDateFinancialMetrics) {
-    return createResultSafeBox({
-      data: Some(financialMetricsCardsTemplate),
-      message: Some(
-        "No selectedDateFinancialMetrics available",
-      ),
-    });
-  }
-
   const {
     dayFinancialMetrics: { prevDayMetrics, selectedDayMetrics },
     monthFinancialMetrics: { prevMonthMetrics, selectedMonthMetrics },

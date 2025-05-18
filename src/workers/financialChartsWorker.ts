@@ -40,13 +40,10 @@ type MessageEventFinancialMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventFinancialMainToWorker,
 ) => {
-    console.log(
-        "Financial Charts Worker received message",
-    );
-
     if (!event.data) {
         self.postMessage(createResultSafeBox({
             data: Some(new Error("No data received")),
+            message: Some("No data received"),
         }));
         return;
     }
@@ -62,18 +59,18 @@ self.onmessage = async (
     } = event.data;
 
     try {
-        const createFinancialMetricsCalendarChartsResult =
+        const createFinancialMetricsCalendarChartsSafeResult =
             createFinancialMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateFinancialMetrics,
                 selectedYYYYMMDD,
             );
         if (
-            createFinancialMetricsCalendarChartsResult.err ||
-            createFinancialMetricsCalendarChartsResult.val.data.none
+            createFinancialMetricsCalendarChartsSafeResult.err ||
+            createFinancialMetricsCalendarChartsSafeResult.val.data.none
         ) {
             self.postMessage(createResultSafeBox({
-                data: createFinancialMetricsCalendarChartsResult.val.data,
+                data: createFinancialMetricsCalendarChartsSafeResult.val.data,
                 message: Some(
                     "Error creating financial metrics calendar charts",
                 ),
@@ -81,19 +78,20 @@ self.onmessage = async (
             return;
         }
         const { currentYear, previousYear } =
-            createFinancialMetricsCalendarChartsResult.val.data.val;
+            createFinancialMetricsCalendarChartsSafeResult.val.data.val;
 
-        const financialMetricsChartsResult = createFinancialMetricsChartsSafe({
-            financialMetricsDocument,
-            months: MONTHS,
-            selectedDateFinancialMetrics,
-        });
+        const financialMetricsChartsSafeResult =
+            createFinancialMetricsChartsSafe({
+                financialMetricsDocument,
+                months: MONTHS,
+                selectedDateFinancialMetrics,
+            });
         if (
-            financialMetricsChartsResult.err ||
-            financialMetricsChartsResult.val.data.none
+            financialMetricsChartsSafeResult.err ||
+            financialMetricsChartsSafeResult.val.data.none
         ) {
             self.postMessage(createResultSafeBox({
-                data: financialMetricsChartsResult.val.data,
+                data: financialMetricsChartsSafeResult.val.data,
                 message: Some(
                     "Error creating financial metrics charts",
                 ),
@@ -101,27 +99,30 @@ self.onmessage = async (
             return;
         }
         const financialMetricsCharts =
-            financialMetricsChartsResult.val.data.val;
+            financialMetricsChartsSafeResult.val.data.val;
 
-        const financialMetricsCardsResult = createFinancialMetricsCardsSafe({
-            cardBgGradient,
-            greenColorShade,
-            redColorShade,
-            selectedDateFinancialMetrics,
-        });
+        const financialMetricsCardsSafeResult = createFinancialMetricsCardsSafe(
+            {
+                cardBgGradient,
+                greenColorShade,
+                redColorShade,
+                selectedDateFinancialMetrics,
+            },
+        );
         if (
-            financialMetricsCardsResult.err ||
-            financialMetricsCardsResult.val.data.none
+            financialMetricsCardsSafeResult.err ||
+            financialMetricsCardsSafeResult.val.data.none
         ) {
             self.postMessage(createResultSafeBox({
-                data: financialMetricsCardsResult.val.data,
+                data: financialMetricsCardsSafeResult.val.data,
                 message: Some(
                     "Error creating financial metrics cards",
                 ),
             }));
             return;
         }
-        const financialMetricsCards = financialMetricsCardsResult.val.data.val;
+        const financialMetricsCards =
+            financialMetricsCardsSafeResult.val.data.val;
 
         self.postMessage(createResultSafeBox({
             data: Some({
