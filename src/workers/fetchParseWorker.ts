@@ -8,7 +8,6 @@ import {
 } from "../types";
 import {
     createResultSafeBox,
-    createSafeBoxResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
@@ -101,8 +100,8 @@ self.onmessage = async (
         }
 
         if (skipTokenDecode) {
-            self.postMessage(createSafeBoxResult({
-                data: { parsedServerResponse: parsedResult.val.data.val },
+            self.postMessage(createResultSafeBox({
+                data: Some({ parsedServerResponse: parsedResult.val.data.val }),
                 kind: "success",
             }));
             return;

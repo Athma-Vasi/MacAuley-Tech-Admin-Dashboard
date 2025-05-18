@@ -487,55 +487,6 @@ function parseSafeSync(
   }
 }
 
-type SafeBoxResultSuccess<Data = unknown> = {
-  data: Data;
-  kind?: "success";
-  message?: string;
-};
-type SafeBoxResultError<Data = unknown> = {
-  data?: Data;
-  kind?: "error";
-  message?: string;
-};
-type SafeBoxResultNotFound = {
-  data?: [];
-  kind?: "notFound";
-  message?: string;
-};
-
-function createSafeBoxResult<Data = unknown>(
-  {
-    data,
-    kind = "error",
-    message = "Unknown",
-  }:
-    | SafeBoxResultSuccess<Data>
-    | SafeBoxResultError<Data>
-    | SafeBoxResultNotFound,
-): SafeBoxResult<Data> {
-  if (kind === "success") {
-    return new Ok({
-      data: data as Data,
-      kind,
-      message,
-    });
-  }
-
-  if (kind === "notFound") {
-    return new Ok({
-      data: [] as Data,
-      kind,
-      message,
-    });
-  }
-
-  return new Err({
-    data,
-    kind,
-    message,
-  });
-}
-
 type ModifyImageSafe = (
   file: Blob,
   config?: ICompressConfig | number,
@@ -750,7 +701,6 @@ export {
   createMetricsForageKey,
   createMetricsURLCacheKey,
   createResultSafeBox,
-  createSafeBoxResult,
   createUsersURLCacheKey,
   debounce,
   decodeJWTSafe,

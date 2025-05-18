@@ -12,7 +12,6 @@ import {
 import { ResultSafeBox } from "../types";
 import {
     createResultSafeBox,
-    createSafeBoxResult,
     getCachedItemSafeAsync,
     modifyImageSafe,
     setCachedItemSafeAsync,
@@ -53,9 +52,8 @@ self.onmessage = async (
     );
 
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: new Error("No data received"),
-            kind: "error",
+        self.postMessage(createResultSafeBox({
+            data: Some(new Error("No data received")),
         }));
         return;
     }
@@ -104,8 +102,8 @@ self.onmessage = async (
             imageToModify,
         );
         if (!imageToModify) {
-            self.postMessage(createSafeBoxResult({
-                message: "No image to modify",
+            self.postMessage(createResultSafeBox({
+                data: Some(new Error("No image to modify")),
             }));
             return;
         }

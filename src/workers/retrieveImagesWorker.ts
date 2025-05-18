@@ -5,11 +5,7 @@ import {
 import { MAX_IMAGES } from "../components/accessibleInputs/image/constants";
 import { createImageInputForageKeys } from "../components/accessibleInputs/image/utils";
 import { ResultSafeBox } from "../types";
-import {
-    createResultSafeBox,
-    createSafeBoxResult,
-    getCachedItemSafeAsync,
-} from "../utils";
+import { createResultSafeBox, getCachedItemSafeAsync } from "../utils";
 
 type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -35,9 +31,8 @@ self.onmessage = async (
     );
 
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: new Error("No data received"),
-            kind: "error",
+        self.postMessage(createResultSafeBox({
+            data: Some(new Error("No data received")),
         }));
         return;
     }

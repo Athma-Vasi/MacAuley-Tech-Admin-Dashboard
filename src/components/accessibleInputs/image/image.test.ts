@@ -1,19 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   INVALID_BOOLEANS,
   INVALID_NUMBERS,
   INVALID_STRINGS,
   VALID_BOOLEANS,
 } from "../../../constants";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
-import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
-import {
-  handleImageQualityOrientationSliderChange,
-  handleRemoveImageClick,
-  handleResetImageClick,
-} from "./handlers";
 import {
   accessibleImageInputReducer_addFileName,
   accessibleImageInputReducer_addImageFileBlob,

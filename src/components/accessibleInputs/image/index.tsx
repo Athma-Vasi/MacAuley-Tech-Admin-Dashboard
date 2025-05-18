@@ -324,6 +324,7 @@ function AccessibleImageInput<
                             isComponentMountedRef,
                             parentDispatch,
                             setCachedItemSafeAsync,
+                            showBoundary,
                             storageKey,
                             validValueAction,
                         });
@@ -348,6 +349,7 @@ function AccessibleImageInput<
                             getCachedItemSafeAsync,
                             index,
                             isComponentMountedRef,
+                            showBoundary,
                             storageKey,
                         });
                     },

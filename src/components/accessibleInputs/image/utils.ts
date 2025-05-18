@@ -1,5 +1,6 @@
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import { Some } from "ts-results";
+import { ResultSafeBox } from "../../../types";
+import { createResultSafeBox } from "../../../utils";
 import { ModifiedFile } from "../AccessibleFileInput";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
 import { SetFilesInErrorPayload } from "./types";
@@ -85,65 +86,73 @@ function checkImageFileBlobs<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): SafeBoxResult<boolean> {
-    if (imageFileBlobs.length === 0) {
-        return createSafeBoxResult({
-            message: "No images to process",
-        });
-    }
-
-    const {
-        modifiedFilesForageKey,
-    } = createImageInputForageKeys(
-        storageKey,
-    );
-
-    imageFileBlobs.forEach((imageFileBlob, idx) => {
-        if (imageFileBlob !== null) {
-            const { size, type } = imageFileBlob;
-
-            const isImageSizeInvalid = size > maxImageSize;
-            const isImageTypeInvalid = !ALLOWED_FILE_EXTENSIONS_REGEX
-                .test(
-                    type.split("/")[1],
-                );
-            const isImageInvalid = isImageSizeInvalid ||
-                isImageTypeInvalid;
-
-            parentDispatch?.({
-                action: invalidValueAction,
-                payload: {
-                    kind: isImageInvalid ? "isError" : "notError",
-                    name: fileNames[idx],
-                },
+): ResultSafeBox<string> {
+    try {
+        if (imageFileBlobs.length === 0) {
+            return createResultSafeBox({
+                data: Some("No images selected"),
             });
         }
-    });
 
-    const value = imageFileBlobs.reduce<FormData>(
-        (formDataAcc, imageFileBlob, index) => {
-            if (imageFileBlob) {
-                formDataAcc.append(
-                    modifiedFilesForageKey,
-                    imageFileBlob,
-                    fileNames[index],
-                );
+        const {
+            modifiedFilesForageKey,
+        } = createImageInputForageKeys(
+            storageKey,
+        );
+
+        imageFileBlobs.forEach((imageFileBlob, idx) => {
+            if (imageFileBlob !== null) {
+                const { size, type } = imageFileBlob;
+
+                const isImageSizeInvalid = size > maxImageSize;
+                const isImageTypeInvalid = !ALLOWED_FILE_EXTENSIONS_REGEX
+                    .test(
+                        type.split("/")[1],
+                    );
+                const isImageInvalid = isImageSizeInvalid ||
+                    isImageTypeInvalid;
+
+                parentDispatch?.({
+                    action: invalidValueAction,
+                    payload: {
+                        kind: isImageInvalid ? "isError" : "notError",
+                        name: fileNames[idx],
+                    },
+                });
             }
+        });
 
-            return formDataAcc;
-        },
-        new FormData(),
-    );
+        const value = imageFileBlobs.reduce<FormData>(
+            (formDataAcc, imageFileBlob, index) => {
+                if (imageFileBlob) {
+                    formDataAcc.append(
+                        modifiedFilesForageKey,
+                        imageFileBlob,
+                        fileNames[index],
+                    );
+                }
 
-    parentDispatch?.({
-        action: validValueAction,
-        payload: value,
-    });
+                return formDataAcc;
+            },
+            new FormData(),
+        );
 
-    return createSafeBoxResult({
-        kind: "success",
-        data: true,
-    });
+        parentDispatch?.({
+            action: validValueAction,
+            payload: value,
+        });
+
+        return createResultSafeBox({
+            data: Some("Image files validated"),
+            kind: "success",
+        });
+    } catch (error: unknown) {
+        return createResultSafeBox({
+            data: Some(
+                error instanceof Error ? error.message : "Unknown error",
+            ),
+        });
+    }
 }
 
 export { checkImageFileBlobs, createImageInputForageKeys, validateImages };
