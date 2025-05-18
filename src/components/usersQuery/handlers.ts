@@ -8,41 +8,59 @@ import {
     createResultSafeBox,
     createUsersURLCacheKey,
     getCachedItemSafeAsync,
+    parseSafeSync,
     setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventUsersQueryWorkerToMain } from "../../workers/usersQueryWorker";
+import { SortDirection } from "../query/types";
 import { usersQueryAction } from "./actions";
-import { UsersQueryDispatch } from "./schemas";
-import { UsersQueryState } from "./types";
+import {
+    handleUsersQueryOnmessageCallbackInputZod,
+    handleUsersQuerySubmitGETClickInputZod,
+    UsersQueryDispatch,
+} from "./schemas";
 
 async function handleUsersQuerySubmitGETClick(
-    {
-        accessToken,
-        currentPage,
-        isComponentMountedRef,
-        newQueryFlag,
-        showBoundary,
-        url,
-        usersFetchWorker,
-        usersQueryDispatch,
-        usersQueryState,
-    }: {
+    input: {
         accessToken: string;
+        arrangeByDirection: SortDirection;
+        arrangeByField: keyof UserDocument;
         currentPage: number;
         isComponentMountedRef: React.RefObject<boolean>;
         newQueryFlag: boolean;
+        queryString: string;
         showBoundary: (error: unknown) => void;
+        totalDocuments: number;
         url: string;
         usersFetchWorker: Worker | null;
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
-        usersQueryState: UsersQueryState;
     },
 ): Promise<ResultSafeBox<string>> {
-    if (!usersFetchWorker) {
+    const parsedInputResult = parseSafeSync({
+        object: input,
+        zSchema: handleUsersQuerySubmitGETClickInputZod,
+    });
+    if (parsedInputResult.err || parsedInputResult.val.data.none) {
         return createResultSafeBox({
-            data: Some("Worker not initialized"),
+            data: parsedInputResult.val.data ?? Some("Error parsing input"),
         });
     }
+
+    const {
+        accessToken,
+        arrangeByDirection,
+        arrangeByField,
+        currentPage,
+        isComponentMountedRef,
+        newQueryFlag,
+        queryString,
+        showBoundary,
+        totalDocuments,
+        url,
+        usersFetchWorker,
+        usersQueryDispatch,
+    } = parsedInputResult.val.data.val;
+
     const requestInit: RequestInit = {
         method: "GET",
         headers: {
@@ -51,11 +69,6 @@ async function handleUsersQuerySubmitGETClick(
         },
     };
 
-    const {
-        queryString,
-        totalDocuments,
-    } = usersQueryState;
-
     const cacheKey = createUsersURLCacheKey({
         currentPage,
         newQueryFlag,
@@ -63,8 +76,6 @@ async function handleUsersQuerySubmitGETClick(
         totalDocuments,
         url,
     });
-
-    console.log("handleUsersQuerySubmitGETClick cacheKey", cacheKey);
 
     usersQueryDispatch({
         action: usersQueryAction.setCurrentPage,
@@ -95,7 +106,6 @@ async function handleUsersQuerySubmitGETClick(
         }
 
         if (userDocumentsResult.val.data.some) {
-            const { arrangeByDirection, arrangeByField } = usersQueryState;
             const userDocuments = userDocumentsResult.val.data.val;
 
             const sorted = userDocuments.sort((a, b) => {
@@ -138,7 +148,7 @@ async function handleUsersQuerySubmitGETClick(
             });
         }
 
-        usersFetchWorker.postMessage({
+        usersFetchWorker?.postMessage({
             currentPage,
             newQueryFlag,
             queryString,
@@ -154,14 +164,14 @@ async function handleUsersQuerySubmitGETClick(
         });
     } catch (error: unknown) {
         if (
-            !isComponentMountedRef.current
+            !input.isComponentMountedRef.current
         ) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
             });
         }
 
-        showBoundary(error);
+        input.showBoundary(error);
         return createResultSafeBox({
             data: Some(
                 error instanceof Error
@@ -175,16 +185,9 @@ async function handleUsersQuerySubmitGETClick(
 }
 
 async function handleUsersQueryOnmessageCallback(
-    {
-        authDispatch,
-        event,
-        isComponentMountedRef,
-        navigate,
-        showBoundary,
-        url,
-        usersQueryDispatch,
-        usersQueryState,
-    }: {
+    input: {
+        arrangeByDirection: SortDirection;
+        arrangeByField: keyof UserDocument;
         authDispatch: React.Dispatch<AuthDispatch>;
         event: MessageEventUsersQueryWorkerToMain;
         isComponentMountedRef: React.RefObject<boolean>;
@@ -192,10 +195,31 @@ async function handleUsersQueryOnmessageCallback(
         showBoundary: (error: unknown) => void;
         url: string;
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
-        usersQueryState: UsersQueryState;
     },
 ): Promise<ResultSafeBox<string>> {
     try {
+        const parsedInputResult = parseSafeSync({
+            object: input,
+            zSchema: handleUsersQueryOnmessageCallbackInputZod,
+        });
+        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+            return createResultSafeBox({
+                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+            });
+        }
+
+        const {
+            arrangeByDirection,
+            arrangeByField,
+            authDispatch,
+            event,
+            isComponentMountedRef,
+            navigate,
+            showBoundary,
+            url,
+            usersQueryDispatch,
+        } = parsedInputResult.val.data.val;
+
         const messageEventResult = event.data;
         if (!messageEventResult) {
             return createResultSafeBox({
@@ -278,8 +302,6 @@ async function handleUsersQueryOnmessageCallback(
             });
         }
 
-        const { arrangeByDirection, arrangeByField } = usersQueryState;
-
         const sorted = userDocuments.sort((a, b) => {
             const aValue = a[arrangeByField];
             const bValue = b[arrangeByField];
@@ -359,13 +381,13 @@ async function handleUsersQueryOnmessageCallback(
             kind: "success",
         });
     } catch (error: unknown) {
-        if (!isComponentMountedRef.current) {
+        if (!input.isComponentMountedRef.current) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
             });
         }
 
-        showBoundary(error);
+        input.showBoundary(error);
         return createResultSafeBox({
             data: Some(
                 error instanceof Error

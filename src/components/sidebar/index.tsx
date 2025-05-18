@@ -321,6 +321,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             showBoundary,
             toLocation: "/dashboard/directory",
             storeLocation: "All Locations",
+          }).then((result) => {
+            console.log("handleDirectoryNavClick result:", result);
           });
 
           setOpened(false);

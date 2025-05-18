@@ -53,6 +53,8 @@ function UsersQuery() {
             event: MessageEventUsersQueryWorkerToMain,
         ) => {
             await handleUsersQueryOnmessageCallback({
+                arrangeByDirection,
+                arrangeByField,
                 authDispatch,
                 event,
                 isComponentMountedRef,
@@ -60,7 +62,6 @@ function UsersQuery() {
                 showBoundary,
                 url: API_URL,
                 usersQueryDispatch,
-                usersQueryState,
             });
         };
 
@@ -78,6 +79,7 @@ function UsersQuery() {
         usersFetchWorker,
         isError,
         isLoading,
+        queryString,
         pages,
         resourceData,
         totalDocuments,
@@ -96,14 +98,17 @@ function UsersQuery() {
 
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
+                        arrangeByDirection,
+                        arrangeByField,
                         currentPage,
                         isComponentMountedRef,
                         newQueryFlag,
+                        queryString,
                         showBoundary,
+                        totalDocuments,
                         url: API_URL,
                         usersFetchWorker,
                         usersQueryDispatch,
-                        usersQueryState,
                     });
                 },
             }}
@@ -157,14 +162,17 @@ function UsersQuery() {
                 onChange={async (page) => {
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
+                        arrangeByDirection,
+                        arrangeByField,
                         currentPage: page,
                         isComponentMountedRef,
                         newQueryFlag: false,
+                        queryString,
                         showBoundary,
+                        totalDocuments,
                         url: API_URL,
                         usersFetchWorker,
                         usersQueryDispatch,
-                        usersQueryState,
                     }).then((result) => {
                         console.log("Result from pagination", result);
                     });

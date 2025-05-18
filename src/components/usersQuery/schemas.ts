@@ -176,6 +176,61 @@ const setUsersFetchWorkerUsersQueryDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const arrangeByFieldZod = z.enum([
+    "addressLine",
+    "city",
+    "country",
+    "department",
+    "email",
+    "fileUploadId",
+    "firstName",
+    "jobPosition",
+    "lastName",
+    "orgId",
+    "parentOrgId",
+    "password",
+    "postalCodeCanada",
+    "postalCodeUS",
+    "profilePictureUrl",
+    "province",
+    "roles",
+    "state",
+    "storeLocation",
+    "username",
+    "_id",
+    "createdAt",
+    "updatedAt",
+    "__v",
+]);
+const arrangeByDirectionZod = z.enum(["ascending", "descending"]);
+
+const handleUsersQuerySubmitGETClickInputZod = z.object({
+    accessToken: z.string(),
+    currentPage: z.number().min(0),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    newQueryFlag: z.boolean(),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    url: z.string().url(),
+    usersFetchWorker: z.instanceof(Worker),
+    usersQueryDispatch: z.function().args(z.any()).returns(z.void()),
+    arrangeByDirection: arrangeByDirectionZod,
+    arrangeByField: arrangeByFieldZod,
+    queryString: z.string(),
+    totalDocuments: z.number().min(0),
+});
+
+const handleUsersQueryOnmessageCallbackInputZod = z.object({
+    arrangeByDirection: arrangeByDirectionZod,
+    arrangeByField: arrangeByFieldZod,
+    authDispatch: z.function().args(z.any()).returns(z.void()),
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    navigate: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    url: z.string().url(),
+    usersQueryDispatch: z.function().args(z.any()).returns(z.void()),
+});
+
 type UsersQueryDispatch =
     | z.infer<typeof setArrangeByDirectionUsersQueryDispatchZod>
     | z.infer<typeof setArrangeByFieldUsersQueryDispatchZod>
@@ -191,6 +246,8 @@ type UsersQueryDispatch =
     | z.infer<typeof setUsersFetchWorkerUsersQueryDispatchZod>;
 
 export {
+    handleUsersQueryOnmessageCallbackInputZod,
+    handleUsersQuerySubmitGETClickInputZod,
     resetToInitialUsersQueryDispatchZod,
     setArrangeByDirectionUsersQueryDispatchZod,
     setArrangeByFieldUsersQueryDispatchZod,
