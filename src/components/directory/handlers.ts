@@ -1,8 +1,9 @@
+import { Some } from "ts-results";
 import { globalAction, GlobalDispatch } from "../../context/globalProvider";
-import { UserDocument } from "../../types";
+import { ResultSafeBox, UserDocument } from "../../types";
 import {
     createDirectoryURLCacheKey,
-    createSafeBoxResult,
+    createResultSafeBox,
     getCachedItemSafeAsync,
 } from "../../utils";
 import { AllStoreLocations } from "../dashboard/types";
@@ -28,7 +29,13 @@ async function handleDirectoryDepartmentAndLocationClicks(
         showBoundary: (error: unknown) => void;
         storeLocation: AllStoreLocations;
     },
-) {
+): Promise<ResultSafeBox<string>> {
+    if (!directoryFetchWorker) {
+        return createResultSafeBox({
+            data: Some("Worker not initialized"),
+        });
+    }
+
     const requestInit: RequestInit = {
         method: "GET",
         headers: {
@@ -54,26 +61,22 @@ async function handleDirectoryDepartmentAndLocationClicks(
         >(cacheKey);
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                message: "Component unmounted",
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
             });
         }
         if (userDocumentsResult.err) {
             showBoundary(userDocumentsResult.val.data);
-            return createSafeBoxResult({
-                message: userDocumentsResult.val.message ??
-                    "Error fetching response",
+            return createResultSafeBox({
+                data: userDocumentsResult.val.data,
+                message: userDocumentsResult.val.message,
             });
         }
 
-        if (
-            userDocumentsResult.ok &&
-            userDocumentsResult.safeUnwrap().kind === "success"
-        ) {
+        if (userDocumentsResult.val.data.some) {
             globalDispatch({
                 action: globalAction.setDirectory,
-                payload: userDocumentsResult.safeUnwrap()
-                    .data as UserDocument[],
+                payload: userDocumentsResult.val.data.val as UserDocument[],
             });
 
             globalDispatch({
@@ -81,17 +84,13 @@ async function handleDirectoryDepartmentAndLocationClicks(
                 payload: false,
             });
 
-            return createSafeBoxResult({
-                data: {
-                    accessToken,
-                    userDocuments: userDocumentsResult.safeUnwrap()
-                        .data as UserDocument[],
-                },
+            return createResultSafeBox({
+                data: Some("Data fetched successfully"),
                 kind: "success",
             });
         }
 
-        directoryFetchWorker?.postMessage({
+        directoryFetchWorker.postMessage({
             department,
             requestInit,
             routesZodSchemaMapKey: "directory",
@@ -99,13 +98,28 @@ async function handleDirectoryDepartmentAndLocationClicks(
             url: cacheKey,
         });
 
-        return createSafeBoxResult({
-            data: true,
+        return createResultSafeBox({
+            data: Some("Fetching data..."),
             kind: "success",
         });
     } catch (error: unknown) {
-        return createSafeBoxResult({
-            message: error instanceof Error ? error.message : "Unknown error",
+        if (
+            !isComponentMountedRef.current
+        ) {
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
+            });
+        }
+
+        showBoundary(error);
+        return createResultSafeBox({
+            data: Some(
+                error instanceof Error
+                    ? error.message
+                    : typeof error === "string"
+                    ? error
+                    : "Unknown error",
+            ),
         });
     }
 }

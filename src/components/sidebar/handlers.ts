@@ -12,14 +12,12 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
   ResultSafeBox,
-  SafeBoxResult,
   UserDocument,
 } from "../../types";
 import {
   createDirectoryURLCacheKey,
   createMetricsURLCacheKey,
   createResultSafeBox,
-  createSafeBoxResult,
   getCachedItemSafeAsync,
   setCachedItemSafeAsync,
 } from "../../utils";
@@ -233,7 +231,7 @@ async function handleMetricCategoryNavClick(
     storeLocation: AllStoreLocations;
     toLocation: string;
   },
-) {
+): Promise<ResultSafeBox<string>> {
   const requestInit: RequestInit = {
     method: "GET",
     headers: {
@@ -261,50 +259,47 @@ async function handleMetricCategoryNavClick(
     >(cacheKey);
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
     if (metricsDocumentResult.err) {
       showBoundary(metricsDocumentResult.val.data);
-      return createSafeBoxResult({
-        message: metricsDocumentResult.val.message ?? "Error fetching response",
+      return createResultSafeBox({
+        data: metricsDocumentResult.val.data,
+        message: metricsDocumentResult.val.message ??
+          Some("Error fetching response"),
       });
     }
 
-    if (
-      metricsDocumentResult.ok &&
-      metricsDocumentResult.safeUnwrap().kind === "success"
-    ) {
+    if (metricsDocumentResult.val.data.some) {
       if (metricsView === "customers") {
         globalDispatch({
           action: globalAction.setCustomerMetricsDocument,
-          payload: metricsDocumentResult.safeUnwrap()
-            .data as CustomerMetricsDocument,
+          payload: metricsDocumentResult.val.data
+            .val as CustomerMetricsDocument,
         });
       }
 
       if (metricsView === "financials") {
         globalDispatch({
           action: globalAction.setFinancialMetricsDocument,
-          payload: metricsDocumentResult.safeUnwrap()
-            .data as FinancialMetricsDocument,
+          payload: metricsDocumentResult.val.data
+            .val as FinancialMetricsDocument,
         });
       }
 
       if (metricsView === "products") {
         globalDispatch({
           action: globalAction.setProductMetricsDocument,
-          payload: metricsDocumentResult.safeUnwrap()
-            .data as ProductMetricsDocument,
+          payload: metricsDocumentResult.val.data.val as ProductMetricsDocument,
         });
       }
 
       if (metricsView === "repairs") {
         globalDispatch({
           action: globalAction.setRepairMetricsDocument,
-          payload: metricsDocumentResult.safeUnwrap()
-            .data as RepairMetricsDocument,
+          payload: metricsDocumentResult.val.data.val as RepairMetricsDocument,
         });
       }
 
@@ -315,12 +310,8 @@ async function handleMetricCategoryNavClick(
 
       navigate(toLocation);
 
-      return createSafeBoxResult({
-        data: {
-          accessToken,
-          businessMetricsDocument: metricsDocumentResult.safeUnwrap()
-            .data as BusinessMetricsDocument,
-        },
+      return createResultSafeBox({
+        data: Some("Metrics fetch successful"),
         kind: "success",
       });
     }
@@ -341,22 +332,28 @@ async function handleMetricCategoryNavClick(
       url: cacheKey,
     });
 
-    return createSafeBoxResult({
-      data: true,
+    return createResultSafeBox({
+      data: Some("Metrics fetch in progress"),
       kind: "success",
     });
   } catch (error: unknown) {
     if (
       !isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
     showBoundary(error);
-    return createSafeBoxResult({
-      message: error instanceof Error ? error.message : "Unknown error",
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -371,7 +368,7 @@ async function handleLogoutClick({
   globalDispatch: React.Dispatch<GlobalDispatch>;
   logoutFetchWorker: Worker | null;
   logoutUrl: string;
-}): Promise<SafeBoxResult<boolean>> {
+}): Promise<ResultSafeBox<string>> {
   try {
     const requestInit: RequestInit = {
       method: "POST",
@@ -393,13 +390,19 @@ async function handleLogoutClick({
       url: logoutUrl,
     });
 
-    return createSafeBoxResult({
-      data: true,
+    return createResultSafeBox({
+      data: Some("Logout successful"),
       kind: "success",
     });
   } catch (error: unknown) {
-    return createSafeBoxResult({
-      message: error instanceof Error ? error.message : "Unknown error",
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -502,7 +505,7 @@ async function handleDirectoryNavClick(
     storeLocation: AllStoreLocations;
     toLocation: string;
   },
-) {
+): Promise<ResultSafeBox<string>> {
   const requestInit: RequestInit = {
     method: "GET",
     headers: {
@@ -530,25 +533,23 @@ async function handleDirectoryNavClick(
     >(urlWithQuery.toString());
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
     if (userDocumentsResult.err) {
       showBoundary(userDocumentsResult.val.data);
-      return createSafeBoxResult({
-        message: userDocumentsResult.val.message ?? "Error fetching response",
+      return createResultSafeBox({
+        data: userDocumentsResult.val.data,
+        message: userDocumentsResult.val.message ??
+          Some("Error fetching response"),
       });
     }
 
-    if (
-      userDocumentsResult.ok &&
-      userDocumentsResult.safeUnwrap().kind === "success"
-    ) {
+    if (userDocumentsResult.val.data.some) {
       globalDispatch({
         action: globalAction.setDirectory,
-        payload: userDocumentsResult.safeUnwrap()
-          .data as UserDocument[],
+        payload: userDocumentsResult.val.data.val as UserDocument[],
       });
 
       globalDispatch({
@@ -558,12 +559,8 @@ async function handleDirectoryNavClick(
 
       navigate(toLocation);
 
-      return createSafeBoxResult({
-        data: {
-          accessToken,
-          userDocuments: userDocumentsResult.safeUnwrap()
-            .data as UserDocument[],
-        },
+      return createResultSafeBox({
+        data: Some("Directory fetch successful"),
         kind: "success",
       });
     }
@@ -576,13 +573,28 @@ async function handleDirectoryNavClick(
       url: urlWithQuery.toString(),
     });
 
-    return createSafeBoxResult({
-      data: true,
+    return createResultSafeBox({
+      data: Some("Directory fetch in progress"),
       kind: "success",
     });
   } catch (error: unknown) {
-    return createSafeBoxResult({
-      message: error instanceof Error ? error.message : "Unknown error",
+    if (
+      !isComponentMountedRef.current
+    ) {
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
+      });
+    }
+
+    showBoundary(error);
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -688,9 +700,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
     if (setForageItemResult.err) {
       showBoundary(setForageItemResult.val.data);
       return createResultSafeBox({
-        data: Some(
-          setForageItemResult.val.message ?? "Error setting forage item",
-        ),
+        data: setForageItemResult.val.data,
+        message: setForageItemResult.val.message ??
+          Some("Error fetching response"),
       });
     }
 
@@ -709,7 +721,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
       data: Some("Directory fetch successful"),
       kind: "success",
     });
-  } catch (error) {
+  } catch (error: unknown) {
     if (
       !isComponentMountedRef.current
     ) {

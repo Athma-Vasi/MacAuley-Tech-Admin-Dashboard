@@ -14,7 +14,6 @@ import {
 import {
     createMetricsURLCacheKey,
     createResultSafeBox,
-    createSafeBoxResult,
     GetCachedItemSafeAsync,
     SetCachedItemSafeAsync,
 } from "../../utils";
@@ -56,7 +55,13 @@ async function handleStoreAndCategoryClicks(
         showBoundary: (error: any) => void;
         storeLocation: AllStoreLocations;
     },
-) {
+): Promise<ResultSafeBox<string>> {
+    if (!dashboardFetchWorker) {
+        return createResultSafeBox({
+            data: Some("Worker not initialized"),
+        });
+    }
+
     const requestInit: RequestInit = {
         method: "GET",
         headers: {
@@ -85,42 +90,42 @@ async function handleStoreAndCategoryClicks(
 
         if (metricsDocumentResult.err) {
             showBoundary(metricsDocumentResult.val.data);
-            return createSafeBoxResult({
-                message: metricsDocumentResult.val.message ??
-                    "Unable to get forage item",
+            return createResultSafeBox({
+                data: metricsDocumentResult.val.data,
+                message: metricsDocumentResult.val.message,
             });
         }
-        const unwrapped = metricsDocumentResult.safeUnwrap();
-        const metricsDocument = unwrapped.data;
 
-        if (
-            unwrapped.kind === "success" && metricsDocument !== undefined
-        ) {
+        if (metricsDocumentResult.val.data.some) {
             if (metricsView === "customers") {
                 globalDispatch({
                     action: globalAction.setCustomerMetricsDocument,
-                    payload: metricsDocument as CustomerMetricsDocument,
+                    payload: metricsDocumentResult.val.data
+                        .val as CustomerMetricsDocument,
                 });
             }
 
             if (metricsView === "financials") {
                 globalDispatch({
                     action: globalAction.setFinancialMetricsDocument,
-                    payload: metricsDocument as FinancialMetricsDocument,
+                    payload: metricsDocumentResult.val.data
+                        .val as FinancialMetricsDocument,
                 });
             }
 
             if (metricsView === "products") {
                 globalDispatch({
                     action: globalAction.setProductMetricsDocument,
-                    payload: metricsDocument as ProductMetricsDocument,
+                    payload: metricsDocumentResult.val.data
+                        .val as ProductMetricsDocument,
                 });
             }
 
             if (metricsView === "repairs") {
                 globalDispatch({
                     action: globalAction.setRepairMetricsDocument,
-                    payload: metricsDocument as RepairMetricsDocument,
+                    payload: metricsDocumentResult.val.data
+                        .val as RepairMetricsDocument,
                 });
             }
 
@@ -129,16 +134,13 @@ async function handleStoreAndCategoryClicks(
                 payload: false,
             });
 
-            return createSafeBoxResult({
-                data: {
-                    newAccessToken: accessToken,
-                    businessMetricsDocument: metricsDocument,
-                },
+            return createResultSafeBox({
+                data: Some("Data fetched successfully"),
                 kind: "success",
             });
         }
 
-        dashboardFetchWorker?.postMessage(
+        dashboardFetchWorker.postMessage(
             {
                 metricsView,
                 productMetricCategory,
@@ -150,22 +152,28 @@ async function handleStoreAndCategoryClicks(
             },
         );
 
-        return createSafeBoxResult({
-            data: true,
+        return createResultSafeBox({
+            data: Some("Fetching data..."),
             kind: "success",
         });
     } catch (error) {
         if (
             !isComponentMountedRef.current
         ) {
-            return createSafeBoxResult({
-                message: "Component unmounted",
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
             });
         }
 
         showBoundary(error);
-        return createSafeBoxResult({
-            message: (error as Error)?.message ?? "Unknown error",
+        return createResultSafeBox({
+            data: Some(
+                error instanceof Error
+                    ? error.message
+                    : typeof error === "string"
+                    ? error
+                    : "Unknown error",
+            ),
         });
     }
 }

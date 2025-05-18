@@ -6,7 +6,6 @@ import { AuthDispatch } from "../../context/authProvider/types";
 import { ResultSafeBox, UserDocument } from "../../types";
 import {
     createResultSafeBox,
-    createSafeBoxResult,
     createUsersURLCacheKey,
     getCachedItemSafeAsync,
     setCachedItemSafeAsync,
@@ -38,7 +37,7 @@ async function handleUsersQuerySubmitGETClick(
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
         usersQueryState: UsersQueryState;
     },
-) {
+): Promise<ResultSafeBox<string>> {
     const requestInit: RequestInit = {
         method: "GET",
         headers: {
@@ -77,25 +76,22 @@ async function handleUsersQuerySubmitGETClick(
         >(cacheKey);
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                message: "Component unmounted",
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
             });
         }
         if (userDocumentsResult.err) {
             showBoundary(userDocumentsResult.val.data);
-            return createSafeBoxResult({
+            return createResultSafeBox({
+                data: userDocumentsResult.val.data,
                 message: userDocumentsResult.val.message ??
-                    "Error fetching response",
+                    Some("Error fetching response"),
             });
         }
 
-        if (
-            userDocumentsResult.ok &&
-            userDocumentsResult.safeUnwrap().kind === "success"
-        ) {
+        if (userDocumentsResult.val.data.some) {
             const { arrangeByDirection, arrangeByField } = usersQueryState;
-            const userDocuments = userDocumentsResult.safeUnwrap()
-                .data as UserDocument[];
+            const userDocuments = userDocumentsResult.val.data.val;
 
             const sorted = userDocuments.sort((a, b) => {
                 const aValue = a[arrangeByField];
@@ -131,12 +127,8 @@ async function handleUsersQuerySubmitGETClick(
                 payload: withFUIAndPPUFieldsAdded,
             });
 
-            return createSafeBoxResult({
-                data: {
-                    accessToken,
-                    userDocuments: userDocumentsResult.safeUnwrap()
-                        .data as UserDocument[],
-                },
+            return createResultSafeBox({
+                data: Some("User documents fetched successfully"),
                 kind: "success",
             });
         }
@@ -151,14 +143,28 @@ async function handleUsersQuerySubmitGETClick(
             url: cacheKey,
         });
 
-        return createSafeBoxResult({
-            data: true,
+        return createResultSafeBox({
+            data: Some("Fetching user documents"),
             kind: "success",
         });
     } catch (error: unknown) {
-        return createSafeBoxResult({
-            data: error,
-            message: "Error handling submit click",
+        if (
+            !isComponentMountedRef.current
+        ) {
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
+            });
+        }
+
+        showBoundary(error);
+        return createResultSafeBox({
+            data: Some(
+                error instanceof Error
+                    ? error.message
+                    : typeof error === "string"
+                    ? error
+                    : "Unknown error",
+            ),
         });
     }
 }

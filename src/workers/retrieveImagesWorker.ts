@@ -4,7 +4,7 @@ import {
 } from "../components/accessibleInputs/AccessibleFileInput";
 import { MAX_IMAGES } from "../components/accessibleInputs/image/constants";
 import { createImageInputForageKeys } from "../components/accessibleInputs/image/utils";
-import { SafeBoxResult } from "../types";
+import { ResultSafeBox } from "../types";
 import {
     createResultSafeBox,
     createSafeBoxResult,
@@ -12,7 +12,7 @@ import {
 } from "../utils";
 
 type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             fileNames: Array<string>;
             modifiedFiles: Array<ModifiedFile>;
@@ -60,71 +60,93 @@ self.onmessage = async (
             modifiedFilesForageKey,
         );
         if (modifiedFilesResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: modifiedFilesResult.val.message ??
-                    "Error getting modified files",
-            }));
+            self.postMessage(
+                createResultSafeBox({
+                    data: modifiedFilesResult.val.data,
+                    message: Some("Error getting modified files"),
+                }),
+            );
             return;
         }
-        const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
+        const modifiedFiles = modifiedFilesResult.val.data.none
+            ? []
+            : modifiedFilesResult.val.data.val;
 
         const fileNamesResult = await getCachedItemSafeAsync<Array<string>>(
             fileNamesForageKey,
         );
         if (fileNamesResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: fileNamesResult.val.message ??
-                    "Error getting file names",
-            }));
+            self.postMessage(
+                createResultSafeBox({
+                    data: fileNamesResult.val.data,
+                    message: Some("Error setting file names"),
+                }),
+            );
             return;
         }
-        const fileNames = fileNamesResult.safeUnwrap().data ?? [];
+        const fileNames = fileNamesResult.val.data.none
+            ? []
+            : fileNamesResult.val.data.val;
 
-        const qualitiesResult = await getCachedItemSafeAsync<Array<number>>(
+        const getQualitiesResult = await getCachedItemSafeAsync<Array<number>>(
             qualitiesForageKey,
         );
-        if (qualitiesResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: qualitiesResult.val.message ??
-                    "Error getting qualities",
-            }));
+        if (getQualitiesResult.err) {
+            self.postMessage(
+                createResultSafeBox({
+                    data: getQualitiesResult.val.data,
+                    message: Some("Error getting qualities"),
+                }),
+            );
             return;
         }
-        const qualities = qualitiesResult.safeUnwrap().data ?? Array.from(
-            { length: MAX_IMAGES },
-            () => 10,
-        );
+        const qualities = getQualitiesResult.val.data.none
+            ? Array.from(
+                { length: MAX_IMAGES },
+                () => 10,
+            )
+            : getQualitiesResult.val.data.val;
 
-        const orientationsResult = await getCachedItemSafeAsync<Array<number>>(
+        const getOrientationsResult = await getCachedItemSafeAsync<
+            Array<number>
+        >(
             orientationsForageKey,
         );
-        if (orientationsResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: orientationsResult.val.message ??
-                    "Error getting orientations",
-            }));
+        if (getOrientationsResult.err) {
+            self.postMessage(
+                createResultSafeBox({
+                    data: getOrientationsResult.val.data,
+                    message: Some("Error getting orientations"),
+                }),
+            );
             return;
         }
-        const orientations = orientationsResult.safeUnwrap().data ??
-            Array.from(
+        const orientations = getOrientationsResult.val.data.none
+            ? Array.from(
                 { length: MAX_IMAGES },
                 () => 1,
-            );
+            )
+            : getOrientationsResult.val.data.val;
 
-        self.postMessage(createSafeBoxResult({
-            data: {
+        self.postMessage(createResultSafeBox({
+            data: Some({
                 fileNames,
                 modifiedFiles,
                 qualities,
                 orientations,
-            },
+            }),
             kind: "success",
         }));
-    } catch (error) {
-        console.error("Worker error:", error);
-        self.postMessage(createSafeBoxResult({
-            data: error,
-            kind: "error",
+    } catch (error: unknown) {
+        self.postMessage(createResultSafeBox({
+            data: Some(error),
+            message: Some(
+                error instanceof Error
+                    ? error.message
+                    : typeof error === "string"
+                    ? error
+                    : "Unknown error",
+            ),
         }));
     }
 };

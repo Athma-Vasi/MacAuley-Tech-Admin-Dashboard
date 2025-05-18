@@ -8,13 +8,11 @@ import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   FinancialMetricsDocument,
   ResultSafeBox,
-  SafeBoxResult,
   UserDocument,
 } from "../../types";
 import {
   createMetricsURLCacheKey,
   createResultSafeBox,
-  createSafeBoxResult,
   setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
@@ -32,22 +30,21 @@ async function handleLoginClick({
   loginDispatch: React.Dispatch<LoginDispatch>;
   loginFetchWorker: Worker | null;
   schema: { username: string; password: string };
-}): Promise<SafeBoxResult<boolean>> {
+}): Promise<ResultSafeBox<string>> {
   const { isLoading, isSubmitting, isSuccessful } = loginState;
 
-  if (loginFetchWorker === null) {
-    return createSafeBoxResult({
-      message: "Login worker not initialized",
+  if (!loginFetchWorker) {
+    return createResultSafeBox({
+      data: Some("Worker not initialized"),
+    });
+  }
+  if (isLoading || isSubmitting || isSuccessful) {
+    return createResultSafeBox({
+      data: Some("Login already in progress"),
     });
   }
 
   try {
-    if (isLoading || isSubmitting || isSuccessful) {
-      return createSafeBoxResult({
-        message: "Login already in progress",
-      });
-    }
-
     loginDispatch({
       action: loginAction.setIsSubmitting,
       payload: true,
@@ -61,20 +58,25 @@ async function handleLoginClick({
       body: JSON.stringify({ schema }),
     };
 
-    loginFetchWorker?.postMessage({
+    loginFetchWorker.postMessage({
       requestInit,
       url: LOGIN_URL,
       routesZodSchemaMapKey: "login",
     });
 
-    return createSafeBoxResult({
-      data: true,
+    return createResultSafeBox({
+      data: Some("Login request sent"),
       kind: "success",
-      message: "Login message sent",
     });
   } catch (error: unknown) {
-    return createSafeBoxResult({
-      message: "Error occurred during login",
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -239,7 +241,9 @@ async function handleMessageEventLoginFetchWorkerToMain(
       kind: "success",
     });
   } catch (error: unknown) {
-    if (!isComponentMountedRef.current) {
+    if (
+      !isComponentMountedRef.current
+    ) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
       });
@@ -247,7 +251,13 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
     showBoundary(error);
     return createResultSafeBox({
-      data: Some("Error occurred during login"),
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }

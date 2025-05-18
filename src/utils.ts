@@ -431,37 +431,36 @@ async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
 
 type GetCachedItemSafeAsync = <Data = unknown>(
   key: string,
-) => Promise<SafeBoxResult<Data>>;
+) => Promise<ResultSafeBox<Data>>;
 
 async function getCachedItemSafeAsync<Data = unknown>(
   key: string,
-): Promise<SafeBoxResult<Data>> {
+): Promise<ResultSafeBox<Data>> {
   try {
     const data: Data = await localforage.getItem(key);
-    if (data === null || data === undefined) {
-      return new Ok({ data: void 0, kind: "notFound" });
-    }
-
-    return new Ok({ data, kind: "success" });
+    return new Ok({
+      data: data === null || data === undefined ? None : Some(data),
+      kind: "success",
+    });
   } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
+    return new Err({ data: Some(error), kind: "error" });
   }
 }
 
 type SetCachedItemSafeAsync = <Data = unknown>(
   key: string,
   value: Data,
-) => Promise<SafeBoxResult<undefined>>;
+) => Promise<ResultSafeBox>;
 
 async function setCachedItemSafeAsync<Data = unknown>(
   key: string,
   value: Data,
-): Promise<SafeBoxResult<undefined>> {
+): Promise<ResultSafeBox> {
   try {
     await localforage.setItem(key, value);
-    return new Ok({ data: void 0, kind: "success" });
+    return new Ok({ data: None, kind: "success" });
   } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
+    return new Err({ data: Some(error), kind: "error" });
   }
 }
 
@@ -540,17 +539,22 @@ function createSafeBoxResult<Data = unknown>(
 type ModifyImageSafe = (
   file: Blob,
   config?: ICompressConfig | number,
-) => Promise<SafeBoxResult<Blob>>;
+) => Promise<ResultSafeBox<Blob>>;
 
 async function modifyImageSafe(
   file: Blob,
   config?: ICompressConfig | number,
-): Promise<SafeBoxResult<Blob>> {
+): Promise<ResultSafeBox<Blob>> {
   try {
     const compressedBlob = await compress(file, config);
-    return new Ok({ data: compressedBlob, kind: "success" });
+    return new Ok({
+      data: compressedBlob === null || compressedBlob === undefined
+        ? None
+        : Some(compressedBlob),
+      kind: "success",
+    });
   } catch (error) {
-    return new Err({ data: error, kind: "error" });
+    return new Err({ data: Some(error), kind: "error" });
   }
 }
 

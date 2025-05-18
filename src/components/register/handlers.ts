@@ -1,7 +1,7 @@
 import { NavigateFunction } from "react-router-dom";
 import { Some } from "ts-results";
 import { ResultSafeBox } from "../../types";
-import { createResultSafeBox, createSafeBoxResult } from "../../utils";
+import { createResultSafeBox } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { registerAction } from "./actions";
@@ -16,10 +16,15 @@ async function handleCheckEmail(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     url: RequestInfo | URL;
   },
-) {
+): Promise<ResultSafeBox<string>> {
+  if (!checkEmailWorker) {
+    return createResultSafeBox({
+      data: Some("Worker not initialized"),
+    });
+  }
   if (!email) {
-    return createSafeBoxResult({
-      message: "Email is empty",
+    return createResultSafeBox({
+      data: Some("Email is empty"),
     });
   }
 
@@ -33,8 +38,8 @@ async function handleCheckEmail(
   });
 
   if (!isEmailValid) {
-    return createSafeBoxResult({
-      message: "Email is invalid",
+    return createResultSafeBox({
+      data: Some("Email is invalid"),
     });
   }
 
@@ -52,15 +57,15 @@ async function handleCheckEmail(
 
   const urlWithQuery = new URL(`${url}/check/?&email[$in]=${email}`);
 
-  checkEmailWorker?.postMessage({
+  checkEmailWorker.postMessage({
     requestInit,
     routesZodSchemaMapKey: "checkEmail",
     skipTokenDecode: true,
     url: urlWithQuery.toString(),
   });
 
-  return createSafeBoxResult({
-    data: true,
+  return createResultSafeBox({
+    data: Some("Email is valid"),
     kind: "success",
   });
 }
@@ -136,9 +141,16 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
         data: Some("Component unmounted"),
       });
     }
+
     showBoundary(error);
     return createResultSafeBox({
-      data: Some("Error fetching data"),
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -150,10 +162,15 @@ async function handleCheckUsername(
     url: RequestInfo | URL;
     username: string;
   },
-) {
+): Promise<ResultSafeBox<string>> {
+  if (!checkUsernameWorker) {
+    return createResultSafeBox({
+      data: Some("Worker not initialized"),
+    });
+  }
   if (!username) {
-    return createSafeBoxResult({
-      message: "Username is empty",
+    return createResultSafeBox({
+      data: Some("Username is empty"),
     });
   }
 
@@ -167,8 +184,8 @@ async function handleCheckUsername(
   });
 
   if (!isUsernameValid) {
-    return createSafeBoxResult({
-      message: "Username is invalid",
+    return createResultSafeBox({
+      data: Some("Username is invalid"),
     });
   }
 
@@ -186,15 +203,15 @@ async function handleCheckUsername(
 
   const urlWithQuery = new URL(`${url}/check/?&username[$in]=${username}`);
 
-  checkUsernameWorker?.postMessage({
+  checkUsernameWorker.postMessage({
     requestInit,
     routesZodSchemaMapKey: "checkUsername",
     skipTokenDecode: true,
     url: urlWithQuery.toString(),
   });
 
-  return createSafeBoxResult({
-    data: true,
+  return createResultSafeBox({
+    data: Some("Username is valid"),
     kind: "success",
   });
 }
@@ -262,7 +279,7 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
       data: Some(isUsernameExists.toString()),
       kind: "success",
     });
-  } catch (error) {
+  } catch (error: unknown) {
     if (
       !isComponentMountedRef.current
     ) {
@@ -270,9 +287,16 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
         data: Some("Component unmounted"),
       });
     }
+
     showBoundary(error);
     return createResultSafeBox({
-      data: Some("Error fetching data"),
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -289,7 +313,13 @@ async function handleRegisterButtonSubmit(
     registerWorker: Worker | null;
     url: RequestInfo | URL;
   },
-) {
+): Promise<ResultSafeBox<string>> {
+  if (!registerWorker) {
+    return createResultSafeBox({
+      data: Some("Worker not initialized"),
+    });
+  }
+
   const requestInit: RequestInit = {
     body: formData,
     method: "POST",
@@ -301,11 +331,16 @@ async function handleRegisterButtonSubmit(
     payload: true,
   });
 
-  registerWorker?.postMessage({
+  registerWorker.postMessage({
     requestInit,
     routesZodSchemaMapKey: "register",
     skipTokenDecode: true,
     url: url.toString(),
+  });
+
+  return createResultSafeBox({
+    data: Some("Registration request sent"),
+    kind: "success",
   });
 }
 
@@ -399,9 +434,16 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
         data: Some("Component unmounted"),
       });
     }
+
     showBoundary(error);
     return createResultSafeBox({
-      data: Some("Error fetching data"),
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -418,111 +460,123 @@ function handlePrevNextStepClick(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     registerState: RegisterState;
   },
-) {
-  if (activeStep === MAX_REGISTER_STEPS) {
-    return;
+): ResultSafeBox<string> {
+  try {
+    if (activeStep === MAX_REGISTER_STEPS) {
+      return createResultSafeBox({
+        data: Some("Last step reached"),
+      });
+    }
+
+    const stepInputNames = STEPS_INPUTNAMES_MAP.get(activeStep) ??
+      [];
+
+    const {
+      stepInError,
+      isStepWithEmptyInputs,
+      inputsInError,
+      inputsNotInError,
+    } = stepInputNames
+      .reduce(
+        (acc, inputName) => {
+          const inputValidation = VALIDATION_FUNCTIONS_TABLE[inputName];
+
+          const isInputValid = inputValidation.every((validation) => {
+            const [regExpOrFunc, _] = validation;
+            const stateValue = Object.entries(registerState).find(([key]) =>
+              key === inputName
+            )?.[1] ?? "";
+            if (stateValue === null || stateValue === undefined) {
+              return acc;
+            }
+
+            if (
+              typeof stateValue === "string" && stateValue?.length === 0
+            ) {
+              acc.isStepWithEmptyInputs = true;
+
+              // ignore empty inputs from validation error
+              return acc;
+            }
+
+            return typeof regExpOrFunc === "function"
+              ? regExpOrFunc(stateValue as string)
+              : regExpOrFunc.test(stateValue as string);
+          });
+
+          if (isInputValid) {
+            acc.inputsNotInError.add(inputName);
+          } else {
+            acc.inputsInError.add(inputName);
+            acc.stepInError = true;
+          }
+
+          return acc;
+        },
+        {
+          stepInError: false,
+          isStepWithEmptyInputs: false,
+          inputsInError: new Set<string>(),
+          inputsNotInError: new Set<string>(),
+        },
+      );
+
+    inputsInError.forEach((inputName) => {
+      registerDispatch({
+        action: registerAction.setInputsInError,
+        payload: {
+          kind: "add",
+          name: inputName,
+        },
+      });
+    });
+
+    inputsNotInError.forEach((inputName) => {
+      registerDispatch({
+        action: registerAction.setInputsInError,
+        payload: {
+          kind: "delete",
+          name: inputName,
+        },
+      });
+    });
+
+    registerDispatch({
+      action: registerAction.setStepsInError,
+      payload: {
+        kind: stepInError ? "add" : "delete",
+        step: activeStep,
+      },
+    });
+
+    registerDispatch({
+      action: registerAction.setStepsWithEmptyInputs,
+      payload: {
+        kind: isStepWithEmptyInputs ? "add" : "delete",
+        step: activeStep,
+      },
+    });
+
+    registerDispatch({
+      action: registerAction.setActiveStep,
+      payload: kind === "next" ? activeStep + 1 : activeStep - 1,
+    });
+
+    return createResultSafeBox({
+      data: Some("Step changed"),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
+    });
   }
-
-  const stepInputNames = STEPS_INPUTNAMES_MAP.get(activeStep) ??
-    [];
-
-  const {
-    stepInError,
-    isStepWithEmptyInputs,
-    inputsInError,
-    inputsNotInError,
-  } = stepInputNames
-    .reduce(
-      (acc, inputName) => {
-        const inputValidation = VALIDATION_FUNCTIONS_TABLE[inputName];
-
-        const isInputValid = inputValidation.every((validation) => {
-          const [regExpOrFunc, _] = validation;
-          const stateValue = Object.entries(registerState).find(([key]) =>
-            key === inputName
-          )?.[1] ?? "";
-          if (stateValue === null || stateValue === undefined) {
-            return acc;
-          }
-
-          if (
-            typeof stateValue === "string" && stateValue?.length === 0
-          ) {
-            acc.isStepWithEmptyInputs = true;
-
-            // ignore empty inputs from validation error
-            return acc;
-          }
-
-          return typeof regExpOrFunc === "function"
-            ? regExpOrFunc(stateValue as string)
-            : regExpOrFunc.test(stateValue as string);
-        });
-
-        if (isInputValid) {
-          acc.inputsNotInError.add(inputName);
-        } else {
-          acc.inputsInError.add(inputName);
-          acc.stepInError = true;
-        }
-
-        return acc;
-      },
-      {
-        stepInError: false,
-        isStepWithEmptyInputs: false,
-        inputsInError: new Set<string>(),
-        inputsNotInError: new Set<string>(),
-      },
-    );
-
-  console.log({
-    stepInError,
-    isStepWithEmptyInputs,
-    inputsInError,
-    inputsNotInError,
-  });
-
-  inputsInError.forEach((inputName) => {
-    registerDispatch({
-      action: registerAction.setInputsInError,
-      payload: {
-        kind: "add",
-        name: inputName,
-      },
-    });
-  });
-
-  inputsNotInError.forEach((inputName) => {
-    registerDispatch({
-      action: registerAction.setInputsInError,
-      payload: {
-        kind: "delete",
-        name: inputName,
-      },
-    });
-  });
-
-  registerDispatch({
-    action: registerAction.setStepsInError,
-    payload: {
-      kind: stepInError ? "add" : "delete",
-      step: activeStep,
-    },
-  });
-
-  registerDispatch({
-    action: registerAction.setStepsWithEmptyInputs,
-    payload: {
-      kind: isStepWithEmptyInputs ? "add" : "delete",
-      step: activeStep,
-    },
-  });
-
-  registerDispatch({
-    action: registerAction.setActiveStep,
-    payload: kind === "next" ? activeStep + 1 : activeStep - 1,
-  });
 }
 
 export {

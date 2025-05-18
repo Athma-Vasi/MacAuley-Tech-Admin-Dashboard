@@ -6,7 +6,6 @@ import {
     DecodedToken,
     HttpServerResponse,
     ResultSafeBox,
-    SafeBoxResult,
     UserDocument,
 } from "../types";
 import {
@@ -112,7 +111,7 @@ self.onmessage = async (
         if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
             self.postMessage(
                 createResultSafeBox({
-                    data: Some(decodedTokenResult.val.data),
+                    data: decodedTokenResult.val.data,
                     message: Some("Error decoding JWT"),
                 }),
             );

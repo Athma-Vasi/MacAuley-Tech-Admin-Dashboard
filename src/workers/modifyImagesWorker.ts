@@ -9,7 +9,7 @@ import {
     createImageInputForageKeys,
     validateImages,
 } from "../components/accessibleInputs/image/utils";
-import { SafeBoxResult } from "../types";
+import { ResultSafeBox } from "../types";
 import {
     createResultSafeBox,
     createSafeBoxResult,
@@ -19,7 +19,7 @@ import {
 } from "../utils";
 
 type MessageEventModifyImagesWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             areImagesInvalid: Array<boolean>;
             currentImageIndex: number;
@@ -85,27 +85,19 @@ self.onmessage = async (
         const originalFilesResult = await getCachedItemSafeAsync<
             Array<OriginalFile>
         >(originalFilesForageKey);
-        console.log(
-            "Original files result",
-            originalFilesResult,
-        );
-        if (originalFilesResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: originalFilesResult.val.message ??
-                    "Error getting original files",
-            }));
-            return;
-        }
-        const originalFiles = originalFilesResult.safeUnwrap().data ?? [];
-        if (originalFiles.length === 0) {
-            self.postMessage(createSafeBoxResult({
-                message: "No original files found",
-            }));
+        if (originalFilesResult.err || originalFilesResult.val.data.none) {
+            self.postMessage(
+                createResultSafeBox({
+                    data: originalFilesResult.val.data,
+                    message: originalFilesResult.val.message ??
+                        Some("Error getting original files"),
+                }),
+            );
             return;
         }
 
         const imageToModify = structuredClone(
-            originalFiles[currentImageIndex],
+            originalFilesResult.val.data.val[currentImageIndex],
         );
         console.log(
             "Image to modify",
@@ -128,18 +120,17 @@ self.onmessage = async (
             "Modify image result",
             modifyImageResult,
         );
-        if (modifyImageResult.err) {
-            return createSafeBoxResult({
-                message: modifyImageResult.val.message ??
-                    "Unable to modify image",
-            });
+        if (modifyImageResult.err || modifyImageResult.val.data.none) {
+            self.postMessage(
+                createResultSafeBox({
+                    data: modifyImageResult.val.data,
+                    message: modifyImageResult.val.message ??
+                        Some("Error modifying image"),
+                }),
+            );
+            return;
         }
-        const fileBlob = modifyImageResult.safeUnwrap().data;
-        if (fileBlob === undefined) {
-            return createSafeBoxResult({
-                message: "File blob is undefined",
-            });
-        }
+        const fileBlob = modifyImageResult.val.data.val;
 
         const modifiedFilesResult = await getCachedItemSafeAsync<
             Array<ModifiedFile>
@@ -149,17 +140,21 @@ self.onmessage = async (
             modifiedFilesResult,
         );
         if (modifiedFilesResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: modifiedFilesResult.val.message ??
-                    "Error getting modified files",
-            }));
+            self.postMessage(
+                createResultSafeBox({
+                    data: modifiedFilesResult.val.data,
+                    message: modifiedFilesResult.val.message ??
+                        Some("Error getting modified files"),
+                }),
+            );
             return;
         }
-        const modifiedFiles = modifiedFilesResult.safeUnwrap().data ?? [];
-        const updatedModifiedFiles = modifiedFiles.map(
-            (modifiedFile, index) =>
-                index === currentImageIndex ? fileBlob : modifiedFile,
-        );
+        const updatedModifiedFiles = modifiedFilesResult.val.data.none
+            ? []
+            : modifiedFilesResult.val.data.val.map(
+                (modifiedFile, index) =>
+                    index === currentImageIndex ? fileBlob : modifiedFile,
+            );
 
         const setForageItemSafeResult = await setCachedItemSafeAsync(
             modifiedFilesForageKey,
@@ -170,10 +165,13 @@ self.onmessage = async (
             setForageItemSafeResult,
         );
         if (setForageItemSafeResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: setForageItemSafeResult.val.message ??
-                    "Error setting modified files",
-            }));
+            self.postMessage(
+                createResultSafeBox({
+                    data: setForageItemSafeResult.val.data,
+                    message: setForageItemSafeResult.val.message ??
+                        Some("Error setting modified files"),
+                }),
+            );
             return;
         }
 
@@ -197,10 +195,13 @@ self.onmessage = async (
             setQualitiesResult,
         );
         if (setQualitiesResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: setQualitiesResult.val.message ??
-                    "Error setting qualities",
-            }));
+            self.postMessage(
+                createResultSafeBox({
+                    data: setQualitiesResult.val.data,
+                    message: setQualitiesResult.val.message ??
+                        Some("Error setting qualities"),
+                }),
+            );
             return;
         }
 
@@ -219,10 +220,13 @@ self.onmessage = async (
             setOrientationsResult,
         );
         if (setOrientationsResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: setOrientationsResult.val.message ??
-                    "Error setting orientations",
-            }));
+            self.postMessage(
+                createResultSafeBox({
+                    data: setOrientationsResult.val.data,
+                    message: setOrientationsResult.val.message ??
+                        Some("Error setting orientations"),
+                }),
+            );
             return;
         }
 
@@ -234,31 +238,40 @@ self.onmessage = async (
             fileNamesResult,
         );
         if (fileNamesResult.err) {
-            self.postMessage(createSafeBoxResult({
-                message: fileNamesResult.val.message ??
-                    "Error getting file names",
-            }));
+            self.postMessage(
+                createResultSafeBox({
+                    data: fileNamesResult.val.data,
+                    message: fileNamesResult.val.message ??
+                        Some("Error setting file names"),
+                }),
+            );
             return;
         }
-        const fileNames = fileNamesResult.safeUnwrap().data ?? [];
 
-        self.postMessage(createSafeBoxResult({
-            data: {
+        self.postMessage(createResultSafeBox({
+            data: Some({
                 areImagesInvalid,
                 currentImageIndex,
                 fileBlob,
-                fileNames,
+                fileNames: fileNamesResult.val.data.none
+                    ? []
+                    : fileNamesResult.val.data.val,
                 quality,
                 updatedModifiedFiles,
                 orientation,
-            },
+            }),
             kind: "success",
         }));
     } catch (error) {
-        console.error("Worker error:", error);
-        self.postMessage(createSafeBoxResult({
-            data: error,
-            kind: "error",
+        self.postMessage(createResultSafeBox({
+            data: Some(error),
+            message: Some(
+                error instanceof Error
+                    ? error.message
+                    : typeof error === "string"
+                    ? error
+                    : "Unknown error",
+            ),
         }));
     }
 };
