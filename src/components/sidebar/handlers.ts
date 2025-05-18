@@ -559,6 +559,7 @@ async function handleDirectoryNavClick(
       data: parsedInputResult.val.data ?? Some("Error parsing input"),
     });
   }
+
   const {
     accessToken,
     department,

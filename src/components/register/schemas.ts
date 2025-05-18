@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EMAIL_REGEX, USERNAME_REGEX } from "../../regexes";
 import { registerAction } from "./actions";
 
 const setConfirmPasswordRegisterDispatchZod = z.object({
@@ -190,7 +191,103 @@ type RegisterDispatch =
     | z.infer<typeof setCheckUsernameWorkerRegisterDispatchZod>
     | z.infer<typeof setCheckEmailWorkerRegisterDispatchZod>;
 
+const handleCheckEmailInputZod = z.object({
+    checkEmailWorker: z.instanceof(Worker),
+    email: z.string().regex(EMAIL_REGEX),
+    registerDispatch: z.function().args(z.any()).returns(z.void()),
+    url: z.union([z.string(), z.instanceof(URL)]),
+});
+
+const handleMessageEventCheckEmailWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    registerDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
+const handleCheckUsernameInputZod = z.object({
+    checkUsernameWorker: z.instanceof(Worker),
+    registerDispatch: z.function().args(z.any()).returns(z.void()),
+    url: z.union([z.string(), z.instanceof(URL)]),
+    username: z.string().regex(USERNAME_REGEX),
+});
+
+const handleMessageEventCheckUsernameWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    registerDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
+const handleRegisterButtonSubmitInputZod = z.object({
+    formData: z.instanceof(FormData),
+    registerDispatch: z.function().args(z.any()).returns(z.void()),
+    registerWorker: z.instanceof(Worker),
+    url: z.union([z.string(), z.instanceof(URL)]),
+});
+
+const handleMessageEventRegisterFetchWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    navigate: z.function().args(z.any()).returns(z.void()),
+    registerDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    toLocation: z.string().min(1).max(1000),
+});
+
+const registerStateZod = z.object({
+    activeStep: z.number(),
+    addressLine: z.string(),
+    checkEmailWorker: z.instanceof(Worker).nullable(),
+    checkUsernameWorker: z.instanceof(Worker).nullable(),
+    city: z.string(),
+    confirmPassword: z.string(),
+    country: z.string(),
+    department: z.string(),
+    email: z.string(),
+    errorMessage: z.string(),
+    filesInError: z.instanceof(Map),
+    firstName: z.string(),
+    formData: z.instanceof(FormData),
+    inputsInError: z.instanceof(Set),
+    isEmailExists: z.boolean(),
+    isEmailExistsSubmitting: z.boolean(),
+    isError: z.boolean(),
+    isSubmitting: z.boolean(),
+    isSuccessful: z.boolean(),
+    isUsernameExists: z.boolean(),
+    isUsernameExistsSubmitting: z.boolean(),
+    jobPosition: z.string(),
+    lastName: z.string(),
+    password: z.string(),
+    postalCodeCanada: z.string(),
+    postalCodeUS: z.string(),
+    profilePictureUrl: z.string(),
+    province: z.string(),
+    registerWorker: z.instanceof(Worker).nullable(),
+    state: z.string(),
+    stepsInError: z.instanceof(Set),
+    stepsWithEmptyInputs: z.instanceof(Set),
+    storeLocation: z.string(),
+    username: z.string(),
+});
+
+const handlePrevNextStepClickInputZod = z.object({
+    activeStep: z.number(),
+    kind: z.enum(["previous", "next"]),
+    registerDispatch: z.function().args(z.any()).returns(z.void()),
+    registerState: registerStateZod,
+});
+
 export {
+    handleCheckEmailInputZod,
+    handleCheckUsernameInputZod,
+    handleMessageEventCheckEmailWorkerToMainInputZod,
+    handleMessageEventCheckUsernameWorkerToMainInputZod,
+    handleMessageEventRegisterFetchWorkerToMainInputZod,
+    handlePrevNextStepClickInputZod,
+    handleRegisterButtonSubmitInputZod,
+    registerStateZod,
     setActiveStepRegisterDispatchZod,
     setAddressLineRegisterDispatchZod,
     setCheckEmailWorkerRegisterDispatchZod,

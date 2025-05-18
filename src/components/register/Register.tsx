@@ -203,12 +203,13 @@ function Register() {
           : "",
         kind: "next",
         onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
-          handlePrevNextStepClick({
+          const result = handlePrevNextStepClick({
             activeStep,
             kind: "next",
             registerDispatch,
             registerState,
           });
+          console.log("result", result);
         },
       }}
     />
