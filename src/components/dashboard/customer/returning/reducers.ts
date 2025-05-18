@@ -25,14 +25,13 @@ function returningReducer_setYAxisKey(
     zSchema: setYAxisKeyReturningDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    yAxisKey: parsedResult.safeUnwrap().data
-      ?.payload as CustomerNewReturningYAxisKey,
+    yAxisKey: parsedResult.val.data.val.payload as CustomerNewReturningYAxisKey,
   };
 }
 
