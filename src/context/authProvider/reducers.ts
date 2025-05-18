@@ -33,13 +33,13 @@ function authReducer_setAccessToken(
     zSchema: setAccessTokenAuthDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    accessToken: parsedResult.safeUnwrap().data?.payload as string,
+    accessToken: parsedResult.val.data.val.payload as string,
   };
 }
 
@@ -52,13 +52,13 @@ function authReducer_setDecodedToken(
     zSchema: setDecodedTokenAuthDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    decodedToken: parsedResult.safeUnwrap().data?.payload as DecodedToken,
+    decodedToken: parsedResult.val.data.val.payload as DecodedToken,
   };
 }
 
@@ -71,13 +71,13 @@ function authReducer_setIsLoggedIn(
     zSchema: setIsLoggedInAuthDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isLoggedIn: parsedResult.safeUnwrap().data?.payload as boolean,
+    isLoggedIn: parsedResult.val.data.val.payload as boolean,
   };
 }
 
@@ -90,13 +90,13 @@ function authReducer_setUserDocument(
     zSchema: setUserDocumentAuthDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    userDocument: parsedResult.safeUnwrap().data?.payload as UserDocument,
+    userDocument: parsedResult.val.data.val.payload as UserDocument,
   };
 }
 
