@@ -50,13 +50,13 @@ function productMetricsReducer_setCalendarChartsData(
     zSchema: setCalendarChartsDataProductMetricsDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    calendarChartsData: parsedResult.safeUnwrap().data?.payload as {
+    calendarChartsData: parsedResult.val.data.val.payload as {
       currentYear: ProductMetricsCalendarCharts;
       previousYear: ProductMetricsCalendarCharts;
     },
@@ -86,13 +86,13 @@ function productMetricsReducer_setCharts(
     zSchema: setChartsProductMetricsDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    charts: parsedResult.safeUnwrap().data?.payload as ProductMetricsCharts,
+    charts: parsedResult.val.data.val.payload as ProductMetricsCharts,
   };
 }
 
@@ -105,13 +105,13 @@ function productMetricsReducer_setIsGenerating(
     zSchema: setIsGeneratingProductMetricsDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isGenerating: parsedResult.safeUnwrap().data?.payload as boolean,
+    isGenerating: parsedResult.val.data.val.payload as boolean,
   };
 }
 
@@ -124,13 +124,13 @@ function productMetricsReducer_setProductChartsWorker(
     zSchema: setChartsWorkerProductMetricsDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    productChartsWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+    productChartsWorker: parsedResult.val.data.val.payload as Worker,
   };
 }
 
