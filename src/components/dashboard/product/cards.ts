@@ -1,3 +1,6 @@
+import { Err, Some } from "ts-results";
+import { ResultSafeBox } from "../../../types";
+import { createResultSafeBox } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -32,14 +35,35 @@ type ProductMetricsCards = {
   };
 };
 
-function createProductMetricsCards(
+function createProductMetricsCardsSafe(
   {
     cardBgGradient,
     greenColorShade,
     redColorShade,
     selectedDateProductMetrics,
   }: createProductMetricsCardsInput,
-): ProductMetricsCards {
+): ResultSafeBox<ProductMetricsCards> {
+  const productMetricsCardsTemplate: ProductMetricsCards = {
+    dailyCards: {
+      revenue: [],
+      unitsSold: [],
+    },
+    monthlyCards: {
+      revenue: [],
+      unitsSold: [],
+    },
+    yearlyCards: {
+      revenue: [],
+      unitsSold: [],
+    },
+  };
+
+  if (!selectedDateProductMetrics) {
+    return createResultSafeBox({
+      data: Some(productMetricsCardsTemplate),
+    });
+  }
+
   const {
     dayProductMetrics: { prevDayMetrics, selectedDayMetrics },
     monthProductMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -54,231 +78,237 @@ function createProductMetricsCards(
     !selectedDayMetrics ||
     !prevDayMetrics
   ) {
-    return {
-      dailyCards: {
-        revenue: [],
-        unitsSold: [],
-      },
-      monthlyCards: {
-        revenue: [],
-        unitsSold: [],
-      },
-      yearlyCards: {
-        revenue: [],
-        unitsSold: [],
-      },
-    };
+    return createResultSafeBox({
+      data: Some(productMetricsCardsTemplate),
+    });
   }
 
-  const currentYear = selectedYearMetrics.year;
-  const prevYear = prevYearMetrics.year;
-  const currentMonth = selectedMonthMetrics.month;
-  const prevMonth = prevMonthMetrics.month;
-  const prevDay = prevDayMetrics.day;
+  try {
+    const currentYear = selectedYearMetrics.year;
+    const prevYear = prevYearMetrics.year;
+    const currentMonth = selectedMonthMetrics.month;
+    const prevMonth = prevMonthMetrics.month;
+    const prevDay = prevDayMetrics.day;
 
-  const DASHBOARD_CARD_INFO_INPUT_TEMPLATE: CreateDashboardMetricsCardsInput = {
-    cardBgGradient,
-    currentMonth,
-    currentYear,
-    greenColorShade,
-    heading: "Total",
-    kind: "day",
-    prevDay,
-    prevMonth,
-    prevValue: 1,
-    prevYear,
-    redColorShade,
-    selectedValue: 1,
-  };
+    const DASHBOARD_CARD_INFO_INPUT_TEMPLATE: CreateDashboardMetricsCardsInput =
+      {
+        cardBgGradient,
+        currentMonth,
+        currentYear,
+        greenColorShade,
+        heading: "Total",
+        kind: "day",
+        prevDay,
+        prevMonth,
+        prevValue: 1,
+        prevYear,
+        redColorShade,
+        selectedValue: 1,
+      };
 
-  // daily
+    // daily
 
-  const dayRevenueTotalCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    isDisplayValueAsCurrency: true,
-    prevValue: prevDayMetrics.revenue.total,
-    selectedValue: selectedDayMetrics.revenue.total,
-  });
+    const dayRevenueTotalCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      isDisplayValueAsCurrency: true,
+      prevValue: prevDayMetrics.revenue.total,
+      selectedValue: selectedDayMetrics.revenue.total,
+    });
 
-  const dayRevenueInStoreCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "In-Store",
-    isDisplayValueAsCurrency: true,
-    prevValue: prevDayMetrics.revenue.inStore,
-    selectedValue: selectedDayMetrics.revenue.inStore,
-  });
+    const dayRevenueInStoreCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "In-Store",
+      isDisplayValueAsCurrency: true,
+      prevValue: prevDayMetrics.revenue.inStore,
+      selectedValue: selectedDayMetrics.revenue.inStore,
+    });
 
-  const dayRevenueOnlineCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Online",
-    isDisplayValueAsCurrency: true,
-    prevValue: prevDayMetrics.revenue.online,
-    selectedValue: selectedDayMetrics.revenue.online,
-  });
+    const dayRevenueOnlineCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Online",
+      isDisplayValueAsCurrency: true,
+      prevValue: prevDayMetrics.revenue.online,
+      selectedValue: selectedDayMetrics.revenue.online,
+    });
 
-  const dayUnitsSoldTotalCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Total",
-    prevValue: prevDayMetrics.unitsSold.total,
-    selectedValue: selectedDayMetrics.unitsSold.total,
-  });
+    const dayUnitsSoldTotalCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Total",
+      prevValue: prevDayMetrics.unitsSold.total,
+      selectedValue: selectedDayMetrics.unitsSold.total,
+    });
 
-  const dayUnitsSoldInStoreCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "In-Store",
-    prevValue: prevDayMetrics.unitsSold.inStore,
-    selectedValue: selectedDayMetrics.unitsSold.inStore,
-  });
+    const dayUnitsSoldInStoreCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "In-Store",
+      prevValue: prevDayMetrics.unitsSold.inStore,
+      selectedValue: selectedDayMetrics.unitsSold.inStore,
+    });
 
-  const dayUnitsSoldOnlineCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Online",
-    prevValue: prevDayMetrics.unitsSold.online,
-    selectedValue: selectedDayMetrics.unitsSold.online,
-  });
+    const dayUnitsSoldOnlineCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Online",
+      prevValue: prevDayMetrics.unitsSold.online,
+      selectedValue: selectedDayMetrics.unitsSold.online,
+    });
 
-  // monthly
+    // monthly
 
-  const monthRevenueTotalCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    isDisplayValueAsCurrency: true,
-    kind: "month",
-    prevValue: prevMonthMetrics.revenue.total,
-    selectedValue: selectedMonthMetrics.revenue.total,
-  });
+    const monthRevenueTotalCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      isDisplayValueAsCurrency: true,
+      kind: "month",
+      prevValue: prevMonthMetrics.revenue.total,
+      selectedValue: selectedMonthMetrics.revenue.total,
+    });
 
-  const monthRevenueInStoreCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    isDisplayValueAsCurrency: true,
-    heading: "In-Store",
-    kind: "month",
-    prevValue: prevMonthMetrics.revenue.inStore,
-    selectedValue: selectedMonthMetrics.revenue.inStore,
-  });
+    const monthRevenueInStoreCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      isDisplayValueAsCurrency: true,
+      heading: "In-Store",
+      kind: "month",
+      prevValue: prevMonthMetrics.revenue.inStore,
+      selectedValue: selectedMonthMetrics.revenue.inStore,
+    });
 
-  const monthRevenueOnlineCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    isDisplayValueAsCurrency: true,
-    heading: "Online",
-    kind: "month",
-    prevValue: prevMonthMetrics.revenue.online,
-    selectedValue: selectedMonthMetrics.revenue.online,
-  });
+    const monthRevenueOnlineCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      isDisplayValueAsCurrency: true,
+      heading: "Online",
+      kind: "month",
+      prevValue: prevMonthMetrics.revenue.online,
+      selectedValue: selectedMonthMetrics.revenue.online,
+    });
 
-  const monthUnitsSoldTotalCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Total",
-    kind: "month",
-    prevValue: prevMonthMetrics.unitsSold.total,
-    selectedValue: selectedMonthMetrics.unitsSold.total,
-  });
+    const monthUnitsSoldTotalCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Total",
+      kind: "month",
+      prevValue: prevMonthMetrics.unitsSold.total,
+      selectedValue: selectedMonthMetrics.unitsSold.total,
+    });
 
-  const monthUnitsSoldInStoreCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "In-Store",
-    kind: "month",
-    prevValue: prevMonthMetrics.unitsSold.inStore,
-    selectedValue: selectedMonthMetrics.unitsSold.inStore,
-  });
+    const monthUnitsSoldInStoreCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "In-Store",
+      kind: "month",
+      prevValue: prevMonthMetrics.unitsSold.inStore,
+      selectedValue: selectedMonthMetrics.unitsSold.inStore,
+    });
 
-  const monthUnitsSoldOnlineCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Online",
-    kind: "month",
-    prevValue: prevMonthMetrics.unitsSold.online,
-    selectedValue: selectedMonthMetrics.unitsSold.online,
-  });
+    const monthUnitsSoldOnlineCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Online",
+      kind: "month",
+      prevValue: prevMonthMetrics.unitsSold.online,
+      selectedValue: selectedMonthMetrics.unitsSold.online,
+    });
 
-  // yearly
+    // yearly
 
-  const yearRevenueTotalCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    isDisplayValueAsCurrency: true,
-    kind: "year",
-    prevValue: prevYearMetrics.revenue.total,
-    selectedValue: selectedYearMetrics.revenue.total,
-  });
+    const yearRevenueTotalCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      isDisplayValueAsCurrency: true,
+      kind: "year",
+      prevValue: prevYearMetrics.revenue.total,
+      selectedValue: selectedYearMetrics.revenue.total,
+    });
 
-  const yearRevenueInStoreCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "In-Store",
-    isDisplayValueAsCurrency: true,
-    kind: "year",
-    prevValue: prevYearMetrics.revenue.inStore,
-    selectedValue: selectedYearMetrics.revenue.inStore,
-  });
+    const yearRevenueInStoreCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "In-Store",
+      isDisplayValueAsCurrency: true,
+      kind: "year",
+      prevValue: prevYearMetrics.revenue.inStore,
+      selectedValue: selectedYearMetrics.revenue.inStore,
+    });
 
-  const yearRevenueOnlineCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Online",
-    isDisplayValueAsCurrency: true,
-    kind: "year",
-    prevValue: prevYearMetrics.revenue.online,
-    selectedValue: selectedYearMetrics.revenue.online,
-  });
+    const yearRevenueOnlineCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Online",
+      isDisplayValueAsCurrency: true,
+      kind: "year",
+      prevValue: prevYearMetrics.revenue.online,
+      selectedValue: selectedYearMetrics.revenue.online,
+    });
 
-  const yearUnitsSoldTotalCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Total",
-    kind: "year",
-    prevValue: prevYearMetrics.unitsSold.total,
-    selectedValue: selectedYearMetrics.unitsSold.total,
-  });
+    const yearUnitsSoldTotalCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Total",
+      kind: "year",
+      prevValue: prevYearMetrics.unitsSold.total,
+      selectedValue: selectedYearMetrics.unitsSold.total,
+    });
 
-  const yearUnitsSoldInStoreCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "In-Store",
-    kind: "year",
-    prevValue: prevYearMetrics.unitsSold.inStore,
-    selectedValue: selectedYearMetrics.unitsSold.inStore,
-  });
+    const yearUnitsSoldInStoreCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "In-Store",
+      kind: "year",
+      prevValue: prevYearMetrics.unitsSold.inStore,
+      selectedValue: selectedYearMetrics.unitsSold.inStore,
+    });
 
-  const yearUnitsSoldOnlineCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
-    heading: "Online",
-    kind: "year",
-    prevValue: prevYearMetrics.unitsSold.online,
-    selectedValue: selectedYearMetrics.unitsSold.online,
-  });
+    const yearUnitsSoldOnlineCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_INFO_INPUT_TEMPLATE,
+      heading: "Online",
+      kind: "year",
+      prevValue: prevYearMetrics.unitsSold.online,
+      selectedValue: selectedYearMetrics.unitsSold.online,
+    });
 
-  return {
-    dailyCards: {
-      revenue: [
-        dayRevenueTotalCardInfo,
-        dayRevenueInStoreCardInfo,
-        dayRevenueOnlineCardInfo,
-      ],
-      unitsSold: [
-        dayUnitsSoldTotalCardInfo,
-        dayUnitsSoldInStoreCardInfo,
-        dayUnitsSoldOnlineCardInfo,
-      ],
-    },
-    monthlyCards: {
-      revenue: [
-        monthRevenueTotalCardInfo,
-        monthRevenueInStoreCardInfo,
-        monthRevenueOnlineCardInfo,
-      ],
-      unitsSold: [
-        monthUnitsSoldTotalCardInfo,
-        monthUnitsSoldInStoreCardInfo,
-        monthUnitsSoldOnlineCardInfo,
-      ],
-    },
-    yearlyCards: {
-      revenue: [
-        yearRevenueTotalCardInfo,
-        yearRevenueInStoreCardInfo,
-        yearRevenueOnlineCardInfo,
-      ],
-      unitsSold: [
-        yearUnitsSoldTotalCardInfo,
-        yearUnitsSoldInStoreCardInfo,
-        yearUnitsSoldOnlineCardInfo,
-      ],
-    },
-  };
+    return createResultSafeBox({
+      data: Some({
+        dailyCards: {
+          revenue: [
+            dayRevenueTotalCardInfo,
+            dayRevenueInStoreCardInfo,
+            dayRevenueOnlineCardInfo,
+          ],
+          unitsSold: [
+            dayUnitsSoldTotalCardInfo,
+            dayUnitsSoldInStoreCardInfo,
+            dayUnitsSoldOnlineCardInfo,
+          ],
+        },
+        monthlyCards: {
+          revenue: [
+            monthRevenueTotalCardInfo,
+            monthRevenueInStoreCardInfo,
+            monthRevenueOnlineCardInfo,
+          ],
+          unitsSold: [
+            monthUnitsSoldTotalCardInfo,
+            monthUnitsSoldInStoreCardInfo,
+            monthUnitsSoldOnlineCardInfo,
+          ],
+        },
+        yearlyCards: {
+          revenue: [
+            yearRevenueTotalCardInfo,
+            yearRevenueInStoreCardInfo,
+            yearRevenueOnlineCardInfo,
+          ],
+          unitsSold: [
+            yearUnitsSoldTotalCardInfo,
+            yearUnitsSoldInStoreCardInfo,
+            yearUnitsSoldOnlineCardInfo,
+          ],
+        },
+      }),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
+      kind: "error",
+    });
+  }
 }
 
 function returnProductMetricsCards(
@@ -316,5 +346,5 @@ function returnProductMetricsCards(
   }, new Map());
 }
 
-export { createProductMetricsCards, returnProductMetricsCards };
+export { createProductMetricsCardsSafe, returnProductMetricsCards };
 export type { ProductMetricsCards };

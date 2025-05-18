@@ -1,12 +1,12 @@
 import { Some } from "ts-results";
 import { MONTHS } from "../components/dashboard/constants";
 import {
-    createProductMetricsCards,
+    createProductMetricsCardsSafe,
     ProductMetricsCards,
 } from "../components/dashboard/product/cards";
 import {
-    createProductMetricsCalendarCharts,
-    createProductMetricsCharts,
+    createProductMetricsCalendarChartsSafe,
+    createProductMetricsChartsSafe,
     ProductMetricsCalendarCharts,
     ProductMetricsCharts,
     SelectedDateProductMetrics,
@@ -62,25 +62,66 @@ self.onmessage = async (
     } = event.data;
 
     try {
-        const { currentYear, previousYear } =
-            createProductMetricsCalendarCharts(
+        const createProductMetricsCalendarChartsSafeResult =
+            createProductMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateProductMetrics,
                 selectedYYYYMMDD,
             );
+        if (
+            createProductMetricsCalendarChartsSafeResult.err ||
+            createProductMetricsCalendarChartsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: createProductMetricsCalendarChartsSafeResult.val.data,
+                message: Some(
+                    "Error creating product metrics calendar charts",
+                ),
+            }));
+            return;
+        }
+        const { currentYear, previousYear } =
+            createProductMetricsCalendarChartsSafeResult.val.data.val;
 
-        const productMetricsCharts = createProductMetricsCharts({
+        const productMetricsChartsSafeResult = createProductMetricsChartsSafe({
             productMetricsDocument,
             months: MONTHS,
             selectedDateProductMetrics,
         });
+        if (
+            productMetricsChartsSafeResult.err ||
+            productMetricsChartsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: productMetricsChartsSafeResult.val.data,
+                message: Some(
+                    "Error creating product metrics charts",
+                ),
+            }));
+            return;
+        }
+        const productMetricsCharts =
+            productMetricsChartsSafeResult.val.data.val;
 
-        const productMetricsCards = createProductMetricsCards({
+        const productMetricsCardsSafeResult = createProductMetricsCardsSafe({
             cardBgGradient,
             greenColorShade,
             redColorShade,
             selectedDateProductMetrics,
         });
+        if (
+            productMetricsCardsSafeResult.err ||
+            productMetricsCardsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: productMetricsCardsSafeResult.val.data,
+                message: Some(
+                    "Error creating product metrics cards",
+                ),
+            }));
+            return;
+        }
+        const productMetricsCards = productMetricsCardsSafeResult.val.data.val;
 
         self.postMessage(createResultSafeBox({
             data: Some({
