@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { allDepartmentsZod, allStoreLocationsZod } from "../../schemas";
 import { directoryAction } from "./actions";
 
 const setDirectoryFetchWorkerDirectoryDispatchZod = z.object({
@@ -8,22 +9,7 @@ const setDirectoryFetchWorkerDirectoryDispatchZod = z.object({
 
 const setDepartmentDirectoryDispatchZod = z.object({
     action: z.literal(directoryAction.setDepartment),
-    payload: z.enum([
-        "All Departments",
-        "Executive Management",
-        "Human Resources",
-        "Store Administration",
-        "Office Administration",
-        "Accounting",
-        "Sales",
-        "Marketing",
-        "Information Technology",
-        "Repair Technicians",
-        "Field Service Technicians",
-        "Logistics and Inventory",
-        "Customer Service",
-        "Maintenance",
-    ]),
+    payload: allDepartmentsZod,
 });
 
 const setOrientationDirectoryDispatchZod = z.object({
@@ -33,15 +19,22 @@ const setOrientationDirectoryDispatchZod = z.object({
 
 const setStoreLocationDirectoryDispatchZod = z.object({
     action: z.literal(directoryAction.setStoreLocation),
-    payload: z.enum([
-        "All Locations",
-        "Edmonton",
-        "Calgary",
-        "Vancouver",
-    ]),
+    payload: allStoreLocationsZod,
+});
+
+const handleDirectoryDepartmentAndLocationClicksInputZod = z.object({
+    accessToken: z.string().min(1),
+    department: allDepartmentsZod,
+    directoryFetchWorker: z.instanceof(Worker),
+    directoryUrl: z.string().url(),
+    globalDispatch: z.function().args(z.any()).returns(z.void()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    storeLocation: allStoreLocationsZod,
 });
 
 export {
+    handleDirectoryDepartmentAndLocationClicksInputZod,
     setDepartmentDirectoryDispatchZod,
     setDirectoryFetchWorkerDirectoryDispatchZod,
     setOrientationDirectoryDispatchZod,

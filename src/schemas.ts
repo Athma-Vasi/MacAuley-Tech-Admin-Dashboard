@@ -56,7 +56,25 @@ const metricsViewZod = z.enum([
     "repairs",
 ]);
 
+const allDepartmentsZod = z.enum([
+    "All Departments",
+    "Executive Management",
+    "Human Resources",
+    "Store Administration",
+    "Office Administration",
+    "Accounting",
+    "Sales",
+    "Marketing",
+    "Information Technology",
+    "Repair Technicians",
+    "Field Service Technicians",
+    "Logistics and Inventory",
+    "Customer Service",
+    "Maintenance",
+]);
+
 export {
+    allDepartmentsZod,
     allStoreLocationsZod,
     customerMetricCategoryZod,
     financialMetricCategoryZod,

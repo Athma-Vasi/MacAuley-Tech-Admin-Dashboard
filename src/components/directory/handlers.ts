@@ -5,21 +5,14 @@ import {
     createDirectoryURLCacheKey,
     createResultSafeBox,
     getCachedItemSafeAsync,
+    parseSafeSync,
 } from "../../utils";
 import { AllStoreLocations } from "../dashboard/types";
+import { handleDirectoryDepartmentAndLocationClicksInputZod } from "./schemas";
 import { DepartmentsWithDefaultKey } from "./types";
 
 async function handleDirectoryDepartmentAndLocationClicks(
-    {
-        accessToken,
-        department,
-        directoryFetchWorker,
-        directoryUrl,
-        globalDispatch,
-        isComponentMountedRef,
-        showBoundary,
-        storeLocation,
-    }: {
+    input: {
         accessToken: string;
         department: DepartmentsWithDefaultKey;
         directoryFetchWorker: Worker | null;
@@ -30,32 +23,47 @@ async function handleDirectoryDepartmentAndLocationClicks(
         storeLocation: AllStoreLocations;
     },
 ): Promise<ResultSafeBox<string>> {
-    if (!directoryFetchWorker) {
-        return createResultSafeBox({
-            data: Some("Worker not initialized"),
-        });
-    }
-
-    const requestInit: RequestInit = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-        },
-    };
-
-    const cacheKey = createDirectoryURLCacheKey({
-        department,
-        directoryUrl,
-        storeLocation,
-    });
-
-    globalDispatch({
-        action: globalAction.setIsFetching,
-        payload: true,
-    });
-
     try {
+        const parsedInputResult = parseSafeSync({
+            object: input,
+            zSchema: handleDirectoryDepartmentAndLocationClicksInputZod,
+        });
+        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+            return createResultSafeBox({
+                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+            });
+        }
+
+        const {
+            accessToken,
+            department,
+            directoryFetchWorker,
+            directoryUrl,
+            globalDispatch,
+            isComponentMountedRef,
+            showBoundary,
+            storeLocation,
+        } = parsedInputResult.val.data.val;
+
+        const requestInit: RequestInit = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+
+        const cacheKey = createDirectoryURLCacheKey({
+            department,
+            directoryUrl,
+            storeLocation,
+        });
+
+        globalDispatch({
+            action: globalAction.setIsFetching,
+            payload: true,
+        });
+
         const userDocumentsResult = await getCachedItemSafeAsync<
             UserDocument[]
         >(cacheKey);
@@ -90,7 +98,7 @@ async function handleDirectoryDepartmentAndLocationClicks(
             });
         }
 
-        directoryFetchWorker.postMessage({
+        directoryFetchWorker?.postMessage({
             department,
             requestInit,
             routesZodSchemaMapKey: "directory",
@@ -104,14 +112,14 @@ async function handleDirectoryDepartmentAndLocationClicks(
         });
     } catch (error: unknown) {
         if (
-            !isComponentMountedRef.current
+            !input.isComponentMountedRef.current
         ) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
             });
         }
 
-        showBoundary(error);
+        input.showBoundary(error);
         return createResultSafeBox({
             data: Some(
                 error instanceof Error
