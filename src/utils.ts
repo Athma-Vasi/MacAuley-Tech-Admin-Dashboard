@@ -12,7 +12,12 @@ import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
 import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
-import { DecodedToken, ResultSafeBox, ThemeObject } from "./types";
+import {
+  DecodedToken,
+  NonNullableObject,
+  ResultSafeBox,
+  ThemeObject,
+} from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -459,12 +464,13 @@ async function setCachedItemSafeAsync<Data = unknown>(
   }
 }
 
-function parseSafeSync(
+function parseSafeSync<Output = unknown>(
   { object, zSchema }: {
-    object: Record<string, unknown> | Array<Record<string, unknown>>;
+    // object: Record<string, unknown> | Array<Record<string, unknown>>;
+    object: Output;
     zSchema: z.ZodSchema;
   },
-): ResultSafeBox<z.infer<typeof zSchema>> {
+): ResultSafeBox<Output> {
   try {
     const arraySchema = z.array(zSchema);
 

@@ -38,6 +38,11 @@ async function handleUsersQuerySubmitGETClick(
         usersQueryState: UsersQueryState;
     },
 ): Promise<ResultSafeBox<string>> {
+    if (!usersFetchWorker) {
+        return createResultSafeBox({
+            data: Some("Worker not initialized"),
+        });
+    }
     const requestInit: RequestInit = {
         method: "GET",
         headers: {
@@ -133,7 +138,7 @@ async function handleUsersQuerySubmitGETClick(
             });
         }
 
-        usersFetchWorker?.postMessage({
+        usersFetchWorker.postMessage({
             currentPage,
             newQueryFlag,
             queryString,
@@ -192,6 +197,12 @@ async function handleUsersQueryOnmessageCallback(
 ): Promise<ResultSafeBox<string>> {
     try {
         const messageEventResult = event.data;
+        if (!messageEventResult) {
+            return createResultSafeBox({
+                data: Some("No data in message event"),
+            });
+        }
+
         if (!isComponentMountedRef.current) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),

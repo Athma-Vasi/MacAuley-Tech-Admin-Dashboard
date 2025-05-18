@@ -1,5 +1,4 @@
 import { Group, Loader, Space, Stack, Text } from "@mantine/core";
-import localforage from "localforage";
 import React, { useEffect } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import {
@@ -134,7 +133,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
         event,
         globalDispatch,
         isComponentMountedRef,
-        localforage,
         navigate,
         showBoundary,
       });
@@ -392,6 +390,8 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             globalDispatch,
             logoutFetchWorker,
             logoutUrl: LOGOUT_URL,
+          }).then((result) => {
+            console.log("handleLogoutClick result:", result);
           });
         },
       }}

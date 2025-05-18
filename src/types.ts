@@ -20,6 +20,12 @@ import {
 } from "./components/dashboard/types";
 import { ValidationKey } from "./validations";
 
+type NonNullableObject<T> = {
+  [K in keyof T as T[K] extends null | undefined ? never : K]: T[K] extends
+    object ? NonNullableObject<T[K]>
+    : T[K];
+};
+
 // gives the final flattened type after mapping, intersecting, or conditional logic
 type Prettify<T> =
   & {
@@ -260,12 +266,10 @@ type HttpServerResponse<Data = unknown> = {
 
 type SafeBoxSuccess<Data = unknown> = {
   data: Option<Data>;
-  kind: "success";
   message?: Option<string>;
 };
 type SafeBoxError<Error_ = any> = {
   data?: Option<Error_>;
-  kind: "error";
   message?: Option<string>;
 };
 
@@ -509,6 +513,7 @@ export type {
   LogisticsAndInventory,
   Maintenance,
   Marketing,
+  NonNullableObject,
   OfficeAdministration,
   PostalCode,
   Prettify,

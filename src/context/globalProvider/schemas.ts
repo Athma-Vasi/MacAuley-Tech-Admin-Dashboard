@@ -4,11 +4,18 @@ import { financialMetricsDocumentZod } from "../../components/dashboard/financia
 import { productMetricsDocumentZod } from "../../components/dashboard/product/schemas";
 import { repairMetricsDocumentZod } from "../../components/dashboard/repair/schemas";
 import { userDocumentOptionalsZod } from "../../components/usersQuery/schemas";
+import {
+    allStoreLocationsZod,
+    customerMetricCategoryZod,
+    financialMetricCategoryZod,
+    productMetricCategoryZod,
+    repairMetricCategoryZod,
+} from "../../schemas";
 import { globalAction } from "./actions";
 
 const setCustomerMetricsCategoryGlobalDispatchZod = z.object({
     action: z.literal(globalAction.setCustomerMetricsCategory),
-    payload: z.enum(["new", "returning", "churn"]),
+    payload: customerMetricCategoryZod,
 });
 
 const setCustomerMetricsDocumentGlobalDispatchZod = z.object({
@@ -18,13 +25,7 @@ const setCustomerMetricsDocumentGlobalDispatchZod = z.object({
 
 const setFinancialMetricCategoryGlobalDispatchZod = z.object({
     action: z.literal(globalAction.setFinancialMetricCategory),
-    payload: z.enum([
-        "expenses",
-        "profit",
-        "revenue",
-        "transactions",
-        "otherMetrics",
-    ]),
+    payload: financialMetricCategoryZod,
 });
 
 const setFinancialMetricsDocumentGlobalDispatchZod = z.object({
@@ -44,25 +45,7 @@ const setIsPrefersReducedMotionGlobalDispatchZod = z.object({
 
 const setProductMetricCategoryGlobalDispatchZod = z.object({
     action: z.literal(globalAction.setProductMetricCategory),
-    payload: z.enum([
-        "All Products",
-        "Accessory",
-        "Central Processing Unit (CPU)",
-        "Computer Case",
-        "Desktop Computer",
-        "Display",
-        "Graphics Processing Unit (GPU)",
-        "Headphone",
-        "Keyboard",
-        "Memory (RAM)",
-        "Microphone",
-        "Motherboard",
-        "Mouse",
-        "Power Supply Unit (PSU)",
-        "Speaker",
-        "Storage",
-        "Webcam",
-    ]),
+    payload: productMetricCategoryZod,
 });
 
 const setProductMetricsDocumentGlobalDispatchZod = z.object({
@@ -77,15 +60,7 @@ const setProductSubMetricCategoryGlobalDispatchZod = z.object({
 
 const setRepairMetricCategoryGlobalDispatchZod = z.object({
     action: z.literal(globalAction.setRepairMetricCategory),
-    payload: z.enum([
-        "All Repairs",
-        "Computer Component",
-        "Peripheral",
-        "Electronic Device",
-        "Mobile Device",
-        "Audio/Video",
-        "Accessory",
-    ]),
+    payload: repairMetricCategoryZod,
 });
 
 const setRepairMetricsDocumentGlobalDispatchZod = z.object({
@@ -112,12 +87,7 @@ const setSelectedYYYYMMDDGlobalDispatchZod = z.object({
 
 const setStoreLocationViewGlobalDispatchZod = z.object({
     action: z.literal(globalAction.setStoreLocation),
-    payload: z.enum([
-        "All Locations",
-        "Calgary",
-        "Edmonton",
-        "Vancouver",
-    ]),
+    payload: allStoreLocationsZod,
 });
 
 const setColorSchemeGlobalDispatchZod = z.object({

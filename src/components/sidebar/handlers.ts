@@ -19,6 +19,7 @@ import {
   createMetricsURLCacheKey,
   createResultSafeBox,
   getCachedItemSafeAsync,
+  parseSafeSync,
   setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
@@ -28,16 +29,16 @@ import { ProductMetricCategory } from "../dashboard/product/types";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { DepartmentsWithDefaultKey } from "../directory/types";
+import {
+  handleDirectoryNavClickInputZod,
+  handleLogoutClickInputZod,
+  handleMessageEventDirectoryFetchWorkerToMainInputZod,
+  handleMessageEventLogoutFetchWorkerToMainInputZod,
+  handleMessageEventMetricsFetchWorkerToMainInputZod,
+  handleMetricCategoryNavClickInputZod,
+} from "./schemas";
 
-async function handleMessageEventMetricsFetchWorkerToMain({
-  authDispatch,
-  event,
-  globalDispatch,
-  isComponentMountedRef,
-  metricsUrl,
-  navigate,
-  showBoundary,
-}: {
+async function handleMessageEventMetricsFetchWorkerToMain(input: {
   authDispatch: React.Dispatch<AuthDispatch>;
   event: MessageEventMetricsWorkerToMain;
   globalDispatch: React.Dispatch<GlobalDispatch>;
@@ -47,7 +48,33 @@ async function handleMessageEventMetricsFetchWorkerToMain({
   showBoundary: (error: unknown) => void;
 }): Promise<ResultSafeBox<string>> {
   try {
+    const parsedResult = parseSafeSync({
+      object: input,
+      zSchema: handleMessageEventMetricsFetchWorkerToMainInputZod,
+    });
+    if (parsedResult.err || parsedResult.val.data.none) {
+      return createResultSafeBox({
+        data: parsedResult.val.data ?? Some("Error parsing input"),
+      });
+    }
+
+    const {
+      authDispatch,
+      event,
+      globalDispatch,
+      isComponentMountedRef,
+      metricsUrl,
+      navigate,
+      showBoundary,
+    } = parsedResult.val.data.val;
+
     const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createResultSafeBox({
+        data: Some("No data in message event"),
+      });
+    }
+
     if (!isComponentMountedRef.current) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
@@ -156,16 +183,16 @@ async function handleMessageEventMetricsFetchWorkerToMain({
           storeLocation,
         });
 
-        const setForageItemResult = await setCachedItemSafeAsync<
+        const setCachedItemResult = await setCachedItemSafeAsync<
           BusinessMetricsDocument
         >(
           cacheKey,
           payload,
         );
-        if (setForageItemResult.err) {
-          showBoundary(setForageItemResult.val.data);
+        if (setCachedItemResult.err) {
+          showBoundary(setCachedItemResult.val.data);
           return createResultSafeBox({
-            data: Some(setForageItemResult.val.data),
+            data: Some(setCachedItemResult.val.data),
           });
         }
       },
@@ -183,14 +210,14 @@ async function handleMessageEventMetricsFetchWorkerToMain({
     });
   } catch (error) {
     if (
-      !isComponentMountedRef.current
+      !input.isComponentMountedRef.current
     ) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
       });
     }
 
-    showBoundary(error);
+    input.showBoundary(error);
     return createResultSafeBox({
       data: Some(
         error instanceof Error
@@ -204,20 +231,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
 }
 
 async function handleMetricCategoryNavClick(
-  {
-    accessToken,
-    metricsFetchWorker,
-    globalDispatch,
-    isComponentMountedRef,
-    metricsUrl,
-    metricsView,
-    navigate,
-    productMetricCategory,
-    repairMetricCategory,
-    showBoundary,
-    storeLocation,
-    toLocation,
-  }: {
+  input: {
     accessToken: string;
     metricsFetchWorker: Worker | null;
     globalDispatch: React.Dispatch<GlobalDispatch>;
@@ -232,6 +246,31 @@ async function handleMetricCategoryNavClick(
     toLocation: string;
   },
 ): Promise<ResultSafeBox<string>> {
+  const parsedInputResult = parseSafeSync({
+    object: input,
+    zSchema: handleMetricCategoryNavClickInputZod,
+  });
+  if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    return createResultSafeBox({
+      data: parsedInputResult.val.data ?? Some("Error parsing input"),
+    });
+  }
+
+  const {
+    accessToken,
+    metricsFetchWorker,
+    globalDispatch,
+    isComponentMountedRef,
+    metricsUrl,
+    metricsView,
+    navigate,
+    productMetricCategory,
+    repairMetricCategory,
+    showBoundary,
+    storeLocation,
+    toLocation,
+  } = parsedInputResult.val.data.val;
+
   const requestInit: RequestInit = {
     method: "GET",
     headers: {
@@ -338,14 +377,14 @@ async function handleMetricCategoryNavClick(
     });
   } catch (error: unknown) {
     if (
-      !isComponentMountedRef.current
+      !input.isComponentMountedRef.current
     ) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
       });
     }
 
-    showBoundary(error);
+    input.showBoundary(error);
     return createResultSafeBox({
       data: Some(
         error instanceof Error
@@ -358,17 +397,24 @@ async function handleMetricCategoryNavClick(
   }
 }
 
-async function handleLogoutClick({
-  accessToken,
-  globalDispatch,
-  logoutFetchWorker,
-  logoutUrl,
-}: {
+async function handleLogoutClick(input: {
   accessToken: string;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   logoutFetchWorker: Worker | null;
   logoutUrl: string;
 }): Promise<ResultSafeBox<string>> {
+  const parsedInputResult = parseSafeSync({
+    object: input,
+    zSchema: handleLogoutClickInputZod,
+  });
+  if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    return createResultSafeBox({
+      data: parsedInputResult.val.data ?? Some("Error parsing input"),
+    });
+  }
+  const { accessToken, globalDispatch, logoutFetchWorker, logoutUrl } =
+    parsedInputResult.val.data.val;
+
   try {
     const requestInit: RequestInit = {
       method: "POST",
@@ -407,22 +453,31 @@ async function handleLogoutClick({
   }
 }
 
-async function handleMessageEventLogoutFetchWorkerToMain({
-  event,
-  globalDispatch,
-  isComponentMountedRef,
-  localforage,
-  navigate,
-  showBoundary,
-}: {
+async function handleMessageEventLogoutFetchWorkerToMain(input: {
   event: MessageEventFetchWorkerToMain<boolean>;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
-  localforage: LocalForage;
   navigate: NavigateFunction;
   showBoundary: (error: unknown) => void;
 }): Promise<ResultSafeBox<string>> {
   try {
+    const parsedResult = parseSafeSync({
+      object: input,
+      zSchema: handleMessageEventLogoutFetchWorkerToMainInputZod,
+    });
+    if (parsedResult.err || parsedResult.val.data.none) {
+      return createResultSafeBox({
+        data: parsedResult.val.data ?? Some("Error parsing input"),
+      });
+    }
+    const {
+      event,
+      globalDispatch,
+      isComponentMountedRef,
+      navigate,
+      showBoundary,
+    } = parsedResult.val.data.val;
+
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
       return createResultSafeBox({
@@ -461,14 +516,14 @@ async function handleMessageEventLogoutFetchWorkerToMain({
     });
   } catch (error: unknown) {
     if (
-      !isComponentMountedRef.current
+      !input.isComponentMountedRef.current
     ) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
       });
     }
 
-    showBoundary(error);
+    input.showBoundary(error);
     return createResultSafeBox({
       data: Some(
         error instanceof Error
@@ -482,18 +537,7 @@ async function handleMessageEventLogoutFetchWorkerToMain({
 }
 
 async function handleDirectoryNavClick(
-  {
-    accessToken,
-    department,
-    directoryFetchWorker,
-    directoryUrl,
-    globalDispatch,
-    isComponentMountedRef,
-    navigate,
-    showBoundary,
-    storeLocation,
-    toLocation,
-  }: {
+  input: {
     accessToken: string;
     department: DepartmentsWithDefaultKey;
     directoryFetchWorker: Worker | null;
@@ -506,6 +550,28 @@ async function handleDirectoryNavClick(
     toLocation: string;
   },
 ): Promise<ResultSafeBox<string>> {
+  const parsedInputResult = parseSafeSync({
+    object: input,
+    zSchema: handleDirectoryNavClickInputZod,
+  });
+  if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    return createResultSafeBox({
+      data: parsedInputResult.val.data ?? Some("Error parsing input"),
+    });
+  }
+  const {
+    accessToken,
+    department,
+    directoryFetchWorker,
+    directoryUrl,
+    globalDispatch,
+    isComponentMountedRef,
+    navigate,
+    showBoundary,
+    storeLocation,
+    toLocation,
+  } = parsedInputResult.val.data.val;
+
   const requestInit: RequestInit = {
     method: "GET",
     headers: {
@@ -579,14 +645,14 @@ async function handleDirectoryNavClick(
     });
   } catch (error: unknown) {
     if (
-      !isComponentMountedRef.current
+      !input.isComponentMountedRef.current
     ) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
       });
     }
 
-    showBoundary(error);
+    input.showBoundary(error);
     return createResultSafeBox({
       data: Some(
         error instanceof Error
@@ -599,16 +665,7 @@ async function handleDirectoryNavClick(
   }
 }
 
-async function handleMessageEventDirectoryFetchWorkerToMain({
-  authDispatch,
-  directoryUrl,
-  event,
-  globalDispatch,
-  isComponentMountedRef,
-  navigate,
-  showBoundary,
-  toLocation = "/dashboard/directory",
-}: {
+async function handleMessageEventDirectoryFetchWorkerToMain(input: {
   authDispatch: React.Dispatch<AuthDispatch>;
   directoryUrl: string;
   event: MessageEventDirectoryFetchWorkerToMain;
@@ -619,7 +676,34 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
   toLocation?: string;
 }): Promise<ResultSafeBox<string>> {
   try {
+    const parsedResult = parseSafeSync({
+      object: input,
+      zSchema: handleMessageEventDirectoryFetchWorkerToMainInputZod,
+    });
+    if (parsedResult.err || parsedResult.val.data.none) {
+      return createResultSafeBox({
+        data: parsedResult.val.data ?? Some("Error parsing input"),
+      });
+    }
+
+    const {
+      authDispatch,
+      directoryUrl,
+      event,
+      globalDispatch,
+      isComponentMountedRef,
+      navigate,
+      showBoundary,
+      toLocation,
+    } = parsedResult.val.data.val;
+
     const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createResultSafeBox({
+        data: Some("No data in message event"),
+      });
+    }
+
     if (!isComponentMountedRef.current) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
@@ -693,15 +777,15 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
       storeLocation,
     });
 
-    const setForageItemResult = await setCachedItemSafeAsync<UserDocument[]>(
+    const setCachedItemResult = await setCachedItemSafeAsync<UserDocument[]>(
       cacheKey,
       userDocuments,
     );
-    if (setForageItemResult.err) {
-      showBoundary(setForageItemResult.val.data);
+    if (setCachedItemResult.err) {
+      showBoundary(setCachedItemResult.val.data);
       return createResultSafeBox({
-        data: setForageItemResult.val.data,
-        message: setForageItemResult.val.message ??
+        data: setCachedItemResult.val.data,
+        message: setCachedItemResult.val.message ??
           Some("Error fetching response"),
       });
     }
@@ -715,7 +799,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
       payload: false,
     });
 
-    navigate?.(toLocation);
+    navigate?.(toLocation ?? "/dashboard/directory");
 
     return createResultSafeBox({
       data: Some("Directory fetch successful"),
@@ -723,14 +807,14 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
     });
   } catch (error: unknown) {
     if (
-      !isComponentMountedRef.current
+      !input.isComponentMountedRef.current
     ) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
       });
     }
 
-    showBoundary(error);
+    input.showBoundary(error);
     return createResultSafeBox({
       data: Some(
         error instanceof Error

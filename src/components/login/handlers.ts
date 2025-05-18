@@ -111,6 +111,11 @@ async function handleMessageEventLoginFetchWorkerToMain(
 ): Promise<ResultSafeBox<string>> {
   try {
     const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createResultSafeBox({
+        data: Some("No data in message event"),
+      });
+    }
     console.log("Login Worker received message:", event.data);
 
     if (!isComponentMountedRef.current) {

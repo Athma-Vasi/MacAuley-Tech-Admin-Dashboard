@@ -1,4 +1,4 @@
-import { Some } from "ts-results";
+import { Err, Some } from "ts-results";
 import { ResultSafeBox } from "../../../types";
 import { createResultSafeBox } from "../../../utils";
 import { DashboardCalendarView } from "../types";
