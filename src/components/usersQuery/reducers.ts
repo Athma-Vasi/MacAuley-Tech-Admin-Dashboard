@@ -63,11 +63,11 @@ function usersQueryReducer_resetToInitial(
         zSchema: resetToInitialUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    return parsedResult.safeUnwrap().data.payload;
+    return parsedResult.val.data.val.payload;
 }
 
 function usersQueryReducer_setArrangeByDirection(
@@ -79,12 +79,12 @@ function usersQueryReducer_setArrangeByDirection(
         zSchema: setArrangeByDirectionUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     const { arrangeByField, resourceData } = state;
-    const arrangeByDirection = parsedResult.safeUnwrap().data.payload;
+    const arrangeByDirection = parsedResult.val.data.val.payload;
     const cloned = structuredClone(resourceData);
 
     const sorted = cloned.sort((a, b) => {
@@ -108,12 +108,12 @@ function usersQueryReducer_setArrangeByField(
         zSchema: setArrangeByFieldUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     const { arrangeByDirection, resourceData } = state;
-    const arrangeByField = parsedResult.safeUnwrap().data
+    const arrangeByField = parsedResult.val.data.val
         .payload as keyof Omit<UserDocument, "password">;
     const cloned = structuredClone(resourceData);
 
@@ -138,13 +138,13 @@ function usersQueryReducer_setCurrentPage(
         zSchema: setCurrentPageUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        currentPage: parsedResult.safeUnwrap().data.payload as number,
+        currentPage: parsedResult.val.data.val.payload as number,
     };
 }
 
@@ -157,13 +157,13 @@ function usersQueryReducer_setUsersFetchWorker(
         zSchema: setUsersFetchWorkerUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        usersFetchWorker: parsedResult.safeUnwrap().data.payload as
+        usersFetchWorker: parsedResult.val.data.val.payload as
             | Worker
             | null,
     };
@@ -178,13 +178,13 @@ function usersQueryReducer_setIsError(
         zSchema: setIsErrorUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        isError: parsedResult.safeUnwrap().data.payload as boolean,
+        isError: parsedResult.val.data.val.payload as boolean,
     };
 }
 
@@ -197,13 +197,13 @@ function usersQueryReducer_setIsLoading(
         zSchema: setIsLoadingUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        isLoading: parsedResult.safeUnwrap().data.payload as boolean,
+        isLoading: parsedResult.val.data.val.payload as boolean,
     };
 }
 
@@ -216,13 +216,13 @@ function usersQueryReducer_setNewQueryFlag(
         zSchema: setNewQueryFlagUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        newQueryFlag: parsedResult.safeUnwrap().data.payload as boolean,
+        newQueryFlag: parsedResult.val.data.val.payload as boolean,
     };
 }
 
@@ -235,13 +235,13 @@ function usersQueryReducer_setPages(
         zSchema: setPagesUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        pages: parsedResult.safeUnwrap().data.payload as number,
+        pages: parsedResult.val.data.val.payload as number,
     };
 }
 
@@ -254,13 +254,13 @@ function usersQueryReducer_setQueryString(
         zSchema: setQueryStringUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        queryString: parsedResult.safeUnwrap().data.payload as string,
+        queryString: parsedResult.val.data.val.payload as string,
     };
 }
 
@@ -273,13 +273,13 @@ function usersQueryReducer_setResourceData(
         zSchema: setResourceDataUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        resourceData: parsedResult.safeUnwrap().data.payload as Array<
+        resourceData: parsedResult.val.data.val.payload as Array<
             UserDocument
         >,
     };
@@ -294,13 +294,13 @@ function usersQueryReducer_setTotalDocuments(
         zSchema: setTotalDocumentsUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        totalDocuments: parsedResult.safeUnwrap().data.payload as number,
+        totalDocuments: parsedResult.val.data.val.payload as number,
     };
 }
 
