@@ -40,7 +40,32 @@ type LoginDispatch =
     | z.infer<typeof setLoginFetchWorkerLoginDispatchZod>
     | z.infer<typeof setErrorMessageLoginDispatchZod>;
 
+const handleLoginClickInputZod = z.object({
+    isLoading: z.boolean(),
+    isSubmitting: z.boolean(),
+    isSuccessful: z.boolean(),
+    loginDispatch: z.function().args(z.any()).returns(z.void()),
+    loginFetchWorker: z.instanceof(Worker),
+    schema: z.object({
+        username: z.string(),
+        password: z.string(),
+    }),
+});
+
+const handleMessageEventLoginFetchWorkerToMainInputZod = z.object({
+    authDispatch: z.function().args(z.any()).returns(z.void()),
+    event: z.instanceof(MessageEvent),
+    globalDispatch: z.function().args(z.any()).returns(z.void()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    loginDispatch: z.function().args(z.any()).returns(z.void()),
+    metricsUrl: z.string().url(),
+    navigate: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
 export {
+    handleLoginClickInputZod,
+    handleMessageEventLoginFetchWorkerToMainInputZod,
     setErrorMessageLoginDispatchZod,
     setIsLoadingLoginDispatchZod,
     setIsSubmittingLoginDispatchZod,

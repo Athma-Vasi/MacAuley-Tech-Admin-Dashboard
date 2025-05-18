@@ -1,3 +1,4 @@
+import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { Some } from "ts-results";
 import { LOGIN_URL } from "../../constants";
@@ -13,38 +14,51 @@ import {
 import {
   createMetricsURLCacheKey,
   createResultSafeBox,
+  parseSafeSync,
   setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { loginAction } from "./actions";
-import { LoginDispatch } from "./schemas";
-import { LoginState } from "./types";
+import {
+  handleLoginClickInputZod,
+  handleMessageEventLoginFetchWorkerToMainInputZod,
+  LoginDispatch,
+} from "./schemas";
 
-async function handleLoginClick({
-  loginState,
-  loginFetchWorker,
-  loginDispatch,
-  schema,
-}: {
-  loginState: LoginState;
+async function handleLoginClick(input: {
+  isLoading: boolean;
+  isSubmitting: boolean;
+  isSuccessful: boolean;
   loginDispatch: React.Dispatch<LoginDispatch>;
   loginFetchWorker: Worker | null;
   schema: { username: string; password: string };
 }): Promise<ResultSafeBox<string>> {
-  const { isLoading, isSubmitting, isSuccessful } = loginState;
-
-  if (!loginFetchWorker) {
-    return createResultSafeBox({
-      data: Some("Worker not initialized"),
-    });
-  }
-  if (isLoading || isSubmitting || isSuccessful) {
-    return createResultSafeBox({
-      data: Some("Login already in progress"),
-    });
-  }
-
   try {
+    const parsedInputResult = parseSafeSync({
+      object: input,
+      zSchema: handleLoginClickInputZod,
+    });
+    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+      return createResultSafeBox({
+        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+      });
+    }
+
+    const {
+      isLoading,
+      isSubmitting,
+      isSuccessful,
+      loginDispatch,
+      loginFetchWorker,
+      schema,
+    } = parsedInputResult.val.data.val;
+
+    if (isLoading || isSubmitting || isSuccessful) {
+      return createResultSafeBox({
+        data: Some("Login already in progress"),
+      });
+    }
+
     loginDispatch({
       action: loginAction.setIsSubmitting,
       payload: true,
@@ -58,7 +72,7 @@ async function handleLoginClick({
       body: JSON.stringify({ schema }),
     };
 
-    loginFetchWorker.postMessage({
+    loginFetchWorker?.postMessage({
       requestInit,
       url: LOGIN_URL,
       routesZodSchemaMapKey: "login",
@@ -82,17 +96,7 @@ async function handleLoginClick({
 }
 
 async function handleMessageEventLoginFetchWorkerToMain(
-  {
-    authDispatch,
-    event,
-    globalDispatch,
-    isComponentMountedRef,
-    localforage,
-    loginDispatch,
-    metricsUrl,
-    navigate,
-    showBoundary,
-  }: {
+  input: {
     authDispatch: React.Dispatch<AuthDispatch>;
     event: MessageEventFetchWorkerToMain<
       {
@@ -102,7 +106,6 @@ async function handleMessageEventLoginFetchWorkerToMain(
     >;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
-    localforage: LocalForage;
     loginDispatch: React.Dispatch<LoginDispatch>;
     metricsUrl: string;
     navigate: NavigateFunction;
@@ -110,13 +113,33 @@ async function handleMessageEventLoginFetchWorkerToMain(
   },
 ): Promise<ResultSafeBox<string>> {
   try {
+    const parsedInputResult = parseSafeSync({
+      object: input,
+      zSchema: handleMessageEventLoginFetchWorkerToMainInputZod,
+    });
+    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+      return createResultSafeBox({
+        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+      });
+    }
+
+    const {
+      authDispatch,
+      event,
+      globalDispatch,
+      isComponentMountedRef,
+      loginDispatch,
+      metricsUrl,
+      navigate,
+      showBoundary,
+    } = parsedInputResult.val.data.val;
+
     const messageEventResult = event.data;
     if (!messageEventResult) {
       return createResultSafeBox({
         data: Some("No data in message event"),
       });
     }
-    console.log("Login Worker received message:", event.data);
 
     if (!isComponentMountedRef.current) {
       return createResultSafeBox({
@@ -130,8 +153,6 @@ async function handleMessageEventLoginFetchWorkerToMain(
         data: Some("Error from worker"),
       });
     }
-
-    console.log("event.data.val.data", event.data.val.data);
 
     if (messageEventResult.val.data.none) {
       loginDispatch({
@@ -247,14 +268,14 @@ async function handleMessageEventLoginFetchWorkerToMain(
     });
   } catch (error: unknown) {
     if (
-      !isComponentMountedRef.current
+      !input.isComponentMountedRef.current
     ) {
       return createResultSafeBox({
         data: Some("Component unmounted"),
       });
     }
 
-    showBoundary(error);
+    input.showBoundary(error);
     return createResultSafeBox({
       data: Some(
         error instanceof Error
