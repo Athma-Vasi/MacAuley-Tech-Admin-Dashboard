@@ -1,12 +1,12 @@
 import { Some } from "ts-results";
 import { MONTHS } from "../components/dashboard/constants";
 import {
-    createFinancialMetricsCards,
+    createFinancialMetricsCardsSafe,
     FinancialMetricsCards,
 } from "../components/dashboard/financial/cards";
 import {
-    createFinancialMetricsCalendarCharts,
-    createFinancialMetricsCharts,
+    createFinancialMetricsCalendarChartsSafe,
+    createFinancialMetricsChartsSafe,
     FinancialMetricsCalendarCharts,
     FinancialMetricsCharts,
     SelectedDateFinancialMetrics,
@@ -62,25 +62,66 @@ self.onmessage = async (
     } = event.data;
 
     try {
-        const { currentYear, previousYear } =
-            createFinancialMetricsCalendarCharts(
+        const createFinancialMetricsCalendarChartsResult =
+            createFinancialMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateFinancialMetrics,
                 selectedYYYYMMDD,
             );
+        if (
+            createFinancialMetricsCalendarChartsResult.err ||
+            createFinancialMetricsCalendarChartsResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: createFinancialMetricsCalendarChartsResult.val.data,
+                message: Some(
+                    "Error creating financial metrics calendar charts",
+                ),
+            }));
+            return;
+        }
+        const { currentYear, previousYear } =
+            createFinancialMetricsCalendarChartsResult.val.data.val;
 
-        const financialMetricsCharts = createFinancialMetricsCharts({
+        const financialMetricsChartsResult = createFinancialMetricsChartsSafe({
             financialMetricsDocument,
             months: MONTHS,
             selectedDateFinancialMetrics,
         });
+        if (
+            financialMetricsChartsResult.err ||
+            financialMetricsChartsResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: financialMetricsChartsResult.val.data,
+                message: Some(
+                    "Error creating financial metrics charts",
+                ),
+            }));
+            return;
+        }
+        const financialMetricsCharts =
+            financialMetricsChartsResult.val.data.val;
 
-        const financialMetricsCards = createFinancialMetricsCards({
+        const financialMetricsCardsResult = createFinancialMetricsCardsSafe({
             cardBgGradient,
             greenColorShade,
             redColorShade,
             selectedDateFinancialMetrics,
         });
+        if (
+            financialMetricsCardsResult.err ||
+            financialMetricsCardsResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: financialMetricsCardsResult.val.data,
+                message: Some(
+                    "Error creating financial metrics cards",
+                ),
+            }));
+            return;
+        }
+        const financialMetricsCards = financialMetricsCardsResult.val.data.val;
 
         self.postMessage(createResultSafeBox({
             data: Some({

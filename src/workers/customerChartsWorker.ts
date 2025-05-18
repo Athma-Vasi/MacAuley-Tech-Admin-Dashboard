@@ -1,7 +1,7 @@
 import { Some } from "ts-results";
 import { MONTHS } from "../components/dashboard/constants";
 import {
-    createCustomerMetricsCards,
+    createCustomerMetricsCardsSafe,
     CustomerMetricsCards,
 } from "../components/dashboard/customer/cards";
 import {
@@ -102,7 +102,7 @@ self.onmessage = async (
         }
         const customerMetricsCharts = customerMetricsChartsResult.val.data.val;
 
-        const customerMetricsCardsResult = createCustomerMetricsCards({
+        const customerMetricsCardsResult = createCustomerMetricsCardsSafe({
             cardBgGradient,
             greenColorShade,
             redColorShade,

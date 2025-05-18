@@ -45,7 +45,7 @@ type CustomerMetricsCards = {
   };
 };
 
-function createCustomerMetricsCards(
+function createCustomerMetricsCardsSafe(
   {
     cardBgGradient,
     greenColorShade,
@@ -661,7 +661,7 @@ function returnCustomerMetricsCardsMap(
 }
 
 export {
-  createCustomerMetricsCards,
+  createCustomerMetricsCardsSafe,
   returnCalendarViewCustomerCards,
   returnCustomerMetricsCardsMap,
 };
