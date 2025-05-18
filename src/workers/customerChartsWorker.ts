@@ -102,12 +102,25 @@ self.onmessage = async (
         }
         const customerMetricsCharts = customerMetricsChartsResult.val.data.val;
 
-        const customerMetricsCards = createCustomerMetricsCards({
+        const customerMetricsCardsResult = createCustomerMetricsCards({
             cardBgGradient,
             greenColorShade,
             redColorShade,
             selectedDateCustomerMetrics,
         });
+        if (
+            customerMetricsCardsResult.err ||
+            customerMetricsCardsResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: customerMetricsCardsResult.val.data,
+                message: Some(
+                    "Error creating customer metrics cards",
+                ),
+            }));
+            return;
+        }
+        const customerMetricsCards = customerMetricsCardsResult.val.data.val;
 
         self.postMessage(createResultSafeBox({
             data: Some({
