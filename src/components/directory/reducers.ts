@@ -45,14 +45,14 @@ function directoryReducer_setDepartment(
     zSchema: setDepartmentDirectoryDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    department: parsedResult.safeUnwrap().data
-      ?.payload as DepartmentsWithDefaultKey,
+    department: parsedResult.val.data.val
+      .payload as DepartmentsWithDefaultKey,
   };
 }
 
@@ -65,13 +65,13 @@ function directoryReducer_setDirectoryFetchWorker(
     zSchema: setDirectoryFetchWorkerDirectoryDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    directoryFetchWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+    directoryFetchWorker: parsedResult.val.data.val.payload as Worker,
   };
 }
 
@@ -84,13 +84,13 @@ function directoryReducer_setOrientation(
     zSchema: setOrientationDirectoryDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    orientation: parsedResult.safeUnwrap().data?.payload as Orientation,
+    orientation: parsedResult.val.data.val.payload as Orientation,
   };
 }
 
@@ -103,14 +103,14 @@ function directoryReducer_setStoreLocation(
     zSchema: setStoreLocationDirectoryDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    storeLocation: parsedResult.safeUnwrap().data
-      ?.payload as StoreLocationsWithDefaultKey,
+    storeLocation: parsedResult.val.data.val
+      .payload as StoreLocationsWithDefaultKey,
   };
 }
 
