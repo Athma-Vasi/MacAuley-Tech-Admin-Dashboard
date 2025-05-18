@@ -44,13 +44,13 @@ function loginReducer_setErrorMessage(
     },
   );
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    errorMessage: parsedResult.safeUnwrap().data.payload,
+    errorMessage: parsedResult.val.data.val.payload,
   };
 }
 
@@ -65,13 +65,13 @@ function loginReducer_setIsLoading(
     },
   );
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isLoading: parsedResult.safeUnwrap().data.payload,
+    isLoading: parsedResult.val.data.val.payload,
   };
 }
 
@@ -86,13 +86,13 @@ function loginReducer_setIsSubmitting(
     },
   );
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isSubmitting: parsedResult.safeUnwrap().data.payload,
+    isSubmitting: parsedResult.val.data.val.payload,
   };
 }
 
@@ -107,13 +107,13 @@ function loginReducer_setIsSuccessful(
     },
   );
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isSuccessful: parsedResult.safeUnwrap().data.payload,
+    isSuccessful: parsedResult.val.data.val.payload,
   };
 }
 
@@ -128,13 +128,13 @@ function loginReducer_setLoginFetchWorker(
     },
   );
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    loginFetchWorker: parsedResult.safeUnwrap().data.payload,
+    loginFetchWorker: parsedResult.val.data.val.payload,
   };
 }
 
@@ -149,13 +149,13 @@ function loginReducer_setPassword(
     },
   );
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    password: parsedResult.safeUnwrap().data.payload,
+    password: parsedResult.val.data.val.payload,
   };
 }
 
@@ -170,13 +170,13 @@ function loginReducer_setUsername(
     },
   );
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    username: parsedResult.safeUnwrap().data.payload,
+    username: parsedResult.val.data.val.payload,
   };
 }
 
