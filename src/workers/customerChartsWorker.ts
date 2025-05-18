@@ -62,12 +62,26 @@ self.onmessage = async (
     } = event.data;
 
     try {
-        const { currentYear, previousYear } =
+        const createCustomerMetricsCalendarChartsResult =
             createCustomerMetricsCalendarCharts(
                 calendarView,
                 selectedDateCustomerMetrics,
                 selectedYYYYMMDD,
             );
+        if (
+            createCustomerMetricsCalendarChartsResult.err ||
+            createCustomerMetricsCalendarChartsResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: createCustomerMetricsCalendarChartsResult.val.data,
+                message: Some(
+                    "Error creating customer metrics calendar charts",
+                ),
+            }));
+            return;
+        }
+        const { currentYear, previousYear } =
+            createCustomerMetricsCalendarChartsResult.val.data.val;
 
         const customerMetricsCharts = createCustomerMetricsCharts({
             customerMetricsDocument,

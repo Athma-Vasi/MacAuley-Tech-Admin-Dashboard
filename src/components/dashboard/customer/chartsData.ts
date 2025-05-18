@@ -1,5 +1,6 @@
-import { CustomerMetricsDocument } from "../../../types";
-import { toFixedFloat } from "../../../utils";
+import { Err, Some } from "ts-results";
+import { CustomerMetricsDocument, ResultSafeBox } from "../../../types";
+import { createResultSafeBox, toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -2026,180 +2027,196 @@ function createCustomerMetricsCalendarCharts(
   calendarView: DashboardCalendarView,
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics,
   selectedYYYYMMDD: string,
-): {
+): ResultSafeBox<{
   currentYear: CustomerMetricsCalendarCharts;
   previousYear: CustomerMetricsCalendarCharts;
-} {
-  const { yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics } } =
-    selectedDateCustomerMetrics;
+}> {
+  try {
+    const { yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics } } =
+      selectedDateCustomerMetrics;
 
-  const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
-    total: [],
-    repair: [],
-    sales: [],
-    inStore: [],
-    online: [],
-  };
+    const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
+      total: [],
+      repair: [],
+      sales: [],
+      inStore: [],
+      online: [],
+    };
 
-  const calendarChartsTemplateChurnRetention = {
-    churnRate: [],
-    retentionRate: [],
-  };
+    const calendarChartsTemplateChurnRetention = {
+      churnRate: [],
+      retentionRate: [],
+    };
 
-  const calendarChartsTemplate: CustomerMetricsCalendarCharts = {
-    new: structuredClone(calendarChartsTemplateNewReturning),
-    returning: structuredClone(calendarChartsTemplateNewReturning),
-    churn: structuredClone(calendarChartsTemplateChurnRetention),
-  };
+    const calendarChartsTemplate: CustomerMetricsCalendarCharts = {
+      new: structuredClone(calendarChartsTemplateNewReturning),
+      returning: structuredClone(calendarChartsTemplateNewReturning),
+      churn: structuredClone(calendarChartsTemplateChurnRetention),
+    };
 
-  const [currentYear, previousYear] = [
-    createDailyCustomerCalendarCharts(
-      structuredClone(calendarChartsTemplate),
-      calendarView,
-      selectedYYYYMMDD,
-      selectedYearMetrics,
-    ),
-    createDailyCustomerCalendarCharts(
-      structuredClone(calendarChartsTemplate),
-      calendarView,
-      selectedYYYYMMDD,
-      prevYearMetrics,
-    ),
-  ];
+    const [currentYear, previousYear] = [
+      createDailyCustomerCalendarCharts(
+        structuredClone(calendarChartsTemplate),
+        calendarView,
+        selectedYYYYMMDD,
+        selectedYearMetrics,
+      ),
+      createDailyCustomerCalendarCharts(
+        structuredClone(calendarChartsTemplate),
+        calendarView,
+        selectedYYYYMMDD,
+        prevYearMetrics,
+      ),
+    ];
 
-  function createDailyCustomerCalendarCharts(
-    calendarChartsTemplate: CustomerMetricsCalendarCharts,
-    calendarView: DashboardCalendarView,
-    selectedYYYYMMDD: string,
-    yearlyMetrics: CustomerYearlyMetric | undefined,
-  ): CustomerMetricsCalendarCharts {
-    if (!yearlyMetrics) {
-      return calendarChartsTemplate;
-    }
-
-    let selectedMetrics: Array<CustomerMonthlyMetric> = [];
-
-    if (calendarView === "Daily") {
-      const selectedMonthMetrics = yearlyMetrics.monthlyMetrics.find(
-        (monthlyMetric) => {
-          const { month } = monthlyMetric;
-          const monthIdx = MONTHS.indexOf(month) + 1;
-          return monthIdx === parseInt(selectedYYYYMMDD.split("-")[1]);
-        },
-      );
-
-      if (!selectedMonthMetrics) {
+    function createDailyCustomerCalendarCharts(
+      calendarChartsTemplate: CustomerMetricsCalendarCharts,
+      calendarView: DashboardCalendarView,
+      selectedYYYYMMDD: string,
+      yearlyMetrics: CustomerYearlyMetric | undefined,
+    ): CustomerMetricsCalendarCharts {
+      if (!yearlyMetrics) {
         return calendarChartsTemplate;
       }
 
-      selectedMetrics = [selectedMonthMetrics];
+      let selectedMetrics: Array<CustomerMonthlyMetric> = [];
+
+      if (calendarView === "Daily") {
+        const selectedMonthMetrics = yearlyMetrics.monthlyMetrics.find(
+          (monthlyMetric) => {
+            const { month } = monthlyMetric;
+            const monthIdx = MONTHS.indexOf(month) + 1;
+            return monthIdx === parseInt(selectedYYYYMMDD.split("-")[1]);
+          },
+        );
+
+        if (!selectedMonthMetrics) {
+          return calendarChartsTemplate;
+        }
+
+        selectedMetrics = [selectedMonthMetrics];
+      }
+
+      if (calendarView === "Monthly" || calendarView === "Yearly") {
+        selectedMetrics = yearlyMetrics.monthlyMetrics;
+      }
+
+      if (selectedMetrics.length === 0) {
+        return calendarChartsTemplate;
+      }
+
+      const customerCalendarCharts = selectedMetrics.reduce(
+        (resultAcc, monthlyMetric) => {
+          const { month, dailyMetrics } = monthlyMetric;
+          const monthNumber = MONTHS.indexOf(month) + 1;
+
+          dailyMetrics.forEach((dailyMetric) => {
+            const {
+              customers: {
+                churnRate,
+                new: newCustomers,
+                retentionRate,
+                returning,
+              },
+            } = dailyMetric;
+            const day = `${yearlyMetrics.year}-${
+              monthNumber.toString().padStart(2, "0")
+            }-${dailyMetric.day}`;
+
+            // new customers
+
+            resultAcc.new.total.push({
+              value: newCustomers.total,
+              day,
+            });
+
+            resultAcc.new.repair.push({
+              value: newCustomers.repair,
+              day,
+            });
+
+            resultAcc.new.sales.push({
+              value: newCustomers.sales.total,
+              day,
+            });
+
+            resultAcc.new.inStore.push({
+              value: newCustomers.sales.inStore,
+              day,
+            });
+
+            resultAcc.new.online.push({
+              value: newCustomers.sales.online,
+              day,
+            });
+
+            // returning customers
+
+            resultAcc.returning.total.push({
+              value: returning.total,
+              day,
+            });
+
+            resultAcc.returning.repair.push({
+              value: returning.repair,
+              day,
+            });
+
+            resultAcc.returning.sales.push({
+              value: returning.sales.total,
+              day,
+            });
+
+            resultAcc.returning.inStore.push({
+              value: returning.sales.inStore,
+              day,
+            });
+
+            resultAcc.returning.online.push({
+              value: returning.sales.online,
+              day,
+            });
+
+            // churn & retention rate
+
+            resultAcc.churn.churnRate.push({
+              value: toFixedFloat(churnRate * 100, 2),
+              day,
+            });
+
+            resultAcc.churn.retentionRate.push({
+              value: toFixedFloat(retentionRate * 100, 2),
+              day,
+            });
+          });
+
+          return resultAcc;
+        },
+        calendarChartsTemplate,
+      );
+
+      return customerCalendarCharts;
     }
 
-    if (calendarView === "Monthly" || calendarView === "Yearly") {
-      selectedMetrics = yearlyMetrics.monthlyMetrics;
-    }
-
-    if (selectedMetrics.length === 0) {
-      return calendarChartsTemplate;
-    }
-
-    const customerCalendarCharts = selectedMetrics.reduce(
-      (resultAcc, monthlyMetric) => {
-        const { month, dailyMetrics } = monthlyMetric;
-        const monthNumber = MONTHS.indexOf(month) + 1;
-
-        dailyMetrics.forEach((dailyMetric) => {
-          const {
-            customers: {
-              churnRate,
-              new: newCustomers,
-              retentionRate,
-              returning,
-            },
-          } = dailyMetric;
-          const day = `${yearlyMetrics.year}-${
-            monthNumber.toString().padStart(2, "0")
-          }-${dailyMetric.day}`;
-
-          // new customers
-
-          resultAcc.new.total.push({
-            value: newCustomers.total,
-            day,
-          });
-
-          resultAcc.new.repair.push({
-            value: newCustomers.repair,
-            day,
-          });
-
-          resultAcc.new.sales.push({
-            value: newCustomers.sales.total,
-            day,
-          });
-
-          resultAcc.new.inStore.push({
-            value: newCustomers.sales.inStore,
-            day,
-          });
-
-          resultAcc.new.online.push({
-            value: newCustomers.sales.online,
-            day,
-          });
-
-          // returning customers
-
-          resultAcc.returning.total.push({
-            value: returning.total,
-            day,
-          });
-
-          resultAcc.returning.repair.push({
-            value: returning.repair,
-            day,
-          });
-
-          resultAcc.returning.sales.push({
-            value: returning.sales.total,
-            day,
-          });
-
-          resultAcc.returning.inStore.push({
-            value: returning.sales.inStore,
-            day,
-          });
-
-          resultAcc.returning.online.push({
-            value: returning.sales.online,
-            day,
-          });
-
-          // churn & retention rate
-
-          resultAcc.churn.churnRate.push({
-            value: toFixedFloat(churnRate * 100, 2),
-            day,
-          });
-
-          resultAcc.churn.retentionRate.push({
-            value: toFixedFloat(retentionRate * 100, 2),
-            day,
-          });
-        });
-
-        return resultAcc;
-      },
-      calendarChartsTemplate,
-    );
-
-    return customerCalendarCharts;
+    return createResultSafeBox({
+      data: Some({
+        currentYear,
+        previousYear,
+      }),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
+      kind: "error",
+    });
   }
-
-  return {
-    currentYear,
-    previousYear,
-  };
 }
 
 export {
