@@ -1,12 +1,12 @@
 import { Some } from "ts-results";
 import { MONTHS } from "../components/dashboard/constants";
 import {
-    createRepairMetricsCards,
+    createRepairMetricsCardsSafe,
     RepairMetricsCards,
 } from "../components/dashboard/repair/cards";
 import {
-    createRepairMetricsCalendarCharts,
-    createRepairMetricsCharts,
+    createRepairMetricsCalendarChartsSafe,
+    createRepairMetricsChartsSafe,
     RepairMetricCalendarCharts,
     RepairMetricsCharts,
     SelectedDateRepairMetrics,
@@ -62,24 +62,65 @@ self.onmessage = async (
     } = event.data;
 
     try {
-        const { currentYear, previousYear } = createRepairMetricsCalendarCharts(
-            calendarView,
-            selectedDateRepairMetrics,
-            selectedYYYYMMDD,
-        );
+        const createRepairMetricsCalendarChartsSafeResult =
+            createRepairMetricsCalendarChartsSafe(
+                calendarView,
+                selectedDateRepairMetrics,
+                selectedYYYYMMDD,
+            );
+        if (
+            createRepairMetricsCalendarChartsSafeResult.err ||
+            createRepairMetricsCalendarChartsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: createRepairMetricsCalendarChartsSafeResult.val.data,
+                message: Some(
+                    "Error creating repair metrics calendar charts",
+                ),
+            }));
+            return;
+        }
+        const { currentYear, previousYear } =
+            createRepairMetricsCalendarChartsSafeResult.val.data.val;
 
-        const repairMetricsCharts = createRepairMetricsCharts({
+        const repairMetricsChartsSafeResult = createRepairMetricsChartsSafe({
             repairMetricsDocument,
             months: MONTHS,
             selectedDateRepairMetrics,
         });
+        if (
+            repairMetricsChartsSafeResult.err ||
+            repairMetricsChartsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: repairMetricsChartsSafeResult.val.data,
+                message: Some(
+                    "Error creating repair metrics charts",
+                ),
+            }));
+            return;
+        }
+        const repairMetricsCharts = repairMetricsChartsSafeResult.val.data.val;
 
-        const repairMetricsCards = createRepairMetricsCards({
+        const repairMetricsCardsSafeResult = createRepairMetricsCardsSafe({
             cardBgGradient,
             greenColorShade,
             redColorShade,
             selectedDateRepairMetrics,
         });
+        if (
+            repairMetricsCardsSafeResult.err ||
+            repairMetricsCardsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: repairMetricsCardsSafeResult.val.data,
+                message: Some(
+                    "Error creating repair metrics cards",
+                ),
+            }));
+            return;
+        }
+        const repairMetricsCards = repairMetricsCardsSafeResult.val.data.val;
 
         self.postMessage(createResultSafeBox({
             data: Some({

@@ -1,3 +1,6 @@
+import { Some } from "ts-results";
+import { ResultSafeBox } from "../../../types";
+import { createResultSafeBox } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -20,10 +23,16 @@ type RepairMetricsCards = {
   yearlyCards: DashboardCardInfo[];
 };
 
-function createRepairMetricsCards(
+function createRepairMetricsCardsSafe(
   { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
     createRepairMetricsCardsInput,
-): RepairMetricsCards {
+): ResultSafeBox<RepairMetricsCards> {
+  const repairMetricsCardsTemplate: RepairMetricsCards = {
+    dailyCards: [],
+    monthlyCards: [],
+    yearlyCards: [],
+  };
+
   const {
     dayRepairMetrics: { prevDayMetrics, selectedDayMetrics },
     monthRepairMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -38,85 +47,100 @@ function createRepairMetricsCards(
     !selectedDayMetrics ||
     !prevDayMetrics
   ) {
-    return {
-      dailyCards: [],
-      monthlyCards: [],
-      yearlyCards: [],
-    };
+    return createResultSafeBox({
+      data: Some(repairMetricsCardsTemplate),
+      message: Some("no metrics data"),
+    });
   }
 
-  const currentYear = selectedYearMetrics.year;
-  const prevYear = prevYearMetrics.year;
-  const currentMonth = selectedMonthMetrics.month;
-  const prevMonth = prevMonthMetrics.month;
-  const prevDay = prevDayMetrics.day;
+  try {
+    const currentYear = selectedYearMetrics.year;
+    const prevYear = prevYearMetrics.year;
+    const currentMonth = selectedMonthMetrics.month;
+    const prevMonth = prevMonthMetrics.month;
+    const prevDay = prevDayMetrics.day;
 
-  const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
-    cardBgGradient,
-    currentMonth,
-    currentYear,
-    greenColorShade,
-    heading: "Revenue",
-    kind: "day",
-    prevDay,
-    prevMonth,
-    prevValue: 1,
-    prevYear,
-    redColorShade,
-    selectedValue: 1,
-  };
+    const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
+      cardBgGradient,
+      currentMonth,
+      currentYear,
+      greenColorShade,
+      heading: "Revenue",
+      kind: "day",
+      prevDay,
+      prevMonth,
+      prevValue: 1,
+      prevYear,
+      redColorShade,
+      selectedValue: 1,
+    };
 
-  const dayRevenueCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_TEMPLATE,
-    isDisplayValueAsCurrency: true,
-    prevValue: prevDayMetrics.revenue,
-    selectedValue: selectedDayMetrics.revenue,
-  });
+    const dayRevenueCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_TEMPLATE,
+      isDisplayValueAsCurrency: true,
+      prevValue: prevDayMetrics.revenue,
+      selectedValue: selectedDayMetrics.revenue,
+    });
 
-  const dayUnitsRepairedCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_TEMPLATE,
-    heading: "Units Repaired",
-    prevValue: prevDayMetrics.unitsRepaired,
-    selectedValue: selectedDayMetrics.unitsRepaired,
-  });
+    const dayUnitsRepairedCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_TEMPLATE,
+      heading: "Units Repaired",
+      prevValue: prevDayMetrics.unitsRepaired,
+      selectedValue: selectedDayMetrics.unitsRepaired,
+    });
 
-  const monthRevenueCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_TEMPLATE,
-    kind: "month",
-    isDisplayValueAsCurrency: true,
-    prevValue: prevMonthMetrics.revenue,
-    selectedValue: selectedMonthMetrics.revenue,
-  });
+    const monthRevenueCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_TEMPLATE,
+      kind: "month",
+      isDisplayValueAsCurrency: true,
+      prevValue: prevMonthMetrics.revenue,
+      selectedValue: selectedMonthMetrics.revenue,
+    });
 
-  const monthUnitsRepairedCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_TEMPLATE,
-    heading: "Units Repaired",
-    kind: "month",
-    prevValue: prevMonthMetrics.unitsRepaired,
-    selectedValue: selectedMonthMetrics.unitsRepaired,
-  });
+    const monthUnitsRepairedCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_TEMPLATE,
+      heading: "Units Repaired",
+      kind: "month",
+      prevValue: prevMonthMetrics.unitsRepaired,
+      selectedValue: selectedMonthMetrics.unitsRepaired,
+    });
 
-  const yearRevenueCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_TEMPLATE,
-    kind: "year",
-    isDisplayValueAsCurrency: true,
-    prevValue: prevYearMetrics.revenue,
-    selectedValue: selectedYearMetrics.revenue,
-  });
+    const yearRevenueCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_TEMPLATE,
+      kind: "year",
+      isDisplayValueAsCurrency: true,
+      prevValue: prevYearMetrics.revenue,
+      selectedValue: selectedYearMetrics.revenue,
+    });
 
-  const yearUnitsRepairedCardInfo = createDashboardMetricsCards({
-    ...DASHBOARD_CARD_TEMPLATE,
-    heading: "Units Repaired",
-    kind: "year",
-    prevValue: prevYearMetrics.unitsRepaired,
-    selectedValue: selectedYearMetrics.unitsRepaired,
-  });
+    const yearUnitsRepairedCardInfo = createDashboardMetricsCards({
+      ...DASHBOARD_CARD_TEMPLATE,
+      heading: "Units Repaired",
+      kind: "year",
+      prevValue: prevYearMetrics.unitsRepaired,
+      selectedValue: selectedYearMetrics.unitsRepaired,
+    });
 
-  return {
-    dailyCards: [dayRevenueCardInfo, dayUnitsRepairedCardInfo],
-    monthlyCards: [monthRevenueCardInfo, monthUnitsRepairedCardInfo],
-    yearlyCards: [yearRevenueCardInfo, yearUnitsRepairedCardInfo],
-  };
+    return createResultSafeBox({
+      data: Some({
+        dailyCards: [dayRevenueCardInfo, dayUnitsRepairedCardInfo],
+        monthlyCards: [monthRevenueCardInfo, monthUnitsRepairedCardInfo],
+        yearlyCards: [yearRevenueCardInfo, yearUnitsRepairedCardInfo],
+      }),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
+      kind: "error",
+    });
+  }
 }
 
 function returnRepairMetricsCards(
@@ -146,5 +170,5 @@ function returnRepairMetricsCards(
   }, new Map());
 }
 
-export { createRepairMetricsCards, returnRepairMetricsCards };
+export { createRepairMetricsCardsSafe, returnRepairMetricsCards };
 export type { RepairMetricsCards };
