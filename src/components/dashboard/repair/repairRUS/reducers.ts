@@ -28,13 +28,13 @@ function repairRUSReducer_setYAxisKey(
     zSchema: setYAxisKeyRepairRUSDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    yAxisKey: parsedResult.safeUnwrap().data?.payload as RepairSubMetric,
+    yAxisKey: parsedResult.val.data.val.payload as RepairSubMetric,
   };
 }
 
