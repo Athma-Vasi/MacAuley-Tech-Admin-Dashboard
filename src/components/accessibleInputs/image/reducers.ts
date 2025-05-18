@@ -103,11 +103,11 @@ function accessibleImageInputReducer_addImageFileBlob(
         zSchema: addImageFileBlobDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    const fileBlob = parsedResult.safeUnwrap().data?.payload as ModifiedFile;
+    const fileBlob = parsedResult.val.data.val.payload as ModifiedFile;
     const imageFileBlobs = structuredClone(state.imageFileBlobs);
     imageFileBlobs.push(fileBlob);
 
@@ -126,14 +126,14 @@ function accessibleImageInputReducer_addFileName(
         zSchema: addImageFileNameDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     const {
         value: fileName,
         index,
-    } = parsedResult.safeUnwrap().data?.payload as {
+    } = parsedResult.val.data.val.payload as {
         value: string;
         index: number;
     };
@@ -160,13 +160,13 @@ function accessibleImageInputReducer_setCurrentImageIndex(
         zSchema: setCurrentImageIndexDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        currentImageIndex: parsedResult.safeUnwrap().data?.payload as number,
+        currentImageIndex: parsedResult.val.data.val.payload as number,
     };
 }
 
@@ -179,11 +179,11 @@ function accessibleImageInputReducer_removeImageFileBlob(
         zSchema: removeImageFileBlobDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    const index = parsedResult.safeUnwrap().data?.payload as number;
+    const index = parsedResult.val.data.val.payload as number;
 
     const imageFileBlobs = structuredClone(state.imageFileBlobs).filter(
         (_: ModifiedFile, i: number) => i !== index,
@@ -216,11 +216,11 @@ function accessibleImageInputReducer_resetImageFileBlob(
         zSchema: resetImageFileBlobDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    const { index, value } = parsedResult.safeUnwrap().data?.payload as {
+    const { index, value } = parsedResult.val.data.val.payload as {
         index: number;
         value: OriginalFile;
     };
@@ -261,12 +261,12 @@ function accessibleImageInputReducer_setImageFileBlob(
         zSchema: setImageFileBlobDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    const { index, fileBlob } = parsedResult.safeUnwrap().data
-        ?.payload as {
+    const { index, fileBlob } = parsedResult.val.data.val
+        .payload as {
             index: number;
             fileBlob: ModifiedFile;
         };
@@ -289,13 +289,13 @@ function accessibleImageInputReducer_setModifyImagesWorker(
         zSchema: setModifyImagesWorkerDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        modifyImagesWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+        modifyImagesWorker: parsedResult.val.data.val.payload as Worker,
     };
 }
 
@@ -308,13 +308,13 @@ function accessibleImageInputReducer_setRetrieveImagesWorker(
         zSchema: setRetrieveImagesWorkerDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        retrieveImagesWorker: parsedResult.safeUnwrap().data?.payload as Worker,
+        retrieveImagesWorker: parsedResult.val.data.val.payload as Worker,
     };
 }
 
@@ -327,11 +327,11 @@ function accessibleImageInputReducer_setIsErrors(
         zSchema: setIsErrorsImageDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    const { index, value } = parsedResult.safeUnwrap().data?.payload as {
+    const { index, value } = parsedResult.val.data.val.payload as {
         index: number;
         value: boolean;
     };
@@ -353,13 +353,13 @@ function accessibleImageInputReducer_setIsLoading(
         zSchema: setIsLoadingImageDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        isLoading: parsedResult.safeUnwrap().data?.payload as boolean,
+        isLoading: parsedResult.val.data.val.payload as boolean,
     };
 }
 
@@ -372,13 +372,13 @@ function accessibleImageInputReducer_setIsModalOpen(
         zSchema: setIsModalOpenImageDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
     return {
         ...state,
-        isModalOpen: parsedResult.safeUnwrap().data?.payload as boolean,
+        isModalOpen: parsedResult.val.data.val.payload as boolean,
     };
 }
 
@@ -391,12 +391,12 @@ function accessibleImageInputReducer_setQuality(
         zSchema: setQualityImageDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    const { index, value } = parsedResult.safeUnwrap().data
-        ?.payload as DynamicSliderInputPayload;
+    const { index, value } = parsedResult.val.data.val
+        .payload as DynamicSliderInputPayload;
     const qualities = structuredClone(state.qualities);
     qualities[index] = value;
 
@@ -416,12 +416,12 @@ function accessibleImageInputReducer_setOrientation(
         zSchema: setOrientationImageDispatchZod,
     });
 
-    if (parsedResult.err) {
+    if (parsedResult.err || parsedResult.val.data.none) {
         return state;
     }
 
-    const { index, value } = parsedResult.safeUnwrap().data
-        ?.payload as DynamicSliderInputPayload;
+    const { index, value } = parsedResult.val.data.val
+        .payload as DynamicSliderInputPayload;
     const orientations = state.orientations.slice();
     orientations[index] = value;
 
