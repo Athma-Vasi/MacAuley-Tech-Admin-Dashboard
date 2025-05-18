@@ -150,13 +150,13 @@ function globalReducer_setDirectory(
     zSchema: setDirectoryGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    directory: parsedResult.safeUnwrap().data?.payload as UserDocument[],
+    directory: parsedResult.val.data.val.payload as UserDocument[],
   };
 }
 
@@ -169,14 +169,14 @@ function globalReducer_setProductMetricCategory(
     zSchema: setProductMetricCategoryGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    productMetricCategory: parsedResult.safeUnwrap().data
-      ?.payload as ProductMetricCategory,
+    productMetricCategory: parsedResult.val.data.val
+      .payload as ProductMetricCategory,
   };
 }
 
@@ -189,14 +189,14 @@ function globalReducer_setProductSubMetricCategory(
     zSchema: setProductSubMetricCategoryGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    productSubMetricCategory: parsedResult.safeUnwrap().data
-      ?.payload as ProductSubMetric,
+    productSubMetricCategory: parsedResult.val.data.val
+      .payload as ProductSubMetric,
   };
 }
 
@@ -209,14 +209,14 @@ function globalReducer_setRepairMetricCategory(
     zSchema: setRepairMetricCategoryGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    repairMetricCategory: parsedResult.safeUnwrap().data
-      ?.payload as RepairMetricCategory,
+    repairMetricCategory: parsedResult.val.data.val
+      .payload as RepairMetricCategory,
   };
 }
 
@@ -229,14 +229,14 @@ function globalReducer_setFinancialMetricCategory(
     zSchema: setFinancialMetricCategoryGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    financialMetricCategory: parsedResult.safeUnwrap().data
-      ?.payload as FinancialMetricCategory,
+    financialMetricCategory: parsedResult.val.data.val
+      .payload as FinancialMetricCategory,
   };
 }
 
@@ -249,14 +249,14 @@ function globalReducer_setCustomerMetricsCategory(
     zSchema: setCustomerMetricsCategoryGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    customerMetricsCategory: parsedResult.safeUnwrap().data
-      ?.payload as CustomerMetricsCategory,
+    customerMetricsCategory: parsedResult.val.data.val
+      .payload as CustomerMetricsCategory,
   };
 }
 
@@ -269,14 +269,14 @@ function globalReducer_setFinancialMetricsDocument(
     zSchema: setFinancialMetricsDocumentGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    financialMetricsDocument: parsedResult.safeUnwrap().data
-      ?.payload as FinancialMetricsDocument,
+    financialMetricsDocument: parsedResult.val.data.val
+      .payload as FinancialMetricsDocument,
   };
 }
 
@@ -289,14 +289,14 @@ function globalReducer_setProductMetricsDocument(
     zSchema: setProductMetricsDocumentGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    productMetricsDocument: parsedResult.safeUnwrap().data
-      ?.payload as ProductMetricsDocument,
+    productMetricsDocument: parsedResult.val.data.val
+      .payload as ProductMetricsDocument,
   };
 }
 
@@ -309,14 +309,14 @@ function globalReducer_setCustomerMetricsDocument(
     zSchema: setCustomerMetricsDocumentGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    customerMetricsDocument: parsedResult.safeUnwrap().data
-      ?.payload as CustomerMetricsDocument,
+    customerMetricsDocument: parsedResult.val.data.val
+      .payload as CustomerMetricsDocument,
   };
 }
 
@@ -329,14 +329,14 @@ function globalReducer_setRepairMetricsDocument(
     zSchema: setRepairMetricsDocumentGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    repairMetricsDocument: parsedResult.safeUnwrap().data
-      ?.payload as RepairMetricsDocument,
+    repairMetricsDocument: parsedResult.val.data.val
+      .payload as RepairMetricsDocument,
   };
 }
 
@@ -349,11 +349,11 @@ function globalReducer_setColorScheme(
     zSchema: setColorSchemeGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
-  const colorScheme = parsedResult.safeUnwrap().data?.payload as ColorScheme;
+  const colorScheme = parsedResult.val.data.val.payload as ColorScheme;
   const { components } = state.themeObject;
   const { Button, Text, Title } = components;
 
@@ -411,13 +411,13 @@ function globalReducer_setSelectedYYYYMMDD(
     zSchema: setSelectedYYYYMMDDGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    selectedYYYYMMDD: parsedResult.safeUnwrap().data?.payload as string,
+    selectedYYYYMMDD: parsedResult.val.data.val.payload as string,
   };
 }
 
@@ -430,7 +430,7 @@ function globalReducer_setDefaultGradient(
     zSchema: setDefaultGradientGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
@@ -438,7 +438,7 @@ function globalReducer_setDefaultGradient(
     ...state,
     themeObject: {
       ...state.themeObject,
-      defaultGradient: parsedResult.safeUnwrap().data?.payload as {
+      defaultGradient: parsedResult.val.data.val.payload as {
         deg: number;
         from: MantineColor;
         to: MantineColor;
@@ -469,14 +469,14 @@ function globalReducer_setPrefersReducedMotion(
     zSchema: setPrefersReducedMotionGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isPrefersReducedMotion: parsedResult.safeUnwrap().data
-      ?.payload as boolean,
+    isPrefersReducedMotion: parsedResult.val.data.val
+      .payload as boolean,
   };
 }
 
@@ -489,7 +489,7 @@ function globalReducer_setPrimaryColor(
     zSchema: setPrimaryColorGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
@@ -497,8 +497,8 @@ function globalReducer_setPrimaryColor(
     ...state,
     themeObject: {
       ...state.themeObject,
-      primaryColor: parsedResult.safeUnwrap().data
-        ?.payload as MantineColor,
+      primaryColor: parsedResult.val.data.val
+        .payload as MantineColor,
     },
   };
 }
@@ -512,7 +512,7 @@ function globalReducer_setPrimaryShadeDark(
     zSchema: setPrimaryShadeDarkGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
@@ -522,7 +522,7 @@ function globalReducer_setPrimaryShadeDark(
       ...state.themeObject,
       primaryShade: {
         ...state.themeObject.primaryShade,
-        dark: parsedResult.safeUnwrap().data?.payload as Shade,
+        dark: parsedResult.val.data.val.payload as Shade,
       },
     },
   };
@@ -537,7 +537,7 @@ function globalReducer_setPrimaryShadeLight(
     zSchema: setPrimaryShadeLightGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
@@ -547,7 +547,7 @@ function globalReducer_setPrimaryShadeLight(
       ...state.themeObject,
       primaryShade: {
         ...state.themeObject.primaryShade,
-        light: parsedResult.safeUnwrap().data?.payload as Shade,
+        light: parsedResult.val.data.val.payload as Shade,
       },
     },
   };
@@ -562,7 +562,7 @@ function globalReducer_setRespectReducedMotion(
     zSchema: setPrefersReducedMotionGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
@@ -570,8 +570,8 @@ function globalReducer_setRespectReducedMotion(
     ...state,
     themeObject: {
       ...state.themeObject,
-      respectReducedMotion: parsedResult.safeUnwrap().data
-        ?.payload as boolean,
+      respectReducedMotion: parsedResult.val.data.val
+        .payload as boolean,
     },
   };
 }
@@ -585,13 +585,13 @@ function globalReducer_setIsError(
     zSchema: setIsErrorGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isError: parsedResult.safeUnwrap().data?.payload as boolean,
+    isError: parsedResult.val.data.val.payload as boolean,
   };
 }
 
@@ -604,13 +604,13 @@ function globalReducer_setIsFetching(
     zSchema: setIsFetchingGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    isFetching: parsedResult.safeUnwrap().data?.payload as boolean,
+    isFetching: parsedResult.val.data.val.payload as boolean,
   };
 }
 
@@ -721,14 +721,14 @@ function globalReducer_setStoreLocationView(
     zSchema: setStoreLocationViewGlobalDispatchZod,
   });
 
-  if (parsedResult.err) {
+  if (parsedResult.err || parsedResult.val.data.none) {
     return state;
   }
 
   return {
     ...state,
-    storeLocation: parsedResult.safeUnwrap().data
-      ?.payload as AllStoreLocations,
+    storeLocation: parsedResult.val.data.val
+      .payload as AllStoreLocations,
   };
 }
 

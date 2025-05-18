@@ -12,12 +12,7 @@ import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
 import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
-import {
-  DecodedToken,
-  ResultSafeBox,
-  SafeBoxResult,
-  ThemeObject,
-} from "./types";
+import { DecodedToken, ResultSafeBox, ThemeObject } from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -469,7 +464,7 @@ function parseSafeSync(
     object: Record<string, unknown> | Array<Record<string, unknown>>;
     zSchema: z.ZodSchema;
   },
-): SafeBoxResult<z.infer<typeof zSchema>> {
+): ResultSafeBox<z.infer<typeof zSchema>> {
   try {
     const arraySchema = z.array(zSchema);
 
@@ -478,12 +473,12 @@ function parseSafeSync(
       : zSchema.safeParse(object);
 
     if (parsed.success) {
-      return new Ok({ data: parsed.data, kind: "success" });
+      return new Ok({ data: Some(parsed.data), kind: "success" });
     } else {
-      return new Err({ data: parsed.error, kind: "error" });
+      return new Err({ data: Some(parsed.error), kind: "error" });
     }
   } catch (error: unknown) {
-    return new Err({ data: error, kind: "error" });
+    return new Err({ data: Some(error), kind: "error" });
   }
 }
 
