@@ -195,7 +195,7 @@ async function handleUsersQueryOnmessageCallback(
         if (messageEventResult.err || messageEventResult.val.data.none) {
             showBoundary(messageEventResult.val.data);
             return createResultSafeBox({
-                data: messageEventResult.val.message,
+                data: messageEventResult.val.data,
                 message: messageEventResult.val.message,
             });
         }

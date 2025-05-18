@@ -47,7 +47,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
   metricsUrl: string;
   navigate: NavigateFunction;
   showBoundary: (error: unknown) => void;
-}) {
+}): Promise<ResultSafeBox<string>> {
   try {
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
@@ -59,7 +59,7 @@ async function handleMessageEventMetricsFetchWorkerToMain({
     if (messageEventResult.err || messageEventResult.val.data.none) {
       showBoundary(messageEventResult.val.data);
       return createResultSafeBox({
-        data: messageEventResult.val.message,
+        data: messageEventResult.val.data,
         message: messageEventResult.val.message,
       });
     }
@@ -95,8 +95,8 @@ async function handleMessageEventMetricsFetchWorkerToMain({
 
       await localforage.clear();
       navigate("/");
-      return createSafeBoxResult({
-        message: "Logout triggered",
+      return createResultSafeBox({
+        data: Some("Logout triggered"),
       });
     }
 
@@ -115,9 +115,8 @@ async function handleMessageEventMetricsFetchWorkerToMain({
           `Server error: ${message}`,
         ),
       );
-      return createSafeBoxResult({
-        message,
-        kind: "error",
+      return createResultSafeBox({
+        data: Some(message),
       });
     }
 
@@ -167,9 +166,8 @@ async function handleMessageEventMetricsFetchWorkerToMain({
         );
         if (setForageItemResult.err) {
           showBoundary(setForageItemResult.val.data);
-          return createSafeBoxResult({
-            message: setForageItemResult.val.message ??
-              "Error setting forage item",
+          return createResultSafeBox({
+            data: Some(setForageItemResult.val.data),
           });
         }
       },
@@ -181,26 +179,28 @@ async function handleMessageEventMetricsFetchWorkerToMain({
     });
 
     navigate(`/dashboard/${metricsView}`);
-    return createSafeBoxResult({
-      data: {
-        accessToken: newAccessToken,
-        businessMetricsDocument: parsedServerResponse
-          .data[0] as BusinessMetricsDocument,
-      },
+    return createResultSafeBox({
+      data: Some("Metrics fetch successful"),
       kind: "success",
     });
   } catch (error) {
     if (
       !isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        message: "Component unmounted",
+      return createResultSafeBox({
+        data: Some("Component unmounted"),
       });
     }
 
     showBoundary(error);
-    return createSafeBoxResult({
-      message: error instanceof Error ? error.message : "Unknown error",
+    return createResultSafeBox({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
     });
   }
 }
@@ -430,7 +430,7 @@ async function handleMessageEventLogoutFetchWorkerToMain({
     if (messageEventResult.err || messageEventResult.val.data.none) {
       showBoundary(messageEventResult.val.data);
       return createResultSafeBox({
-        data: messageEventResult.val.message,
+        data: messageEventResult.val.data,
         message: messageEventResult.val.message,
       });
     }
@@ -617,7 +617,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain({
     if (messageEventResult.err || messageEventResult.val.data.none) {
       showBoundary(messageEventResult.val.data);
       return createResultSafeBox({
-        data: messageEventResult.val.message,
+        data: messageEventResult.val.data,
         message: messageEventResult.val.message,
       });
     }

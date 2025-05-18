@@ -1,4 +1,5 @@
 import { Some } from "ts-results";
+import { ResultSafeBox } from "../../../types";
 import { createResultSafeBox } from "../../../utils";
 import { MessageEventRepairWorkerToMain } from "../../../workers/repairChartsWorker";
 import { repairMetricsAction } from "./actions";
@@ -14,33 +15,20 @@ async function handleMessageEventRepairWorkerToMain({
     isComponentMountedRef: React.RefObject<boolean>;
     repairMetricsDispatch: React.Dispatch<RepairMetricsDispatch>;
     showBoundary: (error: unknown) => void;
-}) {
+}): Promise<ResultSafeBox<string>> {
     try {
-        console.log("Repair Worker received message:", event.data);
-
+        const messageEventResult = event.data;
         if (!isComponentMountedRef.current) {
             return createResultSafeBox({
-                data: Some(new Error("Component unmounted")),
+                data: Some("Component unmounted"),
             });
         }
 
-        const { err, val } = event.data;
-
-        if (err) {
-            showBoundary(val);
-
+        if (messageEventResult.err || messageEventResult.val.data.none) {
+            showBoundary(messageEventResult.val.data);
             return createResultSafeBox({
-                data: Some(val),
-                message: val.message,
-            });
-        }
-
-        if (val.data.none) {
-            const error = new Error("No data from worker");
-            showBoundary(error);
-
-            return createResultSafeBox({
-                data: Some(error),
+                data: messageEventResult.val.data,
+                message: messageEventResult.val.message,
             });
         }
 
@@ -49,11 +37,7 @@ async function handleMessageEventRepairWorkerToMain({
             previousYear,
             repairMetricsCharts,
             repairMetricsCards,
-        } = val.data.val;
-
-        if (!isComponentMountedRef.current) {
-            return;
-        }
+        } = messageEventResult.val.data.val;
 
         repairMetricsDispatch({
             action: repairMetricsAction.setCalendarChartsData,
@@ -74,20 +58,27 @@ async function handleMessageEventRepairWorkerToMain({
         });
 
         return createResultSafeBox({
-            data: event.data.val.data,
+            data: Some("Repair metrics charts updated"),
             kind: "success",
         });
     } catch (error: unknown) {
-        if (!isComponentMountedRef.current) {
+        if (
+            !isComponentMountedRef.current
+        ) {
             return createResultSafeBox({
-                data: Some(new Error("Component unmounted")),
+                data: Some("Component unmounted"),
             });
         }
 
         showBoundary(error);
         return createResultSafeBox({
-            data: Some(error),
-            message: Some("Error in worker"),
+            data: Some(
+                error instanceof Error
+                    ? error.message
+                    : typeof error === "string"
+                    ? error
+                    : "Unknown error",
+            ),
         });
     }
 }
