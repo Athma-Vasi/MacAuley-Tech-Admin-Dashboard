@@ -8,13 +8,13 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
-import { MessageEventUsersQueryWorkerToMain } from "../../workers/usersQueryWorker";
-import UsersQueryWorker from "../../workers/usersQueryWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { Query } from "../query/Query";
 import { usersQueryAction } from "./actions";
 import { USER_QUERY_TEMPLATES } from "./constants";
 import DisplayResource from "./DisplayResource";
+import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
+import UsersFetchWorker from "./fetchWorker?worker";
 import {
     handleUsersQueryOnmessageCallback,
     handleUsersQuerySubmitGETClick,
@@ -43,14 +43,14 @@ function UsersQuery() {
     const isComponentMountedRef = useMountedRef();
 
     useEffect(() => {
-        const newUsersFetchWorker = new UsersQueryWorker();
+        const newUsersFetchWorker = new UsersFetchWorker();
         usersQueryDispatch({
             action: usersQueryAction.setUsersFetchWorker,
             payload: newUsersFetchWorker,
         });
 
         newUsersFetchWorker.onmessage = async (
-            event: MessageEventUsersQueryWorkerToMain,
+            event: MessageEventUsersFetchWorkerToMain,
         ) => {
             await handleUsersQueryOnmessageCallback({
                 arrangeByDirection,

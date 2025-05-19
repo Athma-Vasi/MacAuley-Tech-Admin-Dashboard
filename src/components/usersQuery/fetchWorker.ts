@@ -1,21 +1,26 @@
 import { Some } from "ts-results";
-import { FETCH_REQUEST_TIMEOUT } from "../constants";
+import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
     HttpServerResponse,
     ResultSafeBox,
     UserDocument,
-} from "../types";
+} from "../../types";
 import {
     createResultSafeBox,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
+    parseSafeSync,
     parseServerResponseAsyncSafe,
-} from "../utils";
-import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
+} from "../../utils";
+import {
+    ROUTES_ZOD_SCHEMAS_MAP,
+    RoutesZodSchemasMapKey,
+} from "../../workers/constants";
+import { messageEventUsersFetchMainToWorkerZod } from "./schemas";
 
-type MessageEventUsersQueryWorkerToMain = MessageEvent<
+type MessageEventUsersFetchWorkerToMain = MessageEvent<
     ResultSafeBox<
         {
             currentPage: number;
@@ -28,7 +33,7 @@ type MessageEventUsersQueryWorkerToMain = MessageEvent<
     >
 >;
 
-type MessageEventUsersQueryMainToWorker = MessageEvent<
+type MessageEventUsersFetchMainToWorker = MessageEvent<
     {
         currentPage: number;
         newQueryFlag: boolean;
@@ -41,12 +46,24 @@ type MessageEventUsersQueryMainToWorker = MessageEvent<
 >;
 
 self.onmessage = async (
-    event: MessageEventUsersQueryMainToWorker,
+    event: MessageEventUsersFetchMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(createResultSafeBox({
             data: Some(new Error("No data received")),
             message: Some("No data received"),
+        }));
+        return;
+    }
+
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventUsersFetchMainToWorkerZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
         }));
         return;
     }
@@ -59,7 +76,8 @@ self.onmessage = async (
         newQueryFlag,
         queryString,
         totalDocuments,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
@@ -176,6 +194,6 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventUsersQueryMainToWorker,
-    MessageEventUsersQueryWorkerToMain,
+    MessageEventUsersFetchMainToWorker,
+    MessageEventUsersFetchWorkerToMain,
 };

@@ -245,9 +245,20 @@ type UsersQueryDispatch =
     | z.infer<typeof resetToInitialUsersQueryDispatchZod>
     | z.infer<typeof setUsersFetchWorkerUsersQueryDispatchZod>;
 
+const messageEventUsersFetchMainToWorkerZod = z.object({
+    currentPage: z.number().min(0),
+    newQueryFlag: z.boolean(),
+    queryString: z.string(),
+    requestInit: z.any(),
+    routesZodSchemaMapKey: z.string(),
+    totalDocuments: z.number().min(0),
+    url: z.string().url(),
+});
+
 export {
     handleUsersQueryOnmessageCallbackInputZod,
     handleUsersQuerySubmitGETClickInputZod,
+    messageEventUsersFetchMainToWorkerZod,
     resetToInitialUsersQueryDispatchZod,
     setArrangeByDirectionUsersQueryDispatchZod,
     setArrangeByFieldUsersQueryDispatchZod,

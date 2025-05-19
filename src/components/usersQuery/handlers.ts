@@ -11,9 +11,9 @@ import {
     parseSafeSync,
     setCachedItemSafeAsync,
 } from "../../utils";
-import { MessageEventUsersQueryWorkerToMain } from "../../workers/usersQueryWorker";
 import { SortDirection } from "../query/types";
 import { usersQueryAction } from "./actions";
+import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
 import {
     handleUsersQueryOnmessageCallbackInputZod,
     handleUsersQuerySubmitGETClickInputZod,
@@ -189,7 +189,7 @@ async function handleUsersQueryOnmessageCallback(
         arrangeByDirection: SortDirection;
         arrangeByField: keyof UserDocument;
         authDispatch: React.Dispatch<AuthDispatch>;
-        event: MessageEventUsersQueryWorkerToMain;
+        event: MessageEventUsersFetchWorkerToMain;
         isComponentMountedRef: React.RefObject<boolean>;
         navigate: NavigateFunction;
         showBoundary: (error: unknown) => void;
