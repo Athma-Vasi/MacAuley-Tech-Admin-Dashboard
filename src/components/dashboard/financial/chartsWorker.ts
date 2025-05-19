@@ -1,19 +1,20 @@
 import { Some } from "ts-results";
-import { MONTHS } from "../components/dashboard/constants";
+import { FinancialMetricsDocument, ResultSafeBox } from "../../../types";
+import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { MONTHS } from "../constants";
+import { DashboardCalendarView, Month, Year } from "../types";
 import {
     createFinancialMetricsCardsSafe,
     FinancialMetricsCards,
-} from "../components/dashboard/financial/cards";
+} from "./cards";
 import {
     createFinancialMetricsCalendarChartsSafe,
     createFinancialMetricsChartsSafe,
     FinancialMetricsCalendarCharts,
     FinancialMetricsCharts,
-    SelectedDateFinancialMetrics,
-} from "../components/dashboard/financial/chartsData";
-import { DashboardCalendarView } from "../components/dashboard/types";
-import { FinancialMetricsDocument, ResultSafeBox } from "../types";
-import { createResultSafeBox } from "../utils";
+    returnSelectedDateFinancialMetricsSafe,
+} from "./chartsData";
+import { messageEventFinancialMainToWorkerZod } from "./schemas";
 
 type MessageEventFinancialWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -29,11 +30,13 @@ type MessageEventFinancialMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         cardBgGradient: string;
+        financialMetricsDocument: FinancialMetricsDocument;
         greenColorShade: string;
         redColorShade: string;
-        financialMetricsDocument: FinancialMetricsDocument;
-        selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
+        selectedDate: string;
+        selectedMonth: Month;
         selectedYYYYMMDD: string;
+        selectedYear: Year;
     }
 >;
 
@@ -48,17 +51,56 @@ self.onmessage = async (
         return;
     }
 
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventFinancialMainToWorkerZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
+
     const {
         calendarView,
         cardBgGradient,
         greenColorShade,
         redColorShade,
         financialMetricsDocument,
-        selectedDateFinancialMetrics,
+        selectedDate,
+        selectedMonth,
+        selectedYear,
         selectedYYYYMMDD,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
 
     try {
+        const selectedDateFinancialMetricsSafeResult =
+            returnSelectedDateFinancialMetricsSafe(
+                {
+                    financialMetricsDocument,
+                    day: selectedDate,
+                    month: selectedMonth,
+                    months: MONTHS,
+                    year: selectedYear,
+                },
+            );
+        if (
+            selectedDateFinancialMetricsSafeResult.err ||
+            selectedDateFinancialMetricsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: selectedDateFinancialMetricsSafeResult.val.data,
+                message: Some(
+                    "Error creating selected date financial metrics",
+                ),
+            }));
+            return;
+        }
+        const selectedDateFinancialMetrics =
+            selectedDateFinancialMetricsSafeResult.val.data.val;
+
         const createFinancialMetricsCalendarChartsSafeResult =
             createFinancialMetricsCalendarChartsSafe(
                 calendarView,

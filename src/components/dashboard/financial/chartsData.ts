@@ -29,7 +29,7 @@ type SelectedDateFinancialMetrics = {
   };
 };
 
-function returnSelectedDateFinancialMetrics({
+function returnSelectedDateFinancialMetricsSafe({
   financialMetricsDocument,
   day,
   month,
@@ -41,61 +41,122 @@ function returnSelectedDateFinancialMetrics({
   month: Month;
   months: Month[];
   year: Year;
-}): SelectedDateFinancialMetrics {
-  const selectedYearMetrics = financialMetricsDocument.financialMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === year,
-  );
-  const prevYearMetrics = financialMetricsDocument.financialMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
-  );
-
-  const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
-    (monthlyMetric) => monthlyMetric.month === month,
-  );
-  const prevPrevYearMetrics = financialMetricsDocument.financialMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
-  );
-  const prevMonthMetrics = month === "January"
-    ? prevPrevYearMetrics?.monthlyMetrics.find(
-      (monthlyMetric) => monthlyMetric.month === "December",
-    )
-    : selectedYearMetrics?.monthlyMetrics.find(
-      (monthlyMetric) =>
-        monthlyMetric.month === months[months.indexOf(month) - 1],
+}): ResultSafeBox<SelectedDateFinancialMetrics> {
+  try {
+    const selectedYearMetrics = financialMetricsDocument.financialMetrics.find(
+      (yearlyMetric) => yearlyMetric.year === year,
     );
+    if (!selectedYearMetrics) {
+      return new Err({
+        data: Some("No financial metrics found for the selected year"),
+        kind: "error",
+      });
+    }
 
-  const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
-    (dailyMetric) => dailyMetric.day === day,
-  );
-
-  const prevDayMetrics = day === "01"
-    ? prevMonthMetrics?.dailyMetrics.reduce<DailyFinancialMetric | undefined>(
-      (acc, prevMonthDailyMetric) => {
-        const { day: prevDay } = prevMonthDailyMetric;
-
-        if (
-          prevDay === "31" ||
-          prevDay === "30" ||
-          prevDay === "29" ||
-          prevDay === "28"
-        ) {
-          acc = prevMonthDailyMetric;
-        }
-
-        return acc;
-      },
-      void 0,
-    )
-    : selectedMonthMetrics?.dailyMetrics.find(
-      (dailyMetric) =>
-        dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
+    const prevYearMetrics = financialMetricsDocument.financialMetrics.find(
+      (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
     );
+    if (!prevYearMetrics) {
+      return new Err({
+        data: Some("No financial metrics found for the previous year"),
+        kind: "error",
+      });
+    }
 
-  return {
-    yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
-    monthFinancialMetrics: { selectedMonthMetrics, prevMonthMetrics },
-    dayFinancialMetrics: { selectedDayMetrics, prevDayMetrics },
-  };
+    const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
+      (monthlyMetric) => monthlyMetric.month === month,
+    );
+    if (!selectedMonthMetrics) {
+      return new Err({
+        data: Some("No financial metrics found for the selected month"),
+        kind: "error",
+      });
+    }
+
+    const prevPrevYearMetrics = financialMetricsDocument.financialMetrics.find(
+      (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
+    );
+    if (!prevPrevYearMetrics) {
+      return new Err({
+        data: Some("No financial metrics found for the previous year"),
+        kind: "error",
+      });
+    }
+
+    const prevMonthMetrics = month === "January"
+      ? prevPrevYearMetrics?.monthlyMetrics.find(
+        (monthlyMetric) => monthlyMetric.month === "December",
+      )
+      : selectedYearMetrics?.monthlyMetrics.find(
+        (monthlyMetric) =>
+          monthlyMetric.month === months[months.indexOf(month) - 1],
+      );
+    if (!prevMonthMetrics) {
+      return new Err({
+        data: Some("No financial metrics found for the previous month"),
+        kind: "error",
+      });
+    }
+
+    const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
+      (dailyMetric) => dailyMetric.day === day,
+    );
+    if (!selectedDayMetrics) {
+      return new Err({
+        data: Some("No financial metrics found for the selected day"),
+        kind: "error",
+      });
+    }
+
+    const prevDayMetrics = day === "01"
+      ? prevMonthMetrics?.dailyMetrics.reduce<DailyFinancialMetric | undefined>(
+        (acc, prevMonthDailyMetric) => {
+          const { day: prevDay } = prevMonthDailyMetric;
+
+          if (
+            prevDay === "31" ||
+            prevDay === "30" ||
+            prevDay === "29" ||
+            prevDay === "28"
+          ) {
+            acc = prevMonthDailyMetric;
+          }
+
+          return acc;
+        },
+        void 0,
+      )
+      : selectedMonthMetrics?.dailyMetrics.find(
+        (dailyMetric) =>
+          dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
+      );
+    if (!prevDayMetrics) {
+      return new Err({
+        data: Some("No financial metrics found for the previous day"),
+        kind: "error",
+      });
+    }
+
+    return createResultSafeBox({
+      data: Some({
+        yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
+        monthFinancialMetrics: { selectedMonthMetrics, prevMonthMetrics },
+        dayFinancialMetrics: { selectedDayMetrics, prevDayMetrics },
+      }),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
+      kind: "error",
+    });
+  }
 }
 
 /**
@@ -3882,7 +3943,7 @@ export {
   createFinancialMetricsChartsSafe,
   createYearlyFinancialChartsSafe,
   returnCalendarViewFinancialCharts,
-  returnSelectedDateFinancialMetrics,
+  returnSelectedDateFinancialMetricsSafe,
 };
 export type {
   FinancialMetricsBarCharts,

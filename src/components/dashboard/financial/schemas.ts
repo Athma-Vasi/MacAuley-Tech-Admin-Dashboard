@@ -433,9 +433,23 @@ const handleMessageEventFinancialWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
+const messageEventFinancialMainToWorkerZod = z.object({
+    calendarView: z.string(),
+    cardBgGradient: z.string(),
+    financialMetricsDocument: financialMetricsDocumentZod,
+    greenColorShade: z.string(),
+    redColorShade: z.string(),
+    selectedDate: z.string(),
+    selectedMonth: z.string().regex(MONTHS_REGEX),
+    selectedYYYYMMDD: z.string(),
+    selectedYear: z.string().regex(YEARS_REGEX),
+});
+
 export {
+    financialChartsZod,
     financialMetricsDocumentZod,
     handleMessageEventFinancialWorkerToMainInputZod,
+    messageEventFinancialMainToWorkerZod,
     setCalendarChartsFinancialMetricsDispatchZod,
     setChartsFinancialMetricsDispatchZod,
     setChartsWorkerFinancialMetricsDispatchZod,

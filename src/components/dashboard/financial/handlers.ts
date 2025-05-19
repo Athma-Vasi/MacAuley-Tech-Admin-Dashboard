@@ -1,8 +1,8 @@
 import { Some } from "ts-results";
 import { ResultSafeBox } from "../../../types";
 import { createResultSafeBox, parseSafeSync } from "../../../utils";
-import { MessageEventFinancialWorkerToMain } from "../../../workers/financialChartsWorker";
 import { financialMetricsAction } from "./actions";
+import { MessageEventFinancialWorkerToMain } from "./chartsWorker";
 import { handleMessageEventFinancialWorkerToMainInputZod } from "./schemas";
 import { FinancialMetricsDispatch } from "./types";
 

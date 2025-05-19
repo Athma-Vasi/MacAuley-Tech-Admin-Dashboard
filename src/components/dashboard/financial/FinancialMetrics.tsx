@@ -6,9 +6,6 @@ import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { FinancialMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { MessageEventFinancialWorkerToMain } from "../../../workers/financialChartsWorker";
-import FinancialChartsWorker from "../../../workers/financialChartsWorker?worker";
-import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
   DashboardCalendarView,
@@ -16,7 +13,8 @@ import type {
   Year,
 } from "../types";
 import { financialMetricsAction } from "./actions";
-import { returnSelectedDateFinancialMetrics } from "./chartsData";
+import { MessageEventFinancialWorkerToMain } from "./chartsWorker";
+import FinancialChartsWorker from "./chartsWorker?worker";
 import { PERT_SET } from "./constants";
 import { handleMessageEventFinancialWorkerToMain } from "./handlers";
 import OtherMetrics from "./otherMetrics/OtherMetrics";
@@ -77,33 +75,23 @@ function FinancialMetrics(
   const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
-    if (!financialChartsWorker) {
+    if (!financialChartsWorker || !financialMetricsDocument) {
       return;
     }
 
-    if (financialMetricsDocument || !cards || !charts) {
-      const selectedDateFinancialMetrics = returnSelectedDateFinancialMetrics(
-        {
-          financialMetricsDocument,
-          day: selectedDate,
-          month: selectedMonth,
-          months: MONTHS,
-          year: selectedYear,
-        },
-      );
-
-      financialChartsWorker.postMessage(
-        {
-          calendarView,
-          cardBgGradient,
-          financialMetricsDocument,
-          greenColorShade,
-          redColorShade,
-          selectedDateFinancialMetrics,
-          selectedYYYYMMDD,
-        },
-      );
-    }
+    financialChartsWorker.postMessage(
+      {
+        calendarView,
+        cardBgGradient,
+        financialMetricsDocument,
+        greenColorShade,
+        redColorShade,
+        selectedDate,
+        selectedMonth,
+        selectedYYYYMMDD,
+        selectedYear,
+      },
+    );
   }, [
     financialChartsWorker,
     calendarView,
