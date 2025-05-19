@@ -233,7 +233,15 @@ const setChartsWorkerProductMetricsDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const handleMessageEventProductWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    productMetricsDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
 export {
+    handleMessageEventProductWorkerToMainInputZod,
     productMetricsDocumentZod,
     setCalendarChartsDataProductMetricsDispatchZod,
     setChartsProductMetricsDispatchZod,
