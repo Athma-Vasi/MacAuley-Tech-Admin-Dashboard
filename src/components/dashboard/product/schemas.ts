@@ -240,8 +240,21 @@ const handleMessageEventProductWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
+const messageEventProductMainToWorkerZod = z.object({
+    calendarView: z.string(),
+    cardBgGradient: z.string(),
+    greenColorShade: z.string(),
+    productMetricsDocument: productMetricsDocumentZod,
+    redColorShade: z.string(),
+    selectedDate: z.string(),
+    selectedMonth: z.string().regex(MONTHS_REGEX),
+    selectedYYYYMMDD: z.string(),
+    selectedYear: z.string().regex(YEARS_REGEX),
+});
+
 export {
     handleMessageEventProductWorkerToMainInputZod,
+    messageEventProductMainToWorkerZod,
     productMetricsDocumentZod,
     setCalendarChartsDataProductMetricsDispatchZod,
     setChartsProductMetricsDispatchZod,

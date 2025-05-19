@@ -1,19 +1,17 @@
 import { Some } from "ts-results";
-import { MONTHS } from "../components/dashboard/constants";
-import {
-    createProductMetricsCardsSafe,
-    ProductMetricsCards,
-} from "../components/dashboard/product/cards";
+import { ProductMetricsDocument, ResultSafeBox } from "../../../types";
+import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { MONTHS } from "../constants";
+import { DashboardCalendarView, Month, Year } from "../types";
+import { createProductMetricsCardsSafe, ProductMetricsCards } from "./cards";
 import {
     createProductMetricsCalendarChartsSafe,
     createProductMetricsChartsSafe,
     ProductMetricsCalendarCharts,
     ProductMetricsCharts,
-    SelectedDateProductMetrics,
-} from "../components/dashboard/product/chartsData";
-import { DashboardCalendarView } from "../components/dashboard/types";
-import { ProductMetricsDocument, ResultSafeBox } from "../types";
-import { createResultSafeBox } from "../utils";
+    returnSelectedDateProductMetricsSafe,
+} from "./chartsData";
+import { messageEventProductMainToWorkerZod } from "./schemas";
 
 type MessageEventProductWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -30,10 +28,12 @@ type MessageEventProductMainToWorker = MessageEvent<
         calendarView: DashboardCalendarView;
         cardBgGradient: string;
         greenColorShade: string;
-        redColorShade: string;
         productMetricsDocument: ProductMetricsDocument;
-        selectedDateProductMetrics: SelectedDateProductMetrics;
+        redColorShade: string;
+        selectedDate: string;
+        selectedMonth: Month;
         selectedYYYYMMDD: string;
+        selectedYear: Year;
     }
 >;
 
@@ -48,17 +48,56 @@ self.onmessage = async (
         return;
     }
 
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventProductMainToWorkerZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
+
     const {
         calendarView,
         cardBgGradient,
         greenColorShade,
         redColorShade,
         productMetricsDocument,
-        selectedDateProductMetrics,
+        selectedDate,
+        selectedMonth,
+        selectedYear,
         selectedYYYYMMDD,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
 
     try {
+        const selectedDateProductMetricsSafeResult =
+            returnSelectedDateProductMetricsSafe(
+                {
+                    productMetricsDocument,
+                    day: selectedDate,
+                    month: selectedMonth,
+                    months: MONTHS,
+                    year: selectedYear,
+                },
+            );
+        if (
+            selectedDateProductMetricsSafeResult.err ||
+            selectedDateProductMetricsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: selectedDateProductMetricsSafeResult.val.data,
+                message: Some(
+                    "Error getting selected date product metrics",
+                ),
+            }));
+            return;
+        }
+        const selectedDateProductMetrics =
+            selectedDateProductMetricsSafeResult.val.data.val;
+
         const createProductMetricsCalendarChartsSafeResult =
             createProductMetricsCalendarChartsSafe(
                 calendarView,

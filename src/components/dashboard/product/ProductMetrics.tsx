@@ -6,9 +6,6 @@ import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { ProductMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { MessageEventProductWorkerToMain } from "../../../workers/productChartsWorker";
-import ProductChartsWorker from "../../../workers/productChartsWorker?worker";
-import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
   DashboardCalendarView,
@@ -16,7 +13,8 @@ import type {
   Year,
 } from "../types";
 import { productMetricsAction } from "./actions";
-import { returnSelectedDateProductMetrics } from "./chartsData";
+import { MessageEventProductWorkerToMain } from "./chartsWorker";
+import ProductChartsWorker from "./chartsWorker?worker";
 import { handleMessageEventProductWorkerToMain } from "./handlers";
 import { productMetricsReducer } from "./reducers";
 import { RUS } from "./rus/RUS";
@@ -76,31 +74,23 @@ function ProductMetrics(
   });
 
   useEffect(() => {
-    if (!productChartsWorker) {
+    if (!productChartsWorker || !productMetricsDocument) {
       return;
     }
 
-    if (productMetricsDocument || !cards || !charts) {
-      const selectedDateProductMetrics = returnSelectedDateProductMetrics({
+    productChartsWorker.postMessage(
+      {
+        calendarView,
+        cardBgGradient,
         productMetricsDocument,
-        day: selectedDate,
-        month: selectedMonth,
-        months: MONTHS,
-        year: selectedYear,
-      });
-
-      productChartsWorker.postMessage(
-        {
-          calendarView,
-          cardBgGradient,
-          greenColorShade,
-          productMetricsDocument,
-          redColorShade,
-          selectedDateProductMetrics,
-          selectedYYYYMMDD,
-        },
-      );
-    }
+        greenColorShade,
+        redColorShade,
+        selectedDate,
+        selectedMonth,
+        selectedYYYYMMDD,
+        selectedYear,
+      },
+    );
   }, [
     productChartsWorker,
     calendarView,
