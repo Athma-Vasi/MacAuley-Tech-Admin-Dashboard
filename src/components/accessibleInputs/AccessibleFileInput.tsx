@@ -107,9 +107,11 @@ function AccessibleFileInput<
                 >(
                     originalFilesForageKey,
                 );
-                if (originalFilesResult.ok) {
-                    const originalFiles =
-                        originalFilesResult.safeUnwrap().data ?? [];
+                if (
+                    originalFilesResult.ok && originalFilesResult.val.data.some
+                ) {
+                    const originalFiles = originalFilesResult.val.data.val ??
+                        [];
                     originalFiles.push(payload);
 
                     await setCachedItemSafeAsync(
@@ -123,10 +125,11 @@ function AccessibleFileInput<
                 >(
                     modifiedFilesForageKey,
                 );
-                if (modifiedFilesResult.ok) {
-                    const modifiedFiles =
-                        modifiedFilesResult.safeUnwrap().data ??
-                            [];
+                if (
+                    modifiedFilesResult.ok && modifiedFilesResult.val.data.some
+                ) {
+                    const modifiedFiles = modifiedFilesResult.val.data.val ??
+                        [];
                     modifiedFiles.push(payload);
 
                     await setCachedItemSafeAsync(
@@ -139,9 +142,9 @@ function AccessibleFileInput<
                 >(
                     fileNamesForageKey,
                 );
-                if (fileNamesResult.ok) {
-                    const fileNamesUnwrapped =
-                        fileNamesResult.safeUnwrap().data ?? [];
+                if (fileNamesResult.ok && fileNamesResult.val.data.some) {
+                    const fileNamesUnwrapped = fileNamesResult.val.data.val ??
+                        [];
                     fileNamesUnwrapped.push(
                         payload?.name ?? "Unknown file name",
                     );

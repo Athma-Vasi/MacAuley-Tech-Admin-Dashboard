@@ -16,13 +16,7 @@ import { TbCheck, TbExclamationCircle } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useMountedRef } from "../../../hooks/useMountedRef";
-import {
-    addCommaSeparator,
-    getCachedItemSafeAsync,
-    modifyImageSafe,
-    returnThemeColors,
-    setCachedItemSafeAsync,
-} from "../../../utils";
+import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { MessageEventRetrieveImagesWorkerToMain } from "../../../workers/retrieveImagesWorker";
 import RetrieveImagesWorker from "../../../workers/retrieveImagesWorker?worker";
 import { GoldenGrid } from "../../goldenGrid";
@@ -318,12 +312,10 @@ function AccessibleImageInput<
                     ) => {
                         await handleRemoveImageClick({
                             accessibleImageInputDispatch,
-                            getCachedItemSafeAsync,
                             index,
                             invalidValueAction,
                             isComponentMountedRef,
                             parentDispatch,
-                            setCachedItemSafeAsync,
                             showBoundary,
                             storageKey,
                             validValueAction,
@@ -343,10 +335,8 @@ function AccessibleImageInput<
                             | React.MouseEvent<HTMLButtonElement, MouseEvent>
                             | React.PointerEvent<HTMLButtonElement>,
                     ) => {
-                        isComponentMountedRef.current = true;
                         await handleResetImageClick({
                             accessibleImageInputDispatch,
-                            getCachedItemSafeAsync,
                             index,
                             isComponentMountedRef,
                             showBoundary,
@@ -403,23 +393,29 @@ function AccessibleImageInput<
                             //     },
                             // );
 
+                            console.log(
+                                "handleImageQualityOrientationSliderChange onChange",
+                            );
+
                             await handleImageQualityOrientationSliderChange({
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
                                 fileNames,
-                                getCachedItemSafeAsync,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
-                                modifyImageSafe,
                                 orientations,
                                 parentDispatch,
                                 qualities,
                                 qualityValue: value,
-                                setCachedItemSafeAsync,
                                 showBoundary,
                                 storageKey,
                                 validValueAction,
+                            }).then((result) => {
+                                console.log(
+                                    "handleImageQualityOrientationSliderChange result",
+                                    result,
+                                );
                             });
                         },
                         sliderDefaultValue: 1,
@@ -477,16 +473,13 @@ function AccessibleImageInput<
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
                                 fileNames,
-                                getCachedItemSafeAsync,
                                 invalidValueAction,
                                 isComponentMountedRef,
                                 maxImageSize,
-                                modifyImageSafe,
                                 orientations,
                                 orientationValue: value,
                                 parentDispatch,
                                 qualities,
-                                setCachedItemSafeAsync,
                                 showBoundary,
                                 storageKey,
                                 validValueAction,

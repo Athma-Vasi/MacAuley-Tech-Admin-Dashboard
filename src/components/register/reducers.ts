@@ -116,7 +116,7 @@ function registerReducer_setInputsInError(
     return state;
   }
 
-  const data = parsedResult.val.data.val;
+  const data = parsedResult.val.data.val.payload;
   if (data === undefined) {
     return state;
   }
@@ -145,7 +145,7 @@ function registerReducer_setStepsWithEmptyInputs(
     return state;
   }
 
-  const data = parsedResult.val.data.val;
+  const data = parsedResult.val.data.val.payload;
   if (data === undefined) {
     return state;
   }
@@ -232,7 +232,7 @@ function registerReducer_setFilesInError(
     return state;
   }
 
-  const { data: { payload: { kind, name } } } = parsedResult.val.data.val;
+  const { kind, name } = parsedResult.val.data.val.payload;
   const filesInError = new Map(state.filesInError);
   if (kind === "remove") {
     filesInError.delete(name);

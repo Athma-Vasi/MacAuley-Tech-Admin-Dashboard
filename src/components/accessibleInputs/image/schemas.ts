@@ -84,9 +84,98 @@ const setModifyImagesWorkerDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const handleResetImageClickInputZod = z.object({
+    accessibleImageInputDispatch: z.function().args(z.any()).returns(z.void()),
+    index: z.number().min(0),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    storageKey: z.string(),
+});
+
+const handleRemoveImageClickInputZod = z.object({
+    accessibleImageInputDispatch: z.function().args(z.any()).returns(z.void()),
+    index: z.number().min(0),
+    invalidValueAction: z.literal("setFilesInError"),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    parentDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    storageKey: z.string(),
+    validValueAction: z.literal("setFormData"),
+});
+
+const handleMessageEventModifyImagesWorkerToMainInputZod = z.object({
+    accessibleImageInputDispatch: z.function().args(z.any()).returns(z.void()),
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    invalidValueAction: z.literal("setFilesInError"),
+    parentDispatch: z.function().args(z.any()).returns(z.void()).optional(),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    storageKey: z.string(),
+    validValueAction: z.literal("setFormData"),
+});
+
+/**
+ *  {
+        accessibleImageInputDispatch: React.Dispatch<
+            AccessibleImageInputDispatch
+        >;
+        currentImageIndex: number;
+        fileNames: string[];
+        isComponentMountedRef: React.RefObject<boolean>;
+        invalidValueAction: InvalidValueAction;
+        maxImageSize: number;
+        orientations: number[];
+        orientationValue?: number;
+        parentDispatch?: React.Dispatch<
+            | {
+                action: ValidValueAction;
+                payload: FormData;
+            }
+            | {
+                action: InvalidValueAction;
+                payload: SetFilesInErrorPayload;
+            }
+        >;
+        qualities: number[];
+        qualityValue?: number;
+        showBoundary: (error: unknown) => void;
+        storageKey: string;
+        validValueAction: ValidValueAction;
+    }
+ */
+
+const handleImageQualityOrientationSliderChangeInputZod = z.object({
+    accessibleImageInputDispatch: z.function().args(z.any()).returns(z.void()),
+    currentImageIndex: z.number(),
+    fileNames: z.array(z.string()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    invalidValueAction: z.literal("setFilesInError"),
+    maxImageSize: z.number(),
+    orientations: z.array(z.number()),
+    orientationValue: z.number().optional(),
+    parentDispatch: z.function().args(z.any()).returns(z.void()).optional(),
+    qualities: z.array(z.number()),
+    qualityValue: z.number().optional(),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    storageKey: z.string(),
+    validValueAction: z.literal("setFormData"),
+});
+
+const handleMessageEventRetrieveImagesWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+    accessibleImageInputDispatch: z.function().args(z.any()).returns(z.void()),
+});
+
 export {
     addImageFileBlobDispatchZod,
     addImageFileNameDispatchZod,
+    handleImageQualityOrientationSliderChangeInputZod,
+    handleMessageEventModifyImagesWorkerToMainInputZod,
+    handleMessageEventRetrieveImagesWorkerToMainInputZod,
+    handleRemoveImageClickInputZod,
+    handleResetImageClickInputZod,
     removeImageFileBlobDispatchZod,
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,
