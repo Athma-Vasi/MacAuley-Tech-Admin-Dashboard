@@ -6,9 +6,6 @@ import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { CustomerMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { MessageEventCustomerWorkerToMain } from "../../../workers/customerChartsWorker";
-import CustomerChartsWorker from "../../../workers/customerChartsWorker?worker";
-import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
   DashboardCalendarView,
@@ -16,7 +13,8 @@ import type {
   Year,
 } from "../types";
 import { customerMetricsAction } from "./actions";
-import { returnSelectedDateCustomerMetrics } from "./chartsData";
+import { MessageEventCustomerWorkerToMain } from "./chartsWorker";
+import CustomerChartsWorker from "./chartsWorker?worker";
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
 import { handleMessageEventCustomerWorkerToMain } from "./handlers";
 import New from "./new/New";
@@ -78,31 +76,23 @@ function CustomerMetrics(
   const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
-    if (!customerChartsWorker) {
+    if (!customerChartsWorker || !customerMetricsDocument) {
       return;
     }
 
-    if (customerMetricsDocument || !cards || !charts) {
-      const selectedDateCustomerMetrics = returnSelectedDateCustomerMetrics({
+    customerChartsWorker.postMessage(
+      {
+        calendarView,
+        cardBgGradient,
         customerMetricsDocument,
-        day: selectedDate,
-        month: selectedMonth,
-        months: MONTHS,
-        year: selectedYear,
-      });
-
-      customerChartsWorker.postMessage(
-        {
-          calendarView,
-          cardBgGradient,
-          customerMetricsDocument,
-          greenColorShade,
-          redColorShade,
-          selectedDateCustomerMetrics,
-          selectedYYYYMMDD,
-        },
-      );
-    }
+        greenColorShade,
+        redColorShade,
+        selectedDate,
+        selectedMonth,
+        selectedYYYYMMDD,
+        selectedYear,
+      },
+    );
   }, [
     customerChartsWorker,
     calendarView,

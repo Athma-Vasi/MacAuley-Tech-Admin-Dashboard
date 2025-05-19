@@ -30,7 +30,7 @@ type SelectedDateCustomerMetrics = {
   };
 };
 
-function returnSelectedDateCustomerMetrics({
+function returnSelectedDateCustomerMetricsSafe({
   customerMetricsDocument,
   day,
   month,
@@ -42,65 +42,128 @@ function returnSelectedDateCustomerMetrics({
   month: Month;
   months: Month[];
   year: Year;
-}): SelectedDateCustomerMetrics {
-  const selectedYearMetrics = customerMetricsDocument.customerMetrics
-    .yearlyMetrics
-    .find(
-      (yearlyMetric) => yearlyMetric.year === year,
-    );
-  const prevYearMetrics = customerMetricsDocument.customerMetrics.yearlyMetrics
-    .find(
-      (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
-    );
+}): ResultSafeBox<SelectedDateCustomerMetrics> {
+  try {
+    const selectedYearMetrics = customerMetricsDocument.customerMetrics
+      .yearlyMetrics
+      .find(
+        (yearlyMetric) => yearlyMetric.year === year,
+      );
+    if (!selectedYearMetrics) {
+      return new Err({
+        data: Some("Selected year metrics not found"),
+        kind: "error",
+      });
+    }
 
-  const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
-    (monthlyMetric) => monthlyMetric.month === month,
-  );
-  const prevPrevYearMetrics = customerMetricsDocument.customerMetrics
-    .yearlyMetrics
-    .find(
-      (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
+    const prevYearMetrics = customerMetricsDocument.customerMetrics
+      .yearlyMetrics
+      .find(
+        (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
+      );
+    if (!prevYearMetrics) {
+      return new Err({
+        data: Some("Previous year metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
+      (monthlyMetric) => monthlyMetric.month === month,
     );
-  const prevMonthMetrics = month === "January"
-    ? prevPrevYearMetrics?.monthlyMetrics.find(
-      (monthlyMetric) => monthlyMetric.month === "December",
-    )
-    : selectedYearMetrics?.monthlyMetrics.find(
-      (monthlyMetric) =>
-        monthlyMetric.month === months[months.indexOf(month) - 1],
+    if (!selectedMonthMetrics) {
+      return new Err({
+        data: Some("Selected month metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const prevPrevYearMetrics = customerMetricsDocument.customerMetrics
+      .yearlyMetrics
+      .find(
+        (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
+      );
+    if (!prevPrevYearMetrics) {
+      return new Err({
+        data: Some("Previous previous year metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const prevMonthMetrics = month === "January"
+      ? prevPrevYearMetrics?.monthlyMetrics.find(
+        (monthlyMetric) => monthlyMetric.month === "December",
+      )
+      : selectedYearMetrics?.monthlyMetrics.find(
+        (monthlyMetric) =>
+          monthlyMetric.month === months[months.indexOf(month) - 1],
+      );
+    if (!prevMonthMetrics) {
+      return new Err({
+        data: Some("Previous month metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
+      (dailyMetric) => dailyMetric.day === day,
     );
+    if (!selectedDayMetrics) {
+      return new Err({
+        data: Some("Selected day metrics not found"),
+        kind: "error",
+      });
+    }
 
-  const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
-    (dailyMetric) => dailyMetric.day === day,
-  );
-  const prevDayMetrics = day === "01"
-    ? prevMonthMetrics?.dailyMetrics.reduce<CustomerDailyMetric | undefined>(
-      (acc, prevMonthDailyMetric) => {
-        const { day: prevDay } = prevMonthDailyMetric;
+    const prevDayMetrics = day === "01"
+      ? prevMonthMetrics?.dailyMetrics.reduce<CustomerDailyMetric | undefined>(
+        (acc, prevMonthDailyMetric) => {
+          const { day: prevDay } = prevMonthDailyMetric;
 
-        if (
-          prevDay === "31" ||
-          prevDay === "30" ||
-          prevDay === "29" ||
-          prevDay === "28"
-        ) {
-          acc = prevMonthDailyMetric;
-        }
+          if (
+            prevDay === "31" ||
+            prevDay === "30" ||
+            prevDay === "29" ||
+            prevDay === "28"
+          ) {
+            acc = prevMonthDailyMetric;
+          }
 
-        return acc;
-      },
-      void 0,
-    )
-    : selectedMonthMetrics?.dailyMetrics.find(
-      (dailyMetric) =>
-        dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
-    );
+          return acc;
+        },
+        void 0,
+      )
+      : selectedMonthMetrics?.dailyMetrics.find(
+        (dailyMetric) =>
+          dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
+      );
+    if (!prevDayMetrics) {
+      return new Err({
+        data: Some("Previous day metrics not found"),
+        kind: "error",
+      });
+    }
 
-  return {
-    dayCustomerMetrics: { selectedDayMetrics, prevDayMetrics },
-    monthCustomerMetrics: { selectedMonthMetrics, prevMonthMetrics },
-    yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics },
-  };
+    return createResultSafeBox({
+      data: Some({
+        dayCustomerMetrics: { selectedDayMetrics, prevDayMetrics },
+        monthCustomerMetrics: { selectedMonthMetrics, prevMonthMetrics },
+        yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics },
+      }),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
+      kind: "error",
+    });
+  }
 }
 
 // new & returning
@@ -2430,7 +2493,7 @@ export {
   createCustomerMetricsCalendarChartsSafe,
   createCustomerMetricsChartsSafe,
   returnCalendarViewCustomerCharts,
-  returnSelectedDateCustomerMetrics,
+  returnSelectedDateCustomerMetricsSafe,
 };
 export type {
   CustomerChurnRetentionCalendarChartsKey,

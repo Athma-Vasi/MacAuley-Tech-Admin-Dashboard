@@ -390,10 +390,122 @@ const handleMessageEventCustomerWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
+const customerDailyMetricZod = z.object({
+    day: z.string(),
+    customers: z.object({
+        total: z.number(),
+        new: z.object({
+            total: z.number(),
+            repair: z.number(),
+            sales: z.object({
+                total: z.number(),
+                online: z.number(),
+                inStore: z.number(),
+            }),
+        }),
+        returning: z.object({
+            total: z.number(),
+            repair: z.number(),
+            sales: z.object({
+                total: z.number(),
+                online: z.number(),
+                inStore: z.number(),
+            }),
+        }),
+        churnRate: z.number(),
+        retentionRate: z.number(),
+    }),
+});
+
+const customerMonthlyMetricZod = z.object({
+    month: z.string(),
+    customers: z.object({
+        total: z.number(),
+        new: z.object({
+            total: z.number(),
+            repair: z.number(),
+            sales: z.object({
+                total: z.number(),
+                online: z.number(),
+                inStore: z.number(),
+            }),
+        }),
+        returning: z.object({
+            total: z.number(),
+            repair: z.number(),
+            sales: z.object({
+                total: z.number(),
+                online: z.number(),
+                inStore: z.number(),
+            }),
+        }),
+        churnRate: z.number(),
+        retentionRate: z.number(),
+    }),
+    dailyMetrics: z.array(customerDailyMetricZod),
+});
+
+const customerYearlyMetricZod = z.object({
+    year: z.string(),
+    customers: z.object({
+        total: z.number(),
+        new: z.object({
+            total: z.number(),
+            repair: z.number(),
+            sales: z.object({
+                total: z.number(),
+                online: z.number(),
+                inStore: z.number(),
+            }),
+        }),
+        returning: z.object({
+            total: z.number(),
+            repair: z.number(),
+            sales: z.object({
+                total: z.number(),
+                online: z.number(),
+                inStore: z.number(),
+            }),
+        }),
+        churnRate: z.number(),
+        retentionRate: z.number(),
+    }),
+    monthlyMetrics: z.array(customerMonthlyMetricZod),
+});
+
+const selectedDateCustomerMetricsZod = z.object({
+    dayCustomerMetrics: z.object({
+        selectedDayMetrics: customerDailyMetricZod.optional(),
+        prevDayMetrics: customerDailyMetricZod.optional(),
+    }),
+    monthCustomerMetrics: z.object({
+        selectedMonthMetrics: customerMonthlyMetricZod.optional(),
+        prevMonthMetrics: customerMonthlyMetricZod.optional(),
+    }),
+    yearCustomerMetrics: z.object({
+        selectedYearMetrics: customerYearlyMetricZod.optional(),
+        prevYearMetrics: customerYearlyMetricZod.optional(),
+    }),
+});
+
+const messageEventCustomerMainToWorkerZod = z.object({
+    calendarView: z.string(),
+    cardBgGradient: z.string(),
+    customerMetricsDocument: customerMetricsDocumentZod,
+    greenColorShade: z.string(),
+    redColorShade: z.string(),
+    selectedDate: z.string(),
+    selectedMonth: z.string().regex(MONTHS_REGEX),
+    selectedYYYYMMDD: z.string(),
+    selectedYear: z.string().regex(YEARS_REGEX),
+});
+
 export {
     calendarChartDataZod,
     customerMetricsDocumentZod,
     handleMessageEventCustomerWorkerToMainInputZod,
+    messageEventCustomerMainToWorkerZod,
+    selectedDateCustomerMetricsZod,
     setCalendarChartsCustomerMetricsDispatchZod,
     setChartsCustomerMetricsDispatchZod,
     setChartsWorkerCustomerMetricsDispatchZod,

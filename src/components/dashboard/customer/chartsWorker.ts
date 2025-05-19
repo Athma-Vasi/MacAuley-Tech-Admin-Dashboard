@@ -1,19 +1,17 @@
 import { Some } from "ts-results";
-import { MONTHS } from "../components/dashboard/constants";
-import {
-    createCustomerMetricsCardsSafe,
-    CustomerMetricsCards,
-} from "../components/dashboard/customer/cards";
+import { CustomerMetricsDocument, ResultSafeBox } from "../../../types";
+import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { MONTHS } from "../constants";
+import { DashboardCalendarView, Month, Year } from "../types";
+import { createCustomerMetricsCardsSafe, CustomerMetricsCards } from "./cards";
 import {
     createCustomerMetricsCalendarChartsSafe,
     createCustomerMetricsChartsSafe,
     CustomerMetricsCalendarCharts,
     CustomerMetricsCharts,
-    SelectedDateCustomerMetrics,
-} from "../components/dashboard/customer/chartsData";
-import { DashboardCalendarView } from "../components/dashboard/types";
-import { CustomerMetricsDocument, ResultSafeBox } from "../types";
-import { createResultSafeBox } from "../utils";
+    returnSelectedDateCustomerMetricsSafe,
+} from "./chartsData";
+import { messageEventCustomerMainToWorkerZod } from "./schemas";
 
 type MessageEventCustomerWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -29,11 +27,13 @@ type MessageEventCustomerMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         cardBgGradient: string;
+        customerMetricsDocument: CustomerMetricsDocument;
         greenColorShade: string;
         redColorShade: string;
-        customerMetricsDocument: CustomerMetricsDocument;
-        selectedDateCustomerMetrics: SelectedDateCustomerMetrics;
+        selectedDate: string;
+        selectedMonth: Month;
         selectedYYYYMMDD: string;
+        selectedYear: Year;
     }
 >;
 
@@ -52,17 +52,54 @@ self.onmessage = async (
         return;
     }
 
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventCustomerMainToWorkerZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
+
     const {
         calendarView,
         cardBgGradient,
         greenColorShade,
         redColorShade,
         customerMetricsDocument,
-        selectedDateCustomerMetrics,
+        selectedDate,
+        selectedMonth,
+        selectedYear,
         selectedYYYYMMDD,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
 
     try {
+        const selectedDateCustomerMetricsSafeResult =
+            returnSelectedDateCustomerMetricsSafe({
+                customerMetricsDocument,
+                day: selectedDate,
+                month: selectedMonth,
+                months: MONTHS,
+                year: selectedYear,
+            });
+        if (
+            selectedDateCustomerMetricsSafeResult.err ||
+            selectedDateCustomerMetricsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: selectedDateCustomerMetricsSafeResult.val.data,
+                message: Some(
+                    "Error getting selected date customer metrics",
+                ),
+            }));
+            return;
+        }
+        const selectedDateCustomerMetrics =
+            selectedDateCustomerMetricsSafeResult.val.data.val;
+
         const createCustomerMetricsCalendarChartsSafeResult =
             createCustomerMetricsCalendarChartsSafe(
                 calendarView,
