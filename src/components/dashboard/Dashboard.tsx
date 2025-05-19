@@ -29,11 +29,7 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
-import {
-  getCachedItemSafeAsync,
-  returnThemeColors,
-  setCachedItemSafeAsync,
-} from "../../utils";
+import { returnThemeColors } from "../../utils";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
@@ -133,7 +129,6 @@ function Dashboard() {
         isComponentMountedRef,
         metricsUrl: METRICS_URL,
         navigateFn,
-        setCachedItemSafeAsync,
         showBoundary,
       });
     };
@@ -191,7 +186,6 @@ function Dashboard() {
             accessToken,
             dashboardDispatch,
             dashboardFetchWorker,
-            getCachedItemSafeAsync,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
@@ -220,7 +214,6 @@ function Dashboard() {
             accessToken,
             dashboardDispatch,
             dashboardFetchWorker,
-            getCachedItemSafeAsync,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
@@ -261,7 +254,6 @@ function Dashboard() {
             accessToken,
             dashboardDispatch,
             dashboardFetchWorker,
-            getCachedItemSafeAsync,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,

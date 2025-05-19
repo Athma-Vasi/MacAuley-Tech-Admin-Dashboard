@@ -14,13 +14,18 @@ import {
 import {
     createMetricsURLCacheKey,
     createResultSafeBox,
-    GetCachedItemSafeAsync,
-    SetCachedItemSafeAsync,
+    getCachedItemSafeAsync,
+    parseSafeSync,
+    setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import { dashboardAction } from "./actions";
 import { ProductMetricCategory } from "./product/types";
 import { RepairMetricCategory } from "./repair/types";
+import {
+    handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod,
+    handleStoreAndCategoryClicksInputZod,
+} from "./schemas";
 import {
     AllStoreLocations,
     DashboardDispatch,
@@ -28,66 +33,75 @@ import {
 } from "./types";
 
 async function handleStoreAndCategoryClicks(
-    {
-        accessToken,
-        dashboardDispatch,
-        dashboardFetchWorker,
-        getCachedItemSafeAsync,
-        globalDispatch,
-        isComponentMountedRef,
-        metricsUrl,
-        metricsView,
-        productMetricCategory,
-        repairMetricCategory,
-        showBoundary,
-        storeLocation,
-    }: {
+    input: {
         accessToken: string;
         dashboardDispatch: React.Dispatch<DashboardDispatch>;
         dashboardFetchWorker: Worker | null;
-        getCachedItemSafeAsync: GetCachedItemSafeAsync;
         globalDispatch: React.Dispatch<GlobalDispatch>;
         isComponentMountedRef: React.RefObject<boolean>;
         metricsUrl: string;
         metricsView: Lowercase<DashboardMetricsView>;
         productMetricCategory: ProductMetricCategory;
         repairMetricCategory: RepairMetricCategory;
-        showBoundary: (error: any) => void;
+        showBoundary: (error: unknown) => void;
         storeLocation: AllStoreLocations;
     },
 ): Promise<ResultSafeBox<string>> {
-    if (!dashboardFetchWorker) {
-        return createResultSafeBox({
-            data: Some("Worker not initialized"),
-        });
-    }
-
-    const requestInit: RequestInit = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-        },
-    };
-
-    const cacheKey = createMetricsURLCacheKey({
-        metricsUrl,
-        metricsView,
-        productMetricCategory,
-        repairMetricCategory,
-        storeLocation,
-    });
-
-    dashboardDispatch({
-        action: dashboardAction.setIsLoading,
-        payload: true,
-    });
-
     try {
+        const parsedInputResult = parseSafeSync({
+            object: input,
+            zSchema: handleStoreAndCategoryClicksInputZod,
+        });
+        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+            return createResultSafeBox({
+                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+            });
+        }
+
+        const {
+            accessToken,
+            dashboardDispatch,
+            dashboardFetchWorker,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl,
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            showBoundary,
+            storeLocation,
+        } = parsedInputResult.val.data.val;
+
+        const requestInit: RequestInit = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+
+        const cacheKey = createMetricsURLCacheKey({
+            metricsUrl,
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            storeLocation,
+        });
+
+        dashboardDispatch({
+            action: dashboardAction.setIsLoading,
+            payload: true,
+        });
+
         const metricsDocumentResult = await getCachedItemSafeAsync<
             BusinessMetricsDocument
         >(cacheKey);
 
+        if (!isComponentMountedRef.current) {
+            return createResultSafeBox({
+                data: Some("Component unmounted"),
+            });
+        }
         if (metricsDocumentResult.err) {
             showBoundary(metricsDocumentResult.val.data);
             return createResultSafeBox({
@@ -140,7 +154,7 @@ async function handleStoreAndCategoryClicks(
             });
         }
 
-        dashboardFetchWorker.postMessage(
+        dashboardFetchWorker?.postMessage(
             {
                 metricsView,
                 productMetricCategory,
@@ -158,14 +172,14 @@ async function handleStoreAndCategoryClicks(
         });
     } catch (error) {
         if (
-            !isComponentMountedRef.current
+            !input.isComponentMountedRef.current
         ) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
             });
         }
 
-        showBoundary(error);
+        input.showBoundary(error);
         return createResultSafeBox({
             data: Some(
                 error instanceof Error
@@ -179,17 +193,7 @@ async function handleStoreAndCategoryClicks(
 }
 
 async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
-    {
-        authDispatch,
-        dashboardDispatch,
-        event,
-        globalDispatch,
-        isComponentMountedRef,
-        metricsUrl,
-        navigateFn,
-        setCachedItemSafeAsync,
-        showBoundary,
-    }: {
+    input: {
         authDispatch: React.Dispatch<AuthDispatch>;
         dashboardDispatch: React.Dispatch<DashboardDispatch>;
         event: MessageEventMetricsWorkerToMain;
@@ -197,15 +201,42 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         isComponentMountedRef: React.RefObject<boolean>;
         metricsUrl: string;
         navigateFn: NavigateFunction;
-        setCachedItemSafeAsync: SetCachedItemSafeAsync;
         showBoundary: (error: unknown) => void;
     },
 ): Promise<ResultSafeBox<string>> {
     try {
-        const messageEventResult = event.data;
+        const parsedInputResult = parseSafeSync({
+            object: input,
+            zSchema:
+                handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod,
+        });
+        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+            return createResultSafeBox({
+                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+            });
+        }
+
+        const {
+            authDispatch,
+            dashboardDispatch,
+            event,
+            globalDispatch,
+            isComponentMountedRef,
+            metricsUrl,
+            navigateFn,
+            showBoundary,
+        } = parsedInputResult.val.data.val;
+
         if (!isComponentMountedRef.current) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
+            });
+        }
+
+        const messageEventResult = event.data;
+        if (!messageEventResult) {
+            return createResultSafeBox({
+                data: Some("No data in message event"),
             });
         }
 
@@ -301,16 +332,16 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             storeLocation,
         });
 
-        const setForageItemResult = await setCachedItemSafeAsync<
+        const setCachedItemResult = await setCachedItemSafeAsync<
             BusinessMetricsDocument
         >(
             cacheKey,
             payload,
         );
-        if (setForageItemResult.err) {
-            showBoundary(setForageItemResult.val.data);
+        if (setCachedItemResult.err) {
+            showBoundary(setCachedItemResult.val.data);
             return createResultSafeBox({
-                data: Some("Unable to set forage item"),
+                data: Some("Unable to set cached item"),
             });
         }
 
@@ -325,14 +356,14 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         });
     } catch (error: unknown) {
         if (
-            !isComponentMountedRef.current
+            !input.isComponentMountedRef.current
         ) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
             });
         }
 
-        showBoundary(error);
+        input.showBoundary(error);
         return createResultSafeBox({
             data: Some(
                 error instanceof Error
