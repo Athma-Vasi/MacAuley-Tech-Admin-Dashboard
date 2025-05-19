@@ -426,8 +426,16 @@ const setChartsWorkerFinancialMetricsDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const handleMessageEventFinancialWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    financialMetricsDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
 export {
     financialMetricsDocumentZod,
+    handleMessageEventFinancialWorkerToMainInputZod,
     setCalendarChartsFinancialMetricsDispatchZod,
     setChartsFinancialMetricsDispatchZod,
     setChartsWorkerFinancialMetricsDispatchZod,
