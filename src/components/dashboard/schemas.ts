@@ -52,9 +52,20 @@ const handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
+const messageEventDashboardFetchMainToWorkerZod = z.object({
+    metricsView: metricsViewZod,
+    productMetricCategory: productMetricCategoryZod,
+    repairMetricCategory: repairMetricCategoryZod,
+    requestInit: z.any(),
+    routesZodSchemaMapKey: z.string(),
+    storeLocation: allStoreLocationsZod,
+    url: z.string().url(),
+});
+
 export {
     handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod,
     handleStoreAndCategoryClicksInputZod,
+    messageEventDashboardFetchMainToWorkerZod,
     setCalendarViewDashboardDispatchZod,
     setDashboardFetchWorkerDashboardDispatchZod,
     setIsLoadingDashboardDispatchZod,

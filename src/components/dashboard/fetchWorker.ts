@@ -1,28 +1,30 @@
 import { Some } from "ts-results";
-import { ProductMetricCategory } from "../components/dashboard/product/types";
-import { RepairMetricCategory } from "../components/dashboard/repair/types";
-import {
-    AllStoreLocations,
-    DashboardMetricsView,
-} from "../components/dashboard/types";
-import { FETCH_REQUEST_TIMEOUT } from "../constants";
+import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     BusinessMetricsDocument,
     DecodedToken,
     HttpServerResponse,
     ResultSafeBox,
     UserDocument,
-} from "../types";
+} from "../../types";
 import {
     createResultSafeBox,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
+    parseSafeSync,
     parseServerResponseAsyncSafe,
-} from "../utils";
-import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
+} from "../../utils";
+import {
+    ROUTES_ZOD_SCHEMAS_MAP,
+    RoutesZodSchemasMapKey,
+} from "../../workers/constants";
+import { ProductMetricCategory } from "./product/types";
+import { RepairMetricCategory } from "./repair/types";
+import { messageEventDashboardFetchMainToWorkerZod } from "./schemas";
+import { AllStoreLocations, DashboardMetricsView } from "./types";
 
-type MessageEventMetricsMainToWorker = MessageEvent<
+type MessageEventDashboardFetchMainToWorker = MessageEvent<
     {
         metricsView: Lowercase<DashboardMetricsView>;
         productMetricCategory: ProductMetricCategory;
@@ -34,7 +36,7 @@ type MessageEventMetricsMainToWorker = MessageEvent<
     }
 >;
 
-type MessageEventMetricsWorkerToMain = MessageEvent<
+type MessageEventDashboardFetchWorkerToMain = MessageEvent<
     ResultSafeBox<{
         decodedToken: DecodedToken;
         metricsView: Lowercase<DashboardMetricsView>;
@@ -46,7 +48,7 @@ type MessageEventMetricsWorkerToMain = MessageEvent<
 >;
 
 self.onmessage = async (
-    event: MessageEventMetricsMainToWorker,
+    event: MessageEventDashboardFetchMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(createResultSafeBox({
@@ -56,10 +58,17 @@ self.onmessage = async (
         return;
     }
 
-    console.log(
-        "Metrics Worker received message in self",
-        event.data,
-    );
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventDashboardFetchMainToWorkerZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
 
     const {
         metricsView,
@@ -69,7 +78,8 @@ self.onmessage = async (
         routesZodSchemaMapKey,
         storeLocation,
         url,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
@@ -186,6 +196,6 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventMetricsMainToWorker,
-    MessageEventMetricsWorkerToMain,
+    MessageEventDashboardFetchMainToWorker,
+    MessageEventDashboardFetchWorkerToMain,
 };

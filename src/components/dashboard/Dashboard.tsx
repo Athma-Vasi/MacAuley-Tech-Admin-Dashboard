@@ -30,8 +30,6 @@ import {
   RepairMetricsDocument,
 } from "../../types";
 import { returnThemeColors } from "../../utils";
-import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
-import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import {
@@ -42,6 +40,8 @@ import {
 } from "./constants";
 import { CUSTOMER_METRICS_CATEGORY_DATA } from "./customer/constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
+import { MessageEventDashboardFetchWorkerToMain } from "./fetchWorker";
+import DashboardFetchWorker from "./fetchWorker?worker";
 import { FINANCIAL_METRICS_CATEGORY_DATA } from "./financial/constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
 import {
@@ -111,7 +111,7 @@ function Dashboard() {
   const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
-    const newDashboardFetchWorker = new MetricsParseWorker();
+    const newDashboardFetchWorker = new DashboardFetchWorker();
 
     dashboardDispatch({
       action: dashboardAction.setDashboardFetchWorker,
@@ -119,7 +119,7 @@ function Dashboard() {
     });
 
     newDashboardFetchWorker.onmessage = async (
-      event: MessageEventMetricsWorkerToMain,
+      event: MessageEventDashboardFetchWorkerToMain,
     ) => {
       await handleMessageEventStoreAndCategoryFetchWorkerToMain({
         authDispatch,

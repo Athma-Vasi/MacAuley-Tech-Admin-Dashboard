@@ -23,10 +23,10 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
-import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
-import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
+import { MessageEventDashboardFetchWorkerToMain } from "../dashboard/fetchWorker";
+import MetricsParseWorker from "../dashboard/fetchWorker?worker";
 import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
 import DirectoryFetchWorker from "../directory/fetchWorker?worker";
 import { sidebarAction } from "./actions";
@@ -86,7 +86,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     });
 
     newMetricsFetchWorker.onmessage = async (
-      event: MessageEventMetricsWorkerToMain,
+      event: MessageEventDashboardFetchWorkerToMain,
     ) => {
       await handleMessageEventMetricsFetchWorkerToMain({
         authDispatch,

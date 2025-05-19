@@ -18,8 +18,8 @@ import {
     parseSafeSync,
     setCachedItemSafeAsync,
 } from "../../utils";
-import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import { dashboardAction } from "./actions";
+import { MessageEventDashboardFetchWorkerToMain } from "./fetchWorker";
 import { ProductMetricCategory } from "./product/types";
 import { RepairMetricCategory } from "./repair/types";
 import {
@@ -196,7 +196,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
     input: {
         authDispatch: React.Dispatch<AuthDispatch>;
         dashboardDispatch: React.Dispatch<DashboardDispatch>;
-        event: MessageEventMetricsWorkerToMain;
+        event: MessageEventDashboardFetchWorkerToMain;
         globalDispatch: React.Dispatch<GlobalDispatch>;
         isComponentMountedRef: React.RefObject<boolean>;
         metricsUrl: string;

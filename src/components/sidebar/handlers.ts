@@ -23,7 +23,7 @@ import {
   setCachedItemSafeAsync,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
-import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
+import { MessageEventDashboardFetchWorkerToMain } from "../dashboard/fetchWorker";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
@@ -40,7 +40,7 @@ import {
 
 async function handleMessageEventMetricsFetchWorkerToMain(input: {
   authDispatch: React.Dispatch<AuthDispatch>;
-  event: MessageEventMetricsWorkerToMain;
+  event: MessageEventDashboardFetchWorkerToMain;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
   metricsUrl: string;
