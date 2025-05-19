@@ -1,8 +1,8 @@
 import { Some } from "ts-results";
 import { ResultSafeBox } from "../../../types";
 import { createResultSafeBox, parseSafeSync } from "../../../utils";
-import { MessageEventRepairWorkerToMain } from "../../../workers/repairChartsWorker";
 import { repairMetricsAction } from "./actions";
+import { MessageEventRepairWorkerToMain } from "./chartsWorker";
 import { handleMessageEventRepairWorkerToMainInputZod } from "./schemas";
 import { RepairMetricsDispatch } from "./types";
 

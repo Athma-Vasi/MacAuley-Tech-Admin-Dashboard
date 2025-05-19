@@ -6,9 +6,6 @@ import { useMountedRef } from "../../../hooks";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { RepairMetricsDocument } from "../../../types";
 import { returnThemeColors } from "../../../utils";
-import { MessageEventRepairWorkerToMain } from "../../../workers/repairChartsWorker";
-import RepairChartsWorker from "../../../workers/repairChartsWorker?worker";
-import { MONTHS } from "../constants";
 import type {
   AllStoreLocations,
   DashboardCalendarView,
@@ -16,7 +13,8 @@ import type {
   Year,
 } from "../types";
 import { repairMetricsAction } from "./actions";
-import { returnSelectedDateRepairMetrics } from "./chartsData";
+import { MessageEventRepairWorkerToMain } from "./chartsWorker";
+import RepairChartsWorker from "./chartsWorker?worker";
 import { handleMessageEventRepairWorkerToMain } from "./handlers";
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
@@ -101,35 +99,23 @@ function RepairMetrics(
   }, []);
 
   useEffect(() => {
-    if (!repairChartsWorker) {
+    if (!repairChartsWorker || !repairMetricsDocument) {
       return;
     }
 
-    if (
-      repairMetricsDocument || !cards || !charts
-    ) {
-      const selectedDateRepairMetrics = returnSelectedDateRepairMetrics({
+    repairChartsWorker.postMessage(
+      {
+        calendarView,
+        cardBgGradient,
+        greenColorShade,
+        redColorShade,
         repairMetricsDocument,
-        day: selectedDate,
-        month: selectedMonth,
-        months: MONTHS,
-        year: selectedYear,
-      });
-
-      console.log("Repair Charts Worker Main sending message");
-
-      repairChartsWorker.postMessage(
-        {
-          calendarView,
-          cardBgGradient,
-          greenColorShade,
-          redColorShade,
-          repairMetricsDocument,
-          selectedDateRepairMetrics,
-          selectedYYYYMMDD,
-        },
-      );
-    }
+        selectedDate,
+        selectedMonth,
+        selectedYYYYMMDD,
+        selectedYear,
+      },
+    );
   }, [
     repairChartsWorker,
     calendarView,

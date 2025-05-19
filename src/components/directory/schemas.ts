@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ALL_STORE_LOCATIONS_REGEX, DEPARTMENT_REGEX } from "../../regexes";
 import { allDepartmentsZod, allStoreLocationsZod } from "../../schemas";
 import { directoryAction } from "./actions";
 
@@ -33,8 +34,17 @@ const handleDirectoryDepartmentAndLocationClicksInputZod = z.object({
     storeLocation: allStoreLocationsZod,
 });
 
+const messageEventDirectoryFetchMainToWorkerZod = z.object({
+    department: z.string().regex(DEPARTMENT_REGEX),
+    requestInit: z.any(),
+    routesZodSchemaMapKey: z.string(),
+    storeLocation: z.string().regex(ALL_STORE_LOCATIONS_REGEX),
+    url: z.string().url(),
+});
+
 export {
     handleDirectoryDepartmentAndLocationClicksInputZod,
+    messageEventDirectoryFetchMainToWorkerZod,
     setDepartmentDirectoryDispatchZod,
     setDirectoryFetchWorkerDirectoryDispatchZod,
     setOrientationDirectoryDispatchZod,

@@ -8,8 +8,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
 import { returnThemeColors } from "../../utils";
-import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
-import DirectoryFetchWorker from "../../workers/directoryFetchWorker?worker";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { AllStoreLocations } from "../dashboard/types";
 import {
@@ -19,6 +17,8 @@ import { directoryAction } from "./actions";
 import { ALL_DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import { D3Tree } from "./d3Tree/D3Tree";
 import { buildD3Tree } from "./d3Tree/utils";
+import { MessageEventDirectoryFetchWorkerToMain } from "./fetchWorker";
+import DirectoryFetchWorker from "./fetchWorker?worker";
 import { handleDirectoryDepartmentAndLocationClicks } from "./handlers";
 import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";

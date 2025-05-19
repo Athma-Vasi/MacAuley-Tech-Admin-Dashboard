@@ -45,68 +45,130 @@ type SelectedDateRepairMetrics = {
   };
 };
 
-function returnSelectedDateRepairMetrics({
+function returnSelectedDateRepairMetricsSafe({
   repairMetricsDocument,
   day,
   month,
   months,
   year,
-}: CreateSelectedDateRepairMetricsInput): SelectedDateRepairMetrics {
-  const selectedYearMetrics = repairMetricsDocument.yearlyMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === year,
-  );
-  const prevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
-  );
-
-  const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
-    (monthlyMetric) => monthlyMetric.month === month,
-  );
-  const prevPrevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
-    (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
-  );
-
-  const prevMonthMetrics = month === "January"
-    ? prevPrevYearMetrics?.monthlyMetrics.find(
-      (monthlyMetric) => monthlyMetric.month === "December",
-    )
-    : selectedYearMetrics?.monthlyMetrics.find(
-      (monthlyMetric) =>
-        monthlyMetric.month === months[months.indexOf(month) - 1],
+}: CreateSelectedDateRepairMetricsInput): ResultSafeBox<
+  SelectedDateRepairMetrics
+> {
+  try {
+    const selectedYearMetrics = repairMetricsDocument.yearlyMetrics.find(
+      (yearlyMetric) => yearlyMetric.year === year,
     );
+    if (!selectedYearMetrics) {
+      return new Err({
+        data: Some("Yearly metrics not found"),
+        kind: "error",
+      });
+    }
 
-  const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
-    (dailyMetric) => dailyMetric.day === day,
-  );
-
-  const prevDayMetrics = day === "01"
-    ? prevMonthMetrics?.dailyMetrics.reduce<RepairDailyMetric | undefined>(
-      (acc, prevMonthDailyMetric) => {
-        const { day: prevDay } = prevMonthDailyMetric;
-
-        if (
-          prevDay === "31" ||
-          prevDay === "30" ||
-          prevDay === "29" ||
-          prevDay === "28"
-        ) {
-          acc = prevMonthDailyMetric;
-        }
-
-        return acc;
-      },
-      void 0,
-    )
-    : selectedMonthMetrics?.dailyMetrics.find(
-      (dailyMetric) =>
-        dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
+    const prevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
+      (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
     );
+    if (!prevYearMetrics) {
+      return new Err({
+        data: Some("Previous yearly metrics not found"),
+        kind: "error",
+      });
+    }
 
-  return {
-    dayRepairMetrics: { selectedDayMetrics, prevDayMetrics },
-    monthRepairMetrics: { selectedMonthMetrics, prevMonthMetrics },
-    yearRepairMetrics: { selectedYearMetrics, prevYearMetrics },
-  };
+    const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
+      (monthlyMetric) => monthlyMetric.month === month,
+    );
+    if (!selectedMonthMetrics) {
+      return new Err({
+        data: Some("Monthly metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const prevPrevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
+      (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
+    );
+    if (!prevPrevYearMetrics) {
+      return new Err({
+        data: Some("Previous previous yearly metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const prevMonthMetrics = month === "January"
+      ? prevPrevYearMetrics?.monthlyMetrics.find(
+        (monthlyMetric) => monthlyMetric.month === "December",
+      )
+      : selectedYearMetrics?.monthlyMetrics.find(
+        (monthlyMetric) =>
+          monthlyMetric.month === months[months.indexOf(month) - 1],
+      );
+    if (!prevMonthMetrics) {
+      return new Err({
+        data: Some("Previous monthly metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
+      (dailyMetric) => dailyMetric.day === day,
+    );
+    if (!selectedDayMetrics) {
+      return new Err({
+        data: Some("Daily metrics not found"),
+        kind: "error",
+      });
+    }
+
+    const prevDayMetrics = day === "01"
+      ? prevMonthMetrics?.dailyMetrics.reduce<RepairDailyMetric | undefined>(
+        (acc, prevMonthDailyMetric) => {
+          const { day: prevDay } = prevMonthDailyMetric;
+
+          if (
+            prevDay === "31" ||
+            prevDay === "30" ||
+            prevDay === "29" ||
+            prevDay === "28"
+          ) {
+            acc = prevMonthDailyMetric;
+          }
+
+          return acc;
+        },
+        void 0,
+      )
+      : selectedMonthMetrics?.dailyMetrics.find(
+        (dailyMetric) =>
+          dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
+      );
+    if (!prevDayMetrics) {
+      return new Err({
+        data: Some("Previous daily metrics not found"),
+        kind: "error",
+      });
+    }
+
+    return createResultSafeBox({
+      data: Some({
+        dayRepairMetrics: { selectedDayMetrics, prevDayMetrics },
+        monthRepairMetrics: { selectedMonthMetrics, prevMonthMetrics },
+        yearRepairMetrics: { selectedYearMetrics, prevYearMetrics },
+      }),
+      kind: "success",
+    });
+  } catch (error: unknown) {
+    return new Err({
+      data: Some(
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : "Unknown error",
+      ),
+      kind: "error",
+    });
+  }
 }
 
 type ReturnRepairChartsInput = {
@@ -762,7 +824,7 @@ export {
   createRepairMetricsCalendarChartsSafe,
   createRepairMetricsChartsSafe,
   returnCalendarViewRepairCharts,
-  returnSelectedDateRepairMetrics,
+  returnSelectedDateRepairMetricsSafe,
   returnSelectedRepairCalendarCharts,
 };
 export type {

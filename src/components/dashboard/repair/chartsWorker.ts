@@ -1,19 +1,17 @@
 import { Some } from "ts-results";
-import { MONTHS } from "../components/dashboard/constants";
-import {
-    createRepairMetricsCardsSafe,
-    RepairMetricsCards,
-} from "../components/dashboard/repair/cards";
+import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
+import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { MONTHS } from "../constants";
+import { DashboardCalendarView, Month, Year } from "../types";
+import { createRepairMetricsCardsSafe, RepairMetricsCards } from "./cards";
 import {
     createRepairMetricsCalendarChartsSafe,
     createRepairMetricsChartsSafe,
     RepairMetricCalendarCharts,
     RepairMetricsCharts,
-    SelectedDateRepairMetrics,
-} from "../components/dashboard/repair/chartsData";
-import { DashboardCalendarView } from "../components/dashboard/types";
-import { RepairMetricsDocument, ResultSafeBox } from "../types";
-import { createResultSafeBox } from "../utils";
+    returnSelectedDateRepairMetricsSafe,
+} from "./chartsData";
+import { messageEventRepairMainToWorkerZod } from "./schemas";
 
 type MessageEventRepairWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -30,10 +28,12 @@ type MessageEventRepairMainToWorker = MessageEvent<
         calendarView: DashboardCalendarView;
         cardBgGradient: string;
         greenColorShade: string;
-        redColorShade: string;
         repairMetricsDocument: RepairMetricsDocument;
-        selectedDateRepairMetrics: SelectedDateRepairMetrics;
+        redColorShade: string;
+        selectedDate: string;
+        selectedMonth: Month;
         selectedYYYYMMDD: string;
+        selectedYear: Year;
     }
 >;
 
@@ -48,17 +48,54 @@ self.onmessage = async (
         return;
     }
 
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventRepairMainToWorkerZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
+
     const {
         calendarView,
         cardBgGradient,
         greenColorShade,
         redColorShade,
         repairMetricsDocument,
-        selectedDateRepairMetrics,
+        selectedDate,
+        selectedMonth,
+        selectedYear,
         selectedYYYYMMDD,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
 
     try {
+        const selectedDateRepairMetricsSafeResult =
+            returnSelectedDateRepairMetricsSafe({
+                repairMetricsDocument,
+                day: selectedDate,
+                month: selectedMonth,
+                months: MONTHS,
+                year: selectedYear,
+            });
+        if (
+            selectedDateRepairMetricsSafeResult.err ||
+            selectedDateRepairMetricsSafeResult.val.data.none
+        ) {
+            self.postMessage(createResultSafeBox({
+                data: selectedDateRepairMetricsSafeResult.val.data,
+                message: Some(
+                    "Error getting selected date repair metrics",
+                ),
+            }));
+            return;
+        }
+        const selectedDateRepairMetrics =
+            selectedDateRepairMetricsSafeResult.val.data.val;
+
         const createRepairMetricsCalendarChartsSafeResult =
             createRepairMetricsCalendarChartsSafe(
                 calendarView,

@@ -1,21 +1,26 @@
 import { Some } from "ts-results";
-import { AllStoreLocations } from "../components/dashboard/types";
-import { DepartmentsWithDefaultKey } from "../components/directory/types";
-import { FETCH_REQUEST_TIMEOUT } from "../constants";
+import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
     HttpServerResponse,
     ResultSafeBox,
     UserDocument,
-} from "../types";
+} from "../../types";
 import {
     createResultSafeBox,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
+    parseSafeSync,
     parseServerResponseAsyncSafe,
-} from "../utils";
-import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
+} from "../../utils";
+import {
+    ROUTES_ZOD_SCHEMAS_MAP,
+    RoutesZodSchemasMapKey,
+} from "../../workers/constants";
+import { AllStoreLocations } from "../dashboard/types";
+import { messageEventDirectoryFetchMainToWorkerZod } from "./schemas";
+import { DepartmentsWithDefaultKey } from "./types";
 
 type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -49,17 +54,26 @@ self.onmessage = async (
         return;
     }
 
-    console.log(
-        "Directory Fetch Worker received message in self:",
-        JSON.stringify(event.data, null, 2),
-    );
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventDirectoryFetchMainToWorkerZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
+
     const {
         department,
         requestInit,
         routesZodSchemaMapKey,
         storeLocation,
         url,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 

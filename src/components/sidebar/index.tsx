@@ -21,14 +21,14 @@ import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
-import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
-import DirectoryFetchWorker from "../../workers/directoryFetchWorker?worker";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import MetricsParseWorker from "../../workers/metricsParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
+import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
+import DirectoryFetchWorker from "../directory/fetchWorker?worker";
 import { sidebarAction } from "./actions";
 import {
   handleDirectoryNavClick,

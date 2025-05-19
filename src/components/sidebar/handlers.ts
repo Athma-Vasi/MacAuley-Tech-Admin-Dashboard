@@ -22,12 +22,12 @@ import {
   parseSafeSync,
   setCachedItemSafeAsync,
 } from "../../utils";
-import { MessageEventDirectoryFetchWorkerToMain } from "../../workers/directoryFetchWorker";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { MessageEventMetricsWorkerToMain } from "../../workers/metricsParseWorker";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
+import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
 import { DepartmentsWithDefaultKey } from "../directory/types";
 import {
   handleDirectoryNavClickInputZod,
