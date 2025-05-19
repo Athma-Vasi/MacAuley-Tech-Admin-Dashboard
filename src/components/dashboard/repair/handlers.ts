@@ -1,26 +1,45 @@
 import { Some } from "ts-results";
 import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { createResultSafeBox, parseSafeSync } from "../../../utils";
 import { MessageEventRepairWorkerToMain } from "../../../workers/repairChartsWorker";
 import { repairMetricsAction } from "./actions";
+import { handleMessageEventRepairWorkerToMainInputZod } from "./schemas";
 import { RepairMetricsDispatch } from "./types";
 
-async function handleMessageEventRepairWorkerToMain({
-    event,
-    isComponentMountedRef,
-    repairMetricsDispatch,
-    showBoundary,
-}: {
+async function handleMessageEventRepairWorkerToMain(input: {
     event: MessageEventRepairWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
     repairMetricsDispatch: React.Dispatch<RepairMetricsDispatch>;
     showBoundary: (error: unknown) => void;
 }): Promise<ResultSafeBox<string>> {
     try {
-        const messageEventResult = event.data;
+        const parsedInputResult = parseSafeSync({
+            object: input,
+            zSchema: handleMessageEventRepairWorkerToMainInputZod,
+        });
+        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+            return createResultSafeBox({
+                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+            });
+        }
+
+        const {
+            event,
+            isComponentMountedRef,
+            repairMetricsDispatch,
+            showBoundary,
+        } = parsedInputResult.val.data.val;
+
         if (!isComponentMountedRef.current) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
+            });
+        }
+
+        const messageEventResult = event.data;
+        if (!messageEventResult) {
+            return createResultSafeBox({
+                data: Some("No data in message event"),
             });
         }
 
@@ -63,14 +82,14 @@ async function handleMessageEventRepairWorkerToMain({
         });
     } catch (error: unknown) {
         if (
-            !isComponentMountedRef.current
+            !input.isComponentMountedRef.current
         ) {
             return createResultSafeBox({
                 data: Some("Component unmounted"),
             });
         }
 
-        showBoundary(error);
+        input.showBoundary(error);
         return createResultSafeBox({
             data: Some(
                 error instanceof Error

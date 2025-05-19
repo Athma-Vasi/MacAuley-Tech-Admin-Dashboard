@@ -176,21 +176,18 @@ const setChartsWorkerRepairMetricsDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const handleMessageEventRepairWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    repairMetricsDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
 export {
+    handleMessageEventRepairWorkerToMainInputZod,
+    repairMetricsDocumentZod,
     setCalendarChartsDataRepairMetricsDispatchZod,
     setChartsRepairMetricsDispatchZod,
     setChartsWorkerRepairMetricsDispatchZod,
     setIsGeneratingRepairMetricsDispatchZod,
 };
-
-/**
- * calendarChartsData: {
-    currentYear: RepairMetricCalendarCharts | null;
-    previousYear: RepairMetricCalendarCharts | null;
-  };
-  cards: RepairMetricsCards | null;
-  charts: RepairMetricsCharts | null;
-  isGenerating: boolean;
- */
-
-export { repairMetricsDocumentZod };
