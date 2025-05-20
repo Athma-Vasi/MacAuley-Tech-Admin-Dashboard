@@ -17,8 +17,7 @@ import { COLORS_SWATCHES } from "../../../constants";
 import { useGlobalState } from "../../../hooks/useGlobalState";
 import { useMountedRef } from "../../../hooks/useMountedRef";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
-import { MessageEventRetrieveImagesWorkerToMain } from "../../../workers/retrieveImagesWorker";
-import RetrieveImagesWorker from "../../../workers/retrieveImagesWorker?worker";
+import RetrieveImagesWorker from "./retrieveImagesWorker?worker";
 import { GoldenGrid } from "../../goldenGrid";
 import { AccessibleFileInput, ModifiedFile } from "../AccessibleFileInput";
 import { AccessibleSliderInput } from "../AccessibleSliderInput";
@@ -42,6 +41,7 @@ import {
     handleResetImageClick,
 } from "./handlers";
 import { accessibleImageInputReducer } from "./reducers";
+import { MessageEventRetrieveImagesWorkerToMain } from "./retrieveImagesWorker";
 import { initialAccessibleImageInputState } from "./state";
 import type { AccessibleImageInputProps } from "./types";
 import { checkImageFileBlobs } from "./utils";
@@ -619,7 +619,6 @@ function AccessibleImageInput<
     return (
         <Stack
             className="accessible-input"
-            // style={{ minWidth: INPUT_WIDTH, maxWidth: "400px" }}
             pos="relative"
         >
             {modifiedImagePreviewModal}

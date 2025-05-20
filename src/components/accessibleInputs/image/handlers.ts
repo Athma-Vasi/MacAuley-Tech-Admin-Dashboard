@@ -8,11 +8,11 @@ import {
     parseSafeSync,
     setCachedItemSafeAsync,
 } from "../../../utils";
-import { MessageEventModifyImagesWorkerToMain } from "../../../workers/modifyImagesWorker";
-import { MessageEventRetrieveImagesWorkerToMain } from "../../../workers/retrieveImagesWorker";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
+import { MessageEventModifyImagesWorkerToMain } from "./modifyImagesWorker";
+import { MessageEventRetrieveImagesWorkerToMain } from "./retrieveImagesWorker";
 import {
     handleImageQualityOrientationSliderChangeInputZod,
     handleMessageEventModifyImagesWorkerToMainInputZod,

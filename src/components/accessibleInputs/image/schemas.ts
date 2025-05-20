@@ -114,36 +114,6 @@ const handleMessageEventModifyImagesWorkerToMainInputZod = z.object({
     validValueAction: z.literal("setFormData"),
 });
 
-/**
- *  {
-        accessibleImageInputDispatch: React.Dispatch<
-            AccessibleImageInputDispatch
-        >;
-        currentImageIndex: number;
-        fileNames: string[];
-        isComponentMountedRef: React.RefObject<boolean>;
-        invalidValueAction: InvalidValueAction;
-        maxImageSize: number;
-        orientations: number[];
-        orientationValue?: number;
-        parentDispatch?: React.Dispatch<
-            | {
-                action: ValidValueAction;
-                payload: FormData;
-            }
-            | {
-                action: InvalidValueAction;
-                payload: SetFilesInErrorPayload;
-            }
-        >;
-        qualities: number[];
-        qualityValue?: number;
-        showBoundary: (error: unknown) => void;
-        storageKey: string;
-        validValueAction: ValidValueAction;
-    }
- */
-
 const handleImageQualityOrientationSliderChangeInputZod = z.object({
     accessibleImageInputDispatch: z.function().args(z.any()).returns(z.void()),
     currentImageIndex: z.number(),
@@ -168,6 +138,21 @@ const handleMessageEventRetrieveImagesWorkerToMainInputZod = z.object({
     accessibleImageInputDispatch: z.function().args(z.any()).returns(z.void()),
 });
 
+const messageEventRetrieveImagesMainToWorkerInputZod = z.object({
+    storageKey: z.string(),
+});
+
+const messageEventModifyImagesMainToWorkerInputZod = z.object({
+    currentImageIndex: z.number(),
+    maxImagesAmount: z.number(),
+    maxImageSize: z.number(),
+    orientation: z.number(),
+    orientations: z.array(z.number()),
+    qualities: z.array(z.number()),
+    quality: z.number(),
+    storageKey: z.string(),
+});
+
 export {
     addImageFileBlobDispatchZod,
     addImageFileNameDispatchZod,
@@ -176,6 +161,8 @@ export {
     handleMessageEventRetrieveImagesWorkerToMainInputZod,
     handleRemoveImageClickInputZod,
     handleResetImageClickInputZod,
+    messageEventModifyImagesMainToWorkerInputZod,
+    messageEventRetrieveImagesMainToWorkerInputZod,
     removeImageFileBlobDispatchZod,
     resetImageFileBlobDispatchZod,
     setCurrentImageIndexDispatchZod,

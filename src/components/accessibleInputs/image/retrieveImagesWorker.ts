@@ -1,11 +1,14 @@
 import { Some } from "ts-results";
+import { ResultSafeBox } from "../../../types";
 import {
-    ModifiedFile,
-} from "../components/accessibleInputs/AccessibleFileInput";
-import { MAX_IMAGES } from "../components/accessibleInputs/image/constants";
-import { createImageInputForageKeys } from "../components/accessibleInputs/image/utils";
-import { ResultSafeBox } from "../types";
-import { createResultSafeBox, getCachedItemSafeAsync } from "../utils";
+    createResultSafeBox,
+    getCachedItemSafeAsync,
+    parseSafeSync,
+} from "../../../utils";
+import { ModifiedFile } from "../AccessibleFileInput";
+import { MAX_IMAGES } from "./constants";
+import { messageEventRetrieveImagesMainToWorkerInputZod } from "./schemas";
+import { createImageInputForageKeys } from "./utils";
 
 type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -34,7 +37,19 @@ self.onmessage = async (
         return;
     }
 
-    const { storageKey } = event.data;
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventRetrieveImagesMainToWorkerInputZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
+
+    const { storageKey } = parsedMessageResult.val.data.val;
 
     const {
         fileNamesForageKey,

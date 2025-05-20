@@ -1,21 +1,17 @@
 import { EImageType } from "image-conversion";
 import { Some } from "ts-results";
-import {
-    ModifiedFile,
-    OriginalFile,
-} from "../components/accessibleInputs/AccessibleFileInput";
-import { ALLOWED_FILE_EXTENSIONS_REGEX } from "../components/accessibleInputs/image/constants";
-import {
-    createImageInputForageKeys,
-    validateImages,
-} from "../components/accessibleInputs/image/utils";
-import { ResultSafeBox } from "../types";
+import { ResultSafeBox } from "../../../types";
 import {
     createResultSafeBox,
     getCachedItemSafeAsync,
     modifyImageSafe,
+    parseSafeSync,
     setCachedItemSafeAsync,
-} from "../utils";
+} from "../../../utils";
+import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
+import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
+import { messageEventModifyImagesMainToWorkerInputZod } from "./schemas";
+import { createImageInputForageKeys, validateImages } from "./utils";
 
 type MessageEventModifyImagesWorkerToMain = MessageEvent<
     ResultSafeBox<
@@ -54,6 +50,18 @@ self.onmessage = async (
         return;
     }
 
+    const parsedMessageResult = parseSafeSync({
+        object: event.data,
+        zSchema: messageEventModifyImagesMainToWorkerInputZod,
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createResultSafeBox({
+            data: parsedMessageResult.val.data,
+            message: Some("Error parsing message"),
+        }));
+        return;
+    }
+
     const {
         currentImageIndex,
         maxImagesAmount,
@@ -63,7 +71,7 @@ self.onmessage = async (
         qualities,
         quality,
         storageKey,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
 
     const {
         fileNamesForageKey,
