@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { FinancialMetricsDocument, ResultSafeBox } from "../../../types";
-import { createResultSafeBox, toFixedFloat } from "../../../utils";
+import { FinancialMetricsDocument, SafeBoxResult } from "../../../types";
+import { createSafeBoxResult, toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
@@ -41,7 +41,7 @@ function returnSelectedDateFinancialMetricsSafe({
   month: Month;
   months: Month[];
   year: Year;
-}): ResultSafeBox<SelectedDateFinancialMetrics> {
+}): SafeBoxResult<SelectedDateFinancialMetrics> {
   try {
     const selectedYearMetrics = financialMetricsDocument.financialMetrics.find(
       (yearlyMetric) => yearlyMetric.year === year,
@@ -137,7 +137,7 @@ function returnSelectedDateFinancialMetricsSafe({
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
         monthFinancialMetrics: { selectedMonthMetrics, prevMonthMetrics },
@@ -363,7 +363,7 @@ function createFinancialMetricsChartsSafe({
   financialMetricsDocument,
   months,
   selectedDateFinancialMetrics,
-}: ReturnFinancialMetricsChartsInput): ResultSafeBox<FinancialMetricsCharts> {
+}: ReturnFinancialMetricsChartsInput): SafeBoxResult<FinancialMetricsCharts> {
   const BAR_CHARTS_TEMPLATE: FinancialMetricsBarCharts = {
     total: [],
     all: [],
@@ -412,7 +412,7 @@ function createFinancialMetricsChartsSafe({
   };
 
   if (!financialMetricsDocument || !selectedDateFinancialMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: {
           profit: {
@@ -550,7 +550,7 @@ function createFinancialMetricsChartsSafe({
       dailyFinancialChartsSafeResult.err ||
       dailyFinancialChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: dailyFinancialChartsSafeResult.val.data,
         message: Some("Error creating daily financial charts"),
       });
@@ -559,7 +559,7 @@ function createFinancialMetricsChartsSafe({
       monthlyFinancialChartsSafeResult.err ||
       monthlyFinancialChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: monthlyFinancialChartsSafeResult.val.data,
         message: Some("Error creating monthly financial charts"),
       });
@@ -568,13 +568,13 @@ function createFinancialMetricsChartsSafe({
       yearlyFinancialChartsSafeResult.err ||
       yearlyFinancialChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: yearlyFinancialChartsSafeResult.val.data,
         message: Some("Error creating yearly financial charts"),
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: dailyFinancialChartsSafeResult.val.data.val,
         monthlyCharts: monthlyFinancialChartsSafeResult.val.data.val,
@@ -613,11 +613,11 @@ function createDailyFinancialChartsSafe({
   otherMetricsLineChartsTemplate,
   pieChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyFinancialChartsInput): ResultSafeBox<
+}: CreateDailyFinancialChartsInput): SafeBoxResult<
   FinancialMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics || !selectedDayMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         profit: {
           bar: barChartsTemplate,
@@ -1554,7 +1554,7 @@ function createDailyFinancialChartsSafe({
       ],
     };
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         profit: {
           bar: dailyProfitBarCharts,
@@ -1617,11 +1617,11 @@ function createMonthlyFinancialChartsSafe({
   pieChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyFinancialChartsInput): ResultSafeBox<
+}: CreateMonthlyFinancialChartsInput): SafeBoxResult<
   FinancialMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics || !selectedMonthMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         profit: {
           bar: barChartsTemplate,
@@ -2582,7 +2582,7 @@ function createMonthlyFinancialChartsSafe({
       ],
     };
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         revenue: {
           bar: monthlyRevenueBarCharts,
@@ -2642,11 +2642,11 @@ function createYearlyFinancialChartsSafe({
   otherMetricsBarChartsTemplate,
   lineChartsTemplate,
   barChartsTemplate,
-}: CreateYearlyFinancialChartsInput): ResultSafeBox<
+}: CreateYearlyFinancialChartsInput): SafeBoxResult<
   FinancialMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics || !selectedYearMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         profit: {
           bar: barChartsTemplate,
@@ -3594,7 +3594,7 @@ function createYearlyFinancialChartsSafe({
       ],
     };
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         revenue: {
           bar: yearlyRevenueBarChartsObj,
@@ -3685,7 +3685,7 @@ function createFinancialMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeBoxResult<{
   currentYear: FinancialMetricsCalendarCharts;
   previousYear: FinancialMetricsCalendarCharts;
 }> {
@@ -3710,7 +3710,7 @@ function createFinancialMetricsCalendarChartsSafe(
   };
 
   if (!selectedDateFinancialMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear: calendarChartsTemplate,
         previousYear: calendarChartsTemplate,
@@ -3917,7 +3917,7 @@ function createFinancialMetricsCalendarChartsSafe(
       return financialCalendarCharts;
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear,
         previousYear,

@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { SafeBoxResult } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -26,7 +26,7 @@ type RepairMetricsCards = {
 function createRepairMetricsCardsSafe(
   { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
     createRepairMetricsCardsInput,
-): ResultSafeBox<RepairMetricsCards> {
+): SafeBoxResult<RepairMetricsCards> {
   const repairMetricsCardsTemplate: RepairMetricsCards = {
     dailyCards: [],
     monthlyCards: [],
@@ -47,7 +47,7 @@ function createRepairMetricsCardsSafe(
     !selectedDayMetrics ||
     !prevDayMetrics
   ) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(repairMetricsCardsTemplate),
       message: Some("no metrics data"),
     });
@@ -121,7 +121,7 @@ function createRepairMetricsCardsSafe(
       selectedValue: selectedYearMetrics.unitsRepaired,
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCards: [dayRevenueCardInfo, dayUnitsRepairedCardInfo],
         monthlyCards: [monthRevenueCardInfo, monthUnitsRepairedCardInfo],

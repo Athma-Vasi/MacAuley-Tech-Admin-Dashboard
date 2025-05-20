@@ -1,6 +1,6 @@
 import { Some } from "ts-results";
-import { FinancialMetricsDocument, ResultSafeBox } from "../../../types";
-import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { FinancialMetricsDocument, SafeBoxResult } from "../../../types";
+import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
 import { MONTHS } from "../constants";
 import { DashboardCalendarView, Month, Year } from "../types";
 import {
@@ -17,7 +17,7 @@ import {
 import { messageEventFinancialMainToWorkerZod } from "./schemas";
 
 type MessageEventFinancialWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeBoxResult<
         {
             currentYear: FinancialMetricsCalendarCharts;
             previousYear: FinancialMetricsCalendarCharts;
@@ -44,19 +44,19 @@ self.onmessage = async (
     event: MessageEventFinancialMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(new Error("No data received")),
             message: Some("No data received"),
         }));
         return;
     }
 
-    const parsedMessageResult = parseSafeSync({
+    const parsedMessageResult = parseSyncSafe({
         object: event.data,
         zSchema: messageEventFinancialMainToWorkerZod,
     });
     if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: parsedMessageResult.val.data,
             message: Some("Error parsing message"),
         }));
@@ -90,7 +90,7 @@ self.onmessage = async (
             selectedDateFinancialMetricsSafeResult.err ||
             selectedDateFinancialMetricsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: selectedDateFinancialMetricsSafeResult.val.data,
                 message: Some(
                     "Error creating selected date financial metrics",
@@ -111,7 +111,7 @@ self.onmessage = async (
             createFinancialMetricsCalendarChartsSafeResult.err ||
             createFinancialMetricsCalendarChartsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: createFinancialMetricsCalendarChartsSafeResult.val.data,
                 message: Some(
                     "Error creating financial metrics calendar charts",
@@ -132,7 +132,7 @@ self.onmessage = async (
             financialMetricsChartsSafeResult.err ||
             financialMetricsChartsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: financialMetricsChartsSafeResult.val.data,
                 message: Some(
                     "Error creating financial metrics charts",
@@ -155,7 +155,7 @@ self.onmessage = async (
             financialMetricsCardsSafeResult.err ||
             financialMetricsCardsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: financialMetricsCardsSafeResult.val.data,
                 message: Some(
                     "Error creating financial metrics cards",
@@ -166,7 +166,7 @@ self.onmessage = async (
         const financialMetricsCards =
             financialMetricsCardsSafeResult.val.data.val;
 
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some({
                 currentYear,
                 previousYear,
@@ -177,7 +177,7 @@ self.onmessage = async (
         }));
     } catch (error) {
         console.error("Financial Charts Worker error:", error);
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(error),
             message: Some(
                 error instanceof Error ? error.message : "Unknown error",
@@ -188,7 +188,7 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Financial Charts Worker error:", event);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event),
         message: Some(
             event instanceof Error
@@ -203,7 +203,7 @@ self.onerror = (event: string | Event) => {
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event.reason),
         message: Some(
             event.reason instanceof Error

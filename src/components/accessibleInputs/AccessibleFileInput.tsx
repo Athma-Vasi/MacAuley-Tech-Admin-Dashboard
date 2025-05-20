@@ -2,8 +2,8 @@ import { FileInput, MantineNumberSize, MantineSize, Text } from "@mantine/core";
 import { Dispatch } from "react";
 
 import {
-    getCachedItemSafeAsync,
-    setCachedItemSafeAsync,
+    getCachedItemAsyncSafe,
+    setCachedItemAsyncSafe,
     splitCamelCase,
 } from "../../utils";
 import { createImageInputForageKeys } from "./image/utils";
@@ -102,7 +102,7 @@ function AccessibleFileInput<
             name={name}
             onBlur={onBlur}
             onChange={async (payload: OriginalFile) => {
-                const originalFilesResult = await getCachedItemSafeAsync<
+                const originalFilesResult = await getCachedItemAsyncSafe<
                     Array<OriginalFile>
                 >(
                     originalFilesForageKey,
@@ -114,13 +114,13 @@ function AccessibleFileInput<
                         [];
                     originalFiles.push(payload);
 
-                    await setCachedItemSafeAsync(
+                    await setCachedItemAsyncSafe(
                         originalFilesForageKey,
                         originalFiles,
                     );
                 }
 
-                const modifiedFilesResult = await getCachedItemSafeAsync<
+                const modifiedFilesResult = await getCachedItemAsyncSafe<
                     Array<ModifiedFile>
                 >(
                     modifiedFilesForageKey,
@@ -132,12 +132,12 @@ function AccessibleFileInput<
                         [];
                     modifiedFiles.push(payload);
 
-                    await setCachedItemSafeAsync(
+                    await setCachedItemAsyncSafe(
                         modifiedFilesForageKey,
                         modifiedFiles,
                     );
                 }
-                const fileNamesResult = await getCachedItemSafeAsync<
+                const fileNamesResult = await getCachedItemAsyncSafe<
                     Array<string>
                 >(
                     fileNamesForageKey,
@@ -149,7 +149,7 @@ function AccessibleFileInput<
                         payload?.name ?? "Unknown file name",
                     );
 
-                    await setCachedItemSafeAsync(
+                    await setCachedItemAsyncSafe(
                         fileNamesForageKey,
                         fileNamesUnwrapped,
                     );

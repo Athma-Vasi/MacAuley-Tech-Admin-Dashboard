@@ -3,11 +3,11 @@ import { FETCH_REQUEST_TIMEOUT } from "../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    ResultSafeBox,
+    SafeBoxResult,
     UserDocument,
 } from "../types";
 import {
-    createResultSafeBox,
+    createSafeBoxResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
@@ -16,7 +16,7 @@ import {
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
 type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
-    ResultSafeBox<
+    SafeBoxResult<
         {
             parsedServerResponse: HttpServerResponse<Data>;
             decodedToken: DecodedToken;
@@ -37,7 +37,7 @@ self.onmessage = async (
     event: MessageEventFetchMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(new Error("No data received")),
             message: Some("No data received"),
         }));
@@ -65,7 +65,7 @@ self.onmessage = async (
         });
         if (responseResult.err || responseResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: responseResult.val.data,
                     message: Some("Error fetching data"),
                 }),
@@ -78,7 +78,7 @@ self.onmessage = async (
         >(responseResult.val.data.val);
         if (jsonResult.err || jsonResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: jsonResult.val.data,
                     message: Some("Error extracting JSON from response"),
                 }),
@@ -100,7 +100,7 @@ self.onmessage = async (
 
         if (parsedResult.err || parsedResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: parsedResult.val.data,
                     message: Some("Error parsing server response"),
                 }),
@@ -109,7 +109,7 @@ self.onmessage = async (
         }
 
         if (skipTokenDecode) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: Some({ parsedServerResponse: parsedResult.val.data.val }),
                 kind: "success",
             }));
@@ -121,7 +121,7 @@ self.onmessage = async (
         const decodedTokenResult = await decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: decodedTokenResult.val.data,
                     message: Some("Error decoding JWT"),
                 }),
@@ -129,7 +129,7 @@ self.onmessage = async (
             return;
         }
 
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some({
                 parsedServerResponse: parsedResult.val.data.val,
                 decodedToken: decodedTokenResult.val.data.val,
@@ -138,7 +138,7 @@ self.onmessage = async (
         }));
     } catch (error: unknown) {
         self.postMessage(
-            createResultSafeBox({
+            createSafeBoxResult({
                 data: Some(error),
                 message: Some(
                     error instanceof Error
@@ -156,7 +156,7 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Fetch Parse Worker error:", event);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event),
         message: Some(
             event instanceof Error
@@ -171,7 +171,7 @@ self.onerror = (event: string | Event) => {
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event.reason),
         message: Some(
             event.reason instanceof Error

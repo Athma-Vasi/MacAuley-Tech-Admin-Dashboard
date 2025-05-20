@@ -1,6 +1,6 @@
 import { Some } from "ts-results";
-import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
-import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { RepairMetricsDocument, SafeBoxResult } from "../../../types";
+import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
 import { MONTHS } from "../constants";
 import { DashboardCalendarView, Month, Year } from "../types";
 import { createRepairMetricsCardsSafe, RepairMetricsCards } from "./cards";
@@ -14,7 +14,7 @@ import {
 import { messageEventRepairMainToWorkerZod } from "./schemas";
 
 type MessageEventRepairWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeBoxResult<
         {
             currentYear: RepairMetricCalendarCharts;
             previousYear: RepairMetricCalendarCharts;
@@ -41,19 +41,19 @@ self.onmessage = async (
     event: MessageEventRepairMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(new Error("No data received")),
             message: Some("No data received"),
         }));
         return;
     }
 
-    const parsedMessageResult = parseSafeSync({
+    const parsedMessageResult = parseSyncSafe({
         object: event.data,
         zSchema: messageEventRepairMainToWorkerZod,
     });
     if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: parsedMessageResult.val.data,
             message: Some("Error parsing message"),
         }));
@@ -85,7 +85,7 @@ self.onmessage = async (
             selectedDateRepairMetricsSafeResult.err ||
             selectedDateRepairMetricsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: selectedDateRepairMetricsSafeResult.val.data,
                 message: Some(
                     "Error getting selected date repair metrics",
@@ -106,7 +106,7 @@ self.onmessage = async (
             createRepairMetricsCalendarChartsSafeResult.err ||
             createRepairMetricsCalendarChartsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: createRepairMetricsCalendarChartsSafeResult.val.data,
                 message: Some(
                     "Error creating repair metrics calendar charts",
@@ -126,7 +126,7 @@ self.onmessage = async (
             repairMetricsChartsSafeResult.err ||
             repairMetricsChartsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: repairMetricsChartsSafeResult.val.data,
                 message: Some(
                     "Error creating repair metrics charts",
@@ -146,7 +146,7 @@ self.onmessage = async (
             repairMetricsCardsSafeResult.err ||
             repairMetricsCardsSafeResult.val.data.none
         ) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: repairMetricsCardsSafeResult.val.data,
                 message: Some(
                     "Error creating repair metrics cards",
@@ -156,7 +156,7 @@ self.onmessage = async (
         }
         const repairMetricsCards = repairMetricsCardsSafeResult.val.data.val;
 
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some({
                 currentYear,
                 previousYear,
@@ -167,7 +167,7 @@ self.onmessage = async (
         }));
     } catch (error) {
         console.error("Repair Charts Worker error:", error);
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(error),
             message: Some(
                 error instanceof Error ? error.message : "Unknown error",
@@ -178,7 +178,7 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Repair Charts Worker error:", event);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event),
         message: Some(
             event instanceof Error
@@ -193,7 +193,7 @@ self.onerror = (event: string | Event) => {
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event.reason),
         message: Some(
             event.reason instanceof Error

@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { SafeBoxResult } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -42,7 +42,7 @@ function createProductMetricsCardsSafe(
     redColorShade,
     selectedDateProductMetrics,
   }: createProductMetricsCardsInput,
-): ResultSafeBox<ProductMetricsCards> {
+): SafeBoxResult<ProductMetricsCards> {
   const productMetricsCardsTemplate: ProductMetricsCards = {
     dailyCards: {
       revenue: [],
@@ -59,7 +59,7 @@ function createProductMetricsCardsSafe(
   };
 
   if (!selectedDateProductMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(productMetricsCardsTemplate),
     });
   }
@@ -78,7 +78,7 @@ function createProductMetricsCardsSafe(
     !selectedDayMetrics ||
     !prevDayMetrics
   ) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(productMetricsCardsTemplate),
     });
   }
@@ -256,7 +256,7 @@ function createProductMetricsCardsSafe(
       selectedValue: selectedYearMetrics.unitsSold.online,
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCards: {
           revenue: [

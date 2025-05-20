@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { SafeBoxResult } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import type { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -52,7 +52,7 @@ function createCustomerMetricsCardsSafe(
     redColorShade,
     selectedDateCustomerMetrics,
   }: CreateCustomerMetricsCardsInput,
-): ResultSafeBox<CustomerMetricsCards> {
+): SafeBoxResult<CustomerMetricsCards> {
   try {
     const {
       dayCustomerMetrics: { prevDayMetrics, selectedDayMetrics },
@@ -68,7 +68,7 @@ function createCustomerMetricsCardsSafe(
       !selectedDayMetrics ||
       !prevDayMetrics
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some({
           dailyCards: {
             overview: [],
@@ -496,7 +496,7 @@ function createCustomerMetricsCardsSafe(
       isDisplayValueAsPercentage: true,
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCards: {
           overview: [

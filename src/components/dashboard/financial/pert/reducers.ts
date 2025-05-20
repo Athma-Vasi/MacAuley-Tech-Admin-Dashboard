@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../../utils";
+import { parseSyncSafe } from "../../../../utils";
 import { FinancialYAxisKey } from "../../types";
 import { PERTAction, pertAction } from "./actions";
 import { setYAxisKeyPERTDispatchZod } from "./schemas";
@@ -20,7 +20,7 @@ function pertReducer_setYAxisKey(
   state: PERTState,
   dispatch: PERTDispatch,
 ): PERTState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setYAxisKeyPERTDispatchZod,
   });

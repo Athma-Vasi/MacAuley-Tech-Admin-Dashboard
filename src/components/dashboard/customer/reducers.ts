@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../utils";
+import { parseSyncSafe } from "../../../utils";
 import { CustomerMetricsAction, customerMetricsAction } from "./actions";
 import { CustomerMetricsCards } from "./cards";
 import {
@@ -48,7 +48,7 @@ function customerMetricsReducer_setCalendarChartsData(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCalendarChartsCustomerMetricsDispatchZod,
   });
@@ -84,7 +84,7 @@ function customerMetricsReducer_setCharts(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setChartsCustomerMetricsDispatchZod,
   });
@@ -103,7 +103,7 @@ function customerMetricsReducer_setCustomerChartsWorker(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setChartsWorkerCustomerMetricsDispatchZod,
   });
@@ -122,7 +122,7 @@ function customerMetricsReducer_setIsGenerating(
   state: CustomerMetricsState,
   dispatch: CustomerMetricsDispatch,
 ): CustomerMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsGeneratingCustomerMetricsDispatchZod,
   });

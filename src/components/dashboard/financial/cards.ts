@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { SafeBoxResult } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import { DashboardCalendarView, FinancialYAxisKey } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -55,7 +55,7 @@ function createFinancialMetricsCardsSafe(
     redColorShade,
     selectedDateFinancialMetrics,
   }: CreateFinancialMetricsCardsInput,
-): ResultSafeBox<FinancialMetricsCards> {
+): SafeBoxResult<FinancialMetricsCards> {
   const financialMetricsCardsTemplate: FinancialMetricsCards = {
     dailyCards: {
       profit: [],
@@ -94,7 +94,7 @@ function createFinancialMetricsCardsSafe(
     !selectedDayMetrics ||
     !prevDayMetrics
   ) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(financialMetricsCardsTemplate),
       message: Some(
         "No financial metrics available for the selected date",
@@ -784,7 +784,7 @@ function createFinancialMetricsCardsSafe(
       selectedValue: selectedYearMetrics.netProfitMargin,
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCards: {
           profit: [

@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../utils";
+import { parseSyncSafe } from "../../../utils";
 import { FinancialMetricsAction, financialMetricsAction } from "./actions";
 import { FinancialMetricsCards } from "./cards";
 import {
@@ -48,7 +48,7 @@ function financialMetricsReducer_setCalendarChartsData(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCalendarChartsFinancialMetricsDispatchZod,
   });
@@ -84,7 +84,7 @@ function financialMetricsReducer_setCharts(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setChartsFinancialMetricsDispatchZod,
   });
@@ -103,7 +103,7 @@ function financialMetricsReducer_setFinancialChartsWorker(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setChartsWorkerFinancialMetricsDispatchZod,
   });
@@ -122,7 +122,7 @@ function financialMetricsReducer_setIsGenerating(
   state: FinancialMetricsState,
   dispatch: FinancialMetricsDispatch,
 ): FinancialMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsGeneratingFinancialMetricsDispatchZod,
   });

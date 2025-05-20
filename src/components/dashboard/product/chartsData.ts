@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { ProductMetricsDocument, ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { ProductMetricsDocument, SafeBoxResult } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -44,7 +44,7 @@ function returnSelectedDateProductMetricsSafe({
   month,
   months,
   year,
-}: CreateSelectedDateProductMetricsInput): ResultSafeBox<
+}: CreateSelectedDateProductMetricsInput): SafeBoxResult<
   SelectedDateProductMetrics
 > {
   try {
@@ -142,7 +142,7 @@ function returnSelectedDateProductMetricsSafe({
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dayProductMetrics: { prevDayMetrics, selectedDayMetrics },
         monthProductMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -260,7 +260,7 @@ function createProductMetricsChartsSafe({
   productMetricsDocument,
   months,
   selectedDateProductMetrics,
-}: CreateProductMetricsChartsInput): ResultSafeBox<ProductMetricsCharts> {
+}: CreateProductMetricsChartsInput): SafeBoxResult<ProductMetricsCharts> {
   const BAR_CHART_OBJ_TEMPLATE: ProductMetricsBarCharts = {
     total: [],
     overview: [],
@@ -284,7 +284,7 @@ function createProductMetricsChartsSafe({
   ];
 
   if (!productMetricsDocument || !selectedDateProductMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: {
           revenue: {
@@ -379,7 +379,7 @@ function createProductMetricsChartsSafe({
     if (
       dailyProductChartsResult.err || dailyProductChartsResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: dailyProductChartsResult.val.data,
         message: Some("Error creating daily product charts"),
       });
@@ -388,7 +388,7 @@ function createProductMetricsChartsSafe({
       monthlyProductChartsResult.err ||
       monthlyProductChartsResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: monthlyProductChartsResult.val.data,
         message: Some("Error creating monthly product charts"),
       });
@@ -397,13 +397,13 @@ function createProductMetricsChartsSafe({
       yearlyProductChartsResult.err ||
       yearlyProductChartsResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: yearlyProductChartsResult.val.data,
         message: Some("Error creating yearly product charts"),
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: dailyProductChartsResult.val.data.val,
         monthlyCharts: monthlyProductChartsResult.val.data.val,
@@ -441,11 +441,11 @@ function createDailyProductChartsSafe({
   lineChartsTemplate,
   pieChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyProductChartsInput): ResultSafeBox<
+}: CreateDailyProductChartsInput): SafeBoxResult<
   ProductMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics || !selectedDayMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         unitsSold: {
           bar: barChartsTemplate,
@@ -659,7 +659,7 @@ function createDailyProductChartsSafe({
       },
     ];
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         revenue: {
           bar: dailyRevenueBarCharts,
@@ -704,11 +704,11 @@ function createMonthlyProductChartsSafe({
   pieChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyProductChartsInput): ResultSafeBox<
+}: CreateMonthlyProductChartsInput): SafeBoxResult<
   ProductMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics || !selectedMonthMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         unitsSold: {
           bar: barChartsTemplate,
@@ -942,7 +942,7 @@ function createMonthlyProductChartsSafe({
       },
     ];
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         revenue: {
           bar: monthlyRevenueBarChartsObj,
@@ -985,11 +985,11 @@ function createYearlyProductChartsSafe({
   pieChartsTemplate,
   selectedYearMetrics,
   yearlyMetrics,
-}: CreateYearlyProductChartsInput): ResultSafeBox<
+}: CreateYearlyProductChartsInput): SafeBoxResult<
   ProductMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics || !selectedYearMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         unitsSold: {
           bar: barChartsTemplate,
@@ -1211,7 +1211,7 @@ function createYearlyProductChartsSafe({
       },
     ];
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         revenue: {
           bar: yearlyRevenueBarChartsObj,
@@ -1258,7 +1258,7 @@ function createProductMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateProductMetrics: SelectedDateProductMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeBoxResult<{
   currentYear: ProductMetricsCalendarCharts;
   previousYear: ProductMetricsCalendarCharts;
 }> {
@@ -1276,7 +1276,7 @@ function createProductMetricsCalendarChartsSafe(
   };
 
   if (!selectedDateProductMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear: productMetricsCalendarChartsTemplate,
         previousYear: productMetricsCalendarChartsTemplate,
@@ -1385,7 +1385,7 @@ function createProductMetricsCalendarChartsSafe(
       return productMetricsCalendarCharts;
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear,
         previousYear,

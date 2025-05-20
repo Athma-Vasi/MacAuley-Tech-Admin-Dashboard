@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { dashboardAction } from "./actions";
 import {
   setCalendarViewDashboardDispatchZod,
@@ -38,7 +38,7 @@ function dashboardReducer_setIsLoading(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsLoadingDashboardDispatchZod,
   });
@@ -57,7 +57,7 @@ function dashboardReducer_setLoadingMessage(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setLoadingMessageDashboardDispatchZod,
   });
@@ -76,7 +76,7 @@ function dashboardReducer_setCalendarView(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCalendarViewDashboardDispatchZod,
   });
@@ -96,7 +96,7 @@ function dashboardReducer_setDashboardFetchWorker(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setDashboardFetchWorkerDashboardDispatchZod,
   });

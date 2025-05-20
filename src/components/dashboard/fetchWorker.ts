@@ -4,16 +4,16 @@ import {
     BusinessMetricsDocument,
     DecodedToken,
     HttpServerResponse,
-    ResultSafeBox,
+    SafeBoxResult,
     UserDocument,
 } from "../../types";
 import {
-    createResultSafeBox,
+    createSafeBoxResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
-    parseSafeSync,
     parseServerResponseAsyncSafe,
+    parseSyncSafe,
 } from "../../utils";
 import {
     ROUTES_ZOD_SCHEMAS_MAP,
@@ -37,7 +37,7 @@ type MessageEventDashboardFetchMainToWorker = MessageEvent<
 >;
 
 type MessageEventDashboardFetchWorkerToMain = MessageEvent<
-    ResultSafeBox<{
+    SafeBoxResult<{
         decodedToken: DecodedToken;
         metricsView: Lowercase<DashboardMetricsView>;
         parsedServerResponse: HttpServerResponse<BusinessMetricsDocument>;
@@ -51,19 +51,19 @@ self.onmessage = async (
     event: MessageEventDashboardFetchMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(new Error("No data received")),
             message: Some("No data received"),
         }));
         return;
     }
 
-    const parsedMessageResult = parseSafeSync({
+    const parsedMessageResult = parseSyncSafe({
         object: event.data,
         zSchema: messageEventDashboardFetchMainToWorkerZod,
     });
     if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: parsedMessageResult.val.data,
             message: Some("Error parsing message"),
         }));
@@ -90,7 +90,7 @@ self.onmessage = async (
         });
         if (responseResult.err || responseResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: responseResult.val.data,
                     message: Some("Error fetching data"),
                 }),
@@ -103,7 +103,7 @@ self.onmessage = async (
         >(responseResult.val.data.val);
         if (jsonResult.err || jsonResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: jsonResult.val.data,
                     message: Some("Error extracting JSON from response"),
                 }),
@@ -118,7 +118,7 @@ self.onmessage = async (
 
         if (parsedResult.err || parsedResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: parsedResult.val.data,
                     message: Some("Error parsing server response"),
                 }),
@@ -131,7 +131,7 @@ self.onmessage = async (
         const decodedTokenResult = await decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: decodedTokenResult.val.data,
                     message: Some("Error decoding JWT"),
                 }),
@@ -139,7 +139,7 @@ self.onmessage = async (
             return;
         }
 
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some({
                 decodedToken: decodedTokenResult.val.data.val,
                 metricsView,
@@ -151,7 +151,7 @@ self.onmessage = async (
             kind: "success",
         }));
     } catch (err) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(err),
             message: Some(
                 err instanceof Error
@@ -168,7 +168,7 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Metrics Charts Worker error:", event);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event),
         message: Some(
             event instanceof Error
@@ -183,7 +183,7 @@ self.onerror = (event: string | Event) => {
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event.reason),
         message: Some(
             event.reason instanceof Error

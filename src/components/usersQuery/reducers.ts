@@ -1,5 +1,5 @@
 import { UserDocument } from "../../types";
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { UsersQueryAction, usersQueryAction } from "./actions";
 import {
     resetToInitialUsersQueryDispatchZod,
@@ -58,7 +58,7 @@ function usersQueryReducer_resetToInitial(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: resetToInitialUsersQueryDispatchZod,
     });
@@ -74,7 +74,7 @@ function usersQueryReducer_setArrangeByDirection(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setArrangeByDirectionUsersQueryDispatchZod,
     });
@@ -103,7 +103,7 @@ function usersQueryReducer_setArrangeByField(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setArrangeByFieldUsersQueryDispatchZod,
     });
@@ -133,7 +133,7 @@ function usersQueryReducer_setCurrentPage(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setCurrentPageUsersQueryDispatchZod,
     });
@@ -152,7 +152,7 @@ function usersQueryReducer_setUsersFetchWorker(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setUsersFetchWorkerUsersQueryDispatchZod,
     });
@@ -173,7 +173,7 @@ function usersQueryReducer_setIsError(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setIsErrorUsersQueryDispatchZod,
     });
@@ -192,7 +192,7 @@ function usersQueryReducer_setIsLoading(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setIsLoadingUsersQueryDispatchZod,
     });
@@ -211,7 +211,7 @@ function usersQueryReducer_setNewQueryFlag(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setNewQueryFlagUsersQueryDispatchZod,
     });
@@ -230,7 +230,7 @@ function usersQueryReducer_setPages(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setPagesUsersQueryDispatchZod,
     });
@@ -249,7 +249,7 @@ function usersQueryReducer_setQueryString(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setQueryStringUsersQueryDispatchZod,
     });
@@ -268,7 +268,7 @@ function usersQueryReducer_setResourceData(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setResourceDataUsersQueryDispatchZod,
     });
@@ -289,7 +289,7 @@ function usersQueryReducer_setTotalDocuments(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
 ): UsersQueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setTotalDocumentsUsersQueryDispatchZod,
     });

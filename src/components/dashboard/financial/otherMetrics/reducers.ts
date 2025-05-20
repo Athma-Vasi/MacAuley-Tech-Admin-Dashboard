@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../../utils";
+import { parseSyncSafe } from "../../../../utils";
 import { FinancialMetricsOtherMetricsChartsKey } from "../chartsData";
 import { OtherMetricsAction, otherMetricsAction } from "./actions";
 import { setYAxisKeyOtherMetricsDispatchZod } from "./schemas";
@@ -29,7 +29,7 @@ function otherMetricsReducer_setYAxisKey(
   state: OtherMetricsState,
   dispatch: OtherMetricsDispatch,
 ): OtherMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setYAxisKeyOtherMetricsDispatchZod,
   });

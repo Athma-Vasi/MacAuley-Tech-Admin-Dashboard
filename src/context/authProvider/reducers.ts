@@ -1,5 +1,5 @@
 import type { DecodedToken, UserDocument } from "../../types";
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { type AuthAction, authAction } from "./actions";
 import {
   setAccessTokenAuthDispatchZod,
@@ -28,7 +28,7 @@ function authReducer_setAccessToken(
   state: AuthState,
   dispatch: AuthDispatch,
 ): AuthState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setAccessTokenAuthDispatchZod,
   });
@@ -47,7 +47,7 @@ function authReducer_setDecodedToken(
   state: AuthState,
   dispatch: AuthDispatch,
 ): AuthState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setDecodedTokenAuthDispatchZod,
   });
@@ -66,7 +66,7 @@ function authReducer_setIsLoggedIn(
   state: AuthState,
   dispatch: AuthDispatch,
 ): AuthState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsLoggedInAuthDispatchZod,
   });
@@ -85,7 +85,7 @@ function authReducer_setUserDocument(
   state: AuthState,
   dispatch: AuthDispatch,
 ): AuthState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setUserDocumentAuthDispatchZod,
   });

@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../utils";
+import { parseSyncSafe } from "../../../utils";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { DynamicSliderInputPayload } from "../AccessibleSliderInput";
 import {
@@ -98,7 +98,7 @@ function accessibleImageInputReducer_addImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: addImageFileBlobDispatchZod,
     });
@@ -121,7 +121,7 @@ function accessibleImageInputReducer_addFileName(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: addImageFileNameDispatchZod,
     });
@@ -155,7 +155,7 @@ function accessibleImageInputReducer_setCurrentImageIndex(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setCurrentImageIndexDispatchZod,
     });
@@ -174,7 +174,7 @@ function accessibleImageInputReducer_removeImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: removeImageFileBlobDispatchZod,
     });
@@ -211,7 +211,7 @@ function accessibleImageInputReducer_resetImageFileBlob(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: resetImageFileBlobDispatchZod,
     });
@@ -256,7 +256,7 @@ function accessibleImageInputReducer_setImageFileBlob(
     //     ...state,
     //     imageFileBlobs,
     // };
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setImageFileBlobDispatchZod,
     });
@@ -284,7 +284,7 @@ function accessibleImageInputReducer_setModifyImagesWorker(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setModifyImagesWorkerDispatchZod,
     });
@@ -303,7 +303,7 @@ function accessibleImageInputReducer_setRetrieveImagesWorker(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setRetrieveImagesWorkerDispatchZod,
     });
@@ -322,7 +322,7 @@ function accessibleImageInputReducer_setIsErrors(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setIsErrorsImageDispatchZod,
     });
@@ -348,7 +348,7 @@ function accessibleImageInputReducer_setIsLoading(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setIsLoadingImageDispatchZod,
     });
@@ -367,7 +367,7 @@ function accessibleImageInputReducer_setIsModalOpen(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setIsModalOpenImageDispatchZod,
     });
@@ -386,7 +386,7 @@ function accessibleImageInputReducer_setQuality(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setQualityImageDispatchZod,
     });
@@ -411,7 +411,7 @@ function accessibleImageInputReducer_setOrientation(
     state: AccessibleImageInputState,
     dispatch: AccessibleImageInputDispatch,
 ): AccessibleImageInputState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setOrientationImageDispatchZod,
     });

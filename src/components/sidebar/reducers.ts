@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { SidebarAction, sidebarAction } from "./actions";
 import {
     setClickedNavlinkSidebarDispatchZod,
@@ -30,7 +30,7 @@ function sidebarReducer_setClickedNavlink(
     state: SidebarState,
     dispatch: SidebarDispatch,
 ) {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setClickedNavlinkSidebarDispatchZod,
     });
@@ -50,7 +50,7 @@ function sidebarReducer_setDirectoryFetchWorker(
     state: SidebarState,
     dispatch: SidebarDispatch,
 ) {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setDirectoryFetchWorkerSidebarDispatchZod,
     });
@@ -69,7 +69,7 @@ function sidebarReducer_setLogoutFetchWorker(
     state: SidebarState,
     dispatch: SidebarDispatch,
 ) {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setLogoutFetchWorkerSidebarDispatchZod,
     });
@@ -88,7 +88,7 @@ function sidebarReducer_setMetricsFetchWorker(
     state: SidebarState,
     dispatch: SidebarDispatch,
 ) {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setMetricsFetchWorkerSidebarDispatchZod,
     });

@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../utils";
+import { parseSyncSafe } from "../../../utils";
 import { ProductMetricsAction, productMetricsAction } from "./actions";
 import { ProductMetricsCards } from "./cards";
 import {
@@ -45,7 +45,7 @@ function productMetricsReducer_setCalendarChartsData(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCalendarChartsDataProductMetricsDispatchZod,
   });
@@ -81,7 +81,7 @@ function productMetricsReducer_setCharts(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setChartsProductMetricsDispatchZod,
   });
@@ -100,7 +100,7 @@ function productMetricsReducer_setIsGenerating(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsGeneratingProductMetricsDispatchZod,
   });
@@ -119,7 +119,7 @@ function productMetricsReducer_setProductChartsWorker(
   state: ProductMetricsState,
   dispatch: ProductMetricsDispatch,
 ): ProductMetricsState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setChartsWorkerProductMetricsDispatchZod,
   });

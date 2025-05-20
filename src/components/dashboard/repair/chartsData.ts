@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { RepairMetricsDocument, SafeBoxResult } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -51,7 +51,7 @@ function returnSelectedDateRepairMetricsSafe({
   month,
   months,
   year,
-}: CreateSelectedDateRepairMetricsInput): ResultSafeBox<
+}: CreateSelectedDateRepairMetricsInput): SafeBoxResult<
   SelectedDateRepairMetrics
 > {
   try {
@@ -149,7 +149,7 @@ function returnSelectedDateRepairMetricsSafe({
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dayRepairMetrics: { selectedDayMetrics, prevDayMetrics },
         monthRepairMetrics: { selectedMonthMetrics, prevMonthMetrics },
@@ -219,7 +219,7 @@ function createRepairMetricsChartsSafe({
   repairMetricsDocument,
   months,
   selectedDateRepairMetrics,
-}: ReturnRepairChartsInput): ResultSafeBox<RepairMetricsCharts> {
+}: ReturnRepairChartsInput): SafeBoxResult<RepairMetricsCharts> {
   const BAR_CHART_DATA_TEMPLATE: RepairMetricBarCharts = {
     revenue: [],
     unitsRepaired: [],
@@ -231,7 +231,7 @@ function createRepairMetricsChartsSafe({
   };
 
   if (!repairMetricsDocument || !selectedDateRepairMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: {
           bar: BAR_CHART_DATA_TEMPLATE,
@@ -294,7 +294,7 @@ function createRepairMetricsChartsSafe({
       dailyRepairChartsSafeResult.err ||
       dailyRepairChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: dailyRepairChartsSafeResult.val.data,
         message: Some("Error creating daily repair charts"),
       });
@@ -303,7 +303,7 @@ function createRepairMetricsChartsSafe({
       monthlyRepairChartsSafeResult.err ||
       monthlyRepairChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: monthlyRepairChartsSafeResult.val.data,
         message: Some("Error creating monthly repair charts"),
       });
@@ -312,13 +312,13 @@ function createRepairMetricsChartsSafe({
       yearlyRepairChartsSafeResult.err ||
       yearlyRepairChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: yearlyRepairChartsSafeResult.val.data,
         message: Some("Error creating yearly repair charts"),
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: dailyRepairChartsSafeResult.val.data.val,
         monthlyCharts: monthlyRepairChartsSafeResult.val.data.val,
@@ -352,11 +352,11 @@ function createDailyRepairChartsSafe({
   barChartsTemplate,
   dailyMetrics,
   lineChartsTemplate,
-}: CreateDailyRepairChartsInput): ResultSafeBox<
+}: CreateDailyRepairChartsInput): SafeBoxResult<
   RepairMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         bar: barChartsTemplate,
         line: lineChartsTemplate,
@@ -418,7 +418,7 @@ function createDailyRepairChartsSafe({
         ],
       );
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         bar: dailyRepairMetricsBarCharts,
         line: dailyRepairMetricsLineCharts,
@@ -451,11 +451,11 @@ function createMonthlyRepairChartsSafe({
   lineChartsTemplate,
   monthlyMetrics,
   selectedYear,
-}: CreateMonthlyRepairChartsInput): ResultSafeBox<
+}: CreateMonthlyRepairChartsInput): SafeBoxResult<
   RepairMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         bar: barChartsTemplate,
         line: lineChartsTemplate,
@@ -531,7 +531,7 @@ function createMonthlyRepairChartsSafe({
         ],
       );
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         bar: monthlyRepairMetricsBarCharts,
         line: monthlyRepairMetricsLineCharts,
@@ -562,11 +562,11 @@ function createYearlyRepairChartsSafe({
   barChartsTemplate,
   lineChartsTemplate,
   yearlyMetrics,
-}: CreateYearlyRepairChartsInput): ResultSafeBox<
+}: CreateYearlyRepairChartsInput): SafeBoxResult<
   RepairMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         bar: barChartsTemplate,
         line: lineChartsTemplate,
@@ -628,7 +628,7 @@ function createYearlyRepairChartsSafe({
         ],
       );
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         bar: yearlyRepairMetricsBarCharts,
         line: yearlyRepairMetricsLineCharts,
@@ -669,7 +669,7 @@ function createRepairMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateRepairMetrics: SelectedDateRepairMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeBoxResult<{
   currentYear: RepairMetricCalendarCharts;
   previousYear: RepairMetricCalendarCharts;
 }> {
@@ -679,7 +679,7 @@ function createRepairMetricsCalendarChartsSafe(
   };
 
   if (!selectedDateRepairMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear: repairCalendarChartTemplate,
         previousYear: repairCalendarChartTemplate,
@@ -770,7 +770,7 @@ function createRepairMetricsCalendarChartsSafe(
       return repairCalendarCharts;
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear,
         previousYear,

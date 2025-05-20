@@ -1,6 +1,6 @@
 import { Err, Some } from "ts-results";
-import { CustomerMetricsDocument, ResultSafeBox } from "../../../types";
-import { createResultSafeBox, toFixedFloat } from "../../../utils";
+import { CustomerMetricsDocument, SafeBoxResult } from "../../../types";
+import { createSafeBoxResult, toFixedFloat } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -42,7 +42,7 @@ function returnSelectedDateCustomerMetricsSafe({
   month: Month;
   months: Month[];
   year: Year;
-}): ResultSafeBox<SelectedDateCustomerMetrics> {
+}): SafeBoxResult<SelectedDateCustomerMetrics> {
   try {
     const selectedYearMetrics = customerMetricsDocument.customerMetrics
       .yearlyMetrics
@@ -144,7 +144,7 @@ function returnSelectedDateCustomerMetricsSafe({
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dayCustomerMetrics: { selectedDayMetrics, prevDayMetrics },
         monthCustomerMetrics: { selectedMonthMetrics, prevMonthMetrics },
@@ -304,7 +304,7 @@ function createCustomerMetricsChartsSafe({
   customerMetricsDocument,
   months,
   selectedDateCustomerMetrics,
-}: ReturnCustomerMetricsChartsInput): ResultSafeBox<CustomerMetricsCharts> {
+}: ReturnCustomerMetricsChartsInput): SafeBoxResult<CustomerMetricsCharts> {
   const NEW_RETURNING_BAR_CHART_TEMPLATE: CustomerNewReturningBarCharts = {
     total: [],
     all: [],
@@ -352,7 +352,7 @@ function createCustomerMetricsChartsSafe({
     };
 
   if (!customerMetricsDocument || !selectedDateCustomerMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: {
           new: {
@@ -466,7 +466,7 @@ function createCustomerMetricsChartsSafe({
       dailyCustomerChartsSafeResult.err ||
       dailyCustomerChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: dailyCustomerChartsSafeResult.val.data,
         message: Some("Error creating daily customer charts"),
       });
@@ -475,7 +475,7 @@ function createCustomerMetricsChartsSafe({
       monthlyCustomerChartsSafeResult.err ||
       monthlyCustomerChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: monthlyCustomerChartsSafeResult.val.data,
         message: Some("Error creating monthly customer charts"),
       });
@@ -484,13 +484,13 @@ function createCustomerMetricsChartsSafe({
       yearlyCustomerChartsSafeResult.err ||
       yearlyCustomerChartsSafeResult.val.data.none
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: yearlyCustomerChartsSafeResult.val.data,
         message: Some("Error creating yearly customer charts"),
       });
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         dailyCharts: dailyCustomerChartsSafeResult.val.data.val,
         monthlyCharts: monthlyCustomerChartsSafeResult.val.data.val,
@@ -532,11 +532,11 @@ function createDailyCustomerChartsSafe({
   returningBarChartsTemplate,
   returningLineChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyCustomerChartsInput): ResultSafeBox<
+}: CreateDailyCustomerChartsInput): SafeBoxResult<
   CustomerMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics || !selectedDayMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         new: {
           bar: newBarChartsTemplate,
@@ -1039,7 +1039,7 @@ function createDailyCustomerChartsSafe({
       },
     ];
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         new: {
           bar: dailyNewBarCharts,
@@ -1096,11 +1096,11 @@ function createMonthlyCustomerChartsSafe({
   returningLineChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyCustomerChartsInput): ResultSafeBox<
+}: CreateMonthlyCustomerChartsInput): SafeBoxResult<
   CustomerMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics || !selectedMonthMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         new: {
           bar: newBarChartsTemplate,
@@ -1634,7 +1634,7 @@ function createMonthlyCustomerChartsSafe({
       },
     ];
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         new: {
           bar: monthlyNewBarCharts,
@@ -1688,11 +1688,11 @@ function createYearlyCustomerChartsSafe({
   returningLineChartsTemplate,
   selectedYearMetrics,
   yearlyMetrics,
-}: CreateYearlyCustomerChartsInput): ResultSafeBox<
+}: CreateYearlyCustomerChartsInput): SafeBoxResult<
   CustomerMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics || !selectedYearMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         new: {
           bar: newBarChartsTemplate,
@@ -2212,7 +2212,7 @@ function createYearlyCustomerChartsSafe({
       },
     ];
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         new: {
           bar: yearlyNewBarCharts,
@@ -2288,7 +2288,7 @@ function createCustomerMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeBoxResult<{
   currentYear: CustomerMetricsCalendarCharts;
   previousYear: CustomerMetricsCalendarCharts;
 }> {
@@ -2312,7 +2312,7 @@ function createCustomerMetricsCalendarChartsSafe(
   };
 
   if (!selectedDateCustomerMetrics) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear: calendarChartsTemplate,
         previousYear: calendarChartsTemplate,
@@ -2468,7 +2468,7 @@ function createCustomerMetricsCalendarChartsSafe(
       return customerCalendarCharts;
     }
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some({
         currentYear,
         previousYear,

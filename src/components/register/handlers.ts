@@ -1,7 +1,7 @@
 import { NavigateFunction } from "react-router-dom";
 import { Some } from "ts-results";
-import { ResultSafeBox } from "../../types";
-import { createResultSafeBox, parseSafeSync } from "../../utils";
+import { SafeBoxResult } from "../../types";
+import { createSafeBoxResult, parseSyncSafe } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { registerAction } from "./actions";
@@ -25,14 +25,14 @@ async function handleCheckEmail(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     url: RequestInfo | URL;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
   try {
-    const parsedInputResult = parseSafeSync({
+    const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleCheckEmailInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.data.none) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: parsedInputResult.val.data ?? Some("Error parsing input"),
       });
     }
@@ -50,7 +50,7 @@ async function handleCheckEmail(
     });
 
     if (!isEmailValid) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Email is invalid"),
       });
     }
@@ -76,12 +76,12 @@ async function handleCheckEmail(
       url: urlWithQuery.toString(),
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some("Email is valid"),
       kind: "success",
     });
   } catch (error: unknown) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(
         error instanceof Error
           ? error.message
@@ -100,14 +100,14 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
   try {
-    const parsedInputResult = parseSafeSync({
+    const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleMessageEventCheckEmailWorkerToMainInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.data.none) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: parsedInputResult.val.data ?? Some("Error parsing input"),
       });
     }
@@ -118,14 +118,14 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
     const messageEventResult = event.data;
 
     if (!isComponentMountedRef.current) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Component unmounted"),
       });
     }
 
     if (messageEventResult.err || messageEventResult.val.data.none) {
       showBoundary(messageEventResult.val.data);
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Error from worker"),
       });
     }
@@ -145,7 +145,7 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
           `Server error: ${message}`,
         ),
       );
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some(`Server error: ${message}`),
       });
     }
@@ -157,7 +157,7 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
       payload: isEmailExists,
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(isEmailExists.toString()),
       kind: "success",
     });
@@ -165,13 +165,13 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
     if (
       !input.isComponentMountedRef.current
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Component unmounted"),
       });
     }
 
     input.showBoundary(error);
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(
         error instanceof Error
           ? error.message
@@ -190,14 +190,14 @@ async function handleCheckUsername(
     url: RequestInfo | URL;
     username: string;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
   try {
-    const parsedInputResult = parseSafeSync({
+    const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleCheckUsernameInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.data.none) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: parsedInputResult.val.data ?? Some("Error parsing input"),
       });
     }
@@ -215,7 +215,7 @@ async function handleCheckUsername(
     });
 
     if (!isUsernameValid) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Username is invalid"),
       });
     }
@@ -241,12 +241,12 @@ async function handleCheckUsername(
       url: urlWithQuery.toString(),
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some("Username is valid"),
       kind: "success",
     });
   } catch (error: unknown) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(
         error instanceof Error
           ? error.message
@@ -265,14 +265,14 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
   try {
-    const parsedInputResult = parseSafeSync({
+    const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleMessageEventCheckUsernameWorkerToMainInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.data.none) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: parsedInputResult.val.data ?? Some("Error parsing input"),
       });
     }
@@ -283,14 +283,14 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
     const messageEventResult = event.data;
 
     if (!isComponentMountedRef.current) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Component unmounted"),
       });
     }
 
     if (messageEventResult.err || messageEventResult.val.data.none) {
       showBoundary(messageEventResult.val.data);
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Error from worker"),
       });
     }
@@ -310,7 +310,7 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
           `Server error: ${message}`,
         ),
       );
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some(`Server error: ${message}`),
       });
     }
@@ -322,7 +322,7 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
       payload: isUsernameExists,
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(isUsernameExists.toString()),
       kind: "success",
     });
@@ -330,13 +330,13 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
     if (
       !input.isComponentMountedRef.current
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Component unmounted"),
       });
     }
 
     input.showBoundary(error);
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(
         error instanceof Error
           ? error.message
@@ -355,13 +355,13 @@ async function handleRegisterButtonSubmit(
     registerWorker: Worker | null;
     url: RequestInfo | URL;
   },
-): Promise<ResultSafeBox<string>> {
-  const parsedInputResult = parseSafeSync({
+): Promise<SafeBoxResult<string>> {
+  const parsedInputResult = parseSyncSafe({
     object: input,
     zSchema: handleRegisterButtonSubmitInputZod,
   });
   if (parsedInputResult.err || parsedInputResult.val.data.none) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: parsedInputResult.val.data ?? Some("Error parsing input"),
     });
   }
@@ -387,7 +387,7 @@ async function handleRegisterButtonSubmit(
     url: url.toString(),
   });
 
-  return createResultSafeBox({
+  return createSafeBoxResult({
     data: Some("Registration request sent"),
     kind: "success",
   });
@@ -402,14 +402,14 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
     showBoundary: (error: unknown) => void;
     toLocation: string;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
   try {
-    const parsedInputResult = parseSafeSync({
+    const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleMessageEventRegisterFetchWorkerToMainInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.data.none) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: parsedInputResult.val.data ?? Some("Error parsing input"),
       });
     }
@@ -426,14 +426,14 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
     const messageEventResult = event.data;
 
     if (!isComponentMountedRef.current) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Component unmounted"),
       });
     }
 
     if (messageEventResult.err || messageEventResult.val.data.none) {
       showBoundary(messageEventResult.val.data);
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Error from worker"),
       });
     }
@@ -456,7 +456,7 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
 
       navigate("/login");
 
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some(parsedServerResponse.message),
       });
     }
@@ -480,7 +480,7 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
 
     navigate(toLocation);
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some("Registration successful"),
       kind: "success",
     });
@@ -488,13 +488,13 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
     if (
       !input.isComponentMountedRef.current
     ) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Component unmounted"),
       });
     }
 
     input.showBoundary(error);
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(
         error instanceof Error
           ? error.message
@@ -513,14 +513,14 @@ function handlePrevNextStepClick(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     registerState: RegisterState;
   },
-): ResultSafeBox<string> {
+): SafeBoxResult<string> {
   try {
-    const parsedInputResult = parseSafeSync({
+    const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handlePrevNextStepClickInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.data.none) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: parsedInputResult.val.data ?? Some("Error parsing input"),
       });
     }
@@ -529,7 +529,7 @@ function handlePrevNextStepClick(
       parsedInputResult.val.data.val;
 
     if (activeStep === MAX_REGISTER_STEPS) {
-      return createResultSafeBox({
+      return createSafeBoxResult({
         data: Some("Last step reached"),
       });
     }
@@ -628,12 +628,12 @@ function handlePrevNextStepClick(
       payload: kind === "next" ? activeStep + 1 : activeStep - 1,
     });
 
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some("Step changed"),
       kind: "success",
     });
   } catch (error: unknown) {
-    return createResultSafeBox({
+    return createSafeBoxResult({
       data: Some(
         error instanceof Error
           ? error.message

@@ -1,6 +1,6 @@
 import { Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { SafeBoxResult } from "../../../types";
+import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
 import { repairMetricsAction } from "./actions";
 import { MessageEventRepairWorkerToMain } from "./chartsWorker";
 import { handleMessageEventRepairWorkerToMainInputZod } from "./schemas";
@@ -11,14 +11,14 @@ async function handleMessageEventRepairWorkerToMain(input: {
     isComponentMountedRef: React.RefObject<boolean>;
     repairMetricsDispatch: React.Dispatch<RepairMetricsDispatch>;
     showBoundary: (error: unknown) => void;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeBoxResult<string>> {
     try {
-        const parsedInputResult = parseSafeSync({
+        const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleMessageEventRepairWorkerToMainInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: parsedInputResult.val.data ?? Some("Error parsing input"),
             });
         }
@@ -31,21 +31,21 @@ async function handleMessageEventRepairWorkerToMain(input: {
         } = parsedInputResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("No data in message event"),
             });
         }
 
         if (messageEventResult.err || messageEventResult.val.data.none) {
             showBoundary(messageEventResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: messageEventResult.val.data,
                 message: messageEventResult.val.message,
             });
@@ -76,7 +76,7 @@ async function handleMessageEventRepairWorkerToMain(input: {
             payload: repairMetricsCards,
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Repair metrics charts updated"),
             kind: "success",
         });
@@ -84,13 +84,13 @@ async function handleMessageEventRepairWorkerToMain(input: {
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         input.showBoundary(error);
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error
                     ? error.message

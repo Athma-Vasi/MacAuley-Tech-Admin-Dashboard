@@ -1,12 +1,12 @@
 import { EImageType } from "image-conversion";
 import { Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
+import { SafeBoxResult } from "../../../types";
 import {
-    createResultSafeBox,
-    getCachedItemSafeAsync,
+    createSafeBoxResult,
+    getCachedItemAsyncSafe,
     modifyImageSafe,
-    parseSafeSync,
-    setCachedItemSafeAsync,
+    parseSyncSafe,
+    setCachedItemAsyncSafe,
 } from "../../../utils";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
@@ -33,14 +33,14 @@ async function handleResetImageClick(
         showBoundary: (error: unknown) => void;
         storageKey: string;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
     try {
-        const parsedInputResult = parseSafeSync({
+        const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleResetImageClickInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: parsedInputResult.val.data ?? Some("Error parsing input"),
             });
         }
@@ -54,7 +54,7 @@ async function handleResetImageClick(
         } = parsedInputResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
@@ -65,17 +65,17 @@ async function handleResetImageClick(
             storageKey,
         );
 
-        const originalFilesResult = await getCachedItemSafeAsync<
+        const originalFilesResult = await getCachedItemAsyncSafe<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (originalFilesResult.err) {
             showBoundary(originalFilesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Original files not found"),
             });
         }
@@ -100,7 +100,7 @@ async function handleResetImageClick(
             payload: index,
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Image reset successfully"),
             kind: "success",
         });
@@ -108,13 +108,13 @@ async function handleResetImageClick(
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         input.showBoundary(error);
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error
                     ? error.message
@@ -151,14 +151,14 @@ async function handleRemoveImageClick<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
     try {
-        const parsedInputResult = parseSafeSync({
+        const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleRemoveImageClickInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: parsedInputResult.val.data ?? Some("Error parsing input"),
             });
         }
@@ -175,7 +175,7 @@ async function handleRemoveImageClick<
         } = parsedInputResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
@@ -188,17 +188,17 @@ async function handleRemoveImageClick<
             storageKey,
         );
 
-        const modifiedFilesResult = await getCachedItemSafeAsync<
+        const modifiedFilesResult = await getCachedItemAsyncSafe<
             Array<ModifiedFile>
         >(modifiedFilesForageKey);
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (modifiedFilesResult.err) {
             showBoundary(modifiedFilesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: modifiedFilesResult.val.data,
                 message: modifiedFilesResult.val.message ?? Some("Not found"),
             });
@@ -209,35 +209,35 @@ async function handleRemoveImageClick<
             : modifiedFilesResult.val.data.val;
         modifiedFiles?.splice(index, 1);
 
-        const setModifiedFilesResult = await setCachedItemSafeAsync(
+        const setModifiedFilesResult = await setCachedItemAsyncSafe(
             modifiedFilesForageKey,
             modifiedFiles,
         );
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (setModifiedFilesResult.err) {
             showBoundary(setModifiedFilesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: setModifiedFilesResult.val.data,
                 message: setModifiedFilesResult.val.message ??
                     Some("Not found"),
             });
         }
 
-        const originalFilesResult = await getCachedItemSafeAsync<
+        const originalFilesResult = await getCachedItemAsyncSafe<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (originalFilesResult.err) {
             showBoundary(originalFilesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: originalFilesResult.val.data,
                 message: originalFilesResult.val.message ??
                     Some("Unable to retrieve original files"),
@@ -249,35 +249,35 @@ async function handleRemoveImageClick<
             : originalFilesResult.val.data.val;
         originalFiles?.splice(index, 1);
 
-        const setOriginalFilesResult = await setCachedItemSafeAsync(
+        const setOriginalFilesResult = await setCachedItemAsyncSafe(
             originalFilesForageKey,
             originalFiles,
         );
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (setOriginalFilesResult.err) {
             showBoundary(setOriginalFilesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: setOriginalFilesResult.val.data,
                 message: setOriginalFilesResult.val.message ??
                     Some("Not found"),
             });
         }
 
-        const fileNamesResult = await getCachedItemSafeAsync<Array<string>>(
+        const fileNamesResult = await getCachedItemAsyncSafe<Array<string>>(
             fileNamesForageKey,
         );
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (fileNamesResult.err) {
             showBoundary(fileNamesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: fileNamesResult.val.data,
                 message: fileNamesResult.val.message ??
                     Some("Unable to retrieve file names"),
@@ -290,18 +290,18 @@ async function handleRemoveImageClick<
         const existingFileName = fileNames[index];
         fileNames?.splice(index, 1);
 
-        const setFileNamesResult = await setCachedItemSafeAsync(
+        const setFileNamesResult = await setCachedItemAsyncSafe(
             fileNamesForageKey,
             fileNames,
         );
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (setFileNamesResult.err) {
             showBoundary(setFileNamesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: setFileNamesResult.val.data,
                 message: setFileNamesResult.val.message ??
                     Some("Not found"),
@@ -328,7 +328,7 @@ async function handleRemoveImageClick<
             },
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Image removed successfully"),
             kind: "success",
         });
@@ -336,13 +336,13 @@ async function handleRemoveImageClick<
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         input.showBoundary(error);
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error
                     ? error.message
@@ -379,14 +379,14 @@ async function handleMessageEventModifyImagesWorkerToMain<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
     try {
-        const parsedInputResult = parseSafeSync({
+        const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleMessageEventModifyImagesWorkerToMainInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: parsedInputResult.val.data ?? Some("Error parsing input"),
             });
         }
@@ -403,21 +403,21 @@ async function handleMessageEventModifyImagesWorkerToMain<
         } = parsedInputResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("No data in message event"),
             });
         }
 
         if (messageEventResult.err || messageEventResult.val.data.none) {
             showBoundary(messageEventResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: messageEventResult.val.data,
                 message: messageEventResult.val.message,
             });
@@ -494,7 +494,7 @@ async function handleMessageEventModifyImagesWorkerToMain<
             payload: false,
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Image modified successfully"),
             kind: "success",
         });
@@ -502,13 +502,13 @@ async function handleMessageEventModifyImagesWorkerToMain<
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         input.showBoundary(error);
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error
                     ? error.message
@@ -551,15 +551,15 @@ async function handleImageQualityOrientationSliderChange<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
     try {
         console.log("handleImageQualityOrientationSliderChange");
-        const parsedInputResult = parseSafeSync({
+        const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleImageQualityOrientationSliderChangeInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: parsedInputResult.val.data ?? Some("Error parsing input"),
             });
         }
@@ -582,7 +582,7 @@ async function handleImageQualityOrientationSliderChange<
         } = parsedInputResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
@@ -596,29 +596,29 @@ async function handleImageQualityOrientationSliderChange<
             storageKey,
         );
 
-        const originalFilesResult = await getCachedItemSafeAsync<
+        const originalFilesResult = await getCachedItemAsyncSafe<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (originalFilesResult.err) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: originalFilesResult.val.data,
                 message: originalFilesResult.val.message ??
                     Some("Error getting original files"),
             });
         }
         if (originalFilesResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("No original files found"),
             });
         }
         const originalFiles = originalFilesResult.val.data.val;
         if (originalFiles.length === 0) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("No original files found"),
             });
         }
@@ -627,7 +627,7 @@ async function handleImageQualityOrientationSliderChange<
             originalFiles[currentImageIndex],
         );
         if (!imageToModify) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Image to modify is undefined"),
             });
         }
@@ -644,13 +644,13 @@ async function handleImageQualityOrientationSliderChange<
             type,
         });
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (modifyImageResult.err || modifyImageResult.val.data.none) {
             showBoundary(modifyImageResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: modifyImageResult.val.data,
                 message: modifyImageResult.val.message ??
                     Some("Error modifying image"),
@@ -667,16 +667,16 @@ async function handleImageQualityOrientationSliderChange<
             },
         });
 
-        const modifiedFilesResult = await getCachedItemSafeAsync<
+        const modifiedFilesResult = await getCachedItemAsyncSafe<
             Array<ModifiedFile>
         >(modifiedFilesForageKey);
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (modifiedFilesResult.err) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: modifiedFilesResult.val.data,
                 message: modifiedFilesResult.val.message ??
                     Some("Error getting modified files"),
@@ -690,18 +690,18 @@ async function handleImageQualityOrientationSliderChange<
                 index === currentImageIndex ? fileBlob : modifiedFile,
         );
 
-        const setModifiedFilesResult = await setCachedItemSafeAsync(
+        const setModifiedFilesResult = await setCachedItemAsyncSafe(
             modifiedFilesForageKey,
             updatedModifiedFiles,
         );
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component is not mounted"),
             });
         }
         if (setModifiedFilesResult.err) {
             showBoundary(setModifiedFilesResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: setModifiedFilesResult.val.data,
                 message: setModifiedFilesResult.val.message ??
                     Some("Error setting modified files"),
@@ -751,18 +751,18 @@ async function handleImageQualityOrientationSliderChange<
             const clonedQualities = structuredClone(qualities);
             clonedQualities[currentImageIndex] = qualityValue;
 
-            const setQualitiesResult = await setCachedItemSafeAsync(
+            const setQualitiesResult = await setCachedItemAsyncSafe(
                 qualitiesForageKey,
                 clonedQualities,
             );
             if (!isComponentMountedRef.current) {
-                return createResultSafeBox({
+                return createSafeBoxResult({
                     data: Some("Component is not mounted"),
                 });
             }
             if (setQualitiesResult.err) {
                 showBoundary(setQualitiesResult.val.data);
-                return createResultSafeBox({
+                return createSafeBoxResult({
                     data: setQualitiesResult.val.data,
                     message: setQualitiesResult.val.message ??
                         Some("Error setting qualities"),
@@ -779,18 +779,18 @@ async function handleImageQualityOrientationSliderChange<
             const clonedOrientations = structuredClone(orientations);
             clonedOrientations[currentImageIndex] = orientationValue;
 
-            const setOrientationsResult = await setCachedItemSafeAsync(
+            const setOrientationsResult = await setCachedItemAsyncSafe(
                 orientationsForageKey,
                 clonedOrientations,
             );
             if (!isComponentMountedRef.current) {
-                return createResultSafeBox({
+                return createSafeBoxResult({
                     data: Some("Component is not mounted"),
                 });
             }
             if (setOrientationsResult.err) {
                 showBoundary(setOrientationsResult.val.data);
-                return createResultSafeBox({
+                return createSafeBoxResult({
                     data: setOrientationsResult.val.data,
                     message: setOrientationsResult.val.message ??
                         Some("Error setting orientations"),
@@ -808,7 +808,7 @@ async function handleImageQualityOrientationSliderChange<
             payload: currentImageIndex,
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Image modified successfully"),
             kind: "success",
         });
@@ -816,13 +816,13 @@ async function handleImageQualityOrientationSliderChange<
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         input.showBoundary(error);
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error
                     ? error.message
@@ -843,14 +843,14 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             AccessibleImageInputDispatch
         >;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeBoxResult<string>> {
     try {
-        const parsedInputResult = parseSafeSync({
+        const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleMessageEventRetrieveImagesWorkerToMainInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: parsedInputResult.val.data ?? Some("Error parsing input"),
             });
         }
@@ -863,21 +863,21 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
         } = parsedInputResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("No data in message event"),
             });
         }
 
         if (messageEventResult.err || messageEventResult.val.data.none) {
             showBoundary(messageEventResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: messageEventResult.val.data,
                 message: messageEventResult.val.message,
             });
@@ -887,7 +887,7 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             messageEventResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
@@ -926,7 +926,7 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             payload: false,
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Images retrieved successfully"),
             kind: "success",
         });
@@ -934,13 +934,13 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         input.showBoundary(error);
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error
                     ? error.message

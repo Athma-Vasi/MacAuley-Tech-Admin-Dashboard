@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../../utils";
+import { parseSyncSafe } from "../../../../utils";
 import { ProductMetricsChartKey } from "../chartsData";
 import { RUSAction, rusAction } from "./actions";
 import { setYAxisKeyRUSDispatchZod } from "./schemas";
@@ -20,7 +20,7 @@ function rusReducer_setYAxisKey(
   state: RUSState,
   dispatch: RUSDispatch,
 ): RUSState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setYAxisKeyRUSDispatchZod,
   });

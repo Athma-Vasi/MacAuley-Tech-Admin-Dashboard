@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { type LoginAction, loginAction } from "./actions";
 import {
   LoginDispatch,
@@ -37,7 +37,7 @@ function loginReducer_setErrorMessage(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const parsedResult = parseSafeSync(
+  const parsedResult = parseSyncSafe(
     {
       object: dispatch,
       zSchema: setErrorMessageLoginDispatchZod,
@@ -58,7 +58,7 @@ function loginReducer_setIsLoading(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const parsedResult = parseSafeSync(
+  const parsedResult = parseSyncSafe(
     {
       object: dispatch,
       zSchema: setIsLoadingLoginDispatchZod,
@@ -79,7 +79,7 @@ function loginReducer_setIsSubmitting(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const parsedResult = parseSafeSync(
+  const parsedResult = parseSyncSafe(
     {
       object: dispatch,
       zSchema: setIsSubmittingLoginDispatchZod,
@@ -100,7 +100,7 @@ function loginReducer_setIsSuccessful(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const parsedResult = parseSafeSync(
+  const parsedResult = parseSyncSafe(
     {
       object: dispatch,
       zSchema: setIsSuccessfulLoginDispatchZod,
@@ -121,7 +121,7 @@ function loginReducer_setLoginFetchWorker(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const parsedResult = parseSafeSync(
+  const parsedResult = parseSyncSafe(
     {
       object: dispatch,
       zSchema: setLoginFetchWorkerLoginDispatchZod,
@@ -142,7 +142,7 @@ function loginReducer_setPassword(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const parsedResult = parseSafeSync(
+  const parsedResult = parseSyncSafe(
     {
       object: dispatch,
       zSchema: setPasswordLoginDispatchZod,
@@ -163,7 +163,7 @@ function loginReducer_setUsername(
   state: LoginState,
   dispatch: LoginDispatch,
 ): LoginState {
-  const parsedResult = parseSafeSync(
+  const parsedResult = parseSyncSafe(
     {
       object: dispatch,
       zSchema: setUsernameLoginDispatchZod,

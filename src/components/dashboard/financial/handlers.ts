@@ -1,6 +1,6 @@
 import { Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox, parseSafeSync } from "../../../utils";
+import { SafeBoxResult } from "../../../types";
+import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
 import { financialMetricsAction } from "./actions";
 import { MessageEventFinancialWorkerToMain } from "./chartsWorker";
 import { handleMessageEventFinancialWorkerToMainInputZod } from "./schemas";
@@ -11,14 +11,14 @@ async function handleMessageEventFinancialWorkerToMain(input: {
     isComponentMountedRef: React.RefObject<boolean>;
     financialMetricsDispatch: React.Dispatch<FinancialMetricsDispatch>;
     showBoundary: (error: unknown) => void;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeBoxResult<string>> {
     try {
-        const parsedInputResult = parseSafeSync({
+        const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleMessageEventFinancialWorkerToMainInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: parsedInputResult.val.data ?? Some("Error parsing input"),
             });
         }
@@ -31,21 +31,21 @@ async function handleMessageEventFinancialWorkerToMain(input: {
         } = parsedInputResult.val.data.val;
 
         if (!isComponentMountedRef.current) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("No data in message event"),
             });
         }
 
         if (messageEventResult.err || messageEventResult.val.data.none) {
             showBoundary(messageEventResult.val.data);
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: messageEventResult.val.data,
                 message: messageEventResult.val.message,
             });
@@ -76,7 +76,7 @@ async function handleMessageEventFinancialWorkerToMain(input: {
             payload: financialMetricsCards,
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Data processed successfully"),
             kind: "success",
         });
@@ -84,13 +84,13 @@ async function handleMessageEventFinancialWorkerToMain(input: {
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("Component unmounted"),
             });
         }
 
         input.showBoundary(error);
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error
                     ? error.message

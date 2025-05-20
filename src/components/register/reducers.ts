@@ -1,5 +1,5 @@
 import { SetStepInErrorPayload, StatesUS } from "../../types";
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { registerAction } from "./actions";
 import {
   RegisterDispatch,
@@ -107,7 +107,7 @@ function registerReducer_setInputsInError(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setInputsInErrorRegisterDispatchZod,
   });
@@ -136,7 +136,7 @@ function registerReducer_setStepsWithEmptyInputs(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setStepsWithEmptyInputsRegisterDispatchZod,
   });
@@ -165,7 +165,7 @@ function registerReducer_setActiveStep(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setActiveStepRegisterDispatchZod,
   });
@@ -181,7 +181,7 @@ function registerReducer_setStepsInError(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setStepsInErrorRegisterDispatchZod,
   });
@@ -207,7 +207,7 @@ function registerReducer_setDepartment(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setDepartmentRegisterDispatchZod,
   });
@@ -223,7 +223,7 @@ function registerReducer_setFilesInError(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setFilesInErrorRegisterRegisterDispatchZod,
   });
@@ -247,7 +247,7 @@ function registerReducer_setFirstName(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setFirstNameRegisterDispatchZod,
   });
@@ -263,7 +263,7 @@ function registerReducer_setFormData(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setFormDataRegisterDispatchZod,
   });
@@ -279,7 +279,7 @@ function registerReducer_setJobPosition(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setJobPositionRegisterDispatchZod,
   });
@@ -295,7 +295,7 @@ function registerReducer_setLastName(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setLastNameRegisterDispatchZod,
   });
@@ -311,7 +311,7 @@ function registerReducer_setProfilePictureUrl(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setProfilePictureUrlRegisterDispatchZod,
   });
@@ -330,7 +330,7 @@ function registerReducer_setStoreLocation(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setStoreLocationRegisterDispatchZod,
   });
@@ -346,7 +346,7 @@ function registerReducer_setAddressLine(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setAddressLineRegisterDispatchZod,
   });
@@ -362,7 +362,7 @@ function registerReducer_setCity(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCityRegisterDispatchZod,
   });
@@ -378,7 +378,7 @@ function registerReducer_setCountry(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCountryRegisterDispatchZod,
   });
@@ -394,7 +394,7 @@ function registerReducer_setPostalCodeCanada(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPostalCodeCanadaRegisterDispatchZod,
   });
@@ -413,7 +413,7 @@ function registerReducer_setPostalCodeUS(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPostalCodeUSRegisterDispatchZod,
   });
@@ -429,7 +429,7 @@ function registerReducer_setProvince(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setProvinceRegisterDispatchZod,
   });
@@ -445,7 +445,7 @@ function registerReducer_setState(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setStateRegisterDispatchZod,
   });
@@ -464,7 +464,7 @@ function registerReducer_setConfirmPassword(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setConfirmPasswordRegisterDispatchZod,
   });
@@ -479,7 +479,7 @@ function registerReducer_setEmail(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setEmailRegisterDispatchZod,
   });
@@ -495,7 +495,7 @@ function registerReducer_setErrorMessage(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setErrorMessageRegisterDispatchZod,
   });
@@ -511,7 +511,7 @@ function registerReducer_setIsEmailExists(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsEmailExistsRegisterDispatchZod,
   });
@@ -527,7 +527,7 @@ function registerReducer_setIsEmailExistsSubmitting(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsEmailExistsSubmittingRegisterDispatchZod,
   });
@@ -546,7 +546,7 @@ function registerReducer_setIsError(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsErrorRegisterDispatchZod,
   });
@@ -562,7 +562,7 @@ function registerReducer_setIsSubmitting(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsSubmittingRegisterDispatchZod,
   });
@@ -578,7 +578,7 @@ function registerReducer_setIsSuccessful(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsSuccessfulRegisterDispatchZod,
   });
@@ -594,7 +594,7 @@ function registerReducer_setIsUsernameExists(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsUsernameExistsRegisterDispatchZod,
   });
@@ -613,7 +613,7 @@ function registerReducer_setIsUsernameExistsSubmitting(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsUsernameExistsSubmittingRegisterDispatchZod,
   });
@@ -632,7 +632,7 @@ function registerReducer_setPassword(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPasswordRegisterDispatchZod,
   });
@@ -648,7 +648,7 @@ function registerReducer_setUsername(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setUsernameRegisterDispatchZod,
   });
@@ -664,7 +664,7 @@ function registerReducer_setCheckUsernameWorker(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCheckUsernameWorkerRegisterDispatchZod,
   });
@@ -683,7 +683,7 @@ function registerReducer_setCheckEmailWorker(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCheckEmailWorkerRegisterDispatchZod,
   });
@@ -702,7 +702,7 @@ function registerReducer_setRegisterWorker(
   state: RegisterState,
   dispatch: RegisterDispatch,
 ): RegisterState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setRegisterWorkerRegisterDispatchZod,
   });

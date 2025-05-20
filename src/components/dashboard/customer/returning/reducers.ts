@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../../utils";
+import { parseSyncSafe } from "../../../../utils";
 import { CustomerNewReturningYAxisKey } from "../types";
 import { ReturningAction, returningAction } from "./actions";
 import { setYAxisKeyReturningDispatchZod } from "./schemas";
@@ -20,7 +20,7 @@ function returningReducer_setYAxisKey(
   state: ReturningState,
   dispatch: ReturningDispatch,
 ): ReturningState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setYAxisKeyReturningDispatchZod,
   });

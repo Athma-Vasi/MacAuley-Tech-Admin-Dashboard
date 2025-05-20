@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { QueryAction, queryAction } from "./actions";
 import {
     modifyQueryChainsDispatchZod,
@@ -73,7 +73,7 @@ function queryReducer_resetToInitial(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: resetToInitialDispatchZod,
     });
@@ -89,7 +89,7 @@ function queryReducer_setProjectionFields(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setProjectionFieldsDispatchZod,
     });
@@ -108,7 +108,7 @@ function queryReducer_modifyQueryChains(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: modifyQueryChainsDispatchZod,
     });
@@ -274,7 +274,7 @@ function queryReducer_setFilterField(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setFilterFieldDispatchZod,
     });
@@ -293,7 +293,7 @@ function queryReducer_setFilterComparisonOperator(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setFilterComparisonOperatorDispatchZod,
     });
@@ -312,7 +312,7 @@ function queryReducer_setFilterLogicalOperator(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setFilterLogicalOperatorDispatchZod,
     });
@@ -331,7 +331,7 @@ function queryReducer_setFilterValue(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setFilterValueDispatchZod,
     });
@@ -350,7 +350,7 @@ function queryReducer_setGeneralSearchCase(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setGeneralSearchCaseDispatchZod,
     });
@@ -369,7 +369,7 @@ function queryReducer_setGeneralSearchExclusionValue(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setGeneralSearchExclusionValueDispatchZod,
     });
@@ -388,7 +388,7 @@ function queryReducer_setGeneralSearchInclusionValue(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setGeneralSearchInclusionValueDispatchZod,
     });
@@ -407,7 +407,7 @@ function queryReducer_setIsError(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setIsErrorDispatchZod,
     });
@@ -423,7 +423,7 @@ function queryReducer_setIsSearchDisabled(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setIsSearchDisabledDispatchZod,
     });
@@ -442,7 +442,7 @@ function queryReducer_setLimitPerPage(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setLimitPerPageDispatchZod,
     });
@@ -461,7 +461,7 @@ function queryReducer_setSortDirection(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setSortDirectionDispatchZod,
     });
@@ -480,7 +480,7 @@ function queryReducer_setSortField(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setSortFieldDispatchZod,
     });
@@ -499,7 +499,7 @@ function queryReducer_setQueryKind(
     state: QueryState,
     dispatch: QueryDispatch,
 ): QueryState {
-    const parsedResult = parseSafeSync({
+    const parsedResult = parseSyncSafe({
         object: dispatch,
         zSchema: setQueryKindDispatchZod,
     });

@@ -1,12 +1,12 @@
 import { EImageType } from "image-conversion";
 import { Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
+import { SafeBoxResult } from "../../../types";
 import {
-    createResultSafeBox,
-    getCachedItemSafeAsync,
+    createSafeBoxResult,
+    getCachedItemAsyncSafe,
     modifyImageSafe,
-    parseSafeSync,
-    setCachedItemSafeAsync,
+    parseSyncSafe,
+    setCachedItemAsyncSafe,
 } from "../../../utils";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
@@ -14,7 +14,7 @@ import { messageEventModifyImagesMainToWorkerInputZod } from "./schemas";
 import { createImageInputForageKeys, validateImages } from "./utils";
 
 type MessageEventModifyImagesWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeBoxResult<
         {
             areImagesInvalid: Array<boolean>;
             currentImageIndex: number;
@@ -43,19 +43,19 @@ self.onmessage = async (
     event: MessageEventModifyImagesMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(new Error("No data received")),
             message: Some("No data received"),
         }));
         return;
     }
 
-    const parsedMessageResult = parseSafeSync({
+    const parsedMessageResult = parseSyncSafe({
         object: event.data,
         zSchema: messageEventModifyImagesMainToWorkerInputZod,
     });
     if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: parsedMessageResult.val.data,
             message: Some("Error parsing message"),
         }));
@@ -84,12 +84,12 @@ self.onmessage = async (
     );
 
     try {
-        const originalFilesResult = await getCachedItemSafeAsync<
+        const originalFilesResult = await getCachedItemAsyncSafe<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (originalFilesResult.err || originalFilesResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: originalFilesResult.val.data,
                     message: originalFilesResult.val.message ??
                         Some("Error getting original files"),
@@ -106,7 +106,7 @@ self.onmessage = async (
             imageToModify,
         );
         if (!imageToModify) {
-            self.postMessage(createResultSafeBox({
+            self.postMessage(createSafeBoxResult({
                 data: Some(new Error("No image to modify")),
             }));
             return;
@@ -124,7 +124,7 @@ self.onmessage = async (
         );
         if (modifyImageResult.err || modifyImageResult.val.data.none) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: modifyImageResult.val.data,
                     message: modifyImageResult.val.message ??
                         Some("Error modifying image"),
@@ -134,7 +134,7 @@ self.onmessage = async (
         }
         const fileBlob = modifyImageResult.val.data.val;
 
-        const modifiedFilesResult = await getCachedItemSafeAsync<
+        const modifiedFilesResult = await getCachedItemAsyncSafe<
             Array<ModifiedFile>
         >(modifiedFilesForageKey);
         console.log(
@@ -143,7 +143,7 @@ self.onmessage = async (
         );
         if (modifiedFilesResult.err) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: modifiedFilesResult.val.data,
                     message: modifiedFilesResult.val.message ??
                         Some("Error getting modified files"),
@@ -158,19 +158,19 @@ self.onmessage = async (
                     index === currentImageIndex ? fileBlob : modifiedFile,
             );
 
-        const setForageItemSafeResult = await setCachedItemSafeAsync(
+        const setCachedItemSafeResult = await setCachedItemAsyncSafe(
             modifiedFilesForageKey,
             updatedModifiedFiles,
         );
         console.log(
-            "Set forage item safe result",
-            setForageItemSafeResult,
+            "Set cached item safe result",
+            setCachedItemSafeResult,
         );
-        if (setForageItemSafeResult.err) {
+        if (setCachedItemSafeResult.err) {
             self.postMessage(
-                createResultSafeBox({
-                    data: setForageItemSafeResult.val.data,
-                    message: setForageItemSafeResult.val.message ??
+                createSafeBoxResult({
+                    data: setCachedItemSafeResult.val.data,
+                    message: setCachedItemSafeResult.val.message ??
                         Some("Error setting modified files"),
                 }),
             );
@@ -188,7 +188,7 @@ self.onmessage = async (
             index === currentImageIndex ? quality : q
         );
 
-        const setQualitiesResult = await setCachedItemSafeAsync(
+        const setQualitiesResult = await setCachedItemAsyncSafe(
             qualitiesForageKey,
             clonedQualities,
         );
@@ -198,7 +198,7 @@ self.onmessage = async (
         );
         if (setQualitiesResult.err) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: setQualitiesResult.val.data,
                     message: setQualitiesResult.val.message ??
                         Some("Error setting qualities"),
@@ -213,7 +213,7 @@ self.onmessage = async (
             index === currentImageIndex ? orientation : o
         );
 
-        const setOrientationsResult = await setCachedItemSafeAsync(
+        const setOrientationsResult = await setCachedItemAsyncSafe(
             orientationsForageKey,
             clonedOrientations,
         );
@@ -223,7 +223,7 @@ self.onmessage = async (
         );
         if (setOrientationsResult.err) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: setOrientationsResult.val.data,
                     message: setOrientationsResult.val.message ??
                         Some("Error setting orientations"),
@@ -232,7 +232,7 @@ self.onmessage = async (
             return;
         }
 
-        const fileNamesResult = await getCachedItemSafeAsync<
+        const fileNamesResult = await getCachedItemAsyncSafe<
             Array<string>
         >(fileNamesForageKey);
         console.log(
@@ -241,7 +241,7 @@ self.onmessage = async (
         );
         if (fileNamesResult.err) {
             self.postMessage(
-                createResultSafeBox({
+                createSafeBoxResult({
                     data: fileNamesResult.val.data,
                     message: fileNamesResult.val.message ??
                         Some("Error setting file names"),
@@ -250,7 +250,7 @@ self.onmessage = async (
             return;
         }
 
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some({
                 areImagesInvalid,
                 currentImageIndex,
@@ -265,7 +265,7 @@ self.onmessage = async (
             kind: "success",
         }));
     } catch (error) {
-        self.postMessage(createResultSafeBox({
+        self.postMessage(createSafeBoxResult({
             data: Some(error),
             message: Some(
                 error instanceof Error
@@ -280,7 +280,7 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Repair Charts Worker error:", event);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event),
         message: Some(
             event instanceof Error
@@ -295,7 +295,7 @@ self.onerror = (event: string | Event) => {
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createResultSafeBox({
+    self.postMessage(createSafeBoxResult({
         data: Some(event.reason),
         message: Some(
             event.reason instanceof Error

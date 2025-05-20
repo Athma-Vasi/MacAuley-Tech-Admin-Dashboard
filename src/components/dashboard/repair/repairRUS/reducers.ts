@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../../utils";
+import { parseSyncSafe } from "../../../../utils";
 import { RepairSubMetric } from "../types";
 import { RepairRUSAction, repairRUSAction } from "./actions";
 import { setYAxisKeyRepairRUSDispatchZod } from "./schemas";
@@ -23,7 +23,7 @@ function repairRUSReducer_setYAxisKey(
   state: RepairRUSState,
   dispatch: RepairRUSDispatch,
 ): RepairRUSState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setYAxisKeyRepairRUSDispatchZod,
   });

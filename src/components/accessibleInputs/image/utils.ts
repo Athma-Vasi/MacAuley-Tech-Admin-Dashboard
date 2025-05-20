@@ -1,6 +1,6 @@
 import { Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
-import { createResultSafeBox } from "../../../utils";
+import { SafeBoxResult } from "../../../types";
+import { createSafeBoxResult } from "../../../utils";
 import { ModifiedFile } from "../AccessibleFileInput";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
 import { SetFilesInErrorPayload } from "./types";
@@ -86,10 +86,10 @@ function checkImageFileBlobs<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): ResultSafeBox<string> {
+): SafeBoxResult<string> {
     try {
         if (imageFileBlobs.length === 0) {
-            return createResultSafeBox({
+            return createSafeBoxResult({
                 data: Some("No images selected"),
             });
         }
@@ -142,12 +142,12 @@ function checkImageFileBlobs<
             payload: value,
         });
 
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some("Image files validated"),
             kind: "success",
         });
     } catch (error: unknown) {
-        return createResultSafeBox({
+        return createSafeBoxResult({
             data: Some(
                 error instanceof Error ? error.message : "Unknown error",
             ),

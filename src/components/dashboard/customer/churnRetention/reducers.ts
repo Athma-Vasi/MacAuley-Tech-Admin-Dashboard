@@ -1,4 +1,4 @@
-import { parseSafeSync } from "../../../../utils";
+import { parseSyncSafe } from "../../../../utils";
 import { CustomerMetricsChurnRetentionChartsKey } from "../chartsData";
 import { ChurnRetentionAction, churnRetentionAction } from "./actions";
 import { setYAxisKeyChurnRetentionDispatchZod } from "./schemas";
@@ -26,7 +26,7 @@ function churnRetentionReducer_setYAxisKey(
   state: ChurnRetentionState,
   dispatch: ChurnRetentionDispatch,
 ): ChurnRetentionState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setYAxisKeyChurnRetentionDispatchZod,
   });

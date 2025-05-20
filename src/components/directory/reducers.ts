@@ -1,5 +1,5 @@
 import { Orientation } from "react-d3-tree";
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { directoryAction } from "./actions";
 import {
   setDepartmentDirectoryDispatchZod,
@@ -40,7 +40,7 @@ function directoryReducer_setDepartment(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setDepartmentDirectoryDispatchZod,
   });
@@ -60,7 +60,7 @@ function directoryReducer_setDirectoryFetchWorker(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setDirectoryFetchWorkerDirectoryDispatchZod,
   });
@@ -79,7 +79,7 @@ function directoryReducer_setOrientation(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setOrientationDirectoryDispatchZod,
   });
@@ -98,7 +98,7 @@ function directoryReducer_setStoreLocation(
   state: DirectoryState,
   dispatch: DirectoryDispatch,
 ): DirectoryState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setStoreLocationDirectoryDispatchZod,
   });

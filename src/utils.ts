@@ -12,12 +12,7 @@ import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
 import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
-import {
-  DecodedToken,
-  NonNullableObject,
-  ResultSafeBox,
-  ThemeObject,
-} from "./types";
+import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -360,7 +355,7 @@ function urlBuilder({
   return new URL(`${protocol}://${host}:${port}/api/v1/${path}${query}${hash}`);
 }
 
-function createResultSafeBox<Data = unknown>({
+function createSafeBoxResult<Data = unknown>({
   data = None,
   kind = "error",
   message = None,
@@ -368,7 +363,7 @@ function createResultSafeBox<Data = unknown>({
   data?: Option<Data>;
   kind?: "error" | "success";
   message?: Option<string>;
-}): ResultSafeBox<Data> {
+}): SafeBoxResult<Data> {
   if (kind === "success") {
     return new Ok({
       data,
@@ -388,7 +383,7 @@ async function fetchResponseSafe(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<
-  ResultSafeBox<Response>
+  SafeBoxResult<Response>
 > {
   try {
     const response: Response = await fetch(input, init);
@@ -403,7 +398,7 @@ async function fetchResponseSafe(
 
 async function extractJSONFromResponseSafe<Data = unknown>(
   response: Response,
-): Promise<ResultSafeBox<Data>> {
+): Promise<SafeBoxResult<Data>> {
   try {
     const data: Data = await response.json();
     return new Ok({
@@ -417,7 +412,7 @@ async function extractJSONFromResponseSafe<Data = unknown>(
 
 async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
   token: string,
-): Promise<ResultSafeBox<Decoded>> {
+): Promise<SafeBoxResult<Decoded>> {
   try {
     const decoded: Decoded = jwtDecode(token);
     return new Ok({
@@ -429,13 +424,9 @@ async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
   }
 }
 
-type GetCachedItemSafeAsync = <Data = unknown>(
+async function getCachedItemAsyncSafe<Data = unknown>(
   key: string,
-) => Promise<ResultSafeBox<Data>>;
-
-async function getCachedItemSafeAsync<Data = unknown>(
-  key: string,
-): Promise<ResultSafeBox<Data>> {
+): Promise<SafeBoxResult<Data>> {
   try {
     const data: Data = await localforage.getItem(key);
     return new Ok({
@@ -447,15 +438,10 @@ async function getCachedItemSafeAsync<Data = unknown>(
   }
 }
 
-type SetCachedItemSafeAsync = <Data = unknown>(
+async function setCachedItemAsyncSafe<Data = unknown>(
   key: string,
   value: Data,
-) => Promise<ResultSafeBox>;
-
-async function setCachedItemSafeAsync<Data = unknown>(
-  key: string,
-  value: Data,
-): Promise<ResultSafeBox> {
+): Promise<SafeBoxResult> {
   try {
     await localforage.setItem(key, value);
     return new Ok({ data: None, kind: "success" });
@@ -464,13 +450,13 @@ async function setCachedItemSafeAsync<Data = unknown>(
   }
 }
 
-function parseSafeSync<Output = unknown>(
+function parseSyncSafe<Output = unknown>(
   { object, zSchema }: {
     // object: Record<string, unknown> | Array<Record<string, unknown>>;
     object: Output;
     zSchema: z.ZodSchema;
   },
-): ResultSafeBox<Output> {
+): SafeBoxResult<Output> {
   try {
     const arraySchema = z.array(zSchema);
 
@@ -491,12 +477,12 @@ function parseSafeSync<Output = unknown>(
 type ModifyImageSafe = (
   file: Blob,
   config?: ICompressConfig | number,
-) => Promise<ResultSafeBox<Blob>>;
+) => Promise<SafeBoxResult<Blob>>;
 
 async function modifyImageSafe(
   file: Blob,
   config?: ICompressConfig | number,
-): Promise<ResultSafeBox<Blob>> {
+): Promise<SafeBoxResult<Blob>> {
   try {
     const compressedBlob = await compress(file, config);
     return new Ok({
@@ -515,7 +501,7 @@ async function parseServerResponseAsyncSafe(
     zSchema: z.ZodSchema;
     object: Record<string, unknown>;
   },
-): Promise<ResultSafeBox<z.infer<typeof zSchema>>> {
+): Promise<SafeBoxResult<z.infer<typeof zSchema>>> {
   try {
     const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema
@@ -701,28 +687,28 @@ export {
   createDirectoryURLCacheKey,
   createMetricsForageKey,
   createMetricsURLCacheKey,
-  createResultSafeBox,
+  createSafeBoxResult,
   createUsersURLCacheKey,
   debounce,
   decodeJWTSafe,
   extractJSONFromResponseSafe,
   fetchResponseSafe,
   formatDate,
-  getCachedItemSafeAsync,
+  getCachedItemAsyncSafe,
   hexToHSL,
   modifyImageSafe,
-  parseSafeSync,
   parseServerResponseAsyncSafe,
+  parseSyncSafe,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,
   returnSliderMarks,
   returnThemeColors,
   returnTimeToRead,
-  setCachedItemSafeAsync,
+  setCachedItemAsyncSafe,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
   toFixedFloat,
   urlBuilder,
 };
-export type { GetCachedItemSafeAsync, ModifyImageSafe, SetCachedItemSafeAsync };
+export type { ModifyImageSafe };

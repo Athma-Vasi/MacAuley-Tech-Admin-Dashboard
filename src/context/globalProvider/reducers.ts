@@ -15,7 +15,7 @@ import {
   RepairMetricsDocument,
   UserDocument,
 } from "../../types";
-import { parseSafeSync } from "../../utils";
+import { parseSyncSafe } from "../../utils";
 import { type GlobalAction, globalAction } from "./actions";
 import {
   setColorSchemeGlobalDispatchZod,
@@ -145,7 +145,7 @@ function globalReducer_setDirectory(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setDirectoryGlobalDispatchZod,
   });
@@ -164,7 +164,7 @@ function globalReducer_setProductMetricCategory(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setProductMetricCategoryGlobalDispatchZod,
   });
@@ -184,7 +184,7 @@ function globalReducer_setProductSubMetricCategory(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setProductSubMetricCategoryGlobalDispatchZod,
   });
@@ -204,7 +204,7 @@ function globalReducer_setRepairMetricCategory(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setRepairMetricCategoryGlobalDispatchZod,
   });
@@ -224,7 +224,7 @@ function globalReducer_setFinancialMetricCategory(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setFinancialMetricCategoryGlobalDispatchZod,
   });
@@ -244,7 +244,7 @@ function globalReducer_setCustomerMetricsCategory(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCustomerMetricsCategoryGlobalDispatchZod,
   });
@@ -264,7 +264,7 @@ function globalReducer_setFinancialMetricsDocument(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setFinancialMetricsDocumentGlobalDispatchZod,
   });
@@ -284,7 +284,7 @@ function globalReducer_setProductMetricsDocument(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setProductMetricsDocumentGlobalDispatchZod,
   });
@@ -304,7 +304,7 @@ function globalReducer_setCustomerMetricsDocument(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setCustomerMetricsDocumentGlobalDispatchZod,
   });
@@ -324,7 +324,7 @@ function globalReducer_setRepairMetricsDocument(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setRepairMetricsDocumentGlobalDispatchZod,
   });
@@ -344,7 +344,7 @@ function globalReducer_setColorScheme(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setColorSchemeGlobalDispatchZod,
   });
@@ -406,7 +406,7 @@ function globalReducer_setSelectedYYYYMMDD(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setSelectedYYYYMMDDGlobalDispatchZod,
   });
@@ -425,7 +425,7 @@ function globalReducer_setDefaultGradient(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setDefaultGradientGlobalDispatchZod,
   });
@@ -464,7 +464,7 @@ function globalReducer_setPrefersReducedMotion(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPrefersReducedMotionGlobalDispatchZod,
   });
@@ -484,7 +484,7 @@ function globalReducer_setPrimaryColor(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPrimaryColorGlobalDispatchZod,
   });
@@ -507,7 +507,7 @@ function globalReducer_setPrimaryShadeDark(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPrimaryShadeDarkGlobalDispatchZod,
   });
@@ -532,7 +532,7 @@ function globalReducer_setPrimaryShadeLight(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPrimaryShadeLightGlobalDispatchZod,
   });
@@ -557,7 +557,7 @@ function globalReducer_setRespectReducedMotion(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setPrefersReducedMotionGlobalDispatchZod,
   });
@@ -580,7 +580,7 @@ function globalReducer_setIsError(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsErrorGlobalDispatchZod,
   });
@@ -599,7 +599,7 @@ function globalReducer_setIsFetching(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setIsFetchingGlobalDispatchZod,
   });
@@ -716,7 +716,7 @@ function globalReducer_setStoreLocationView(
   state: GlobalState,
   dispatch: GlobalDispatch,
 ): GlobalState {
-  const parsedResult = parseSafeSync({
+  const parsedResult = parseSyncSafe({
     object: dispatch,
     zSchema: setStoreLocationViewGlobalDispatchZod,
   });
