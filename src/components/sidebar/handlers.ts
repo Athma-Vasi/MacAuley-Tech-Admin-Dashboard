@@ -52,9 +52,9 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
       object: input,
       zSchema: handleMessageEventMetricsFetchWorkerToMainInputZod,
     });
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
       return createSafeBoxResult({
-        data: parsedResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
@@ -66,7 +66,7 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
       metricsUrl,
       navigate,
       showBoundary,
-    } = parsedResult.val.data.val;
+    } = parsedResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
@@ -250,9 +250,9 @@ async function handleMetricCategoryNavClick(
     object: input,
     zSchema: handleMetricCategoryNavClickInputZod,
   });
-  if (parsedInputResult.err || parsedInputResult.val.data.none) {
+  if (parsedInputResult.err || parsedInputResult.val.none) {
     return createSafeBoxResult({
-      data: parsedInputResult.val.data ?? Some("Error parsing input"),
+      data: Some("Error parsing input"),
     });
   }
 
@@ -269,7 +269,7 @@ async function handleMetricCategoryNavClick(
     showBoundary,
     storeLocation,
     toLocation,
-  } = parsedInputResult.val.data.val;
+  } = parsedInputResult.val.safeUnwrap();
 
   const requestInit: RequestInit = {
     method: "GET",
@@ -407,13 +407,13 @@ async function handleLogoutClick(input: {
     object: input,
     zSchema: handleLogoutClickInputZod,
   });
-  if (parsedInputResult.err || parsedInputResult.val.data.none) {
+  if (parsedInputResult.err || parsedInputResult.val.none) {
     return createSafeBoxResult({
-      data: parsedInputResult.val.data ?? Some("Error parsing input"),
+      data: Some("Error parsing input"),
     });
   }
   const { accessToken, globalDispatch, logoutFetchWorker, logoutUrl } =
-    parsedInputResult.val.data.val;
+    parsedInputResult.val.safeUnwrap();
 
   try {
     const requestInit: RequestInit = {
@@ -465,9 +465,9 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
       object: input,
       zSchema: handleMessageEventLogoutFetchWorkerToMainInputZod,
     });
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
       return createSafeBoxResult({
-        data: parsedResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
     const {
@@ -476,7 +476,7 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
       isComponentMountedRef,
       navigate,
       showBoundary,
-    } = parsedResult.val.data.val;
+    } = parsedResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
@@ -554,9 +554,9 @@ async function handleDirectoryNavClick(
     object: input,
     zSchema: handleDirectoryNavClickInputZod,
   });
-  if (parsedInputResult.err || parsedInputResult.val.data.none) {
+  if (parsedInputResult.err || parsedInputResult.val.none) {
     return createSafeBoxResult({
-      data: parsedInputResult.val.data ?? Some("Error parsing input"),
+      data: Some("Error parsing input"),
     });
   }
 
@@ -571,7 +571,7 @@ async function handleDirectoryNavClick(
     showBoundary,
     storeLocation,
     toLocation,
-  } = parsedInputResult.val.data.val;
+  } = parsedInputResult.val.safeUnwrap();
 
   const requestInit: RequestInit = {
     method: "GET",
@@ -679,9 +679,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       object: input,
       zSchema: handleMessageEventDirectoryFetchWorkerToMainInputZod,
     });
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
       return createSafeBoxResult({
-        data: parsedResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
@@ -694,7 +694,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       navigate,
       showBoundary,
       toLocation,
-    } = parsedResult.val.data.val;
+    } = parsedResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
