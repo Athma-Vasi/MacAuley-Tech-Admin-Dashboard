@@ -635,16 +635,14 @@ async function handleImageQualityOrientationSliderChange<
                 data: Some("Component is not mounted"),
             });
         }
-        if (modifyImageResult.err || modifyImageResult.val.data.none) {
-            showBoundary(modifyImageResult.val.data);
+        if (modifyImageResult.err || modifyImageResult.val.none) {
+            showBoundary(modifyImageResult.val);
             return createSafeBoxResult({
-                data: modifyImageResult.val.data,
-                message: modifyImageResult.val.message ??
-                    Some("Error modifying image"),
+                data: Some("Error modifying image"),
             });
         }
 
-        const fileBlob = modifyImageResult.val.data.val;
+        const fileBlob = modifyImageResult.val.safeUnwrap();
 
         accessibleImageInputDispatch({
             action: accessibleImageInputAction.setImageFileBlob,

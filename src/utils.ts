@@ -14,6 +14,7 @@ import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
+  HttpServerResponse,
   ResultSafeBox,
   SafeBoxResult,
   ThemeObject,
@@ -431,7 +432,7 @@ function decodeJWTSafe<Decoded extends Record<string, unknown> = DecodedToken>(
 
 async function getCachedItemAsyncSafe<Data = unknown>(
   key: string,
-): Promise<ResultSafeBox<Data>> {
+): Promise<ResultSafeBox<Data, unknown>> {
   try {
     const data: Data = await localforage.getItem(key);
     return new Ok(data === null || data === undefined ? None : Some(data));
@@ -485,33 +486,30 @@ function parseSyncSafe<Output = unknown>(
 type ModifyImageSafe = (
   file: Blob,
   config?: ICompressConfig | number,
-) => Promise<SafeBoxResult<Blob>>;
+) => Promise<ResultSafeBox<Blob>>;
 
 async function modifyImageSafe(
   file: Blob,
   config?: ICompressConfig | number,
-): Promise<SafeBoxResult<Blob>> {
+): Promise<ResultSafeBox<Blob, unknown>> {
   try {
     const compressedBlob = await compress(file, config);
-    return new Ok({
-      data: compressedBlob === null || compressedBlob === undefined
+    return new Ok(
+      compressedBlob === null || compressedBlob === undefined
         ? None
         : Some(compressedBlob),
-    });
+    );
   } catch (error) {
-    return new Err({
-      data: Some(error),
-      message: Some("Error modifying image"),
-    });
+    return new Err(Some(error));
   }
 }
 
-async function parseServerResponseAsyncSafe(
+async function parseServerResponseAsyncSafe<Output = unknown>(
   { object, zSchema }: {
+    object: HttpServerResponse<Output>;
     zSchema: z.ZodSchema;
-    object: Record<string, unknown>;
   },
-): Promise<SafeBoxResult<z.infer<typeof zSchema>>> {
+): Promise<ResultSafeBox<HttpServerResponse<Output>, unknown>> {
   try {
     const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema
@@ -532,18 +530,12 @@ async function parseServerResponseAsyncSafe(
     );
 
     if (parsed.success) {
-      return new Ok({ data: Some(parsed.data) });
+      return new Ok(Some(parsed.data));
     } else {
-      return new Err({
-        data: Some(parsed.error),
-        message: Some("Parsing error"),
-      });
+      return new Err(Some(parsed.error));
     }
   } catch (error: unknown) {
-    return new Err({
-      data: Some(error),
-      message: Some("Error parsing object"),
-    });
+    return new Err(Some(error));
   }
 }
 

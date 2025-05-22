@@ -121,17 +121,16 @@ self.onmessage = async (
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
-        if (parsedResult.err || parsedResult.val.data.none) {
+        if (parsedResult.err || parsedResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: parsedResult.val.data,
-                    message: Some("Error parsing server response"),
+                    data: Some("Error parsing server response"),
                 }),
             );
             return;
         }
 
-        const { accessToken } = parsedResult.val.data.val;
+        const { accessToken } = parsedResult.val.safeUnwrap();
 
         const decodedTokenResult = decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.none) {
@@ -150,7 +149,7 @@ self.onmessage = async (
             data: Some({
                 decodedToken: decodedTokenResult.val.safeUnwrap(),
                 metricsView,
-                parsedServerResponse: parsedResult.val.data.val,
+                parsedServerResponse: parsedResult.val.safeUnwrap(),
                 productMetricCategory,
                 repairMetricCategory,
                 storeLocation,
