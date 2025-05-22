@@ -1,4 +1,9 @@
-import { SetStepInErrorPayload, StatesUS } from "../../types";
+import {
+  SetInputsInErrorPayload,
+  SetStepInErrorPayload,
+  SetStepWithEmptyInputsPayload,
+  StatesUS,
+} from "../../types";
 import { parseSyncSafe } from "../../utils";
 import { registerAction } from "./actions";
 import {
@@ -112,14 +117,11 @@ function registerReducer_setInputsInError(
     zSchema: setInputsInErrorRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  const data = parsedResult.val.data.val.payload;
-  if (data === undefined) {
-    return state;
-  }
+  const data = parsedResult.val.safeUnwrap().payload as SetInputsInErrorPayload;
 
   const { kind, name } = data;
   const inputsInError = new Set(state.inputsInError);
@@ -141,14 +143,12 @@ function registerReducer_setStepsWithEmptyInputs(
     zSchema: setStepsWithEmptyInputsRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  const data = parsedResult.val.data.val.payload;
-  if (data === undefined) {
-    return state;
-  }
+  const data = parsedResult.val.safeUnwrap()
+    .payload as SetStepWithEmptyInputsPayload;
 
   const { kind, step } = data;
   const stepsWithEmptyInputs = new Set(state.stepsWithEmptyInputs);
@@ -170,11 +170,14 @@ function registerReducer_setActiveStep(
     zSchema: setActiveStepRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, activeStep: parsedResult.val.data.val.payload };
+  return {
+    ...state,
+    activeStep: parsedResult.val.safeUnwrap().payload as number,
+  };
 }
 
 function registerReducer_setStepsInError(
@@ -186,11 +189,11 @@ function registerReducer_setStepsInError(
     zSchema: setStepsInErrorRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  const { kind, step } = parsedResult.val.data.val
+  const { kind, step } = parsedResult.val.safeUnwrap()
     .payload as SetStepInErrorPayload;
   const stepsInError = new Set(state.stepsInError);
   if (kind === "add") {
@@ -212,11 +215,11 @@ function registerReducer_setDepartment(
     zSchema: setDepartmentRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, department: parsedResult.val.data.val.payload };
+  return { ...state, department: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setFilesInError(
@@ -228,11 +231,11 @@ function registerReducer_setFilesInError(
     zSchema: setFilesInErrorRegisterRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  const { kind, name } = parsedResult.val.data.val.payload;
+  const { kind, name } = parsedResult.val.safeUnwrap().payload;
   const filesInError = new Map(state.filesInError);
   if (kind === "remove") {
     filesInError.delete(name);
@@ -252,11 +255,11 @@ function registerReducer_setFirstName(
     zSchema: setFirstNameRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, firstName: parsedResult.val.data.val.payload };
+  return { ...state, firstName: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setFormData(
@@ -268,11 +271,11 @@ function registerReducer_setFormData(
     zSchema: setFormDataRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, formData: parsedResult.val.data.val.payload };
+  return { ...state, formData: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setJobPosition(
@@ -284,11 +287,11 @@ function registerReducer_setJobPosition(
     zSchema: setJobPositionRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, jobPosition: parsedResult.val.data.val.payload };
+  return { ...state, jobPosition: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setLastName(
@@ -300,11 +303,11 @@ function registerReducer_setLastName(
     zSchema: setLastNameRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, lastName: parsedResult.val.data.val.payload };
+  return { ...state, lastName: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setProfilePictureUrl(
@@ -316,13 +319,13 @@ function registerReducer_setProfilePictureUrl(
     zSchema: setProfilePictureUrlRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    profilePictureUrl: parsedResult.val.data.val.payload,
+    profilePictureUrl: parsedResult.val.safeUnwrap().payload,
   };
 }
 
@@ -335,11 +338,11 @@ function registerReducer_setStoreLocation(
     zSchema: setStoreLocationRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, storeLocation: parsedResult.val.data.val.payload };
+  return { ...state, storeLocation: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setAddressLine(
@@ -351,11 +354,11 @@ function registerReducer_setAddressLine(
     zSchema: setAddressLineRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, addressLine: parsedResult.val.data.val.payload };
+  return { ...state, addressLine: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setCity(
@@ -367,11 +370,11 @@ function registerReducer_setCity(
     zSchema: setCityRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, city: parsedResult.val.data.val.payload };
+  return { ...state, city: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setCountry(
@@ -383,11 +386,11 @@ function registerReducer_setCountry(
     zSchema: setCountryRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, country: parsedResult.val.data.val.payload };
+  return { ...state, country: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setPostalCodeCanada(
@@ -399,13 +402,13 @@ function registerReducer_setPostalCodeCanada(
     zSchema: setPostalCodeCanadaRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    postalCodeCanada: parsedResult.val.data.val.payload,
+    postalCodeCanada: parsedResult.val.safeUnwrap().payload,
   };
 }
 
@@ -418,11 +421,11 @@ function registerReducer_setPostalCodeUS(
     zSchema: setPostalCodeUSRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, postalCodeUS: parsedResult.val.data.val.payload };
+  return { ...state, postalCodeUS: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setProvince(
@@ -434,11 +437,11 @@ function registerReducer_setProvince(
     zSchema: setProvinceRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, province: parsedResult.val.data.val.payload };
+  return { ...state, province: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setState(
@@ -450,13 +453,13 @@ function registerReducer_setState(
     zSchema: setStateRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    state: parsedResult.val.data.val.payload as StatesUS,
+    state: parsedResult.val.safeUnwrap().payload as StatesUS,
   };
 }
 
@@ -469,11 +472,11 @@ function registerReducer_setConfirmPassword(
     zSchema: setConfirmPasswordRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, confirmPassword: parsedResult.val.data.val.payload };
+  return { ...state, confirmPassword: parsedResult.val.safeUnwrap().payload };
 }
 function registerReducer_setEmail(
   state: RegisterState,
@@ -484,11 +487,11 @@ function registerReducer_setEmail(
     zSchema: setEmailRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, email: parsedResult.val.data.val.payload };
+  return { ...state, email: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setErrorMessage(
@@ -500,11 +503,11 @@ function registerReducer_setErrorMessage(
     zSchema: setErrorMessageRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, errorMessage: parsedResult.val.data.val.payload };
+  return { ...state, errorMessage: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setIsEmailExists(
@@ -516,11 +519,11 @@ function registerReducer_setIsEmailExists(
     zSchema: setIsEmailExistsRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, isEmailExists: parsedResult.val.data.val.payload };
+  return { ...state, isEmailExists: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setIsEmailExistsSubmitting(
@@ -532,13 +535,13 @@ function registerReducer_setIsEmailExistsSubmitting(
     zSchema: setIsEmailExistsSubmittingRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isEmailExistsSubmitting: parsedResult.val.data.val.payload,
+    isEmailExistsSubmitting: parsedResult.val.safeUnwrap().payload,
   };
 }
 
@@ -551,11 +554,11 @@ function registerReducer_setIsError(
     zSchema: setIsErrorRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, isError: parsedResult.val.data.val.payload };
+  return { ...state, isError: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setIsSubmitting(
@@ -567,11 +570,11 @@ function registerReducer_setIsSubmitting(
     zSchema: setIsSubmittingRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, isSubmitting: parsedResult.val.data.val.payload };
+  return { ...state, isSubmitting: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setIsSuccessful(
@@ -583,11 +586,11 @@ function registerReducer_setIsSuccessful(
     zSchema: setIsSuccessfulRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, isSuccessful: parsedResult.val.data.val.payload };
+  return { ...state, isSuccessful: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setIsUsernameExists(
@@ -599,13 +602,13 @@ function registerReducer_setIsUsernameExists(
     zSchema: setIsUsernameExistsRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isUsernameExists: parsedResult.val.data.val.payload,
+    isUsernameExists: parsedResult.val.safeUnwrap().payload,
   };
 }
 
@@ -618,13 +621,13 @@ function registerReducer_setIsUsernameExistsSubmitting(
     zSchema: setIsUsernameExistsSubmittingRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isUsernameExistsSubmitting: parsedResult.val.data.val.payload,
+    isUsernameExistsSubmitting: parsedResult.val.safeUnwrap().payload,
   };
 }
 
@@ -637,11 +640,11 @@ function registerReducer_setPassword(
     zSchema: setPasswordRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, password: parsedResult.val.data.val.payload };
+  return { ...state, password: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setUsername(
@@ -653,11 +656,11 @@ function registerReducer_setUsername(
     zSchema: setUsernameRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, username: parsedResult.val.data.val.payload };
+  return { ...state, username: parsedResult.val.safeUnwrap().payload };
 }
 
 function registerReducer_setCheckUsernameWorker(
@@ -669,13 +672,13 @@ function registerReducer_setCheckUsernameWorker(
     zSchema: setCheckUsernameWorkerRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    checkUsernameWorker: parsedResult.val.data.val.payload,
+    checkUsernameWorker: parsedResult.val.safeUnwrap().payload,
   };
 }
 
@@ -688,13 +691,13 @@ function registerReducer_setCheckEmailWorker(
     zSchema: setCheckEmailWorkerRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    checkEmailWorker: parsedResult.val.data.val.payload,
+    checkEmailWorker: parsedResult.val.safeUnwrap().payload,
   };
 }
 
@@ -707,11 +710,11 @@ function registerReducer_setRegisterWorker(
     zSchema: setRegisterWorkerRegisterDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
-  return { ...state, registerWorker: parsedResult.val.data.val.payload };
+  return { ...state, registerWorker: parsedResult.val.safeUnwrap().payload };
 }
 
 export {

@@ -31,14 +31,14 @@ async function handleCheckEmail(
       object: input,
       zSchema: handleCheckEmailInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
-    const { checkEmailWorker, email, registerDispatch, url } =
-      parsedInputResult.val.data.val;
+    const { checkEmailWorker, email, registerDispatch, url } = parsedInputResult
+      .val.safeUnwrap();
 
     const emailValidations = VALIDATION_FUNCTIONS_TABLE["email"];
     const isEmailValid = emailValidations.every((validation) => {
@@ -106,14 +106,14 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
       object: input,
       zSchema: handleMessageEventCheckEmailWorkerToMainInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
     const { event, isComponentMountedRef, registerDispatch, showBoundary } =
-      parsedInputResult.val.data.val;
+      parsedInputResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
 
@@ -196,14 +196,14 @@ async function handleCheckUsername(
       object: input,
       zSchema: handleCheckUsernameInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
     const { checkUsernameWorker, registerDispatch, url, username } =
-      parsedInputResult.val.data.val;
+      parsedInputResult.val.safeUnwrap();
 
     const usernameValidations = VALIDATION_FUNCTIONS_TABLE["username"];
     const isUsernameValid = usernameValidations.every((validation) => {
@@ -271,14 +271,14 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
       object: input,
       zSchema: handleMessageEventCheckUsernameWorkerToMainInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
     const { event, isComponentMountedRef, registerDispatch, showBoundary } =
-      parsedInputResult.val.data.val;
+      parsedInputResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
 
@@ -360,14 +360,14 @@ async function handleRegisterButtonSubmit(
     object: input,
     zSchema: handleRegisterButtonSubmitInputZod,
   });
-  if (parsedInputResult.err || parsedInputResult.val.data.none) {
+  if (parsedInputResult.err || parsedInputResult.val.none) {
     return createSafeBoxResult({
-      data: parsedInputResult.val.data ?? Some("Error parsing input"),
+      data: Some("Error parsing input"),
     });
   }
 
-  const { formData, registerDispatch, registerWorker, url } =
-    parsedInputResult.val.data.val;
+  const { formData, registerDispatch, registerWorker, url } = parsedInputResult
+    .val.safeUnwrap();
 
   const requestInit: RequestInit = {
     body: formData,
@@ -408,9 +408,9 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
       object: input,
       zSchema: handleMessageEventRegisterFetchWorkerToMainInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
@@ -421,7 +421,7 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
       registerDispatch,
       showBoundary,
       toLocation,
-    } = parsedInputResult.val.data.val;
+    } = parsedInputResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
 
@@ -519,14 +519,14 @@ function handlePrevNextStepClick(
       object: input,
       zSchema: handlePrevNextStepClickInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
     const { activeStep, kind, registerDispatch, registerState } =
-      parsedInputResult.val.data.val;
+      parsedInputResult.val.safeUnwrap();
 
     if (activeStep === MAX_REGISTER_STEPS) {
       return createSafeBoxResult({
