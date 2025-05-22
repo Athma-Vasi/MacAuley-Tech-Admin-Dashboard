@@ -190,9 +190,9 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
           payload,
         );
         if (setCachedItemResult.err) {
-          showBoundary(setCachedItemResult.val.data);
+          showBoundary(setCachedItemResult.val);
           return createSafeBoxResult({
-            data: Some(setCachedItemResult.val.data),
+            data: Some("Error setting cached item"),
           });
         }
       },
@@ -303,42 +303,42 @@ async function handleMetricCategoryNavClick(
       });
     }
     if (metricsDocumentResult.err) {
-      showBoundary(metricsDocumentResult.val.data);
+      showBoundary(metricsDocumentResult.val);
       return createSafeBoxResult({
-        data: metricsDocumentResult.val.data,
-        message: metricsDocumentResult.val.message ??
-          Some("Error fetching response"),
+        data: Some("Error fetching response"),
       });
     }
 
-    if (metricsDocumentResult.val.data.some) {
+    if (metricsDocumentResult.val.some) {
       if (metricsView === "customers") {
         globalDispatch({
           action: globalAction.setCustomerMetricsDocument,
-          payload: metricsDocumentResult.val.data
-            .val as CustomerMetricsDocument,
+          payload: metricsDocumentResult.val
+            .safeUnwrap() as CustomerMetricsDocument,
         });
       }
 
       if (metricsView === "financials") {
         globalDispatch({
           action: globalAction.setFinancialMetricsDocument,
-          payload: metricsDocumentResult.val.data
-            .val as FinancialMetricsDocument,
+          payload: metricsDocumentResult.val
+            .safeUnwrap() as FinancialMetricsDocument,
         });
       }
 
       if (metricsView === "products") {
         globalDispatch({
           action: globalAction.setProductMetricsDocument,
-          payload: metricsDocumentResult.val.data.val as ProductMetricsDocument,
+          payload: metricsDocumentResult.val
+            .safeUnwrap() as ProductMetricsDocument,
         });
       }
 
       if (metricsView === "repairs") {
         globalDispatch({
           action: globalAction.setRepairMetricsDocument,
-          payload: metricsDocumentResult.val.data.val as RepairMetricsDocument,
+          payload: metricsDocumentResult.val
+            .safeUnwrap() as RepairMetricsDocument,
         });
       }
 
@@ -605,18 +605,16 @@ async function handleDirectoryNavClick(
       });
     }
     if (userDocumentsResult.err) {
-      showBoundary(userDocumentsResult.val.data);
+      showBoundary(userDocumentsResult.val);
       return createSafeBoxResult({
-        data: userDocumentsResult.val.data,
-        message: userDocumentsResult.val.message ??
-          Some("Error fetching response"),
+        data: Some("Error fetching response"),
       });
     }
 
-    if (userDocumentsResult.val.data.some) {
+    if (userDocumentsResult.val.some) {
       globalDispatch({
         action: globalAction.setDirectory,
-        payload: userDocumentsResult.val.data.val as UserDocument[],
+        payload: userDocumentsResult.val.safeUnwrap() as UserDocument[],
       });
 
       globalDispatch({
@@ -783,11 +781,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       userDocuments,
     );
     if (setCachedItemResult.err) {
-      showBoundary(setCachedItemResult.val.data);
+      showBoundary(setCachedItemResult.val);
       return createSafeBoxResult({
-        data: setCachedItemResult.val.data,
-        message: setCachedItemResult.val.message ??
-          Some("Error fetching response"),
+        data: Some("Error fetching response"),
       });
     }
 

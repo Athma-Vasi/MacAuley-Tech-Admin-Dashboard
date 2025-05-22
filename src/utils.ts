@@ -431,32 +431,24 @@ function decodeJWTSafe<Decoded extends Record<string, unknown> = DecodedToken>(
 
 async function getCachedItemAsyncSafe<Data = unknown>(
   key: string,
-): Promise<SafeBoxResult<Data>> {
+): Promise<ResultSafeBox<Data>> {
   try {
     const data: Data = await localforage.getItem(key);
-    return new Ok({
-      data: data === null || data === undefined ? None : Some(data),
-    });
+    return new Ok(data === null || data === undefined ? None : Some(data));
   } catch (error: unknown) {
-    return new Err({
-      data: Some(error),
-      message: Some("Error getting cached item"),
-    });
+    return new Err(Some(error));
   }
 }
 
 async function setCachedItemAsyncSafe<Data = unknown>(
   key: string,
   value: Data,
-): Promise<SafeBoxResult> {
+): Promise<ResultSafeBox> {
   try {
     await localforage.setItem(key, value);
-    return new Ok({ data: None });
+    return new Ok(None);
   } catch (error: unknown) {
-    return new Err({
-      data: Some(error),
-      message: Some("Error setting cached item"),
-    });
+    return new Err(Some(error));
   }
 }
 

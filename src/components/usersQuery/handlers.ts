@@ -97,15 +97,14 @@ async function handleUsersQuerySubmitGETClick(
             });
         }
         if (userDocumentsResult.err) {
-            showBoundary(userDocumentsResult.val.message);
+            showBoundary(userDocumentsResult.val);
             return createSafeBoxResult({
-                data: userDocumentsResult.val.data,
-                message: userDocumentsResult.val.message,
+                data: Some("Error getting cached item"),
             });
         }
 
-        if (userDocumentsResult.val.data.some) {
-            const userDocuments = userDocumentsResult.val.data.val;
+        if (userDocumentsResult.val.some) {
+            const userDocuments = userDocumentsResult.val.safeUnwrap();
 
             const sorted = userDocuments.sort((a, b) => {
                 const aValue = a[arrangeByField];
@@ -349,7 +348,7 @@ async function handleUsersQueryOnmessageCallback(
             });
         }
         if (setItemCacheResult.err) {
-            showBoundary(setItemCacheResult.val.data);
+            showBoundary(setItemCacheResult.val);
             return createSafeBoxResult({
                 data: Some("Error setting cached item"),
             });

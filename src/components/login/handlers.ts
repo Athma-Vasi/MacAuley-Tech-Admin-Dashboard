@@ -245,7 +245,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
       });
     }
     if (setCachedItemResult.err) {
-      showBoundary(setCachedItemResult.val.data);
+      showBoundary(setCachedItemResult.val);
       return createSafeBoxResult({
         data: Some("Error setting cached item"),
       });

@@ -74,16 +74,16 @@ async function handleResetImageClick(
             });
         }
         if (originalFilesResult.err) {
-            showBoundary(originalFilesResult.val.data);
+            showBoundary(originalFilesResult.val);
             return createSafeBoxResult({
                 data: Some("Original files not found"),
             });
         }
 
-        if (originalFilesResult.val.data.some) {
-            const originalFiles = originalFilesResult.val.data.none
+        if (originalFilesResult.val.some) {
+            const originalFiles = originalFilesResult.val.none
                 ? []
-                : originalFilesResult.val.data.val;
+                : originalFilesResult.val.safeUnwrap();
             const originalFile = originalFiles[index];
 
             accessibleImageInputDispatch({
@@ -197,16 +197,15 @@ async function handleRemoveImageClick<
             });
         }
         if (modifiedFilesResult.err) {
-            showBoundary(modifiedFilesResult.val.data);
+            showBoundary(modifiedFilesResult.val);
             return createSafeBoxResult({
-                data: modifiedFilesResult.val.data,
-                message: modifiedFilesResult.val.message ?? Some("Not found"),
+                data: Some("Unable to retrieve modified files"),
             });
         }
 
-        const modifiedFiles = modifiedFilesResult.val.data.none
+        const modifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.data.val;
+            : modifiedFilesResult.val.safeUnwrap();
         modifiedFiles?.splice(index, 1);
 
         const setModifiedFilesResult = await setCachedItemAsyncSafe(
@@ -219,11 +218,9 @@ async function handleRemoveImageClick<
             });
         }
         if (setModifiedFilesResult.err) {
-            showBoundary(setModifiedFilesResult.val.data);
+            showBoundary(setModifiedFilesResult.val);
             return createSafeBoxResult({
-                data: setModifiedFilesResult.val.data,
-                message: setModifiedFilesResult.val.message ??
-                    Some("Not found"),
+                data: Some("Unable to set modified files"),
             });
         }
 
@@ -236,17 +233,15 @@ async function handleRemoveImageClick<
             });
         }
         if (originalFilesResult.err) {
-            showBoundary(originalFilesResult.val.data);
+            showBoundary(originalFilesResult.val);
             return createSafeBoxResult({
-                data: originalFilesResult.val.data,
-                message: originalFilesResult.val.message ??
-                    Some("Unable to retrieve original files"),
+                data: Some("Unable to retrieve original files"),
             });
         }
 
-        const originalFiles = originalFilesResult.val.data.none
+        const originalFiles = originalFilesResult.val.none
             ? []
-            : originalFilesResult.val.data.val;
+            : originalFilesResult.val.safeUnwrap();
         originalFiles?.splice(index, 1);
 
         const setOriginalFilesResult = await setCachedItemAsyncSafe(
@@ -259,11 +254,9 @@ async function handleRemoveImageClick<
             });
         }
         if (setOriginalFilesResult.err) {
-            showBoundary(setOriginalFilesResult.val.data);
+            showBoundary(setOriginalFilesResult.val);
             return createSafeBoxResult({
-                data: setOriginalFilesResult.val.data,
-                message: setOriginalFilesResult.val.message ??
-                    Some("Not found"),
+                data: Some("Unable to set original files"),
             });
         }
 
@@ -276,17 +269,15 @@ async function handleRemoveImageClick<
             });
         }
         if (fileNamesResult.err) {
-            showBoundary(fileNamesResult.val.data);
+            showBoundary(fileNamesResult.val);
             return createSafeBoxResult({
-                data: fileNamesResult.val.data,
-                message: fileNamesResult.val.message ??
-                    Some("Unable to retrieve file names"),
+                data: Some("Unable to retrieve file names"),
             });
         }
 
-        const fileNames = fileNamesResult.val.data.none
+        const fileNames = fileNamesResult.val.none
             ? []
-            : fileNamesResult.val.data.val;
+            : fileNamesResult.val.safeUnwrap();
         const existingFileName = fileNames[index];
         fileNames?.splice(index, 1);
 
@@ -300,11 +291,9 @@ async function handleRemoveImageClick<
             });
         }
         if (setFileNamesResult.err) {
-            showBoundary(setFileNamesResult.val.data);
+            showBoundary(setFileNamesResult.val);
             return createSafeBoxResult({
-                data: setFileNamesResult.val.data,
-                message: setFileNamesResult.val.message ??
-                    Some("Not found"),
+                data: Some("Unable to set file names"),
             });
         }
 
@@ -606,17 +595,15 @@ async function handleImageQualityOrientationSliderChange<
         }
         if (originalFilesResult.err) {
             return createSafeBoxResult({
-                data: originalFilesResult.val.data,
-                message: originalFilesResult.val.message ??
-                    Some("Error getting original files"),
+                data: Some("Error getting original files"),
             });
         }
-        if (originalFilesResult.val.data.none) {
+        if (originalFilesResult.val.none) {
             return createSafeBoxResult({
                 data: Some("No original files found"),
             });
         }
-        const originalFiles = originalFilesResult.val.data.val;
+        const originalFiles = originalFilesResult.val.safeUnwrap();
         if (originalFiles.length === 0) {
             return createSafeBoxResult({
                 data: Some("No original files found"),
@@ -677,14 +664,12 @@ async function handleImageQualityOrientationSliderChange<
         }
         if (modifiedFilesResult.err) {
             return createSafeBoxResult({
-                data: modifiedFilesResult.val.data,
-                message: modifiedFilesResult.val.message ??
-                    Some("Error getting modified files"),
+                data: Some("Error getting modified files"),
             });
         }
-        const modifiedFiles = modifiedFilesResult.val.data.none
+        const modifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.data.val;
+            : modifiedFilesResult.val.safeUnwrap();
         const updatedModifiedFiles = modifiedFiles.map(
             (modifiedFile, index) =>
                 index === currentImageIndex ? fileBlob : modifiedFile,
@@ -700,11 +685,9 @@ async function handleImageQualityOrientationSliderChange<
             });
         }
         if (setModifiedFilesResult.err) {
-            showBoundary(setModifiedFilesResult.val.data);
+            showBoundary(setModifiedFilesResult.val);
             return createSafeBoxResult({
-                data: setModifiedFilesResult.val.data,
-                message: setModifiedFilesResult.val.message ??
-                    Some("Error setting modified files"),
+                data: Some("Error setting modified files"),
             });
         }
 
@@ -761,11 +744,9 @@ async function handleImageQualityOrientationSliderChange<
                 });
             }
             if (setQualitiesResult.err) {
-                showBoundary(setQualitiesResult.val.data);
+                showBoundary(setQualitiesResult.val);
                 return createSafeBoxResult({
-                    data: setQualitiesResult.val.data,
-                    message: setQualitiesResult.val.message ??
-                        Some("Error setting qualities"),
+                    data: Some("Error setting qualities"),
                 });
             }
 
@@ -789,11 +770,9 @@ async function handleImageQualityOrientationSliderChange<
                 });
             }
             if (setOrientationsResult.err) {
-                showBoundary(setOrientationsResult.val.data);
+                showBoundary(setOrientationsResult.val);
                 return createSafeBoxResult({
-                    data: setOrientationsResult.val.data,
-                    message: setOrientationsResult.val.message ??
-                        Some("Error setting orientations"),
+                    data: Some("Error setting orientations"),
                 });
             }
 

@@ -74,17 +74,16 @@ async function handleDirectoryDepartmentAndLocationClicks(
             });
         }
         if (userDocumentsResult.err) {
-            showBoundary(userDocumentsResult.val.data);
+            showBoundary(userDocumentsResult.val);
             return createSafeBoxResult({
-                data: userDocumentsResult.val.data,
-                message: userDocumentsResult.val.message,
+                data: Some("Error getting cached data"),
             });
         }
 
-        if (userDocumentsResult.val.data.some) {
+        if (userDocumentsResult.val.some) {
             globalDispatch({
                 action: globalAction.setDirectory,
-                payload: userDocumentsResult.val.data.val as UserDocument[],
+                payload: userDocumentsResult.val.safeUnwrap() as UserDocument[],
             });
 
             globalDispatch({

@@ -103,43 +103,42 @@ async function handleStoreAndCategoryClicks(
             });
         }
         if (metricsDocumentResult.err) {
-            showBoundary(metricsDocumentResult.val.data);
+            showBoundary(metricsDocumentResult.val);
             return createSafeBoxResult({
-                data: metricsDocumentResult.val.data,
-                message: metricsDocumentResult.val.message,
+                data: Some("Error getting cached data"),
             });
         }
 
-        if (metricsDocumentResult.val.data.some) {
+        if (metricsDocumentResult.val.some) {
             if (metricsView === "customers") {
                 globalDispatch({
                     action: globalAction.setCustomerMetricsDocument,
-                    payload: metricsDocumentResult.val.data
-                        .val as CustomerMetricsDocument,
+                    payload: metricsDocumentResult.val
+                        .safeUnwrap() as CustomerMetricsDocument,
                 });
             }
 
             if (metricsView === "financials") {
                 globalDispatch({
                     action: globalAction.setFinancialMetricsDocument,
-                    payload: metricsDocumentResult.val.data
-                        .val as FinancialMetricsDocument,
+                    payload: metricsDocumentResult.val
+                        .safeUnwrap() as FinancialMetricsDocument,
                 });
             }
 
             if (metricsView === "products") {
                 globalDispatch({
                     action: globalAction.setProductMetricsDocument,
-                    payload: metricsDocumentResult.val.data
-                        .val as ProductMetricsDocument,
+                    payload: metricsDocumentResult.val
+                        .safeUnwrap() as ProductMetricsDocument,
                 });
             }
 
             if (metricsView === "repairs") {
                 globalDispatch({
                     action: globalAction.setRepairMetricsDocument,
-                    payload: metricsDocumentResult.val.data
-                        .val as RepairMetricsDocument,
+                    payload: metricsDocumentResult.val
+                        .safeUnwrap() as RepairMetricsDocument,
                 });
             }
 
@@ -339,7 +338,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             payload,
         );
         if (setCachedItemResult.err) {
-            showBoundary(setCachedItemResult.val.data);
+            showBoundary(setCachedItemResult.val);
             return createSafeBoxResult({
                 data: Some("Unable to set cached item"),
             });
