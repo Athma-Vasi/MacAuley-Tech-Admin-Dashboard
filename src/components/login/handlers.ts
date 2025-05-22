@@ -38,9 +38,9 @@ async function handleLoginClick(input: {
       object: input,
       zSchema: handleLoginClickInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
@@ -51,7 +51,7 @@ async function handleLoginClick(input: {
       loginDispatch,
       loginFetchWorker,
       schema,
-    } = parsedInputResult.val.data.val;
+    } = parsedInputResult.val.safeUnwrap();
 
     if (isLoading || isSubmitting || isSuccessful) {
       return createSafeBoxResult({
@@ -117,9 +117,9 @@ async function handleMessageEventLoginFetchWorkerToMain(
       object: input,
       zSchema: handleMessageEventLoginFetchWorkerToMainInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
       return createSafeBoxResult({
-        data: parsedInputResult.val.data ?? Some("Error parsing input"),
+        data: Some("Error parsing input"),
       });
     }
 
@@ -132,7 +132,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
       metricsUrl,
       navigate,
       showBoundary,
-    } = parsedInputResult.val.data.val;
+    } = parsedInputResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
     if (!messageEventResult) {

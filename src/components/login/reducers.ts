@@ -44,13 +44,13 @@ function loginReducer_setErrorMessage(
     },
   );
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    errorMessage: parsedResult.val.data.val.payload,
+    errorMessage: parsedResult.val.safeUnwrap().payload as string,
   };
 }
 
@@ -65,13 +65,13 @@ function loginReducer_setIsLoading(
     },
   );
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isLoading: parsedResult.val.data.val.payload,
+    isLoading: parsedResult.val.safeUnwrap().payload as boolean,
   };
 }
 
@@ -86,13 +86,13 @@ function loginReducer_setIsSubmitting(
     },
   );
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isSubmitting: parsedResult.val.data.val.payload,
+    isSubmitting: parsedResult.val.safeUnwrap().payload as boolean,
   };
 }
 
@@ -107,13 +107,13 @@ function loginReducer_setIsSuccessful(
     },
   );
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isSuccessful: parsedResult.val.data.val.payload,
+    isSuccessful: parsedResult.val.safeUnwrap().payload as boolean,
   };
 }
 
@@ -128,13 +128,13 @@ function loginReducer_setLoginFetchWorker(
     },
   );
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    loginFetchWorker: parsedResult.val.data.val.payload,
+    loginFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
   };
 }
 
@@ -149,13 +149,13 @@ function loginReducer_setPassword(
     },
   );
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    password: parsedResult.val.data.val.payload,
+    password: parsedResult.val.safeUnwrap().payload as string,
   };
 }
 
@@ -170,13 +170,13 @@ function loginReducer_setUsername(
     },
   );
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    username: parsedResult.val.data.val.payload,
+    username: parsedResult.val.safeUnwrap().payload as string,
   };
 }
 
