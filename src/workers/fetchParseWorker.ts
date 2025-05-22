@@ -1,4 +1,5 @@
 import { None, Ok, Some } from "ts-results";
+import { z } from "zod";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
 import {
     DecodedToken,
@@ -12,6 +13,7 @@ import {
     extractJSONFromResponseSafe,
     fetchResponseSafe,
     parseServerResponseAsyncSafe,
+    parseSyncSafe,
 } from "../utils";
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
@@ -44,6 +46,23 @@ self.onmessage = async (
         return;
     }
 
+    const parsedMessageResult = parseSyncSafe({
+        object: event.data,
+        zSchema: z.object({
+            requestInit: z.any(),
+            routesZodSchemaMapKey: z.string(),
+            skipTokenDecode: z.boolean().optional(),
+            url: z.string(),
+        }),
+    });
+    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+        self.postMessage(createSafeBoxResult({
+            data: parsedMessageResult.val.data,
+            message: parsedMessageResult.val.message,
+        }));
+        return;
+    }
+
     console.log(
         "Worker received message in self:",
         JSON.stringify(event.data, null, 2),
@@ -54,7 +73,8 @@ self.onmessage = async (
         routesZodSchemaMapKey,
         skipTokenDecode,
         url,
-    } = event.data;
+    } = parsedMessageResult.val.data.val;
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
@@ -63,10 +83,10 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err || responseResult.val.data.none) {
+        if (responseResult.err || responseResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: responseResult.val.data,
+                    data: responseResult.val,
                     message: Some("Error fetching data"),
                 }),
             );
@@ -75,7 +95,7 @@ self.onmessage = async (
 
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
-        >(responseResult.val.data.val);
+        >(responseResult.val.safeUnwrap());
         if (jsonResult.err || jsonResult.val.data.none) {
             self.postMessage(
                 createSafeBoxResult({

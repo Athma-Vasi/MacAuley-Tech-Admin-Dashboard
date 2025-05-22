@@ -55,18 +55,14 @@ function ErrorFallback({
             kind: "previous",
             label: <Text color={redColorShade}>Enter</Text>,
             leftIcon: <TbPillFilled color={redColorShade} />,
-            onClick: () => {
-              navigateFn("/");
-            },
+            onClick: () => navigateFn("/"),
           }}
         />
       </Group>
     </Tooltip>
   );
 
-  const errorUnwrapped = error.none
-    ? "Follow the white rabbit."
-    : error.safeUnwrap();
+  const errorUnwrapped = error.none ? "Follow the white rabbit." : error.val;
   const errorMessage = typeof errorUnwrapped === "string"
     ? errorUnwrapped
     : errorUnwrapped instanceof InvalidTokenError
@@ -76,19 +72,18 @@ function ErrorFallback({
     : "You've seen it before. Déjà vu. Something's off.";
 
   const errorCard = (
-    <Card shadow="sm" radius="md" withBorder>
+    <Card shadow="sm" radius="md" withBorder className="error-card">
       <Image
         src={matrixGif}
         alt="Glitch in the matrix"
-        height={320}
-        width={320}
+        className="error-image"
         fit="cover"
         radius="md"
       />
 
       <Stack w="100%">
-        <Text size="xl" weight={500} mt="md">
-          Simulation error
+        <Text size="xl" weight={500} mt="md" align="center">
+          Simulation desynchronized
         </Text>
 
         <Text size="sm" color="dimmed">

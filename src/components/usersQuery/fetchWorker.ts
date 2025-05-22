@@ -86,11 +86,11 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err || responseResult.val.data.none) {
+        if (responseResult.err || responseResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: responseResult.val.data,
-                    message: responseResult.val.message,
+                    data: responseResult.val,
+                    message: Some("Error fetching response"),
                 }),
             );
             return;
@@ -98,7 +98,7 @@ self.onmessage = async (
 
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
-        >(responseResult.val.data.val);
+        >(responseResult.val.safeUnwrap());
         if (jsonResult.err || jsonResult.val.data.none) {
             self.postMessage(
                 createSafeBoxResult({

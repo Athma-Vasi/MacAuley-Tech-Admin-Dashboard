@@ -393,18 +393,15 @@ async function fetchResponseSafe(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<
-  SafeBoxResult<Response>
+  ResultSafeBox<Response>
 > {
   try {
     const response: Response = await fetch(input, init);
-    return new Ok({
-      data: response === null || response === undefined ? None : Some(response),
-    });
+    return new Ok(
+      response === null || response === undefined ? None : Some(response),
+    );
   } catch (error: unknown) {
-    return new Err({
-      data: Some(error),
-      message: Some("Error fetching response"),
-    });
+    return new Err(Some(error));
   }
 }
 

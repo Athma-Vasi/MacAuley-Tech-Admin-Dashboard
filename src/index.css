@@ -37,7 +37,7 @@
 
   --min-card-width: calc(343px - var(--padding));
   --ideal-card-width: calc(100% - var(--padding));
-  --max-card-width: calc(350px - var(--padding));
+  --max-card-width: calc(400px - var(--padding));
   --card-width: clamp(
     var(--min-card-width),
     var(--ideal-card-width),
@@ -95,12 +95,20 @@
   width: var(--input-width);
 }
 
+.burger {
+  display: none;
+}
+
 .directory-card {
   width: var(--directory-card-width);
 }
 
-.burger {
-  display: none;
+.error-card {
+  width: var(--card-width);
+
+  .error-image {
+    width: calc(100% - var(--padding-x2));
+  }
 }
 
 .login-container {
