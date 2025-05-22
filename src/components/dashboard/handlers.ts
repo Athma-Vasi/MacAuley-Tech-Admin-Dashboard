@@ -52,9 +52,9 @@ async function handleStoreAndCategoryClicks(
             object: input,
             zSchema: handleStoreAndCategoryClicksInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -70,7 +70,7 @@ async function handleStoreAndCategoryClicks(
             repairMetricCategory,
             showBoundary,
             storeLocation,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         const requestInit: RequestInit = {
             method: "GET",
@@ -209,9 +209,9 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             zSchema:
                 handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -224,7 +224,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             metricsUrl,
             navigateFn,
             showBoundary,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({

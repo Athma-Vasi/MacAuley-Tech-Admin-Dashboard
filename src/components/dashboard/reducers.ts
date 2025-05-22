@@ -43,13 +43,13 @@ function dashboardReducer_setIsLoading(
     zSchema: setIsLoadingDashboardDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isLoading: parsedResult.val.data.val.payload as boolean,
+    isLoading: parsedResult.val.safeUnwrap().payload as boolean,
   };
 }
 
@@ -62,13 +62,13 @@ function dashboardReducer_setLoadingMessage(
     zSchema: setLoadingMessageDashboardDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    loadingMessage: parsedResult.val.data.val.payload as string,
+    loadingMessage: parsedResult.val.safeUnwrap().payload as string,
   };
 }
 
@@ -81,13 +81,13 @@ function dashboardReducer_setCalendarView(
     zSchema: setCalendarViewDashboardDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    calendarView: parsedResult.val.data.val
+    calendarView: parsedResult.val.safeUnwrap()
       .payload as DashboardCalendarView,
   };
 }
@@ -101,13 +101,13 @@ function dashboardReducer_setDashboardFetchWorker(
     zSchema: setDashboardFetchWorkerDashboardDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    dashboardFetchWorker: parsedResult.val.data.val.payload as Worker,
+    dashboardFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
   };
 }
 

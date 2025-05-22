@@ -62,10 +62,9 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventDashboardFetchMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+    if (parsedMessageResult.err || parsedMessageResult.val.none) {
         self.postMessage(createSafeBoxResult({
-            data: parsedMessageResult.val.data,
-            message: Some("Error parsing message"),
+            data: Some("Error parsing message"),
         }));
         return;
     }
@@ -78,7 +77,7 @@ self.onmessage = async (
         routesZodSchemaMapKey,
         storeLocation,
         url,
-    } = parsedMessageResult.val.data.val;
+    } = parsedMessageResult.val.safeUnwrap();
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
