@@ -8,8 +8,6 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { InvalidTokenError } from "jwt-decode";
-import { LuRabbit } from "react-icons/lu";
-import { TbPillFilled } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { Option } from "ts-results";
 import { COLORS_SWATCHES } from "../../constants";
@@ -39,7 +37,6 @@ function ErrorFallback({
           attributes={{
             kind: "reset",
             label: "Reload",
-            leftIcon: <LuRabbit />,
             onClick: () => resetErrorBoundary(),
           }}
         />
@@ -53,8 +50,7 @@ function ErrorFallback({
         <AccessibleButton
           attributes={{
             kind: "previous",
-            label: <Text color={redColorShade}>Enter</Text>,
-            leftIcon: <TbPillFilled color={redColorShade} />,
+            label: "Enter",
             onClick: () => navigateFn("/"),
           }}
         />

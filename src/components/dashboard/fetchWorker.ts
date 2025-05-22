@@ -101,10 +101,10 @@ self.onmessage = async (
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
         >(responseResult.val.safeUnwrap());
-        if (jsonResult.err || jsonResult.val.data.none) {
+        if (jsonResult.err || jsonResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: jsonResult.val.data,
+                    data: jsonResult.val,
                     message: Some("Error extracting JSON from response"),
                 }),
             );
@@ -113,11 +113,11 @@ self.onmessage = async (
 
         console.log(
             "jsonResult in dashboard fetch worker",
-            jsonResult.val.data.val,
+            jsonResult.val.safeUnwrap(),
         );
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: jsonResult.val.data.val,
+            object: jsonResult.val.safeUnwrap(),
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 

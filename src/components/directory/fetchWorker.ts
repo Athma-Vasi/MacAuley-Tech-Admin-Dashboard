@@ -82,10 +82,10 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err || responseResult.val.data.none) {
+        if (responseResult.err || responseResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: responseResult.val.data,
+                    data: responseResult.val,
                     message: Some("Error fetching data"),
                 }),
             );
@@ -94,11 +94,11 @@ self.onmessage = async (
 
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
-        >(responseResult.val.data.val);
-        if (jsonResult.err || jsonResult.val.data.none) {
+        >(responseResult.val.safeUnwrap());
+        if (jsonResult.err || jsonResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: jsonResult.val.data,
+                    data: jsonResult.val,
                     message: Some("Error extracting JSON from response"),
                 }),
             );
@@ -106,7 +106,7 @@ self.onmessage = async (
         }
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: jsonResult.val.data.val,
+            object: jsonResult.val.safeUnwrap(),
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
@@ -122,11 +122,11 @@ self.onmessage = async (
 
         const { accessToken } = parsedResult.val.data.val;
 
-        const decodedTokenResult = await decodeJWTSafe(accessToken);
-        if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
+        const decodedTokenResult = decodeJWTSafe(accessToken);
+        if (decodedTokenResult.err || decodedTokenResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: decodedTokenResult.val.data,
+                    data: decodedTokenResult.val,
                     message: Some("Error decoding JWT"),
                 }),
             );
@@ -135,7 +135,7 @@ self.onmessage = async (
 
         self.postMessage(createSafeBoxResult({
             data: Some({
-                decodedToken: decodedTokenResult.val.data.val,
+                decodedToken: decodedTokenResult.val.safeUnwrap(),
                 department,
                 parsedServerResponse: parsedResult.val.data.val,
                 storeLocation,

@@ -407,17 +407,12 @@ async function fetchResponseSafe(
 
 async function extractJSONFromResponseSafe<Data = unknown>(
   response: Response,
-): Promise<SafeBoxResult<Data>> {
+): Promise<ResultSafeBox<Data>> {
   try {
     const data: Data = await response.json();
-    return new Ok({
-      data: data === null || data === undefined ? None : Some(data),
-    });
+    return new Ok(data === null || data === undefined ? None : Some(data));
   } catch (error: unknown) {
-    return new Err({
-      data: Some(error),
-      message: Some("Error extracting JSON from response"),
-    });
+    return new Err(Some(error));
   }
 }
 

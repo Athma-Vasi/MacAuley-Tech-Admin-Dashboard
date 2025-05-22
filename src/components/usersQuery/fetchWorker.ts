@@ -99,18 +99,18 @@ self.onmessage = async (
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
         >(responseResult.val.safeUnwrap());
-        if (jsonResult.err || jsonResult.val.data.none) {
+        if (jsonResult.err || jsonResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: jsonResult.val.data,
-                    message: jsonResult.val.message,
+                    data: jsonResult.val,
+                    message: Some("Error extracting JSON from response"),
                 }),
             );
             return;
         }
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: jsonResult.val.data.val,
+            object: jsonResult.val.safeUnwrap(),
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 

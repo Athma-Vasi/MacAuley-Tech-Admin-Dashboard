@@ -96,25 +96,25 @@ self.onmessage = async (
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
         >(responseResult.val.safeUnwrap());
-        if (jsonResult.err || jsonResult.val.data.none) {
+        if (jsonResult.err || jsonResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: jsonResult.val.data,
+                    data: jsonResult.val,
                     message: Some("Error extracting JSON from response"),
                 }),
             );
             return;
         }
 
-        if (jsonResult.val.data.val.message === "Invalid credentials") {
-            self.postMessage(
-                new Ok({ data: None, kind: "success" }),
-            );
-            return;
-        }
+        // if (jsonResult.val.message === "Invalid credentials") {
+        //     self.postMessage(
+        //         new Ok({ data: None, kind: "success" }),
+        //     );
+        //     return;
+        // }
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: jsonResult.val.data.val,
+            object: jsonResult.val.safeUnwrap(),
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
