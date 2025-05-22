@@ -52,10 +52,9 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventRepairMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+    if (parsedMessageResult.err || parsedMessageResult.val.none) {
         self.postMessage(createSafeBoxResult({
-            data: parsedMessageResult.val.data,
-            message: Some("Error parsing message"),
+            data: Some("Error parsing message"),
         }));
         return;
     }
@@ -70,7 +69,7 @@ self.onmessage = async (
         selectedMonth,
         selectedYear,
         selectedYYYYMMDD,
-    } = parsedMessageResult.val.data.val;
+    } = parsedMessageResult.val.safeUnwrap();
 
     try {
         const selectedDateRepairMetricsSafeResult =
