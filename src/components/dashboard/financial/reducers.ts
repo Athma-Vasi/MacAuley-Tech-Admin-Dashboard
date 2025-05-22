@@ -53,13 +53,13 @@ function financialMetricsReducer_setCalendarChartsData(
     zSchema: setCalendarChartsFinancialMetricsDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    calendarChartsData: parsedResult.val.data.val.payload as {
+    calendarChartsData: parsedResult.val.safeUnwrap().payload as {
       currentYear: FinancialMetricsCalendarCharts;
       previousYear: FinancialMetricsCalendarCharts;
     },
@@ -89,13 +89,13 @@ function financialMetricsReducer_setCharts(
     zSchema: setChartsFinancialMetricsDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    charts: parsedResult.val.data.val.payload as FinancialMetricsCharts,
+    charts: parsedResult.val.safeUnwrap().payload as FinancialMetricsCharts,
   };
 }
 
@@ -108,13 +108,13 @@ function financialMetricsReducer_setFinancialChartsWorker(
     zSchema: setChartsWorkerFinancialMetricsDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    financialChartsWorker: parsedResult.val.data.val.payload as Worker,
+    financialChartsWorker: parsedResult.val.safeUnwrap().payload as Worker,
   };
 }
 
@@ -127,13 +127,13 @@ function financialMetricsReducer_setIsGenerating(
     zSchema: setIsGeneratingFinancialMetricsDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    isGenerating: parsedResult.val.data.val.payload as boolean,
+    isGenerating: parsedResult.val.safeUnwrap().payload as boolean,
   };
 }
 
