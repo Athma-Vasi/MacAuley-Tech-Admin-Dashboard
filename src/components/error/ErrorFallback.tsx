@@ -8,17 +8,29 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { InvalidTokenError } from "jwt-decode";
+import { LuRabbit } from "react-icons/lu";
+import { TbPillFilled } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import { Option } from "ts-results";
+import { COLORS_SWATCHES } from "../../constants";
+import { useGlobalState } from "../../hooks";
+import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
+import matrixGif from "./matrix.gif";
 
 function ErrorFallback({
   error,
   resetErrorBoundary,
 }: {
-  error: any;
+  error: Option<unknown>;
   resetErrorBoundary: () => void;
 }) {
   const navigateFn = useNavigate();
+  const { globalState: { themeObject } } = useGlobalState();
+  const { redColorShade } = returnThemeColors({
+    colorsSwatches: COLORS_SWATCHES,
+    themeObject,
+  });
 
   const tryAgainButtonWithTooltip = (
     <Tooltip label="Will try the action again">
@@ -26,7 +38,8 @@ function ErrorFallback({
         <AccessibleButton
           attributes={{
             kind: "reset",
-            label: "Try again",
+            label: "Reload",
+            leftIcon: <LuRabbit />,
             onClick: () => resetErrorBoundary(),
           }}
         />
@@ -35,12 +48,13 @@ function ErrorFallback({
   );
 
   const goHomeButtonWithTooltip = (
-    <Tooltip label="Will take you to the home page">
+    <Tooltip label="Will take you to login">
       <Group>
         <AccessibleButton
           attributes={{
             kind: "previous",
-            label: "Login",
+            label: <Text color={redColorShade}>Enter</Text>,
+            leftIcon: <TbPillFilled color={redColorShade} />,
             onClick: () => {
               navigateFn("/");
             },
@@ -50,33 +64,37 @@ function ErrorFallback({
     </Tooltip>
   );
 
-  const errorMessage = error instanceof InvalidTokenError
+  const errorUnwrapped = error.none
+    ? "Follow the white rabbit."
+    : error.safeUnwrap();
+  const errorMessage = typeof errorUnwrapped === "string"
+    ? errorUnwrapped
+    : errorUnwrapped instanceof InvalidTokenError
     ? "Invalid token. Please login again!"
-    : !error.response
-    ? "Network error. Please try again!"
-    : error?.message ?? "Unknown error occurred. Please try again!";
+    : errorUnwrapped instanceof Error
+    ? errorUnwrapped.message
+    : "You've seen it before. Déjà vu. Something's off.";
 
   const errorCard = (
     <Card shadow="sm" radius="md" withBorder>
       <Image
-        src="https://images.pexels.com/photos/2882552/pexels-photo-2882552.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        alt="Picture of a guinea pig with a thought"
+        src={matrixGif}
+        alt="Glitch in the matrix"
         height={320}
         width={320}
         fit="cover"
         radius="md"
       />
 
-      <Stack>
-        <Text size="lg" weight={500} mt="md">
-          Oops! Something went wrong.
+      <Stack w="100%">
+        <Text size="xl" weight={500} mt="md">
+          Simulation error
         </Text>
+
         <Text size="sm" color="dimmed">
-          If the problem persists, contact support.
+          {errorMessage}
         </Text>
-        <Text size="sm" color="dimmed">
-          Error details: {errorMessage}
-        </Text>
+
         <Group w="100%" position="apart">
           {goHomeButtonWithTooltip}
           {tryAgainButtonWithTooltip}
