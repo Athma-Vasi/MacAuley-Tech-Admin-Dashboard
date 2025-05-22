@@ -41,15 +41,14 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventRetrieveImagesMainToWorkerInputZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+    if (parsedMessageResult.err || parsedMessageResult.val.none) {
         self.postMessage(createSafeBoxResult({
-            data: parsedMessageResult.val.data,
-            message: Some("Error parsing message"),
+            data: Some("Error parsing message"),
         }));
         return;
     }
 
-    const { storageKey } = parsedMessageResult.val.data.val;
+    const { storageKey } = parsedMessageResult.val.safeUnwrap();
 
     const {
         fileNamesForageKey,
@@ -69,15 +68,14 @@ self.onmessage = async (
         if (modifiedFilesResult.err) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: modifiedFilesResult.val.data,
-                    message: Some("Error getting modified files"),
+                    data: Some("Error getting modified files"),
                 }),
             );
             return;
         }
-        const modifiedFiles = modifiedFilesResult.val.data.none
+        const modifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.data.val;
+            : modifiedFilesResult.val.safeUnwrap();
 
         const fileNamesResult = await getCachedItemAsyncSafe<Array<string>>(
             fileNamesForageKey,
@@ -85,15 +83,14 @@ self.onmessage = async (
         if (fileNamesResult.err) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: fileNamesResult.val.data,
-                    message: Some("Error setting file names"),
+                    data: Some("Error setting file names"),
                 }),
             );
             return;
         }
-        const fileNames = fileNamesResult.val.data.none
+        const fileNames = fileNamesResult.val.none
             ? []
-            : fileNamesResult.val.data.val;
+            : fileNamesResult.val.safeUnwrap();
 
         const getQualitiesResult = await getCachedItemAsyncSafe<Array<number>>(
             qualitiesForageKey,
@@ -101,18 +98,17 @@ self.onmessage = async (
         if (getQualitiesResult.err) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: getQualitiesResult.val.data,
-                    message: Some("Error getting qualities"),
+                    data: Some("Error getting qualities"),
                 }),
             );
             return;
         }
-        const qualities = getQualitiesResult.val.data.none
+        const qualities = getQualitiesResult.val.none
             ? Array.from(
                 { length: MAX_IMAGES },
                 () => 10,
             )
-            : getQualitiesResult.val.data.val;
+            : getQualitiesResult.val.safeUnwrap();
 
         const getOrientationsResult = await getCachedItemAsyncSafe<
             Array<number>
@@ -122,18 +118,17 @@ self.onmessage = async (
         if (getOrientationsResult.err) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: getOrientationsResult.val.data,
-                    message: Some("Error getting orientations"),
+                    data: Some("Error getting orientations"),
                 }),
             );
             return;
         }
-        const orientations = getOrientationsResult.val.data.none
+        const orientations = getOrientationsResult.val.none
             ? Array.from(
                 { length: MAX_IMAGES },
                 () => 1,
             )
-            : getOrientationsResult.val.data.val;
+            : getOrientationsResult.val.safeUnwrap();
 
         self.postMessage(createSafeBoxResult({
             data: Some({

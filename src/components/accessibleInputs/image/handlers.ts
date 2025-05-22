@@ -39,9 +39,9 @@ async function handleResetImageClick(
             object: input,
             zSchema: handleResetImageClickInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -51,7 +51,7 @@ async function handleResetImageClick(
             isComponentMountedRef,
             showBoundary,
             storageKey,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
@@ -157,9 +157,9 @@ async function handleRemoveImageClick<
             object: input,
             zSchema: handleRemoveImageClickInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -172,7 +172,7 @@ async function handleRemoveImageClick<
             showBoundary,
             storageKey,
             validValueAction,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
@@ -374,9 +374,9 @@ async function handleMessageEventModifyImagesWorkerToMain<
             object: input,
             zSchema: handleMessageEventModifyImagesWorkerToMainInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -389,7 +389,7 @@ async function handleMessageEventModifyImagesWorkerToMain<
             showBoundary,
             storageKey,
             validValueAction,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
@@ -547,9 +547,9 @@ async function handleImageQualityOrientationSliderChange<
             object: input,
             zSchema: handleImageQualityOrientationSliderChangeInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -568,7 +568,7 @@ async function handleImageQualityOrientationSliderChange<
             qualityValue,
             storageKey,
             validValueAction,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
@@ -826,9 +826,9 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             object: input,
             zSchema: handleMessageEventRetrieveImagesWorkerToMainInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -837,7 +837,7 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             accessibleImageInputDispatch,
             isComponentMountedRef,
             showBoundary,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
