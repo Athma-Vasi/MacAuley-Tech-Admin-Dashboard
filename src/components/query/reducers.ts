@@ -20,12 +20,14 @@ import {
     setSortFieldDispatchZod,
 } from "./schemas";
 import type {
+    GeneralSearchCase,
     LimitPerPage,
     LogicalOperator,
     ModifyQueryChainPayload,
     QueryChain,
     QueryChainKind,
     QueryKind,
+    QueryOperator,
     QueryState,
     SortDirection,
 } from "./types";
@@ -78,11 +80,11 @@ function queryReducer_resetToInitial(
         zSchema: resetToInitialDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
-    return parsedResult.val.data.val.payload;
+    return parsedResult.val.safeUnwrap().payload as QueryState;
 }
 
 function queryReducer_setProjectionFields(
@@ -94,13 +96,13 @@ function queryReducer_setProjectionFields(
         zSchema: setProjectionFieldsDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        projectionFields: parsedResult.val.data.val.payload,
+        projectionFields: parsedResult.val.safeUnwrap().payload as string[],
     };
 }
 
@@ -113,7 +115,7 @@ function queryReducer_modifyQueryChains(
         zSchema: modifyQueryChainsDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
@@ -123,7 +125,7 @@ function queryReducer_modifyQueryChains(
         queryChainActions,
         queryLink,
         queryChainKind,
-    } = parsedResult.val.data.val.payload as ModifyQueryChainPayload;
+    } = parsedResult.val.safeUnwrap().payload as ModifyQueryChainPayload;
     const [field, comparisonOperator, value] = queryLink;
     const queryChains = structuredClone(state.queryChains);
 
@@ -279,13 +281,13 @@ function queryReducer_setFilterField(
         zSchema: setFilterFieldDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        filterField: parsedResult.val.data.val.payload,
+        filterField: parsedResult.val.safeUnwrap().payload as string,
     };
 }
 
@@ -298,13 +300,14 @@ function queryReducer_setFilterComparisonOperator(
         zSchema: setFilterComparisonOperatorDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        filterComparisonOperator: parsedResult.val.data.val.payload,
+        filterComparisonOperator: parsedResult.val.safeUnwrap()
+            .payload as QueryOperator,
     };
 }
 
@@ -317,13 +320,14 @@ function queryReducer_setFilterLogicalOperator(
         zSchema: setFilterLogicalOperatorDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        filterLogicalOperator: parsedResult.val.data.val.payload,
+        filterLogicalOperator: parsedResult.val.safeUnwrap()
+            .payload as LogicalOperator,
     };
 }
 
@@ -336,13 +340,13 @@ function queryReducer_setFilterValue(
         zSchema: setFilterValueDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        filterValue: parsedResult.val.data.val.payload,
+        filterValue: parsedResult.val.safeUnwrap().payload as string,
     };
 }
 
@@ -355,13 +359,14 @@ function queryReducer_setGeneralSearchCase(
         zSchema: setGeneralSearchCaseDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        generalSearchCase: parsedResult.val.data.val.payload,
+        generalSearchCase: parsedResult.val.safeUnwrap()
+            .payload as GeneralSearchCase,
     };
 }
 
@@ -374,13 +379,14 @@ function queryReducer_setGeneralSearchExclusionValue(
         zSchema: setGeneralSearchExclusionValueDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        generalSearchExclusionValue: parsedResult.val.data.val.payload,
+        generalSearchExclusionValue: parsedResult.val.safeUnwrap()
+            .payload as string,
     };
 }
 
@@ -393,13 +399,14 @@ function queryReducer_setGeneralSearchInclusionValue(
         zSchema: setGeneralSearchInclusionValueDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        generalSearchInclusionValue: parsedResult.val.data.val.payload,
+        generalSearchInclusionValue: parsedResult.val.safeUnwrap()
+            .payload as string,
     };
 }
 
@@ -412,11 +419,14 @@ function queryReducer_setIsError(
         zSchema: setIsErrorDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
-    return { ...state, isError: parsedResult.val.data.val.payload };
+    return {
+        ...state,
+        isError: parsedResult.val.safeUnwrap().payload as boolean,
+    };
 }
 
 function queryReducer_setIsSearchDisabled(
@@ -428,13 +438,13 @@ function queryReducer_setIsSearchDisabled(
         zSchema: setIsSearchDisabledDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        isSearchDisabled: parsedResult.val.data.val.payload,
+        isSearchDisabled: parsedResult.val.safeUnwrap().payload as boolean,
     };
 }
 
@@ -447,13 +457,13 @@ function queryReducer_setLimitPerPage(
         zSchema: setLimitPerPageDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        limitPerPage: parsedResult.val.data.val.payload as LimitPerPage,
+        limitPerPage: parsedResult.val.safeUnwrap().payload as LimitPerPage,
     };
 }
 
@@ -466,13 +476,13 @@ function queryReducer_setSortDirection(
         zSchema: setSortDirectionDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        sortDirection: parsedResult.val.data.val.payload as SortDirection,
+        sortDirection: parsedResult.val.safeUnwrap().payload as SortDirection,
     };
 }
 
@@ -485,13 +495,13 @@ function queryReducer_setSortField(
         zSchema: setSortFieldDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        sortField: parsedResult.val.data.val.payload as string,
+        sortField: parsedResult.val.safeUnwrap().payload as string,
     };
 }
 
@@ -504,13 +514,13 @@ function queryReducer_setQueryKind(
         zSchema: setQueryKindDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        queryKind: parsedResult.val.data.val.payload as QueryKind,
+        queryKind: parsedResult.val.safeUnwrap().payload as QueryKind,
     };
 }
 
