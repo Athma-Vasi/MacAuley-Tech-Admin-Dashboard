@@ -40,9 +40,9 @@ async function handleUsersQuerySubmitGETClick(
         object: input,
         zSchema: handleUsersQuerySubmitGETClickInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.data.none) {
+    if (parsedInputResult.err || parsedInputResult.val.none) {
         return createSafeBoxResult({
-            data: parsedInputResult.val.data ?? Some("Error parsing input"),
+            data: Some("Error parsing input"),
         });
     }
 
@@ -59,7 +59,7 @@ async function handleUsersQuerySubmitGETClick(
         url,
         usersFetchWorker,
         usersQueryDispatch,
-    } = parsedInputResult.val.data.val;
+    } = parsedInputResult.val.safeUnwrap();
 
     const requestInit: RequestInit = {
         method: "GET",
@@ -200,10 +200,9 @@ async function handleUsersQueryOnmessageCallback(
             object: input,
             zSchema: handleUsersQueryOnmessageCallbackInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data,
-                message: parsedInputResult.val.message,
+                data: Some("Error parsing input"),
             });
         }
 
@@ -217,7 +216,7 @@ async function handleUsersQueryOnmessageCallback(
             showBoundary,
             url,
             usersQueryDispatch,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         const messageEventResult = event.data;
         if (!messageEventResult) {

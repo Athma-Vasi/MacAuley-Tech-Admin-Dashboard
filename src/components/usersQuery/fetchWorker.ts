@@ -60,10 +60,9 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventUsersFetchMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
+    if (parsedMessageResult.err || parsedMessageResult.val.none) {
         self.postMessage(createSafeBoxResult({
-            data: parsedMessageResult.val.data,
-            message: parsedMessageResult.val.message,
+            data: Some("Error parsing message"),
         }));
         return;
     }
@@ -76,7 +75,7 @@ self.onmessage = async (
         newQueryFlag,
         queryString,
         totalDocuments,
-    } = parsedMessageResult.val.data.val;
+    } = parsedMessageResult.val.safeUnwrap();
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);

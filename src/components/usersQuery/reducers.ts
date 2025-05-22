@@ -1,5 +1,6 @@
 import { UserDocument } from "../../types";
 import { parseSyncSafe } from "../../utils";
+import { SortDirection } from "../query/types";
 import { UsersQueryAction, usersQueryAction } from "./actions";
 import {
     resetToInitialUsersQueryDispatchZod,
@@ -63,11 +64,11 @@ function usersQueryReducer_resetToInitial(
         zSchema: resetToInitialUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
-    return parsedResult.val.data.val.payload;
+    return parsedResult.val.safeUnwrap().payload as UsersQueryState;
 }
 
 function usersQueryReducer_setArrangeByDirection(
@@ -79,12 +80,13 @@ function usersQueryReducer_setArrangeByDirection(
         zSchema: setArrangeByDirectionUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     const { arrangeByField, resourceData } = state;
-    const arrangeByDirection = parsedResult.val.data.val.payload;
+    const arrangeByDirection = parsedResult.val.safeUnwrap()
+        .payload as SortDirection;
     const cloned = structuredClone(resourceData);
 
     const sorted = cloned.sort((a, b) => {
@@ -108,12 +110,12 @@ function usersQueryReducer_setArrangeByField(
         zSchema: setArrangeByFieldUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     const { arrangeByDirection, resourceData } = state;
-    const arrangeByField = parsedResult.val.data.val
+    const arrangeByField = parsedResult.val.safeUnwrap()
         .payload as keyof Omit<UserDocument, "password">;
     const cloned = structuredClone(resourceData);
 
@@ -138,13 +140,13 @@ function usersQueryReducer_setCurrentPage(
         zSchema: setCurrentPageUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        currentPage: parsedResult.val.data.val.payload as number,
+        currentPage: parsedResult.val.safeUnwrap().payload as number,
     };
 }
 
@@ -157,13 +159,13 @@ function usersQueryReducer_setUsersFetchWorker(
         zSchema: setUsersFetchWorkerUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        usersFetchWorker: parsedResult.val.data.val.payload as
+        usersFetchWorker: parsedResult.val.safeUnwrap().payload as
             | Worker
             | null,
     };
@@ -178,13 +180,13 @@ function usersQueryReducer_setIsError(
         zSchema: setIsErrorUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        isError: parsedResult.val.data.val.payload as boolean,
+        isError: parsedResult.val.safeUnwrap().payload as boolean,
     };
 }
 
@@ -197,13 +199,13 @@ function usersQueryReducer_setIsLoading(
         zSchema: setIsLoadingUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        isLoading: parsedResult.val.data.val.payload as boolean,
+        isLoading: parsedResult.val.safeUnwrap().payload as boolean,
     };
 }
 
@@ -216,13 +218,13 @@ function usersQueryReducer_setNewQueryFlag(
         zSchema: setNewQueryFlagUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        newQueryFlag: parsedResult.val.data.val.payload as boolean,
+        newQueryFlag: parsedResult.val.safeUnwrap().payload as boolean,
     };
 }
 
@@ -235,13 +237,13 @@ function usersQueryReducer_setPages(
         zSchema: setPagesUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        pages: parsedResult.val.data.val.payload as number,
+        pages: parsedResult.val.safeUnwrap().payload as number,
     };
 }
 
@@ -254,13 +256,13 @@ function usersQueryReducer_setQueryString(
         zSchema: setQueryStringUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        queryString: parsedResult.val.data.val.payload as string,
+        queryString: parsedResult.val.safeUnwrap().payload as string,
     };
 }
 
@@ -273,13 +275,13 @@ function usersQueryReducer_setResourceData(
         zSchema: setResourceDataUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        resourceData: parsedResult.val.data.val.payload as Array<
+        resourceData: parsedResult.val.safeUnwrap().payload as Array<
             UserDocument
         >,
     };
@@ -294,13 +296,13 @@ function usersQueryReducer_setTotalDocuments(
         zSchema: setTotalDocumentsUsersQueryDispatchZod,
     });
 
-    if (parsedResult.err || parsedResult.val.data.none) {
+    if (parsedResult.err || parsedResult.val.none) {
         return state;
     }
 
     return {
         ...state,
-        totalDocuments: parsedResult.val.data.val.payload as number,
+        totalDocuments: parsedResult.val.safeUnwrap().payload as number,
     };
 }
 
