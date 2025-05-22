@@ -17,9 +17,9 @@ async function handleMessageEventProductWorkerToMain(input: {
             object: input,
             zSchema: handleMessageEventProductWorkerToMainInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.data.none) {
+        if (parsedInputResult.err || parsedInputResult.val.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: Some("Error parsing input"),
             });
         }
 
@@ -28,7 +28,7 @@ async function handleMessageEventProductWorkerToMain(input: {
             isComponentMountedRef,
             productMetricsDispatch,
             showBoundary,
-        } = parsedInputResult.val.data.val;
+        } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
             return createSafeBoxResult({
