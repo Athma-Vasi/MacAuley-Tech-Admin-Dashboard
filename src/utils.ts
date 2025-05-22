@@ -459,7 +459,7 @@ function parseSyncSafe<Output = unknown>(
     object: Output;
     zSchema: z.ZodSchema;
   },
-): SafeBoxResult<Output> {
+): ResultSafeBox<Output, unknown> {
   try {
     const arraySchema = z.array(zSchema);
 
@@ -467,19 +467,11 @@ function parseSyncSafe<Output = unknown>(
       ? arraySchema.safeParse(object)
       : zSchema.safeParse(object);
 
-    if (parsed.success) {
-      return new Ok({ data: Some(parsed.data) });
-    } else {
-      return new Err({
-        data: Some(parsed.error),
-        message: Some("Parsing error"),
-      });
-    }
+    return parsed.success
+      ? new Ok(Some(parsed.data))
+      : new Err(Some(parsed.error));
   } catch (error: unknown) {
-    return new Err({
-      data: Some(error),
-      message: Some("Error parsing object"),
-    });
+    return new Err(Some(error));
   }
 }
 
@@ -529,11 +521,9 @@ async function parseServerResponseAsyncSafe<Output = unknown>(
       object,
     );
 
-    if (parsed.success) {
-      return new Ok(Some(parsed.data));
-    } else {
-      return new Err(Some(parsed.error));
-    }
+    return parsed.success
+      ? new Ok(Some(parsed.data))
+      : new Err(Some(parsed.error));
   } catch (error: unknown) {
     return new Err(Some(error));
   }
