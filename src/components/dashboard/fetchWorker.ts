@@ -111,6 +111,11 @@ self.onmessage = async (
             return;
         }
 
+        console.log(
+            "jsonResult in dashboard fetch worker",
+            jsonResult.val.data.val,
+        );
+
         const parsedResult = await parseServerResponseAsyncSafe({
             object: jsonResult.val.data.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
@@ -128,20 +133,22 @@ self.onmessage = async (
 
         const { accessToken } = parsedResult.val.data.val;
 
-        const decodedTokenResult = await decodeJWTSafe(accessToken);
-        if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
+        const decodedTokenResult = decodeJWTSafe(accessToken);
+        if (decodedTokenResult.err || decodedTokenResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: decodedTokenResult.val.data,
+                    data: decodedTokenResult.val,
                     message: Some("Error decoding JWT"),
                 }),
             );
             return;
         }
 
+        console.log("SUCCESSFULLY DECODED JWT TOKEN", decodedTokenResult.val);
+
         self.postMessage(createSafeBoxResult({
             data: Some({
-                decodedToken: decodedTokenResult.val.data.val,
+                decodedToken: decodedTokenResult.val.safeUnwrap(),
                 metricsView,
                 parsedServerResponse: parsedResult.val.data.val,
                 productMetricCategory,

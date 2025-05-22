@@ -118,11 +118,11 @@ self.onmessage = async (
 
         const { accessToken } = parsedResult.val.data.val;
 
-        const decodedTokenResult = await decodeJWTSafe(accessToken);
-        if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
+        const decodedTokenSafeResult = decodeJWTSafe(accessToken);
+        if (decodedTokenSafeResult.err || decodedTokenSafeResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: decodedTokenResult.val.data,
+                    data: decodedTokenSafeResult.val,
                     message: Some("Error decoding JWT"),
                 }),
             );
@@ -132,7 +132,7 @@ self.onmessage = async (
         self.postMessage(createSafeBoxResult({
             data: Some({
                 parsedServerResponse: parsedResult.val.data.val,
-                decodedToken: decodedTokenResult.val.data.val,
+                decodedToken: decodedTokenSafeResult.val.safeUnwrap(),
             }),
             kind: "success",
         }));

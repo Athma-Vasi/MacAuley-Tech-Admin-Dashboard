@@ -97,11 +97,10 @@ async function handleUsersQuerySubmitGETClick(
             });
         }
         if (userDocumentsResult.err) {
-            showBoundary(userDocumentsResult.val.data);
+            showBoundary(userDocumentsResult.val.message);
             return createSafeBoxResult({
                 data: userDocumentsResult.val.data,
-                message: userDocumentsResult.val.message ??
-                    Some("Error fetching response"),
+                message: userDocumentsResult.val.message,
             });
         }
 
@@ -204,7 +203,8 @@ async function handleUsersQueryOnmessageCallback(
         });
         if (parsedInputResult.err || parsedInputResult.val.data.none) {
             return createSafeBoxResult({
-                data: parsedInputResult.val.data ?? Some("Error parsing input"),
+                data: parsedInputResult.val.data,
+                message: parsedInputResult.val.message,
             });
         }
 

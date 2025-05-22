@@ -12,7 +12,12 @@ import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import { AllStoreLocations } from "./components/dashboard/types";
 import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
-import { DecodedToken, SafeBoxResult, ThemeObject } from "./types";
+import {
+  DecodedToken,
+  ResultSafeBox,
+  SafeBoxResult,
+  ThemeObject,
+} from "./types";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -355,6 +360,13 @@ function urlBuilder({
   return new URL(`${protocol}://${host}:${port}/api/v1/${path}${query}${hash}`);
 }
 
+function createSafeResult<Data = unknown>(
+  data: Option<Data>,
+  kind: "error" | "success" = "error",
+): ResultSafeBox<Data, unknown> {
+  return kind === "success" ? new Ok(data) : new Err(data);
+}
+
 function createSafeBoxResult<Data = unknown>({
   data = None,
   kind = "error",
@@ -367,14 +379,12 @@ function createSafeBoxResult<Data = unknown>({
   if (kind === "success") {
     return new Ok({
       data,
-      kind,
       message,
     });
   }
 
   return new Err({
     data,
-    kind,
     message,
   });
 }
@@ -389,10 +399,12 @@ async function fetchResponseSafe(
     const response: Response = await fetch(input, init);
     return new Ok({
       data: response === null || response === undefined ? None : Some(response),
-      kind: "success",
     });
   } catch (error: unknown) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err({
+      data: Some(error),
+      message: Some("Error fetching response"),
+    });
   }
 }
 
@@ -403,24 +415,25 @@ async function extractJSONFromResponseSafe<Data = unknown>(
     const data: Data = await response.json();
     return new Ok({
       data: data === null || data === undefined ? None : Some(data),
-      kind: "success",
     });
   } catch (error: unknown) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err({
+      data: Some(error),
+      message: Some("Error extracting JSON from response"),
+    });
   }
 }
 
-async function decodeJWTSafe<Decoded extends DecodedToken = DecodedToken>(
+function decodeJWTSafe<Decoded extends Record<string, unknown> = DecodedToken>(
   token: string,
-): Promise<SafeBoxResult<Decoded>> {
+): ResultSafeBox<Decoded, unknown> {
   try {
     const decoded: Decoded = jwtDecode(token);
-    return new Ok({
-      data: decoded === null || decoded === undefined ? None : Some(decoded),
-      kind: "success",
-    });
+    return new Ok(
+      decoded === null || decoded === undefined ? None : Some(decoded),
+    );
   } catch (error: unknown) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err(Some(error));
   }
 }
 
@@ -431,10 +444,12 @@ async function getCachedItemAsyncSafe<Data = unknown>(
     const data: Data = await localforage.getItem(key);
     return new Ok({
       data: data === null || data === undefined ? None : Some(data),
-      kind: "success",
     });
   } catch (error: unknown) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err({
+      data: Some(error),
+      message: Some("Error getting cached item"),
+    });
   }
 }
 
@@ -444,9 +459,12 @@ async function setCachedItemAsyncSafe<Data = unknown>(
 ): Promise<SafeBoxResult> {
   try {
     await localforage.setItem(key, value);
-    return new Ok({ data: None, kind: "success" });
+    return new Ok({ data: None });
   } catch (error: unknown) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err({
+      data: Some(error),
+      message: Some("Error setting cached item"),
+    });
   }
 }
 
@@ -465,12 +483,18 @@ function parseSyncSafe<Output = unknown>(
       : zSchema.safeParse(object);
 
     if (parsed.success) {
-      return new Ok({ data: Some(parsed.data), kind: "success" });
+      return new Ok({ data: Some(parsed.data) });
     } else {
-      return new Err({ data: Some(parsed.error), kind: "error" });
+      return new Err({
+        data: Some(parsed.error),
+        message: Some("Parsing error"),
+      });
     }
   } catch (error: unknown) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err({
+      data: Some(error),
+      message: Some("Error parsing object"),
+    });
   }
 }
 
@@ -489,10 +513,12 @@ async function modifyImageSafe(
       data: compressedBlob === null || compressedBlob === undefined
         ? None
         : Some(compressedBlob),
-      kind: "success",
     });
   } catch (error) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err({
+      data: Some(error),
+      message: Some("Error modifying image"),
+    });
   }
 }
 
@@ -522,12 +548,18 @@ async function parseServerResponseAsyncSafe(
     );
 
     if (parsed.success) {
-      return new Ok({ data: Some(parsed.data), kind: "success" });
+      return new Ok({ data: Some(parsed.data) });
     } else {
-      return new Err({ data: Some(parsed.error), kind: "error" });
+      return new Err({
+        data: Some(parsed.error),
+        message: Some("Parsing error"),
+      });
     }
   } catch (error: unknown) {
-    return new Err({ data: Some(error), kind: "error" });
+    return new Err({
+      data: Some(error),
+      message: Some("Error parsing object"),
+    });
   }
 }
 
@@ -688,6 +720,7 @@ export {
   createMetricsForageKey,
   createMetricsURLCacheKey,
   createSafeBoxResult,
+  createSafeResult,
   createUsersURLCacheKey,
   debounce,
   decodeJWTSafe,

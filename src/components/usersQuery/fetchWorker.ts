@@ -63,7 +63,7 @@ self.onmessage = async (
     if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
         self.postMessage(createSafeBoxResult({
             data: parsedMessageResult.val.data,
-            message: Some("Error parsing message"),
+            message: parsedMessageResult.val.message,
         }));
         return;
     }
@@ -90,7 +90,7 @@ self.onmessage = async (
             self.postMessage(
                 createSafeBoxResult({
                     data: responseResult.val.data,
-                    message: Some("Error fetching data"),
+                    message: responseResult.val.message,
                 }),
             );
             return;
@@ -103,7 +103,7 @@ self.onmessage = async (
             self.postMessage(
                 createSafeBoxResult({
                     data: jsonResult.val.data,
-                    message: Some("Error extracting JSON from response"),
+                    message: jsonResult.val.message,
                 }),
             );
             return;
@@ -118,7 +118,7 @@ self.onmessage = async (
             self.postMessage(
                 createSafeBoxResult({
                     data: parsedResult.val.data,
-                    message: Some("Error parsing server response"),
+                    message: parsedResult.val.message,
                 }),
             );
             return;
@@ -126,11 +126,11 @@ self.onmessage = async (
 
         const { accessToken } = parsedResult.val.data.val;
 
-        const decodedTokenResult = await decodeJWTSafe(accessToken);
-        if (decodedTokenResult.err || decodedTokenResult.val.data.none) {
+        const decodedTokenResult = decodeJWTSafe(accessToken);
+        if (decodedTokenResult.err || decodedTokenResult.val.none) {
             self.postMessage(
                 createSafeBoxResult({
-                    data: decodedTokenResult.val.data,
+                    data: decodedTokenResult.val,
                     message: Some("Error decoding JWT"),
                 }),
             );
@@ -140,7 +140,7 @@ self.onmessage = async (
         self.postMessage(createSafeBoxResult({
             data: Some({
                 currentPage,
-                decodedToken: decodedTokenResult.val.data.val,
+                decodedToken: decodedTokenResult.val.safeUnwrap(),
                 newQueryFlag,
                 parsedServerResponse: parsedResult.val.data.val,
                 queryString,
