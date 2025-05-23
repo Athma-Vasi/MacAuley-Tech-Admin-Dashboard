@@ -2,7 +2,7 @@ import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    ResultSafeBox,
+    SafeResult,
     UserDocument,
 } from "../../types";
 import {
@@ -21,7 +21,7 @@ import {
 import { messageEventUsersFetchMainToWorkerZod } from "./schemas";
 
 type MessageEventUsersFetchWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeResult<
         {
             currentPage: number;
             decodedToken: DecodedToken;

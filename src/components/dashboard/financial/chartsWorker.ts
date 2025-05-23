@@ -1,4 +1,4 @@
-import { FinancialMetricsDocument, ResultSafeBox } from "../../../types";
+import { FinancialMetricsDocument, SafeResult } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
@@ -20,7 +20,7 @@ import {
 import { messageEventFinancialMainToWorkerZod } from "./schemas";
 
 type MessageEventFinancialWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeResult<
         {
             currentYear: FinancialMetricsCalendarCharts;
             previousYear: FinancialMetricsCalendarCharts;

@@ -8,7 +8,7 @@ import {
     FinancialMetricsDocument,
     ProductMetricsDocument,
     RepairMetricsDocument,
-    ResultSafeBox,
+    SafeResult,
 } from "../../types";
 import {
     catchHandlerErrorSafe,
@@ -47,7 +47,7 @@ async function handleStoreAndCategoryClicks(
         showBoundary: (error: unknown) => void;
         storeLocation: AllStoreLocations;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
@@ -183,7 +183,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         navigateFn: NavigateFunction;
         showBoundary: (error: unknown) => void;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,

@@ -1,4 +1,4 @@
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import type { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
@@ -51,7 +51,7 @@ function createCustomerMetricsCardsSafe(
     redColorShade,
     selectedDateCustomerMetrics,
   }: CreateCustomerMetricsCardsInput,
-): ResultSafeBox<CustomerMetricsCards> {
+): SafeResult<CustomerMetricsCards> {
   if (!selectedDateCustomerMetrics) {
     return createSafeErrorResult(
       "Selected date customer metrics not found",

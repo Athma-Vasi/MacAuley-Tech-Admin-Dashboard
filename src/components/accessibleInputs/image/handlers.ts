@@ -1,5 +1,5 @@
 import { EImageType } from "image-conversion";
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
@@ -34,7 +34,7 @@ async function handleResetImageClick(
         showBoundary: (error: unknown) => void;
         storageKey: string;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
@@ -142,7 +142,7 @@ async function handleRemoveImageClick<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
@@ -345,7 +345,7 @@ async function handleMessageEventModifyImagesWorkerToMain<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
@@ -511,7 +511,7 @@ async function handleImageQualityOrientationSliderChange<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         console.log("handleImageQualityOrientationSliderChange");
         const parsedInputResult = parseSyncSafe({
@@ -782,7 +782,7 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             AccessibleImageInputDispatch
         >;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,

@@ -4,7 +4,7 @@ import { FETCH_REQUEST_TIMEOUT } from "../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    ResultSafeBox,
+    SafeResult,
     UserDocument,
 } from "../types";
 import {
@@ -19,7 +19,7 @@ import {
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
 type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
-    ResultSafeBox<
+    SafeResult<
         {
             parsedServerResponse: HttpServerResponse<Data>;
             decodedToken: Option<DecodedToken>;

@@ -1,4 +1,4 @@
-import { FinancialMetricsDocument, ResultSafeBox } from "../../../types";
+import { FinancialMetricsDocument, SafeResult } from "../../../types";
 import {
   createSafeErrorResult,
   createSafeSuccessResult,
@@ -44,7 +44,7 @@ function returnSelectedDateFinancialMetricsSafe({
   month: Month;
   months: Month[];
   year: Year;
-}): ResultSafeBox<SelectedDateFinancialMetrics> {
+}): SafeResult<SelectedDateFinancialMetrics> {
   try {
     const selectedYearMetrics = financialMetricsDocument.financialMetrics.find(
       (yearlyMetric) => yearlyMetric.year === year,
@@ -347,7 +347,7 @@ function createFinancialMetricsChartsSafe({
   financialMetricsDocument,
   months,
   selectedDateFinancialMetrics,
-}: ReturnFinancialMetricsChartsInput): ResultSafeBox<FinancialMetricsCharts> {
+}: ReturnFinancialMetricsChartsInput): SafeResult<FinancialMetricsCharts> {
   if (!financialMetricsDocument) {
     return createSafeErrorResult(
       "No financial metrics document found",
@@ -493,7 +493,7 @@ function createDailyFinancialChartsSafe({
   otherMetricsBarChartsTemplate,
   otherMetricsLineChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyFinancialChartsInput): ResultSafeBox<
+}: CreateDailyFinancialChartsInput): SafeResult<
   FinancialMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics) {
@@ -1463,7 +1463,7 @@ function createMonthlyFinancialChartsSafe({
   otherMetricsLineChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyFinancialChartsInput): ResultSafeBox<
+}: CreateMonthlyFinancialChartsInput): SafeResult<
   FinancialMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics) {
@@ -2454,7 +2454,7 @@ function createYearlyFinancialChartsSafe({
   otherMetricsBarChartsTemplate,
   lineChartsTemplate,
   barChartsTemplate,
-}: CreateYearlyFinancialChartsInput): ResultSafeBox<
+}: CreateYearlyFinancialChartsInput): SafeResult<
   FinancialMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics) {
@@ -3465,7 +3465,7 @@ function createFinancialMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeResult<{
   currentYear: FinancialMetricsCalendarCharts;
   previousYear: FinancialMetricsCalendarCharts;
 }> {

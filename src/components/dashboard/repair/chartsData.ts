@@ -1,4 +1,4 @@
-import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
+import { RepairMetricsDocument, SafeResult } from "../../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
@@ -50,7 +50,7 @@ function returnSelectedDateRepairMetricsSafe({
   month,
   months,
   year,
-}: CreateSelectedDateRepairMetricsInput): ResultSafeBox<
+}: CreateSelectedDateRepairMetricsInput): SafeResult<
   SelectedDateRepairMetrics
 > {
   try {
@@ -189,7 +189,7 @@ function createRepairMetricsChartsSafe({
   repairMetricsDocument,
   months,
   selectedDateRepairMetrics,
-}: ReturnRepairChartsInput): ResultSafeBox<RepairMetricsCharts> {
+}: ReturnRepairChartsInput): SafeResult<RepairMetricsCharts> {
   if (!repairMetricsDocument) {
     return createSafeErrorResult("No repair metrics data found");
   }
@@ -284,7 +284,7 @@ function createDailyRepairChartsSafe({
   barChartsTemplate,
   dailyMetrics,
   lineChartsTemplate,
-}: CreateDailyRepairChartsInput): ResultSafeBox<
+}: CreateDailyRepairChartsInput): SafeResult<
   RepairMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics) {
@@ -366,7 +366,7 @@ function createMonthlyRepairChartsSafe({
   lineChartsTemplate,
   monthlyMetrics,
   selectedYear,
-}: CreateMonthlyRepairChartsInput): ResultSafeBox<
+}: CreateMonthlyRepairChartsInput): SafeResult<
   RepairMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics) {
@@ -460,7 +460,7 @@ function createYearlyRepairChartsSafe({
   barChartsTemplate,
   lineChartsTemplate,
   yearlyMetrics,
-}: CreateYearlyRepairChartsInput): ResultSafeBox<
+}: CreateYearlyRepairChartsInput): SafeResult<
   RepairMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics) {
@@ -550,7 +550,7 @@ function createRepairMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateRepairMetrics: SelectedDateRepairMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeResult<{
   currentYear: RepairMetricCalendarCharts;
   previousYear: RepairMetricCalendarCharts;
 }> {

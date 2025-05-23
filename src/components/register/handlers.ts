@@ -1,5 +1,5 @@
 import { NavigateFunction } from "react-router-dom";
-import { ResultSafeBox } from "../../types";
+import { SafeResult } from "../../types";
 import {
   catchHandlerErrorSafe,
   createSafeErrorResult,
@@ -31,7 +31,7 @@ async function handleCheckEmail(
     showBoundary: (error: unknown) => void;
     url: RequestInfo | URL;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
@@ -99,7 +99,7 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
@@ -176,7 +176,7 @@ async function handleCheckUsername(
     url: RequestInfo | URL;
     username: string;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
@@ -244,7 +244,7 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
@@ -327,7 +327,7 @@ async function handleRegisterButtonSubmit(
     showBoundary: (error: unknown) => void;
     url: RequestInfo | URL;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
@@ -384,7 +384,7 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
     showBoundary: (error: unknown) => void;
     toLocation: string;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
@@ -491,7 +491,7 @@ function handlePrevNextStepClick(
     registerState: RegisterState;
     showBoundary: (error: unknown) => void;
   },
-): ResultSafeBox<string> {
+): SafeResult<string> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,

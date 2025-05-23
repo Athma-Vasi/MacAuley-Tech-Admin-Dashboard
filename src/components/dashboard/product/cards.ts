@@ -1,4 +1,4 @@
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
@@ -41,7 +41,7 @@ function createProductMetricsCardsSafe(
     redColorShade,
     selectedDateProductMetrics,
   }: createProductMetricsCardsInput,
-): ResultSafeBox<ProductMetricsCards> {
+): SafeResult<ProductMetricsCards> {
   if (!selectedDateProductMetrics) {
     return createSafeErrorResult(
       "Invalid product metrics data",

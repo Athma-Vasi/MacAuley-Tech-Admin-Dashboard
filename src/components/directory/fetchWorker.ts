@@ -2,7 +2,7 @@ import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    ResultSafeBox,
+    SafeResult,
     UserDocument,
 } from "../../types";
 import {
@@ -23,7 +23,7 @@ import { messageEventDirectoryFetchMainToWorkerZod } from "./schemas";
 import { DepartmentsWithDefaultKey } from "./types";
 
 type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeResult<
         {
             decodedToken: DecodedToken;
             department: DepartmentsWithDefaultKey;

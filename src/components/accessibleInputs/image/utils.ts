@@ -1,5 +1,4 @@
-import { Some } from "ts-results";
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
@@ -90,7 +89,7 @@ function checkImageFileBlobs<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): ResultSafeBox<string> {
+): SafeResult<string> {
     try {
         if (imageFileBlobs.length === 0) {
             return createSafeErrorResult(

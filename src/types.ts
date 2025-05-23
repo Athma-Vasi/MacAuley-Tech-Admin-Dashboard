@@ -272,7 +272,7 @@ type SafeError = {
   stack: Option<string>;
   original: Option<string>;
 };
-type ResultSafeBox<Data = unknown> = Result<Option<Data>, SafeError>;
+type SafeResult<Data = unknown> = Result<Option<Data>, SafeError>;
 
 type FontFamily = "Work Sans" | "sans-serif" | "serif" | "Open-Dyslexic";
 
@@ -509,8 +509,8 @@ export type {
   Province,
   RepairMetricsDocument,
   RepairTechnicians,
-  ResultSafeBox,
   SafeError,
+  SafeResult,
   Sales,
   ScreenshotImageType,
   SetInputsInErrorPayload,

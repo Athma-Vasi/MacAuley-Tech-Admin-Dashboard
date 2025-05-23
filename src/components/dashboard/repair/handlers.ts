@@ -1,4 +1,4 @@
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
@@ -15,7 +15,7 @@ async function handleMessageEventRepairWorkerToMain(input: {
     isComponentMountedRef: React.RefObject<boolean>;
     repairMetricsDispatch: React.Dispatch<RepairMetricsDispatch>;
     showBoundary: (error: unknown) => void;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,

@@ -15,8 +15,8 @@ import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
   HttpServerResponse,
-  ResultSafeBox,
   SafeError,
+  SafeResult,
   ThemeObject,
 } from "./types";
 
@@ -361,37 +361,6 @@ function urlBuilder({
   return new URL(`${protocol}://${host}:${port}/api/v1/${path}${query}${hash}`);
 }
 
-function createSafeResult<Data = unknown>(
-  data: Data,
-  kind: "error" | "success" = "error",
-): ResultSafeBox<Data> {
-  return kind === "success"
-    ? createSafeSuccessResult(data)
-    : createSafeErrorResult(data);
-}
-
-// function createSafeBoxResult<Data = unknown>({
-//   data = None,
-//   kind = "error",
-//   message = None,
-// }: {
-//   data?: Option<Data>;
-//   kind?: "error" | "success";
-//   message?: Option<string>;
-// }): SafeBoxResult<Data> {
-//   if (kind === "success") {
-//     return new Ok({
-//       data,
-//       message,
-//     });
-//   }
-
-//   return new Err({
-//     data,
-//     message,
-//   });
-// }
-
 function createSafeSuccessResult<Data = unknown>(
   data: Data,
 ): Ok<Option<Data>> {
@@ -470,7 +439,7 @@ async function fetchResponseSafe(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<
-  ResultSafeBox<Response>
+  SafeResult<Response>
 > {
   try {
     const response: Response = await fetch(input, init);
@@ -482,7 +451,7 @@ async function fetchResponseSafe(
 
 async function extractJSONFromResponseSafe<Data = unknown>(
   response: Response,
-): Promise<ResultSafeBox<Data>> {
+): Promise<SafeResult<Data>> {
   try {
     const data: Data = await response.json();
     return createSafeSuccessResult(data);
@@ -493,7 +462,7 @@ async function extractJSONFromResponseSafe<Data = unknown>(
 
 function decodeJWTSafe<Decoded extends Record<string, unknown> = DecodedToken>(
   token: string,
-): ResultSafeBox<Decoded> {
+): SafeResult<Decoded> {
   try {
     const decoded: Decoded = jwtDecode(token);
     return createSafeSuccessResult(decoded);
@@ -504,7 +473,7 @@ function decodeJWTSafe<Decoded extends Record<string, unknown> = DecodedToken>(
 
 async function getCachedItemAsyncSafe<Data = unknown>(
   key: string,
-): Promise<ResultSafeBox<Data>> {
+): Promise<SafeResult<Data>> {
   try {
     const data: Data = await localforage.getItem(key);
     return createSafeSuccessResult(data);
@@ -516,7 +485,7 @@ async function getCachedItemAsyncSafe<Data = unknown>(
 async function setCachedItemAsyncSafe<Data = unknown>(
   key: string,
   value: Data,
-): Promise<ResultSafeBox> {
+): Promise<SafeResult> {
   try {
     await localforage.setItem(key, value);
     return new Ok(None);
@@ -531,7 +500,7 @@ function parseSyncSafe<Output = unknown>(
     object: Output;
     zSchema: z.ZodSchema;
   },
-): ResultSafeBox<Output> {
+): SafeResult<Output> {
   try {
     const { data, error, success } = Array.isArray(object)
       ? z.array(zSchema).safeParse(object)
@@ -548,12 +517,12 @@ function parseSyncSafe<Output = unknown>(
 type ModifyImageSafe = (
   file: Blob,
   config?: ICompressConfig | number,
-) => Promise<ResultSafeBox<Blob>>;
+) => Promise<SafeResult<Blob>>;
 
 async function modifyImageSafe(
   file: Blob,
   config?: ICompressConfig | number,
-): Promise<ResultSafeBox<Blob>> {
+): Promise<SafeResult<Blob>> {
   try {
     const compressedBlob = await compress(file, config);
     return createSafeSuccessResult(compressedBlob);
@@ -567,7 +536,7 @@ async function parseServerResponseAsyncSafe<Output = unknown>(
     object: HttpServerResponse<Output>;
     zSchema: z.ZodSchema;
   },
-): Promise<ResultSafeBox<HttpServerResponse<Output>>> {
+): Promise<SafeResult<HttpServerResponse<Output>>> {
   try {
     const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema

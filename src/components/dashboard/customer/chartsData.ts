@@ -1,4 +1,4 @@
-import { CustomerMetricsDocument, ResultSafeBox } from "../../../types";
+import { CustomerMetricsDocument, SafeResult } from "../../../types";
 import {
   createSafeErrorResult,
   createSafeSuccessResult,
@@ -45,7 +45,7 @@ function returnSelectedDateCustomerMetricsSafe({
   month: Month;
   months: Month[];
   year: Year;
-}): ResultSafeBox<SelectedDateCustomerMetrics> {
+}): SafeResult<SelectedDateCustomerMetrics> {
   try {
     const selectedYearMetrics = customerMetricsDocument.customerMetrics
       .yearlyMetrics
@@ -288,7 +288,7 @@ function createCustomerMetricsChartsSafe({
   customerMetricsDocument,
   months,
   selectedDateCustomerMetrics,
-}: ReturnCustomerMetricsChartsInput): ResultSafeBox<CustomerMetricsCharts> {
+}: ReturnCustomerMetricsChartsInput): SafeResult<CustomerMetricsCharts> {
   if (!customerMetricsDocument) {
     return createSafeErrorResult(
       "Customer metrics document not found",
@@ -449,7 +449,7 @@ function createDailyCustomerChartsSafe({
   returningBarChartsTemplate,
   returningLineChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyCustomerChartsInput): ResultSafeBox<
+}: CreateDailyCustomerChartsInput): SafeResult<
   CustomerMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics || dailyMetrics.length === 0) {
@@ -986,7 +986,7 @@ function createMonthlyCustomerChartsSafe({
   returningLineChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyCustomerChartsInput): ResultSafeBox<
+}: CreateMonthlyCustomerChartsInput): SafeResult<
   CustomerMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics || monthlyMetrics.length === 0) {
@@ -1551,7 +1551,7 @@ function createYearlyCustomerChartsSafe({
   returningLineChartsTemplate,
   selectedYearMetrics,
   yearlyMetrics,
-}: CreateYearlyCustomerChartsInput): ResultSafeBox<
+}: CreateYearlyCustomerChartsInput): SafeResult<
   CustomerMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics || yearlyMetrics.length === 0) {
@@ -2124,7 +2124,7 @@ function createCustomerMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeResult<{
   currentYear: CustomerMetricsCalendarCharts;
   previousYear: CustomerMetricsCalendarCharts;
 }> {

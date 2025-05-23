@@ -2,7 +2,7 @@ import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
-import { ResultSafeBox, UserDocument } from "../../types";
+import { SafeResult, UserDocument } from "../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
@@ -36,7 +36,7 @@ async function handleUsersQuerySubmitGETClick(
         usersFetchWorker: Worker | null;
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     const parsedInputResult = parseSyncSafe({
         object: input,
         zSchema: handleUsersQuerySubmitGETClickInputZod,
@@ -182,7 +182,7 @@ async function handleUsersQueryOnmessageCallback(
         url: string;
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,

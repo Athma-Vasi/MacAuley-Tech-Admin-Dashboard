@@ -7,7 +7,7 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   FinancialMetricsDocument,
-  ResultSafeBox,
+  SafeResult,
   UserDocument,
 } from "../../types";
 import {
@@ -35,7 +35,7 @@ async function handleLoginClick(input: {
   loginFetchWorker: Worker | null;
   schema: { username: string; password: string };
   showBoundary: (error: unknown) => void;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
@@ -111,7 +111,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
     navigate: NavigateFunction;
     showBoundary: (error: unknown) => void;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,

@@ -3,7 +3,7 @@ import {
     BusinessMetricsDocument,
     DecodedToken,
     HttpServerResponse,
-    ResultSafeBox,
+    SafeResult,
     UserDocument,
 } from "../../types";
 import {
@@ -37,7 +37,7 @@ type MessageEventDashboardFetchMainToWorker = MessageEvent<
 >;
 
 type MessageEventDashboardFetchWorkerToMain = MessageEvent<
-    ResultSafeBox<{
+    SafeResult<{
         decodedToken: DecodedToken;
         metricsView: Lowercase<DashboardMetricsView>;
         parsedServerResponse: HttpServerResponse<BusinessMetricsDocument>;

@@ -1,4 +1,4 @@
-import { ProductMetricsDocument, ResultSafeBox } from "../../../types";
+import { ProductMetricsDocument, SafeResult } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
@@ -17,7 +17,7 @@ import {
 import { messageEventProductMainToWorkerZod } from "./schemas";
 
 type MessageEventProductWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeResult<
         {
             currentYear: ProductMetricsCalendarCharts;
             previousYear: ProductMetricsCalendarCharts;

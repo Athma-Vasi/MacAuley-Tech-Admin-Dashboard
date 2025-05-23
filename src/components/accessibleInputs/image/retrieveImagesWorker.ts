@@ -1,4 +1,4 @@
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
@@ -11,7 +11,7 @@ import { messageEventRetrieveImagesMainToWorkerInputZod } from "./schemas";
 import { createImageInputForageKeys } from "./utils";
 
 type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeResult<
         {
             fileNames: Array<string>;
             modifiedFiles: Array<ModifiedFile>;

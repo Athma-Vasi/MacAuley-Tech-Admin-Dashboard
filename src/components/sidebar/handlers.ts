@@ -10,7 +10,7 @@ import {
   FinancialMetricsDocument,
   ProductMetricsDocument,
   RepairMetricsDocument,
-  ResultSafeBox,
+  SafeResult,
   UserDocument,
 } from "../../types";
 import {
@@ -47,7 +47,7 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
   metricsUrl: string;
   navigate: NavigateFunction;
   showBoundary: (error: unknown) => void;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeResult<string>> {
   try {
     const parsedResult = parseSyncSafe({
       object: input,
@@ -229,7 +229,7 @@ async function handleMetricCategoryNavClick(
     storeLocation: AllStoreLocations;
     toLocation: string;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   const parsedInputResult = parseSyncSafe({
     object: input,
     zSchema: handleMetricCategoryNavClickInputZod,
@@ -369,7 +369,7 @@ async function handleLogoutClick(input: {
   logoutFetchWorker: Worker | null;
   logoutUrl: string;
   showBoundary: (error: unknown) => void;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeResult<string>> {
   const parsedInputResult = parseSyncSafe({
     object: input,
     zSchema: handleLogoutClickInputZod,
@@ -424,7 +424,7 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
   isComponentMountedRef: React.RefObject<boolean>;
   navigate: NavigateFunction;
   showBoundary: (error: unknown) => void;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeResult<string>> {
   try {
     const parsedResult = parseSyncSafe({
       object: input,
@@ -500,7 +500,7 @@ async function handleDirectoryNavClick(
     storeLocation: AllStoreLocations;
     toLocation: string;
   },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
   const parsedInputResult = parseSyncSafe({
     object: input,
     zSchema: handleDirectoryNavClickInputZod,
@@ -606,7 +606,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
   navigate?: NavigateFunction;
   showBoundary: (error: unknown) => void;
   toLocation?: string;
-}): Promise<ResultSafeBox<string>> {
+}): Promise<SafeResult<string>> {
   try {
     const parsedResult = parseSyncSafe({
       object: input,

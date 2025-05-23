@@ -1,4 +1,4 @@
-import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
+import { RepairMetricsDocument, SafeResult } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
@@ -17,7 +17,7 @@ import {
 import { messageEventRepairMainToWorkerZod } from "./schemas";
 
 type MessageEventRepairWorkerToMain = MessageEvent<
-    ResultSafeBox<
+    SafeResult<
         {
             currentYear: RepairMetricCalendarCharts;
             previousYear: RepairMetricCalendarCharts;

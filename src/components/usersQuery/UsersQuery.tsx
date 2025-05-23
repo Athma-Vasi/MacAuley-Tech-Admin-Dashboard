@@ -173,8 +173,6 @@ function UsersQuery() {
                         url: API_URL,
                         usersFetchWorker,
                         usersQueryDispatch,
-                    }).then((result) => {
-                        console.log("Result from pagination", result);
                     });
                 }}
                 total={pages}

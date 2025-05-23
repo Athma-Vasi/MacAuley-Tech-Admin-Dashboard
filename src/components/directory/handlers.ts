@@ -1,5 +1,5 @@
 import { globalAction, GlobalDispatch } from "../../context/globalProvider";
-import { ResultSafeBox, UserDocument } from "../../types";
+import { SafeResult, UserDocument } from "../../types";
 import {
     catchHandlerErrorSafe,
     createDirectoryURLCacheKey,
@@ -22,7 +22,7 @@ async function handleDirectoryDepartmentAndLocationClicks(
         showBoundary: (error: unknown) => void;
         storeLocation: AllStoreLocations;
     },
-): Promise<ResultSafeBox<string>> {
+): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,

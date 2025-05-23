@@ -1,4 +1,4 @@
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { DashboardCalendarView, FinancialYAxisKey } from "../types";
 import { createDashboardMetricsCards } from "../utils";
@@ -54,7 +54,7 @@ function createFinancialMetricsCardsSafe(
     redColorShade,
     selectedDateFinancialMetrics,
   }: CreateFinancialMetricsCardsInput,
-): ResultSafeBox<FinancialMetricsCards> {
+): SafeResult<FinancialMetricsCards> {
   if (!selectedDateFinancialMetrics) {
     return createSafeErrorResult(
       "Selected date financial metrics not found",

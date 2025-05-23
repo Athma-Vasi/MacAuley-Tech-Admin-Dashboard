@@ -1,4 +1,4 @@
-import { ProductMetricsDocument, ResultSafeBox } from "../../../types";
+import { ProductMetricsDocument, SafeResult } from "../../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
@@ -43,7 +43,7 @@ function returnSelectedDateProductMetricsSafe({
   month,
   months,
   year,
-}: CreateSelectedDateProductMetricsInput): ResultSafeBox<
+}: CreateSelectedDateProductMetricsInput): SafeResult<
   SelectedDateProductMetrics
 > {
   try {
@@ -240,7 +240,7 @@ function createProductMetricsChartsSafe({
   productMetricsDocument,
   months,
   selectedDateProductMetrics,
-}: CreateProductMetricsChartsInput): ResultSafeBox<ProductMetricsCharts> {
+}: CreateProductMetricsChartsInput): SafeResult<ProductMetricsCharts> {
   if (!productMetricsDocument) {
     return createSafeErrorResult(
       "Invalid product metrics document",
@@ -360,7 +360,7 @@ function createDailyProductChartsSafe({
   dailyMetrics,
   lineChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyProductChartsInput): ResultSafeBox<
+}: CreateDailyProductChartsInput): SafeResult<
   ProductMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics) {
@@ -603,7 +603,7 @@ function createMonthlyProductChartsSafe({
   monthlyMetrics,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyProductChartsInput): ResultSafeBox<
+}: CreateMonthlyProductChartsInput): SafeResult<
   ProductMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics) {
@@ -864,7 +864,7 @@ function createYearlyProductChartsSafe({
   lineChartsTemplate,
   selectedYearMetrics,
   yearlyMetrics,
-}: CreateYearlyProductChartsInput): ResultSafeBox<
+}: CreateYearlyProductChartsInput): SafeResult<
   ProductMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics) {
@@ -1119,7 +1119,7 @@ function createProductMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateProductMetrics: SelectedDateProductMetrics,
   selectedYYYYMMDD: string,
-): ResultSafeBox<{
+): SafeResult<{
   currentYear: ProductMetricsCalendarCharts;
   previousYear: ProductMetricsCalendarCharts;
 }> {

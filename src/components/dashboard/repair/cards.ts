@@ -1,4 +1,4 @@
-import { ResultSafeBox } from "../../../types";
+import { SafeResult } from "../../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
@@ -25,7 +25,7 @@ type RepairMetricsCards = {
 function createRepairMetricsCardsSafe(
   { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
     createRepairMetricsCardsInput,
-): ResultSafeBox<RepairMetricsCards> {
+): SafeResult<RepairMetricsCards> {
   if (!selectedDateRepairMetrics) {
     return createSafeErrorResult(
       "Selected date repair metrics not found",
