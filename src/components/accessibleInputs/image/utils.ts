@@ -1,6 +1,10 @@
 import { Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import { ResultSafeBox } from "../../../types";
+import {
+    catchHandlerErrorSafe,
+    createSafeErrorResult,
+    createSafeSuccessResult,
+} from "../../../utils";
 import { ModifiedFile } from "../AccessibleFileInput";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
 import { SetFilesInErrorPayload } from "./types";
@@ -86,12 +90,12 @@ function checkImageFileBlobs<
         storageKey: string;
         validValueAction: ValidValueAction;
     },
-): SafeBoxResult<string> {
+): ResultSafeBox<string> {
     try {
         if (imageFileBlobs.length === 0) {
-            return createSafeBoxResult({
-                data: Some("No images selected"),
-            });
+            return createSafeErrorResult(
+                "No image files provided",
+            );
         }
 
         const {
@@ -142,16 +146,13 @@ function checkImageFileBlobs<
             payload: value,
         });
 
-        return createSafeBoxResult({
-            data: Some("Image files validated"),
-            kind: "success",
-        });
+        return createSafeSuccessResult(
+            "Image files validated",
+        );
     } catch (error: unknown) {
-        return createSafeBoxResult({
-            data: Some(
-                error instanceof Error ? error.message : "Unknown error",
-            ),
-        });
+        return catchHandlerErrorSafe(
+            error,
+        );
     }
 }
 

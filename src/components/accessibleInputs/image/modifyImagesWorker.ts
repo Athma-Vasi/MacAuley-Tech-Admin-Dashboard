@@ -1,8 +1,6 @@
 import { EImageType } from "image-conversion";
-import { Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
+import { ResultSafeBox } from "../../../types";
 import {
-    createSafeBoxResult,
     createSafeErrorResult,
     createSafeSuccessResult,
     getCachedItemAsyncSafe,
@@ -16,7 +14,7 @@ import { messageEventModifyImagesMainToWorkerInputZod } from "./schemas";
 import { createImageInputForageKeys, validateImages } from "./utils";
 
 type MessageEventModifyImagesWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             areImagesInvalid: Array<boolean>;
             currentImageIndex: number;

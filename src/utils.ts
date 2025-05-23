@@ -454,8 +454,8 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
 
 function catchHandlerErrorSafe(
   error: unknown,
-  isComponentMountedRef: React.RefObject<boolean>,
-  showBoundary: (error: unknown) => void,
+  isComponentMountedRef: React.RefObject<boolean> = { current: true },
+  showBoundary: (error: unknown) => void = () => {},
 ) {
   if (!isComponentMountedRef.current) {
     return createSafeErrorResult("Component unmounted");

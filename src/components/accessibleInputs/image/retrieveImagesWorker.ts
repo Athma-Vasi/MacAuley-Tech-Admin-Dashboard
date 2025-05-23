@@ -1,7 +1,7 @@
-import { Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
+import { ResultSafeBox } from "../../../types";
 import {
-    createSafeBoxResult,
+    createSafeErrorResult,
+    createSafeSuccessResult,
     getCachedItemAsyncSafe,
     parseSyncSafe,
 } from "../../../utils";
@@ -11,7 +11,7 @@ import { messageEventRetrieveImagesMainToWorkerInputZod } from "./schemas";
 import { createImageInputForageKeys } from "./utils";
 
 type MessageEventRetrieveImagesWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             fileNames: Array<string>;
             modifiedFiles: Array<ModifiedFile>;
@@ -30,10 +30,9 @@ self.onmessage = async (
     event: MessageEventRetrieveImagesMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -41,10 +40,16 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventRetrieveImagesMainToWorkerInputZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+    if (parsedMessageResult.err) {
+        self.postMessage(
+            parsedMessageResult,
+        );
+        return;
+    }
+    if (parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing message"),
+        );
         return;
     }
 
@@ -66,11 +71,7 @@ self.onmessage = async (
             modifiedFilesForageKey,
         );
         if (modifiedFilesResult.err) {
-            self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error getting modified files"),
-                }),
-            );
+            self.postMessage(modifiedFilesResult);
             return;
         }
         const modifiedFiles = modifiedFilesResult.val.none
@@ -81,11 +82,7 @@ self.onmessage = async (
             fileNamesForageKey,
         );
         if (fileNamesResult.err) {
-            self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error setting file names"),
-                }),
-            );
+            self.postMessage(fileNamesResult);
             return;
         }
         const fileNames = fileNamesResult.val.none
@@ -96,11 +93,7 @@ self.onmessage = async (
             qualitiesForageKey,
         );
         if (getQualitiesResult.err) {
-            self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error getting qualities"),
-                }),
-            );
+            self.postMessage(getQualitiesResult);
             return;
         }
         const qualities = getQualitiesResult.val.none
@@ -116,11 +109,7 @@ self.onmessage = async (
             orientationsForageKey,
         );
         if (getOrientationsResult.err) {
-            self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error getting orientations"),
-                }),
-            );
+            self.postMessage(getOrientationsResult);
             return;
         }
         const orientations = getOrientationsResult.val.none
@@ -130,56 +119,34 @@ self.onmessage = async (
             )
             : getOrientationsResult.val.safeUnwrap();
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
+        self.postMessage(
+            createSafeSuccessResult({
                 fileNames,
                 modifiedFiles,
                 qualities,
                 orientations,
             }),
-            kind: "success",
-        }));
+        );
     } catch (error: unknown) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(error),
-            message: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
-            ),
-        }));
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     }
 };
 
 self.onerror = (event: string | Event) => {
     console.error("Repair Charts Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
 });
 
 export type {
