@@ -1,6 +1,5 @@
-import { Err, Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import { ResultSafeBox } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { DashboardCalendarView, FinancialYAxisKey } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -55,30 +54,12 @@ function createFinancialMetricsCardsSafe(
     redColorShade,
     selectedDateFinancialMetrics,
   }: CreateFinancialMetricsCardsInput,
-): SafeBoxResult<FinancialMetricsCards> {
-  const financialMetricsCardsTemplate: FinancialMetricsCards = {
-    dailyCards: {
-      profit: [],
-      expenses: [],
-      transactions: [],
-      revenue: [],
-      otherMetrics: [],
-    },
-    monthlyCards: {
-      profit: [],
-      expenses: [],
-      transactions: [],
-      revenue: [],
-      otherMetrics: [],
-    },
-    yearlyCards: {
-      profit: [],
-      expenses: [],
-      transactions: [],
-      revenue: [],
-      otherMetrics: [],
-    },
-  };
+): ResultSafeBox<FinancialMetricsCards> {
+  if (!selectedDateFinancialMetrics) {
+    return createSafeErrorResult(
+      "Selected date financial metrics not found",
+    );
+  }
 
   const {
     dayFinancialMetrics: { prevDayMetrics, selectedDayMetrics },
@@ -86,20 +67,35 @@ function createFinancialMetricsCardsSafe(
     yearFinancialMetrics: { prevYearMetrics, selectedYearMetrics },
   } = selectedDateFinancialMetrics;
 
-  if (
-    !selectedYearMetrics ||
-    !prevYearMetrics ||
-    !selectedMonthMetrics ||
-    !prevMonthMetrics ||
-    !selectedDayMetrics ||
-    !prevDayMetrics
-  ) {
-    return createSafeBoxResult({
-      data: Some(financialMetricsCardsTemplate),
-      message: Some(
-        "No financial metrics available for the selected date",
-      ),
-    });
+  if (!selectedYearMetrics) {
+    return createSafeErrorResult(
+      "Selected year metrics not found",
+    );
+  }
+  if (!prevYearMetrics) {
+    return createSafeErrorResult(
+      "Previous year metrics not found",
+    );
+  }
+  if (!selectedMonthMetrics) {
+    return createSafeErrorResult(
+      "Selected month metrics not found",
+    );
+  }
+  if (!prevMonthMetrics) {
+    return createSafeErrorResult(
+      "Previous month metrics not found",
+    );
+  }
+  if (!selectedDayMetrics) {
+    return createSafeErrorResult(
+      "Selected day metrics not found",
+    );
+  }
+  if (!prevDayMetrics) {
+    return createSafeErrorResult(
+      "Previous day metrics not found",
+    );
   }
 
   try {
@@ -784,127 +780,115 @@ function createFinancialMetricsCardsSafe(
       selectedValue: selectedYearMetrics.netProfitMargin,
     });
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCards: {
-          profit: [
-            dayProfitTotalCardInfo,
-            dayProfitRepairCardInfo,
-            dayProfitSalesTotalCardInfo,
-            dayProfitSalesOnlineCardInfo,
-            dayProfitSalesInStoreCardInfo,
-          ],
-          revenue: [
-            dayRevenueTotalCardInfo,
-            dayRevenueRepairCardInfo,
-            dayRevenueSalesTotalCardInfo,
-            dayRevenueSalesOnlineCardInfo,
-            dayRevenueSalesInStoreCardInfo,
-          ],
-          expenses: [
-            dayExpensesTotalCardInfo,
-            dayExpensesRepairCardInfo,
-            dayExpensesSalesTotalCardInfo,
-            dayExpensesSalesOnlineCardInfo,
-            dayExpensesSalesInStoreCardInfo,
-          ],
-          transactions: [
-            dayUnitsSoldTotalCardInfo,
-            dayUnitsSoldRepairCardInfo,
-            dayUnitsSoldSalesTotalCardInfo,
-            dayUnitsSoldSalesOnlineCardInfo,
-            dayUnitsSoldSalesInStoreCardInfo,
-          ],
-          otherMetrics: [
-            dayAverageOrderValueCardInfo,
-            dayConversionRateCardInfo,
-            dayNetProfitMarginCardInfo,
-          ],
-        },
-        monthlyCards: {
-          profit: [
-            monthProfitTotalCardInfo,
-            monthProfitRepairCardInfo,
-            monthProfitSalesTotalCardInfo,
-            monthProfitSalesOnlineCardInfo,
-            monthProfitSalesInStoreCardInfo,
-          ],
-          revenue: [
-            monthRevenueTotalCardInfo,
-            monthRevenueRepairCardInfo,
-            monthRevenueSalesTotalCardInfo,
-            monthRevenueSalesOnlineCardInfo,
-            monthRevenueSalesInStoreCardInfo,
-          ],
-          expenses: [
-            monthExpensesTotalCardInfo,
-            monthExpensesRepairCardInfo,
-            monthExpensesSalesTotalCardInfo,
-            monthExpensesSalesOnlineCardInfo,
-            monthExpensesSalesInStoreCardInfo,
-          ],
-          transactions: [
-            monthUnitsSoldTotalCardInfo,
-            monthUnitsSoldRepairCardInfo,
-            monthUnitsSoldSalesTotalCardInfo,
-            monthUnitsSoldSalesOnlineCardInfo,
-            monthUnitsSoldSalesInStoreCardInfo,
-          ],
-          otherMetrics: [
-            monthAverageOrderValueCardInfo,
-            monthConversionRateCardInfo,
-            monthNetProfitMarginCardInfo,
-          ],
-        },
-        yearlyCards: {
-          profit: [
-            yearProfitTotalCardInfo,
-            yearProfitRepairCardInfo,
-            yearProfitSalesTotalCardInfo,
-            yearProfitSalesOnlineCardInfo,
-            yearProfitSalesInStoreCardInfo,
-          ],
-          revenue: [
-            yearRevenueTotalCardInfo,
-            yearRevenueRepairCardInfo,
-            yearRevenueSalesTotalCardInfo,
-            yearRevenueSalesOnlineCardInfo,
-            yearRevenueSalesInStoreCardInfo,
-          ],
-          expenses: [
-            yearExpensesTotalCardInfo,
-            yearExpensesRepairCardInfo,
-            yearExpensesSalesTotalCardInfo,
-            yearExpensesSalesOnlineCardInfo,
-            yearExpensesSalesInStoreCardInfo,
-          ],
-          transactions: [
-            yearUnitsSoldTotalCardInfo,
-            yearUnitsSoldRepairCardInfo,
-            yearUnitsSoldSalesTotalCardInfo,
-            yearUnitsSoldSalesOnlineCardInfo,
-            yearUnitsSoldSalesInStoreCardInfo,
-          ],
-          otherMetrics: [
-            yearAverageOrderValueCardInfo,
-            yearConversionRateCardInfo,
-            yearNetProfitMarginCardInfo,
-          ],
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      dailyCards: {
+        profit: [
+          dayProfitTotalCardInfo,
+          dayProfitRepairCardInfo,
+          dayProfitSalesTotalCardInfo,
+          dayProfitSalesOnlineCardInfo,
+          dayProfitSalesInStoreCardInfo,
+        ],
+        revenue: [
+          dayRevenueTotalCardInfo,
+          dayRevenueRepairCardInfo,
+          dayRevenueSalesTotalCardInfo,
+          dayRevenueSalesOnlineCardInfo,
+          dayRevenueSalesInStoreCardInfo,
+        ],
+        expenses: [
+          dayExpensesTotalCardInfo,
+          dayExpensesRepairCardInfo,
+          dayExpensesSalesTotalCardInfo,
+          dayExpensesSalesOnlineCardInfo,
+          dayExpensesSalesInStoreCardInfo,
+        ],
+        transactions: [
+          dayUnitsSoldTotalCardInfo,
+          dayUnitsSoldRepairCardInfo,
+          dayUnitsSoldSalesTotalCardInfo,
+          dayUnitsSoldSalesOnlineCardInfo,
+          dayUnitsSoldSalesInStoreCardInfo,
+        ],
+        otherMetrics: [
+          dayAverageOrderValueCardInfo,
+          dayConversionRateCardInfo,
+          dayNetProfitMarginCardInfo,
+        ],
+      },
+      monthlyCards: {
+        profit: [
+          monthProfitTotalCardInfo,
+          monthProfitRepairCardInfo,
+          monthProfitSalesTotalCardInfo,
+          monthProfitSalesOnlineCardInfo,
+          monthProfitSalesInStoreCardInfo,
+        ],
+        revenue: [
+          monthRevenueTotalCardInfo,
+          monthRevenueRepairCardInfo,
+          monthRevenueSalesTotalCardInfo,
+          monthRevenueSalesOnlineCardInfo,
+          monthRevenueSalesInStoreCardInfo,
+        ],
+        expenses: [
+          monthExpensesTotalCardInfo,
+          monthExpensesRepairCardInfo,
+          monthExpensesSalesTotalCardInfo,
+          monthExpensesSalesOnlineCardInfo,
+          monthExpensesSalesInStoreCardInfo,
+        ],
+        transactions: [
+          monthUnitsSoldTotalCardInfo,
+          monthUnitsSoldRepairCardInfo,
+          monthUnitsSoldSalesTotalCardInfo,
+          monthUnitsSoldSalesOnlineCardInfo,
+          monthUnitsSoldSalesInStoreCardInfo,
+        ],
+        otherMetrics: [
+          monthAverageOrderValueCardInfo,
+          monthConversionRateCardInfo,
+          monthNetProfitMarginCardInfo,
+        ],
+      },
+      yearlyCards: {
+        profit: [
+          yearProfitTotalCardInfo,
+          yearProfitRepairCardInfo,
+          yearProfitSalesTotalCardInfo,
+          yearProfitSalesOnlineCardInfo,
+          yearProfitSalesInStoreCardInfo,
+        ],
+        revenue: [
+          yearRevenueTotalCardInfo,
+          yearRevenueRepairCardInfo,
+          yearRevenueSalesTotalCardInfo,
+          yearRevenueSalesOnlineCardInfo,
+          yearRevenueSalesInStoreCardInfo,
+        ],
+        expenses: [
+          yearExpensesTotalCardInfo,
+          yearExpensesRepairCardInfo,
+          yearExpensesSalesTotalCardInfo,
+          yearExpensesSalesOnlineCardInfo,
+          yearExpensesSalesInStoreCardInfo,
+        ],
+        transactions: [
+          yearUnitsSoldTotalCardInfo,
+          yearUnitsSoldRepairCardInfo,
+          yearUnitsSoldSalesTotalCardInfo,
+          yearUnitsSoldSalesOnlineCardInfo,
+          yearUnitsSoldSalesInStoreCardInfo,
+        ],
+        otherMetrics: [
+          yearAverageOrderValueCardInfo,
+          yearConversionRateCardInfo,
+          yearNetProfitMarginCardInfo,
+        ],
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 

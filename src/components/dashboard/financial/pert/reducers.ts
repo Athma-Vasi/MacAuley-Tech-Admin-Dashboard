@@ -25,13 +25,13 @@ function pertReducer_setYAxisKey(
     zSchema: setYAxisKeyPERTDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    yAxisKey: parsedResult.val.data.val.payload as FinancialYAxisKey,
+    yAxisKey: parsedResult.val.safeUnwrap().payload as FinancialYAxisKey,
   };
 }
 

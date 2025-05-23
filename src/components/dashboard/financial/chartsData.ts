@@ -1,6 +1,9 @@
-import { Err, Some } from "ts-results";
-import { FinancialMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, toFixedFloat } from "../../../utils";
+import { FinancialMetricsDocument, ResultSafeBox } from "../../../types";
+import {
+  createSafeErrorResult,
+  createSafeSuccessResult,
+  toFixedFloat,
+} from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
 import { PieChartData } from "../../charts/responsivePieChart/types";
@@ -41,46 +44,42 @@ function returnSelectedDateFinancialMetricsSafe({
   month: Month;
   months: Month[];
   year: Year;
-}): SafeBoxResult<SelectedDateFinancialMetrics> {
+}): ResultSafeBox<SelectedDateFinancialMetrics> {
   try {
     const selectedYearMetrics = financialMetricsDocument.financialMetrics.find(
       (yearlyMetric) => yearlyMetric.year === year,
     );
     if (!selectedYearMetrics) {
-      return new Err({
-        data: Some("No financial metrics found for the selected year"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "No financial metrics found for the selected year",
+      );
     }
 
     const prevYearMetrics = financialMetricsDocument.financialMetrics.find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
     );
     if (!prevYearMetrics) {
-      return new Err({
-        data: Some("No financial metrics found for the previous year"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "No financial metrics found for the previous year",
+      );
     }
 
     const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
       (monthlyMetric) => monthlyMetric.month === month,
     );
     if (!selectedMonthMetrics) {
-      return new Err({
-        data: Some("No financial metrics found for the selected month"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "No financial metrics found for the selected month",
+      );
     }
 
     const prevPrevYearMetrics = financialMetricsDocument.financialMetrics.find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
     );
     if (!prevPrevYearMetrics) {
-      return new Err({
-        data: Some("No financial metrics found for the previous year"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "No financial metrics found for the previous year",
+      );
     }
 
     const prevMonthMetrics = month === "January"
@@ -92,20 +91,18 @@ function returnSelectedDateFinancialMetricsSafe({
           monthlyMetric.month === months[months.indexOf(month) - 1],
       );
     if (!prevMonthMetrics) {
-      return new Err({
-        data: Some("No financial metrics found for the previous month"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "No financial metrics found for the previous month",
+      );
     }
 
     const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
       (dailyMetric) => dailyMetric.day === day,
     );
     if (!selectedDayMetrics) {
-      return new Err({
-        data: Some("No financial metrics found for the selected day"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "No financial metrics found for the selected day",
+      );
     }
 
     const prevDayMetrics = day === "01"
@@ -131,31 +128,18 @@ function returnSelectedDateFinancialMetricsSafe({
           dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
       );
     if (!prevDayMetrics) {
-      return new Err({
-        data: Some("No financial metrics found for the previous day"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "No financial metrics found for the previous day",
+      );
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
-        monthFinancialMetrics: { selectedMonthMetrics, prevMonthMetrics },
-        dayFinancialMetrics: { selectedDayMetrics, prevDayMetrics },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      yearFinancialMetrics: { selectedYearMetrics, prevYearMetrics },
+      monthFinancialMetrics: { selectedMonthMetrics, prevMonthMetrics },
+      dayFinancialMetrics: { selectedDayMetrics, prevDayMetrics },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -363,7 +347,18 @@ function createFinancialMetricsChartsSafe({
   financialMetricsDocument,
   months,
   selectedDateFinancialMetrics,
-}: ReturnFinancialMetricsChartsInput): SafeBoxResult<FinancialMetricsCharts> {
+}: ReturnFinancialMetricsChartsInput): ResultSafeBox<FinancialMetricsCharts> {
+  if (!financialMetricsDocument) {
+    return createSafeErrorResult(
+      "No financial metrics document found",
+    );
+  }
+  if (!selectedDateFinancialMetrics) {
+    return createSafeErrorResult(
+      "No selected date financial metrics found",
+    );
+  }
+
   const BAR_CHARTS_TEMPLATE: FinancialMetricsBarCharts = {
     total: [],
     all: [],
@@ -406,96 +401,6 @@ function createFinancialMetricsChartsSafe({
     netProfitMargin: [{ id: "Net Profit Margin", data: [] }],
   };
 
-  const PIE_CHARTS_TEMPLATE: FinancialMetricsPieCharts = {
-    overview: [],
-    all: [],
-  };
-
-  if (!financialMetricsDocument || !selectedDateFinancialMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: {
-          profit: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          expenses: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          revenue: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          transactions: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          otherMetrics: {
-            bar: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
-            line: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
-          },
-        },
-        monthlyCharts: {
-          profit: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          expenses: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          revenue: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          transactions: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          otherMetrics: {
-            bar: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
-            line: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
-          },
-        },
-        yearlyCharts: {
-          profit: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          expenses: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          revenue: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          transactions: {
-            bar: BAR_CHARTS_TEMPLATE,
-            line: LINE_CHARTS_TEMPLATE,
-            pie: PIE_CHARTS_TEMPLATE,
-          },
-          otherMetrics: {
-            bar: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
-            line: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
-          },
-        },
-      }),
-    });
-  }
-
   try {
     const {
       yearFinancialMetrics: { selectedYearMetrics },
@@ -510,89 +415,66 @@ function createFinancialMetricsChartsSafe({
       dayFinancialMetrics: { selectedDayMetrics },
     } = selectedDateFinancialMetrics;
 
-    const [
-      dailyFinancialChartsSafeResult,
-      monthlyFinancialChartsSafeResult,
-      yearlyFinancialChartsSafeResult,
-    ] = [
-      createDailyFinancialChartsSafe({
-        barChartsTemplate: BAR_CHARTS_TEMPLATE,
-        dailyMetrics: selectedMonthMetrics?.dailyMetrics,
-        lineChartsTemplate: LINE_CHARTS_TEMPLATE,
-        otherMetricsBarChartsTemplate: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
-        otherMetricsLineChartsTemplate: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
-        pieChartsTemplate: PIE_CHARTS_TEMPLATE,
-        selectedDayMetrics,
-      }),
-      createMonthlyFinancialChartsSafe({
-        barChartsTemplate: BAR_CHARTS_TEMPLATE,
-        lineChartsTemplate: LINE_CHARTS_TEMPLATE,
-        otherMetricsBarChartsTemplate: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
-        otherMetricsLineChartsTemplate: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
-        pieChartsTemplate: PIE_CHARTS_TEMPLATE,
-        months,
-        selectedYear,
-        monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
-        selectedMonthMetrics,
-      }),
-      createYearlyFinancialChartsSafe({
-        barChartsTemplate: BAR_CHARTS_TEMPLATE,
-        lineChartsTemplate: LINE_CHARTS_TEMPLATE,
-        otherMetricsBarChartsTemplate: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
-        otherMetricsLineChartsTemplate: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
-        pieChartsTemplate: PIE_CHARTS_TEMPLATE,
-        selectedYearMetrics,
-        yearlyMetrics: financialMetricsDocument.financialMetrics,
-      }),
-    ];
-
-    if (
-      dailyFinancialChartsSafeResult.err ||
-      dailyFinancialChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: dailyFinancialChartsSafeResult.val.data,
-        message: Some("Error creating daily financial charts"),
-      });
+    const dailyFinancialChartsSafeResult = createDailyFinancialChartsSafe({
+      barChartsTemplate: BAR_CHARTS_TEMPLATE,
+      dailyMetrics: selectedMonthMetrics?.dailyMetrics,
+      lineChartsTemplate: LINE_CHARTS_TEMPLATE,
+      otherMetricsBarChartsTemplate: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
+      otherMetricsLineChartsTemplate: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
+      selectedDayMetrics,
+    });
+    if (dailyFinancialChartsSafeResult.err) {
+      return dailyFinancialChartsSafeResult;
     }
-    if (
-      monthlyFinancialChartsSafeResult.err ||
-      monthlyFinancialChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: monthlyFinancialChartsSafeResult.val.data,
-        message: Some("Error creating monthly financial charts"),
-      });
-    }
-    if (
-      yearlyFinancialChartsSafeResult.err ||
-      yearlyFinancialChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: yearlyFinancialChartsSafeResult.val.data,
-        message: Some("Error creating yearly financial charts"),
-      });
+    if (dailyFinancialChartsSafeResult.val.none) {
+      return createSafeErrorResult(
+        "No daily financial metrics found",
+      );
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: dailyFinancialChartsSafeResult.val.data.val,
-        monthlyCharts: monthlyFinancialChartsSafeResult.val.data.val,
-        yearlyCharts: yearlyFinancialChartsSafeResult.val.data.val,
-      }),
-      kind: "success",
+    const monthlyFinancialChartsSafeResult = createMonthlyFinancialChartsSafe({
+      barChartsTemplate: BAR_CHARTS_TEMPLATE,
+      lineChartsTemplate: LINE_CHARTS_TEMPLATE,
+      otherMetricsBarChartsTemplate: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
+      otherMetricsLineChartsTemplate: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
+      months,
+      selectedYear,
+      monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
+      selectedMonthMetrics,
+    });
+    if (monthlyFinancialChartsSafeResult.err) {
+      return monthlyFinancialChartsSafeResult;
+    }
+    if (monthlyFinancialChartsSafeResult.val.none) {
+      return createSafeErrorResult(
+        "No monthly financial metrics found",
+      );
+    }
+
+    const yearlyFinancialChartsSafeResult = createYearlyFinancialChartsSafe({
+      barChartsTemplate: BAR_CHARTS_TEMPLATE,
+      lineChartsTemplate: LINE_CHARTS_TEMPLATE,
+      otherMetricsBarChartsTemplate: OTHER_METRICS_BAR_CHARTS_TEMPLATE,
+      otherMetricsLineChartsTemplate: OTHER_METRICS_LINE_CHARTS_TEMPLATE,
+      selectedYearMetrics,
+      yearlyMetrics: financialMetricsDocument.financialMetrics,
+    });
+    if (yearlyFinancialChartsSafeResult.err) {
+      return yearlyFinancialChartsSafeResult;
+    }
+    if (yearlyFinancialChartsSafeResult.val.none) {
+      return createSafeErrorResult(
+        "No yearly financial metrics found",
+      );
+    }
+
+    return createSafeSuccessResult({
+      dailyCharts: dailyFinancialChartsSafeResult.val.safeUnwrap(),
+      monthlyCharts: monthlyFinancialChartsSafeResult.val.safeUnwrap(),
+      yearlyCharts: yearlyFinancialChartsSafeResult.val.safeUnwrap(),
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -602,7 +484,6 @@ type CreateDailyFinancialChartsInput = {
   lineChartsTemplate: FinancialMetricLineCharts;
   otherMetricsBarChartsTemplate: FinancialOtherMetricsBarCharts;
   otherMetricsLineChartsTemplate: FinancialOtherMetricsLineCharts;
-  pieChartsTemplate: FinancialMetricsPieCharts;
   selectedDayMetrics?: DailyFinancialMetric;
 };
 function createDailyFinancialChartsSafe({
@@ -611,40 +492,19 @@ function createDailyFinancialChartsSafe({
   lineChartsTemplate,
   otherMetricsBarChartsTemplate,
   otherMetricsLineChartsTemplate,
-  pieChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyFinancialChartsInput): SafeBoxResult<
+}: CreateDailyFinancialChartsInput): ResultSafeBox<
   FinancialMetricsCharts["dailyCharts"]
 > {
-  if (!dailyMetrics || !selectedDayMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        profit: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        expenses: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        revenue: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        transactions: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        otherMetrics: {
-          bar: otherMetricsBarChartsTemplate,
-          line: otherMetricsLineChartsTemplate,
-        },
-      }),
-    });
+  if (!dailyMetrics) {
+    return createSafeErrorResult(
+      "No daily financial metrics found",
+    );
+  }
+  if (!selectedDayMetrics) {
+    return createSafeErrorResult(
+      "No selected day financial metrics found",
+    );
   }
 
   try {
@@ -1554,46 +1414,34 @@ function createDailyFinancialChartsSafe({
       ],
     };
 
-    return createSafeBoxResult({
-      data: Some({
-        profit: {
-          bar: dailyProfitBarCharts,
-          line: dailyProfitLineCharts,
-          pie: dailyProfitPieCharts,
-        },
-        expenses: {
-          bar: dailyExpensesBarCharts,
-          line: dailyExpensesLineCharts,
-          pie: dailyExpensesPieCharts,
-        },
-        revenue: {
-          bar: dailyRevenueBarCharts,
-          line: dailyRevenueLineCharts,
-          pie: dailyRevenuePieCharts,
-        },
-        transactions: {
-          bar: dailyTransactionsBarCharts,
-          line: dailyTransactionsLineCharts,
-          pie: dailyTransactionsPieCharts,
-        },
-        otherMetrics: {
-          bar: dailyOtherMetricsBarCharts,
-          line: dailyOtherMetricsLineCharts,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      profit: {
+        bar: dailyProfitBarCharts,
+        line: dailyProfitLineCharts,
+        pie: dailyProfitPieCharts,
+      },
+      expenses: {
+        bar: dailyExpensesBarCharts,
+        line: dailyExpensesLineCharts,
+        pie: dailyExpensesPieCharts,
+      },
+      revenue: {
+        bar: dailyRevenueBarCharts,
+        line: dailyRevenueLineCharts,
+        pie: dailyRevenuePieCharts,
+      },
+      transactions: {
+        bar: dailyTransactionsBarCharts,
+        line: dailyTransactionsLineCharts,
+        pie: dailyTransactionsPieCharts,
+      },
+      otherMetrics: {
+        bar: dailyOtherMetricsBarCharts,
+        line: dailyOtherMetricsLineCharts,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -1604,7 +1452,6 @@ type CreateMonthlyFinancialChartsInput = {
   months: Month[];
   otherMetricsBarChartsTemplate: FinancialOtherMetricsBarCharts;
   otherMetricsLineChartsTemplate: FinancialOtherMetricsLineCharts;
-  pieChartsTemplate: FinancialMetricsPieCharts;
   selectedMonthMetrics?: MonthlyFinancialMetric;
   selectedYear: Year;
 };
@@ -1614,41 +1461,20 @@ function createMonthlyFinancialChartsSafe({
   monthlyMetrics,
   otherMetricsBarChartsTemplate,
   otherMetricsLineChartsTemplate,
-  pieChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyFinancialChartsInput): SafeBoxResult<
+}: CreateMonthlyFinancialChartsInput): ResultSafeBox<
   FinancialMetricsCharts["monthlyCharts"]
 > {
-  if (!monthlyMetrics || !selectedMonthMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        profit: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        expenses: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        revenue: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        transactions: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        otherMetrics: {
-          bar: otherMetricsBarChartsTemplate,
-          line: otherMetricsLineChartsTemplate,
-        },
-      }),
-    });
+  if (!monthlyMetrics) {
+    return createSafeErrorResult(
+      "No monthly financial metrics found",
+    );
+  }
+  if (!selectedMonthMetrics) {
+    return createSafeErrorResult(
+      "No selected month financial metrics found",
+    );
   }
 
   try {
@@ -2582,46 +2408,34 @@ function createMonthlyFinancialChartsSafe({
       ],
     };
 
-    return createSafeBoxResult({
-      data: Some({
-        revenue: {
-          bar: monthlyRevenueBarCharts,
-          line: monthlyRevenueLineCharts,
-          pie: monthlyRevenuePieCharts,
-        },
-        profit: {
-          bar: monthlyProfitBarCharts,
-          line: monthlyProfitLineCharts,
-          pie: monthlyProfitPieCharts,
-        },
-        expenses: {
-          bar: monthlyExpensesBarCharts,
-          line: monthlyExpensesLineCharts,
-          pie: monthlyExpensesPieCharts,
-        },
-        transactions: {
-          bar: monthlyTransactionsBarCharts,
-          line: monthlyTransactionsLineCharts,
-          pie: monthlyTransactionsPieCharts,
-        },
-        otherMetrics: {
-          bar: monthlyOtherMetricsBarCharts,
-          line: monthlyOtherMetricsLineCharts,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      revenue: {
+        bar: monthlyRevenueBarCharts,
+        line: monthlyRevenueLineCharts,
+        pie: monthlyRevenuePieCharts,
+      },
+      profit: {
+        bar: monthlyProfitBarCharts,
+        line: monthlyProfitLineCharts,
+        pie: monthlyProfitPieCharts,
+      },
+      expenses: {
+        bar: monthlyExpensesBarCharts,
+        line: monthlyExpensesLineCharts,
+        pie: monthlyExpensesPieCharts,
+      },
+      transactions: {
+        bar: monthlyTransactionsBarCharts,
+        line: monthlyTransactionsLineCharts,
+        pie: monthlyTransactionsPieCharts,
+      },
+      otherMetrics: {
+        bar: monthlyOtherMetricsBarCharts,
+        line: monthlyOtherMetricsLineCharts,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -2630,50 +2444,28 @@ type CreateYearlyFinancialChartsInput = {
   lineChartsTemplate: FinancialMetricLineCharts;
   otherMetricsBarChartsTemplate: FinancialOtherMetricsBarCharts;
   otherMetricsLineChartsTemplate: FinancialOtherMetricsLineCharts;
-  pieChartsTemplate: FinancialMetricsPieCharts;
   selectedYearMetrics?: YearlyFinancialMetric;
   yearlyMetrics?: YearlyFinancialMetric[];
 };
 function createYearlyFinancialChartsSafe({
   yearlyMetrics,
   selectedYearMetrics,
-  pieChartsTemplate,
   otherMetricsLineChartsTemplate,
   otherMetricsBarChartsTemplate,
   lineChartsTemplate,
   barChartsTemplate,
-}: CreateYearlyFinancialChartsInput): SafeBoxResult<
+}: CreateYearlyFinancialChartsInput): ResultSafeBox<
   FinancialMetricsCharts["yearlyCharts"]
 > {
-  if (!yearlyMetrics || !selectedYearMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        profit: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        expenses: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        revenue: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        transactions: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        otherMetrics: {
-          bar: otherMetricsBarChartsTemplate,
-          line: otherMetricsLineChartsTemplate,
-        },
-      }),
-    });
+  if (!yearlyMetrics) {
+    return createSafeErrorResult(
+      "Yearly metrics data is not available",
+    );
+  }
+  if (!selectedYearMetrics) {
+    return createSafeErrorResult(
+      "Selected year metrics data is not available",
+    );
   }
 
   try {
@@ -3594,46 +3386,34 @@ function createYearlyFinancialChartsSafe({
       ],
     };
 
-    return createSafeBoxResult({
-      data: Some({
-        revenue: {
-          bar: yearlyRevenueBarChartsObj,
-          line: yearlyRevenueLineChartsObj,
-          pie: yearlyRevenuePie,
-        },
-        expenses: {
-          bar: yearlyExpensesBarChartsObj,
-          line: yearlyExpensesLineChartsObj,
-          pie: yearlyExpensesPie,
-        },
-        profit: {
-          bar: yearlyProfitBarChartsObj,
-          line: yearlyProfitLineChartsObj,
-          pie: yearlyProfitPie,
-        },
-        transactions: {
-          bar: yearlyTransactionsBarChartsObj,
-          line: yearlyTransactionsLineChartsObj,
-          pie: yearlyTransactionsPie,
-        },
-        otherMetrics: {
-          bar: yearlyOtherMetricsBarChartsObj,
-          line: yearlyOtherMetricsLineChartsObj,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      revenue: {
+        bar: yearlyRevenueBarChartsObj,
+        line: yearlyRevenueLineChartsObj,
+        pie: yearlyRevenuePie,
+      },
+      expenses: {
+        bar: yearlyExpensesBarChartsObj,
+        line: yearlyExpensesLineChartsObj,
+        pie: yearlyExpensesPie,
+      },
+      profit: {
+        bar: yearlyProfitBarChartsObj,
+        line: yearlyProfitLineChartsObj,
+        pie: yearlyProfitPie,
+      },
+      transactions: {
+        bar: yearlyTransactionsBarChartsObj,
+        line: yearlyTransactionsLineChartsObj,
+        pie: yearlyTransactionsPie,
+      },
+      otherMetrics: {
+        bar: yearlyOtherMetricsBarChartsObj,
+        line: yearlyOtherMetricsLineChartsObj,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -3685,10 +3465,16 @@ function createFinancialMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics,
   selectedYYYYMMDD: string,
-): SafeBoxResult<{
+): ResultSafeBox<{
   currentYear: FinancialMetricsCalendarCharts;
   previousYear: FinancialMetricsCalendarCharts;
 }> {
+  if (!selectedDateFinancialMetrics) {
+    return createSafeErrorResult(
+      "Selected date financial metrics is not defined",
+    );
+  }
+
   const calendarChartsTemplatePERT: CalendarChartsPERT = {
     total: [],
     repair: [],
@@ -3708,15 +3494,6 @@ function createFinancialMetricsCalendarChartsSafe(
       netProfitMargin: [],
     },
   };
-
-  if (!selectedDateFinancialMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        currentYear: calendarChartsTemplate,
-        previousYear: calendarChartsTemplate,
-      }),
-    });
-  }
 
   try {
     const {
@@ -3917,24 +3694,12 @@ function createFinancialMetricsCalendarChartsSafe(
       return financialCalendarCharts;
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        currentYear,
-        previousYear,
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      currentYear,
+      previousYear,
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 

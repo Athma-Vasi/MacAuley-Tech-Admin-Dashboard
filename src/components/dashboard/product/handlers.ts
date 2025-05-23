@@ -22,10 +22,15 @@ async function handleMessageEventProductWorkerToMain(input: {
             zSchema: handleMessageEventProductWorkerToMainInputZod,
         });
         if (parsedInputResult.err) {
+            input.showBoundary(parsedInputResult);
             return parsedInputResult;
         }
         if (parsedInputResult.val.none) {
-            return createSafeErrorResult("Error parsing input");
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input.showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {

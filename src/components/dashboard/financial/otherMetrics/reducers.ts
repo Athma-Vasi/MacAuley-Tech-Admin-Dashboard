@@ -34,13 +34,13 @@ function otherMetricsReducer_setYAxisKey(
     zSchema: setYAxisKeyOtherMetricsDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    yAxisKey: parsedResult.val.data.val
+    yAxisKey: parsedResult.val.safeUnwrap()
       .payload as FinancialMetricsOtherMetricsChartsKey,
   };
 }

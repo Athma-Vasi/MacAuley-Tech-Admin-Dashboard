@@ -1,6 +1,9 @@
-import { Some } from "ts-results";
-import { FinancialMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
+import { FinancialMetricsDocument, ResultSafeBox } from "../../../types";
+import {
+    createSafeErrorResult,
+    createSafeSuccessResult,
+    parseSyncSafe,
+} from "../../../utils";
 import { MONTHS } from "../constants";
 import { DashboardCalendarView, Month, Year } from "../types";
 import {
@@ -17,7 +20,7 @@ import {
 import { messageEventFinancialMainToWorkerZod } from "./schemas";
 
 type MessageEventFinancialWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             currentYear: FinancialMetricsCalendarCharts;
             previousYear: FinancialMetricsCalendarCharts;
@@ -30,8 +33,8 @@ type MessageEventFinancialMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         cardBgGradient: string;
-        financialMetricsDocument: FinancialMetricsDocument;
         greenColorShade: string;
+        financialMetricsDocument: FinancialMetricsDocument;
         redColorShade: string;
         selectedDate: string;
         selectedMonth: Month;
@@ -44,10 +47,9 @@ self.onmessage = async (
     event: MessageEventFinancialMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -55,10 +57,14 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventFinancialMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+    if (parsedMessageResult.err) {
+        self.postMessage(parsedMessageResult);
+        return;
+    }
+    if (parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing input"),
+        );
         return;
     }
 
@@ -76,29 +82,28 @@ self.onmessage = async (
 
     try {
         const selectedDateFinancialMetricsSafeResult =
-            returnSelectedDateFinancialMetricsSafe(
-                {
-                    financialMetricsDocument,
-                    day: selectedDate,
-                    month: selectedMonth,
-                    months: MONTHS,
-                    year: selectedYear,
-                },
-            );
-        if (
-            selectedDateFinancialMetricsSafeResult.err ||
-            selectedDateFinancialMetricsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: selectedDateFinancialMetricsSafeResult.val.data,
-                message: Some(
-                    "Error creating selected date financial metrics",
+            returnSelectedDateFinancialMetricsSafe({
+                financialMetricsDocument,
+                day: selectedDate,
+                month: selectedMonth,
+                months: MONTHS,
+                year: selectedYear,
+            });
+        if (selectedDateFinancialMetricsSafeResult.err) {
+            self.postMessage(selectedDateFinancialMetricsSafeResult);
+            return;
+        }
+        if (selectedDateFinancialMetricsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No financial metrics found for the selected date",
                 ),
-            }));
+            );
             return;
         }
         const selectedDateFinancialMetrics =
-            selectedDateFinancialMetricsSafeResult.val.data.val;
+            selectedDateFinancialMetricsSafeResult
+                .val.safeUnwrap();
 
         const createFinancialMetricsCalendarChartsSafeResult =
             createFinancialMetricsCalendarChartsSafe(
@@ -106,20 +111,22 @@ self.onmessage = async (
                 selectedDateFinancialMetrics,
                 selectedYYYYMMDD,
             );
-        if (
-            createFinancialMetricsCalendarChartsSafeResult.err ||
-            createFinancialMetricsCalendarChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: createFinancialMetricsCalendarChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating financial metrics calendar charts",
+        if (createFinancialMetricsCalendarChartsSafeResult.err) {
+            self.postMessage(
+                createFinancialMetricsCalendarChartsSafeResult,
+            );
+            return;
+        }
+        if (createFinancialMetricsCalendarChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No financial metrics calendar charts found",
                 ),
-            }));
+            );
             return;
         }
         const { currentYear, previousYear } =
-            createFinancialMetricsCalendarChartsSafeResult.val.data.val;
+            createFinancialMetricsCalendarChartsSafeResult.val.safeUnwrap();
 
         const financialMetricsChartsSafeResult =
             createFinancialMetricsChartsSafe({
@@ -127,20 +134,20 @@ self.onmessage = async (
                 months: MONTHS,
                 selectedDateFinancialMetrics,
             });
-        if (
-            financialMetricsChartsSafeResult.err ||
-            financialMetricsChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: financialMetricsChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating financial metrics charts",
-                ),
-            }));
+        if (financialMetricsChartsSafeResult.err) {
+            self.postMessage(financialMetricsChartsSafeResult);
             return;
         }
-        const financialMetricsCharts =
-            financialMetricsChartsSafeResult.val.data.val;
+        if (financialMetricsChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No financial metrics charts found",
+                ),
+            );
+            return;
+        }
+        const financialMetricsCharts = financialMetricsChartsSafeResult.val
+            .safeUnwrap();
 
         const financialMetricsCardsSafeResult = createFinancialMetricsCardsSafe(
             {
@@ -150,68 +157,52 @@ self.onmessage = async (
                 selectedDateFinancialMetrics,
             },
         );
-        if (
-            financialMetricsCardsSafeResult.err ||
-            financialMetricsCardsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: financialMetricsCardsSafeResult.val.data,
-                message: Some(
-                    "Error creating financial metrics cards",
-                ),
-            }));
+        if (financialMetricsCardsSafeResult.err) {
+            self.postMessage(
+                financialMetricsCardsSafeResult,
+            );
             return;
         }
-        const financialMetricsCards =
-            financialMetricsCardsSafeResult.val.data.val;
+        if (financialMetricsCardsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No financial metrics cards found",
+                ),
+            );
+            return;
+        }
+        const financialMetricsCards = financialMetricsCardsSafeResult.val
+            .safeUnwrap();
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
+        self.postMessage(
+            createSafeSuccessResult({
                 currentYear,
                 previousYear,
                 financialMetricsCharts,
                 financialMetricsCards,
             }),
-            kind: "success",
-        }));
+        );
     } catch (error) {
         console.error("Financial Charts Worker error:", error);
-        self.postMessage(createSafeBoxResult({
-            data: Some(error),
-            message: Some(
-                error instanceof Error ? error.message : "Unknown error",
-            ),
-        }));
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     }
 };
 
 self.onerror = (event: string | Event) => {
     console.error("Financial Charts Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
 });
 
 export type {
