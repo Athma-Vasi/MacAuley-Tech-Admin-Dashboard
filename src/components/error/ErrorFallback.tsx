@@ -9,10 +9,8 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { COLORS_SWATCHES } from "../../constants";
-import { useGlobalState } from "../../hooks";
+import { Err } from "ts-results";
 import { SafeError } from "../../types";
-import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { GoldenGrid } from "../goldenGrid";
 import matrixGif from "./matrix.gif";
@@ -21,15 +19,10 @@ function ErrorFallback({
   safeError,
   resetErrorBoundary,
 }: {
-  safeError: SafeError;
+  safeError: Err<SafeError>;
   resetErrorBoundary: () => void;
 }) {
   const navigateFn = useNavigate();
-  const { globalState: { themeObject } } = useGlobalState();
-  const { redColorShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
 
   const tryAgainButtonWithTooltip = (
     <Tooltip label="Will try the action again">
@@ -71,27 +64,27 @@ function ErrorFallback({
 
       <Stack w="100%">
         <Text size="xl" weight={500} mt="md" align="center">
-          Simulation Desynchronized
+          Oops! Something went wrong.
         </Text>
 
         <GoldenGrid>
           <Text>Name:</Text>
-          <Text data-testid={`error-name-${safeError.name}`}>
-            {safeError.name}
+          <Text data-testid={`error-name-${safeError.val.name}`}>
+            {safeError.val.name}
           </Text>
         </GoldenGrid>
         <Divider w="100%" />
         <GoldenGrid>
           <Text>Message:</Text>
-          <Text data-testid={`error-message-${safeError.message}`}>
-            {safeError.message}
+          <Text data-testid={`error-message-${safeError.val.message}`}>
+            {safeError.val.message}
           </Text>
         </GoldenGrid>
         <Divider w="100%" />
         <GoldenGrid>
           <Text>Stack:</Text>
-          <Text data-testid={`error-stack-${safeError.stack}`}>
-            {safeError.stack.none
+          <Text data-testid={`error-stack-${safeError.val.stack}`}>
+            {safeError.val.stack.none
               ? <Text color="dimmed">No stack available</Text>
               : <Text>{safeError.stack}</Text>}
           </Text>
@@ -99,10 +92,10 @@ function ErrorFallback({
         <Divider w="100%" />
         <GoldenGrid>
           <Text>Original:</Text>
-          <Text data-testid={`error-original-${safeError.original}`}>
-            {safeError.original.none
+          <Text data-testid={`error-original-${safeError.val.original}`}>
+            {safeError.val.original.none
               ? <Text color="dimmed">No original available</Text>
-              : <Text>{safeError.original}</Text>}
+              : <Text>{safeError.val.original}</Text>}
           </Text>
         </GoldenGrid>
 

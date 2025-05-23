@@ -1,14 +1,14 @@
-import { Some } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     BusinessMetricsDocument,
     DecodedToken,
     HttpServerResponse,
-    SafeBoxResult,
+    ResultSafeBox,
     UserDocument,
 } from "../../types";
 import {
-    createSafeBoxResult,
+    createSafeErrorResult,
+    createSafeSuccessResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
@@ -37,7 +37,7 @@ type MessageEventDashboardFetchMainToWorker = MessageEvent<
 >;
 
 type MessageEventDashboardFetchWorkerToMain = MessageEvent<
-    SafeBoxResult<{
+    ResultSafeBox<{
         decodedToken: DecodedToken;
         metricsView: Lowercase<DashboardMetricsView>;
         parsedServerResponse: HttpServerResponse<BusinessMetricsDocument>;
@@ -51,10 +51,9 @@ self.onmessage = async (
     event: MessageEventDashboardFetchMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -62,10 +61,15 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventDashboardFetchMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+    if (parsedMessageResult.err) {
+        self.postMessage(parsedMessageResult);
+        return;
+    }
+
+    if (parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing input"),
+        );
         return;
     }
 
@@ -87,12 +91,13 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err || responseResult.val.none) {
+        if (responseResult.err) {
+            self.postMessage(responseResult);
+            return;
+        }
+        if (responseResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: responseResult.val,
-                    message: Some("Error fetching response"),
-                }),
+                createSafeErrorResult("Response not found"),
             );
             return;
         }
@@ -100,31 +105,28 @@ self.onmessage = async (
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
         >(responseResult.val.safeUnwrap());
-        if (jsonResult.err || jsonResult.val.none) {
+        if (jsonResult.err) {
+            self.postMessage(jsonResult);
+            return;
+        }
+        if (jsonResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: jsonResult.val,
-                    message: Some("Error extracting JSON from response"),
-                }),
+                createSafeErrorResult("JSON not found"),
             );
             return;
         }
-
-        console.log(
-            "jsonResult in dashboard fetch worker",
-            jsonResult.val.safeUnwrap(),
-        );
 
         const parsedResult = await parseServerResponseAsyncSafe({
             object: jsonResult.val.safeUnwrap(),
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-
-        if (parsedResult.err || parsedResult.val.none) {
+        if (parsedResult.err) {
+            self.postMessage(parsedResult);
+            return;
+        }
+        if (parsedResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error parsing server response"),
-                }),
+                createSafeErrorResult("Parsed result not found"),
             );
             return;
         }
@@ -132,40 +134,33 @@ self.onmessage = async (
         const { accessToken } = parsedResult.val.safeUnwrap();
 
         const decodedTokenResult = decodeJWTSafe(accessToken);
-        if (decodedTokenResult.err || decodedTokenResult.val.none) {
+        if (decodedTokenResult.err) {
+            self.postMessage(decodedTokenResult);
+            return;
+        }
+        if (decodedTokenResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: decodedTokenResult.val,
-                    message: Some("Error decoding JWT"),
-                }),
+                createSafeErrorResult("Decoded token not found"),
             );
             return;
         }
 
-        console.log("SUCCESSFULLY DECODED JWT TOKEN", decodedTokenResult.val);
-
-        self.postMessage(createSafeBoxResult({
-            data: Some({
-                decodedToken: decodedTokenResult.val.safeUnwrap(),
-                metricsView,
-                parsedServerResponse: parsedResult.val.safeUnwrap(),
-                productMetricCategory,
-                repairMetricCategory,
-                storeLocation,
-            }),
-            kind: "success",
-        }));
-    } catch (err) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(err),
-            message: Some(
-                err instanceof Error
-                    ? err.message
-                    : typeof err === "string"
-                    ? err
-                    : "Unknown error",
+        self.postMessage(
+            createSafeSuccessResult(
+                {
+                    decodedToken: decodedTokenResult.val.safeUnwrap(),
+                    metricsView,
+                    parsedServerResponse: parsedResult.val.safeUnwrap(),
+                    productMetricCategory,
+                    repairMetricCategory,
+                    storeLocation,
+                },
             ),
-        }));
+        );
+    } catch (error: unknown) {
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     } finally {
         clearTimeout(timeout);
     }
@@ -173,31 +168,17 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Metrics Charts Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
 });
 
 export type {

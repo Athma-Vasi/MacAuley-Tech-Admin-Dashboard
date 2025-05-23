@@ -1,6 +1,6 @@
 import { Some } from "ts-results";
-import { RepairMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
+import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
+import { createSafeErrorResult, parseSyncSafe } from "../../../utils";
 import { MONTHS } from "../constants";
 import { DashboardCalendarView, Month, Year } from "../types";
 import { createRepairMetricsCardsSafe, RepairMetricsCards } from "./cards";
@@ -14,7 +14,7 @@ import {
 import { messageEventRepairMainToWorkerZod } from "./schemas";
 
 type MessageEventRepairWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             currentYear: RepairMetricCalendarCharts;
             previousYear: RepairMetricCalendarCharts;
@@ -41,10 +41,9 @@ self.onmessage = async (
     event: MessageEventRepairMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -52,10 +51,14 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventRepairMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+    if (parsedMessageResult.err) {
+        self.postMessage(parsedMessageResult);
+        return;
+    }
+    if (parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing input"),
+        );
         return;
     }
 

@@ -1,6 +1,14 @@
 import { Err, Some } from "ts-results";
-import { RepairMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import {
+  RepairMetricsDocument,
+  ResultSafeBox,
+  SafeBoxResult,
+} from "../../../types";
+import {
+  createSafeBoxResult,
+  createSafeErrorResult,
+  createSafeSuccessResult,
+} from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -51,7 +59,7 @@ function returnSelectedDateRepairMetricsSafe({
   month,
   months,
   year,
-}: CreateSelectedDateRepairMetricsInput): SafeBoxResult<
+}: CreateSelectedDateRepairMetricsInput): ResultSafeBox<
   SelectedDateRepairMetrics
 > {
   try {
@@ -59,40 +67,30 @@ function returnSelectedDateRepairMetricsSafe({
       (yearlyMetric) => yearlyMetric.year === year,
     );
     if (!selectedYearMetrics) {
-      return new Err({
-        data: Some("Yearly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult("Selected yearly metrics not found");
     }
 
     const prevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
     );
     if (!prevYearMetrics) {
-      return new Err({
-        data: Some("Previous yearly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult("Previous yearly metrics not found");
     }
 
     const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
       (monthlyMetric) => monthlyMetric.month === month,
     );
     if (!selectedMonthMetrics) {
-      return new Err({
-        data: Some("Monthly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult("Monthly metrics not found");
     }
 
     const prevPrevYearMetrics = repairMetricsDocument.yearlyMetrics.find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
     );
     if (!prevPrevYearMetrics) {
-      return new Err({
-        data: Some("Previous previous yearly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous previous yearly metrics not found",
+      );
     }
 
     const prevMonthMetrics = month === "January"
@@ -104,20 +102,14 @@ function returnSelectedDateRepairMetricsSafe({
           monthlyMetric.month === months[months.indexOf(month) - 1],
       );
     if (!prevMonthMetrics) {
-      return new Err({
-        data: Some("Previous monthly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult("Previous monthly metrics not found");
     }
 
     const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
       (dailyMetric) => dailyMetric.day === day,
     );
     if (!selectedDayMetrics) {
-      return new Err({
-        data: Some("Daily metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult("Daily metrics not found");
     }
 
     const prevDayMetrics = day === "01"
@@ -143,31 +135,18 @@ function returnSelectedDateRepairMetricsSafe({
           dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
       );
     if (!prevDayMetrics) {
-      return new Err({
-        data: Some("Previous daily metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult("Previous daily metrics not found");
     }
 
-    return createSafeBoxResult({
-      data: Some({
+    return createSafeSuccessResult(
+      {
         dayRepairMetrics: { selectedDayMetrics, prevDayMetrics },
         monthRepairMetrics: { selectedMonthMetrics, prevMonthMetrics },
         yearRepairMetrics: { selectedYearMetrics, prevYearMetrics },
-      }),
-      kind: "success",
-    });
+      },
+    );
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -219,7 +198,14 @@ function createRepairMetricsChartsSafe({
   repairMetricsDocument,
   months,
   selectedDateRepairMetrics,
-}: ReturnRepairChartsInput): SafeBoxResult<RepairMetricsCharts> {
+}: ReturnRepairChartsInput): ResultSafeBox<RepairMetricsCharts> {
+  if (!repairMetricsDocument) {
+    return createSafeErrorResult("No repair metrics data found");
+  }
+  if (!selectedDateRepairMetrics) {
+    return createSafeErrorResult("No selected date repair metrics data found");
+  }
+
   const BAR_CHART_DATA_TEMPLATE: RepairMetricBarCharts = {
     revenue: [],
     unitsRepaired: [],
@@ -229,25 +215,6 @@ function createRepairMetricsChartsSafe({
     revenue: [{ id: "Revenue", data: [] }],
     unitsRepaired: [{ id: "Units Repaired", data: [] }],
   };
-
-  if (!repairMetricsDocument || !selectedDateRepairMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: {
-          bar: BAR_CHART_DATA_TEMPLATE,
-          line: LINE_CHART_DATA_TEMPLATE,
-        },
-        monthlyCharts: {
-          bar: BAR_CHART_DATA_TEMPLATE,
-          line: LINE_CHART_DATA_TEMPLATE,
-        },
-        yearlyCharts: {
-          bar: BAR_CHART_DATA_TEMPLATE,
-          line: LINE_CHART_DATA_TEMPLATE,
-        },
-      }),
-    });
-  }
 
   try {
     const {
@@ -291,13 +258,9 @@ function createRepairMetricsChartsSafe({
     ];
 
     if (
-      dailyRepairChartsSafeResult.err ||
-      dailyRepairChartsSafeResult.val.data.none
+      dailyRepairChartsSafeResult.err
     ) {
-      return createSafeBoxResult({
-        data: dailyRepairChartsSafeResult.val.data,
-        message: Some("Error creating daily repair charts"),
-      });
+      return dailyRepairChartsSafeResult;
     }
     if (
       monthlyRepairChartsSafeResult.err ||

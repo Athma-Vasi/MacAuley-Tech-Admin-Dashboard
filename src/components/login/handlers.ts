@@ -1,6 +1,5 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
-import { Some } from "ts-results";
 import { LOGIN_URL } from "../../constants";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
@@ -8,12 +7,13 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   FinancialMetricsDocument,
-  SafeBoxResult,
+  ResultSafeBox,
   UserDocument,
 } from "../../types";
 import {
   createMetricsURLCacheKey,
-  createSafeBoxResult,
+  createSafeErrorResult,
+  createSafeSuccessResult,
   parseSyncSafe,
   setCachedItemAsyncSafe,
 } from "../../utils";
@@ -32,16 +32,14 @@ async function handleLoginClick(input: {
   loginDispatch: React.Dispatch<LoginDispatch>;
   loginFetchWorker: Worker | null;
   schema: { username: string; password: string };
-}): Promise<SafeBoxResult<string>> {
+}): Promise<ResultSafeBox<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleLoginClickInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.none) {
-      return createSafeBoxResult({
-        data: Some("Error parsing input"),
-      });
+      return createSafeErrorResult("Error parsing input");
     }
 
     const {
@@ -54,9 +52,7 @@ async function handleLoginClick(input: {
     } = parsedInputResult.val.safeUnwrap();
 
     if (isLoading || isSubmitting || isSuccessful) {
-      return createSafeBoxResult({
-        data: Some("Login already in progress"),
-      });
+      return createSafeErrorResult("Already loading or submitting");
     }
 
     loginDispatch({
@@ -78,20 +74,9 @@ async function handleLoginClick(input: {
       routesZodSchemaMapKey: "login",
     });
 
-    return createSafeBoxResult({
-      data: Some("Login request sent"),
-      kind: "success",
-    });
+    return createSafeSuccessResult("Login request sent");
   } catch (error: unknown) {
-    return createSafeBoxResult({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -111,16 +96,14 @@ async function handleMessageEventLoginFetchWorkerToMain(
     navigate: NavigateFunction;
     showBoundary: (error: unknown) => void;
   },
-): Promise<SafeBoxResult<string>> {
+): Promise<ResultSafeBox<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleMessageEventLoginFetchWorkerToMainInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.none) {
-      return createSafeBoxResult({
-        data: Some("Error parsing input"),
-      });
+      return createSafeErrorResult("Error parsing input");
     }
 
     const {
@@ -136,25 +119,19 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
-      return createSafeBoxResult({
-        data: Some("No data in message event"),
-      });
+      return createSafeErrorResult("No data received");
     }
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        data: Some("Component unmounted"),
-      });
+      return createSafeErrorResult("Component unmounted");
     }
 
     if (messageEventResult.err) {
-      showBoundary(messageEventResult.val.data);
-      return createSafeBoxResult({
-        data: Some("Error from worker"),
-      });
+      showBoundary(messageEventResult);
+      return messageEventResult;
     }
 
-    if (messageEventResult.val.data.none) {
+    if (messageEventResult.val.none) {
       loginDispatch({
         action: loginAction.setErrorMessage,
         payload: "Invalid credentials",
@@ -168,16 +145,14 @@ async function handleMessageEventLoginFetchWorkerToMain(
         payload: false,
       });
 
-      return createSafeBoxResult({
-        data: Some("Invalid credentials"),
-      });
+      return createSafeErrorResult("Invalid credentials");
     }
 
-    const { parsedServerResponse, decodedToken } =
-      messageEventResult.val.data.val;
+    const { parsedServerResponse, decodedToken } = messageEventResult.val
+      .safeUnwrap();
     const { accessToken, data, triggerLogout } = parsedServerResponse;
 
-    if (triggerLogout) {
+    if (triggerLogout || decodedToken.none) {
       authDispatch({
         action: authAction.setAccessToken,
         payload: "",
@@ -197,9 +172,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
       await localforage.clear();
       navigate("/");
-      return createSafeBoxResult({
-        data: Some("Logout triggered"),
-      });
+      return createSafeErrorResult("Session expired");
     }
 
     authDispatch({
@@ -208,7 +181,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
     });
     authDispatch({
       action: authAction.setDecodedToken,
-      payload: decodedToken,
+      payload: decodedToken.safeUnwrap(),
     });
     authDispatch({
       action: authAction.setIsLoggedIn,
@@ -240,15 +213,11 @@ async function handleMessageEventLoginFetchWorkerToMain(
     );
 
     if (!isComponentMountedRef.current) {
-      return createSafeBoxResult({
-        data: Some("Component unmounted"),
-      });
+      return createSafeErrorResult("Component unmounted");
     }
     if (setCachedItemResult.err) {
-      showBoundary(setCachedItemResult.val);
-      return createSafeBoxResult({
-        data: Some("Error setting cached item"),
-      });
+      showBoundary(setCachedItemResult);
+      return createSafeErrorResult("Error setting cached item");
     }
 
     loginDispatch({
@@ -262,29 +231,17 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
     navigate("/dashboard/financials");
 
-    return createSafeBoxResult({
-      data: Some("Login successful"),
-      kind: "success",
-    });
+    return createSafeSuccessResult("Login successful");
   } catch (error: unknown) {
     if (
       !input.isComponentMountedRef.current
     ) {
-      return createSafeBoxResult({
-        data: Some("Component unmounted"),
-      });
+      return createSafeErrorResult("Component unmounted");
     }
 
-    input.showBoundary(error);
-    return createSafeBoxResult({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-    });
+    const safeErrorResult = createSafeErrorResult(error);
+    input.showBoundary(safeErrorResult);
+    return safeErrorResult;
   }
 }
 

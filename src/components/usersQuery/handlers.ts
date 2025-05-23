@@ -1,11 +1,11 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
-import { Some } from "ts-results";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
-import { SafeBoxResult, UserDocument } from "../../types";
+import { ResultSafeBox, UserDocument } from "../../types";
 import {
-    createSafeBoxResult,
+    createSafeErrorResult,
+    createSafeSuccessResult,
     createUsersURLCacheKey,
     getCachedItemAsyncSafe,
     parseSyncSafe,
@@ -35,15 +35,13 @@ async function handleUsersQuerySubmitGETClick(
         usersFetchWorker: Worker | null;
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
     },
-): Promise<SafeBoxResult<string>> {
+): Promise<ResultSafeBox<string>> {
     const parsedInputResult = parseSyncSafe({
         object: input,
         zSchema: handleUsersQuerySubmitGETClickInputZod,
     });
     if (parsedInputResult.err || parsedInputResult.val.none) {
-        return createSafeBoxResult({
-            data: Some("Error parsing input"),
-        });
+        return createSafeErrorResult("Error parsing input");
     }
 
     const {
@@ -92,15 +90,11 @@ async function handleUsersQuerySubmitGETClick(
         >(cacheKey);
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
         if (userDocumentsResult.err) {
-            showBoundary(userDocumentsResult.val);
-            return createSafeBoxResult({
-                data: Some("Error getting cached item"),
-            });
+            showBoundary(userDocumentsResult);
+            return userDocumentsResult;
         }
 
         if (userDocumentsResult.val.some) {
@@ -140,10 +134,9 @@ async function handleUsersQuerySubmitGETClick(
                 payload: withFUIAndPPUFieldsAdded,
             });
 
-            return createSafeBoxResult({
-                data: Some("User documents fetched successfully"),
-                kind: "success",
-            });
+            return createSafeSuccessResult(
+                "User documents fetched successfully",
+            );
         }
 
         usersFetchWorker?.postMessage({
@@ -156,29 +149,19 @@ async function handleUsersQuerySubmitGETClick(
             url: cacheKey,
         });
 
-        return createSafeBoxResult({
-            data: Some("Fetching user documents"),
-            kind: "success",
-        });
+        return createSafeSuccessResult(
+            "Fetching data...",
+        );
     } catch (error: unknown) {
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
 
-        input.showBoundary(error);
-        return createSafeBoxResult({
-            data: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
-            ),
-        });
+        const safeErrorResult = createSafeErrorResult(error);
+        input.showBoundary(safeErrorResult);
+        return safeErrorResult;
     }
 }
 
@@ -194,16 +177,14 @@ async function handleUsersQueryOnmessageCallback(
         url: string;
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
     },
-): Promise<SafeBoxResult<string>> {
+): Promise<ResultSafeBox<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleUsersQueryOnmessageCallbackInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeBoxResult({
-                data: Some("Error parsing input"),
-            });
+            return createSafeErrorResult("Error parsing input");
         }
 
         const {
@@ -220,23 +201,22 @@ async function handleUsersQueryOnmessageCallback(
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createSafeBoxResult({
-                data: Some("No data in message event"),
-            });
+            return createSafeErrorResult("No data in message event");
         }
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
 
-        if (messageEventResult.err || messageEventResult.val.data.none) {
-            showBoundary(messageEventResult.val.data);
-            return createSafeBoxResult({
-                data: messageEventResult.val.data,
-                message: messageEventResult.val.message,
-            });
+        if (messageEventResult.err) {
+            showBoundary(messageEventResult);
+            return messageEventResult;
+        }
+
+        if (messageEventResult.val.none) {
+            const safeErrorResult = createSafeErrorResult("No data found");
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {
@@ -246,7 +226,7 @@ async function handleUsersQueryOnmessageCallback(
             newQueryFlag,
             queryString,
             totalDocuments,
-        } = messageEventResult.val.data.val;
+        } = messageEventResult.val.safeUnwrap();
         const {
             accessToken: newAccessToken,
             kind,
@@ -275,9 +255,7 @@ async function handleUsersQueryOnmessageCallback(
 
             await localforage.clear();
             navigate("/");
-            return createSafeBoxResult({
-                data: Some("Logout triggered"),
-            });
+            return createSafeErrorResult("Logged out");
         }
 
         authDispatch({
@@ -290,14 +268,11 @@ async function handleUsersQueryOnmessageCallback(
         });
 
         if (kind === "error") {
-            showBoundary(
-                new Error(
-                    `Server error: ${message}`,
-                ),
+            const safeErrorResult = createSafeErrorResult(
+                `Server error: ${message}`,
             );
-            return createSafeBoxResult({
-                data: Some(message),
-            });
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
         const sorted = userDocuments.sort((a, b) => {
@@ -342,15 +317,11 @@ async function handleUsersQueryOnmessageCallback(
             withFUIAndPPUFieldsAdded,
         );
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
         if (setItemCacheResult.err) {
-            showBoundary(setItemCacheResult.val);
-            return createSafeBoxResult({
-                data: Some("Error setting cached item"),
-            });
+            showBoundary(setItemCacheResult);
+            return setItemCacheResult;
         }
 
         usersQueryDispatch({
@@ -374,27 +345,17 @@ async function handleUsersQueryOnmessageCallback(
             payload: false,
         });
 
-        return createSafeBoxResult({
-            data: Some("User documents fetched successfully"),
-            kind: "success",
-        });
+        return createSafeSuccessResult(
+            "User documents fetched successfully",
+        );
     } catch (error: unknown) {
         if (!input.isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
 
-        input.showBoundary(error);
-        return createSafeBoxResult({
-            data: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
-            ),
-        });
+        const safeErrorResult = createSafeErrorResult(error);
+        input.showBoundary(safeErrorResult);
+        return safeErrorResult;
     }
 }
 

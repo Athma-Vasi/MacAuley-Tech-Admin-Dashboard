@@ -1,9 +1,8 @@
-import { Some } from "ts-results";
 import { globalAction, GlobalDispatch } from "../../context/globalProvider";
-import { SafeBoxResult, UserDocument } from "../../types";
+import { ResultSafeBox, UserDocument } from "../../types";
 import {
     createDirectoryURLCacheKey,
-    createSafeBoxResult,
+    createSafeErrorResult,
     getCachedItemAsyncSafe,
     parseSyncSafe,
 } from "../../utils";
@@ -22,16 +21,14 @@ async function handleDirectoryDepartmentAndLocationClicks(
         showBoundary: (error: unknown) => void;
         storeLocation: AllStoreLocations;
     },
-): Promise<SafeBoxResult<string>> {
+): Promise<ResultSafeBox<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleDirectoryDepartmentAndLocationClicksInputZod,
         });
         if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeBoxResult({
-                data: Some("Error parsing input"),
-            });
+            return createSafeErrorResult("Error parsing input");
         }
 
         const {
@@ -69,15 +66,11 @@ async function handleDirectoryDepartmentAndLocationClicks(
         >(cacheKey);
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
         if (userDocumentsResult.err) {
-            showBoundary(userDocumentsResult.val);
-            return createSafeBoxResult({
-                data: Some("Error getting cached data"),
-            });
+            showBoundary(userDocumentsResult);
+            return userDocumentsResult;
         }
 
         if (userDocumentsResult.val.some) {
@@ -91,10 +84,7 @@ async function handleDirectoryDepartmentAndLocationClicks(
                 payload: false,
             });
 
-            return createSafeBoxResult({
-                data: Some("Data fetched successfully"),
-                kind: "success",
-            });
+            return createSafeErrorResult("Data already fetched");
         }
 
         directoryFetchWorker?.postMessage({
@@ -105,29 +95,17 @@ async function handleDirectoryDepartmentAndLocationClicks(
             url: cacheKey,
         });
 
-        return createSafeBoxResult({
-            data: Some("Fetching data..."),
-            kind: "success",
-        });
+        return createSafeErrorResult("Data fetching started");
     } catch (error: unknown) {
         if (
             !input.isComponentMountedRef.current
         ) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
 
-        input.showBoundary(error);
-        return createSafeBoxResult({
-            data: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
-            ),
-        });
+        const safeErrorResult = createSafeErrorResult(error);
+        input.showBoundary(safeErrorResult);
+        return safeErrorResult;
     }
 }
 

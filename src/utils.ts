@@ -16,7 +16,6 @@ import {
   DecodedToken,
   HttpServerResponse,
   ResultSafeBox,
-  SafeBoxResult,
   SafeError,
   ThemeObject,
 } from "./types";
@@ -371,27 +370,27 @@ function createSafeResult<Data = unknown>(
     : createSafeErrorResult(data);
 }
 
-function createSafeBoxResult<Data = unknown>({
-  data = None,
-  kind = "error",
-  message = None,
-}: {
-  data?: Option<Data>;
-  kind?: "error" | "success";
-  message?: Option<string>;
-}): SafeBoxResult<Data> {
-  if (kind === "success") {
-    return new Ok({
-      data,
-      message,
-    });
-  }
+// function createSafeBoxResult<Data = unknown>({
+//   data = None,
+//   kind = "error",
+//   message = None,
+// }: {
+//   data?: Option<Data>;
+//   kind?: "error" | "success";
+//   message?: Option<string>;
+// }): SafeBoxResult<Data> {
+//   if (kind === "success") {
+//     return new Ok({
+//       data,
+//       message,
+//     });
+//   }
 
-  return new Err({
-    data,
-    message,
-  });
-}
+//   return new Err({
+//     data,
+//     message,
+//   });
+// }
 
 function createSafeSuccessResult<Data = unknown>(
   data: Data,
@@ -739,7 +738,6 @@ export {
   createDirectoryURLCacheKey,
   createMetricsForageKey,
   createMetricsURLCacheKey,
-  createSafeBoxResult,
   createSafeErrorResult,
   createSafeResult,
   createSafeSuccessResult,
