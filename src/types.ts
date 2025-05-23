@@ -278,9 +278,19 @@ type SafeBoxResult<Data = unknown, Error_ = any> = Result<
   SafeBoxError<Error_>
 >;
 
-type ResultSafeBox<Data = unknown, Error_ = unknown> = Result<
+//
+//
+type SafeError = {
+  name: string;
+  message: string;
+  stack: Option<string>;
+  original: Option<string>;
+};
+type ResultSafeBox<
+  Data = unknown,
+> = Result<
   Option<Data>,
-  Option<Error_>
+  SafeError
 >;
 
 type FontFamily = "Work Sans" | "sans-serif" | "serif" | "Open-Dyslexic";
@@ -520,6 +530,7 @@ export type {
   RepairTechnicians,
   ResultSafeBox,
   SafeBoxResult,
+  SafeError,
   Sales,
   ScreenshotImageType,
   SetInputsInErrorPayload,

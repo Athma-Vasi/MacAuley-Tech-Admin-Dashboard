@@ -1,14 +1,15 @@
-import { Some } from "ts-results";
+import { None, Option } from "ts-results";
 import { z } from "zod";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    SafeBoxResult,
+    ResultSafeBox,
     UserDocument,
 } from "../types";
 import {
-    createSafeBoxResult,
+    createSafeErrorResult,
+    createSafeSuccessResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
@@ -18,10 +19,10 @@ import {
 import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
 type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             parsedServerResponse: HttpServerResponse<Data>;
-            decodedToken: DecodedToken;
+            decodedToken: Option<DecodedToken>;
         }
     >
 >;
@@ -39,33 +40,27 @@ self.onmessage = async (
     event: MessageEventFetchMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(createSafeErrorResult("No data received"));
         return;
     }
 
-    const parsedMessageResult = parseSyncSafe({
-        object: event.data,
-        zSchema: z.object({
-            requestInit: z.any(),
-            routesZodSchemaMapKey: z.string(),
-            skipTokenDecode: z.boolean().optional(),
-            url: z.string(),
-        }),
-    });
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
-        return;
-    }
-
-    console.log(
-        "Worker received message in self:",
-        JSON.stringify(event.data, null, 2),
+    const parsedMessageResult = parseSyncSafe(
+        {
+            object: event.data,
+            zSchema: z.object(
+                {
+                    requestInit: z.any(),
+                    routesZodSchemaMapKey: z.string(),
+                    skipTokenDecode: z.boolean().optional(),
+                    url: z.string(),
+                },
+            ),
+        },
     );
+    if (parsedMessageResult.err || parsedMessageResult.val.none) {
+        self.postMessage(createSafeErrorResult("Error parsing input"));
+        return;
+    }
 
     const {
         requestInit,
@@ -84,10 +79,7 @@ self.onmessage = async (
         });
         if (responseResult.err || responseResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: responseResult.val,
-                    message: Some("Error fetching data"),
-                }),
+                createSafeErrorResult("Error fetching data"),
             );
             return;
         }
@@ -97,10 +89,7 @@ self.onmessage = async (
         >(responseResult.val.safeUnwrap());
         if (jsonResult.err || jsonResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: jsonResult.val,
-                    message: Some("Error extracting JSON from response"),
-                }),
+                createSafeErrorResult("Error extracting JSON from response"),
             );
             return;
         }
@@ -112,27 +101,29 @@ self.onmessage = async (
         //     return;
         // }
 
-        const parsedResult = await parseServerResponseAsyncSafe({
-            object: jsonResult.val.safeUnwrap(),
-            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
-        });
+        const parsedResult = await parseServerResponseAsyncSafe(
+            {
+                object: jsonResult.val.safeUnwrap(),
+                zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
+            },
+        );
 
         if (parsedResult.err || parsedResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error parsing server response"),
-                }),
+                createSafeErrorResult("Error parsing server response"),
             );
             return;
         }
 
         if (skipTokenDecode) {
-            self.postMessage(createSafeBoxResult({
-                data: Some({
-                    parsedServerResponse: parsedResult.val.safeUnwrap(),
-                }),
-                kind: "success",
-            }));
+            self.postMessage(
+                createSafeSuccessResult(
+                    {
+                        parsedServerResponse: parsedResult.val.safeUnwrap(),
+                        decodedToken: None,
+                    },
+                ),
+            );
             return;
         }
 
@@ -141,33 +132,22 @@ self.onmessage = async (
         const decodedTokenSafeResult = decodeJWTSafe(accessToken);
         if (decodedTokenSafeResult.err || decodedTokenSafeResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: decodedTokenSafeResult.val,
-                    message: Some("Error decoding JWT"),
-                }),
+                createSafeErrorResult("Error decoding JWT"),
             );
             return;
         }
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
-                parsedServerResponse: parsedResult.val.safeUnwrap(),
-                decodedToken: decodedTokenSafeResult.val.safeUnwrap(),
-            }),
-            kind: "success",
-        }));
+        self.postMessage(
+            createSafeSuccessResult(
+                {
+                    parsedServerResponse: parsedResult.val.safeUnwrap(),
+                    decodedToken: decodedTokenSafeResult.val,
+                },
+            ),
+        );
     } catch (error: unknown) {
         self.postMessage(
-            createSafeBoxResult({
-                data: Some(error),
-                message: Some(
-                    error instanceof Error
-                        ? error.message
-                        : typeof error === "string"
-                        ? error
-                        : "Unknown error",
-                ),
-            }),
+            createSafeErrorResult(error),
         );
     } finally {
         clearTimeout(timeout);
@@ -176,31 +156,13 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Fetch Parse Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(createSafeErrorResult(event));
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(createSafeErrorResult(event.reason));
 });
 
 export type { MessageEventFetchMainToWorker, MessageEventFetchWorkerToMain };

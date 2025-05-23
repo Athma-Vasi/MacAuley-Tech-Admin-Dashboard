@@ -17,6 +17,7 @@ import {
   HttpServerResponse,
   ResultSafeBox,
   SafeBoxResult,
+  SafeError,
   ThemeObject,
 } from "./types";
 
@@ -362,10 +363,12 @@ function urlBuilder({
 }
 
 function createSafeResult<Data = unknown>(
-  data: Option<Data>,
+  data: Data,
   kind: "error" | "success" = "error",
-): ResultSafeBox<Data, unknown> {
-  return kind === "success" ? new Ok(data) : new Err(data);
+): ResultSafeBox<Data> {
+  return kind === "success"
+    ? createSafeSuccessResult(data)
+    : createSafeErrorResult(data);
 }
 
 function createSafeBoxResult<Data = unknown>({
@@ -390,6 +393,39 @@ function createSafeBoxResult<Data = unknown>({
   });
 }
 
+function createSafeSuccessResult<Data = unknown>(
+  data: Data,
+): Ok<Option<Data>> {
+  return new Ok(data == null ? None : Some(data));
+}
+
+function createSafeErrorResult(error: unknown): Err<SafeError> {
+  if (error instanceof Error) {
+    return new Err({
+      name: error.name,
+      message: error.message,
+      stack: error.stack == null ? None : Some(error.stack),
+      original: None,
+    });
+  }
+
+  if (typeof error === "string") {
+    return new Err({
+      name: "Error",
+      message: error,
+      stack: None,
+      original: None,
+    });
+  }
+
+  return new Err({
+    name: "Error",
+    message: "You've seen it before. Déjà vu. Something's off...",
+    stack: None,
+    original: error == null ? None : Some(JSON.stringify(error, null, 2)),
+  });
+}
+
 async function fetchResponseSafe(
   input: RequestInfo | URL,
   init?: RequestInit,
@@ -398,11 +434,9 @@ async function fetchResponseSafe(
 > {
   try {
     const response: Response = await fetch(input, init);
-    return new Ok(
-      response === null || response === undefined ? None : Some(response),
-    );
+    return createSafeSuccessResult(response);
   } catch (error: unknown) {
-    return new Err(Some(error));
+    return createSafeErrorResult(error);
   }
 }
 
@@ -411,33 +445,31 @@ async function extractJSONFromResponseSafe<Data = unknown>(
 ): Promise<ResultSafeBox<Data>> {
   try {
     const data: Data = await response.json();
-    return new Ok(data === null || data === undefined ? None : Some(data));
+    return createSafeSuccessResult(data);
   } catch (error: unknown) {
-    return new Err(Some(error));
+    return createSafeErrorResult(error);
   }
 }
 
 function decodeJWTSafe<Decoded extends Record<string, unknown> = DecodedToken>(
   token: string,
-): ResultSafeBox<Decoded, unknown> {
+): ResultSafeBox<Decoded> {
   try {
     const decoded: Decoded = jwtDecode(token);
-    return new Ok(
-      decoded === null || decoded === undefined ? None : Some(decoded),
-    );
+    return createSafeSuccessResult(decoded);
   } catch (error: unknown) {
-    return new Err(Some(error));
+    return createSafeErrorResult(error);
   }
 }
 
 async function getCachedItemAsyncSafe<Data = unknown>(
   key: string,
-): Promise<ResultSafeBox<Data, unknown>> {
+): Promise<ResultSafeBox<Data>> {
   try {
     const data: Data = await localforage.getItem(key);
-    return new Ok(data === null || data === undefined ? None : Some(data));
+    return createSafeSuccessResult(data);
   } catch (error: unknown) {
-    return new Err(Some(error));
+    return createSafeErrorResult(error);
   }
 }
 
@@ -449,7 +481,7 @@ async function setCachedItemAsyncSafe<Data = unknown>(
     await localforage.setItem(key, value);
     return new Ok(None);
   } catch (error: unknown) {
-    return new Err(Some(error));
+    return createSafeErrorResult(error);
   }
 }
 
@@ -459,19 +491,17 @@ function parseSyncSafe<Output = unknown>(
     object: Output;
     zSchema: z.ZodSchema;
   },
-): ResultSafeBox<Output, unknown> {
+): ResultSafeBox<Output> {
   try {
-    const arraySchema = z.array(zSchema);
-
-    const parsed = Array.isArray(object)
-      ? arraySchema.safeParse(object)
+    const { data, error, success } = Array.isArray(object)
+      ? z.array(zSchema).safeParse(object)
       : zSchema.safeParse(object);
 
-    return parsed.success
-      ? new Ok(Some(parsed.data))
-      : new Err(Some(parsed.error));
-  } catch (error: unknown) {
-    return new Err(Some(error));
+    return success
+      ? createSafeSuccessResult(data)
+      : createSafeErrorResult(error);
+  } catch (error_: unknown) {
+    return createSafeErrorResult(error_);
   }
 }
 
@@ -483,16 +513,12 @@ type ModifyImageSafe = (
 async function modifyImageSafe(
   file: Blob,
   config?: ICompressConfig | number,
-): Promise<ResultSafeBox<Blob, unknown>> {
+): Promise<ResultSafeBox<Blob>> {
   try {
     const compressedBlob = await compress(file, config);
-    return new Ok(
-      compressedBlob === null || compressedBlob === undefined
-        ? None
-        : Some(compressedBlob),
-    );
+    return createSafeSuccessResult(compressedBlob);
   } catch (error) {
-    return new Err(Some(error));
+    return createSafeErrorResult(error);
   }
 }
 
@@ -501,7 +527,7 @@ async function parseServerResponseAsyncSafe<Output = unknown>(
     object: HttpServerResponse<Output>;
     zSchema: z.ZodSchema;
   },
-): Promise<ResultSafeBox<HttpServerResponse<Output>, unknown>> {
+): Promise<ResultSafeBox<HttpServerResponse<Output>>> {
   try {
     const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema
@@ -517,15 +543,16 @@ async function parseServerResponseAsyncSafe<Output = unknown>(
         triggerLogout: z.boolean(),
       });
 
-    const parsed = await serverResponseSchema(zSchema).safeParseAsync(
-      object,
-    );
+    const { success, data, error } = await serverResponseSchema(zSchema)
+      .safeParseAsync(
+        object,
+      );
 
-    return parsed.success
-      ? new Ok(Some(parsed.data))
-      : new Err(Some(parsed.error));
-  } catch (error: unknown) {
-    return new Err(Some(error));
+    return success
+      ? createSafeSuccessResult(data)
+      : createSafeErrorResult(error);
+  } catch (error_: unknown) {
+    return createSafeErrorResult(error_);
   }
 }
 
@@ -686,7 +713,9 @@ export {
   createMetricsForageKey,
   createMetricsURLCacheKey,
   createSafeBoxResult,
+  createSafeErrorResult,
   createSafeResult,
+  createSafeSuccessResult,
   createUsersURLCacheKey,
   debounce,
   decodeJWTSafe,

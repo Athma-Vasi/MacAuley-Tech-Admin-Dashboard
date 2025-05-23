@@ -1,26 +1,27 @@
 import {
   Card,
   Center,
+  Divider,
   Group,
   Image,
   Stack,
   Text,
   Tooltip,
 } from "@mantine/core";
-import { InvalidTokenError } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { Option } from "ts-results";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks";
+import { SafeError } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
+import { GoldenGrid } from "../goldenGrid";
 import matrixGif from "./matrix.gif";
 
 function ErrorFallback({
-  error,
+  safeError,
   resetErrorBoundary,
 }: {
-  error: Option<unknown>;
+  safeError: SafeError;
   resetErrorBoundary: () => void;
 }) {
   const navigateFn = useNavigate();
@@ -58,15 +59,6 @@ function ErrorFallback({
     </Tooltip>
   );
 
-  const errorUnwrapped = error.none ? "Follow the white rabbit." : error.val;
-  const errorMessage = typeof errorUnwrapped === "string"
-    ? errorUnwrapped
-    : errorUnwrapped instanceof InvalidTokenError
-    ? "Invalid token. Please login again!"
-    : errorUnwrapped instanceof Error
-    ? errorUnwrapped.message
-    : "You've seen it before. Déjà vu. Something's off.";
-
   const errorCard = (
     <Card shadow="sm" radius="md" withBorder className="error-card">
       <Image
@@ -79,12 +71,40 @@ function ErrorFallback({
 
       <Stack w="100%">
         <Text size="xl" weight={500} mt="md" align="center">
-          Simulation desynchronized
+          Simulation Desynchronized
         </Text>
 
-        <Text size="sm" color="dimmed">
-          {errorMessage}
-        </Text>
+        <GoldenGrid>
+          <Text>Name:</Text>
+          <Text data-testid={`error-name-${safeError.name}`}>
+            {safeError.name}
+          </Text>
+        </GoldenGrid>
+        <Divider w="100%" />
+        <GoldenGrid>
+          <Text>Message:</Text>
+          <Text data-testid={`error-message-${safeError.message}`}>
+            {safeError.message}
+          </Text>
+        </GoldenGrid>
+        <Divider w="100%" />
+        <GoldenGrid>
+          <Text>Stack:</Text>
+          <Text data-testid={`error-stack-${safeError.stack}`}>
+            {safeError.stack.none
+              ? <Text color="dimmed">No stack available</Text>
+              : <Text>{safeError.stack}</Text>}
+          </Text>
+        </GoldenGrid>
+        <Divider w="100%" />
+        <GoldenGrid>
+          <Text>Original:</Text>
+          <Text data-testid={`error-original-${safeError.original}`}>
+            {safeError.original.none
+              ? <Text color="dimmed">No original available</Text>
+              : <Text>{safeError.original}</Text>}
+          </Text>
+        </GoldenGrid>
 
         <Group w="100%" position="apart">
           {goHomeButtonWithTooltip}
