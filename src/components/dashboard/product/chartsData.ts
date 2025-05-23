@@ -1,6 +1,5 @@
-import { Err, Some } from "ts-results";
-import { ProductMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import { ProductMetricsDocument, ResultSafeBox } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -44,7 +43,7 @@ function returnSelectedDateProductMetricsSafe({
   month,
   months,
   year,
-}: CreateSelectedDateProductMetricsInput): SafeBoxResult<
+}: CreateSelectedDateProductMetricsInput): ResultSafeBox<
   SelectedDateProductMetrics
 > {
   try {
@@ -52,40 +51,36 @@ function returnSelectedDateProductMetricsSafe({
       (yearlyMetric) => yearlyMetric.year === year,
     );
     if (!selectedYearMetrics) {
-      return new Err({
-        data: Some("Yearly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Selected yearly metrics not found",
+      );
     }
 
     const prevYearMetrics = productMetricsDocument.yearlyMetrics.find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
     );
     if (!prevYearMetrics) {
-      return new Err({
-        data: Some("Previous yearly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous yearly metrics not found",
+      );
     }
 
     const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
       (monthlyMetric) => monthlyMetric.month === month,
     );
     if (!selectedMonthMetrics) {
-      return new Err({
-        data: Some("Monthly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Selected monthly metrics not found",
+      );
     }
 
     const prevPrevYearMetrics = productMetricsDocument.yearlyMetrics.find(
       (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
     );
     if (!prevPrevYearMetrics) {
-      return new Err({
-        data: Some("Previous previous yearly metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous previous yearly metrics not found",
+      );
     }
 
     const prevMonthMetrics = month === "January"
@@ -97,20 +92,18 @@ function returnSelectedDateProductMetricsSafe({
           monthlyMetric.month === months[months.indexOf(month) - 1],
       );
     if (!prevMonthMetrics) {
-      return new Err({
-        data: Some("Previous month metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous monthly metrics not found",
+      );
     }
 
     const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
       (dailyMetric) => dailyMetric.day === day,
     );
     if (!selectedDayMetrics) {
-      return new Err({
-        data: Some("Daily metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Selected day metrics not found",
+      );
     }
 
     const prevDayMetrics = day === "01"
@@ -136,31 +129,18 @@ function returnSelectedDateProductMetricsSafe({
           dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
       );
     if (!prevDayMetrics) {
-      return new Err({
-        data: Some("Previous day metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous day metrics not found",
+      );
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        dayProductMetrics: { prevDayMetrics, selectedDayMetrics },
-        monthProductMetrics: { prevMonthMetrics, selectedMonthMetrics },
-        yearProductMetrics: { prevYearMetrics, selectedYearMetrics },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      dayProductMetrics: { prevDayMetrics, selectedDayMetrics },
+      monthProductMetrics: { prevMonthMetrics, selectedMonthMetrics },
+      yearProductMetrics: { prevYearMetrics, selectedYearMetrics },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -260,7 +240,18 @@ function createProductMetricsChartsSafe({
   productMetricsDocument,
   months,
   selectedDateProductMetrics,
-}: CreateProductMetricsChartsInput): SafeBoxResult<ProductMetricsCharts> {
+}: CreateProductMetricsChartsInput): ResultSafeBox<ProductMetricsCharts> {
+  if (!productMetricsDocument) {
+    return createSafeErrorResult(
+      "Invalid product metrics document",
+    );
+  }
+  if (!selectedDateProductMetrics) {
+    return createSafeErrorResult(
+      "Invalid selected date product metrics",
+    );
+  }
+
   const BAR_CHART_OBJ_TEMPLATE: ProductMetricsBarCharts = {
     total: [],
     overview: [],
@@ -277,54 +268,6 @@ function createProductMetricsChartsSafe({
     online: [{ id: "Online", data: [] }],
     inStore: [{ id: "In-Store", data: [] }],
   };
-
-  const PIE_CHART_OBJ_TEMPLATE: PieChartData[] = [
-    { id: "In-Store", label: "In-Store", value: 0 },
-    { id: "Online", label: "Online", value: 0 },
-  ];
-
-  if (!productMetricsDocument || !selectedDateProductMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: {
-          revenue: {
-            bar: BAR_CHART_OBJ_TEMPLATE,
-            line: LINE_CHART_OBJ_TEMPLATE,
-            pie: PIE_CHART_OBJ_TEMPLATE,
-          },
-          unitsSold: {
-            bar: BAR_CHART_OBJ_TEMPLATE,
-            line: LINE_CHART_OBJ_TEMPLATE,
-            pie: PIE_CHART_OBJ_TEMPLATE,
-          },
-        },
-        monthlyCharts: {
-          revenue: {
-            bar: BAR_CHART_OBJ_TEMPLATE,
-            line: LINE_CHART_OBJ_TEMPLATE,
-            pie: PIE_CHART_OBJ_TEMPLATE,
-          },
-          unitsSold: {
-            bar: BAR_CHART_OBJ_TEMPLATE,
-            line: LINE_CHART_OBJ_TEMPLATE,
-            pie: PIE_CHART_OBJ_TEMPLATE,
-          },
-        },
-        yearlyCharts: {
-          revenue: {
-            bar: BAR_CHART_OBJ_TEMPLATE,
-            line: LINE_CHART_OBJ_TEMPLATE,
-            pie: PIE_CHART_OBJ_TEMPLATE,
-          },
-          unitsSold: {
-            bar: BAR_CHART_OBJ_TEMPLATE,
-            line: LINE_CHART_OBJ_TEMPLATE,
-            pie: PIE_CHART_OBJ_TEMPLATE,
-          },
-        },
-      }),
-    });
-  }
 
   try {
     const {
@@ -345,83 +288,61 @@ function createProductMetricsChartsSafe({
       dayProductMetrics: { selectedDayMetrics },
     } = selectedDateProductMetrics;
 
-    const [
-      dailyProductChartsResult,
-      monthlyProductChartsResult,
-      yearlyProductChartsResult,
-    ] = [
-      createDailyProductChartsSafe({
-        barChartsTemplate: BAR_CHART_OBJ_TEMPLATE,
-        dailyMetrics: selectedMonthMetrics?.dailyMetrics,
-        lineChartsTemplate: LINE_CHART_OBJ_TEMPLATE,
-        monthIndex,
-        pieChartsTemplate: PIE_CHART_OBJ_TEMPLATE,
-        selectedDayMetrics,
-        selectedYear,
-      }),
-      createMonthlyProductChartsSafe({
-        barChartsTemplate: BAR_CHART_OBJ_TEMPLATE,
-        lineChartsTemplate: LINE_CHART_OBJ_TEMPLATE,
-        monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
-        pieChartsTemplate: PIE_CHART_OBJ_TEMPLATE,
-        selectedMonthMetrics,
-        selectedYear,
-      }),
-      createYearlyProductChartsSafe({
-        barChartsTemplate: BAR_CHART_OBJ_TEMPLATE,
-        lineChartsTemplate: LINE_CHART_OBJ_TEMPLATE,
-        pieChartsTemplate: PIE_CHART_OBJ_TEMPLATE,
-        selectedYearMetrics,
-        yearlyMetrics: productMetricsDocument.yearlyMetrics,
-      }),
-    ];
-
-    if (
-      dailyProductChartsResult.err || dailyProductChartsResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: dailyProductChartsResult.val.data,
-        message: Some("Error creating daily product charts"),
-      });
+    const dailyProductChartsResult = createDailyProductChartsSafe({
+      barChartsTemplate: BAR_CHART_OBJ_TEMPLATE,
+      dailyMetrics: selectedMonthMetrics?.dailyMetrics,
+      lineChartsTemplate: LINE_CHART_OBJ_TEMPLATE,
+      monthIndex,
+      selectedDayMetrics,
+      selectedYear,
+    });
+    if (dailyProductChartsResult.err) {
+      return dailyProductChartsResult;
     }
-    if (
-      monthlyProductChartsResult.err ||
-      monthlyProductChartsResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: monthlyProductChartsResult.val.data,
-        message: Some("Error creating monthly product charts"),
-      });
-    }
-    if (
-      yearlyProductChartsResult.err ||
-      yearlyProductChartsResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: yearlyProductChartsResult.val.data,
-        message: Some("Error creating yearly product charts"),
-      });
+    if (dailyProductChartsResult.val.none) {
+      return createSafeErrorResult(
+        "No daily product charts found",
+      );
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: dailyProductChartsResult.val.data.val,
-        monthlyCharts: monthlyProductChartsResult.val.data.val,
-        yearlyCharts: yearlyProductChartsResult.val.data.val,
-      }),
-      kind: "success",
+    const monthlyProductChartsResult = createMonthlyProductChartsSafe({
+      barChartsTemplate: BAR_CHART_OBJ_TEMPLATE,
+      lineChartsTemplate: LINE_CHART_OBJ_TEMPLATE,
+      monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
+      selectedMonthMetrics,
+      selectedYear,
+    });
+    if (monthlyProductChartsResult.err) {
+      return monthlyProductChartsResult;
+    }
+    if (monthlyProductChartsResult.val.none) {
+      return createSafeErrorResult(
+        "No monthly product charts found",
+      );
+    }
+
+    const yearlyProductChartsResult = createYearlyProductChartsSafe({
+      barChartsTemplate: BAR_CHART_OBJ_TEMPLATE,
+      lineChartsTemplate: LINE_CHART_OBJ_TEMPLATE,
+      selectedYearMetrics,
+      yearlyMetrics: productMetricsDocument.yearlyMetrics,
+    });
+    if (yearlyProductChartsResult.err) {
+      return yearlyProductChartsResult;
+    }
+    if (yearlyProductChartsResult.val.none) {
+      return createSafeErrorResult(
+        "No yearly product charts found",
+      );
+    }
+
+    return createSafeSuccessResult({
+      dailyCharts: dailyProductChartsResult.val.safeUnwrap(),
+      monthlyCharts: monthlyProductChartsResult.val.safeUnwrap(),
+      yearlyCharts: yearlyProductChartsResult.val.safeUnwrap(),
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -430,7 +351,6 @@ type CreateDailyProductChartsInput = {
   dailyMetrics?: ProductDailyMetric[];
   lineChartsTemplate: ProductMetricsLineCharts;
   monthIndex: string;
-  pieChartsTemplate: PieChartData[];
   selectedDayMetrics?: ProductDailyMetric;
   selectedYear: Year;
 };
@@ -439,26 +359,19 @@ function createDailyProductChartsSafe({
   barChartsTemplate,
   dailyMetrics,
   lineChartsTemplate,
-  pieChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyProductChartsInput): SafeBoxResult<
+}: CreateDailyProductChartsInput): ResultSafeBox<
   ProductMetricsCharts["dailyCharts"]
 > {
-  if (!dailyMetrics || !selectedDayMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        unitsSold: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        revenue: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-      }),
-    });
+  if (!dailyMetrics) {
+    return createSafeErrorResult(
+      "Invalid daily metrics",
+    );
+  }
+  if (!selectedDayMetrics) {
+    return createSafeErrorResult(
+      "Invalid selected day metrics",
+    );
   }
 
   try {
@@ -659,32 +572,20 @@ function createDailyProductChartsSafe({
       },
     ];
 
-    return createSafeBoxResult({
-      data: Some({
-        revenue: {
-          bar: dailyRevenueBarCharts,
-          line: dailyRevenueLineCharts,
-          pie: dailyRevenuePieCharts,
-        },
-        unitsSold: {
-          bar: dailyUnitsSoldBarCharts,
-          line: dailyUnitsSoldLineCharts,
-          pie: dailyUnitsSoldPieCharts,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      revenue: {
+        bar: dailyRevenueBarCharts,
+        line: dailyRevenueLineCharts,
+        pie: dailyRevenuePieCharts,
+      },
+      unitsSold: {
+        bar: dailyUnitsSoldBarCharts,
+        line: dailyUnitsSoldLineCharts,
+        pie: dailyUnitsSoldPieCharts,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -692,7 +593,6 @@ type CreateMonthlyProductChartsInput = {
   barChartsTemplate: ProductMetricsBarCharts;
   lineChartsTemplate: ProductMetricsLineCharts;
   monthlyMetrics?: ProductMonthlyMetric[];
-  pieChartsTemplate: PieChartData[];
   selectedMonthMetrics?: ProductMonthlyMetric;
   selectedYear: Year;
 };
@@ -701,27 +601,20 @@ function createMonthlyProductChartsSafe({
   barChartsTemplate,
   lineChartsTemplate,
   monthlyMetrics,
-  pieChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyProductChartsInput): SafeBoxResult<
+}: CreateMonthlyProductChartsInput): ResultSafeBox<
   ProductMetricsCharts["monthlyCharts"]
 > {
-  if (!monthlyMetrics || !selectedMonthMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        unitsSold: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        revenue: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-      }),
-    });
+  if (!monthlyMetrics) {
+    return createSafeErrorResult(
+      "Invalid monthly metrics",
+    );
+  }
+  if (!selectedMonthMetrics) {
+    return createSafeErrorResult(
+      "Invalid selected month metrics",
+    );
   }
 
   try {
@@ -942,39 +835,26 @@ function createMonthlyProductChartsSafe({
       },
     ];
 
-    return createSafeBoxResult({
-      data: Some({
-        revenue: {
-          bar: monthlyRevenueBarChartsObj,
-          line: monthlyRevenueLineChartsObj,
-          pie: monthlyRevenuePieCharts,
-        },
-        unitsSold: {
-          bar: monthlyUnitsSoldBarChartsObj,
-          line: monthlyUnitsSoldLineChartsObj,
-          pie: monthlyUnitsSoldPieCharts,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      revenue: {
+        bar: monthlyRevenueBarChartsObj,
+        line: monthlyRevenueLineChartsObj,
+        pie: monthlyRevenuePieCharts,
+      },
+      unitsSold: {
+        bar: monthlyUnitsSoldBarChartsObj,
+        line: monthlyUnitsSoldLineChartsObj,
+        pie: monthlyUnitsSoldPieCharts,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
 type CreateYearlyProductChartsInput = {
   barChartsTemplate: ProductMetricsBarCharts;
   lineChartsTemplate: ProductMetricsLineCharts;
-  pieChartsTemplate: PieChartData[];
   selectedYearMetrics?: ProductYearlyMetric;
   yearlyMetrics?: ProductYearlyMetric[];
 };
@@ -982,27 +862,20 @@ type CreateYearlyProductChartsInput = {
 function createYearlyProductChartsSafe({
   barChartsTemplate,
   lineChartsTemplate,
-  pieChartsTemplate,
   selectedYearMetrics,
   yearlyMetrics,
-}: CreateYearlyProductChartsInput): SafeBoxResult<
+}: CreateYearlyProductChartsInput): ResultSafeBox<
   ProductMetricsCharts["yearlyCharts"]
 > {
-  if (!yearlyMetrics || !selectedYearMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        unitsSold: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-        revenue: {
-          bar: barChartsTemplate,
-          line: lineChartsTemplate,
-          pie: pieChartsTemplate,
-        },
-      }),
-    });
+  if (!yearlyMetrics) {
+    return createSafeErrorResult(
+      "Invalid yearly metrics",
+    );
+  }
+  if (!selectedYearMetrics) {
+    return createSafeErrorResult(
+      "Invalid selected year metrics",
+    );
   }
 
   try {
@@ -1211,32 +1084,20 @@ function createYearlyProductChartsSafe({
       },
     ];
 
-    return createSafeBoxResult({
-      data: Some({
-        revenue: {
-          bar: yearlyRevenueBarChartsObj,
-          line: yearlyRevenueLineChartsObj,
-          pie: yearlyRevenuePieCharts,
-        },
-        unitsSold: {
-          bar: yearlyUnitsSoldBarChartsObj,
-          line: yearlyUnitsSoldLineChartsObj,
-          pie: yearlyUnitsSoldPieCharts,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      revenue: {
+        bar: yearlyRevenueBarChartsObj,
+        line: yearlyRevenueLineChartsObj,
+        pie: yearlyRevenuePieCharts,
+      },
+      unitsSold: {
+        bar: yearlyUnitsSoldBarChartsObj,
+        line: yearlyUnitsSoldLineChartsObj,
+        pie: yearlyUnitsSoldPieCharts,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -1258,10 +1119,16 @@ function createProductMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateProductMetrics: SelectedDateProductMetrics,
   selectedYYYYMMDD: string,
-): SafeBoxResult<{
+): ResultSafeBox<{
   currentYear: ProductMetricsCalendarCharts;
   previousYear: ProductMetricsCalendarCharts;
 }> {
+  if (!selectedDateProductMetrics) {
+    return createSafeErrorResult(
+      "Invalid selected date product metrics",
+    );
+  }
+
   const productMetricsCalendarChartsTemplate: ProductMetricsCalendarCharts = {
     revenue: {
       total: [],
@@ -1274,15 +1141,6 @@ function createProductMetricsCalendarChartsSafe(
       inStore: [],
     },
   };
-
-  if (!selectedDateProductMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        currentYear: productMetricsCalendarChartsTemplate,
-        previousYear: productMetricsCalendarChartsTemplate,
-      }),
-    });
-  }
 
   try {
     const { yearProductMetrics: { selectedYearMetrics, prevYearMetrics } } =
@@ -1385,24 +1243,12 @@ function createProductMetricsCalendarChartsSafe(
       return productMetricsCalendarCharts;
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        currentYear,
-        previousYear,
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      currentYear,
+      previousYear,
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 

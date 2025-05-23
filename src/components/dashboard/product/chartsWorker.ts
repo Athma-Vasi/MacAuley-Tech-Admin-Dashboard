@@ -1,6 +1,9 @@
-import { Some } from "ts-results";
-import { ProductMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
+import { ProductMetricsDocument, ResultSafeBox } from "../../../types";
+import {
+    createSafeErrorResult,
+    createSafeSuccessResult,
+    parseSyncSafe,
+} from "../../../utils";
 import { MONTHS } from "../constants";
 import { DashboardCalendarView, Month, Year } from "../types";
 import { createProductMetricsCardsSafe, ProductMetricsCards } from "./cards";
@@ -14,7 +17,7 @@ import {
 import { messageEventProductMainToWorkerZod } from "./schemas";
 
 type MessageEventProductWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             currentYear: ProductMetricsCalendarCharts;
             previousYear: ProductMetricsCalendarCharts;
@@ -41,10 +44,9 @@ self.onmessage = async (
     event: MessageEventProductMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -52,10 +54,14 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventProductMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+    if (parsedMessageResult.err) {
+        self.postMessage(parsedMessageResult);
+        return;
+    }
+    if (parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing input"),
+        );
         return;
     }
 
@@ -73,29 +79,27 @@ self.onmessage = async (
 
     try {
         const selectedDateProductMetricsSafeResult =
-            returnSelectedDateProductMetricsSafe(
-                {
-                    productMetricsDocument,
-                    day: selectedDate,
-                    month: selectedMonth,
-                    months: MONTHS,
-                    year: selectedYear,
-                },
-            );
-        if (
-            selectedDateProductMetricsSafeResult.err ||
-            selectedDateProductMetricsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: selectedDateProductMetricsSafeResult.val.data,
-                message: Some(
-                    "Error getting selected date product metrics",
-                ),
-            }));
+            returnSelectedDateProductMetricsSafe({
+                productMetricsDocument,
+                day: selectedDate,
+                month: selectedMonth,
+                months: MONTHS,
+                year: selectedYear,
+            });
+        if (selectedDateProductMetricsSafeResult.err) {
+            self.postMessage(selectedDateProductMetricsSafeResult);
             return;
         }
-        const selectedDateProductMetrics =
-            selectedDateProductMetricsSafeResult.val.data.val;
+        if (selectedDateProductMetricsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No product metrics found for the selected date",
+                ),
+            );
+            return;
+        }
+        const selectedDateProductMetrics = selectedDateProductMetricsSafeResult
+            .val.safeUnwrap();
 
         const createProductMetricsCalendarChartsSafeResult =
             createProductMetricsCalendarChartsSafe(
@@ -103,40 +107,42 @@ self.onmessage = async (
                 selectedDateProductMetrics,
                 selectedYYYYMMDD,
             );
-        if (
-            createProductMetricsCalendarChartsSafeResult.err ||
-            createProductMetricsCalendarChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: createProductMetricsCalendarChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating product metrics calendar charts",
+        if (createProductMetricsCalendarChartsSafeResult.err) {
+            self.postMessage(
+                createProductMetricsCalendarChartsSafeResult,
+            );
+            return;
+        }
+        if (createProductMetricsCalendarChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No product metrics calendar charts found",
                 ),
-            }));
+            );
             return;
         }
         const { currentYear, previousYear } =
-            createProductMetricsCalendarChartsSafeResult.val.data.val;
+            createProductMetricsCalendarChartsSafeResult.val.safeUnwrap();
 
         const productMetricsChartsSafeResult = createProductMetricsChartsSafe({
             productMetricsDocument,
             months: MONTHS,
             selectedDateProductMetrics,
         });
-        if (
-            productMetricsChartsSafeResult.err ||
-            productMetricsChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: productMetricsChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating product metrics charts",
-                ),
-            }));
+        if (productMetricsChartsSafeResult.err) {
+            self.postMessage(productMetricsChartsSafeResult);
             return;
         }
-        const productMetricsCharts =
-            productMetricsChartsSafeResult.val.data.val;
+        if (productMetricsChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No product metrics charts found",
+                ),
+            );
+            return;
+        }
+        const productMetricsCharts = productMetricsChartsSafeResult.val
+            .safeUnwrap();
 
         const productMetricsCardsSafeResult = createProductMetricsCardsSafe({
             cardBgGradient,
@@ -144,67 +150,52 @@ self.onmessage = async (
             redColorShade,
             selectedDateProductMetrics,
         });
-        if (
-            productMetricsCardsSafeResult.err ||
-            productMetricsCardsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: productMetricsCardsSafeResult.val.data,
-                message: Some(
-                    "Error creating product metrics cards",
-                ),
-            }));
+        if (productMetricsCardsSafeResult.err) {
+            self.postMessage(
+                productMetricsCardsSafeResult,
+            );
             return;
         }
-        const productMetricsCards = productMetricsCardsSafeResult.val.data.val;
+        if (productMetricsCardsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No product metrics cards found",
+                ),
+            );
+            return;
+        }
+        const productMetricsCards = productMetricsCardsSafeResult.val
+            .safeUnwrap();
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
+        self.postMessage(
+            createSafeSuccessResult({
                 currentYear,
                 previousYear,
                 productMetricsCharts,
                 productMetricsCards,
             }),
-            kind: "success",
-        }));
+        );
     } catch (error) {
         console.error("Product Charts Worker error:", error);
-        self.postMessage(createSafeBoxResult({
-            data: Some(error),
-            message: Some(
-                error instanceof Error ? error.message : "Unknown error",
-            ),
-        }));
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     }
 };
 
 self.onerror = (event: string | Event) => {
     console.error("Product Charts Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
 });
 
 export type {

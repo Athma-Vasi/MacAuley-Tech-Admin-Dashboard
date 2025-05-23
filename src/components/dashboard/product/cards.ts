@@ -1,6 +1,5 @@
-import { Err, Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import { ResultSafeBox } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -42,26 +41,11 @@ function createProductMetricsCardsSafe(
     redColorShade,
     selectedDateProductMetrics,
   }: createProductMetricsCardsInput,
-): SafeBoxResult<ProductMetricsCards> {
-  const productMetricsCardsTemplate: ProductMetricsCards = {
-    dailyCards: {
-      revenue: [],
-      unitsSold: [],
-    },
-    monthlyCards: {
-      revenue: [],
-      unitsSold: [],
-    },
-    yearlyCards: {
-      revenue: [],
-      unitsSold: [],
-    },
-  };
-
+): ResultSafeBox<ProductMetricsCards> {
   if (!selectedDateProductMetrics) {
-    return createSafeBoxResult({
-      data: Some(productMetricsCardsTemplate),
-    });
+    return createSafeErrorResult(
+      "Invalid product metrics data",
+    );
   }
 
   const {
@@ -70,17 +54,23 @@ function createProductMetricsCardsSafe(
     yearProductMetrics: { prevYearMetrics, selectedYearMetrics },
   } = selectedDateProductMetrics;
 
-  if (
-    !selectedYearMetrics ||
-    !prevYearMetrics ||
-    !selectedMonthMetrics ||
-    !prevMonthMetrics ||
-    !selectedDayMetrics ||
-    !prevDayMetrics
-  ) {
-    return createSafeBoxResult({
-      data: Some(productMetricsCardsTemplate),
-    });
+  if (!selectedYearMetrics) {
+    return createSafeErrorResult("Selected year metrics not found");
+  }
+  if (!prevYearMetrics) {
+    return createSafeErrorResult("Previous year metrics not found");
+  }
+  if (!selectedMonthMetrics) {
+    return createSafeErrorResult("Selected month metrics not found");
+  }
+  if (!prevMonthMetrics) {
+    return createSafeErrorResult("Previous month metrics not found");
+  }
+  if (!selectedDayMetrics) {
+    return createSafeErrorResult("Selected day metrics not found");
+  }
+  if (!prevDayMetrics) {
+    return createSafeErrorResult("Previous day metrics not found");
   }
 
   try {
@@ -256,58 +246,46 @@ function createProductMetricsCardsSafe(
       selectedValue: selectedYearMetrics.unitsSold.online,
     });
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCards: {
-          revenue: [
-            dayRevenueTotalCardInfo,
-            dayRevenueInStoreCardInfo,
-            dayRevenueOnlineCardInfo,
-          ],
-          unitsSold: [
-            dayUnitsSoldTotalCardInfo,
-            dayUnitsSoldInStoreCardInfo,
-            dayUnitsSoldOnlineCardInfo,
-          ],
-        },
-        monthlyCards: {
-          revenue: [
-            monthRevenueTotalCardInfo,
-            monthRevenueInStoreCardInfo,
-            monthRevenueOnlineCardInfo,
-          ],
-          unitsSold: [
-            monthUnitsSoldTotalCardInfo,
-            monthUnitsSoldInStoreCardInfo,
-            monthUnitsSoldOnlineCardInfo,
-          ],
-        },
-        yearlyCards: {
-          revenue: [
-            yearRevenueTotalCardInfo,
-            yearRevenueInStoreCardInfo,
-            yearRevenueOnlineCardInfo,
-          ],
-          unitsSold: [
-            yearUnitsSoldTotalCardInfo,
-            yearUnitsSoldInStoreCardInfo,
-            yearUnitsSoldOnlineCardInfo,
-          ],
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      dailyCards: {
+        revenue: [
+          dayRevenueTotalCardInfo,
+          dayRevenueInStoreCardInfo,
+          dayRevenueOnlineCardInfo,
+        ],
+        unitsSold: [
+          dayUnitsSoldTotalCardInfo,
+          dayUnitsSoldInStoreCardInfo,
+          dayUnitsSoldOnlineCardInfo,
+        ],
+      },
+      monthlyCards: {
+        revenue: [
+          monthRevenueTotalCardInfo,
+          monthRevenueInStoreCardInfo,
+          monthRevenueOnlineCardInfo,
+        ],
+        unitsSold: [
+          monthUnitsSoldTotalCardInfo,
+          monthUnitsSoldInStoreCardInfo,
+          monthUnitsSoldOnlineCardInfo,
+        ],
+      },
+      yearlyCards: {
+        revenue: [
+          yearRevenueTotalCardInfo,
+          yearRevenueInStoreCardInfo,
+          yearRevenueOnlineCardInfo,
+        ],
+        unitsSold: [
+          yearUnitsSoldTotalCardInfo,
+          yearUnitsSoldInStoreCardInfo,
+          yearUnitsSoldOnlineCardInfo,
+        ],
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 

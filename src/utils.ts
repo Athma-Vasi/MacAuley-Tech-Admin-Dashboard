@@ -452,6 +452,20 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
   });
 }
 
+function catchHandlerErrorSafe(
+  error: unknown,
+  isComponentMountedRef: React.RefObject<boolean>,
+  showBoundary: (error: unknown) => void,
+) {
+  if (!isComponentMountedRef.current) {
+    return createSafeErrorResult("Component unmounted");
+  }
+
+  const safeErrorResult = createSafeErrorResult(error);
+  showBoundary(safeErrorResult);
+  return safeErrorResult;
+}
+
 async function fetchResponseSafe(
   input: RequestInfo | URL,
   init?: RequestInit,
@@ -735,6 +749,7 @@ export {
   capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
+  catchHandlerErrorSafe,
   createDirectoryURLCacheKey,
   createMetricsForageKey,
   createMetricsURLCacheKey,

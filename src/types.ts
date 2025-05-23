@@ -264,20 +264,6 @@ type HttpServerResponse<Data = unknown> = {
   triggerLogout: boolean;
 };
 
-type SafeBoxSuccess<Data = unknown> = {
-  data: Option<Data>;
-  message?: Option<string>;
-};
-type SafeBoxError<Error_ = any> = {
-  data: Option<Error_>;
-  message?: Option<string>;
-};
-
-type SafeBoxResult<Data = unknown, Error_ = any> = Result<
-  SafeBoxSuccess<Data>,
-  SafeBoxError<Error_>
->;
-
 //
 //
 type SafeError = {
@@ -286,12 +272,7 @@ type SafeError = {
   stack: Option<string>;
   original: Option<string>;
 };
-type ResultSafeBox<
-  Data = unknown,
-> = Result<
-  Option<Data>,
-  SafeError
->;
+type ResultSafeBox<Data = unknown> = Result<Option<Data>, SafeError>;
 
 type FontFamily = "Work Sans" | "sans-serif" | "serif" | "Open-Dyslexic";
 
@@ -529,7 +510,6 @@ export type {
   RepairMetricsDocument,
   RepairTechnicians,
   ResultSafeBox,
-  SafeBoxResult,
   SafeError,
   Sales,
   ScreenshotImageType,

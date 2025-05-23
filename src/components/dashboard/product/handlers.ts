@@ -1,6 +1,10 @@
-import { Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
+import { ResultSafeBox } from "../../../types";
+import {
+    catchHandlerErrorSafe,
+    createSafeErrorResult,
+    createSafeSuccessResult,
+    parseSyncSafe,
+} from "../../../utils";
 import { productMetricsAction } from "./actions";
 import { MessageEventProductWorkerToMain } from "./chartsWorker";
 import { handleMessageEventProductWorkerToMainInputZod } from "./schemas";
@@ -11,16 +15,17 @@ async function handleMessageEventProductWorkerToMain(input: {
     isComponentMountedRef: React.RefObject<boolean>;
     productMetricsDispatch: React.Dispatch<ProductMetricsDispatch>;
     showBoundary: (error: unknown) => void;
-}): Promise<SafeBoxResult<string>> {
+}): Promise<ResultSafeBox<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleMessageEventProductWorkerToMainInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeBoxResult({
-                data: Some("Error parsing input"),
-            });
+        if (parsedInputResult.err) {
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            return createSafeErrorResult("Error parsing input");
         }
 
         const {
@@ -31,24 +36,19 @@ async function handleMessageEventProductWorkerToMain(input: {
         } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult("Component unmounted");
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createSafeBoxResult({
-                data: Some("No data in message event"),
-            });
+            return createSafeErrorResult("No data received");
         }
-
-        if (messageEventResult.err || messageEventResult.val.data.none) {
-            showBoundary(messageEventResult.val.data);
-            return createSafeBoxResult({
-                data: messageEventResult.val.data,
-                message: messageEventResult.val.message,
-            });
+        if (messageEventResult.err) {
+            showBoundary(messageEventResult);
+            return messageEventResult;
+        }
+        if (messageEventResult.val.none) {
+            return createSafeErrorResult("Error parsing message event");
         }
 
         const {
@@ -56,7 +56,7 @@ async function handleMessageEventProductWorkerToMain(input: {
             previousYear,
             productMetricsCharts,
             productMetricsCards,
-        } = messageEventResult.val.data.val;
+        } = messageEventResult.val.safeUnwrap();
 
         productMetricsDispatch({
             action: productMetricsAction.setCalendarChartsData,
@@ -76,29 +76,15 @@ async function handleMessageEventProductWorkerToMain(input: {
             payload: productMetricsCards,
         });
 
-        return createSafeBoxResult({
-            data: Some("Product metrics charts updated"),
-            kind: "success",
-        });
+        return createSafeSuccessResult(
+            "Product metrics charts and cards updated successfully",
+        );
     } catch (error: unknown) {
-        if (
-            !input.isComponentMountedRef.current
-        ) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
-        }
-
-        input.showBoundary(error);
-        return createSafeBoxResult({
-            data: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
-            ),
-        });
+        return catchHandlerErrorSafe(
+            error,
+            input.isComponentMountedRef,
+            input.showBoundary,
+        );
     }
 }
 
