@@ -49,7 +49,7 @@ async function handleDirectoryDepartmentAndLocationClicks(
             isComponentMountedRef,
             showBoundary,
             storeLocation,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         const requestInit: RequestInit = {
             method: "GET",
@@ -85,7 +85,7 @@ async function handleDirectoryDepartmentAndLocationClicks(
         if (userDocumentsResult.val.some) {
             globalDispatch({
                 action: globalAction.setDirectory,
-                payload: userDocumentsResult.val.safeUnwrap() as UserDocument[],
+                payload: userDocumentsResult.val.val as UserDocument[],
             });
 
             globalDispatch({

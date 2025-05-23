@@ -38,7 +38,7 @@ async function handleMessageEventProductWorkerToMain(input: {
             isComponentMountedRef,
             productMetricsDispatch,
             showBoundary,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult("Component unmounted");
@@ -61,7 +61,7 @@ async function handleMessageEventProductWorkerToMain(input: {
             previousYear,
             productMetricsCharts,
             productMetricsCards,
-        } = messageEventResult.val.safeUnwrap();
+        } = messageEventResult.val.val;
 
         productMetricsDispatch({
             action: productMetricsAction.setCalendarChartsData,

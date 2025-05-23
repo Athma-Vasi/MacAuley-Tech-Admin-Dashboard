@@ -50,7 +50,7 @@ function loginReducer_setErrorMessage(
 
   return {
     ...state,
-    errorMessage: parsedResult.val.safeUnwrap().payload as string,
+    errorMessage: parsedResult.val.val.payload as string,
   };
 }
 
@@ -71,7 +71,7 @@ function loginReducer_setIsLoading(
 
   return {
     ...state,
-    isLoading: parsedResult.val.safeUnwrap().payload as boolean,
+    isLoading: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -92,7 +92,7 @@ function loginReducer_setIsSubmitting(
 
   return {
     ...state,
-    isSubmitting: parsedResult.val.safeUnwrap().payload as boolean,
+    isSubmitting: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -113,7 +113,7 @@ function loginReducer_setIsSuccessful(
 
   return {
     ...state,
-    isSuccessful: parsedResult.val.safeUnwrap().payload as boolean,
+    isSuccessful: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -134,7 +134,7 @@ function loginReducer_setLoginFetchWorker(
 
   return {
     ...state,
-    loginFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
+    loginFetchWorker: parsedResult.val.val.payload as Worker,
   };
 }
 
@@ -155,7 +155,7 @@ function loginReducer_setPassword(
 
   return {
     ...state,
-    password: parsedResult.val.safeUnwrap().payload as string,
+    password: parsedResult.val.val.payload as string,
   };
 }
 
@@ -176,7 +176,7 @@ function loginReducer_setUsername(
 
   return {
     ...state,
-    username: parsedResult.val.safeUnwrap().payload as string,
+    username: parsedResult.val.val.payload as string,
   };
 }
 

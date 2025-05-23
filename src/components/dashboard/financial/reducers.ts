@@ -59,7 +59,7 @@ function financialMetricsReducer_setCalendarChartsData(
 
   return {
     ...state,
-    calendarChartsData: parsedResult.val.safeUnwrap().payload as {
+    calendarChartsData: parsedResult.val.val.payload as {
       currentYear: FinancialMetricsCalendarCharts;
       previousYear: FinancialMetricsCalendarCharts;
     },
@@ -95,7 +95,7 @@ function financialMetricsReducer_setCharts(
 
   return {
     ...state,
-    charts: parsedResult.val.safeUnwrap().payload as FinancialMetricsCharts,
+    charts: parsedResult.val.val.payload as FinancialMetricsCharts,
   };
 }
 
@@ -114,7 +114,7 @@ function financialMetricsReducer_setFinancialChartsWorker(
 
   return {
     ...state,
-    financialChartsWorker: parsedResult.val.safeUnwrap().payload as Worker,
+    financialChartsWorker: parsedResult.val.val.payload as Worker,
   };
 }
 
@@ -133,7 +133,7 @@ function financialMetricsReducer_setIsGenerating(
 
   return {
     ...state,
-    isGenerating: parsedResult.val.safeUnwrap().payload as boolean,
+    isGenerating: parsedResult.val.val.payload as boolean,
   };
 }
 

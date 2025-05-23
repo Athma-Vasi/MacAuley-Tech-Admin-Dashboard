@@ -73,7 +73,7 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
       metricsUrl,
       navigate,
       showBoundary,
-    } = parsedResult.val.safeUnwrap();
+    } = parsedResult.val.val;
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
@@ -102,7 +102,7 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
       productMetricCategory,
       repairMetricCategory,
       storeLocation,
-    } = messageEventResult.val.safeUnwrap();
+    } = messageEventResult.val.val;
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;
 
@@ -257,7 +257,7 @@ async function handleMetricCategoryNavClick(
     showBoundary,
     storeLocation,
     toLocation,
-  } = parsedInputResult.val.safeUnwrap();
+  } = parsedInputResult.val.val;
 
   const requestInit: RequestInit = {
     method: "GET",
@@ -298,7 +298,7 @@ async function handleMetricCategoryNavClick(
         globalDispatch({
           action: globalAction.setCustomerMetricsDocument,
           payload: metricsDocumentResult.val
-            .safeUnwrap() as CustomerMetricsDocument,
+            .val as CustomerMetricsDocument,
         });
       }
 
@@ -306,7 +306,7 @@ async function handleMetricCategoryNavClick(
         globalDispatch({
           action: globalAction.setFinancialMetricsDocument,
           payload: metricsDocumentResult.val
-            .safeUnwrap() as FinancialMetricsDocument,
+            .val as FinancialMetricsDocument,
         });
       }
 
@@ -314,7 +314,7 @@ async function handleMetricCategoryNavClick(
         globalDispatch({
           action: globalAction.setProductMetricsDocument,
           payload: metricsDocumentResult.val
-            .safeUnwrap() as ProductMetricsDocument,
+            .val as ProductMetricsDocument,
         });
       }
 
@@ -322,7 +322,7 @@ async function handleMetricCategoryNavClick(
         globalDispatch({
           action: globalAction.setRepairMetricsDocument,
           payload: metricsDocumentResult.val
-            .safeUnwrap() as RepairMetricsDocument,
+            .val as RepairMetricsDocument,
         });
       }
 
@@ -385,7 +385,7 @@ async function handleLogoutClick(input: {
   }
 
   const { accessToken, globalDispatch, logoutFetchWorker, logoutUrl } =
-    parsedInputResult.val.safeUnwrap();
+    parsedInputResult.val.val;
 
   try {
     const requestInit: RequestInit = {
@@ -446,7 +446,7 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
       isComponentMountedRef,
       navigate,
       showBoundary,
-    } = parsedResult.val.safeUnwrap();
+    } = parsedResult.val.val;
 
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
@@ -462,7 +462,7 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.safeUnwrap();
+    const { parsedServerResponse } = messageEventResult.val.val;
     if (parsedServerResponse.kind === "error") {
       const safeErrorResult = createSafeErrorResult("Error in server response");
       showBoundary(safeErrorResult);
@@ -526,7 +526,7 @@ async function handleDirectoryNavClick(
     showBoundary,
     storeLocation,
     toLocation,
-  } = parsedInputResult.val.safeUnwrap();
+  } = parsedInputResult.val.val;
 
   const requestInit: RequestInit = {
     method: "GET",
@@ -564,7 +564,7 @@ async function handleDirectoryNavClick(
     if (userDocumentsResult.val.some) {
       globalDispatch({
         action: globalAction.setDirectory,
-        payload: userDocumentsResult.val.safeUnwrap() as UserDocument[],
+        payload: userDocumentsResult.val.val as UserDocument[],
       });
       globalDispatch({
         action: globalAction.setIsFetching,
@@ -631,7 +631,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       navigate,
       showBoundary,
       toLocation,
-    } = parsedResult.val.safeUnwrap();
+    } = parsedResult.val.val;
 
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
@@ -655,7 +655,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
     }
 
     const { parsedServerResponse, decodedToken, department, storeLocation } =
-      messageEventResult.val.safeUnwrap();
+      messageEventResult.val.val;
 
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       parsedServerResponse;

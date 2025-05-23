@@ -263,9 +263,9 @@ function createRepairMetricsChartsSafe({
     }
 
     return createSafeSuccessResult({
-      dailyCharts: dailyRepairChartsSafeResult.val.safeUnwrap(),
-      monthlyCharts: monthlyRepairChartsSafeResult.val.safeUnwrap(),
-      yearlyCharts: yearlyRepairChartsSafeResult.val.safeUnwrap(),
+      dailyCharts: dailyRepairChartsSafeResult.val.val,
+      monthlyCharts: monthlyRepairChartsSafeResult.val.val,
+      yearlyCharts: yearlyRepairChartsSafeResult.val.val,
     });
   } catch (error: unknown) {
     return createSafeErrorResult(error);
@@ -441,7 +441,7 @@ function createMonthlyRepairChartsSafe({
         ],
       );
 
-    return createSafeErrorResult({
+    return createSafeSuccessResult({
       bar: monthlyRepairMetricsBarCharts,
       line: monthlyRepairMetricsLineCharts,
     });
@@ -521,7 +521,7 @@ function createYearlyRepairChartsSafe({
         ],
       );
 
-    return createSafeErrorResult({
+    return createSafeSuccessResult({
       bar: yearlyRepairMetricsBarCharts,
       line: yearlyRepairMetricsLineCharts,
     });
@@ -646,7 +646,7 @@ function createRepairMetricsCalendarChartsSafe(
       return repairCalendarCharts;
     }
 
-    return createSafeErrorResult({
+    return createSafeSuccessResult({
       currentYear,
       previousYear,
     });

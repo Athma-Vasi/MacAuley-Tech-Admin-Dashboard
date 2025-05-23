@@ -75,7 +75,7 @@ self.onmessage = async (
         selectedMonth,
         selectedYear,
         selectedYYYYMMDD,
-    } = parsedMessageResult.val.safeUnwrap();
+    } = parsedMessageResult.val.val;
 
     try {
         const selectedDateProductMetricsSafeResult =
@@ -99,7 +99,7 @@ self.onmessage = async (
             return;
         }
         const selectedDateProductMetrics = selectedDateProductMetricsSafeResult
-            .val.safeUnwrap();
+            .val.val;
 
         const createProductMetricsCalendarChartsSafeResult =
             createProductMetricsCalendarChartsSafe(
@@ -122,7 +122,7 @@ self.onmessage = async (
             return;
         }
         const { currentYear, previousYear } =
-            createProductMetricsCalendarChartsSafeResult.val.safeUnwrap();
+            createProductMetricsCalendarChartsSafeResult.val.val;
 
         const productMetricsChartsSafeResult = createProductMetricsChartsSafe({
             productMetricsDocument,
@@ -142,7 +142,7 @@ self.onmessage = async (
             return;
         }
         const productMetricsCharts = productMetricsChartsSafeResult.val
-            .safeUnwrap();
+            .val;
 
         const productMetricsCardsSafeResult = createProductMetricsCardsSafe({
             cardBgGradient,
@@ -165,7 +165,7 @@ self.onmessage = async (
             return;
         }
         const productMetricsCards = productMetricsCardsSafeResult.val
-            .safeUnwrap();
+            .val;
 
         self.postMessage(
             createSafeSuccessResult({

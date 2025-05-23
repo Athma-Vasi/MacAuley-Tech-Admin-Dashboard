@@ -77,7 +77,7 @@ async function handleStoreAndCategoryClicks(
             repairMetricCategory,
             showBoundary,
             storeLocation,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         const requestInit: RequestInit = {
             method: "GET",
@@ -116,7 +116,7 @@ async function handleStoreAndCategoryClicks(
                 globalDispatch({
                     action: globalAction.setCustomerMetricsDocument,
                     payload: metricsDocumentResult.val
-                        .safeUnwrap() as CustomerMetricsDocument,
+                        .val as CustomerMetricsDocument,
                 });
             }
 
@@ -124,7 +124,7 @@ async function handleStoreAndCategoryClicks(
                 globalDispatch({
                     action: globalAction.setFinancialMetricsDocument,
                     payload: metricsDocumentResult.val
-                        .safeUnwrap() as FinancialMetricsDocument,
+                        .val as FinancialMetricsDocument,
                 });
             }
 
@@ -132,7 +132,7 @@ async function handleStoreAndCategoryClicks(
                 globalDispatch({
                     action: globalAction.setProductMetricsDocument,
                     payload: metricsDocumentResult.val
-                        .safeUnwrap() as ProductMetricsDocument,
+                        .val as ProductMetricsDocument,
                 });
             }
 
@@ -140,7 +140,7 @@ async function handleStoreAndCategoryClicks(
                 globalDispatch({
                     action: globalAction.setRepairMetricsDocument,
                     payload: metricsDocumentResult.val
-                        .safeUnwrap() as RepairMetricsDocument,
+                        .val as RepairMetricsDocument,
                 });
             }
 
@@ -211,7 +211,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             metricsUrl,
             navigateFn,
             showBoundary,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult("Component unmounted");
@@ -242,7 +242,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             productMetricCategory,
             repairMetricCategory,
             storeLocation,
-        } = messageEventResult.val.safeUnwrap();
+        } = messageEventResult.val.val;
 
         const { accessToken: newAccessToken, triggerLogout } =
             parsedServerResponse;

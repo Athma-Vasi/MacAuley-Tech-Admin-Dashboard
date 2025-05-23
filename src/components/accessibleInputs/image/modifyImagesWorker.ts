@@ -69,7 +69,7 @@ self.onmessage = async (
         qualities,
         quality,
         storageKey,
-    } = parsedMessageResult.val.safeUnwrap();
+    } = parsedMessageResult.val.val;
 
     const {
         fileNamesForageKey,
@@ -93,7 +93,7 @@ self.onmessage = async (
         }
 
         const imageToModify = structuredClone(
-            originalFilesResult.val.safeUnwrap()[currentImageIndex],
+            originalFilesResult.val.val[currentImageIndex],
         );
         if (!imageToModify) {
             self.postMessage(
@@ -114,7 +114,7 @@ self.onmessage = async (
             );
             return;
         }
-        const fileBlob = modifyImageResult.val.safeUnwrap();
+        const fileBlob = modifyImageResult.val.val;
 
         const modifiedFilesResult = await getCachedItemAsyncSafe<
             Array<ModifiedFile>
@@ -127,7 +127,7 @@ self.onmessage = async (
         }
         const updatedModifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.safeUnwrap().map(
+            : modifiedFilesResult.val.val.map(
                 (modifiedFile, index) =>
                     index === currentImageIndex ? fileBlob : modifiedFile,
             );
@@ -193,7 +193,7 @@ self.onmessage = async (
         }
         const fileNames = fileNamesResult.val.none
             ? []
-            : fileNamesResult.val.safeUnwrap();
+            : fileNamesResult.val.val;
 
         self.postMessage(
             createSafeSuccessResult(

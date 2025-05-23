@@ -420,9 +420,9 @@ function createCustomerMetricsChartsSafe({
     }
 
     return createSafeSuccessResult({
-      dailyCharts: dailyCustomerChartsSafeResult.val.safeUnwrap(),
-      monthlyCharts: monthlyCustomerChartsSafeResult.val.safeUnwrap(),
-      yearlyCharts: yearlyCustomerChartsSafeResult.val.safeUnwrap(),
+      dailyCharts: dailyCustomerChartsSafeResult.val.val,
+      monthlyCharts: monthlyCustomerChartsSafeResult.val.val,
+      yearlyCharts: yearlyCustomerChartsSafeResult.val.val,
     });
   } catch (error: unknown) {
     return createSafeErrorResult(error);

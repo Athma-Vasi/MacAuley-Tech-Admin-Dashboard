@@ -38,7 +38,7 @@ async function handleMessageEventRepairWorkerToMain(input: {
             isComponentMountedRef,
             repairMetricsDispatch,
             showBoundary,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -71,7 +71,7 @@ async function handleMessageEventRepairWorkerToMain(input: {
             previousYear,
             repairMetricsCharts,
             repairMetricsCards,
-        } = messageEventResult.val.safeUnwrap();
+        } = messageEventResult.val.val;
 
         repairMetricsDispatch({
             action: repairMetricsAction.setCalendarChartsData,

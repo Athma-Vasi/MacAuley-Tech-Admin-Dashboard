@@ -50,7 +50,7 @@ async function handleCheckEmail(
     }
 
     const { checkEmailWorker, email, registerDispatch, url } = parsedInputResult
-      .val.safeUnwrap();
+      .val.val;
 
     const emailValidations = VALIDATION_FUNCTIONS_TABLE["email"];
     const isEmailValid = emailValidations.every((validation) => {
@@ -118,7 +118,7 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
     }
 
     const { event, isComponentMountedRef, registerDispatch, showBoundary } =
-      parsedInputResult.val.safeUnwrap();
+      parsedInputResult.val.val;
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
       return createSafeErrorResult("Component unmounted");
@@ -135,7 +135,7 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.safeUnwrap();
+    const { parsedServerResponse } = messageEventResult.val.val;
 
     registerDispatch({
       action: registerAction.setIsEmailExistsSubmitting,
@@ -195,7 +195,7 @@ async function handleCheckUsername(
     }
 
     const { checkUsernameWorker, registerDispatch, url, username } =
-      parsedInputResult.val.safeUnwrap();
+      parsedInputResult.val.val;
 
     const usernameValidations = VALIDATION_FUNCTIONS_TABLE["username"];
     const isUsernameValid = usernameValidations.every((validation) => {
@@ -263,7 +263,7 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
     }
 
     const { event, isComponentMountedRef, registerDispatch, showBoundary } =
-      parsedInputResult.val.safeUnwrap();
+      parsedInputResult.val.val;
 
     const messageEventResult = event.data;
 
@@ -284,7 +284,7 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.safeUnwrap();
+    const { parsedServerResponse } = messageEventResult.val.val;
 
     registerDispatch({
       action: registerAction.setIsUsernameExistsSubmitting,
@@ -347,7 +347,7 @@ async function handleRegisterButtonSubmit(
 
     const { formData, registerDispatch, registerWorker, url } =
       parsedInputResult
-        .val.safeUnwrap();
+        .val.val;
 
     const requestInit: RequestInit = {
       body: formData,
@@ -409,7 +409,7 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
       registerDispatch,
       showBoundary,
       toLocation,
-    } = parsedInputResult.val.safeUnwrap();
+    } = parsedInputResult.val.val;
 
     const messageEventResult = event.data;
 
@@ -430,7 +430,7 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.safeUnwrap();
+    const { parsedServerResponse } = messageEventResult.val.val;
 
     if (parsedServerResponse.kind === "error") {
       registerDispatch({
@@ -510,7 +510,7 @@ function handlePrevNextStepClick(
     }
 
     const { activeStep, kind, registerDispatch, registerState } =
-      parsedInputResult.val.safeUnwrap();
+      parsedInputResult.val.val;
 
     if (activeStep === MAX_REGISTER_STEPS) {
       return createSafeErrorResult(

@@ -75,7 +75,7 @@ self.onmessage = async (
         routesZodSchemaMapKey,
         skipTokenDecode,
         url,
-    } = parsedMessageResult.val.safeUnwrap();
+    } = parsedMessageResult.val.val;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
@@ -98,7 +98,7 @@ self.onmessage = async (
 
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
-        >(responseResult.val.safeUnwrap());
+        >(responseResult.val.val);
         if (jsonResult.err) {
             self.postMessage(jsonResult);
             return;
@@ -120,7 +120,7 @@ self.onmessage = async (
         // }
 
         const parsedResult = await parseServerResponseAsyncSafe({
-            object: jsonResult.val.safeUnwrap(),
+            object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
@@ -140,14 +140,14 @@ self.onmessage = async (
         if (skipTokenDecode) {
             self.postMessage(
                 createSafeSuccessResult({
-                    parsedServerResponse: parsedResult.val.safeUnwrap(),
+                    parsedServerResponse: parsedResult.val.val,
                     decodedToken: None,
                 }),
             );
             return;
         }
 
-        const { accessToken } = parsedResult.val.safeUnwrap();
+        const { accessToken } = parsedResult.val.val;
 
         const decodedTokenSafeResult = decodeJWTSafe(accessToken);
         if (decodedTokenSafeResult.err) {
@@ -163,7 +163,7 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                parsedServerResponse: parsedResult.val.safeUnwrap(),
+                parsedServerResponse: parsedResult.val.val,
                 decodedToken: decodedTokenSafeResult.val,
             }),
         );

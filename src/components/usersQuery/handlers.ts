@@ -66,7 +66,7 @@ async function handleUsersQuerySubmitGETClick(
         url,
         usersFetchWorker,
         usersQueryDispatch,
-    } = parsedInputResult.val.safeUnwrap();
+    } = parsedInputResult.val.val;
 
     const requestInit: RequestInit = {
         method: "GET",
@@ -107,7 +107,7 @@ async function handleUsersQuerySubmitGETClick(
         }
 
         if (userDocumentsResult.val.some) {
-            const userDocuments = userDocumentsResult.val.safeUnwrap();
+            const userDocuments = userDocumentsResult.val.val;
 
             const sorted = userDocuments.sort((a, b) => {
                 const aValue = a[arrangeByField];
@@ -210,7 +210,7 @@ async function handleUsersQueryOnmessageCallback(
             showBoundary,
             url,
             usersQueryDispatch,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
@@ -241,7 +241,7 @@ async function handleUsersQueryOnmessageCallback(
             newQueryFlag,
             queryString,
             totalDocuments,
-        } = messageEventResult.val.safeUnwrap();
+        } = messageEventResult.val.val;
         const {
             accessToken: newAccessToken,
             kind,

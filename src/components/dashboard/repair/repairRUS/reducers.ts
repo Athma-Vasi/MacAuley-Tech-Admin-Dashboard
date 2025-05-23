@@ -34,7 +34,7 @@ function repairRUSReducer_setYAxisKey(
 
   return {
     ...state,
-    yAxisKey: parsedResult.val.safeUnwrap().payload as RepairSubMetric,
+    yAxisKey: parsedResult.val.val.payload as RepairSubMetric,
   };
 }
 

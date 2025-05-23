@@ -51,7 +51,7 @@ function directoryReducer_setDepartment(
 
   return {
     ...state,
-    department: parsedResult.val.safeUnwrap()
+    department: parsedResult.val.val
       .payload as DepartmentsWithDefaultKey,
   };
 }
@@ -71,7 +71,7 @@ function directoryReducer_setDirectoryFetchWorker(
 
   return {
     ...state,
-    directoryFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
+    directoryFetchWorker: parsedResult.val.val.payload as Worker,
   };
 }
 
@@ -90,7 +90,7 @@ function directoryReducer_setOrientation(
 
   return {
     ...state,
-    orientation: parsedResult.val.safeUnwrap().payload as Orientation,
+    orientation: parsedResult.val.val.payload as Orientation,
   };
 }
 
@@ -109,7 +109,7 @@ function directoryReducer_setStoreLocation(
 
   return {
     ...state,
-    storeLocation: parsedResult.val.safeUnwrap()
+    storeLocation: parsedResult.val.val
       .payload as StoreLocationsWithDefaultKey,
   };
 }

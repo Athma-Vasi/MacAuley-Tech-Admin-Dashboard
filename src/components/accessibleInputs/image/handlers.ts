@@ -58,7 +58,7 @@ async function handleResetImageClick(
             isComponentMountedRef,
             showBoundary,
             storageKey,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -88,7 +88,7 @@ async function handleResetImageClick(
         if (originalFilesResult.val.some) {
             const originalFiles = originalFilesResult.val.none
                 ? []
-                : originalFilesResult.val.safeUnwrap();
+                : originalFilesResult.val.val;
             const originalFile = originalFiles[index];
 
             accessibleImageInputDispatch({
@@ -169,7 +169,7 @@ async function handleRemoveImageClick<
             showBoundary,
             storageKey,
             validValueAction,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -200,7 +200,7 @@ async function handleRemoveImageClick<
 
         const modifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.safeUnwrap();
+            : modifiedFilesResult.val.val;
         modifiedFiles?.splice(index, 1);
 
         const setModifiedFilesResult = await setCachedItemAsyncSafe(
@@ -232,7 +232,7 @@ async function handleRemoveImageClick<
 
         const originalFiles = originalFilesResult.val.none
             ? []
-            : originalFilesResult.val.safeUnwrap();
+            : originalFilesResult.val.val;
         originalFiles?.splice(index, 1);
 
         const setOriginalFilesResult = await setCachedItemAsyncSafe(
@@ -268,7 +268,7 @@ async function handleRemoveImageClick<
 
         const fileNames = fileNamesResult.val.none
             ? []
-            : fileNamesResult.val.safeUnwrap();
+            : fileNamesResult.val.val;
         const existingFileName = fileNames[index];
         fileNames?.splice(index, 1);
 
@@ -372,7 +372,7 @@ async function handleMessageEventModifyImagesWorkerToMain<
             showBoundary,
             storageKey,
             validValueAction,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -405,7 +405,7 @@ async function handleMessageEventModifyImagesWorkerToMain<
             updatedModifiedFiles,
             orientation,
             quality,
-        } = messageEventResult.val.safeUnwrap();
+        } = messageEventResult.val.val;
 
         accessibleImageInputDispatch({
             action: accessibleImageInputAction.setImageFileBlob,
@@ -545,7 +545,7 @@ async function handleImageQualityOrientationSliderChange<
             qualityValue,
             storageKey,
             validValueAction,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -579,7 +579,7 @@ async function handleImageQualityOrientationSliderChange<
             showBoundary(safeErrorResult);
             return safeErrorResult;
         }
-        const originalFiles = originalFilesResult.val.safeUnwrap();
+        const originalFiles = originalFilesResult.val.val;
         if (originalFiles.length === 0) {
             const safeErrorResult = createSafeErrorResult(
                 "No original files found",
@@ -623,7 +623,7 @@ async function handleImageQualityOrientationSliderChange<
             return safeErrorResult;
         }
 
-        const fileBlob = modifyImageResult.val.safeUnwrap();
+        const fileBlob = modifyImageResult.val.val;
 
         accessibleImageInputDispatch({
             action: accessibleImageInputAction.setImageFileBlob,
@@ -647,7 +647,7 @@ async function handleImageQualityOrientationSliderChange<
         }
         const modifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.safeUnwrap();
+            : modifiedFilesResult.val.val;
         const updatedModifiedFiles = modifiedFiles.map(
             (modifiedFile, index) =>
                 index === currentImageIndex ? fileBlob : modifiedFile,
@@ -805,7 +805,7 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             accessibleImageInputDispatch,
             isComponentMountedRef,
             showBoundary,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -833,7 +833,7 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
         }
 
         const { fileNames, modifiedFiles, orientations, qualities } =
-            messageEventResult.val.safeUnwrap();
+            messageEventResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(

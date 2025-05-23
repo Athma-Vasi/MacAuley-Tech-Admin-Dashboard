@@ -49,7 +49,7 @@ function dashboardReducer_setIsLoading(
 
   return {
     ...state,
-    isLoading: parsedResult.val.safeUnwrap().payload as boolean,
+    isLoading: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -68,7 +68,7 @@ function dashboardReducer_setLoadingMessage(
 
   return {
     ...state,
-    loadingMessage: parsedResult.val.safeUnwrap().payload as string,
+    loadingMessage: parsedResult.val.val.payload as string,
   };
 }
 
@@ -87,7 +87,7 @@ function dashboardReducer_setCalendarView(
 
   return {
     ...state,
-    calendarView: parsedResult.val.safeUnwrap()
+    calendarView: parsedResult.val.val
       .payload as DashboardCalendarView,
   };
 }
@@ -107,7 +107,7 @@ function dashboardReducer_setDashboardFetchWorker(
 
   return {
     ...state,
-    dashboardFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
+    dashboardFetchWorker: parsedResult.val.val.payload as Worker,
   };
 }
 

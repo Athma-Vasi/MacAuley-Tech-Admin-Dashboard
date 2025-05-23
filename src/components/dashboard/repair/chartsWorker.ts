@@ -75,7 +75,7 @@ self.onmessage = async (
         selectedMonth,
         selectedYear,
         selectedYYYYMMDD,
-    } = parsedMessageResult.val.safeUnwrap();
+    } = parsedMessageResult.val.val;
 
     try {
         const selectedDateRepairMetricsSafeResult =
@@ -101,7 +101,7 @@ self.onmessage = async (
             return;
         }
         const selectedDateRepairMetrics = selectedDateRepairMetricsSafeResult
-            .val.safeUnwrap();
+            .val.val;
 
         const createRepairMetricsCalendarChartsSafeResult =
             createRepairMetricsCalendarChartsSafe(
@@ -124,7 +124,7 @@ self.onmessage = async (
             return;
         }
         const { currentYear, previousYear } =
-            createRepairMetricsCalendarChartsSafeResult.val.safeUnwrap();
+            createRepairMetricsCalendarChartsSafeResult.val.val;
 
         const repairMetricsChartsSafeResult = createRepairMetricsChartsSafe({
             repairMetricsDocument,
@@ -144,7 +144,7 @@ self.onmessage = async (
             return;
         }
         const repairMetricsCharts = repairMetricsChartsSafeResult.val
-            .safeUnwrap();
+            .val;
 
         const repairMetricsCardsSafeResult = createRepairMetricsCardsSafe({
             cardBgGradient,
@@ -167,7 +167,7 @@ self.onmessage = async (
             return;
         }
         const repairMetricsCards = repairMetricsCardsSafeResult.val
-            .safeUnwrap();
+            .val;
 
         self.postMessage(
             createSafeSuccessResult({

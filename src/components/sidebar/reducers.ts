@@ -41,7 +41,7 @@ function sidebarReducer_setClickedNavlink(
 
     return {
         ...state,
-        clickedNavlink: parsedResult.val.safeUnwrap()
+        clickedNavlink: parsedResult.val.val
             .payload as SidebarNavlinks,
     };
 }
@@ -61,7 +61,7 @@ function sidebarReducer_setDirectoryFetchWorker(
 
     return {
         ...state,
-        directoryFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
+        directoryFetchWorker: parsedResult.val.val.payload as Worker,
     };
 }
 
@@ -80,7 +80,7 @@ function sidebarReducer_setLogoutFetchWorker(
 
     return {
         ...state,
-        logoutFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
+        logoutFetchWorker: parsedResult.val.val.payload as Worker,
     };
 }
 
@@ -99,7 +99,7 @@ function sidebarReducer_setMetricsFetchWorker(
 
     return {
         ...state,
-        metricsFetchWorker: parsedResult.val.safeUnwrap().payload as Worker,
+        metricsFetchWorker: parsedResult.val.val.payload as Worker,
     };
 }
 

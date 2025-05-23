@@ -156,7 +156,7 @@ function globalReducer_setDirectory(
 
   return {
     ...state,
-    directory: parsedResult.val.safeUnwrap().payload as UserDocument[],
+    directory: parsedResult.val.val.payload as UserDocument[],
   };
 }
 
@@ -175,7 +175,7 @@ function globalReducer_setProductMetricCategory(
 
   return {
     ...state,
-    productMetricCategory: parsedResult.val.safeUnwrap()
+    productMetricCategory: parsedResult.val.val
       .payload as ProductMetricCategory,
   };
 }
@@ -195,7 +195,7 @@ function globalReducer_setProductSubMetricCategory(
 
   return {
     ...state,
-    productSubMetricCategory: parsedResult.val.safeUnwrap()
+    productSubMetricCategory: parsedResult.val.val
       .payload as ProductSubMetric,
   };
 }
@@ -215,7 +215,7 @@ function globalReducer_setRepairMetricCategory(
 
   return {
     ...state,
-    repairMetricCategory: parsedResult.val.safeUnwrap()
+    repairMetricCategory: parsedResult.val.val
       .payload as RepairMetricCategory,
   };
 }
@@ -235,7 +235,7 @@ function globalReducer_setFinancialMetricCategory(
 
   return {
     ...state,
-    financialMetricCategory: parsedResult.val.safeUnwrap()
+    financialMetricCategory: parsedResult.val.val
       .payload as FinancialMetricCategory,
   };
 }
@@ -255,7 +255,7 @@ function globalReducer_setCustomerMetricsCategory(
 
   return {
     ...state,
-    customerMetricsCategory: parsedResult.val.safeUnwrap()
+    customerMetricsCategory: parsedResult.val.val
       .payload as CustomerMetricsCategory,
   };
 }
@@ -275,7 +275,7 @@ function globalReducer_setFinancialMetricsDocument(
 
   return {
     ...state,
-    financialMetricsDocument: parsedResult.val.safeUnwrap()
+    financialMetricsDocument: parsedResult.val.val
       .payload as FinancialMetricsDocument,
   };
 }
@@ -295,7 +295,7 @@ function globalReducer_setProductMetricsDocument(
 
   return {
     ...state,
-    productMetricsDocument: parsedResult.val.safeUnwrap()
+    productMetricsDocument: parsedResult.val.val
       .payload as ProductMetricsDocument,
   };
 }
@@ -315,7 +315,7 @@ function globalReducer_setCustomerMetricsDocument(
 
   return {
     ...state,
-    customerMetricsDocument: parsedResult.val.safeUnwrap()
+    customerMetricsDocument: parsedResult.val.val
       .payload as CustomerMetricsDocument,
   };
 }
@@ -335,7 +335,7 @@ function globalReducer_setRepairMetricsDocument(
 
   return {
     ...state,
-    repairMetricsDocument: parsedResult.val.safeUnwrap()
+    repairMetricsDocument: parsedResult.val.val
       .payload as RepairMetricsDocument,
   };
 }
@@ -353,7 +353,7 @@ function globalReducer_setColorScheme(
     return state;
   }
 
-  const colorScheme = parsedResult.val.safeUnwrap().payload as ColorScheme;
+  const colorScheme = parsedResult.val.val.payload as ColorScheme;
   const { components } = state.themeObject;
   const { Button, Text, Title } = components;
 
@@ -417,7 +417,7 @@ function globalReducer_setSelectedYYYYMMDD(
 
   return {
     ...state,
-    selectedYYYYMMDD: parsedResult.val.safeUnwrap().payload as string,
+    selectedYYYYMMDD: parsedResult.val.val.payload as string,
   };
 }
 
@@ -438,7 +438,7 @@ function globalReducer_setDefaultGradient(
     ...state,
     themeObject: {
       ...state.themeObject,
-      defaultGradient: parsedResult.val.safeUnwrap().payload as {
+      defaultGradient: parsedResult.val.val.payload as {
         deg: number;
         from: MantineColor;
         to: MantineColor;
@@ -475,7 +475,7 @@ function globalReducer_setPrefersReducedMotion(
 
   return {
     ...state,
-    isPrefersReducedMotion: parsedResult.val.safeUnwrap()
+    isPrefersReducedMotion: parsedResult.val.val
       .payload as boolean,
   };
 }
@@ -497,7 +497,7 @@ function globalReducer_setPrimaryColor(
     ...state,
     themeObject: {
       ...state.themeObject,
-      primaryColor: parsedResult.val.safeUnwrap()
+      primaryColor: parsedResult.val.val
         .payload as MantineColor,
     },
   };
@@ -522,7 +522,7 @@ function globalReducer_setPrimaryShadeDark(
       ...state.themeObject,
       primaryShade: {
         ...state.themeObject.primaryShade,
-        dark: parsedResult.val.safeUnwrap().payload as Shade,
+        dark: parsedResult.val.val.payload as Shade,
       },
     },
   };
@@ -547,7 +547,7 @@ function globalReducer_setPrimaryShadeLight(
       ...state.themeObject,
       primaryShade: {
         ...state.themeObject.primaryShade,
-        light: parsedResult.val.safeUnwrap().payload as Shade,
+        light: parsedResult.val.val.payload as Shade,
       },
     },
   };
@@ -570,7 +570,7 @@ function globalReducer_setRespectReducedMotion(
     ...state,
     themeObject: {
       ...state.themeObject,
-      respectReducedMotion: parsedResult.val.safeUnwrap()
+      respectReducedMotion: parsedResult.val.val
         .payload as boolean,
     },
   };
@@ -591,7 +591,7 @@ function globalReducer_setIsError(
 
   return {
     ...state,
-    isError: parsedResult.val.safeUnwrap().payload as boolean,
+    isError: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -610,7 +610,7 @@ function globalReducer_setIsFetching(
 
   return {
     ...state,
-    isFetching: parsedResult.val.safeUnwrap().payload as boolean,
+    isFetching: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -727,7 +727,7 @@ function globalReducer_setStoreLocationView(
 
   return {
     ...state,
-    storeLocation: parsedResult.val.safeUnwrap()
+    storeLocation: parsedResult.val.val
       .payload as AllStoreLocations,
   };
 }

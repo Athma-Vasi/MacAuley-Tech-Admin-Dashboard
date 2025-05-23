@@ -39,7 +39,7 @@ function authReducer_setAccessToken(
 
   return {
     ...state,
-    accessToken: parsedResult.val.safeUnwrap().payload as string,
+    accessToken: parsedResult.val.val.payload as string,
   };
 }
 
@@ -58,7 +58,7 @@ function authReducer_setDecodedToken(
 
   return {
     ...state,
-    decodedToken: parsedResult.val.safeUnwrap().payload as DecodedToken,
+    decodedToken: parsedResult.val.val.payload as DecodedToken,
   };
 }
 
@@ -77,7 +77,7 @@ function authReducer_setIsLoggedIn(
 
   return {
     ...state,
-    isLoggedIn: parsedResult.val.safeUnwrap().payload as boolean,
+    isLoggedIn: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -96,7 +96,7 @@ function authReducer_setUserDocument(
 
   return {
     ...state,
-    userDocument: parsedResult.val.safeUnwrap().payload as UserDocument,
+    userDocument: parsedResult.val.val.payload as UserDocument,
   };
 }
 

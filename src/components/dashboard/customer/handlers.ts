@@ -38,7 +38,7 @@ async function handleMessageEventCustomerWorkerToMain(input: {
             isComponentMountedRef,
             customerMetricsDispatch,
             showBoundary,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -69,7 +69,7 @@ async function handleMessageEventCustomerWorkerToMain(input: {
             previousYear,
             customerMetricsCharts,
             customerMetricsCards,
-        } = messageEventResult.val.safeUnwrap();
+        } = messageEventResult.val.val;
 
         customerMetricsDispatch({
             action: customerMetricsAction.setCalendarChartsData,

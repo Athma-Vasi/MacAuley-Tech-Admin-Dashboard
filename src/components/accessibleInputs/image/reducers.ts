@@ -107,7 +107,7 @@ function accessibleImageInputReducer_addImageFileBlob(
         return state;
     }
 
-    const fileBlob = parsedResult.val.safeUnwrap().payload as ModifiedFile;
+    const fileBlob = parsedResult.val.val.payload as ModifiedFile;
     const imageFileBlobs = structuredClone(state.imageFileBlobs);
     imageFileBlobs.push(fileBlob);
 
@@ -133,7 +133,7 @@ function accessibleImageInputReducer_addFileName(
     const {
         value: fileName,
         index,
-    } = parsedResult.val.safeUnwrap().payload as {
+    } = parsedResult.val.val.payload as {
         value: string;
         index: number;
     };
@@ -166,7 +166,7 @@ function accessibleImageInputReducer_setCurrentImageIndex(
 
     return {
         ...state,
-        currentImageIndex: parsedResult.val.safeUnwrap().payload as number,
+        currentImageIndex: parsedResult.val.val.payload as number,
     };
 }
 
@@ -183,7 +183,7 @@ function accessibleImageInputReducer_removeImageFileBlob(
         return state;
     }
 
-    const index = parsedResult.val.safeUnwrap().payload as number;
+    const index = parsedResult.val.val.payload as number;
 
     const imageFileBlobs = structuredClone(state.imageFileBlobs).filter(
         (_: ModifiedFile, i: number) => i !== index,
@@ -220,7 +220,7 @@ function accessibleImageInputReducer_resetImageFileBlob(
         return state;
     }
 
-    const { index, value } = parsedResult.val.safeUnwrap().payload as {
+    const { index, value } = parsedResult.val.val.payload as {
         index: number;
         value: OriginalFile;
     };
@@ -265,7 +265,7 @@ function accessibleImageInputReducer_setImageFileBlob(
         return state;
     }
 
-    const { index, fileBlob } = parsedResult.val.safeUnwrap()
+    const { index, fileBlob } = parsedResult.val.val
         .payload as {
             index: number;
             fileBlob: ModifiedFile;
@@ -295,7 +295,7 @@ function accessibleImageInputReducer_setModifyImagesWorker(
 
     return {
         ...state,
-        modifyImagesWorker: parsedResult.val.safeUnwrap().payload as Worker,
+        modifyImagesWorker: parsedResult.val.val.payload as Worker,
     };
 }
 
@@ -314,7 +314,7 @@ function accessibleImageInputReducer_setRetrieveImagesWorker(
 
     return {
         ...state,
-        retrieveImagesWorker: parsedResult.val.safeUnwrap().payload as Worker,
+        retrieveImagesWorker: parsedResult.val.val.payload as Worker,
     };
 }
 
@@ -331,7 +331,7 @@ function accessibleImageInputReducer_setIsErrors(
         return state;
     }
 
-    const { index, value } = parsedResult.val.safeUnwrap().payload as {
+    const { index, value } = parsedResult.val.val.payload as {
         index: number;
         value: boolean;
     };
@@ -359,7 +359,7 @@ function accessibleImageInputReducer_setIsLoading(
 
     return {
         ...state,
-        isLoading: parsedResult.val.safeUnwrap().payload as boolean,
+        isLoading: parsedResult.val.val.payload as boolean,
     };
 }
 
@@ -378,7 +378,7 @@ function accessibleImageInputReducer_setIsModalOpen(
 
     return {
         ...state,
-        isModalOpen: parsedResult.val.safeUnwrap().payload as boolean,
+        isModalOpen: parsedResult.val.val.payload as boolean,
     };
 }
 
@@ -395,7 +395,7 @@ function accessibleImageInputReducer_setQuality(
         return state;
     }
 
-    const { index, value } = parsedResult.val.safeUnwrap()
+    const { index, value } = parsedResult.val.val
         .payload as DynamicSliderInputPayload;
     const qualities = structuredClone(state.qualities);
     qualities[index] = value;
@@ -420,7 +420,7 @@ function accessibleImageInputReducer_setOrientation(
         return state;
     }
 
-    const { index, value } = parsedResult.val.safeUnwrap()
+    const { index, value } = parsedResult.val.val
         .payload as DynamicSliderInputPayload;
     const orientations = state.orientations.slice();
     orientations[index] = value;

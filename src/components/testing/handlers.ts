@@ -69,7 +69,7 @@ async function postUsersToDB(
             return safeErrorResult;
         }
 
-        const responseUnwrapped = responseResult.val.safeUnwrap();
+        const responseUnwrapped = responseResult.val.val;
 
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
@@ -93,7 +93,7 @@ async function postUsersToDB(
             return safeErrorResult;
         }
 
-        const serverResponse = jsonResult.val.safeUnwrap();
+        const serverResponse = jsonResult.val.val;
         if (serverResponse.kind === "error") {
             const safeErrorResult = createSafeErrorResult(
                 serverResponse.message,

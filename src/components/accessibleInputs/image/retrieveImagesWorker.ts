@@ -53,7 +53,7 @@ self.onmessage = async (
         return;
     }
 
-    const { storageKey } = parsedMessageResult.val.safeUnwrap();
+    const { storageKey } = parsedMessageResult.val.val;
 
     const {
         fileNamesForageKey,
@@ -76,7 +76,7 @@ self.onmessage = async (
         }
         const modifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.safeUnwrap();
+            : modifiedFilesResult.val.val;
 
         const fileNamesResult = await getCachedItemAsyncSafe<Array<string>>(
             fileNamesForageKey,
@@ -87,7 +87,7 @@ self.onmessage = async (
         }
         const fileNames = fileNamesResult.val.none
             ? []
-            : fileNamesResult.val.safeUnwrap();
+            : fileNamesResult.val.val;
 
         const getQualitiesResult = await getCachedItemAsyncSafe<Array<number>>(
             qualitiesForageKey,
@@ -101,7 +101,7 @@ self.onmessage = async (
                 { length: MAX_IMAGES },
                 () => 10,
             )
-            : getQualitiesResult.val.safeUnwrap();
+            : getQualitiesResult.val.val;
 
         const getOrientationsResult = await getCachedItemAsyncSafe<
             Array<number>
@@ -117,7 +117,7 @@ self.onmessage = async (
                 { length: MAX_IMAGES },
                 () => 1,
             )
-            : getOrientationsResult.val.safeUnwrap();
+            : getOrientationsResult.val.val;
 
         self.postMessage(
             createSafeSuccessResult({

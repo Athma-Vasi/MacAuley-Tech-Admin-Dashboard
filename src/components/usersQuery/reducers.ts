@@ -68,7 +68,7 @@ function usersQueryReducer_resetToInitial(
         return state;
     }
 
-    return parsedResult.val.safeUnwrap().payload as UsersQueryState;
+    return parsedResult.val.val.payload as UsersQueryState;
 }
 
 function usersQueryReducer_setArrangeByDirection(
@@ -85,7 +85,7 @@ function usersQueryReducer_setArrangeByDirection(
     }
 
     const { arrangeByField, resourceData } = state;
-    const arrangeByDirection = parsedResult.val.safeUnwrap()
+    const arrangeByDirection = parsedResult.val.val
         .payload as SortDirection;
     const cloned = structuredClone(resourceData);
 
@@ -115,7 +115,7 @@ function usersQueryReducer_setArrangeByField(
     }
 
     const { arrangeByDirection, resourceData } = state;
-    const arrangeByField = parsedResult.val.safeUnwrap()
+    const arrangeByField = parsedResult.val.val
         .payload as keyof Omit<UserDocument, "password">;
     const cloned = structuredClone(resourceData);
 
@@ -146,7 +146,7 @@ function usersQueryReducer_setCurrentPage(
 
     return {
         ...state,
-        currentPage: parsedResult.val.safeUnwrap().payload as number,
+        currentPage: parsedResult.val.val.payload as number,
     };
 }
 
@@ -165,7 +165,7 @@ function usersQueryReducer_setUsersFetchWorker(
 
     return {
         ...state,
-        usersFetchWorker: parsedResult.val.safeUnwrap().payload as
+        usersFetchWorker: parsedResult.val.val.payload as
             | Worker
             | null,
     };
@@ -186,7 +186,7 @@ function usersQueryReducer_setIsError(
 
     return {
         ...state,
-        isError: parsedResult.val.safeUnwrap().payload as boolean,
+        isError: parsedResult.val.val.payload as boolean,
     };
 }
 
@@ -205,7 +205,7 @@ function usersQueryReducer_setIsLoading(
 
     return {
         ...state,
-        isLoading: parsedResult.val.safeUnwrap().payload as boolean,
+        isLoading: parsedResult.val.val.payload as boolean,
     };
 }
 
@@ -224,7 +224,7 @@ function usersQueryReducer_setNewQueryFlag(
 
     return {
         ...state,
-        newQueryFlag: parsedResult.val.safeUnwrap().payload as boolean,
+        newQueryFlag: parsedResult.val.val.payload as boolean,
     };
 }
 
@@ -243,7 +243,7 @@ function usersQueryReducer_setPages(
 
     return {
         ...state,
-        pages: parsedResult.val.safeUnwrap().payload as number,
+        pages: parsedResult.val.val.payload as number,
     };
 }
 
@@ -262,7 +262,7 @@ function usersQueryReducer_setQueryString(
 
     return {
         ...state,
-        queryString: parsedResult.val.safeUnwrap().payload as string,
+        queryString: parsedResult.val.val.payload as string,
     };
 }
 
@@ -281,7 +281,7 @@ function usersQueryReducer_setResourceData(
 
     return {
         ...state,
-        resourceData: parsedResult.val.safeUnwrap().payload as Array<
+        resourceData: parsedResult.val.val.payload as Array<
             UserDocument
         >,
     };
@@ -302,7 +302,7 @@ function usersQueryReducer_setTotalDocuments(
 
     return {
         ...state,
-        totalDocuments: parsedResult.val.safeUnwrap().payload as number,
+        totalDocuments: parsedResult.val.val.payload as number,
     };
 }
 

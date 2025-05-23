@@ -54,7 +54,7 @@ function repairMetricsReducer_setCalendarChartsData(
 
   return {
     ...state,
-    calendarChartsData: parsedResult.val.safeUnwrap().payload as {
+    calendarChartsData: parsedResult.val.val.payload as {
       currentYear: RepairMetricCalendarCharts;
       previousYear: RepairMetricCalendarCharts;
     },
@@ -90,7 +90,7 @@ function repairMetricsReducer_setCharts(
 
   return {
     ...state,
-    charts: parsedResult.val.safeUnwrap().payload as RepairMetricsCharts,
+    charts: parsedResult.val.val.payload as RepairMetricsCharts,
   };
 }
 
@@ -109,7 +109,7 @@ function repairMetricsReducer_setIsGenerating(
 
   return {
     ...state,
-    isGenerating: parsedResult.val.safeUnwrap().payload as boolean,
+    isGenerating: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -128,7 +128,7 @@ function repairMetricsReducer_setRepairChartsWorker(
 
   return {
     ...state,
-    repairChartsWorker: parsedResult.val.safeUnwrap().payload as Worker,
+    repairChartsWorker: parsedResult.val.val.payload as Worker,
   };
 }
 

@@ -38,7 +38,7 @@ async function handleMessageEventFinancialWorkerToMain(input: {
             isComponentMountedRef,
             financialMetricsDispatch,
             showBoundary,
-        } = parsedInputResult.val.safeUnwrap();
+        } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
@@ -69,7 +69,7 @@ async function handleMessageEventFinancialWorkerToMain(input: {
             previousYear,
             financialMetricsCharts,
             financialMetricsCards,
-        } = messageEventResult.val.safeUnwrap();
+        } = messageEventResult.val.val;
 
         financialMetricsDispatch({
             action: financialMetricsAction.setCalendarChartsData,

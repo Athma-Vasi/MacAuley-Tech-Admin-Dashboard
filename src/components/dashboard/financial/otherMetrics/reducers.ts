@@ -40,7 +40,7 @@ function otherMetricsReducer_setYAxisKey(
 
   return {
     ...state,
-    yAxisKey: parsedResult.val.safeUnwrap()
+    yAxisKey: parsedResult.val.val
       .payload as FinancialMetricsOtherMetricsChartsKey,
   };
 }

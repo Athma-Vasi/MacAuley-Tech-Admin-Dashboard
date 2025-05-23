@@ -56,7 +56,7 @@ function productMetricsReducer_setCalendarChartsData(
 
   return {
     ...state,
-    calendarChartsData: parsedResult.val.safeUnwrap().payload as {
+    calendarChartsData: parsedResult.val.val.payload as {
       currentYear: ProductMetricsCalendarCharts;
       previousYear: ProductMetricsCalendarCharts;
     },
@@ -92,7 +92,7 @@ function productMetricsReducer_setCharts(
 
   return {
     ...state,
-    charts: parsedResult.val.safeUnwrap().payload as ProductMetricsCharts,
+    charts: parsedResult.val.val.payload as ProductMetricsCharts,
   };
 }
 
@@ -111,7 +111,7 @@ function productMetricsReducer_setIsGenerating(
 
   return {
     ...state,
-    isGenerating: parsedResult.val.safeUnwrap().payload as boolean,
+    isGenerating: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -130,7 +130,7 @@ function productMetricsReducer_setProductChartsWorker(
 
   return {
     ...state,
-    productChartsWorker: parsedResult.val.safeUnwrap().payload as Worker,
+    productChartsWorker: parsedResult.val.val.payload as Worker,
   };
 }
 

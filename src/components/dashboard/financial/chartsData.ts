@@ -469,9 +469,9 @@ function createFinancialMetricsChartsSafe({
     }
 
     return createSafeSuccessResult({
-      dailyCharts: dailyFinancialChartsSafeResult.val.safeUnwrap(),
-      monthlyCharts: monthlyFinancialChartsSafeResult.val.safeUnwrap(),
-      yearlyCharts: yearlyFinancialChartsSafeResult.val.safeUnwrap(),
+      dailyCharts: dailyFinancialChartsSafeResult.val.val,
+      monthlyCharts: monthlyFinancialChartsSafeResult.val.val,
+      yearlyCharts: yearlyFinancialChartsSafeResult.val.val,
     });
   } catch (error: unknown) {
     return createSafeErrorResult(error);

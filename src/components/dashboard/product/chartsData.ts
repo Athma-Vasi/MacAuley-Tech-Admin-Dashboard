@@ -337,9 +337,9 @@ function createProductMetricsChartsSafe({
     }
 
     return createSafeSuccessResult({
-      dailyCharts: dailyProductChartsResult.val.safeUnwrap(),
-      monthlyCharts: monthlyProductChartsResult.val.safeUnwrap(),
-      yearlyCharts: yearlyProductChartsResult.val.safeUnwrap(),
+      dailyCharts: dailyProductChartsResult.val.val,
+      monthlyCharts: monthlyProductChartsResult.val.val,
+      yearlyCharts: yearlyProductChartsResult.val.val,
     });
   } catch (error: unknown) {
     return createSafeErrorResult(error);

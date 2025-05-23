@@ -84,7 +84,7 @@ function queryReducer_resetToInitial(
         return state;
     }
 
-    return parsedResult.val.safeUnwrap().payload as QueryState;
+    return parsedResult.val.val.payload as QueryState;
 }
 
 function queryReducer_setProjectionFields(
@@ -102,7 +102,7 @@ function queryReducer_setProjectionFields(
 
     return {
         ...state,
-        projectionFields: parsedResult.val.safeUnwrap().payload as string[],
+        projectionFields: parsedResult.val.val.payload as string[],
     };
 }
 
@@ -125,7 +125,7 @@ function queryReducer_modifyQueryChains(
         queryChainActions,
         queryLink,
         queryChainKind,
-    } = parsedResult.val.safeUnwrap().payload as ModifyQueryChainPayload;
+    } = parsedResult.val.val.payload as ModifyQueryChainPayload;
     const [field, comparisonOperator, value] = queryLink;
     const queryChains = structuredClone(state.queryChains);
 
@@ -287,7 +287,7 @@ function queryReducer_setFilterField(
 
     return {
         ...state,
-        filterField: parsedResult.val.safeUnwrap().payload as string,
+        filterField: parsedResult.val.val.payload as string,
     };
 }
 
@@ -306,7 +306,7 @@ function queryReducer_setFilterComparisonOperator(
 
     return {
         ...state,
-        filterComparisonOperator: parsedResult.val.safeUnwrap()
+        filterComparisonOperator: parsedResult.val.val
             .payload as QueryOperator,
     };
 }
@@ -326,7 +326,7 @@ function queryReducer_setFilterLogicalOperator(
 
     return {
         ...state,
-        filterLogicalOperator: parsedResult.val.safeUnwrap()
+        filterLogicalOperator: parsedResult.val.val
             .payload as LogicalOperator,
     };
 }
@@ -346,7 +346,7 @@ function queryReducer_setFilterValue(
 
     return {
         ...state,
-        filterValue: parsedResult.val.safeUnwrap().payload as string,
+        filterValue: parsedResult.val.val.payload as string,
     };
 }
 
@@ -365,7 +365,7 @@ function queryReducer_setGeneralSearchCase(
 
     return {
         ...state,
-        generalSearchCase: parsedResult.val.safeUnwrap()
+        generalSearchCase: parsedResult.val.val
             .payload as GeneralSearchCase,
     };
 }
@@ -385,7 +385,7 @@ function queryReducer_setGeneralSearchExclusionValue(
 
     return {
         ...state,
-        generalSearchExclusionValue: parsedResult.val.safeUnwrap()
+        generalSearchExclusionValue: parsedResult.val.val
             .payload as string,
     };
 }
@@ -405,7 +405,7 @@ function queryReducer_setGeneralSearchInclusionValue(
 
     return {
         ...state,
-        generalSearchInclusionValue: parsedResult.val.safeUnwrap()
+        generalSearchInclusionValue: parsedResult.val.val
             .payload as string,
     };
 }
@@ -425,7 +425,7 @@ function queryReducer_setIsError(
 
     return {
         ...state,
-        isError: parsedResult.val.safeUnwrap().payload as boolean,
+        isError: parsedResult.val.val.payload as boolean,
     };
 }
 
@@ -444,7 +444,7 @@ function queryReducer_setIsSearchDisabled(
 
     return {
         ...state,
-        isSearchDisabled: parsedResult.val.safeUnwrap().payload as boolean,
+        isSearchDisabled: parsedResult.val.val.payload as boolean,
     };
 }
 
@@ -463,7 +463,7 @@ function queryReducer_setLimitPerPage(
 
     return {
         ...state,
-        limitPerPage: parsedResult.val.safeUnwrap().payload as LimitPerPage,
+        limitPerPage: parsedResult.val.val.payload as LimitPerPage,
     };
 }
 
@@ -482,7 +482,7 @@ function queryReducer_setSortDirection(
 
     return {
         ...state,
-        sortDirection: parsedResult.val.safeUnwrap().payload as SortDirection,
+        sortDirection: parsedResult.val.val.payload as SortDirection,
     };
 }
 
@@ -501,7 +501,7 @@ function queryReducer_setSortField(
 
     return {
         ...state,
-        sortField: parsedResult.val.safeUnwrap().payload as string,
+        sortField: parsedResult.val.val.payload as string,
     };
 }
 
@@ -520,7 +520,7 @@ function queryReducer_setQueryKind(
 
     return {
         ...state,
-        queryKind: parsedResult.val.safeUnwrap().payload as QueryKind,
+        queryKind: parsedResult.val.val.payload as QueryKind,
     };
 }
 

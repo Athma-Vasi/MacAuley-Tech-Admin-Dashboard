@@ -60,7 +60,7 @@ async function handleLoginClick(input: {
       loginDispatch,
       loginFetchWorker,
       schema,
-    } = parsedInputResult.val.safeUnwrap();
+    } = parsedInputResult.val.val;
 
     if (isLoading || isSubmitting || isSuccessful) {
       return createSafeErrorResult("Already loading or submitting");
@@ -138,7 +138,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
       metricsUrl,
       navigate,
       showBoundary,
-    } = parsedInputResult.val.safeUnwrap();
+    } = parsedInputResult.val.val;
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
@@ -171,8 +171,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
       return createSafeErrorResult("Invalid credentials");
     }
 
-    const { parsedServerResponse, decodedToken } = messageEventResult.val
-      .safeUnwrap();
+    const { parsedServerResponse, decodedToken } = messageEventResult.val.val;
     const { accessToken, data, triggerLogout } = parsedServerResponse;
 
     if (triggerLogout || decodedToken.none) {
@@ -204,7 +203,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
     });
     authDispatch({
       action: authAction.setDecodedToken,
-      payload: decodedToken.safeUnwrap(),
+      payload: decodedToken.val,
     });
     authDispatch({
       action: authAction.setIsLoggedIn,
