@@ -26,21 +26,35 @@ function createRepairMetricsCardsSafe(
   { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
     createRepairMetricsCardsInput,
 ): ResultSafeBox<RepairMetricsCards> {
+  if (!selectedDateRepairMetrics) {
+    return createSafeErrorResult(
+      "Selected date repair metrics not found",
+    );
+  }
+
   const {
     dayRepairMetrics: { prevDayMetrics, selectedDayMetrics },
     monthRepairMetrics: { prevMonthMetrics, selectedMonthMetrics },
     yearRepairMetrics: { prevYearMetrics, selectedYearMetrics },
   } = selectedDateRepairMetrics;
 
-  if (
-    !selectedYearMetrics ||
-    !prevYearMetrics ||
-    !selectedMonthMetrics ||
-    !prevMonthMetrics ||
-    !selectedDayMetrics ||
-    !prevDayMetrics
-  ) {
-    return createSafeErrorResult("Invalid repair metrics data");
+  if (!selectedYearMetrics) {
+    return createSafeErrorResult("Selected year metrics not found");
+  }
+  if (!prevYearMetrics) {
+    return createSafeErrorResult("Previous year metrics not found");
+  }
+  if (!selectedMonthMetrics) {
+    return createSafeErrorResult("Selected month metrics not found");
+  }
+  if (!prevMonthMetrics) {
+    return createSafeErrorResult("Previous month metrics not found");
+  }
+  if (!selectedDayMetrics) {
+    return createSafeErrorResult("Selected day metrics not found");
+  }
+  if (!prevDayMetrics) {
+    return createSafeErrorResult("Previous day metrics not found");
   }
 
   try {
