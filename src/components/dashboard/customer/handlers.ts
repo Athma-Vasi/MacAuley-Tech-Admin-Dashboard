@@ -1,6 +1,10 @@
-import { Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
+import { ResultSafeBox } from "../../../types";
+import {
+    catchHandlerErrorSafe,
+    createSafeErrorResult,
+    createSafeSuccessResult,
+    parseSyncSafe,
+} from "../../../utils";
 import { customerMetricsAction } from "./actions";
 import { MessageEventCustomerWorkerToMain } from "./chartsWorker";
 import { handleMessageEventCustomerWorkerToMainInputZod } from "./schemas";
@@ -11,16 +15,22 @@ async function handleMessageEventCustomerWorkerToMain(input: {
     isComponentMountedRef: React.RefObject<boolean>;
     customerMetricsDispatch: React.Dispatch<CustomerMetricsDispatch>;
     showBoundary: (error: unknown) => void;
-}): Promise<SafeBoxResult<string>> {
+}): Promise<ResultSafeBox<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleMessageEventCustomerWorkerToMainInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeBoxResult({
-                data: Some("Error parsing input"),
-            });
+        if (parsedInputResult.err) {
+            input.showBoundary(parsedInputResult);
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input.showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {
@@ -31,24 +41,27 @@ async function handleMessageEventCustomerWorkerToMain(input: {
         } = parsedInputResult.val.safeUnwrap();
 
         if (!isComponentMountedRef.current) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
+            return createSafeErrorResult(
+                "Component unmounted",
+            );
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createSafeBoxResult({
-                data: Some("No data in message event"),
-            });
+            return createSafeErrorResult(
+                "No data received",
+            );
         }
-
-        if (messageEventResult.err || messageEventResult.val.data.none) {
-            showBoundary(messageEventResult.val.data);
-            return createSafeBoxResult({
-                data: messageEventResult.val.data,
-                message: messageEventResult.val.message,
-            });
+        if (messageEventResult.err) {
+            showBoundary(messageEventResult);
+            return messageEventResult;
+        }
+        if (messageEventResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing message event",
+            );
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {
@@ -56,7 +69,7 @@ async function handleMessageEventCustomerWorkerToMain(input: {
             previousYear,
             customerMetricsCharts,
             customerMetricsCards,
-        } = messageEventResult.val.data.val;
+        } = messageEventResult.val.safeUnwrap();
 
         customerMetricsDispatch({
             action: customerMetricsAction.setCalendarChartsData,
@@ -76,29 +89,15 @@ async function handleMessageEventCustomerWorkerToMain(input: {
             payload: customerMetricsCards,
         });
 
-        return createSafeBoxResult({
-            data: Some("Customer charts and cards updated successfully"),
-            kind: "success",
-        });
+        return createSafeSuccessResult(
+            "Customer metrics charts and cards updated successfully",
+        );
     } catch (error: unknown) {
-        if (
-            !input.isComponentMountedRef.current
-        ) {
-            return createSafeBoxResult({
-                data: Some("Component unmounted"),
-            });
-        }
-
-        input.showBoundary(error);
-        return createSafeBoxResult({
-            data: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
-            ),
-        });
+        return catchHandlerErrorSafe(
+            error,
+            input.isComponentMountedRef,
+            input.showBoundary,
+        );
     }
 }
 

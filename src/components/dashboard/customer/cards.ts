@@ -1,6 +1,5 @@
-import { Err, Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import { ResultSafeBox } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import type { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -52,7 +51,13 @@ function createCustomerMetricsCardsSafe(
     redColorShade,
     selectedDateCustomerMetrics,
   }: CreateCustomerMetricsCardsInput,
-): SafeBoxResult<CustomerMetricsCards> {
+): ResultSafeBox<CustomerMetricsCards> {
+  if (!selectedDateCustomerMetrics) {
+    return createSafeErrorResult(
+      "Selected date customer metrics not found",
+    );
+  }
+
   try {
     const {
       dayCustomerMetrics: { prevDayMetrics, selectedDayMetrics },
@@ -60,39 +65,35 @@ function createCustomerMetricsCardsSafe(
       yearCustomerMetrics: { prevYearMetrics, selectedYearMetrics },
     } = selectedDateCustomerMetrics;
 
-    if (
-      !selectedYearMetrics ||
-      !prevYearMetrics ||
-      !selectedMonthMetrics ||
-      !prevMonthMetrics ||
-      !selectedDayMetrics ||
-      !prevDayMetrics
-    ) {
-      return createSafeBoxResult({
-        data: Some({
-          dailyCards: {
-            overview: [],
-            new: [],
-            returning: [],
-            churnRate: [],
-            retentionRate: [],
-          },
-          monthlyCards: {
-            overview: [],
-            new: [],
-            returning: [],
-            churnRate: [],
-            retentionRate: [],
-          },
-          yearlyCards: {
-            overview: [],
-            new: [],
-            returning: [],
-            churnRate: [],
-            retentionRate: [],
-          },
-        }),
-      });
+    if (!selectedYearMetrics) {
+      return createSafeErrorResult(
+        "Selected year metrics not found",
+      );
+    }
+    if (!prevYearMetrics) {
+      return createSafeErrorResult(
+        "Previous year metrics not found",
+      );
+    }
+    if (!selectedMonthMetrics) {
+      return createSafeErrorResult(
+        "Selected month metrics not found",
+      );
+    }
+    if (!prevMonthMetrics) {
+      return createSafeErrorResult(
+        "Previous month metrics not found",
+      );
+    }
+    if (!selectedDayMetrics) {
+      return createSafeErrorResult(
+        "Selected day metrics not found",
+      );
+    }
+    if (!prevDayMetrics) {
+      return createSafeErrorResult(
+        "Previous day metrics not found",
+      );
     }
 
     const currentYear = selectedYearMetrics.year;
@@ -496,91 +497,79 @@ function createCustomerMetricsCardsSafe(
       isDisplayValueAsPercentage: true,
     });
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCards: {
-          overview: [
-            dayTotalCustomersCard,
-            dayTotalNewCustomersCard,
-            dayTotalReturningCustomersCard,
-          ],
-          new: [
-            dayTotalNewCustomersCard,
-            dayTotalNewRepairCustomersCard,
-            dayTotalNewSalesCustomersCard,
-            dayTotalNewSalesOnlineCustomersCard,
-            dayTotalNewSalesInStoreCustomersCard,
-          ],
-          returning: [
-            dayTotalReturningCustomersCard,
-            dayTotalReturningRepairCustomersCard,
-            dayTotalReturningSalesCustomersCard,
-            dayTotalReturningSalesOnlineCustomersCard,
-            dayTotalReturningSalesInStoreCustomersCard,
-          ],
-          churnRate: [dayChurnRateCard],
-          retentionRate: [dayRetentionRateCard],
-        },
-        monthlyCards: {
-          overview: [
-            monthTotalCustomersCard,
-            monthTotalNewCustomersCard,
-            monthTotalReturningCustomersCard,
-          ],
-          new: [
-            monthTotalNewCustomersCard,
-            monthTotalNewRepairCustomersCard,
-            monthTotalNewSalesCustomersCard,
-            monthTotalNewSalesOnlineCustomersCard,
-            monthTotalNewSalesInStoreCustomersCard,
-          ],
-          returning: [
-            monthTotalReturningCustomersCard,
-            monthTotalReturningRepairCustomersCard,
-            monthTotalReturningSalesCustomersCard,
-            monthTotalReturningSalesOnlineCustomersCard,
-            monthTotalReturningSalesInStoreCustomersCard,
-          ],
-          churnRate: [monthChurnRateCard],
-          retentionRate: [monthRetentionRateCard],
-        },
-        yearlyCards: {
-          overview: [
-            yearTotalCustomersCard,
-            yearTotalNewCustomersCard,
-            yearTotalReturningCustomersCard,
-          ],
-          new: [
-            yearTotalNewCustomersCard,
-            yearTotalNewRepairCustomersCard,
-            yearTotalNewSalesCustomersCard,
-            yearTotalNewSalesOnlineCustomersCard,
-            yearTotalNewSalesInStoreCustomersCard,
-          ],
-          returning: [
-            yearTotalReturningCustomersCard,
-            yearTotalReturningRepairCustomersCard,
-            yearTotalReturningSalesCustomersCard,
-            yearTotalReturningSalesOnlineCustomersCard,
-            yearTotalReturningSalesInStoreCustomersCard,
-          ],
-          churnRate: [yearChurnRateCard],
-          retentionRate: [yearRetentionRateCard],
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      dailyCards: {
+        overview: [
+          dayTotalCustomersCard,
+          dayTotalNewCustomersCard,
+          dayTotalReturningCustomersCard,
+        ],
+        new: [
+          dayTotalNewCustomersCard,
+          dayTotalNewRepairCustomersCard,
+          dayTotalNewSalesCustomersCard,
+          dayTotalNewSalesOnlineCustomersCard,
+          dayTotalNewSalesInStoreCustomersCard,
+        ],
+        returning: [
+          dayTotalReturningCustomersCard,
+          dayTotalReturningRepairCustomersCard,
+          dayTotalReturningSalesCustomersCard,
+          dayTotalReturningSalesOnlineCustomersCard,
+          dayTotalReturningSalesInStoreCustomersCard,
+        ],
+        churnRate: [dayChurnRateCard],
+        retentionRate: [dayRetentionRateCard],
+      },
+      monthlyCards: {
+        overview: [
+          monthTotalCustomersCard,
+          monthTotalNewCustomersCard,
+          monthTotalReturningCustomersCard,
+        ],
+        new: [
+          monthTotalNewCustomersCard,
+          monthTotalNewRepairCustomersCard,
+          monthTotalNewSalesCustomersCard,
+          monthTotalNewSalesOnlineCustomersCard,
+          monthTotalNewSalesInStoreCustomersCard,
+        ],
+        returning: [
+          monthTotalReturningCustomersCard,
+          monthTotalReturningRepairCustomersCard,
+          monthTotalReturningSalesCustomersCard,
+          monthTotalReturningSalesOnlineCustomersCard,
+          monthTotalReturningSalesInStoreCustomersCard,
+        ],
+        churnRate: [monthChurnRateCard],
+        retentionRate: [monthRetentionRateCard],
+      },
+      yearlyCards: {
+        overview: [
+          yearTotalCustomersCard,
+          yearTotalNewCustomersCard,
+          yearTotalReturningCustomersCard,
+        ],
+        new: [
+          yearTotalNewCustomersCard,
+          yearTotalNewRepairCustomersCard,
+          yearTotalNewSalesCustomersCard,
+          yearTotalNewSalesOnlineCustomersCard,
+          yearTotalNewSalesInStoreCustomersCard,
+        ],
+        returning: [
+          yearTotalReturningCustomersCard,
+          yearTotalReturningRepairCustomersCard,
+          yearTotalReturningSalesCustomersCard,
+          yearTotalReturningSalesOnlineCustomersCard,
+          yearTotalReturningSalesInStoreCustomersCard,
+        ],
+        churnRate: [yearChurnRateCard],
+        retentionRate: [yearRetentionRateCard],
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 

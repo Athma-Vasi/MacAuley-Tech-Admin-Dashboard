@@ -1,6 +1,9 @@
-import { Some } from "ts-results";
-import { CustomerMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, parseSyncSafe } from "../../../utils";
+import { CustomerMetricsDocument, ResultSafeBox } from "../../../types";
+import {
+    createSafeErrorResult,
+    createSafeSuccessResult,
+    parseSyncSafe,
+} from "../../../utils";
 import { MONTHS } from "../constants";
 import { DashboardCalendarView, Month, Year } from "../types";
 import { createCustomerMetricsCardsSafe, CustomerMetricsCards } from "./cards";
@@ -14,7 +17,7 @@ import {
 import { messageEventCustomerMainToWorkerZod } from "./schemas";
 
 type MessageEventCustomerWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             currentYear: CustomerMetricsCalendarCharts;
             previousYear: CustomerMetricsCalendarCharts;
@@ -27,8 +30,8 @@ type MessageEventCustomerMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         cardBgGradient: string;
-        customerMetricsDocument: CustomerMetricsDocument;
         greenColorShade: string;
+        customerMetricsDocument: CustomerMetricsDocument;
         redColorShade: string;
         selectedDate: string;
         selectedMonth: Month;
@@ -40,15 +43,10 @@ type MessageEventCustomerMainToWorker = MessageEvent<
 self.onmessage = async (
     event: MessageEventCustomerMainToWorker,
 ) => {
-    console.log(
-        "Customer Charts Worker received message",
-    );
-
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -56,10 +54,14 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventCustomerMainToWorkerZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+    if (parsedMessageResult.err) {
+        self.postMessage(parsedMessageResult);
+        return;
+    }
+    if (parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing input"),
+        );
         return;
     }
 
@@ -84,20 +86,21 @@ self.onmessage = async (
                 months: MONTHS,
                 year: selectedYear,
             });
-        if (
-            selectedDateCustomerMetricsSafeResult.err ||
-            selectedDateCustomerMetricsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: selectedDateCustomerMetricsSafeResult.val.data,
-                message: Some(
-                    "Error getting selected date customer metrics",
+        if (selectedDateCustomerMetricsSafeResult.err) {
+            self.postMessage(selectedDateCustomerMetricsSafeResult);
+            return;
+        }
+        if (selectedDateCustomerMetricsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No customer metrics found for the selected date",
                 ),
-            }));
+            );
             return;
         }
         const selectedDateCustomerMetrics =
-            selectedDateCustomerMetricsSafeResult.val.data.val;
+            selectedDateCustomerMetricsSafeResult
+                .val.safeUnwrap();
 
         const createCustomerMetricsCalendarChartsSafeResult =
             createCustomerMetricsCalendarChartsSafe(
@@ -105,20 +108,22 @@ self.onmessage = async (
                 selectedDateCustomerMetrics,
                 selectedYYYYMMDD,
             );
-        if (
-            createCustomerMetricsCalendarChartsSafeResult.err ||
-            createCustomerMetricsCalendarChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: createCustomerMetricsCalendarChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating customer metrics calendar charts",
+        if (createCustomerMetricsCalendarChartsSafeResult.err) {
+            self.postMessage(
+                createCustomerMetricsCalendarChartsSafeResult,
+            );
+            return;
+        }
+        if (createCustomerMetricsCalendarChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No customer metrics calendar charts found",
                 ),
-            }));
+            );
             return;
         }
         const { currentYear, previousYear } =
-            createCustomerMetricsCalendarChartsSafeResult.val.data.val;
+            createCustomerMetricsCalendarChartsSafeResult.val.safeUnwrap();
 
         const customerMetricsChartsSafeResult = createCustomerMetricsChartsSafe(
             {
@@ -127,89 +132,75 @@ self.onmessage = async (
                 selectedDateCustomerMetrics,
             },
         );
-        if (
-            customerMetricsChartsSafeResult.err ||
-            customerMetricsChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: customerMetricsChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating customer metrics charts",
-                ),
-            }));
+        if (customerMetricsChartsSafeResult.err) {
+            self.postMessage(customerMetricsChartsSafeResult);
             return;
         }
-        const customerMetricsCharts =
-            customerMetricsChartsSafeResult.val.data.val;
-
-        const customerMetricsCardsSafeResult = createCustomerMetricsCardsSafe({
-            cardBgGradient,
-            greenColorShade,
-            redColorShade,
-            selectedDateCustomerMetrics,
-        });
-        if (
-            customerMetricsCardsSafeResult.err ||
-            customerMetricsCardsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: customerMetricsCardsSafeResult.val.data,
-                message: Some(
-                    "Error creating customer metrics cards",
+        if (customerMetricsChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No customer metrics charts found",
                 ),
-            }));
+            );
             return;
         }
-        const customerMetricsCards =
-            customerMetricsCardsSafeResult.val.data.val;
+        const customerMetricsCharts = customerMetricsChartsSafeResult.val
+            .safeUnwrap();
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
+        const customerMetricsCardsSafeResult = createCustomerMetricsCardsSafe(
+            {
+                cardBgGradient,
+                greenColorShade,
+                redColorShade,
+                selectedDateCustomerMetrics,
+            },
+        );
+        if (customerMetricsCardsSafeResult.err) {
+            self.postMessage(
+                customerMetricsCardsSafeResult,
+            );
+            return;
+        }
+        if (customerMetricsCardsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No customer metrics cards found",
+                ),
+            );
+            return;
+        }
+        const customerMetricsCards = customerMetricsCardsSafeResult.val
+            .safeUnwrap();
+
+        self.postMessage(
+            createSafeSuccessResult({
                 currentYear,
                 previousYear,
                 customerMetricsCharts,
                 customerMetricsCards,
             }),
-            kind: "success",
-        }));
+        );
     } catch (error) {
         console.error("Customer Charts Worker error:", error);
-        self.postMessage(createSafeBoxResult({
-            data: Some(error),
-            message: Some(
-                error instanceof Error ? error.message : "Unknown error",
-            ),
-        }));
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     }
 };
 
 self.onerror = (event: string | Event) => {
     console.error("Customer Charts Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
 });
 
 export type {

@@ -1,6 +1,9 @@
-import { Err, Some } from "ts-results";
-import { CustomerMetricsDocument, SafeBoxResult } from "../../../types";
-import { createSafeBoxResult, toFixedFloat } from "../../../utils";
+import { CustomerMetricsDocument, ResultSafeBox } from "../../../types";
+import {
+  createSafeErrorResult,
+  createSafeSuccessResult,
+  toFixedFloat,
+} from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -42,7 +45,7 @@ function returnSelectedDateCustomerMetricsSafe({
   month: Month;
   months: Month[];
   year: Year;
-}): SafeBoxResult<SelectedDateCustomerMetrics> {
+}): ResultSafeBox<SelectedDateCustomerMetrics> {
   try {
     const selectedYearMetrics = customerMetricsDocument.customerMetrics
       .yearlyMetrics
@@ -50,10 +53,9 @@ function returnSelectedDateCustomerMetricsSafe({
         (yearlyMetric) => yearlyMetric.year === year,
       );
     if (!selectedYearMetrics) {
-      return new Err({
-        data: Some("Selected year metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Selected year metrics not found",
+      );
     }
 
     const prevYearMetrics = customerMetricsDocument.customerMetrics
@@ -62,20 +64,18 @@ function returnSelectedDateCustomerMetricsSafe({
         (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 1).toString(),
       );
     if (!prevYearMetrics) {
-      return new Err({
-        data: Some("Previous year metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous year metrics not found",
+      );
     }
 
     const selectedMonthMetrics = selectedYearMetrics?.monthlyMetrics.find(
       (monthlyMetric) => monthlyMetric.month === month,
     );
     if (!selectedMonthMetrics) {
-      return new Err({
-        data: Some("Selected month metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Selected month metrics not found",
+      );
     }
 
     const prevPrevYearMetrics = customerMetricsDocument.customerMetrics
@@ -84,10 +84,9 @@ function returnSelectedDateCustomerMetricsSafe({
         (yearlyMetric) => yearlyMetric.year === (parseInt(year) - 2).toString(),
       );
     if (!prevPrevYearMetrics) {
-      return new Err({
-        data: Some("Previous previous year metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous previous year metrics not found",
+      );
     }
 
     const prevMonthMetrics = month === "January"
@@ -99,20 +98,18 @@ function returnSelectedDateCustomerMetricsSafe({
           monthlyMetric.month === months[months.indexOf(month) - 1],
       );
     if (!prevMonthMetrics) {
-      return new Err({
-        data: Some("Previous month metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous month metrics not found",
+      );
     }
 
     const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
       (dailyMetric) => dailyMetric.day === day,
     );
     if (!selectedDayMetrics) {
-      return new Err({
-        data: Some("Selected day metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Selected day metrics not found",
+      );
     }
 
     const prevDayMetrics = day === "01"
@@ -138,31 +135,18 @@ function returnSelectedDateCustomerMetricsSafe({
           dailyMetric.day === (parseInt(day) - 1).toString().padStart(2, "0"),
       );
     if (!prevDayMetrics) {
-      return new Err({
-        data: Some("Previous day metrics not found"),
-        kind: "error",
-      });
+      return createSafeErrorResult(
+        "Previous day metrics not found",
+      );
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        dayCustomerMetrics: { selectedDayMetrics, prevDayMetrics },
-        monthCustomerMetrics: { selectedMonthMetrics, prevMonthMetrics },
-        yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      dayCustomerMetrics: { selectedDayMetrics, prevDayMetrics },
+      monthCustomerMetrics: { selectedMonthMetrics, prevMonthMetrics },
+      yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -304,7 +288,18 @@ function createCustomerMetricsChartsSafe({
   customerMetricsDocument,
   months,
   selectedDateCustomerMetrics,
-}: ReturnCustomerMetricsChartsInput): SafeBoxResult<CustomerMetricsCharts> {
+}: ReturnCustomerMetricsChartsInput): ResultSafeBox<CustomerMetricsCharts> {
+  if (!customerMetricsDocument) {
+    return createSafeErrorResult(
+      "Customer metrics document not found",
+    );
+  }
+  if (!customerMetricsDocument.customerMetrics) {
+    return createSafeErrorResult(
+      "Customer metrics not found",
+    );
+  }
+
   const NEW_RETURNING_BAR_CHART_TEMPLATE: CustomerNewReturningBarCharts = {
     total: [],
     all: [],
@@ -351,64 +346,6 @@ function createCustomerMetricsChartsSafe({
       retentionRate: [{ id: "Retention Rate", data: [] }],
     };
 
-  if (!customerMetricsDocument || !selectedDateCustomerMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: {
-          new: {
-            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
-            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
-            pie: { overview: [], all: [] },
-          },
-          returning: {
-            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
-            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
-            pie: { overview: [], all: [] },
-          },
-          churnRetention: {
-            bar: CHURN_RETENTION_BAR_CHART_TEMPLATE,
-            line: CHURN_RETENTION_LINE_CHART_TEMPLATE,
-            pie: [],
-          },
-        },
-        monthlyCharts: {
-          new: {
-            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
-            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
-            pie: { overview: [], all: [] },
-          },
-          returning: {
-            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
-            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
-            pie: { overview: [], all: [] },
-          },
-          churnRetention: {
-            bar: CHURN_RETENTION_BAR_CHART_TEMPLATE,
-            line: CHURN_RETENTION_LINE_CHART_TEMPLATE,
-            pie: [],
-          },
-        },
-        yearlyCharts: {
-          new: {
-            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
-            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
-            pie: { overview: [], all: [] },
-          },
-          returning: {
-            bar: NEW_RETURNING_BAR_CHART_TEMPLATE,
-            line: NEW_RETURNING_LINE_CHART_TEMPLATE,
-            pie: { overview: [], all: [] },
-          },
-          churnRetention: {
-            bar: CHURN_RETENTION_BAR_CHART_TEMPLATE,
-            line: CHURN_RETENTION_LINE_CHART_TEMPLATE,
-            pie: [],
-          },
-        },
-      }),
-    });
-  }
-
   try {
     const {
       yearCustomerMetrics: { selectedYearMetrics },
@@ -423,92 +360,72 @@ function createCustomerMetricsChartsSafe({
       dayCustomerMetrics: { selectedDayMetrics },
     } = selectedDateCustomerMetrics;
 
-    const [
-      dailyCustomerChartsSafeResult,
-      monthlyCustomerChartsSafeResult,
-      yearlyCustomerChartsSafeResult,
-    ] = [
-      createDailyCustomerChartsSafe({
-        dailyMetrics: selectedMonthMetrics?.dailyMetrics,
-        newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
-        newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
-        returningBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
-        returningLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
-        churnRetentionBarChartsTemplate: CHURN_RETENTION_BAR_CHART_TEMPLATE,
-        churnRetentionLineChartsTemplate: CHURN_RETENTION_LINE_CHART_TEMPLATE,
-        selectedDayMetrics,
-      }),
-      createMonthlyCustomerChartsSafe({
-        monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
-        newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
-        newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
-        returningBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
-        returningLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
-        churnRetentionBarChartsTemplate: CHURN_RETENTION_BAR_CHART_TEMPLATE,
-        churnRetentionLineChartsTemplate: CHURN_RETENTION_LINE_CHART_TEMPLATE,
-        months,
-        selectedYear,
-        selectedMonthMetrics,
-      }),
-      createYearlyCustomerChartsSafe({
-        yearlyMetrics: customerMetricsDocument.customerMetrics.yearlyMetrics,
-        newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
-        newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
-        returningBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
-        returningLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
-        churnRetentionBarChartsTemplate: CHURN_RETENTION_BAR_CHART_TEMPLATE,
-        churnRetentionLineChartsTemplate: CHURN_RETENTION_LINE_CHART_TEMPLATE,
-        selectedYearMetrics,
-      }),
-    ];
-
-    if (
-      dailyCustomerChartsSafeResult.err ||
-      dailyCustomerChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: dailyCustomerChartsSafeResult.val.data,
-        message: Some("Error creating daily customer charts"),
-      });
+    const dailyCustomerChartsSafeResult = createDailyCustomerChartsSafe({
+      dailyMetrics: selectedMonthMetrics?.dailyMetrics,
+      newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
+      newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
+      returningBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
+      returningLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
+      churnRetentionBarChartsTemplate: CHURN_RETENTION_BAR_CHART_TEMPLATE,
+      churnRetentionLineChartsTemplate: CHURN_RETENTION_LINE_CHART_TEMPLATE,
+      selectedDayMetrics,
+    });
+    if (dailyCustomerChartsSafeResult.err) {
+      return dailyCustomerChartsSafeResult;
     }
-    if (
-      monthlyCustomerChartsSafeResult.err ||
-      monthlyCustomerChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: monthlyCustomerChartsSafeResult.val.data,
-        message: Some("Error creating monthly customer charts"),
-      });
-    }
-    if (
-      yearlyCustomerChartsSafeResult.err ||
-      yearlyCustomerChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: yearlyCustomerChartsSafeResult.val.data,
-        message: Some("Error creating yearly customer charts"),
-      });
+    if (dailyCustomerChartsSafeResult.val.none) {
+      return createSafeErrorResult(
+        "Error parsing daily customer charts",
+      );
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: dailyCustomerChartsSafeResult.val.data.val,
-        monthlyCharts: monthlyCustomerChartsSafeResult.val.data.val,
-        yearlyCharts: yearlyCustomerChartsSafeResult.val.data.val,
-      }),
-      kind: "success",
+    const monthlyCustomerChartsSafeResult = createMonthlyCustomerChartsSafe({
+      monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
+      newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
+      newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
+      returningBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
+      returningLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
+      churnRetentionBarChartsTemplate: CHURN_RETENTION_BAR_CHART_TEMPLATE,
+      churnRetentionLineChartsTemplate: CHURN_RETENTION_LINE_CHART_TEMPLATE,
+      months,
+      selectedYear,
+      selectedMonthMetrics,
+    });
+    if (monthlyCustomerChartsSafeResult.err) {
+      return monthlyCustomerChartsSafeResult;
+    }
+    if (monthlyCustomerChartsSafeResult.val.none) {
+      return createSafeErrorResult(
+        "Error parsing monthly customer charts",
+      );
+    }
+
+    const yearlyCustomerChartsSafeResult = createYearlyCustomerChartsSafe({
+      yearlyMetrics: customerMetricsDocument.customerMetrics.yearlyMetrics,
+      newBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
+      newLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
+      returningBarChartsTemplate: NEW_RETURNING_BAR_CHART_TEMPLATE,
+      returningLineChartsTemplate: NEW_RETURNING_LINE_CHART_TEMPLATE,
+      churnRetentionBarChartsTemplate: CHURN_RETENTION_BAR_CHART_TEMPLATE,
+      churnRetentionLineChartsTemplate: CHURN_RETENTION_LINE_CHART_TEMPLATE,
+      selectedYearMetrics,
+    });
+    if (yearlyCustomerChartsSafeResult.err) {
+      return yearlyCustomerChartsSafeResult;
+    }
+    if (yearlyCustomerChartsSafeResult.val.none) {
+      return createSafeErrorResult(
+        "Error parsing yearly customer charts",
+      );
+    }
+
+    return createSafeSuccessResult({
+      dailyCharts: dailyCustomerChartsSafeResult.val.safeUnwrap(),
+      monthlyCharts: monthlyCustomerChartsSafeResult.val.safeUnwrap(),
+      yearlyCharts: yearlyCustomerChartsSafeResult.val.safeUnwrap(),
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -532,29 +449,14 @@ function createDailyCustomerChartsSafe({
   returningBarChartsTemplate,
   returningLineChartsTemplate,
   selectedDayMetrics,
-}: CreateDailyCustomerChartsInput): SafeBoxResult<
+}: CreateDailyCustomerChartsInput): ResultSafeBox<
   CustomerMetricsCharts["dailyCharts"]
 > {
-  if (!dailyMetrics || !selectedDayMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        new: {
-          bar: newBarChartsTemplate,
-          line: newLineChartsTemplate,
-          pie: { overview: [], all: [] },
-        },
-        returning: {
-          bar: returningBarChartsTemplate,
-          line: returningLineChartsTemplate,
-          pie: { overview: [], all: [] },
-        },
-        churnRetention: {
-          bar: { overview: [], churnRate: [], retentionRate: [] },
-          line: { overview: [], churnRate: [], retentionRate: [] },
-          pie: [],
-        },
-      }),
-    });
+  if (!dailyMetrics || dailyMetrics.length === 0) {
+    return createSafeErrorResult("Daily metrics not found");
+  }
+  if (!selectedDayMetrics) {
+    return createSafeErrorResult("Selected day metrics not found");
   }
 
   try {
@@ -1039,37 +941,25 @@ function createDailyCustomerChartsSafe({
       },
     ];
 
-    return createSafeBoxResult({
-      data: Some({
-        new: {
-          bar: dailyNewBarCharts,
-          line: dailyNewLineCharts,
-          pie: dailyNewPieChartData,
-        },
-        returning: {
-          bar: dailyReturningBarCharts,
-          line: dailyReturningLineCharts,
-          pie: dailyReturningPieChartData,
-        },
-        churnRetention: {
-          bar: dailyChurnRetentionBarCharts,
-          line: dailyChurnRetentionLineCharts,
-          pie: dailyChurnRetentionPieChartData,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      new: {
+        bar: dailyNewBarCharts,
+        line: dailyNewLineCharts,
+        pie: dailyNewPieChartData,
+      },
+      returning: {
+        bar: dailyReturningBarCharts,
+        line: dailyReturningLineCharts,
+        pie: dailyReturningPieChartData,
+      },
+      churnRetention: {
+        bar: dailyChurnRetentionBarCharts,
+        line: dailyChurnRetentionLineCharts,
+        pie: dailyChurnRetentionPieChartData,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -1096,29 +986,14 @@ function createMonthlyCustomerChartsSafe({
   returningLineChartsTemplate,
   selectedMonthMetrics,
   selectedYear,
-}: CreateMonthlyCustomerChartsInput): SafeBoxResult<
+}: CreateMonthlyCustomerChartsInput): ResultSafeBox<
   CustomerMetricsCharts["monthlyCharts"]
 > {
-  if (!monthlyMetrics || !selectedMonthMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        new: {
-          bar: newBarChartsTemplate,
-          line: newLineChartsTemplate,
-          pie: { overview: [], all: [] },
-        },
-        returning: {
-          bar: returningBarChartsTemplate,
-          line: returningLineChartsTemplate,
-          pie: { overview: [], all: [] },
-        },
-        churnRetention: {
-          bar: churnRetentionBarChartsTemplate,
-          line: churnRetentionLineChartsTemplate,
-          pie: [],
-        },
-      }),
-    });
+  if (!monthlyMetrics || monthlyMetrics.length === 0) {
+    return createSafeErrorResult("Monthly metrics not found");
+  }
+  if (!selectedMonthMetrics) {
+    return createSafeErrorResult("Selected month metrics not found");
   }
 
   try {
@@ -1634,37 +1509,25 @@ function createMonthlyCustomerChartsSafe({
       },
     ];
 
-    return createSafeBoxResult({
-      data: Some({
-        new: {
-          bar: monthlyNewBarCharts,
-          line: monthlyNewLineCharts,
-          pie: monthlyNewPieChartData,
-        },
-        returning: {
-          bar: monthlyReturningBarCharts,
-          line: monthlyReturningLineCharts,
-          pie: monthlyReturningPieChartData,
-        },
-        churnRetention: {
-          bar: monthlyChurnRetentionRateBarCharts,
-          line: monthlyChurnRetentionRateLineCharts,
-          pie: monthlyChurnRetentionRatePieChartData,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      new: {
+        bar: monthlyNewBarCharts,
+        line: monthlyNewLineCharts,
+        pie: monthlyNewPieChartData,
+      },
+      returning: {
+        bar: monthlyReturningBarCharts,
+        line: monthlyReturningLineCharts,
+        pie: monthlyReturningPieChartData,
+      },
+      churnRetention: {
+        bar: monthlyChurnRetentionRateBarCharts,
+        line: monthlyChurnRetentionRateLineCharts,
+        pie: monthlyChurnRetentionRatePieChartData,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -1688,29 +1551,14 @@ function createYearlyCustomerChartsSafe({
   returningLineChartsTemplate,
   selectedYearMetrics,
   yearlyMetrics,
-}: CreateYearlyCustomerChartsInput): SafeBoxResult<
+}: CreateYearlyCustomerChartsInput): ResultSafeBox<
   CustomerMetricsCharts["yearlyCharts"]
 > {
-  if (!yearlyMetrics || !selectedYearMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        new: {
-          bar: newBarChartsTemplate,
-          line: newLineChartsTemplate,
-          pie: { overview: [], all: [] },
-        },
-        returning: {
-          bar: returningBarChartsTemplate,
-          line: returningLineChartsTemplate,
-          pie: { overview: [], all: [] },
-        },
-        churnRetention: {
-          bar: churnRetentionBarChartsTemplate,
-          line: churnRetentionLineChartsTemplate,
-          pie: [],
-        },
-      }),
-    });
+  if (!yearlyMetrics || yearlyMetrics.length === 0) {
+    return createSafeErrorResult("Yearly metrics not found");
+  }
+  if (!selectedYearMetrics) {
+    return createSafeErrorResult("Selected year metrics not found");
   }
 
   try {
@@ -2212,37 +2060,25 @@ function createYearlyCustomerChartsSafe({
       },
     ];
 
-    return createSafeBoxResult({
-      data: Some({
-        new: {
-          bar: yearlyNewBarCharts,
-          line: yearlyNewLineCharts,
-          pie: yearlyNewPieChartData,
-        },
-        returning: {
-          bar: yearlyReturningBarCharts,
-          line: yearlyReturningLineCharts,
-          pie: yearlyReturningPieChartData,
-        },
-        churnRetention: {
-          bar: yearlyChurnRetentionRateBarCharts,
-          line: yearlyChurnRetentionRateLineCharts,
-          pie: yearlyChurnRetentionRatePieChartData,
-        },
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      new: {
+        bar: yearlyNewBarCharts,
+        line: yearlyNewLineCharts,
+        pie: yearlyNewPieChartData,
+      },
+      returning: {
+        bar: yearlyReturningBarCharts,
+        line: yearlyReturningLineCharts,
+        pie: yearlyReturningPieChartData,
+      },
+      churnRetention: {
+        bar: yearlyChurnRetentionRateBarCharts,
+        line: yearlyChurnRetentionRateLineCharts,
+        pie: yearlyChurnRetentionRatePieChartData,
+      },
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -2288,10 +2124,14 @@ function createCustomerMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics,
   selectedYYYYMMDD: string,
-): SafeBoxResult<{
+): ResultSafeBox<{
   currentYear: CustomerMetricsCalendarCharts;
   previousYear: CustomerMetricsCalendarCharts;
 }> {
+  if (!selectedDateCustomerMetrics) {
+    return createSafeErrorResult("Selected date customer metrics not found");
+  }
+
   const calendarChartsTemplateNewReturning: CalendarChartsNewReturning = {
     total: [],
     repair: [],
@@ -2310,15 +2150,6 @@ function createCustomerMetricsCalendarChartsSafe(
     returning: structuredClone(calendarChartsTemplateNewReturning),
     churn: structuredClone(calendarChartsTemplateChurnRetention),
   };
-
-  if (!selectedDateCustomerMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        currentYear: calendarChartsTemplate,
-        previousYear: calendarChartsTemplate,
-      }),
-    });
-  }
 
   try {
     const { yearCustomerMetrics: { selectedYearMetrics, prevYearMetrics } } =
@@ -2468,24 +2299,12 @@ function createCustomerMetricsCalendarChartsSafe(
       return customerCalendarCharts;
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        currentYear,
-        previousYear,
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      currentYear,
+      previousYear,
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
