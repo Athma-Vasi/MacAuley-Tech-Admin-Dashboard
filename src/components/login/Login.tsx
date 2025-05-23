@@ -56,13 +56,12 @@ function Login() {
   } = useGlobalState();
   const navigate = useNavigate();
   const { showBoundary } = useErrorBoundary();
+  const isComponentMountedRef = useMountedRef();
 
   const usernameRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     usernameRef.current?.focus();
   }, []);
-
-  const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
     // (async function wrapper() {
@@ -185,12 +184,14 @@ function Login() {
           event.preventDefault();
 
           handleLoginClick({
+            isComponentMountedRef,
             isLoading,
             isSubmitting,
             isSuccessful,
             loginDispatch,
             loginFetchWorker,
             schema: { username, password },
+            showBoundary,
           });
         },
         style: {

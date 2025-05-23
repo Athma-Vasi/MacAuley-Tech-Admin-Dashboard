@@ -14,6 +14,7 @@ import {
   UserDocument,
 } from "../../types";
 import {
+  catchHandlerErrorSafe,
   createDirectoryURLCacheKey,
   createMetricsURLCacheKey,
   createSafeErrorResult,
@@ -52,8 +53,16 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
       object: input,
       zSchema: handleMessageEventMetricsFetchWorkerToMainInputZod,
     });
-    if (parsedResult.err || parsedResult.val.none) {
-      return createSafeErrorResult("Error parsing input");
+    if (parsedResult.err) {
+      input?.showBoundary?.(parsedResult);
+      return parsedResult;
+    }
+    if (parsedResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "No data in message event",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
     }
 
     const {
@@ -197,15 +206,11 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
     navigate(`/dashboard/${metricsView}`);
     return createSafeSuccessResult("Metrics fetch successful");
   } catch (error) {
-    if (
-      !input.isComponentMountedRef.current
-    ) {
-      return createSafeErrorResult("Component unmounted");
-    }
-
-    const safeErrorResult = createSafeErrorResult(error);
-    input.showBoundary(safeErrorResult);
-    return safeErrorResult;
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 
@@ -229,8 +234,14 @@ async function handleMetricCategoryNavClick(
     object: input,
     zSchema: handleMetricCategoryNavClickInputZod,
   });
-  if (parsedInputResult.err || parsedInputResult.val.none) {
-    return createSafeErrorResult("Error parsing input");
+  if (parsedInputResult.err) {
+    input?.showBoundary?.(parsedInputResult);
+    return parsedInputResult;
+  }
+  if (parsedInputResult.val.none) {
+    const safeErrorResult = createSafeErrorResult("No data in input");
+    input?.showBoundary?.(safeErrorResult);
+    return safeErrorResult;
   }
 
   const {
@@ -343,31 +354,36 @@ async function handleMetricCategoryNavClick(
 
     return createSafeSuccessResult("Metrics fetch in progress");
   } catch (error: unknown) {
-    if (
-      !input.isComponentMountedRef.current
-    ) {
-      return createSafeErrorResult("Component unmounted");
-    }
-
-    const safeErrorResult = createSafeErrorResult(error);
-    input.showBoundary(safeErrorResult);
-    return safeErrorResult;
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 
 async function handleLogoutClick(input: {
   accessToken: string;
   globalDispatch: React.Dispatch<GlobalDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
   logoutFetchWorker: Worker | null;
   logoutUrl: string;
+  showBoundary: (error: unknown) => void;
 }): Promise<ResultSafeBox<string>> {
   const parsedInputResult = parseSyncSafe({
     object: input,
     zSchema: handleLogoutClickInputZod,
   });
-  if (parsedInputResult.err || parsedInputResult.val.none) {
-    return createSafeErrorResult("Error parsing input");
+  if (parsedInputResult.err) {
+    input?.showBoundary?.(parsedInputResult);
+    return parsedInputResult;
   }
+  if (parsedInputResult.val.none) {
+    const safeErrorResult = createSafeErrorResult("No data in input");
+    input?.showBoundary?.(safeErrorResult);
+    return safeErrorResult;
+  }
+
   const { accessToken, globalDispatch, logoutFetchWorker, logoutUrl } =
     parsedInputResult.val.safeUnwrap();
 
@@ -394,7 +410,11 @@ async function handleLogoutClick(input: {
 
     return createSafeSuccessResult("Logout request sent");
   } catch (error: unknown) {
-    return createSafeErrorResult(error);
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 
@@ -410,9 +430,16 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
       object: input,
       zSchema: handleMessageEventLogoutFetchWorkerToMainInputZod,
     });
-    if (parsedResult.err || parsedResult.val.none) {
-      return createSafeErrorResult("Error parsing input");
+    if (parsedResult.err) {
+      input?.showBoundary?.(parsedResult);
+      return parsedResult;
     }
+    if (parsedResult.val.none) {
+      const safeErrorResult = createSafeErrorResult("No data in input");
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+
     const {
       event,
       globalDispatch,
@@ -425,12 +452,10 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
     if (!isComponentMountedRef.current) {
       return createSafeErrorResult("Component unmounted");
     }
-
     if (messageEventResult.err) {
       showBoundary(messageEventResult.val);
       return messageEventResult;
     }
-
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult("No data found");
       showBoundary(safeErrorResult);
@@ -438,7 +463,6 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
     }
 
     const { parsedServerResponse } = messageEventResult.val.safeUnwrap();
-
     if (parsedServerResponse.kind === "error") {
       const safeErrorResult = createSafeErrorResult("Error in server response");
       showBoundary(safeErrorResult);
@@ -455,15 +479,11 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
 
     return createSafeSuccessResult("Logout successful");
   } catch (error: unknown) {
-    if (
-      !input.isComponentMountedRef.current
-    ) {
-      return createSafeErrorResult("Component unmounted");
-    }
-
-    const safeErrorResult = createSafeErrorResult(error);
-    input.showBoundary(safeErrorResult);
-    return safeErrorResult;
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 
@@ -485,8 +505,14 @@ async function handleDirectoryNavClick(
     object: input,
     zSchema: handleDirectoryNavClickInputZod,
   });
-  if (parsedInputResult.err || parsedInputResult.val.none) {
-    return createSafeErrorResult("Error parsing input");
+  if (parsedInputResult.err) {
+    input?.showBoundary?.(parsedInputResult);
+    return parsedInputResult;
+  }
+  if (parsedInputResult.val.none) {
+    const safeErrorResult = createSafeErrorResult("No data in input");
+    input?.showBoundary?.(safeErrorResult);
+    return safeErrorResult;
   }
 
   const {
@@ -535,21 +561,20 @@ async function handleDirectoryNavClick(
       showBoundary(userDocumentsResult);
       return userDocumentsResult;
     }
-
     if (userDocumentsResult.val.some) {
       globalDispatch({
         action: globalAction.setDirectory,
         payload: userDocumentsResult.val.safeUnwrap() as UserDocument[],
       });
-
       globalDispatch({
         action: globalAction.setIsFetching,
         payload: false,
       });
-
       navigate(toLocation);
 
-      return createSafeSuccessResult("Directory fetch successful");
+      return createSafeSuccessResult(
+        "Directory fetch successful",
+      );
     }
 
     directoryFetchWorker?.postMessage({
@@ -560,17 +585,15 @@ async function handleDirectoryNavClick(
       url: urlWithQuery.toString(),
     });
 
-    return createSafeSuccessResult("Directory fetch in progress");
+    return createSafeSuccessResult(
+      "Directory fetch in progress",
+    );
   } catch (error: unknown) {
-    if (
-      !input.isComponentMountedRef.current
-    ) {
-      return createSafeErrorResult("Component unmounted");
-    }
-
-    const safeErrorResult = createSafeErrorResult(error);
-    input.showBoundary(safeErrorResult);
-    return safeErrorResult;
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 
@@ -589,8 +612,14 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       object: input,
       zSchema: handleMessageEventDirectoryFetchWorkerToMainInputZod,
     });
-    if (parsedResult.err || parsedResult.val.none) {
-      return createSafeErrorResult("Error parsing input");
+    if (parsedResult.err) {
+      input?.showBoundary?.(parsedResult);
+      return parsedResult;
+    }
+    if (parsedResult.val.none) {
+      const safeErrorResult = createSafeErrorResult("No data in input");
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
     }
 
     const {
@@ -605,19 +634,20 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
     } = parsedResult.val.safeUnwrap();
 
     const messageEventResult = event.data;
-    if (!messageEventResult) {
-      return createSafeErrorResult("No data in message event");
-    }
-
     if (!isComponentMountedRef.current) {
       return createSafeErrorResult("Component unmounted");
     }
-
+    if (!messageEventResult) {
+      const safeErrorResult = createSafeErrorResult(
+        "No data in message event",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
     if (messageEventResult.err) {
       showBoundary(messageEventResult);
       return messageEventResult;
     }
-
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult("No data found");
       showBoundary(safeErrorResult);
@@ -669,7 +699,6 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
     }
 
     const userDocuments = parsedServerResponse.data;
-
     const cacheKey = createDirectoryURLCacheKey({
       department,
       directoryUrl,
@@ -693,20 +722,15 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       action: globalAction.setIsFetching,
       payload: false,
     });
-
     navigate?.(toLocation ?? "/dashboard/directory");
 
     return createSafeSuccessResult("Directory fetch successful");
   } catch (error: unknown) {
-    if (
-      !input.isComponentMountedRef.current
-    ) {
-      return createSafeErrorResult("Component unmounted");
-    }
-
-    const safeErrorResult = createSafeErrorResult(error);
-    input.showBoundary(safeErrorResult);
-    return safeErrorResult;
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 

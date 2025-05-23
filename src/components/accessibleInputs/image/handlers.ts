@@ -41,14 +41,14 @@ async function handleResetImageClick(
             zSchema: handleResetImageClickInputZod,
         });
         if (parsedInputResult.err) {
-            input.showBoundary(parsedInputResult);
+            input?.showBoundary?.(parsedInputResult);
             return parsedInputResult;
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
                 "Error parsing input",
             );
-            input.showBoundary(safeErrorResult);
+            input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
         }
 
@@ -111,8 +111,8 @@ async function handleResetImageClick(
     } catch (error: unknown) {
         return catchHandlerErrorSafe(
             error,
-            input.isComponentMountedRef,
-            input.showBoundary,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
         );
     }
 }
@@ -149,14 +149,14 @@ async function handleRemoveImageClick<
             zSchema: handleRemoveImageClickInputZod,
         });
         if (parsedInputResult.err) {
-            input.showBoundary(parsedInputResult);
+            input?.showBoundary?.(parsedInputResult);
             return parsedInputResult;
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
                 "Error parsing input",
             );
-            input.showBoundary(safeErrorResult);
+            input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
         }
 
@@ -314,8 +314,8 @@ async function handleRemoveImageClick<
     } catch (error: unknown) {
         return catchHandlerErrorSafe(
             error,
-            input.isComponentMountedRef,
-            input.showBoundary,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
         );
     }
 }
@@ -352,14 +352,14 @@ async function handleMessageEventModifyImagesWorkerToMain<
             zSchema: handleMessageEventModifyImagesWorkerToMainInputZod,
         });
         if (parsedInputResult.err) {
-            input.showBoundary(parsedInputResult);
+            input?.showBoundary?.(parsedInputResult);
             return parsedInputResult;
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
                 "Error parsing input",
             );
-            input.showBoundary(safeErrorResult);
+            input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
         }
 
@@ -474,8 +474,8 @@ async function handleMessageEventModifyImagesWorkerToMain<
     } catch (error: unknown) {
         return catchHandlerErrorSafe(
             error,
-            input.isComponentMountedRef,
-            input.showBoundary,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
         );
     }
 }
@@ -519,14 +519,14 @@ async function handleImageQualityOrientationSliderChange<
             zSchema: handleImageQualityOrientationSliderChangeInputZod,
         });
         if (parsedInputResult.err) {
-            input.showBoundary(parsedInputResult);
+            input?.showBoundary?.(parsedInputResult);
             return parsedInputResult;
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
                 "Error parsing input",
             );
-            input.showBoundary(safeErrorResult);
+            input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
         }
 
@@ -767,8 +767,8 @@ async function handleImageQualityOrientationSliderChange<
     } catch (error: unknown) {
         return catchHandlerErrorSafe(
             error,
-            input.isComponentMountedRef,
-            input.showBoundary,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
         );
     }
 }
@@ -789,14 +789,14 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
             zSchema: handleMessageEventRetrieveImagesWorkerToMainInputZod,
         });
         if (parsedInputResult.err) {
-            input.showBoundary(parsedInputResult);
+            input?.showBoundary?.(parsedInputResult);
             return parsedInputResult;
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
                 "Error parsing input",
             );
-            input.showBoundary(safeErrorResult);
+            input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
         }
 
@@ -881,8 +881,8 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
     } catch (error: unknown) {
         return catchHandlerErrorSafe(
             error,
-            input.isComponentMountedRef,
-            input.showBoundary,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
         );
     }
 }

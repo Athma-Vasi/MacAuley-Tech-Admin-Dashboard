@@ -161,7 +161,9 @@ function Register() {
   useEffect(() => {
     handleCheckUsername({
       checkUsernameWorker,
+      isComponentMountedRef,
       registerDispatch,
+      showBoundary,
       url: AUTH_URL,
       username,
     });
@@ -170,7 +172,9 @@ function Register() {
   useEffect(() => {
     handleCheckEmail({
       checkEmailWorker,
+      isComponentMountedRef,
       registerDispatch,
+      showBoundary,
       url: AUTH_URL,
       email,
     });
@@ -205,9 +209,11 @@ function Register() {
         onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
           const result = handlePrevNextStepClick({
             activeStep,
+            isComponentMountedRef,
             kind: "next",
             registerDispatch,
             registerState,
+            showBoundary,
           });
           console.log("result", result);
         },
@@ -230,9 +236,11 @@ function Register() {
         onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
           handlePrevNextStepClick({
             activeStep,
+            isComponentMountedRef,
             kind: "previous",
             registerDispatch,
             registerState,
+            showBoundary,
           });
         },
       }}
@@ -320,8 +328,10 @@ function Register() {
 
           await handleRegisterButtonSubmit({
             formData,
+            isComponentMountedRef,
             registerDispatch,
             registerWorker,
+            showBoundary,
             url: REGISTER_URL,
           });
         },

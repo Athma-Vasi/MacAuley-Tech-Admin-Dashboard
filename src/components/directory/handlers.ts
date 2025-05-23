@@ -1,6 +1,7 @@
 import { globalAction, GlobalDispatch } from "../../context/globalProvider";
 import { ResultSafeBox, UserDocument } from "../../types";
 import {
+    catchHandlerErrorSafe,
     createDirectoryURLCacheKey,
     createSafeErrorResult,
     getCachedItemAsyncSafe,
@@ -27,8 +28,16 @@ async function handleDirectoryDepartmentAndLocationClicks(
             object: input,
             zSchema: handleDirectoryDepartmentAndLocationClicksInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeErrorResult("Error parsing input");
+        if (parsedInputResult.err) {
+            input?.showBoundary?.(parsedInputResult);
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input?.showBoundary?.(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {
@@ -97,15 +106,11 @@ async function handleDirectoryDepartmentAndLocationClicks(
 
         return createSafeErrorResult("Data fetching started");
     } catch (error: unknown) {
-        if (
-            !input.isComponentMountedRef.current
-        ) {
-            return createSafeErrorResult("Component unmounted");
-        }
-
-        const safeErrorResult = createSafeErrorResult(error);
-        input.showBoundary(safeErrorResult);
-        return safeErrorResult;
+        return catchHandlerErrorSafe(
+            error,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
+        );
     }
 }
 

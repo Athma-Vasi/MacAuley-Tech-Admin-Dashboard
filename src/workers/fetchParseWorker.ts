@@ -40,7 +40,9 @@ self.onmessage = async (
     event: MessageEventFetchMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeErrorResult("No data received"));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -57,8 +59,14 @@ self.onmessage = async (
             ),
         },
     );
-    if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeErrorResult("Error parsing input"));
+    if (parsedMessageResult.err) {
+        self.postMessage(parsedMessageResult);
+        return;
+    }
+    if (parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing message"),
+        );
         return;
     }
 
@@ -77,9 +85,13 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err || responseResult.val.none) {
+        if (responseResult.err) {
+            self.postMessage(responseResult);
+            return;
+        }
+        if (responseResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Error fetching data"),
+                createSafeErrorResult("Error fetching response"),
             );
             return;
         }
@@ -87,9 +99,15 @@ self.onmessage = async (
         const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
         >(responseResult.val.safeUnwrap());
-        if (jsonResult.err || jsonResult.val.none) {
+        if (jsonResult.err) {
+            self.postMessage(jsonResult);
+            return;
+        }
+        if (jsonResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Error extracting JSON from response"),
+                createSafeErrorResult(
+                    "Error extracting JSON from response",
+                ),
             );
             return;
         }
@@ -106,21 +124,25 @@ self.onmessage = async (
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
 
-        if (parsedResult.err || parsedResult.val.none) {
+        if (parsedResult.err) {
+            self.postMessage(parsedResult);
+            return;
+        }
+        if (parsedResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Error parsing server response"),
+                createSafeErrorResult(
+                    "Error parsing server response",
+                ),
             );
             return;
         }
 
         if (skipTokenDecode) {
             self.postMessage(
-                createSafeSuccessResult(
-                    {
-                        parsedServerResponse: parsedResult.val.safeUnwrap(),
-                        decodedToken: None,
-                    },
-                ),
+                createSafeSuccessResult({
+                    parsedServerResponse: parsedResult.val.safeUnwrap(),
+                    decodedToken: None,
+                }),
             );
             return;
         }
@@ -128,20 +150,22 @@ self.onmessage = async (
         const { accessToken } = parsedResult.val.safeUnwrap();
 
         const decodedTokenSafeResult = decodeJWTSafe(accessToken);
-        if (decodedTokenSafeResult.err || decodedTokenSafeResult.val.none) {
+        if (decodedTokenSafeResult.err) {
+            self.postMessage(decodedTokenSafeResult);
+            return;
+        }
+        if (decodedTokenSafeResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Error decoding JWT"),
+                createSafeErrorResult("Error decoding token"),
             );
             return;
         }
 
         self.postMessage(
-            createSafeSuccessResult(
-                {
-                    parsedServerResponse: parsedResult.val.safeUnwrap(),
-                    decodedToken: decodedTokenSafeResult.val,
-                },
-            ),
+            createSafeSuccessResult({
+                parsedServerResponse: parsedResult.val.safeUnwrap(),
+                decodedToken: decodedTokenSafeResult.val,
+            }),
         );
     } catch (error: unknown) {
         self.postMessage(
@@ -163,7 +187,7 @@ self.onerror = (event: string | Event) => {
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
     self.postMessage(
-        createSafeErrorResult(event.reason),
+        createSafeErrorResult(event),
     );
 });
 

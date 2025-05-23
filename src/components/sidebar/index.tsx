@@ -390,8 +390,10 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           await handleLogoutClick({
             accessToken,
             globalDispatch,
+            isComponentMountedRef,
             logoutFetchWorker,
             logoutUrl: LOGOUT_URL,
+            showBoundary,
           }).then((result) => {
             console.log("handleLogoutClick result:", result);
           });

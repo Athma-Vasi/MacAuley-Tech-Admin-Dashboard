@@ -1,6 +1,11 @@
-import { Err, Ok } from "ts-results";
 import { HttpServerResponse, UserDocument } from "../../types";
-import { fetchSafe, responseToJSONSafe } from "../../utils";
+import {
+    catchHandlerErrorSafe,
+    createSafeErrorResult,
+    createSafeSuccessResult,
+    extractJSONFromResponseSafe,
+    fetchResponseSafe,
+} from "../../utils";
 
 async function postUsersToDB(
     {
@@ -41,76 +46,73 @@ async function postUsersToDB(
     setIsSubmitting(true);
 
     try {
-        const responseResult = await fetchSafe(
+        const responseResult = await fetchResponseSafe(
             urlWithQuery,
             requestInit,
         );
 
         if (!isComponentMounted) {
-            return;
+            return createSafeErrorResult(
+                "Component unmounted before response",
+            );
         }
 
         if (responseResult.err) {
-            showBoundary(responseResult.val.data);
-            return;
+            showBoundary(responseResult);
+            return responseResult;
+        }
+        if (responseResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "No data returned from server",
+            );
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
-        const responseUnwrapped = responseResult.safeUnwrap().data;
+        const responseUnwrapped = responseResult.val.safeUnwrap();
 
-        if (responseUnwrapped === undefined) {
-            showBoundary(new Error("No data returned from server"));
-            return;
-        }
-
-        const jsonResult = await responseToJSONSafe<
+        const jsonResult = await extractJSONFromResponseSafe<
             HttpServerResponse<UserDocument>
-        >(
-            responseUnwrapped,
-        );
+        >(responseUnwrapped);
 
         if (!isComponentMounted) {
-            return;
+            return createSafeErrorResult(
+                "Component unmounted before response",
+            );
         }
 
         if (jsonResult.err) {
-            showBoundary(jsonResult.val.data);
-            return;
+            showBoundary(jsonResult);
+            return jsonResult;
         }
-
-        const serverResponse = jsonResult.safeUnwrap().data;
-
-        if (serverResponse === undefined) {
-            showBoundary(new Error("No data returned from server"));
-            return;
-        }
-
-        if (serverResponse.kind === "error") {
-            showBoundary(
-                new Error(
-                    `Server error: ${serverResponse.message}`,
-                ),
+        if (jsonResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "No data returned from server",
             );
-            return;
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
-        const [userDocument] = serverResponse.data;
-
-        if (userDocument === undefined) {
-            showBoundary(new Error("No data returned from server"));
-            return;
+        const serverResponse = jsonResult.val.safeUnwrap();
+        if (serverResponse.kind === "error") {
+            const safeErrorResult = createSafeErrorResult(
+                serverResponse.message,
+            );
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
         setIsSubmitting(false);
 
-        return new Ok(userDocument);
+        return createSafeSuccessResult({
+            parsedServerResponse: serverResponse,
+        });
     } catch (error: unknown) {
-        if (
-            !isComponentMounted || fetchAbortController.signal.aborted
-        ) {
-            return;
-        }
-        showBoundary(error);
-        return new Err(error);
+        return catchHandlerErrorSafe(
+            error,
+            { current: true },
+            showBoundary,
+        );
     }
 }
 

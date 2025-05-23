@@ -11,6 +11,7 @@ import {
   UserDocument,
 } from "../../types";
 import {
+  catchHandlerErrorSafe,
   createMetricsURLCacheKey,
   createSafeErrorResult,
   createSafeSuccessResult,
@@ -26,20 +27,30 @@ import {
 } from "./schemas";
 
 async function handleLoginClick(input: {
+  isComponentMountedRef: React.RefObject<boolean>;
   isLoading: boolean;
   isSubmitting: boolean;
   isSuccessful: boolean;
   loginDispatch: React.Dispatch<LoginDispatch>;
   loginFetchWorker: Worker | null;
   schema: { username: string; password: string };
+  showBoundary: (error: unknown) => void;
 }): Promise<ResultSafeBox<string>> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,
       zSchema: handleLoginClickInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.none) {
-      return createSafeErrorResult("Error parsing input");
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
     }
 
     const {
@@ -76,7 +87,11 @@ async function handleLoginClick(input: {
 
     return createSafeSuccessResult("Login request sent");
   } catch (error: unknown) {
-    return createSafeErrorResult(error);
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 
@@ -102,8 +117,16 @@ async function handleMessageEventLoginFetchWorkerToMain(
       object: input,
       zSchema: handleMessageEventLoginFetchWorkerToMainInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.none) {
-      return createSafeErrorResult("Error parsing input");
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
     }
 
     const {
@@ -233,15 +256,11 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
     return createSafeSuccessResult("Login successful");
   } catch (error: unknown) {
-    if (
-      !input.isComponentMountedRef.current
-    ) {
-      return createSafeErrorResult("Component unmounted");
-    }
-
-    const safeErrorResult = createSafeErrorResult(error);
-    input.showBoundary(safeErrorResult);
-    return safeErrorResult;
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
   }
 }
 

@@ -65,7 +65,6 @@ self.onmessage = async (
         self.postMessage(parsedMessageResult);
         return;
     }
-
     if (parsedMessageResult.val.none) {
         self.postMessage(
             createSafeErrorResult("Error parsing input"),
@@ -146,16 +145,14 @@ self.onmessage = async (
         }
 
         self.postMessage(
-            createSafeSuccessResult(
-                {
-                    decodedToken: decodedTokenResult.val.safeUnwrap(),
-                    metricsView,
-                    parsedServerResponse: parsedResult.val.safeUnwrap(),
-                    productMetricCategory,
-                    repairMetricCategory,
-                    storeLocation,
-                },
-            ),
+            createSafeSuccessResult({
+                decodedToken: decodedTokenResult.val.safeUnwrap(),
+                metricsView,
+                parsedServerResponse: parsedResult.val.safeUnwrap(),
+                productMetricCategory,
+                repairMetricCategory,
+                storeLocation,
+            }),
         );
     } catch (error: unknown) {
         self.postMessage(

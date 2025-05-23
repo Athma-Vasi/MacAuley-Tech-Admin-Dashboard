@@ -11,6 +11,7 @@ import {
     ResultSafeBox,
 } from "../../types";
 import {
+    catchHandlerErrorSafe,
     createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
@@ -52,8 +53,16 @@ async function handleStoreAndCategoryClicks(
             object: input,
             zSchema: handleStoreAndCategoryClicksInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeErrorResult("Error parsing input");
+        if (parsedInputResult.err) {
+            input?.showBoundary?.(parsedInputResult);
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input?.showBoundary?.(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {
@@ -94,7 +103,6 @@ async function handleStoreAndCategoryClicks(
         const metricsDocumentResult = await getCachedItemAsyncSafe<
             BusinessMetricsDocument
         >(cacheKey);
-
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult("Component unmounted");
         }
@@ -144,29 +152,23 @@ async function handleStoreAndCategoryClicks(
             return createSafeSuccessResult("Data already fetched");
         }
 
-        dashboardFetchWorker?.postMessage(
-            {
-                metricsView,
-                productMetricCategory,
-                repairMetricCategory,
-                requestInit,
-                routesZodSchemaMapKey: "dashboard",
-                storeLocation,
-                url: cacheKey,
-            },
-        );
+        dashboardFetchWorker?.postMessage({
+            metricsView,
+            productMetricCategory,
+            repairMetricCategory,
+            requestInit,
+            routesZodSchemaMapKey: "dashboard",
+            storeLocation,
+            url: cacheKey,
+        });
 
         return createSafeSuccessResult("Data fetching started");
     } catch (error) {
-        if (
-            !input.isComponentMountedRef.current
-        ) {
-            return createSafeErrorResult("Component unmounted");
-        }
-
-        const safeErrorResult = createSafeErrorResult(error);
-        input.showBoundary(safeErrorResult);
-        return safeErrorResult;
+        return catchHandlerErrorSafe(
+            error,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
+        );
     }
 }
 
@@ -188,8 +190,16 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             zSchema:
                 handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeErrorResult("Error parsing input");
+        if (parsedInputResult.err) {
+            input?.showBoundary?.(parsedInputResult);
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input?.showBoundary?.(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {
@@ -325,15 +335,11 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
 
         return createSafeSuccessResult("Data fetching completed");
     } catch (error: unknown) {
-        if (
-            !input.isComponentMountedRef.current
-        ) {
-            return createSafeErrorResult("Component unmounted");
-        }
-
-        const safeErrorResult = createSafeErrorResult(error);
-        input.showBoundary(safeErrorResult);
-        return safeErrorResult;
+        return catchHandlerErrorSafe(
+            error,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
+        );
     }
 }
 

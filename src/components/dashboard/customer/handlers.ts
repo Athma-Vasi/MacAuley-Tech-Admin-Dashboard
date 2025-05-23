@@ -22,14 +22,14 @@ async function handleMessageEventCustomerWorkerToMain(input: {
             zSchema: handleMessageEventCustomerWorkerToMainInputZod,
         });
         if (parsedInputResult.err) {
-            input.showBoundary(parsedInputResult);
+            input?.showBoundary?.(parsedInputResult);
             return parsedInputResult;
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
                 "Error parsing input",
             );
-            input.showBoundary(safeErrorResult);
+            input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
         }
 
@@ -95,8 +95,8 @@ async function handleMessageEventCustomerWorkerToMain(input: {
     } catch (error: unknown) {
         return catchHandlerErrorSafe(
             error,
-            input.isComponentMountedRef,
-            input.showBoundary,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
         );
     }
 }

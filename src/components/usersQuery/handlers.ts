@@ -4,6 +4,7 @@ import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { ResultSafeBox, UserDocument } from "../../types";
 import {
+    catchHandlerErrorSafe,
     createSafeErrorResult,
     createSafeSuccessResult,
     createUsersURLCacheKey,
@@ -40,8 +41,16 @@ async function handleUsersQuerySubmitGETClick(
         object: input,
         zSchema: handleUsersQuerySubmitGETClickInputZod,
     });
-    if (parsedInputResult.err || parsedInputResult.val.none) {
-        return createSafeErrorResult("Error parsing input");
+    if (parsedInputResult.err) {
+        input?.showBoundary?.(parsedInputResult);
+        return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+        const safeErrorResult = createSafeErrorResult(
+            "Error parsing input",
+        );
+        input?.showBoundary?.(safeErrorResult);
+        return safeErrorResult;
     }
 
     const {
@@ -153,15 +162,11 @@ async function handleUsersQuerySubmitGETClick(
             "Fetching data...",
         );
     } catch (error: unknown) {
-        if (
-            !input.isComponentMountedRef.current
-        ) {
-            return createSafeErrorResult("Component unmounted");
-        }
-
-        const safeErrorResult = createSafeErrorResult(error);
-        input.showBoundary(safeErrorResult);
-        return safeErrorResult;
+        return catchHandlerErrorSafe(
+            error,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
+        );
     }
 }
 
@@ -183,8 +188,16 @@ async function handleUsersQueryOnmessageCallback(
             object: input,
             zSchema: handleUsersQueryOnmessageCallbackInputZod,
         });
-        if (parsedInputResult.err || parsedInputResult.val.none) {
-            return createSafeErrorResult("Error parsing input");
+        if (parsedInputResult.err) {
+            input?.showBoundary?.(parsedInputResult);
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input?.showBoundary?.(safeErrorResult);
+            return safeErrorResult;
         }
 
         const {
@@ -201,9 +214,10 @@ async function handleUsersQueryOnmessageCallback(
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createSafeErrorResult("No data in message event");
+            return createSafeErrorResult(
+                "No data in message event",
+            );
         }
-
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult("Component unmounted");
         }
@@ -212,9 +226,10 @@ async function handleUsersQueryOnmessageCallback(
             showBoundary(messageEventResult);
             return messageEventResult;
         }
-
         if (messageEventResult.val.none) {
-            const safeErrorResult = createSafeErrorResult("No data found");
+            const safeErrorResult = createSafeErrorResult(
+                "No data found",
+            );
             showBoundary(safeErrorResult);
             return safeErrorResult;
         }
@@ -349,13 +364,11 @@ async function handleUsersQueryOnmessageCallback(
             "User documents fetched successfully",
         );
     } catch (error: unknown) {
-        if (!input.isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
-        }
-
-        const safeErrorResult = createSafeErrorResult(error);
-        input.showBoundary(safeErrorResult);
-        return safeErrorResult;
+        return catchHandlerErrorSafe(
+            error,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
+        );
     }
 }
 

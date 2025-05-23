@@ -87,7 +87,9 @@ self.onmessage = async (
                 year: selectedYear,
             });
         if (selectedDateRepairMetricsSafeResult.err) {
-            self.postMessage(selectedDateRepairMetricsSafeResult);
+            self.postMessage(
+                selectedDateRepairMetricsSafeResult,
+            );
             return;
         }
         if (selectedDateRepairMetricsSafeResult.val.none) {
