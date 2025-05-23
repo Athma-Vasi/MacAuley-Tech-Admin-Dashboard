@@ -1,6 +1,5 @@
-import { Err, Some } from "ts-results";
-import { SafeBoxResult } from "../../../types";
-import { createSafeBoxResult } from "../../../utils";
+import { ResultSafeBox } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { DashboardCalendarView } from "../types";
 import { createDashboardMetricsCards } from "../utils";
 import {
@@ -26,13 +25,7 @@ type RepairMetricsCards = {
 function createRepairMetricsCardsSafe(
   { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
     createRepairMetricsCardsInput,
-): SafeBoxResult<RepairMetricsCards> {
-  const repairMetricsCardsTemplate: RepairMetricsCards = {
-    dailyCards: [],
-    monthlyCards: [],
-    yearlyCards: [],
-  };
-
+): ResultSafeBox<RepairMetricsCards> {
   const {
     dayRepairMetrics: { prevDayMetrics, selectedDayMetrics },
     monthRepairMetrics: { prevMonthMetrics, selectedMonthMetrics },
@@ -47,10 +40,7 @@ function createRepairMetricsCardsSafe(
     !selectedDayMetrics ||
     !prevDayMetrics
   ) {
-    return createSafeBoxResult({
-      data: Some(repairMetricsCardsTemplate),
-      message: Some("no metrics data"),
-    });
+    return createSafeErrorResult("Invalid repair metrics data");
   }
 
   try {
@@ -121,25 +111,13 @@ function createRepairMetricsCardsSafe(
       selectedValue: selectedYearMetrics.unitsRepaired,
     });
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCards: [dayRevenueCardInfo, dayUnitsRepairedCardInfo],
-        monthlyCards: [monthRevenueCardInfo, monthUnitsRepairedCardInfo],
-        yearlyCards: [yearRevenueCardInfo, yearUnitsRepairedCardInfo],
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      dailyCards: [dayRevenueCardInfo, dayUnitsRepairedCardInfo],
+      monthlyCards: [monthRevenueCardInfo, monthUnitsRepairedCardInfo],
+      yearlyCards: [yearRevenueCardInfo, yearUnitsRepairedCardInfo],
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 

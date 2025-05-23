@@ -1,14 +1,5 @@
-import { Err, Some } from "ts-results";
-import {
-  RepairMetricsDocument,
-  ResultSafeBox,
-  SafeBoxResult,
-} from "../../../types";
-import {
-  createSafeBoxResult,
-  createSafeErrorResult,
-  createSafeSuccessResult,
-} from "../../../utils";
+import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
 import { BarChartData } from "../../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../../charts/responsiveCalendarChart/types";
 import { LineChartData } from "../../charts/responsiveLineChart/types";
@@ -232,74 +223,52 @@ function createRepairMetricsChartsSafe({
       "0",
     );
 
-    const [
-      dailyRepairChartsSafeResult,
-      monthlyRepairChartsSafeResult,
-      yearlyRepairChartsSafeResult,
-    ] = [
-      createDailyRepairChartsSafe({
-        barChartsTemplate: BAR_CHART_DATA_TEMPLATE,
-        dailyMetrics: selectedMonthMetrics?.dailyMetrics,
-        lineChartsTemplate: LINE_CHART_DATA_TEMPLATE,
-        monthNumber,
-        selectedYear,
-      }),
-      createMonthlyRepairChartsSafe({
-        barChartsTemplate: BAR_CHART_DATA_TEMPLATE,
-        lineChartsTemplate: LINE_CHART_DATA_TEMPLATE,
-        monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
-        selectedYear,
-      }),
-      createYearlyRepairChartsSafe({
-        barChartsTemplate: BAR_CHART_DATA_TEMPLATE,
-        lineChartsTemplate: LINE_CHART_DATA_TEMPLATE,
-        yearlyMetrics: repairMetricsDocument.yearlyMetrics,
-      }),
-    ];
-
-    if (
-      dailyRepairChartsSafeResult.err
-    ) {
+    const dailyRepairChartsSafeResult = createDailyRepairChartsSafe({
+      barChartsTemplate: BAR_CHART_DATA_TEMPLATE,
+      dailyMetrics: selectedMonthMetrics?.dailyMetrics,
+      lineChartsTemplate: LINE_CHART_DATA_TEMPLATE,
+      monthNumber,
+      selectedYear,
+    });
+    if (dailyRepairChartsSafeResult.err) {
       return dailyRepairChartsSafeResult;
     }
-    if (
-      monthlyRepairChartsSafeResult.err ||
-      monthlyRepairChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: monthlyRepairChartsSafeResult.val.data,
-        message: Some("Error creating monthly repair charts"),
-      });
-    }
-    if (
-      yearlyRepairChartsSafeResult.err ||
-      yearlyRepairChartsSafeResult.val.data.none
-    ) {
-      return createSafeBoxResult({
-        data: yearlyRepairChartsSafeResult.val.data,
-        message: Some("Error creating yearly repair charts"),
-      });
+    if (dailyRepairChartsSafeResult.val.none) {
+      return createSafeErrorResult("Error creating daily repair charts");
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        dailyCharts: dailyRepairChartsSafeResult.val.data.val,
-        monthlyCharts: monthlyRepairChartsSafeResult.val.data.val,
-        yearlyCharts: yearlyRepairChartsSafeResult.val.data.val,
-      }),
-      kind: "success",
+    const monthlyRepairChartsSafeResult = createMonthlyRepairChartsSafe({
+      barChartsTemplate: BAR_CHART_DATA_TEMPLATE,
+      lineChartsTemplate: LINE_CHART_DATA_TEMPLATE,
+      monthlyMetrics: selectedYearMetrics?.monthlyMetrics,
+      selectedYear,
+    });
+    if (monthlyRepairChartsSafeResult.err) {
+      return monthlyRepairChartsSafeResult;
+    }
+    if (monthlyRepairChartsSafeResult.val.none) {
+      return createSafeErrorResult("Error creating monthly repair charts");
+    }
+
+    const yearlyRepairChartsSafeResult = createYearlyRepairChartsSafe({
+      barChartsTemplate: BAR_CHART_DATA_TEMPLATE,
+      lineChartsTemplate: LINE_CHART_DATA_TEMPLATE,
+      yearlyMetrics: repairMetricsDocument.yearlyMetrics,
+    });
+    if (yearlyRepairChartsSafeResult.err) {
+      return yearlyRepairChartsSafeResult;
+    }
+    if (yearlyRepairChartsSafeResult.val.none) {
+      return createSafeErrorResult("Error creating yearly repair charts");
+    }
+
+    return createSafeSuccessResult({
+      dailyCharts: dailyRepairChartsSafeResult.val.safeUnwrap(),
+      monthlyCharts: monthlyRepairChartsSafeResult.val.safeUnwrap(),
+      yearlyCharts: yearlyRepairChartsSafeResult.val.safeUnwrap(),
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -315,16 +284,11 @@ function createDailyRepairChartsSafe({
   barChartsTemplate,
   dailyMetrics,
   lineChartsTemplate,
-}: CreateDailyRepairChartsInput): SafeBoxResult<
+}: CreateDailyRepairChartsInput): ResultSafeBox<
   RepairMetricsCharts["dailyCharts"]
 > {
   if (!dailyMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        bar: barChartsTemplate,
-        line: lineChartsTemplate,
-      }),
-    });
+    return createSafeErrorResult("No daily metrics data found");
   }
 
   try {
@@ -381,24 +345,12 @@ function createDailyRepairChartsSafe({
         ],
       );
 
-    return createSafeBoxResult({
-      data: Some({
-        bar: dailyRepairMetricsBarCharts,
-        line: dailyRepairMetricsLineCharts,
-      }),
-      kind: "success",
+    return createSafeSuccessResult({
+      bar: dailyRepairMetricsBarCharts,
+      line: dailyRepairMetricsLineCharts,
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -414,16 +366,11 @@ function createMonthlyRepairChartsSafe({
   lineChartsTemplate,
   monthlyMetrics,
   selectedYear,
-}: CreateMonthlyRepairChartsInput): SafeBoxResult<
+}: CreateMonthlyRepairChartsInput): ResultSafeBox<
   RepairMetricsCharts["monthlyCharts"]
 > {
   if (!monthlyMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        bar: barChartsTemplate,
-        line: lineChartsTemplate,
-      }),
-    });
+    return createSafeErrorResult("No monthly metrics data found");
   }
 
   try {
@@ -494,24 +441,12 @@ function createMonthlyRepairChartsSafe({
         ],
       );
 
-    return createSafeBoxResult({
-      data: Some({
-        bar: monthlyRepairMetricsBarCharts,
-        line: monthlyRepairMetricsLineCharts,
-      }),
-      kind: "success",
+    return createSafeErrorResult({
+      bar: monthlyRepairMetricsBarCharts,
+      line: monthlyRepairMetricsLineCharts,
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -525,16 +460,11 @@ function createYearlyRepairChartsSafe({
   barChartsTemplate,
   lineChartsTemplate,
   yearlyMetrics,
-}: CreateYearlyRepairChartsInput): SafeBoxResult<
+}: CreateYearlyRepairChartsInput): ResultSafeBox<
   RepairMetricsCharts["yearlyCharts"]
 > {
   if (!yearlyMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        bar: barChartsTemplate,
-        line: lineChartsTemplate,
-      }),
-    });
+    return createSafeErrorResult("No yearly metrics data found");
   }
 
   try {
@@ -591,24 +521,12 @@ function createYearlyRepairChartsSafe({
         ],
       );
 
-    return createSafeBoxResult({
-      data: Some({
-        bar: yearlyRepairMetricsBarCharts,
-        line: yearlyRepairMetricsLineCharts,
-      }),
-      kind: "success",
+    return createSafeErrorResult({
+      bar: yearlyRepairMetricsBarCharts,
+      line: yearlyRepairMetricsLineCharts,
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 
@@ -632,23 +550,18 @@ function createRepairMetricsCalendarChartsSafe(
   calendarView: DashboardCalendarView,
   selectedDateRepairMetrics: SelectedDateRepairMetrics,
   selectedYYYYMMDD: string,
-): SafeBoxResult<{
+): ResultSafeBox<{
   currentYear: RepairMetricCalendarCharts;
   previousYear: RepairMetricCalendarCharts;
 }> {
+  if (!selectedDateRepairMetrics) {
+    return createSafeErrorResult("No selected date repair metrics data found");
+  }
+
   const repairCalendarChartTemplate: RepairMetricCalendarCharts = {
     revenue: [],
     unitsRepaired: [],
   };
-
-  if (!selectedDateRepairMetrics) {
-    return createSafeBoxResult({
-      data: Some({
-        currentYear: repairCalendarChartTemplate,
-        previousYear: repairCalendarChartTemplate,
-      }),
-    });
-  }
 
   try {
     const { yearRepairMetrics: { selectedYearMetrics, prevYearMetrics } } =
@@ -733,24 +646,12 @@ function createRepairMetricsCalendarChartsSafe(
       return repairCalendarCharts;
     }
 
-    return createSafeBoxResult({
-      data: Some({
-        currentYear,
-        previousYear,
-      }),
-      kind: "success",
+    return createSafeErrorResult({
+      currentYear,
+      previousYear,
     });
   } catch (error: unknown) {
-    return new Err({
-      data: Some(
-        error instanceof Error
-          ? error.message
-          : typeof error === "string"
-          ? error
-          : "Unknown error",
-      ),
-      kind: "error",
-    });
+    return createSafeErrorResult(error);
   }
 }
 

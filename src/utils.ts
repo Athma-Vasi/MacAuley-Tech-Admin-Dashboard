@@ -401,8 +401,8 @@ function createSafeSuccessResult<Data = unknown>(
 function createSafeErrorResult(error: unknown): Err<SafeError> {
   if (error instanceof Error) {
     return new Err({
-      name: error.name,
-      message: error.message,
+      name: error.name == null ? "Error" : error.name,
+      message: error.message == null ? "Unknown error" : error.message,
       stack: error.stack == null ? None : Some(error.stack),
       original: None,
     });

@@ -1,6 +1,9 @@
-import { Some } from "ts-results";
 import { RepairMetricsDocument, ResultSafeBox } from "../../../types";
-import { createSafeErrorResult, parseSyncSafe } from "../../../utils";
+import {
+    createSafeErrorResult,
+    createSafeSuccessResult,
+    parseSyncSafe,
+} from "../../../utils";
 import { MONTHS } from "../constants";
 import { DashboardCalendarView, Month, Year } from "../types";
 import { createRepairMetricsCardsSafe, RepairMetricsCards } from "./cards";
@@ -83,20 +86,20 @@ self.onmessage = async (
                 months: MONTHS,
                 year: selectedYear,
             });
-        if (
-            selectedDateRepairMetricsSafeResult.err ||
-            selectedDateRepairMetricsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: selectedDateRepairMetricsSafeResult.val.data,
-                message: Some(
-                    "Error getting selected date repair metrics",
-                ),
-            }));
+        if (selectedDateRepairMetricsSafeResult.err) {
+            self.postMessage(selectedDateRepairMetricsSafeResult);
             return;
         }
-        const selectedDateRepairMetrics =
-            selectedDateRepairMetricsSafeResult.val.data.val;
+        if (selectedDateRepairMetricsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No repair metrics found for the selected date",
+                ),
+            );
+            return;
+        }
+        const selectedDateRepairMetrics = selectedDateRepairMetricsSafeResult
+            .val.safeUnwrap();
 
         const createRepairMetricsCalendarChartsSafeResult =
             createRepairMetricsCalendarChartsSafe(
@@ -104,39 +107,42 @@ self.onmessage = async (
                 selectedDateRepairMetrics,
                 selectedYYYYMMDD,
             );
-        if (
-            createRepairMetricsCalendarChartsSafeResult.err ||
-            createRepairMetricsCalendarChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: createRepairMetricsCalendarChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating repair metrics calendar charts",
+        if (createRepairMetricsCalendarChartsSafeResult.err) {
+            self.postMessage(
+                createRepairMetricsCalendarChartsSafeResult,
+            );
+            return;
+        }
+        if (createRepairMetricsCalendarChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No repair metrics calendar charts found",
                 ),
-            }));
+            );
             return;
         }
         const { currentYear, previousYear } =
-            createRepairMetricsCalendarChartsSafeResult.val.data.val;
+            createRepairMetricsCalendarChartsSafeResult.val.safeUnwrap();
 
         const repairMetricsChartsSafeResult = createRepairMetricsChartsSafe({
             repairMetricsDocument,
             months: MONTHS,
             selectedDateRepairMetrics,
         });
-        if (
-            repairMetricsChartsSafeResult.err ||
-            repairMetricsChartsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: repairMetricsChartsSafeResult.val.data,
-                message: Some(
-                    "Error creating repair metrics charts",
-                ),
-            }));
+        if (repairMetricsChartsSafeResult.err) {
+            self.postMessage(repairMetricsChartsSafeResult);
             return;
         }
-        const repairMetricsCharts = repairMetricsChartsSafeResult.val.data.val;
+        if (repairMetricsChartsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No repair metrics charts found",
+                ),
+            );
+            return;
+        }
+        const repairMetricsCharts = repairMetricsChartsSafeResult.val
+            .safeUnwrap();
 
         const repairMetricsCardsSafeResult = createRepairMetricsCardsSafe({
             cardBgGradient,
@@ -144,67 +150,52 @@ self.onmessage = async (
             redColorShade,
             selectedDateRepairMetrics,
         });
-        if (
-            repairMetricsCardsSafeResult.err ||
-            repairMetricsCardsSafeResult.val.data.none
-        ) {
-            self.postMessage(createSafeBoxResult({
-                data: repairMetricsCardsSafeResult.val.data,
-                message: Some(
-                    "Error creating repair metrics cards",
-                ),
-            }));
+        if (repairMetricsCardsSafeResult.err) {
+            self.postMessage(
+                repairMetricsCardsSafeResult,
+            );
             return;
         }
-        const repairMetricsCards = repairMetricsCardsSafeResult.val.data.val;
+        if (repairMetricsCardsSafeResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No repair metrics cards found",
+                ),
+            );
+            return;
+        }
+        const repairMetricsCards = repairMetricsCardsSafeResult.val
+            .safeUnwrap();
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
+        self.postMessage(
+            createSafeSuccessResult({
                 currentYear,
                 previousYear,
                 repairMetricsCharts,
                 repairMetricsCards,
             }),
-            kind: "success",
-        }));
+        );
     } catch (error) {
         console.error("Repair Charts Worker error:", error);
-        self.postMessage(createSafeBoxResult({
-            data: Some(error),
-            message: Some(
-                error instanceof Error ? error.message : "Unknown error",
-            ),
-        }));
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     }
 };
 
 self.onerror = (event: string | Event) => {
     console.error("Repair Charts Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
 });
 
 export type { MessageEventRepairMainToWorker, MessageEventRepairWorkerToMain };
