@@ -418,11 +418,38 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
     });
   }
 
+  function serializeSafe(data: unknown): Option<string> {
+    try {
+      const serializedData = JSON.stringify(data, null, 2);
+      return Some(serializedData);
+    } catch (error: unknown) {
+      return Some("Unserializable data");
+    }
+  }
+
+  if (error instanceof Event) {
+    if (error instanceof PromiseRejectionEvent) {
+      return new Err({
+        name: `PromiseRejectionEvent: ${error.type}`,
+        message: error.reason.toString() ?? "",
+        stack: None,
+        original: serializeSafe(error),
+      });
+    }
+
+    return new Err({
+      name: `EventError: ${error.type}`,
+      message: error.timeStamp.toString() ?? "",
+      stack: None,
+      original: serializeSafe(error),
+    });
+  }
+
   return new Err({
-    name: "Error",
+    name: "SimulationDysfunction",
     message: "You've seen it before. Déjà vu. Something's off...",
     stack: None,
-    original: error == null ? None : Some(JSON.stringify(error, null, 2)),
+    original: serializeSafe(error),
   });
 }
 

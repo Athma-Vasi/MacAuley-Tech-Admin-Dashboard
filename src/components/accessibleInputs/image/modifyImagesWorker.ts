@@ -3,6 +3,8 @@ import { Some } from "ts-results";
 import { SafeBoxResult } from "../../../types";
 import {
     createSafeBoxResult,
+    createSafeErrorResult,
+    createSafeSuccessResult,
     getCachedItemAsyncSafe,
     modifyImageSafe,
     parseSyncSafe,
@@ -43,10 +45,9 @@ self.onmessage = async (
     event: MessageEventModifyImagesMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -54,11 +55,10 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventModifyImagesMainToWorkerInputZod,
     });
-    if (parsedMessageResult.err || parsedMessageResult.val.data.none) {
-        self.postMessage(createSafeBoxResult({
-            data: parsedMessageResult.val.data,
-            message: Some("Error parsing message"),
-        }));
+    if (parsedMessageResult.err || parsedMessageResult.val.none) {
+        self.postMessage(
+            createSafeErrorResult("Error parsing message"),
+        );
         return;
     }
 
@@ -71,7 +71,7 @@ self.onmessage = async (
         qualities,
         quality,
         storageKey,
-    } = parsedMessageResult.val.data.val;
+    } = parsedMessageResult.val.safeUnwrap();
 
     const {
         fileNamesForageKey,
@@ -87,28 +87,20 @@ self.onmessage = async (
         const originalFilesResult = await getCachedItemAsyncSafe<
             Array<OriginalFile>
         >(originalFilesForageKey);
-        if (originalFilesResult.err || originalFilesResult.val.data.none) {
+        if (originalFilesResult.err || originalFilesResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: originalFilesResult.val.data,
-                    message: originalFilesResult.val.message ??
-                        Some("Error getting original files"),
-                }),
+                createSafeErrorResult("Error getting original files"),
             );
             return;
         }
 
         const imageToModify = structuredClone(
-            originalFilesResult.val.data.val[currentImageIndex],
-        );
-        console.log(
-            "Image to modify",
-            imageToModify,
+            originalFilesResult.val.safeUnwrap()[currentImageIndex],
         );
         if (!imageToModify) {
-            self.postMessage(createSafeBoxResult({
-                data: Some(new Error("No image to modify")),
-            }));
+            self.postMessage(
+                createSafeErrorResult("No image to modify"),
+            );
             return;
         }
 
@@ -118,42 +110,26 @@ self.onmessage = async (
             orientation,
             type,
         });
-        console.log(
-            "Modify image result",
-            modifyImageResult,
-        );
-        if (modifyImageResult.err || modifyImageResult.val.data.none) {
+        if (modifyImageResult.err || modifyImageResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: modifyImageResult.val.data,
-                    message: modifyImageResult.val.message ??
-                        Some("Error modifying image"),
-                }),
+                createSafeErrorResult("Error modifying image"),
             );
             return;
         }
-        const fileBlob = modifyImageResult.val.data.val;
+        const fileBlob = modifyImageResult.val.safeUnwrap();
 
         const modifiedFilesResult = await getCachedItemAsyncSafe<
             Array<ModifiedFile>
         >(modifiedFilesForageKey);
-        console.log(
-            "Modified files result",
-            modifiedFilesResult,
-        );
         if (modifiedFilesResult.err) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: modifiedFilesResult.val.data,
-                    message: modifiedFilesResult.val.message ??
-                        Some("Error getting modified files"),
-                }),
+                createSafeErrorResult("Error getting modified files"),
             );
             return;
         }
-        const updatedModifiedFiles = modifiedFilesResult.val.data.none
+        const updatedModifiedFiles = modifiedFilesResult.val.none
             ? []
-            : modifiedFilesResult.val.data.val.map(
+            : modifiedFilesResult.val.safeUnwrap().map(
                 (modifiedFile, index) =>
                     index === currentImageIndex ? fileBlob : modifiedFile,
             );
@@ -162,17 +138,9 @@ self.onmessage = async (
             modifiedFilesForageKey,
             updatedModifiedFiles,
         );
-        console.log(
-            "Set cached item safe result",
-            setCachedItemSafeResult,
-        );
         if (setCachedItemSafeResult.err) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: setCachedItemSafeResult.val.data,
-                    message: setCachedItemSafeResult.val.message ??
-                        Some("Error setting modified files"),
-                }),
+                createSafeErrorResult("Error setting modified files"),
             );
             return;
         }
@@ -192,17 +160,9 @@ self.onmessage = async (
             qualitiesForageKey,
             clonedQualities,
         );
-        console.log(
-            "Set qualities result",
-            setQualitiesResult,
-        );
         if (setQualitiesResult.err) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: setQualitiesResult.val.data,
-                    message: setQualitiesResult.val.message ??
-                        Some("Error setting qualities"),
-                }),
+                createSafeErrorResult("Error setting qualities"),
             );
             return;
         }
@@ -217,17 +177,9 @@ self.onmessage = async (
             orientationsForageKey,
             clonedOrientations,
         );
-        console.log(
-            "Set orientations result",
-            setOrientationsResult,
-        );
         if (setOrientationsResult.err) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: setOrientationsResult.val.data,
-                    message: setOrientationsResult.val.message ??
-                        Some("Error setting orientations"),
-                }),
+                createSafeErrorResult("Error setting orientations"),
             );
             return;
         }
@@ -235,76 +187,49 @@ self.onmessage = async (
         const fileNamesResult = await getCachedItemAsyncSafe<
             Array<string>
         >(fileNamesForageKey);
-        console.log(
-            "File names result",
-            fileNamesResult,
-        );
         if (fileNamesResult.err) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: fileNamesResult.val.data,
-                    message: fileNamesResult.val.message ??
-                        Some("Error setting file names"),
-                }),
+                createSafeErrorResult("Error getting file names"),
             );
             return;
         }
+        const fileNames = fileNamesResult.val.none
+            ? []
+            : fileNamesResult.val.safeUnwrap();
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
-                areImagesInvalid,
-                currentImageIndex,
-                fileBlob,
-                fileNames: fileNamesResult.val.data.none
-                    ? []
-                    : fileNamesResult.val.data.val,
-                quality,
-                updatedModifiedFiles,
-                orientation,
-            }),
-            kind: "success",
-        }));
-    } catch (error) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(error),
-            message: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
+        self.postMessage(
+            createSafeSuccessResult(
+                {
+                    areImagesInvalid,
+                    currentImageIndex,
+                    fileBlob,
+                    fileNames,
+                    quality,
+                    updatedModifiedFiles,
+                    orientation,
+                },
             ),
-        }));
+        );
+    } catch (error: unknown) {
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     }
 };
 
 self.onerror = (event: string | Event) => {
     console.error("Repair Charts Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event.reason),
+    );
 });
 
 export type {

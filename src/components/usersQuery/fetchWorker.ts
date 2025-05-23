@@ -1,13 +1,13 @@
-import { Some } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    SafeBoxResult,
+    ResultSafeBox,
     UserDocument,
 } from "../../types";
 import {
-    createSafeBoxResult,
+    createSafeErrorResult,
+    createSafeSuccessResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
@@ -21,7 +21,7 @@ import {
 import { messageEventUsersFetchMainToWorkerZod } from "./schemas";
 
 type MessageEventUsersFetchWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             currentPage: number;
             decodedToken: DecodedToken;
@@ -49,10 +49,9 @@ self.onmessage = async (
     event: MessageEventUsersFetchMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -61,9 +60,9 @@ self.onmessage = async (
         zSchema: messageEventUsersFetchMainToWorkerZod,
     });
     if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("Error parsing message"),
+        );
         return;
     }
 
@@ -87,10 +86,7 @@ self.onmessage = async (
         });
         if (responseResult.err || responseResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: responseResult.val,
-                    message: Some("Error fetching response"),
-                }),
+                createSafeErrorResult("Error fetching response"),
             );
             return;
         }
@@ -100,10 +96,7 @@ self.onmessage = async (
         >(responseResult.val.safeUnwrap());
         if (jsonResult.err || jsonResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: jsonResult.val,
-                    message: Some("Error extracting JSON from response"),
-                }),
+                createSafeErrorResult("Error extracting JSON"),
             );
             return;
         }
@@ -115,9 +108,7 @@ self.onmessage = async (
 
         if (parsedResult.err || parsedResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error parsing server response"),
-                }),
+                createSafeErrorResult("Error parsing server response"),
             );
             return;
         }
@@ -127,36 +118,27 @@ self.onmessage = async (
         const decodedTokenResult = decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: decodedTokenResult.val,
-                    message: Some("Error decoding JWT"),
-                }),
+                createSafeErrorResult("Error decoding JWT token"),
             );
             return;
         }
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
-                currentPage,
-                decodedToken: decodedTokenResult.val.safeUnwrap(),
-                newQueryFlag,
-                parsedServerResponse: parsedResult.val.safeUnwrap(),
-                queryString,
-                totalDocuments,
-            }),
-            kind: "success",
-        }));
-    } catch (error: unknown) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(error),
-            message: Some(
-                error instanceof Error
-                    ? error.message
-                    : typeof error === "string"
-                    ? error
-                    : "Unknown error",
+        self.postMessage(
+            createSafeSuccessResult(
+                {
+                    currentPage,
+                    decodedToken: decodedTokenResult.val.safeUnwrap(),
+                    newQueryFlag,
+                    parsedServerResponse: parsedResult.val.safeUnwrap(),
+                    queryString,
+                    totalDocuments,
+                },
             ),
-        }));
+        );
+    } catch (error: unknown) {
+        self.postMessage(
+            createSafeErrorResult(error),
+        );
     } finally {
         clearTimeout(timeout);
     }
@@ -164,31 +146,17 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Users Query Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event.reason),
+    );
 });
 
 export type {

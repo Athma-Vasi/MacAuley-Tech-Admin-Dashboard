@@ -1,13 +1,13 @@
-import { Some } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
     HttpServerResponse,
-    SafeBoxResult,
+    ResultSafeBox,
     UserDocument,
 } from "../../types";
 import {
-    createSafeBoxResult,
+    createSafeErrorResult,
+    createSafeSuccessResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
@@ -23,7 +23,7 @@ import { messageEventDirectoryFetchMainToWorkerZod } from "./schemas";
 import { DepartmentsWithDefaultKey } from "./types";
 
 type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
-    SafeBoxResult<
+    ResultSafeBox<
         {
             decodedToken: DecodedToken;
             department: DepartmentsWithDefaultKey;
@@ -47,10 +47,9 @@ self.onmessage = async (
     event: MessageEventDirectoryFetchMainToWorker,
 ) => {
     if (!event.data) {
-        self.postMessage(createSafeBoxResult({
-            data: Some(new Error("No data received")),
-            message: Some("No data received"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("No data received"),
+        );
         return;
     }
 
@@ -59,9 +58,9 @@ self.onmessage = async (
         zSchema: messageEventDirectoryFetchMainToWorkerZod,
     });
     if (parsedMessageResult.err || parsedMessageResult.val.none) {
-        self.postMessage(createSafeBoxResult({
-            data: Some("Error parsing message"),
-        }));
+        self.postMessage(
+            createSafeErrorResult("Error parsing input"),
+        );
         return;
     }
 
@@ -83,10 +82,7 @@ self.onmessage = async (
         });
         if (responseResult.err || responseResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: responseResult.val,
-                    message: Some("Error fetching data"),
-                }),
+                createSafeErrorResult("Error fetching response"),
             );
             return;
         }
@@ -96,10 +92,7 @@ self.onmessage = async (
         >(responseResult.val.safeUnwrap());
         if (jsonResult.err || jsonResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: jsonResult.val,
-                    message: Some("Error extracting JSON from response"),
-                }),
+                createSafeErrorResult("Error extracting JSON from response"),
             );
             return;
         }
@@ -111,9 +104,7 @@ self.onmessage = async (
 
         if (parsedResult.err || parsedResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: Some("Error parsing server response"),
-                }),
+                createSafeErrorResult("Error parsing server response"),
             );
             return;
         }
@@ -123,35 +114,24 @@ self.onmessage = async (
         const decodedTokenResult = decodeJWTSafe(accessToken);
         if (decodedTokenResult.err || decodedTokenResult.val.none) {
             self.postMessage(
-                createSafeBoxResult({
-                    data: decodedTokenResult.val,
-                    message: Some("Error decoding JWT"),
-                }),
+                createSafeErrorResult("Error decoding JWT token"),
             );
             return;
         }
 
-        self.postMessage(createSafeBoxResult({
-            data: Some({
-                decodedToken: decodedTokenResult.val.safeUnwrap(),
-                department,
-                parsedServerResponse: parsedResult.val.safeUnwrap(),
-                storeLocation,
-            }),
-            kind: "success",
-        }));
-    } catch (err) {
         self.postMessage(
-            createSafeBoxResult({
-                data: Some(err),
-                message: Some(
-                    err instanceof Error
-                        ? err.message
-                        : typeof err === "string"
-                        ? err
-                        : "Unknown error",
-                ),
-            }),
+            createSafeSuccessResult(
+                {
+                    decodedToken: decodedTokenResult.val.safeUnwrap(),
+                    department,
+                    parsedServerResponse: parsedResult.val.safeUnwrap(),
+                    storeLocation,
+                },
+            ),
+        );
+    } catch (error: unknown) {
+        self.postMessage(
+            createSafeErrorResult(error),
         );
     } finally {
         clearTimeout(timeout);
@@ -160,31 +140,17 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Directory Fetch Worker error:", event);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event),
-        message: Some(
-            event instanceof Error
-                ? event.message
-                : typeof event === "string"
-                ? event
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeBoxResult({
-        data: Some(event.reason),
-        message: Some(
-            event.reason instanceof Error
-                ? event.reason.message
-                : typeof event.reason === "string"
-                ? event.reason
-                : "Unknown error",
-        ),
-    }));
+    self.postMessage(
+        createSafeErrorResult(event.reason),
+    );
 });
 
 export type {

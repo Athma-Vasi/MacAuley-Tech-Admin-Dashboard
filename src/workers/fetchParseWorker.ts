@@ -101,12 +101,10 @@ self.onmessage = async (
         //     return;
         // }
 
-        const parsedResult = await parseServerResponseAsyncSafe(
-            {
-                object: jsonResult.val.safeUnwrap(),
-                zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
-            },
-        );
+        const parsedResult = await parseServerResponseAsyncSafe({
+            object: jsonResult.val.safeUnwrap(),
+            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
+        });
 
         if (parsedResult.err || parsedResult.val.none) {
             self.postMessage(
@@ -156,13 +154,17 @@ self.onmessage = async (
 
 self.onerror = (event: string | Event) => {
     console.error("Fetch Parse Worker error:", event);
-    self.postMessage(createSafeErrorResult(event));
+    self.postMessage(
+        createSafeErrorResult(event),
+    );
     return true; // Prevents default logging to console
 };
 
 self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     console.error("Unhandled promise rejection in worker:", event.reason);
-    self.postMessage(createSafeErrorResult(event.reason));
+    self.postMessage(
+        createSafeErrorResult(event.reason),
+    );
 });
 
 export type { MessageEventFetchMainToWorker, MessageEventFetchWorkerToMain };
