@@ -14,7 +14,7 @@ import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
-  HttpServerResponse,
+  ResponsePayload,
   SafeError,
   SafeResult,
   ThemeObject,
@@ -363,7 +363,7 @@ function urlBuilder({
 
 function createSafeSuccessResult<Data = unknown>(
   data: Data,
-): Ok<Option<Data>> {
+): Ok<Option<NonNullable<Data>>> {
   return new Ok(data == null ? None : Some(data));
 }
 
@@ -531,14 +531,14 @@ async function modifyImageSafe(
   }
 }
 
-async function parseServerResponseAsyncSafe<Output = unknown>(
+async function parseResponsePayloadAsyncSafe<Output = unknown>(
   { object, zSchema }: {
-    object: HttpServerResponse<Output>;
+    object: ResponsePayload<Output>;
     zSchema: z.ZodSchema;
   },
-): Promise<SafeResult<HttpServerResponse<Output>>> {
+): Promise<SafeResult<ResponsePayload<Output>>> {
   try {
-    const serverResponseSchema = <T extends z.ZodSchema>(dataSchema: T) =>
+    const responsePayloadSchema = <T extends z.ZodSchema>(dataSchema: T) =>
       // all server responses have the same schema
       // the only difference is the data type
       z.object({
@@ -552,7 +552,7 @@ async function parseServerResponseAsyncSafe<Output = unknown>(
         triggerLogout: z.boolean(),
       });
 
-    const { success, data, error } = await serverResponseSchema(zSchema)
+    const { success, data, error } = await responsePayloadSchema(zSchema)
       .safeParseAsync(
         object,
       );
@@ -723,7 +723,6 @@ export {
   createMetricsForageKey,
   createMetricsURLCacheKey,
   createSafeErrorResult,
-  createSafeResult,
   createSafeSuccessResult,
   createUsersURLCacheKey,
   debounce,
@@ -734,7 +733,7 @@ export {
   getCachedItemAsyncSafe,
   hexToHSL,
   modifyImageSafe,
-  parseServerResponseAsyncSafe,
+  parseResponsePayloadAsyncSafe,
   parseSyncSafe,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,

@@ -11,7 +11,7 @@ import {
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
-    parseServerResponseAsyncSafe,
+    parseResponsePayloadAsyncSafe,
     parseSyncSafe,
 } from "../../utils";
 import {
@@ -109,7 +109,7 @@ self.onmessage = async (
             return;
         }
 
-        const parsedResult = await parseServerResponseAsyncSafe({
+        const parsedResult = await parseResponsePayloadAsyncSafe({
             object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });

@@ -253,19 +253,17 @@ type BusinessMetricsDocument =
 
 type UserRoles = ("Admin" | "Employee" | "Manager")[];
 
-type HttpServerResponse<Data = unknown> = {
-  accessToken: string;
-  data: Array<Data>;
-  kind: "error" | "success";
-  message: string;
-  pages: number;
-  status: number;
-  totalDocuments: number;
-  triggerLogout: boolean;
-};
+// type HttpServerResponse<Data = unknown> = {
+//   accessToken: string;
+//   data: Array<Data>;
+//   kind: "error" | "success";
+//   message: string;
+//   pages: number;
+//   status: number;
+//   totalDocuments: number;
+//   triggerLogout: boolean;
+// };
 
-//
-//
 type SafeError = {
   name: string;
   message: string;
@@ -273,6 +271,44 @@ type SafeError = {
   original: Option<string>;
 };
 type SafeResult<Data = unknown> = Result<Option<Data>, SafeError>;
+
+type ResponseKind = "error" | "success" | "rejected";
+type OptionalPayload = {
+  accessToken?: string;
+  message?: string;
+  pages?: number;
+  status?: number;
+  totalDocuments?: number;
+  triggerLogout?: boolean;
+};
+type SuccessPayload<Data = unknown> = Prettify<
+  OptionalPayload & {
+    data: Array<NonNullable<Data>>;
+    kind: "success"; // or "empty": data = []
+  }
+>;
+type ErrorPayload = Prettify<
+  OptionalPayload & {
+    data: [];
+    kind: "error";
+    message: string;
+  }
+>;
+type RejectedPayload = Prettify<
+  OptionalPayload & {
+    data: [];
+    kind: "rejected";
+    message: string;
+  }
+>;
+type ResponsePayload<Data = unknown> =
+  | SuccessPayload<Data>
+  | ErrorPayload
+  | RejectedPayload;
+
+// type HttpServerResponse<Data = unknown> = Prettify<
+//   Response<ResponsePayload<Data>>
+// >;
 
 type FontFamily = "Work Sans" | "sans-serif" | "serif" | "Open-Dyslexic";
 
@@ -485,6 +521,7 @@ export type {
   CustomerService,
   DecodedToken,
   Department,
+  ErrorPayload,
   ExecutiveManagement,
   FieldServiceTechnicians,
   FileExtension,
@@ -493,7 +530,6 @@ export type {
   FinancialMetricsDocument,
   FontFamily,
   FormReview,
-  HttpServerResponse,
   HumanResources,
   InformationTechnology,
   JobPosition,
@@ -507,8 +543,11 @@ export type {
   Prettify,
   ProductMetricsDocument,
   Province,
+  RejectedPayload,
   RepairMetricsDocument,
   RepairTechnicians,
+  ResponseKind,
+  ResponsePayload,
   SafeError,
   SafeResult,
   Sales,
@@ -522,6 +561,7 @@ export type {
   StatesUS,
   StoreAdministration,
   StoreLocation,
+  SuccessPayload,
   ThemeComponent,
   ThemeObject,
   UserDocument,
