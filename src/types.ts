@@ -253,17 +253,6 @@ type BusinessMetricsDocument =
 
 type UserRoles = ("Admin" | "Employee" | "Manager")[];
 
-// type HttpServerResponse<Data = unknown> = {
-//   accessToken: string;
-//   data: Array<Data>;
-//   kind: "error" | "success";
-//   message: string;
-//   pages: number;
-//   status: number;
-//   totalDocuments: number;
-//   triggerLogout: boolean;
-// };
-
 type SafeError = {
   name: string;
   message: string;
@@ -275,7 +264,7 @@ type SafeResult<Data = unknown> = Result<
   SafeError
 >;
 
-type ResponseKind = "error" | "success" | "rejected";
+type ResponseKind = "error" | "success";
 type OptionalPayload = {
   accessToken?: string;
   message?: string;
@@ -297,17 +286,9 @@ type ErrorPayload = Prettify<
     message: string;
   }
 >;
-type RejectedPayload = Prettify<
-  OptionalPayload & {
-    data: [];
-    kind: "rejected";
-    message: string;
-  }
->;
 type ResponsePayload<Data = unknown> =
   | SuccessPayload<Data>
-  | ErrorPayload
-  | RejectedPayload;
+  | ErrorPayload;
 
 type ResponsePayloadSafe<Data = unknown> = {
   accessToken: Option<string>;
@@ -319,10 +300,6 @@ type ResponsePayloadSafe<Data = unknown> = {
   totalDocuments: Option<number>;
   triggerLogout: Option<boolean>;
 };
-
-// type HttpServerResponse<Data = unknown> = Prettify<
-//   Response<ResponsePayload<Data>>
-// >;
 
 type FontFamily = "Work Sans" | "sans-serif" | "serif" | "Open-Dyslexic";
 
@@ -557,7 +534,6 @@ export type {
   Prettify,
   ProductMetricsDocument,
   Province,
-  RejectedPayload,
   RepairMetricsDocument,
   RepairTechnicians,
   ResponseKind,
