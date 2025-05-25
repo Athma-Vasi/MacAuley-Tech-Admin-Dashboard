@@ -31,13 +31,13 @@ function churnRetentionReducer_setYAxisKey(
     zSchema: setYAxisKeyChurnRetentionDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    yAxisKey: parsedResult.val.data.val
+    yAxisKey: parsedResult.val.val
       .payload as CustomerMetricsChurnRetentionChartsKey,
   };
 }

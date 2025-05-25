@@ -25,13 +25,13 @@ function rusReducer_setYAxisKey(
     zSchema: setYAxisKeyRUSDispatchZod,
   });
 
-  if (parsedResult.err || parsedResult.val.data.none) {
+  if (parsedResult.err || parsedResult.val.none) {
     return state;
   }
 
   return {
     ...state,
-    yAxisKey: parsedResult.val.data.val.payload as ProductMetricsChartKey,
+    yAxisKey: parsedResult.val.val.payload as ProductMetricsChartKey,
   };
 }
 
