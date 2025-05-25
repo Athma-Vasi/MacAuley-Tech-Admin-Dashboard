@@ -9,6 +9,7 @@ type DashboardAction = Prettify<
 >;
 
 const dashboardAction: DashboardAction = {
+  setCurrentSelectedInput: "setCurrentSelectedInput",
   setCalendarView: "setCalendarView",
   setDashboardFetchWorker: "setDashboardFetchWorker",
   setIsLoading: "setIsLoading",

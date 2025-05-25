@@ -176,14 +176,14 @@ function Login() {
           )
           : null,
         name: "login",
-        onClick: (
+        onClick: async (
           event:
             | React.MouseEvent<HTMLButtonElement, MouseEvent>
             | React.PointerEvent<HTMLButtonElement>,
         ) => {
           event.preventDefault();
 
-          handleLoginClick({
+          await handleLoginClick({
             isComponentMountedRef,
             isLoading,
             isSubmitting,
@@ -193,11 +193,6 @@ function Login() {
             schema: { username, password },
             showBoundary,
           });
-        },
-        style: {
-          cursor: isLoading || isSubmitting || isSuccessful
-            ? "not-allowed"
-            : "pointer",
         },
       }}
     />
@@ -276,7 +271,6 @@ function Login() {
       </Text>
 
       {displayInputs}
-
       {errorMessageElem}
 
       <Group w="100%" position="center">{displayLoginButton}</Group>

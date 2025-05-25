@@ -29,12 +29,6 @@ type CaptureScreenshotInput = {
 /**
  * Captures a screenshot of a chart rendered in the browser and triggers a download.
  * @see https://medium.com/@pro.grb.studio/how-to-screencapture-in-reactjs-step-by-step-guide-b435e8b53e11
- * @param {CaptureScreenshotInput} options - Options for capturing the screenshot.
- * @param {any} options.chartRef - A reference to the chart element to capture.
- * @param {string} options.screenshotFilename - The desired filename for the screenshot.
- * @param {number} options.screenshotImageQuality - The quality of the screenshot image (0-1).
- * @param {string} options.screenshotImageType - The type of the image (image/webp, 'image/png', 'image/jpeg').
- * @returns {Promise<void>}
  */
 async function captureScreenshot({
   chartRef,
@@ -73,77 +67,102 @@ async function captureScreenshot({
 }
 
 function addCommaSeparator(numStr: string | number): string {
-  return numStr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const result = parseSyncSafe({
+    object: numStr,
+    zSchema: z.union([z.string(), z.number()]),
+  });
+  if (result.err || result.val.none) {
+    return numStr.toString();
+  }
+
+  return result.val.val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function toFixedFloat(num: number, precision = 4): number {
-  return num === undefined ? 0 : Number(num.toFixed(precision));
+  const result = parseSyncSafe({
+    object: num,
+    zSchema: z.number(),
+  });
+  if (result.err || result.val.none) {
+    return 0;
+  }
+  return result.val.val === undefined
+    ? 0
+    : Number(result.val.val.toFixed(precision));
 }
 
 function removeUndefinedAndNull<T>(value: T | undefined | null): value is T {
   return value !== undefined && value !== null;
 }
 
-function capitalizeAll(str: string): string {
-  return str.replace(/\b\w/g, (char) => char.toUpperCase());
-}
-
 function capitalizeJoinWithAnd(strings: string[]): string {
-  const joined = strings
+  const result = parseSyncSafe({
+    object: strings,
+    zSchema: z.array(z.string()),
+  });
+  if (result.err || result.val.none) {
+    return "";
+  }
+  const strings_ = result.val.val.filter(removeUndefinedAndNull);
+  if (strings_.length === 0) {
+    return "";
+  }
+
+  const joined = strings_
     // .map((string) => string.charAt(0).toUpperCase() + string.slice(1))
     .map((string) => splitCamelCase(string))
     .join(", ");
   return replaceLastCommaWithAnd(joined);
 }
 
-/**
- * Splits a camelCase or PascalCase string into words and capitalizes the first letter.
- *
- * This function takes a camelCase or PascalCase string as input and splits it into words
- * by inserting spaces between lowercase and uppercase letters. The first letter of the
- * resulting string is then capitalized.
- *
- * @param {string} word - The camelCase or PascalCase string to be processed.
- * @returns {string} A new string with words separated and the first letter capitalized.
- */
 function splitCamelCase(word: string): string {
+  const result = parseSyncSafe({
+    object: word,
+    zSchema: z.string(),
+  });
+  if (result.err || result.val.none) {
+    return "";
+  }
   // Replace lowercase-uppercase pairs with a space in between
-  const splitStr = word.replace(/([a-z])([A-Z])/g, "$1 $2");
+  const splitStr = result.val.val.replace(/([a-z])([A-Z])/g, "$1 $2");
   // Capitalize the first letter of the resulting string
   return splitStr.charAt(0).toUpperCase() + splitStr.slice(1);
 }
 
-/**
- * Replaces the last comma in a string with ' and ' if needed.
- *
- * This function takes a string as input and replaces the last comma in the string with ' and '
- * if the string contains at least one comma. It then returns the modified string.
- *
- * @param {string} str - The input string to process.
- * @returns {string} A new string with the last comma replaced by ' and ' if applicable.
- */
 function replaceLastCommaWithAnd(str: string): string {
+  const result = parseSyncSafe({
+    object: str,
+    zSchema: z.string(),
+  });
+  if (result.err || result.val.none) {
+    return "";
+  }
   // returns an array of matches of all occurrences of a comma
-  const commaCount = str.match(/,/g)?.length ?? 0;
+  const commaCount = result.val.val.match(/,/g)?.length ?? 0;
   // /(?=[^,]*$)/: matches a comma that is followed by zero or more non-comma characters until the end of the string, using a positive lookahead assertion (?=...).
-  const strWithAnd = str.replace(/,(?=[^,]*$)/, commaCount > 0 ? " and" : "");
-
+  const strWithAnd = result.val.val.replace(
+    /,(?=[^,]*$)/,
+    commaCount > 0 ? " and" : "",
+  );
   return strWithAnd;
 }
 
 function replaceLastCommaWithOr(str: string): string {
+  const result = parseSyncSafe({
+    object: str,
+    zSchema: z.string(),
+  });
+  if (result.err || result.val.none) {
+    return "";
+  }
   // returns an array of matches of all occurrences of a comma
-  const commaCount = str.match(/,/g)?.length ?? 0;
+  const commaCount = result.val.val.match(/,/g)?.length ?? 0;
   // /(?=[^,]*$)/: matches a comma that is followed by zero or more non-comma characters until the end of the string, using a positive lookahead assertion (?=...).
-  const strWithOr = str.replace(/,(?=[^,]*$)/, commaCount > 0 ? " or" : "");
-
+  const strWithOr = result.val.val.replace(
+    /,(?=[^,]*$)/,
+    commaCount > 0 ? " or" : "",
+  );
   return strWithOr;
-}
-
-function returnTimeToRead(string: string) {
-  const wordsPerMinute = 200;
-  const textLength = string.split(" ").length;
-  return Math.ceil(textLength / wordsPerMinute);
 }
 
 function formatDate({
@@ -162,8 +181,15 @@ function formatDate({
   formatOptions?: Intl.DateTimeFormatOptions;
   locale?: string;
 }): string {
+  const result = parseSyncSafe({
+    object: date,
+    zSchema: z.string(),
+  });
+  if (result.err || result.val.none) {
+    return "";
+  }
   return new Intl.DateTimeFormat(locale, formatOptions).format(
-    new Date(date),
+    new Date(result.val.val),
   );
 }
 
@@ -367,13 +393,24 @@ function createSafeSuccessResult<Data = unknown>(
   return new Ok(data == null ? None : Some(data));
 }
 
-function createSafeErrorResult(error: unknown): Err<SafeError> {
+function createSafeErrorResult(error: unknown, trace?: {
+  fileName?: string;
+  lineNumber?: number;
+  columnNumber?: number;
+}): Err<SafeError> {
+  const additional = {
+    fileName: trace?.fileName ? Some(trace.fileName) : None,
+    lineNumber: trace?.lineNumber ? Some(trace.lineNumber) : None,
+    columnNumber: trace?.columnNumber ? Some(trace.columnNumber) : None,
+  };
+
   if (error instanceof Error) {
     return new Err({
       name: error.name == null ? "Error" : error.name,
       message: error.message == null ? "Unknown error" : error.message,
       stack: error.stack == null ? None : Some(error.stack),
       original: None,
+      ...additional,
     });
   }
 
@@ -383,6 +420,7 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
       message: error,
       stack: None,
       original: None,
+      ...additional,
     });
   }
 
@@ -402,6 +440,7 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
         message: error.reason.toString() ?? "",
         stack: None,
         original: serializeSafe(error),
+        ...additional,
       });
     }
 
@@ -410,6 +449,7 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
       message: error.timeStamp.toString() ?? "",
       stack: None,
       original: serializeSafe(error),
+      ...additional,
     });
   }
 
@@ -418,6 +458,7 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
     message: "🪞 You've seen it before. Déjà vu. Something's off...",
     stack: None,
     original: serializeSafe(error),
+    ...additional,
   });
 }
 
@@ -735,7 +776,6 @@ function debounce<T extends (...args: any[]) => void>(
 
 export {
   addCommaSeparator,
-  capitalizeAll,
   capitalizeJoinWithAnd,
   captureScreenshot,
   catchHandlerErrorSafe,
@@ -760,7 +800,6 @@ export {
   replaceLastCommaWithOr,
   returnSliderMarks,
   returnThemeColors,
-  returnTimeToRead,
   setCachedItemAsyncSafe,
   splitCamelCase,
   splitWordIntoUpperCasedSentence,

@@ -1,5 +1,5 @@
 import { MantineProvider } from "@mantine/core";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import CustomFonts from "./components/customFonts";
 import Dashboard from "./components/dashboard/Dashboard";
 
@@ -16,6 +16,20 @@ function App() {
   const {
     globalState: { themeObject },
   } = useGlobalState();
+  const navigate = useNavigate();
+
+  // useUnload((event: Event) => {
+  //   event?.preventDefault();
+
+  //   const confirmationMessage =
+  //     "Are you sure you want to leave? All unsaved changes will be lost.";
+  //   const exit = confirm(confirmationMessage);
+  //   if (exit) {
+  //     localforage.clear();
+  //     window.close();
+  //     navigate("/login");
+  //   }
+  // });
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS theme={themeObject}>

@@ -271,15 +271,6 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             return safeErrorResult;
         }
 
-        authDispatch({
-            action: authAction.setAccessToken,
-            payload: newAccessToken.none ? "" : newAccessToken.val,
-        });
-        authDispatch({
-            action: authAction.setDecodedToken,
-            payload: decodedToken,
-        });
-
         const payload = responsePayloadSafe.data[0];
 
         if (metricsView === "financials") {
@@ -329,6 +320,14 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             return setCachedItemResult;
         }
 
+        authDispatch({
+            action: authAction.setAccessToken,
+            payload: newAccessToken.none ? "" : newAccessToken.val,
+        });
+        authDispatch({
+            action: authAction.setDecodedToken,
+            payload: decodedToken,
+        });
         dashboardDispatch({
             action: dashboardAction.setIsLoading,
             payload: false,

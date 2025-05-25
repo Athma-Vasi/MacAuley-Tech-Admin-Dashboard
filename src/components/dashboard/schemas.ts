@@ -27,6 +27,11 @@ const setDashboardFetchWorkerDashboardDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const setCurrentSelectedInputDashboardDispatchZod = z.object({
+    action: z.literal(dashboardAction.setCurrentSelectedInput),
+    payload: z.string(),
+});
+
 const handleStoreAndCategoryClicksInputZod = z.object({
     accessToken: z.string(),
     dashboardDispatch: z.function().args(z.any()).returns(z.void()),
@@ -67,6 +72,7 @@ export {
     handleStoreAndCategoryClicksInputZod,
     messageEventDashboardFetchMainToWorkerZod,
     setCalendarViewDashboardDispatchZod,
+    setCurrentSelectedInputDashboardDispatchZod,
     setDashboardFetchWorkerDashboardDispatchZod,
     setIsLoadingDashboardDispatchZod,
     setLoadingMessageDashboardDispatchZod,

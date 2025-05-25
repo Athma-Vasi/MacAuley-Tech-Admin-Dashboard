@@ -134,15 +134,6 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: newAccessToken.none ? "" : newAccessToken.val,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
-
     if (kind === "error") {
       const safeErrorResult = createSafeErrorResult(
         `Server error: ${message}`,
@@ -203,6 +194,15 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
         }
       },
     );
+
+    authDispatch({
+      action: authAction.setAccessToken,
+      payload: newAccessToken.none ? "" : newAccessToken.val,
+    });
+    authDispatch({
+      action: authAction.setDecodedToken,
+      payload: decodedToken,
+    });
 
     globalDispatch({
       action: globalAction.setIsFetching,
@@ -698,15 +698,6 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: newAccessToken.none ? "" : newAccessToken.val,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
-
     if (kind === "error") {
       const safeErrorResult = createSafeErrorResult(
         `Server error: ${message}`,
@@ -730,6 +721,15 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       showBoundary(setCachedItemResult);
       return setCachedItemResult;
     }
+
+    authDispatch({
+      action: authAction.setAccessToken,
+      payload: newAccessToken.none ? "" : newAccessToken.val,
+    });
+    authDispatch({
+      action: authAction.setDecodedToken,
+      payload: decodedToken,
+    });
 
     globalDispatch({
       action: globalAction.setDirectory,

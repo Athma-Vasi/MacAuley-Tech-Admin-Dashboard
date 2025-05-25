@@ -9,6 +9,7 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
+import localforage from "localforage";
 import { useNavigate } from "react-router-dom";
 import { Err } from "ts-results";
 import { SafeError } from "../../types";
@@ -40,13 +41,16 @@ function ErrorFallback({
   );
 
   const goHomeButtonWithTooltip = (
-    <Tooltip label="Will take you to login">
+    <Tooltip label="Will clear session data and take you to login">
       <Group>
         <AccessibleButton
           attributes={{
             kind: "previous",
             label: "Enter",
-            onClick: () => navigateFn("/"),
+            onClick: async () => {
+              await localforage.clear();
+              navigateFn("/");
+            },
           }}
         />
       </Group>
@@ -115,7 +119,9 @@ function ErrorFallback({
         <Accordion.Panel>
           <Text
             color="dimmed"
-            data-testid={`error-stack-${error.val.stack}`}
+            data-testid={`error-stack-${
+              error.val.stack.none ? "none" : error.val.stack
+            }`}
           >
             {error.stack}
           </Text>
@@ -127,7 +133,11 @@ function ErrorFallback({
     ? (
       <GoldenGrid>
         <Text>Stack:</Text>
-        <Text data-testid={`error-stack-${error.val.stack}`}>
+        <Text
+          data-testid={`error-stack-${
+            error.val.stack.none ? "none" : error.val.stack
+          }`}
+        >
           {error.val.stack.none
             ? <Text color="dimmed">No stack available</Text>
             : <Text>{error.stack}</Text>}
@@ -145,7 +155,9 @@ function ErrorFallback({
         <Accordion.Panel>
           <Text
             color="dimmed"
-            data-testid={`error-original-${error.val.original}`}
+            data-testid={`error-original-${
+              error.val.original.none ? "none" : error.val.original
+            }`}
           >
             {error.val.original}
           </Text>
@@ -157,7 +169,11 @@ function ErrorFallback({
     ? (
       <GoldenGrid>
         <Text>Original:</Text>
-        <Text data-testid={`error-original-${error.val.original}`}>
+        <Text
+          data-testid={`error-original-${
+            error.val.original.none ? "none" : error.val.original
+          }`}
+        >
           {error.val.original.none
             ? <Text color="dimmed">No original available</Text>
             : <Text>{error.val.original}</Text>}
@@ -165,6 +181,51 @@ function ErrorFallback({
       </GoldenGrid>
     )
     : originalAccordion;
+
+  const fileNameEntry = (
+    <GoldenGrid>
+      <Text>File Name:</Text>
+      {error.val.fileName.none
+        ? (
+          <Text color="dimmed" data-testid={`error-fileName-none`}>
+            No file name available
+          </Text>
+        )
+        : (
+          <Group spacing={0}>
+            {error.val.fileName.val.split("").map((char, index) => (
+              <Text
+                key={index}
+                data-testid={`error-fileName-${char}`}
+                color={char === "/" ? "dimmed" : "dark"}
+              >
+                {char}
+              </Text>
+            ))}
+          </Group>
+        )}
+    </GoldenGrid>
+  );
+  const lineNumberEntry = (
+    <GoldenGrid>
+      <Text>Line Number:</Text>
+      <Text data-testid={`error-lineNumber-${error.val.lineNumber.none}`}>
+        {error.val.lineNumber.none
+          ? <Text color="dimmed">No line number available</Text>
+          : <Text>{error.val.lineNumber.val}</Text>}
+      </Text>
+    </GoldenGrid>
+  );
+  const columnNumberEntry = (
+    <GoldenGrid>
+      <Text>Column Number:</Text>
+      <Text data-testid={`error-columnNumber-${error.val.columnNumber.none}`}>
+        {error.val.columnNumber.none
+          ? <Text color="dimmed">No column number available</Text>
+          : <Text>{error.val.columnNumber.val}</Text>}
+      </Text>
+    </GoldenGrid>
+  );
 
   const errorCard = (
     <Card shadow="sm" radius="md" withBorder className="error-card">
@@ -179,6 +240,13 @@ function ErrorFallback({
         <Divider w="100%" />
         {messageEntry}
         <Divider w="100%" />
+        {fileNameEntry}
+        <Divider w="100%" />
+        {lineNumberEntry}
+        <Divider w="100%" />
+        {columnNumberEntry}
+        <Divider w="100%" />
+
         {stackEntry}
         <Divider w="100%" />
         {originalEntry}

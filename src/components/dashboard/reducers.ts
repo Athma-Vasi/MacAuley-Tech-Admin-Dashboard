@@ -2,6 +2,7 @@ import { parseSyncSafe } from "../../utils";
 import { dashboardAction } from "./actions";
 import {
   setCalendarViewDashboardDispatchZod,
+  setCurrentSelectedInputDashboardDispatchZod,
   setDashboardFetchWorkerDashboardDispatchZod,
   setIsLoadingDashboardDispatchZod,
   setLoadingMessageDashboardDispatchZod,
@@ -31,6 +32,10 @@ const dashboardReducersMap = new Map<
   [
     dashboardAction.setDashboardFetchWorker,
     dashboardReducer_setDashboardFetchWorker,
+  ],
+  [
+    dashboardAction.setCurrentSelectedInput,
+    dashboardReducer_setCurrentSelectedInput,
   ],
 ]);
 
@@ -108,6 +113,25 @@ function dashboardReducer_setDashboardFetchWorker(
   return {
     ...state,
     dashboardFetchWorker: parsedResult.val.val.payload as Worker,
+  };
+}
+
+function dashboardReducer_setCurrentSelectedInput(
+  state: DashboardState,
+  dispatch: DashboardDispatch,
+): DashboardState {
+  const parsedResult = parseSyncSafe({
+    object: dispatch,
+    zSchema: setCurrentSelectedInputDashboardDispatchZod,
+  });
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    currentSelectedInput: parsedResult.val.val.payload as string,
   };
 }
 

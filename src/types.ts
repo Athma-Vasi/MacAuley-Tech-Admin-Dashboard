@@ -254,10 +254,13 @@ type BusinessMetricsDocument =
 type UserRoles = ("Admin" | "Employee" | "Manager")[];
 
 type SafeError = {
-  name: string;
+  columnNumber: Option<number>;
+  fileName: Option<string>;
+  lineNumber: Option<number>;
   message: string;
-  stack: Option<string>;
+  name: string;
   original: Option<string>;
+  stack: Option<string>;
 };
 type SafeResult<Data = unknown> = Result<
   Option<Data>,

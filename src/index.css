@@ -521,7 +521,7 @@
               column-gap: 2em;
               display: grid;
               grid-template-columns: 3fr 8fr;
-              padding: 0.25em 0px;
+              padding: 0.75em var(--padding);
             }
 
             .input-section.isEven {
