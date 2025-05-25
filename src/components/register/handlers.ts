@@ -92,9 +92,9 @@ async function handleCheckEmail(
   }
 }
 
-async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
+async function handleMessageEventCheckEmailWorkerToMain(
   input: {
-    event: MessageEventFetchWorkerToMain<Data>;
+    event: MessageEventFetchWorkerToMain<boolean>;
     isComponentMountedRef: React.RefObject<boolean>;
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
@@ -135,14 +135,14 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.val;
+    const { responsePayloadSafe } = messageEventResult.val.val;
 
     registerDispatch({
       action: registerAction.setIsEmailExistsSubmitting,
       payload: false,
     });
 
-    const { data, kind, message } = parsedServerResponse;
+    const { data, kind, message } = responsePayloadSafe;
 
     if (kind === "error") {
       const safeErrorResult = createSafeErrorResult(`Server error: ${message}`);
@@ -150,8 +150,15 @@ async function handleMessageEventCheckEmailWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const [isEmailExists] = data as unknown as [boolean];
+    if (data.length === 0) {
+      const safeErrorResult = createSafeErrorResult(
+        "No data received",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
 
+    const [isEmailExists] = data;
     registerDispatch({
       action: registerAction.setIsEmailExists,
       payload: isEmailExists,
@@ -237,9 +244,9 @@ async function handleCheckUsername(
   }
 }
 
-async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
+async function handleMessageEventCheckUsernameWorkerToMain(
   input: {
-    event: MessageEventFetchWorkerToMain<Data>;
+    event: MessageEventFetchWorkerToMain<boolean>;
     isComponentMountedRef: React.RefObject<boolean>;
     registerDispatch: React.Dispatch<RegisterDispatch>;
     showBoundary: (error: unknown) => void;
@@ -284,14 +291,14 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.val;
+    const { responsePayloadSafe } = messageEventResult.val.val;
 
     registerDispatch({
       action: registerAction.setIsUsernameExistsSubmitting,
       payload: false,
     });
 
-    const { data, kind, message } = parsedServerResponse;
+    const { data, kind, message } = responsePayloadSafe;
 
     if (kind === "error") {
       const safeErrorResult = createSafeErrorResult(
@@ -301,8 +308,15 @@ async function handleMessageEventCheckUsernameWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const [isUsernameExists] = data as unknown as [boolean];
+    if (data.length === 0) {
+      const safeErrorResult = createSafeErrorResult(
+        "No data received",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
 
+    const [isUsernameExists] = data;
     registerDispatch({
       action: registerAction.setIsUsernameExists,
       payload: isUsernameExists,
@@ -375,9 +389,9 @@ async function handleRegisterButtonSubmit(
   }
 }
 
-async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
+async function handleMessageEventRegisterFetchWorkerToMain(
   input: {
-    event: MessageEventFetchWorkerToMain<Data>;
+    event: MessageEventFetchWorkerToMain<boolean>;
     isComponentMountedRef: React.RefObject<boolean>;
     navigate: NavigateFunction;
     registerDispatch: React.Dispatch<RegisterDispatch>;
@@ -430,9 +444,9 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.val;
+    const { responsePayloadSafe } = messageEventResult.val.val;
 
-    if (parsedServerResponse.kind === "error") {
+    if (responsePayloadSafe.kind === "error") {
       registerDispatch({
         action: registerAction.setIsSubmitting,
         payload: false,
@@ -443,13 +457,41 @@ async function handleMessageEventRegisterFetchWorkerToMain<Data = unknown>(
       });
       registerDispatch({
         action: registerAction.setErrorMessage,
-        payload: parsedServerResponse.message,
+        payload: responsePayloadSafe.message.none
+          ? "Unable to register, please try again later."
+          : responsePayloadSafe.message.val,
       });
-      navigate("/login");
 
-      return createSafeErrorResult(
-        `Server error: ${parsedServerResponse.message}`,
+      const safeErrorResult = createSafeErrorResult(
+        `Server error: ${responsePayloadSafe.message}`,
       );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const [isRegistrationSuccessful] = responsePayloadSafe.data;
+    if (!isRegistrationSuccessful) {
+      const errorMessage = responsePayloadSafe.message.none
+        ? "Unable to register, please try again later."
+        : responsePayloadSafe.message.val;
+      registerDispatch({
+        action: registerAction.setIsSubmitting,
+        payload: false,
+      });
+      registerDispatch({
+        action: registerAction.setIsError,
+        payload: true,
+      });
+      registerDispatch({
+        action: registerAction.setErrorMessage,
+        payload: errorMessage,
+      });
+
+      const safeErrorResult = createSafeErrorResult(
+        `Registration failed: ${errorMessage}`,
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
     }
 
     registerDispatch({

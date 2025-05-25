@@ -236,7 +236,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         }
 
         const {
-            parsedServerResponse,
+            responsePayloadSafe,
             decodedToken,
             metricsView,
             productMetricCategory,
@@ -245,7 +245,7 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
         } = messageEventResult.val.val;
 
         const { accessToken: newAccessToken, triggerLogout } =
-            parsedServerResponse;
+            responsePayloadSafe;
 
         if (triggerLogout) {
             authDispatch({
@@ -266,20 +266,21 @@ async function handleMessageEventStoreAndCategoryFetchWorkerToMain(
             });
 
             await localforage.clear();
-            navigateFn("/");
-            return createSafeErrorResult("Session expired");
+            const safeErrorResult = createSafeErrorResult("Session expired");
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
         }
 
         authDispatch({
             action: authAction.setAccessToken,
-            payload: newAccessToken,
+            payload: newAccessToken.none ? "" : newAccessToken.val,
         });
         authDispatch({
             action: authAction.setDecodedToken,
             payload: decodedToken,
         });
 
-        const payload = parsedServerResponse.data[0];
+        const payload = responsePayloadSafe.data[0];
 
         if (metricsView === "financials") {
             globalDispatch({

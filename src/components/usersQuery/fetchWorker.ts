@@ -1,7 +1,7 @@
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
-    HttpServerResponse,
+    ResponsePayloadSafe,
     SafeResult,
     UserDocument,
 } from "../../types";
@@ -26,7 +26,7 @@ type MessageEventUsersFetchWorkerToMain = MessageEvent<
             currentPage: number;
             decodedToken: DecodedToken;
             newQueryFlag: boolean;
-            parsedServerResponse: HttpServerResponse<UserDocument>;
+            responsePayloadSafe: ResponsePayloadSafe<UserDocument>;
             queryString: string;
             totalDocuments: number;
         }
@@ -100,7 +100,7 @@ self.onmessage = async (
         }
 
         const jsonResult = await extractJSONFromResponseSafe<
-            HttpServerResponse<UserDocument>
+            ResponsePayloadSafe<UserDocument>
         >(responseResult.val.val);
         if (jsonResult.err) {
             self.postMessage(jsonResult);
@@ -113,23 +113,36 @@ self.onmessage = async (
             return;
         }
 
-        const parsedResult = await parseResponsePayloadAsyncSafe({
+        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
             object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        if (parsedResult.err) {
-            self.postMessage(parsedResult);
+        if (responsePayloadSafeResult.err) {
+            self.postMessage(responsePayloadSafeResult);
             return;
         }
-        if (parsedResult.val.none) {
+        if (responsePayloadSafeResult.val.none) {
             self.postMessage(
                 createSafeErrorResult("No parsed result received"),
             );
             return;
         }
 
-        const { accessToken } = parsedResult.val.val;
-        const decodedTokenResult = decodeJWTSafe(accessToken);
+        console.log(
+            "usersQueryWorker: responsePayloadSafeResult.val.val",
+            responsePayloadSafeResult.val.val,
+        );
+
+        const { accessToken } = responsePayloadSafeResult.val.val;
+        if (accessToken.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "No access token found in response",
+                ),
+            );
+            return;
+        }
+        const decodedTokenResult = decodeJWTSafe(accessToken.val);
         if (decodedTokenResult.err) {
             self.postMessage(decodedTokenResult);
             return;
@@ -146,7 +159,7 @@ self.onmessage = async (
                 currentPage,
                 decodedToken: decodedTokenResult.val.val,
                 newQueryFlag,
-                parsedServerResponse: parsedResult.val.val,
+                responsePayloadSafe: responsePayloadSafeResult.val.val,
                 queryString,
                 totalDocuments,
             }),

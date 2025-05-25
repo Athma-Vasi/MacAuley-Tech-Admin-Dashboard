@@ -38,8 +38,10 @@ const setLogoutFetchWorkerSidebarDispatchZod = z.object({
 const handleLogoutClickInputZod = z.object({
     accessToken: z.string().min(1).max(1000),
     globalDispatch: z.function().args(z.any()).returns(z.any()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
     logoutFetchWorker: z.instanceof(Worker),
     logoutUrl: z.string().url(),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
 const handleMessageEventLogoutFetchWorkerToMainInputZod = z.object({

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { EMAIL_REGEX, USERNAME_REGEX } from "../../regexes";
 import { registerAction } from "./actions";
 
 const setConfirmPasswordRegisterDispatchZod = z.object({
@@ -156,45 +155,47 @@ const setRegisterWorkerRegisterDispatchZod = z.object({
 });
 
 type RegisterDispatch =
-    | z.infer<typeof setRegisterWorkerRegisterDispatchZod>
+    | z.infer<typeof setActiveStepRegisterDispatchZod>
+    | z.infer<typeof setAddressLineRegisterDispatchZod>
+    | z.infer<typeof setCheckEmailWorkerRegisterDispatchZod>
+    | z.infer<typeof setCheckUsernameWorkerRegisterDispatchZod>
+    | z.infer<typeof setCityRegisterDispatchZod>
     | z.infer<typeof setConfirmPasswordRegisterDispatchZod>
+    | z.infer<typeof setCountryRegisterDispatchZod>
+    | z.infer<typeof setDepartmentRegisterDispatchZod>
     | z.infer<typeof setEmailRegisterDispatchZod>
+    | z.infer<typeof setErrorMessageRegisterDispatchZod>
+    | z.infer<typeof setFilesInErrorRegisterRegisterDispatchZod>
+    | z.infer<typeof setFirstNameRegisterDispatchZod>
+    | z.infer<typeof setFormDataRegisterDispatchZod>
+    | z.infer<typeof setInputsInErrorRegisterDispatchZod>
     | z.infer<typeof setIsEmailExistsRegisterDispatchZod>
     | z.infer<typeof setIsEmailExistsSubmittingRegisterDispatchZod>
-    | z.infer<typeof setIsUsernameExistsRegisterDispatchZod>
-    | z.infer<typeof setIsUsernameExistsSubmittingRegisterDispatchZod>
-    | z.infer<typeof setPasswordRegisterDispatchZod>
-    | z.infer<typeof setUsernameRegisterDispatchZod>
-    | z.infer<typeof setAddressLineRegisterDispatchZod>
-    | z.infer<typeof setCityRegisterDispatchZod>
-    | z.infer<typeof setCountryRegisterDispatchZod>
-    | z.infer<typeof setPostalCodeCanadaRegisterDispatchZod>
-    | z.infer<typeof setPostalCodeUSRegisterDispatchZod>
-    | z.infer<typeof setProvinceRegisterDispatchZod>
-    | z.infer<typeof setStateRegisterDispatchZod>
-    | z.infer<typeof setDepartmentRegisterDispatchZod>
-    | z.infer<typeof setFirstNameRegisterDispatchZod>
-    | z.infer<typeof setJobPositionRegisterDispatchZod>
-    | z.infer<typeof setLastNameRegisterDispatchZod>
-    | z.infer<typeof setProfilePictureUrlRegisterDispatchZod>
-    | z.infer<typeof setStoreLocationRegisterDispatchZod>
-    | z.infer<typeof setErrorMessageRegisterDispatchZod>
     | z.infer<typeof setIsErrorRegisterDispatchZod>
     | z.infer<typeof setIsSubmittingRegisterDispatchZod>
     | z.infer<typeof setIsSuccessfulRegisterDispatchZod>
-    | z.infer<typeof setActiveStepRegisterDispatchZod>
+    | z.infer<typeof setIsUsernameExistsRegisterDispatchZod>
+    | z.infer<typeof setIsUsernameExistsSubmittingRegisterDispatchZod>
+    | z.infer<typeof setJobPositionRegisterDispatchZod>
+    | z.infer<typeof setLastNameRegisterDispatchZod>
+    | z.infer<typeof setPasswordRegisterDispatchZod>
+    | z.infer<typeof setPostalCodeCanadaRegisterDispatchZod>
+    | z.infer<typeof setPostalCodeUSRegisterDispatchZod>
+    | z.infer<typeof setProfilePictureUrlRegisterDispatchZod>
+    | z.infer<typeof setProvinceRegisterDispatchZod>
+    | z.infer<typeof setRegisterWorkerRegisterDispatchZod>
+    | z.infer<typeof setStateRegisterDispatchZod>
     | z.infer<typeof setStepsInErrorRegisterDispatchZod>
     | z.infer<typeof setStepsWithEmptyInputsRegisterDispatchZod>
-    | z.infer<typeof setInputsInErrorRegisterDispatchZod>
-    | z.infer<typeof setFormDataRegisterDispatchZod>
-    | z.infer<typeof setFilesInErrorRegisterRegisterDispatchZod>
-    | z.infer<typeof setCheckUsernameWorkerRegisterDispatchZod>
-    | z.infer<typeof setCheckEmailWorkerRegisterDispatchZod>;
+    | z.infer<typeof setStoreLocationRegisterDispatchZod>
+    | z.infer<typeof setUsernameRegisterDispatchZod>;
 
 const handleCheckEmailInputZod = z.object({
     checkEmailWorker: z.instanceof(Worker),
-    email: z.string().regex(EMAIL_REGEX),
+    email: z.string(),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
     registerDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
     url: z.union([z.string(), z.instanceof(URL)]),
 });
 
@@ -207,9 +208,11 @@ const handleMessageEventCheckEmailWorkerToMainInputZod = z.object({
 
 const handleCheckUsernameInputZod = z.object({
     checkUsernameWorker: z.instanceof(Worker),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
     registerDispatch: z.function().args(z.any()).returns(z.void()),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
     url: z.union([z.string(), z.instanceof(URL)]),
-    username: z.string().regex(USERNAME_REGEX),
+    username: z.string(),
 });
 
 const handleMessageEventCheckUsernameWorkerToMainInputZod = z.object({
@@ -221,8 +224,10 @@ const handleMessageEventCheckUsernameWorkerToMainInputZod = z.object({
 
 const handleRegisterButtonSubmitInputZod = z.object({
     formData: z.instanceof(FormData),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
     registerDispatch: z.function().args(z.any()).returns(z.void()),
     registerWorker: z.instanceof(Worker),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
     url: z.union([z.string(), z.instanceof(URL)]),
 });
 

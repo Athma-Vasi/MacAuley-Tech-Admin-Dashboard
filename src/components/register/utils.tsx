@@ -60,7 +60,7 @@ function returnRegisterStepperCard(
                                 : (
                                     <div className="stepper-circle">
                                         <Text
-                                            size="md"
+                                            size="xl"
                                             color={activeStep === idx
                                                 ? themeColorShade
                                                 : "dimmed"}
@@ -114,7 +114,7 @@ function returnRegisterStepperCard(
                                 align="flex-start"
                                 w="100%"
                                 justify="flex-start"
-                                gap="md"
+                                gap="xs"
                             >
                                 {icon}
                                 <Stack spacing={2}>

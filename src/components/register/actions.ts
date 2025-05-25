@@ -22,7 +22,7 @@ const registerAction: RegisterAction = {
   setFilesInError: "setFilesInError",
   setFirstName: "setFirstName",
   setFormData: "setFormData",
-  setInputsInError: "setInputsInError", // This is the new action
+  setInputsInError: "setInputsInError",
   setIsEmailExists: "setIsEmailExists",
   setIsEmailExistsSubmitting: "setIsEmailExistsSubmitting",
   setIsError: "setIsError",

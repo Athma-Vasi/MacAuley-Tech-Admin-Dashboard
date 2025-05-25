@@ -104,14 +104,12 @@ function AccessibleFileInput<
             onChange={async (payload: OriginalFile) => {
                 const originalFilesResult = await getCachedItemAsyncSafe<
                     Array<OriginalFile>
-                >(
-                    originalFilesForageKey,
-                );
-                if (
-                    originalFilesResult.ok && originalFilesResult.val.data.some
-                ) {
-                    const originalFiles = originalFilesResult.val.data.val ??
-                        [];
+                >(originalFilesForageKey);
+
+                if (originalFilesResult.ok) {
+                    const originalFiles = originalFilesResult.val.none
+                        ? []
+                        : originalFilesResult.val.val;
                     originalFiles.push(payload);
 
                     await setCachedItemAsyncSafe(
@@ -122,14 +120,12 @@ function AccessibleFileInput<
 
                 const modifiedFilesResult = await getCachedItemAsyncSafe<
                     Array<ModifiedFile>
-                >(
-                    modifiedFilesForageKey,
-                );
-                if (
-                    modifiedFilesResult.ok && modifiedFilesResult.val.data.some
-                ) {
-                    const modifiedFiles = modifiedFilesResult.val.data.val ??
-                        [];
+                >(modifiedFilesForageKey);
+
+                if (modifiedFilesResult.ok) {
+                    const modifiedFiles = modifiedFilesResult.val.none
+                        ? []
+                        : modifiedFilesResult.val.val;
                     modifiedFiles.push(payload);
 
                     await setCachedItemAsyncSafe(
@@ -139,12 +135,12 @@ function AccessibleFileInput<
                 }
                 const fileNamesResult = await getCachedItemAsyncSafe<
                     Array<string>
-                >(
-                    fileNamesForageKey,
-                );
-                if (fileNamesResult.ok && fileNamesResult.val.data.some) {
-                    const fileNamesUnwrapped = fileNamesResult.val.data.val ??
-                        [];
+                >(fileNamesForageKey);
+
+                if (fileNamesResult.ok) {
+                    const fileNamesUnwrapped = fileNamesResult.val.none
+                        ? []
+                        : fileNamesResult.val.val;
                     fileNamesUnwrapped.push(
                         payload?.name ?? "Unknown file name",
                     );

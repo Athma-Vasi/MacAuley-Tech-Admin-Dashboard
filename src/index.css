@@ -442,6 +442,12 @@
 
         .stepper-card {
           display: none;
+
+          .stepper-circle-section {
+            width: 15%;
+            display: flex;
+            justify-content: center;
+          }
         }
 
         .stepper-card.active {

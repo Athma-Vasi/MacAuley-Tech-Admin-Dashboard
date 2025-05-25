@@ -90,21 +90,23 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
     }
 
     if (messageEventResult.val.none) {
-      const safeErrorResult = createSafeErrorResult("No data found");
+      const safeErrorResult = createSafeErrorResult(
+        "No data found",
+      );
       showBoundary(safeErrorResult);
       return safeErrorResult;
     }
 
     const {
       metricsView,
-      parsedServerResponse,
+      responsePayloadSafe,
       decodedToken,
       productMetricCategory,
       repairMetricCategory,
       storeLocation,
     } = messageEventResult.val.val;
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
-      parsedServerResponse;
+      responsePayloadSafe;
 
     if (triggerLogout) {
       authDispatch({
@@ -125,13 +127,16 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
       });
 
       await localforage.clear();
-      navigate("/");
-      return createSafeErrorResult("Logout triggered");
+      const safeErrorResult = createSafeErrorResult(
+        "Logout triggered",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
     }
 
     authDispatch({
       action: authAction.setAccessToken,
-      payload: newAccessToken,
+      payload: newAccessToken.none ? "" : newAccessToken.val,
     });
     authDispatch({
       action: authAction.setDecodedToken,
@@ -139,15 +144,14 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
     });
 
     if (kind === "error") {
-      showBoundary(
-        new Error(
-          `Server error: ${message}`,
-        ),
+      const safeErrorResult = createSafeErrorResult(
+        `Server error: ${message}`,
       );
-      return createSafeErrorResult(message);
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
     }
 
-    parsedServerResponse.data.forEach(
+    responsePayloadSafe.data.forEach(
       async (payload: BusinessMetricsDocument) => {
         if (metricsView === "financials") {
           globalDispatch({
@@ -193,7 +197,9 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
         );
         if (setCachedItemResult.err) {
           showBoundary(setCachedItemResult);
-          return createSafeErrorResult("Error setting cached item");
+          return createSafeErrorResult(
+            "Error setting cached item",
+          );
         }
       },
     );
@@ -435,7 +441,9 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
       return parsedResult;
     }
     if (parsedResult.val.none) {
-      const safeErrorResult = createSafeErrorResult("No data in input");
+      const safeErrorResult = createSafeErrorResult(
+        "No data in input",
+      );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
     }
@@ -457,14 +465,18 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
       return messageEventResult;
     }
     if (messageEventResult.val.none) {
-      const safeErrorResult = createSafeErrorResult("No data found");
+      const safeErrorResult = createSafeErrorResult(
+        "No data found",
+      );
       showBoundary(safeErrorResult);
       return safeErrorResult;
     }
 
-    const { parsedServerResponse } = messageEventResult.val.val;
-    if (parsedServerResponse.kind === "error") {
-      const safeErrorResult = createSafeErrorResult("Error in server response");
+    const { responsePayloadSafe } = messageEventResult.val.val;
+    if (responsePayloadSafe.kind === "error") {
+      const safeErrorResult = createSafeErrorResult(
+        "Error in server response",
+      );
       showBoundary(safeErrorResult);
       return safeErrorResult;
     }
@@ -654,11 +666,11 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    const { parsedServerResponse, decodedToken, department, storeLocation } =
+    const { responsePayloadSafe, decodedToken, department, storeLocation } =
       messageEventResult.val.val;
 
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
-      parsedServerResponse;
+      responsePayloadSafe;
 
     if (triggerLogout) {
       authDispatch({
@@ -679,13 +691,16 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       });
 
       await localforage.clear();
-      navigate?.("/");
-      return createSafeErrorResult("Logout triggered");
+      const safeErrorResult = createSafeErrorResult(
+        "Logout triggered",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
     }
 
     authDispatch({
       action: authAction.setAccessToken,
-      payload: newAccessToken,
+      payload: newAccessToken.none ? "" : newAccessToken.val,
     });
     authDispatch({
       action: authAction.setDecodedToken,
@@ -693,12 +708,14 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
     });
 
     if (kind === "error") {
-      const safeErrorResult = createSafeErrorResult(`Server error: ${message}`);
+      const safeErrorResult = createSafeErrorResult(
+        `Server error: ${message}`,
+      );
       showBoundary(safeErrorResult);
       return safeErrorResult;
     }
 
-    const userDocuments = parsedServerResponse.data;
+    const userDocuments = responsePayloadSafe.data;
     const cacheKey = createDirectoryURLCacheKey({
       department,
       directoryUrl,
@@ -711,7 +728,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
     );
     if (setCachedItemResult.err) {
       showBoundary(setCachedItemResult);
-      return createSafeErrorResult("Error setting cached item");
+      return setCachedItemResult;
     }
 
     globalDispatch({

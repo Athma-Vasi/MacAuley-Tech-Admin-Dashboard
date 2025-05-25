@@ -2,7 +2,7 @@ import html2canvas from "html2canvas";
 import jwtDecode from "jwt-decode";
 import { Err, None, Ok, Option, Some } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
-import { ColorsSwatches } from "./constants";
+import { ColorsSwatches, PROPERTY_DESCRIPTOR } from "./constants";
 
 import { compress, ICompressConfig } from "image-conversion";
 import localforage from "localforage";
@@ -14,7 +14,7 @@ import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
-  ResponsePayload,
+  ResponsePayloadSafe,
   SafeError,
   SafeResult,
   ThemeObject,
@@ -531,25 +531,23 @@ async function modifyImageSafe(
   }
 }
 
-async function parseResponsePayloadAsyncSafe<Output = unknown>(
+async function parseResponsePayloadAsyncSafe<Data = unknown, Output = unknown>(
   { object, zSchema }: {
-    object: ResponsePayload<Output>;
+    object: Output;
     zSchema: z.ZodSchema;
   },
-): Promise<SafeResult<ResponsePayload<Output>>> {
+): Promise<SafeResult<ResponsePayloadSafe<Data>>> {
   try {
     const responsePayloadSchema = <T extends z.ZodSchema>(dataSchema: T) =>
-      // all server responses have the same schema
-      // the only difference is the data type
       z.object({
-        accessToken: z.string(),
+        accessToken: z.string().optional(),
         data: z.array(dataSchema),
-        kind: z.enum(["error", "success"]),
-        message: z.string(),
-        pages: z.number(),
-        status: z.number(),
-        totalDocuments: z.number(),
-        triggerLogout: z.boolean(),
+        kind: z.enum(["error", "success", "rejected"]),
+        message: z.string().optional(),
+        pages: z.number().optional(),
+        status: z.number().optional(),
+        totalDocuments: z.number().optional(),
+        triggerLogout: z.boolean().optional(),
       });
 
     const { success, data, error } = await responsePayloadSchema(zSchema)
@@ -557,9 +555,32 @@ async function parseResponsePayloadAsyncSafe<Output = unknown>(
         object,
       );
 
-    return success
-      ? createSafeSuccessResult(data)
-      : createSafeErrorResult(error);
+    if (!success) {
+      return createSafeErrorResult(error);
+    }
+
+    const safeData = Object.entries(data).reduce<ResponsePayloadSafe<Data>>(
+      (acc, [key, value]) => {
+        if (key === "data" || key === "kind") {
+          Object.defineProperty(acc, key, {
+            value,
+            ...PROPERTY_DESCRIPTOR,
+          });
+          return acc;
+        }
+
+        Object.defineProperty(acc, key, {
+          value: value == null ? None : Some(value),
+          ...PROPERTY_DESCRIPTOR,
+        });
+
+        console.log("ACC: ", acc);
+        return acc;
+      },
+      Object.create(null),
+    );
+
+    return createSafeSuccessResult(safeData);
   } catch (error_: unknown) {
     return createSafeErrorResult(error_);
   }

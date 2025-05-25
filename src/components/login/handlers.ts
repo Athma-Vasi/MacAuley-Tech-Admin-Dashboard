@@ -171,8 +171,8 @@ async function handleMessageEventLoginFetchWorkerToMain(
       return createSafeErrorResult("Invalid credentials");
     }
 
-    const { parsedServerResponse, decodedToken } = messageEventResult.val.val;
-    const { accessToken, data, triggerLogout } = parsedServerResponse;
+    const { responsePayloadSafe, decodedToken } = messageEventResult.val.val;
+    const { accessToken, data, triggerLogout } = responsePayloadSafe;
 
     if (triggerLogout || decodedToken.none) {
       authDispatch({
@@ -193,13 +193,16 @@ async function handleMessageEventLoginFetchWorkerToMain(
       });
 
       await localforage.clear();
-      navigate("/");
-      return createSafeErrorResult("Session expired");
+      const safeErrorResult = createSafeErrorResult(
+        "Session expired",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
     }
 
     authDispatch({
       action: authAction.setAccessToken,
-      payload: accessToken,
+      payload: accessToken.none ? "" : accessToken.val,
     });
     authDispatch({
       action: authAction.setDecodedToken,
@@ -239,7 +242,9 @@ async function handleMessageEventLoginFetchWorkerToMain(
     }
     if (setCachedItemResult.err) {
       showBoundary(setCachedItemResult);
-      return createSafeErrorResult("Error setting cached item");
+      return createSafeErrorResult(
+        "Error setting cached item",
+      );
     }
 
     loginDispatch({

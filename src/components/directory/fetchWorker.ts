@@ -1,7 +1,7 @@
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
-    HttpServerResponse,
+    ResponsePayloadSafe,
     SafeResult,
     UserDocument,
 } from "../../types";
@@ -27,7 +27,7 @@ type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
         {
             decodedToken: DecodedToken;
             department: DepartmentsWithDefaultKey;
-            parsedServerResponse: HttpServerResponse<UserDocument>;
+            responsePayloadSafe: ResponsePayloadSafe<UserDocument>;
             storeLocation: AllStoreLocations;
         }
     >
@@ -96,7 +96,7 @@ self.onmessage = async (
         }
 
         const jsonResult = await extractJSONFromResponseSafe<
-            HttpServerResponse<UserDocument>
+            ResponsePayloadSafe<UserDocument>
         >(responseResult.val.val);
         if (jsonResult.err) {
             self.postMessage(jsonResult);
@@ -119,13 +119,24 @@ self.onmessage = async (
         }
         if (parsedResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Error parsing server response"),
+                createSafeErrorResult(
+                    "Error parsing server response",
+                ),
             );
             return;
         }
 
         const { accessToken } = parsedResult.val.val;
-        const decodedTokenResult = decodeJWTSafe(accessToken);
+        if (accessToken.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Access token not found in response",
+                ),
+            );
+            return;
+        }
+
+        const decodedTokenResult = decodeJWTSafe(accessToken.val);
         if (decodedTokenResult.err) {
             self.postMessage(decodedTokenResult);
             return;
@@ -141,7 +152,7 @@ self.onmessage = async (
             createSafeSuccessResult({
                 decodedToken: decodedTokenResult.val.val,
                 department,
-                parsedServerResponse: parsedResult.val.val,
+                responsePayloadSafe: parsedResult.val.val,
                 storeLocation,
             }),
         );

@@ -159,6 +159,10 @@ function Register() {
   }, []);
 
   useEffect(() => {
+    if (!username || username.length === 0 || !checkUsernameWorker) {
+      return;
+    }
+
     handleCheckUsername({
       checkUsernameWorker,
       isComponentMountedRef,
@@ -170,6 +174,10 @@ function Register() {
   }, [username]);
 
   useEffect(() => {
+    if (!email || email.length === 0 || !checkEmailWorker) {
+      return;
+    }
+
     handleCheckEmail({
       checkEmailWorker,
       isComponentMountedRef,

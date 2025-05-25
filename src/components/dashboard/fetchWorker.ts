@@ -2,7 +2,7 @@ import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     BusinessMetricsDocument,
     DecodedToken,
-    HttpServerResponse,
+    ResponsePayloadSafe,
     SafeResult,
     UserDocument,
 } from "../../types";
@@ -40,7 +40,7 @@ type MessageEventDashboardFetchWorkerToMain = MessageEvent<
     SafeResult<{
         decodedToken: DecodedToken;
         metricsView: Lowercase<DashboardMetricsView>;
-        parsedServerResponse: HttpServerResponse<BusinessMetricsDocument>;
+        responsePayloadSafe: ResponsePayloadSafe<BusinessMetricsDocument>;
         productMetricCategory: ProductMetricCategory;
         repairMetricCategory: RepairMetricCategory;
         storeLocation: AllStoreLocations;
@@ -102,7 +102,7 @@ self.onmessage = async (
         }
 
         const jsonResult = await extractJSONFromResponseSafe<
-            HttpServerResponse<UserDocument>
+            ResponsePayloadSafe<BusinessMetricsDocument>
         >(responseResult.val.val);
         if (jsonResult.err) {
             self.postMessage(jsonResult);
@@ -125,21 +125,33 @@ self.onmessage = async (
         }
         if (parsedResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Parsed result not found"),
+                createSafeErrorResult(
+                    "Parsed result not found",
+                ),
             );
             return;
         }
 
         const { accessToken } = parsedResult.val.val;
+        if (accessToken.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Access token not found in response",
+                ),
+            );
+            return;
+        }
 
-        const decodedTokenResult = decodeJWTSafe(accessToken);
+        const decodedTokenResult = decodeJWTSafe(accessToken.val);
         if (decodedTokenResult.err) {
             self.postMessage(decodedTokenResult);
             return;
         }
         if (decodedTokenResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Decoded token not found"),
+                createSafeErrorResult(
+                    "Decoded token not found",
+                ),
             );
             return;
         }
@@ -148,7 +160,7 @@ self.onmessage = async (
             createSafeSuccessResult({
                 decodedToken: decodedTokenResult.val.val,
                 metricsView,
-                parsedServerResponse: parsedResult.val.val,
+                responsePayloadSafe: parsedResult.val.val,
                 productMetricCategory,
                 repairMetricCategory,
                 storeLocation,

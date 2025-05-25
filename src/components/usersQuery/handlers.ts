@@ -235,7 +235,7 @@ async function handleUsersQueryOnmessageCallback(
         }
 
         const {
-            parsedServerResponse,
+            responsePayloadSafe,
             decodedToken,
             currentPage,
             newQueryFlag,
@@ -248,7 +248,7 @@ async function handleUsersQueryOnmessageCallback(
             message,
             triggerLogout,
             data: userDocuments,
-        } = parsedServerResponse;
+        } = responsePayloadSafe;
 
         if (triggerLogout) {
             authDispatch({
@@ -275,7 +275,7 @@ async function handleUsersQueryOnmessageCallback(
 
         authDispatch({
             action: authAction.setAccessToken,
-            payload: newAccessToken,
+            payload: newAccessToken.none ? "" : newAccessToken.val,
         });
         authDispatch({
             action: authAction.setDecodedToken,
@@ -345,11 +345,15 @@ async function handleUsersQueryOnmessageCallback(
         });
         usersQueryDispatch({
             action: usersQueryAction.setTotalDocuments,
-            payload: parsedServerResponse.totalDocuments,
+            payload: responsePayloadSafe.totalDocuments.none
+                ? 0
+                : responsePayloadSafe.totalDocuments.val,
         });
         usersQueryDispatch({
             action: usersQueryAction.setPages,
-            payload: parsedServerResponse.pages,
+            payload: responsePayloadSafe.pages.none
+                ? 0
+                : responsePayloadSafe.pages.val,
         });
         usersQueryDispatch({
             action: usersQueryAction.setNewQueryFlag,

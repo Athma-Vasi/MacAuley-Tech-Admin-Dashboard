@@ -1,12 +1,7 @@
 import { None, Option } from "ts-results";
 import { z } from "zod";
 import { FETCH_REQUEST_TIMEOUT } from "../constants";
-import {
-    DecodedToken,
-    HttpServerResponse,
-    SafeResult,
-    UserDocument,
-} from "../types";
+import { DecodedToken, ResponsePayloadSafe, SafeResult } from "../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
@@ -21,7 +16,7 @@ import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
     SafeResult<
         {
-            parsedServerResponse: HttpServerResponse<Data>;
+            responsePayloadSafe: ResponsePayloadSafe<Data>;
             decodedToken: Option<DecodedToken>;
         }
     >
@@ -96,9 +91,9 @@ self.onmessage = async (
             return;
         }
 
-        const jsonResult = await extractJSONFromResponseSafe<
-            HttpServerResponse<UserDocument>
-        >(responseResult.val.val);
+        const jsonResult = await extractJSONFromResponseSafe(
+            responseResult.val.val,
+        );
         if (jsonResult.err) {
             self.postMessage(jsonResult);
             return;
@@ -112,6 +107,8 @@ self.onmessage = async (
             return;
         }
 
+        console.log("jsonResult", jsonResult.val.val);
+
         // if (jsonResult.val.message === "Invalid credentials") {
         //     self.postMessage(
         //         new Ok({ data: None, kind: "success" }),
@@ -119,16 +116,16 @@ self.onmessage = async (
         //     return;
         // }
 
-        const parsedResult = await parseResponsePayloadAsyncSafe({
+        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
             object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-
-        if (parsedResult.err) {
-            self.postMessage(parsedResult);
+        console.log("responsePayloadSafeResult", responsePayloadSafeResult);
+        if (responsePayloadSafeResult.err) {
+            self.postMessage(responsePayloadSafeResult);
             return;
         }
-        if (parsedResult.val.none) {
+        if (responsePayloadSafeResult.val.none) {
             self.postMessage(
                 createSafeErrorResult(
                     "Error parsing server response",
@@ -140,16 +137,28 @@ self.onmessage = async (
         if (skipTokenDecode) {
             self.postMessage(
                 createSafeSuccessResult({
-                    parsedServerResponse: parsedResult.val.val,
+                    responsePayloadSafe: responsePayloadSafeResult.val.val,
                     decodedToken: None,
                 }),
             );
             return;
         }
 
-        const { accessToken } = parsedResult.val.val;
+        console.log(
+            "responsePayloadSafeResult.val.val",
+            responsePayloadSafeResult.val.val,
+        );
 
-        const decodedTokenSafeResult = decodeJWTSafe(accessToken);
+        const responsePayloadSafe = responsePayloadSafeResult.val.val;
+        const { accessToken } = responsePayloadSafe;
+        if (accessToken.none) {
+            self.postMessage(
+                createSafeErrorResult("Access token not found"),
+            );
+            return;
+        }
+
+        const decodedTokenSafeResult = decodeJWTSafe(accessToken.val);
         if (decodedTokenSafeResult.err) {
             self.postMessage(decodedTokenSafeResult);
             return;
@@ -161,9 +170,14 @@ self.onmessage = async (
             return;
         }
 
+        console.log(
+            "decodedTokenSafeResult.val.val",
+            decodedTokenSafeResult.val.val,
+        );
+
         self.postMessage(
             createSafeSuccessResult({
-                parsedServerResponse: parsedResult.val.val,
+                responsePayloadSafe,
                 decodedToken: decodedTokenSafeResult.val,
             }),
         );

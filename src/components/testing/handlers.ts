@@ -1,4 +1,4 @@
-import { HttpServerResponse, UserDocument } from "../../types";
+import { ResponsePayloadSafe, UserDocument } from "../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
@@ -72,7 +72,7 @@ async function postUsersToDB(
         const responseUnwrapped = responseResult.val.val;
 
         const jsonResult = await extractJSONFromResponseSafe<
-            HttpServerResponse<UserDocument>
+            ResponsePayloadSafe<UserDocument>
         >(responseUnwrapped);
 
         if (!isComponentMounted) {
@@ -105,7 +105,7 @@ async function postUsersToDB(
         setIsSubmitting(false);
 
         return createSafeSuccessResult({
-            parsedServerResponse: serverResponse,
+            responsePayloadSafe: serverResponse,
         });
     } catch (error: unknown) {
         return catchHandlerErrorSafe(

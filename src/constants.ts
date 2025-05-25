@@ -672,6 +672,12 @@ const ARRANGE_BY_DIRECTIONS: SortDirection[] = [
 
 const READY_RUN_TEST = false;
 
+const PROPERTY_DESCRIPTOR: PropertyDescriptor = {
+  configurable: false,
+  enumerable: true,
+  writable: true,
+};
+
 export {
   ACCORDION_BREAKPOINT,
   ALL_STORE_LOCATIONS_DATA,
@@ -705,6 +711,7 @@ export {
   OVERLAY_OPACITY,
   PORT,
   PRODUCT_URL,
+  PROPERTY_DESCRIPTOR,
   PROTOCOL,
   PROVINCES,
   READY_RUN_TEST,

@@ -270,7 +270,10 @@ type SafeError = {
   stack: Option<string>;
   original: Option<string>;
 };
-type SafeResult<Data = unknown> = Result<Option<Data>, SafeError>;
+type SafeResult<Data = unknown> = Result<
+  Option<Data>,
+  SafeError
+>;
 
 type ResponseKind = "error" | "success" | "rejected";
 type OptionalPayload = {
@@ -283,7 +286,7 @@ type OptionalPayload = {
 };
 type SuccessPayload<Data = unknown> = Prettify<
   OptionalPayload & {
-    data: Array<NonNullable<Data>>;
+    data: Array<Data>;
     kind: "success"; // or "empty": data = []
   }
 >;
@@ -305,6 +308,17 @@ type ResponsePayload<Data = unknown> =
   | SuccessPayload<Data>
   | ErrorPayload
   | RejectedPayload;
+
+type ResponsePayloadSafe<Data = unknown> = {
+  accessToken: Option<string>;
+  data: Array<Data>;
+  kind: ResponseKind;
+  message: Option<string>;
+  pages: Option<number>;
+  status: Option<number>;
+  totalDocuments: Option<number>;
+  triggerLogout: Option<boolean>;
+};
 
 // type HttpServerResponse<Data = unknown> = Prettify<
 //   Response<ResponsePayload<Data>>
@@ -548,6 +562,7 @@ export type {
   RepairTechnicians,
   ResponseKind,
   ResponsePayload,
+  ResponsePayloadSafe,
   SafeError,
   SafeResult,
   Sales,
