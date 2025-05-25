@@ -105,6 +105,8 @@
 
 .error-card {
   width: var(--card-width);
+  max-height: 90vh;
+  overflow-y: auto;
 
   .error-image {
     width: calc(100% - var(--padding-x2));

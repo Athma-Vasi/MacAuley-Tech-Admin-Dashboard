@@ -414,8 +414,8 @@ function createSafeErrorResult(error: unknown): Err<SafeError> {
   }
 
   return new Err({
-    name: "SimulationDysfunction",
-    message: "You've seen it before. Déjà vu. Something's off...",
+    name: "👾 SimulationDysfunction",
+    message: "🪞 You've seen it before. Déjà vu. Something's off...",
     stack: None,
     original: serializeSafe(error),
   });
@@ -496,7 +496,6 @@ async function setCachedItemAsyncSafe<Data = unknown>(
 
 function parseSyncSafe<Output = unknown>(
   { object, zSchema }: {
-    // object: Record<string, unknown> | Array<Record<string, unknown>>;
     object: Output;
     zSchema: z.ZodSchema;
   },

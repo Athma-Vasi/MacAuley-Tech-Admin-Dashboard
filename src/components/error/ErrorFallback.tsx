@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Card,
   Center,
   Divider,
@@ -16,10 +17,10 @@ import { GoldenGrid } from "../goldenGrid";
 import matrixGif from "./matrix.gif";
 
 function ErrorFallback({
-  safeError,
+  error,
   resetErrorBoundary,
 }: {
-  safeError: Err<SafeError>;
+  error: Err<SafeError>;
   resetErrorBoundary: () => void;
 }) {
   const navigateFn = useNavigate();
@@ -52,54 +53,137 @@ function ErrorFallback({
     </Tooltip>
   );
 
+  const image = (
+    <Image
+      src={matrixGif}
+      alt="Glitch in the matrix"
+      className="error-image"
+      fit="cover"
+      radius="md"
+    />
+  );
+
+  if (!error) {
+    return (
+      <Center h="100vh">
+        <Card shadow="sm" radius="md" withBorder className="error-card">
+          {image}
+
+          <Stack w="100%">
+            <Text size="xl" weight={500} mt="md" align="center">
+              ⚠️ Oops! Something went wrong.
+            </Text>
+
+            <Text color="dimmed" align="center">
+              😵‍💫 No error information available.
+            </Text>
+
+            <Group w="100%" position="apart">
+              {goHomeButtonWithTooltip}
+              {tryAgainButtonWithTooltip}
+            </Group>
+          </Stack>
+        </Card>
+      </Center>
+    );
+  }
+
+  const nameEntry = (
+    <GoldenGrid>
+      <Text>Name:</Text>
+      <Text data-testid={`error-name-${error.val.name}`}>
+        {error.val.name}
+      </Text>
+    </GoldenGrid>
+  );
+
+  const messageEntry = (
+    <GoldenGrid>
+      <Text>Message:</Text>
+      <Text data-testid={`error-message-${error.val.message}`}>
+        {error.val.message}
+      </Text>
+    </GoldenGrid>
+  );
+
+  const stackAccordion = (
+    <Accordion w="100%">
+      <Accordion.Item value="Stack">
+        <Accordion.Control px={0}>
+          <Text weight={500}>Stack</Text>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <Text
+            color="dimmed"
+            data-testid={`error-stack-${error.val.stack}`}
+          >
+            {error.stack}
+          </Text>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+  const stackEntry = error.val.stack.none
+    ? (
+      <GoldenGrid>
+        <Text>Stack:</Text>
+        <Text data-testid={`error-stack-${error.val.stack}`}>
+          {error.val.stack.none
+            ? <Text color="dimmed">No stack available</Text>
+            : <Text>{error.stack}</Text>}
+        </Text>
+      </GoldenGrid>
+    )
+    : stackAccordion;
+
+  const originalAccordion = (
+    <Accordion w="100%">
+      <Accordion.Item value="Original">
+        <Accordion.Control px={0}>
+          <Text weight={500}>Original</Text>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <Text
+            color="dimmed"
+            data-testid={`error-original-${error.val.original}`}
+          >
+            {error.val.original}
+          </Text>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+  const originalEntry = error.val.original.none
+    ? (
+      <GoldenGrid>
+        <Text>Original:</Text>
+        <Text data-testid={`error-original-${error.val.original}`}>
+          {error.val.original.none
+            ? <Text color="dimmed">No original available</Text>
+            : <Text>{error.val.original}</Text>}
+        </Text>
+      </GoldenGrid>
+    )
+    : originalAccordion;
+
   const errorCard = (
     <Card shadow="sm" radius="md" withBorder className="error-card">
-      <Image
-        src={matrixGif}
-        alt="Glitch in the matrix"
-        className="error-image"
-        fit="cover"
-        radius="md"
-      />
+      {image}
 
       <Stack w="100%">
-        <Text size="xl" weight={500} mt="md" align="center">
-          Oops! Something went wrong.
+        <Text size="xl" weight={500} py="lg" align="center">
+          ⚠️ Oops! Something went wrong...
         </Text>
 
-        <GoldenGrid>
-          <Text>Name:</Text>
-          <Text data-testid={`error-name-${safeError.val.name}`}>
-            {safeError.val.name}
-          </Text>
-        </GoldenGrid>
+        {nameEntry}
         <Divider w="100%" />
-        <GoldenGrid>
-          <Text>Message:</Text>
-          <Text data-testid={`error-message-${safeError.val.message}`}>
-            {safeError.val.message}
-          </Text>
-        </GoldenGrid>
+        {messageEntry}
         <Divider w="100%" />
-        <GoldenGrid>
-          <Text>Stack:</Text>
-          <Text data-testid={`error-stack-${safeError.val.stack}`}>
-            {safeError.val.stack.none
-              ? <Text color="dimmed">No stack available</Text>
-              : <Text>{safeError.stack}</Text>}
-          </Text>
-        </GoldenGrid>
+        {stackEntry}
         <Divider w="100%" />
-        <GoldenGrid>
-          <Text>Original:</Text>
-          <Text data-testid={`error-original-${safeError.val.original}`}>
-            {safeError.val.original.none
-              ? <Text color="dimmed">No original available</Text>
-              : <Text>{safeError.val.original}</Text>}
-          </Text>
-        </GoldenGrid>
+        {originalEntry}
 
-        <Group w="100%" position="apart">
+        <Group w="100%" position="apart" pt="xl">
           {goHomeButtonWithTooltip}
           {tryAgainButtonWithTooltip}
         </Group>

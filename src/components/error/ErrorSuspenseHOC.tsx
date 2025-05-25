@@ -1,9 +1,16 @@
 import { Loader } from "@mantine/core";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { Err } from "ts-results";
+import { SafeError } from "../../types";
 import ErrorFallback from "./ErrorFallback";
 
-function ErrorSuspenseHOC<P extends Record<string | symbol | number, unknown>>(
+function ErrorSuspenseHOC<
+  P extends Record<string | symbol | number, unknown> = {
+    safeError: Err<SafeError>;
+    resetErrorBoundary: () => void;
+  },
+>(
   Component: React.ComponentType<P>,
 ) {
   return function ErrorSuspenseHOC(props: P) {
@@ -12,13 +19,13 @@ function ErrorSuspenseHOC<P extends Record<string | symbol | number, unknown>>(
         FallbackComponent={ErrorFallback}
         onReset={(details) => {
           console.group("onReset triggered");
-          console.log({ details });
+          console.log("details", details);
           console.groupEnd();
         }}
         onError={(error, info) => {
           console.group("onError triggered");
-          console.log({ error });
-          console.log({ info });
+          console.log("error", error);
+          console.log("info", info);
           console.groupEnd();
         }}
       >
