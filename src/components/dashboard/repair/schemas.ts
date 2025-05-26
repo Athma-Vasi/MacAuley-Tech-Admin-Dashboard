@@ -185,7 +185,7 @@ const handleMessageEventRepairWorkerToMainInputZod = z.object({
 
 const messageEventRepairMainToWorkerZod = z.object({
     calendarView: z.string(),
-    cardBgGradient: z.string(),
+    grayBorderShade: z.string(),
     greenColorShade: z.string(),
     redColorShade: z.string(),
     repairMetricsDocument: repairMetricsDocumentZod,

@@ -66,10 +66,12 @@ function RepairMetrics(
 
   const { showBoundary } = useErrorBoundary();
 
-  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
+  const { grayBorderShade, redColorShade, greenColorShade } = returnThemeColors(
+    {
+      colorsSwatches: COLORS_SWATCHES,
+      themeObject,
+    },
+  );
 
   const isComponentMountedRef = useMountedRef();
 
@@ -106,7 +108,7 @@ function RepairMetrics(
     repairChartsWorker.postMessage(
       {
         calendarView,
-        cardBgGradient,
+        grayBorderShade,
         greenColorShade,
         redColorShade,
         repairMetricsDocument,

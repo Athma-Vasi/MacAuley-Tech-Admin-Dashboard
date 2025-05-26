@@ -201,6 +201,9 @@ function Dashboard() {
           : <Text>Store Location</Text>,
         name: "storeLocation",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          if (isLoading || isFetching) {
+            return;
+          }
           dashboardDispatch({
             action: dashboardAction.setCurrentSelectedInput,
             payload: "storeLocation",
@@ -242,6 +245,9 @@ function Dashboard() {
           : <Text>Repair Metrics</Text>,
         name: "repairs",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          if (isLoading || isFetching) {
+            return;
+          }
           dashboardDispatch({
             action: dashboardAction.setCurrentSelectedInput,
             payload: "repairs",
@@ -295,6 +301,9 @@ function Dashboard() {
           : <Text>Product Metrics</Text>,
         name: "product metrics",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          if (isLoading || isFetching) {
+            return;
+          }
           dashboardDispatch({
             action: dashboardAction.setCurrentSelectedInput,
             payload: "product metrics",

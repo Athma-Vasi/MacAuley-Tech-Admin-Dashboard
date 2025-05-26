@@ -29,7 +29,7 @@ type MessageEventRepairWorkerToMain = MessageEvent<
 type MessageEventRepairMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
-        cardBgGradient: string;
+        grayBorderShade: string;
         greenColorShade: string;
         repairMetricsDocument: RepairMetricsDocument;
         redColorShade: string;
@@ -67,7 +67,7 @@ self.onmessage = async (
 
     const {
         calendarView,
-        cardBgGradient,
+        grayBorderShade,
         greenColorShade,
         redColorShade,
         repairMetricsDocument,
@@ -147,7 +147,7 @@ self.onmessage = async (
             .val;
 
         const repairMetricsCardsSafeResult = createRepairMetricsCardsSafe({
-            cardBgGradient,
+            grayBorderShade,
             greenColorShade,
             redColorShade,
             selectedDateRepairMetrics,

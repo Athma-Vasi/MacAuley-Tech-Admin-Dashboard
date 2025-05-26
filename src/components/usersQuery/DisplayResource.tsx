@@ -48,20 +48,22 @@ function DisplayResource(
     >({});
     const [keyToHighlight, setKeyToHighlight] = useState<string>("");
 
-    const { themeColorShade, bgGradient, textColor } = returnThemeColors({
-        colorsSwatches: COLORS_SWATCHES,
-        themeObject,
-    });
+    const { grayBorderShade, themeColorShade, bgGradient, textColor } =
+        returnThemeColors({
+            colorsSwatches: COLORS_SWATCHES,
+            themeObject,
+        });
 
     const resourcesCards = (
         <div className="resource-cards-container">
             {resourceData.map((resource, resourceIndex) =>
                 returnResourceCardElement({
-                    resource,
                     arrangeByDirection,
                     arrangeByField,
+                    grayBorderShade,
                     parentAction,
                     parentDispatch,
+                    resource,
                     resourceIndex,
                     textColor,
                     themeColorShade,
@@ -90,13 +92,14 @@ function DisplayResource(
         >
             <div className="resource-cards-container">
                 {returnResourceCardElement({
-                    resource: selectedDocument,
                     arrangeByDirection,
                     arrangeByField,
+                    grayBorderShade,
                     hideIcons: true,
                     keyToHighlight,
                     parentAction,
                     parentDispatch,
+                    resource: selectedDocument,
                     resourceIndex: 0,
                     textColor,
                     themeColorShade,
@@ -170,7 +173,11 @@ function DisplayResource(
                                         ? imageDropdown
                                         : isFieldADate
                                         ? (
-                                            <Text>
+                                            <Text
+                                                key={`${resourceIndex}-${entryIndex}-${key}-${
+                                                    value?.toString() ?? ""
+                                                }`}
+                                            >
                                                 {formatDate({
                                                     date: value?.toString() ??
                                                         "",
@@ -178,7 +185,11 @@ function DisplayResource(
                                             </Text>
                                         )
                                         : (
-                                            <Text>
+                                            <Text
+                                                key={`${resourceIndex}-${entryIndex}-${key}-${
+                                                    value?.toString() ?? ""
+                                                }`}
+                                            >
                                                 {value?.toString() ??
                                                     "Unknown"}
                                             </Text>

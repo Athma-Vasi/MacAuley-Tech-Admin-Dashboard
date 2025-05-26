@@ -12,12 +12,7 @@ import type { ReactNode } from "react";
 import React from "react";
 import { TbFolderCancel, TbFolderOpen } from "react-icons/tb";
 import { INPUT_WIDTH, TEXT_SHADOW } from "../../constants";
-import {
-  addCommaSeparator,
-  formatDate,
-  splitCamelCase,
-  toFixedFloat,
-} from "../../utils";
+import { addCommaSeparator, formatDate, splitCamelCase } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { GoldenGrid } from "../goldenGrid";
 import { MONTHS } from "./constants";
@@ -33,8 +28,8 @@ import { AllStoreLocations, DashboardCalendarView } from "./types";
 import { StatisticsObject } from "./utils";
 
 type DashboardCardInfo = {
-  cardBgGradient: string;
   date?: string;
+  grayBorderShade: string;
   heading?: string;
   icon: ReactNode;
   idx?: number;
@@ -45,8 +40,8 @@ type DashboardCardInfo = {
 };
 function returnDashboardCardElement(
   {
-    cardBgGradient,
     date,
+    grayBorderShade,
     heading,
     icon,
     idx,
@@ -97,6 +92,8 @@ function returnDashboardCardElement(
     <div
       className={`statistics-card c${idx ?? 0} ${isActive ? "active" : ""}`}
       data-testid={`statistics-card-${heading}`}
+      // style={{ border: `1px solid ${grayBorderShade}` }}
+      style={{ border: "1px solid gray" }}
     >
       {cardHeading}
       {cardBody}
@@ -108,9 +105,9 @@ function returnDashboardCardElement(
 }
 
 type CreateDashboardMetricsCardsInput = {
-  cardBgGradient: string;
   currentMonth: string;
   currentYear: string;
+  grayBorderShade: string;
   greenColorShade: string;
   heading: string;
   isDisplayValueAsCurrency?: boolean;

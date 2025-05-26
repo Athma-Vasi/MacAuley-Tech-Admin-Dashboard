@@ -490,7 +490,7 @@ const selectedDateCustomerMetricsZod = z.object({
 
 const messageEventCustomerMainToWorkerZod = z.object({
     calendarView: z.string(),
-    cardBgGradient: z.string(),
+    grayBorderShade: z.string(),
     customerMetricsDocument: customerMetricsDocumentZod,
     greenColorShade: z.string(),
     redColorShade: z.string(),

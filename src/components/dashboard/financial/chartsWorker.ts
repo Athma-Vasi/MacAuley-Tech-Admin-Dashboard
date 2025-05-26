@@ -32,7 +32,7 @@ type MessageEventFinancialWorkerToMain = MessageEvent<
 type MessageEventFinancialMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
-        cardBgGradient: string;
+        grayBorderShade: string;
         greenColorShade: string;
         financialMetricsDocument: FinancialMetricsDocument;
         redColorShade: string;
@@ -70,7 +70,7 @@ self.onmessage = async (
 
     const {
         calendarView,
-        cardBgGradient,
+        grayBorderShade,
         greenColorShade,
         redColorShade,
         financialMetricsDocument,
@@ -151,7 +151,7 @@ self.onmessage = async (
 
         const financialMetricsCardsSafeResult = createFinancialMetricsCardsSafe(
             {
-                cardBgGradient,
+                grayBorderShade,
                 greenColorShade,
                 redColorShade,
                 selectedDateFinancialMetrics,

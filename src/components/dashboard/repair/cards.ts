@@ -10,7 +10,7 @@ import type { SelectedDateRepairMetrics } from "./chartsData";
 import { RepairSubMetric } from "./types";
 
 type createRepairMetricsCardsInput = {
-  cardBgGradient: string;
+  grayBorderShade: string;
   greenColorShade: string;
   redColorShade: string;
   selectedDateRepairMetrics: SelectedDateRepairMetrics;
@@ -23,8 +23,12 @@ type RepairMetricsCards = {
 };
 
 function createRepairMetricsCardsSafe(
-  { cardBgGradient, greenColorShade, redColorShade, selectedDateRepairMetrics }:
-    createRepairMetricsCardsInput,
+  {
+    grayBorderShade,
+    greenColorShade,
+    redColorShade,
+    selectedDateRepairMetrics,
+  }: createRepairMetricsCardsInput,
 ): SafeResult<RepairMetricsCards> {
   if (!selectedDateRepairMetrics) {
     return createSafeErrorResult(
@@ -65,9 +69,9 @@ function createRepairMetricsCardsSafe(
     const prevDay = prevDayMetrics.day;
 
     const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
-      cardBgGradient,
       currentMonth,
       currentYear,
+      grayBorderShade,
       greenColorShade,
       heading: "Revenue",
       kind: "day",

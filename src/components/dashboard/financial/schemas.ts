@@ -435,7 +435,7 @@ const handleMessageEventFinancialWorkerToMainInputZod = z.object({
 
 const messageEventFinancialMainToWorkerZod = z.object({
     calendarView: z.string(),
-    cardBgGradient: z.string(),
+    grayBorderShade: z.string(),
     financialMetricsDocument: financialMetricsDocumentZod,
     greenColorShade: z.string(),
     redColorShade: z.string(),

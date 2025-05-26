@@ -68,10 +68,12 @@ function CustomerMetrics(
 
   const { showBoundary } = useErrorBoundary();
 
-  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
+  const { grayBorderShade, redColorShade, greenColorShade } = returnThemeColors(
+    {
+      colorsSwatches: COLORS_SWATCHES,
+      themeObject,
+    },
+  );
 
   const isComponentMountedRef = useMountedRef();
 
@@ -83,7 +85,7 @@ function CustomerMetrics(
     customerChartsWorker.postMessage(
       {
         calendarView,
-        cardBgGradient,
+        grayBorderShade,
         customerMetricsDocument,
         greenColorShade,
         redColorShade,

@@ -29,7 +29,7 @@ type MessageEventCustomerWorkerToMain = MessageEvent<
 type MessageEventCustomerMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
-        cardBgGradient: string;
+        grayBorderShade: string;
         greenColorShade: string;
         customerMetricsDocument: CustomerMetricsDocument;
         redColorShade: string;
@@ -67,7 +67,7 @@ self.onmessage = async (
 
     const {
         calendarView,
-        cardBgGradient,
+        grayBorderShade,
         greenColorShade,
         redColorShade,
         customerMetricsDocument,
@@ -149,7 +149,7 @@ self.onmessage = async (
 
         const customerMetricsCardsSafeResult = createCustomerMetricsCardsSafe(
             {
-                cardBgGradient,
+                grayBorderShade,
                 greenColorShade,
                 redColorShade,
                 selectedDateCustomerMetrics,

@@ -67,10 +67,12 @@ function FinancialMetrics(
   } = useGlobalState();
   const { showBoundary } = useErrorBoundary();
 
-  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
+  const { grayBorderShade, redColorShade, greenColorShade } = returnThemeColors(
+    {
+      colorsSwatches: COLORS_SWATCHES,
+      themeObject,
+    },
+  );
 
   const isComponentMountedRef = useMountedRef();
 
@@ -82,7 +84,7 @@ function FinancialMetrics(
     financialChartsWorker.postMessage(
       {
         calendarView,
-        cardBgGradient,
+        grayBorderShade,
         financialMetricsDocument,
         greenColorShade,
         redColorShade,

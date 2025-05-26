@@ -230,7 +230,7 @@ function returnThemeColors({
 
   // all color shades
   const grayColorShade = gray[colorShade];
-  const grayBorderShade = colorScheme === "light" ? gray[2] : gray[8];
+  const grayBorderShade = colorScheme === "light" ? gray[5] : gray[8];
   const redColorShade = red[colorShade];
   const greenColorShade = green[colorShade];
   const cyanColorShade = cyan[colorShade];

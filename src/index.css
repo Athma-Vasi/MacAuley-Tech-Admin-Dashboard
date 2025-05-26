@@ -1,10 +1,9 @@
 :root {
   --border-radius: 0.38em;
-  --border: 1px solid hsla(0, 0%, 0%, 0.17);
   --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.17);
   --column-gap: 1em;
   --entry-odd-background: hsla(0, 0%, 0%, 0.04);
-  --hover-transform-scale: 1.015;
+  --hover-transform-scale: 1.005;
   --padding-x2: 2em;
   --padding: 1em;
   --row-gap: 1em;
@@ -276,7 +275,6 @@
 
   .resource {
     border-radius: var(--border-radius);
-    border: var(--border);
     display: flex;
     flex-direction: column;
     gap: var(--padding);
@@ -345,7 +343,6 @@
     .chart-controls-card {
       align-items: center;
       border-radius: var(--border-radius);
-      border: var(--border);
       display: flex;
       flex-direction: column;
       gap: var(--padding);
@@ -368,7 +365,6 @@
     .statistics-card {
       align-items: flex-start;
       border-radius: var(--border-radius);
-      border: var(--border);
       display: flex;
       flex-direction: column;
       height: var(--grid-item-height);
@@ -380,7 +376,6 @@
 
     .chart-card {
       border-radius: var(--border-radius);
-      border: var(--border);
       display: grid;
       place-items: center;
       width: 100%;
@@ -390,10 +385,6 @@
         height: var(--chart-height);
         width: var(--chart-width);
       }
-    }
-    .chart-card:hover {
-      box-shadow: var(--box-shadow);
-      transform: scale(var(--hover-transform-scale));
     }
   }
 }

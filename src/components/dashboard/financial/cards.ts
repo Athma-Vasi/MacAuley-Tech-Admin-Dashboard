@@ -18,7 +18,7 @@ import {
 } from "./types";
 
 type CreateFinancialMetricsCardsInput = {
-  cardBgGradient: string;
+  grayBorderShade: string;
   greenColorShade: string;
   redColorShade: string;
   selectedDateFinancialMetrics: SelectedDateFinancialMetrics;
@@ -50,6 +50,7 @@ type FinancialMetricsCards = {
 
 function createFinancialMetricsCardsSafe(
   {
+    grayBorderShade,
     greenColorShade,
     redColorShade,
     selectedDateFinancialMetrics,
@@ -106,7 +107,7 @@ function createFinancialMetricsCardsSafe(
     const prevDay = prevDayMetrics.day;
 
     const DASHBOARD_CARD_TEMPLATE: CreateDashboardMetricsCardsInput = {
-      cardBgGradient: "",
+      grayBorderShade,
       currentMonth,
       currentYear,
       greenColorShade,

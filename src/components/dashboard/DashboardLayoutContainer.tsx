@@ -41,7 +41,7 @@ function DashboardLayoutContainer(
   }: DashboardLayoutContainerProps,
 ) {
   const { globalState: { themeObject } } = useGlobalState();
-  const { bgGradient } = returnThemeColors({
+  const { bgGradient, grayBorderShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -56,40 +56,58 @@ function DashboardLayoutContainer(
 
   const pieChartCard = pieChart
     ? (
-      <div className="chart-card pie">
+      <div
+        className="chart-card pie"
+        style={{ border: `1px solid ${grayBorderShade}` }}
+      >
         {pieChart}
       </div>
     )
     : null;
 
   const barChartCard = (
-    <div className="chart-card bar">
+    <div
+      className="chart-card bar"
+      style={{ border: `1px solid ${grayBorderShade}` }}
+    >
       {barChart}
     </div>
   );
 
   const calendarChartCard = calendarChart
     ? (
-      <div className="chart-card calendar">
+      <div
+        className="chart-card calendar"
+        style={{ border: `1px solid ${grayBorderShade}` }}
+      >
         {calendarChart}
       </div>
     )
     : null;
 
   const lineChartCard = (
-    <div className="chart-card line">
+    <div
+      className="chart-card line"
+      style={{ border: `1px solid ${grayBorderShade}` }}
+    >
       {lineChart}
     </div>
   );
 
   const radialChartCard = (
-    <div className="chart-card radial">
+    <div
+      className="chart-card radial"
+      style={{ border: `1px solid ${grayBorderShade}` }}
+    >
       {radialChart}
     </div>
   );
 
   const yAxisKeyChartHeadingTitle = (
-    <div className="chart-titles" data-testid="chart-titles">
+    <div
+      className="chart-titles"
+      data-testid="chart-titles"
+    >
       {yAxisKeyChartHeading?.split(" ").map((word, idx) => (
         <Title order={5} size={24} key={`${idx}-${word}-${calendarView}`}>
           {word}
@@ -99,7 +117,11 @@ function DashboardLayoutContainer(
   );
 
   const yAxisKeyControlsCard = (
-    <div className="chart-controls-card" data-testid="chart-controls-card">
+    <div
+      className="chart-controls-card"
+      data-testid="chart-controls-card"
+      style={{ border: `1px solid ${grayBorderShade}` }}
+    >
       <Group w="100%" position="left">
         <Text size={24} weight={500}>Data Mapping</Text>
       </Group>

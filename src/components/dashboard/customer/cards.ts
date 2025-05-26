@@ -14,7 +14,7 @@ import type {
 import { CustomerNewReturningYAxisKey } from "./types";
 
 type CreateCustomerMetricsCardsInput = {
-  cardBgGradient: string;
+  grayBorderShade: string;
   greenColorShade: string;
   redColorShade: string;
   selectedDateCustomerMetrics: SelectedDateCustomerMetrics;
@@ -46,7 +46,7 @@ type CustomerMetricsCards = {
 
 function createCustomerMetricsCardsSafe(
   {
-    cardBgGradient,
+    grayBorderShade,
     greenColorShade,
     redColorShade,
     selectedDateCustomerMetrics,
@@ -104,7 +104,7 @@ function createCustomerMetricsCardsSafe(
 
     const DASHBOARD_CARD_INFO_INPUT_TEMPLATE: CreateDashboardMetricsCardsInput =
       {
-        cardBgGradient,
+        grayBorderShade,
         currentMonth,
         currentYear,
         greenColorShade,

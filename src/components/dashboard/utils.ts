@@ -3858,23 +3858,25 @@ function returnSelectedCalendarCharts<
     : defaultValue;
 }
 
-function createDashboardMetricsCards({
-  cardBgGradient,
-  currentMonth,
-  currentYear,
-  greenColorShade,
-  heading,
-  isDisplayValueAsCurrency = false,
-  isDisplayValueAsPercentage = false,
-  isFlipColor = false,
-  kind,
-  prevDay,
-  prevMonth,
-  prevValue,
-  prevYear,
-  redColorShade,
-  selectedValue,
-}: CreateDashboardMetricsCardsInput): DashboardCardInfo {
+function createDashboardMetricsCards(
+  {
+    currentMonth,
+    currentYear,
+    grayBorderShade,
+    greenColorShade,
+    heading,
+    isDisplayValueAsCurrency = false,
+    isDisplayValueAsPercentage = false,
+    isFlipColor = false,
+    kind,
+    prevDay,
+    prevMonth,
+    prevValue,
+    prevYear,
+    redColorShade,
+    selectedValue,
+  }: CreateDashboardMetricsCardsInput,
+): DashboardCardInfo {
   const deltaPercentage = toFixedFloat(
     ((selectedValue - prevValue) / prevValue) * 100,
     2,
@@ -3916,8 +3918,8 @@ function createDashboardMetricsCards({
     } ${isDisplayValueAsCurrency ? "CAD" : ""}`;
 
   return {
-    cardBgGradient,
     date,
+    grayBorderShade,
     heading,
     icon: null,
     percentage: deltaFormatted,

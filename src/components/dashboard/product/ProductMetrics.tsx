@@ -68,10 +68,12 @@ function ProductMetrics(
   const { showBoundary } = useErrorBoundary();
   const isComponentMountedRef = useMountedRef();
 
-  const { cardBgGradient, redColorShade, greenColorShade } = returnThemeColors({
-    colorsSwatches: COLORS_SWATCHES,
-    themeObject,
-  });
+  const { grayBorderShade, redColorShade, greenColorShade } = returnThemeColors(
+    {
+      colorsSwatches: COLORS_SWATCHES,
+      themeObject,
+    },
+  );
 
   useEffect(() => {
     if (!productChartsWorker || !productMetricsDocument) {
@@ -81,9 +83,9 @@ function ProductMetrics(
     productChartsWorker.postMessage(
       {
         calendarView,
-        cardBgGradient,
-        productMetricsDocument,
+        grayBorderShade,
         greenColorShade,
+        productMetricsDocument,
         redColorShade,
         selectedDate,
         selectedMonth,

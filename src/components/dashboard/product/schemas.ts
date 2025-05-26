@@ -242,7 +242,7 @@ const handleMessageEventProductWorkerToMainInputZod = z.object({
 
 const messageEventProductMainToWorkerZod = z.object({
     calendarView: z.string(),
-    cardBgGradient: z.string(),
+    grayBorderShade: z.string(),
     greenColorShade: z.string(),
     productMetricsDocument: productMetricsDocumentZod,
     redColorShade: z.string(),

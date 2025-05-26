@@ -128,7 +128,7 @@ function returnImageDropdown(
         alt?: string;
         fit?: ImageProps["fit"];
         height?: number;
-        key: string;
+        key?: string;
         radius?: number;
         src: string;
         truncate?: boolean;
@@ -178,6 +178,7 @@ function returnResourceCardElement(
     {
         arrangeByDirection,
         arrangeByField,
+        grayBorderShade,
         hideIcons = false,
         keyToHighlight,
         parentAction,
@@ -189,6 +190,7 @@ function returnResourceCardElement(
     }: {
         arrangeByDirection: SortDirection;
         arrangeByField: string;
+        grayBorderShade: string;
         hideIcons?: boolean;
         keyToHighlight?: string;
         parentAction: Record<string, string>;
@@ -200,7 +202,10 @@ function returnResourceCardElement(
     },
 ) {
     return (
-        <div className="resource">
+        <div
+            className="resource"
+            style={{ border: `1px solid ${grayBorderShade}` }}
+        >
             {Object.entries(resource).map(
                 ([key, value], entryIndex) => {
                     const isFieldAnImageUrl = RESOURCES_IMAGE_URL_FIELDS

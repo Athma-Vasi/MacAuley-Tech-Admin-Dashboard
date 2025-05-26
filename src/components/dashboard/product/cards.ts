@@ -13,7 +13,7 @@ import type {
 import { ProductSubMetric } from "./types";
 
 type createProductMetricsCardsInput = {
-  cardBgGradient: string;
+  grayBorderShade: string;
   greenColorShade: string;
   redColorShade: string;
   selectedDateProductMetrics: SelectedDateProductMetrics;
@@ -36,7 +36,7 @@ type ProductMetricsCards = {
 
 function createProductMetricsCardsSafe(
   {
-    cardBgGradient,
+    grayBorderShade,
     greenColorShade,
     redColorShade,
     selectedDateProductMetrics,
@@ -82,9 +82,9 @@ function createProductMetricsCardsSafe(
 
     const DASHBOARD_CARD_INFO_INPUT_TEMPLATE: CreateDashboardMetricsCardsInput =
       {
-        cardBgGradient,
         currentMonth,
         currentYear,
+        grayBorderShade,
         greenColorShade,
         heading: "Total",
         kind: "day",
