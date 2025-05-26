@@ -107,8 +107,6 @@ self.onmessage = async (
             return;
         }
 
-        console.log("jsonResult", jsonResult.val.val);
-
         // if (jsonResult.val.message === "Invalid credentials") {
         //     self.postMessage(
         //         new Ok({ data: None, kind: "success" }),
@@ -120,7 +118,6 @@ self.onmessage = async (
             object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        console.log("responsePayloadSafeResult", responsePayloadSafeResult);
         if (responsePayloadSafeResult.err) {
             self.postMessage(responsePayloadSafeResult);
             return;
@@ -144,11 +141,6 @@ self.onmessage = async (
             return;
         }
 
-        console.log(
-            "responsePayloadSafeResult.val.val",
-            responsePayloadSafeResult.val.val,
-        );
-
         const responsePayloadSafe = responsePayloadSafeResult.val.val;
         const { accessToken } = responsePayloadSafe;
         if (accessToken.none) {
@@ -169,11 +161,6 @@ self.onmessage = async (
             );
             return;
         }
-
-        console.log(
-            "decodedTokenSafeResult.val.val",
-            decodedTokenSafeResult.val.val,
-        );
 
         self.postMessage(
             createSafeSuccessResult({

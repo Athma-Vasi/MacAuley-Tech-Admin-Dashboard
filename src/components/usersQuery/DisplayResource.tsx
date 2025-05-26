@@ -159,7 +159,9 @@ function DisplayResource(
                                         );
 
                                     const imageDropdown = returnImageDropdown({
-                                        key: `${resourceIndex}-${entryIndex}-${key}`,
+                                        key: `${resourceIndex}-${entryIndex}-${key}-${
+                                            value?.toString() ?? ""
+                                        }`,
                                         src: value?.toString() ?? "",
                                         truncate: true,
                                     });
@@ -168,9 +170,7 @@ function DisplayResource(
                                         ? imageDropdown
                                         : isFieldADate
                                         ? (
-                                            <Text
-                                                key={`${resourceIndex}-${entryIndex}-${key}`}
-                                            >
+                                            <Text>
                                                 {formatDate({
                                                     date: value?.toString() ??
                                                         "",
@@ -178,9 +178,7 @@ function DisplayResource(
                                             </Text>
                                         )
                                         : (
-                                            <Text
-                                                key={`${resourceIndex}-${entryIndex}-${key}`}
-                                            >
+                                            <Text>
                                                 {value?.toString() ??
                                                     "Unknown"}
                                             </Text>
@@ -188,7 +186,9 @@ function DisplayResource(
 
                                     return (
                                         <td
-                                            key={`${resourceIndex}-${entryIndex}-${key}`}
+                                            key={`${resourceIndex}-${entryIndex}-${key}-${
+                                                value?.toString() ?? ""
+                                            }`}
                                         >
                                             <div
                                                 className="table-value"

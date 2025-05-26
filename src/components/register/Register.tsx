@@ -188,8 +188,6 @@ function Register() {
     });
   }, [email]);
 
-  console.log("registerState", registerState);
-
   const {
     bgGradient,
     cardBgGradient,
@@ -223,7 +221,6 @@ function Register() {
             registerState,
             showBoundary,
           });
-          console.log("result", result);
         },
       }}
     />

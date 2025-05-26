@@ -513,7 +513,6 @@ async function handleImageQualityOrientationSliderChange<
     },
 ): Promise<SafeResult<string>> {
     try {
-        console.log("handleImageQualityOrientationSliderChange");
         const parsedInputResult = parseSyncSafe({
             object: input,
             zSchema: handleImageQualityOrientationSliderChangeInputZod,

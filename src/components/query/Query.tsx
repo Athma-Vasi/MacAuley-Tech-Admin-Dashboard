@@ -55,8 +55,6 @@ function Query({
         sortField,
     } = queryState;
 
-    console.log("queryState", queryState);
-
     // this components output is the query string used to fetch data
     // and the newQueryFlag is set to true whenever the query string changes
     useEffect(() => {

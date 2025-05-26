@@ -167,10 +167,6 @@ test.describe("UsersQuery", async () => {
                         logicalOperator,
                         value,
                     }) => {
-                        console.log(
-                            `----- field: ${field}, comparisonOperator: ${comparisonOperator}, value: ${value}`,
-                        );
-
                         const filterLogicalOperatorSelectInput = page
                             .getByTestId(
                                 "filterLogicalOperator-selectInput",
@@ -252,10 +248,6 @@ test.describe("UsersQuery", async () => {
             await Promise.all(
                 sortPermutations.slice(0, 1).map(
                     async ({ field, value }) => {
-                        console.log(
-                            `----- field: ${field}, value: ${value}`,
-                        );
-
                         const queryKindSelectInput = page.getByTestId(
                             "queryKind-selectInput",
                         );
@@ -325,10 +317,6 @@ test.describe("UsersQuery", async () => {
                         generalSearchExclusionValue,
                         generalSearchInclusionValue,
                     }) => {
-                        console.log(
-                            `----- generalSearchCase: ${generalSearchCase}, generalSearchExclusionValue: ${generalSearchExclusionValue}, generalSearchInclusionValue: ${generalSearchInclusionValue}`,
-                        );
-
                         const queryKindSelectInput = page.getByTestId(
                             "queryKind-selectInput",
                         );
@@ -388,8 +376,6 @@ test.describe("UsersQuery", async () => {
             await Promise.all(
                 projectionPermutations.slice(0, 1).map(
                     async (field) => {
-                        console.log(`----- field: ${field}`);
-
                         const queryKindSelectInput = page.getByTestId(
                             "queryKind-selectInput",
                         );

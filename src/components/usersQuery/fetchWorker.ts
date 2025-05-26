@@ -128,11 +128,6 @@ self.onmessage = async (
             return;
         }
 
-        console.log(
-            "usersQueryWorker: responsePayloadSafeResult.val.val",
-            responsePayloadSafeResult.val.val,
-        );
-
         const { accessToken } = responsePayloadSafeResult.val.val;
         if (accessToken.none) {
             self.postMessage(

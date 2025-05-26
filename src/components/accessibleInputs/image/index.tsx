@@ -393,10 +393,6 @@ function AccessibleImageInput<
                             //     },
                             // );
 
-                            console.log(
-                                "handleImageQualityOrientationSliderChange onChange",
-                            );
-
                             await handleImageQualityOrientationSliderChange({
                                 accessibleImageInputDispatch,
                                 currentImageIndex: index,
@@ -411,11 +407,6 @@ function AccessibleImageInput<
                                 showBoundary,
                                 storageKey,
                                 validValueAction,
-                            }).then((result) => {
-                                console.log(
-                                    "handleImageQualityOrientationSliderChange result",
-                                    result,
-                                );
                             });
                         },
                         sliderDefaultValue: 1,

@@ -61,8 +61,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
 
   const isComponentMountedRef = useMountedRef();
 
-  console.log("globalState in sidebar:", globalState);
-
   const {
     themeObject,
     productMetricCategory,
@@ -321,8 +319,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             showBoundary,
             toLocation: "/dashboard/directory",
             storeLocation: "All Locations",
-          }).then((result) => {
-            console.log("handleDirectoryNavClick result:", result);
           });
 
           setOpened(false);
@@ -394,8 +390,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
             logoutFetchWorker,
             logoutUrl: LOGOUT_URL,
             showBoundary,
-          }).then((result) => {
-            console.log("handleLogoutClick result:", result);
           });
         },
       }}

@@ -368,25 +368,6 @@ function splitWordIntoUpperCasedSentence(sentence: string): string {
     .join(" ");
 }
 
-type UrlBuilderInput = {
-  protocol?: string;
-  host?: string;
-  port?: string;
-  path?: string;
-  query?: string;
-  hash?: string;
-};
-function urlBuilder({
-  hash = "",
-  host = "localhost",
-  path = "",
-  port = "5500",
-  protocol = "http",
-  query = "",
-}: UrlBuilderInput): URL {
-  return new URL(`${protocol}://${host}:${port}/api/v1/${path}${query}${hash}`);
-}
-
 function createSafeSuccessResult<Data = unknown>(
   data: Data,
 ): Ok<Option<NonNullable<Data>>> {
@@ -601,6 +582,7 @@ async function parseResponsePayloadAsyncSafe<Data = unknown, Output = unknown>(
 
     const safeData = Object.entries(data).reduce<ResponsePayloadSafe<Data>>(
       (acc, [key, value]) => {
+        // always present entries
         if (key === "data" || key === "kind") {
           Object.defineProperty(acc, key, {
             value,
@@ -609,12 +591,12 @@ async function parseResponsePayloadAsyncSafe<Data = unknown, Output = unknown>(
           return acc;
         }
 
+        // optional entries
         Object.defineProperty(acc, key, {
           value: value == null ? None : Some(value),
           ...PROPERTY_DESCRIPTOR,
         });
 
-        console.log("ACC: ", acc);
         return acc;
       },
       Object.create(null),
@@ -713,67 +695,6 @@ function createMetricsForageKey(
   }`;
 }
 
-function hexToHSL(
-  hex: string,
-  returnKind: "string" | "object",
-): string | { h: number; s: number; l: number } {
-  // Remove the '#' if present
-  let hex_ = hex.replace(/^#/, "");
-
-  // Parse the hex color into RGB components
-  let r = parseInt(hex_.substring(0, 2), 16) / 255;
-  let g = parseInt(hex_.substring(2, 4), 16) / 255;
-  let b = parseInt(hex_.substring(4, 6), 16) / 255;
-
-  // Find min and max values to calculate lightness
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-
-  let h = 0, s, l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0; // Achromatic (no saturation)
-  } else {
-    const d = max - min;
-
-    // Saturation calculation
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-    // Hue calculation
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-
-  // Convert to percentage
-  h = Math.round(h * 360);
-  s = Math.round(s * 100);
-  l = Math.round(l * 100);
-
-  return returnKind === "string" ? `hsl(${h}, ${s}%, ${l}%)` : { h, s, l };
-}
-
-function debounce<T extends (...args: any[]) => void>(
-  func: T,
-  delay: number,
-): T {
-  let timer: ReturnType<typeof setTimeout>;
-
-  return function (this: any, ...args: any[]) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func.apply(this, args), delay);
-  } as T;
-}
-
 export {
   addCommaSeparator,
   capitalizeJoinWithAnd,
@@ -785,13 +706,11 @@ export {
   createSafeErrorResult,
   createSafeSuccessResult,
   createUsersURLCacheKey,
-  debounce,
   decodeJWTSafe,
   extractJSONFromResponseSafe,
   fetchResponseSafe,
   formatDate,
   getCachedItemAsyncSafe,
-  hexToHSL,
   modifyImageSafe,
   parseResponsePayloadAsyncSafe,
   parseSyncSafe,
@@ -804,6 +723,5 @@ export {
   splitCamelCase,
   splitWordIntoUpperCasedSentence,
   toFixedFloat,
-  urlBuilder,
 };
 export type { ModifyImageSafe };
