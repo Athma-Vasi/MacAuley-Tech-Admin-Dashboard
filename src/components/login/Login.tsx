@@ -31,7 +31,9 @@ import {
   handleLoginClick,
   handleMessageEventLoginFetchWorkerToMain,
 } from "./handlers";
+import ProductMetricsWorker from "./productMetricsWorker?worker";
 import { loginReducer } from "./reducers";
+import RepairMetricsWorker from "./repairMetricsWorker?worker";
 import { initialLoginState } from "./state";
 
 function Login() {
@@ -82,12 +84,10 @@ function Login() {
 
   useEffect(() => {
     const newCustomerMetricsWorker = new CustomerMetricsWorker();
-
     loginDispatch({
       action: loginAction.setCustomerMetricsWorker,
       payload: newCustomerMetricsWorker,
     });
-
     newCustomerMetricsWorker.onmessage = async (
       event: MessageEvent,
     ) => {
@@ -99,8 +99,41 @@ function Login() {
       console.log("Customer metrics worker data:", event.data.val.val);
     };
 
+    const newProductMetricsWorker = new ProductMetricsWorker();
+    loginDispatch({
+      action: loginAction.setProductMetricsWorker,
+      payload: newProductMetricsWorker,
+    });
+    newProductMetricsWorker.onmessage = async (
+      event: MessageEvent,
+    ) => {
+      if (event.data.err || event.data.val.none) {
+        console.error("Error in product metrics worker:", event.data);
+        return;
+      }
+
+      console.log("Product metrics worker data:", event.data.val.val);
+    };
+
+    const newRepairMetricsWorker = new RepairMetricsWorker();
+    loginDispatch({
+      action: loginAction.setRepairMetricsWorker,
+      payload: newRepairMetricsWorker,
+    });
+    newRepairMetricsWorker.onmessage = async (
+      event: MessageEvent,
+    ) => {
+      if (event.data.err || event.data.val.none) {
+        console.error("Error in repair metrics worker:", event.data);
+        return;
+      }
+      console.log("Repair metrics worker data:", event.data.val.val);
+    };
+
     return () => {
       newCustomerMetricsWorker.terminate();
+      newProductMetricsWorker.terminate();
+      newRepairMetricsWorker.terminate();
       isComponentMountedRef.current = false;
     };
   }, []);
@@ -112,6 +145,22 @@ function Login() {
 
     customerMetricsWorker.postMessage(true);
   }, [customerMetricsWorker]);
+
+  useEffect(() => {
+    if (!productMetricsWorker) {
+      return;
+    }
+
+    productMetricsWorker.postMessage(true);
+  }, [productMetricsWorker]);
+
+  useEffect(() => {
+    if (!repairMetricsWorker) {
+      return;
+    }
+
+    repairMetricsWorker.postMessage(true);
+  }, [repairMetricsWorker]);
 
   useEffect(() => {
     const newFetchParseWorker = new FetchParseWorker();

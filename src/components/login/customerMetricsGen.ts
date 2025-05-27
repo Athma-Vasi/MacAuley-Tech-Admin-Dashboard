@@ -110,6 +110,12 @@ function createRandomCustomerMetricsSafe({
     daysInMonthsInYears: DaysInMonthsInYears;
     storeLocation: StoreLocation;
 }): SafeResult<CustomerMetrics> {
+    console.group("createRandomCustomerMetricsSafe");
+    console.log(
+        `Generating random customer metrics for ${storeLocation}`,
+    );
+    console.log("daysInMonthsInYears", daysInMonthsInYears);
+    console.groupEnd();
     /**
      * churn rate spread between [min, max] per year
      * @see https://customergauge.com/blog/average-churn-rate-by-industry

@@ -1,7 +1,7 @@
 import { SafeResult, StoreLocation } from "../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../utils";
+import { PRODUCT_CATEGORIES } from "../dashboard/constants";
 import {
-    BusinessMetric,
     DaysInMonthsInYears,
     LocationYearSpread,
     ProductCategory,
@@ -123,13 +123,11 @@ function createProductCategoryUnitsRevenueTuple({
   }
  */
 
-function createRandomProductMetrics({
+function createRandomProductMetricsSafe({
     daysInMonthsInYears,
-    productCategories,
     storeLocation,
 }: {
     daysInMonthsInYears: DaysInMonthsInYears;
-    productCategories: ProductCategory[];
     storeLocation: StoreLocation;
 }): SafeResult<ProductMetric[]> {
     /**
@@ -215,7 +213,7 @@ function createRandomProductMetrics({
     };
 
     try {
-        const randomProductMetrics = productCategories.map(
+        const randomProductMetrics = PRODUCT_CATEGORIES.map(
             (productCategory) => {
                 const yearlyProductMetrics = Array.from(daysInMonthsInYears)
                     .map(
@@ -439,7 +437,7 @@ function createRandomProductMetrics({
 /**
  * - aggregate product metrics for each store location into 'All Products' metrics
  */
-function createAggregatedProductMetrics(
+function createAllProductsAggregatedProductMetricsSafe(
     productMetrics: Omit<ProductMetric[], "All Products">,
 ): SafeResult<ProductMetric> {
     const PRODUCT_METRIC_TEMPLATE: ProductMetric = {
@@ -692,46 +690,16 @@ function createAggregatedProductMetrics(
 /**
  * - aggregate all store locations' product metrics into a separate 'All Locations' store
  */
-function createAllLocationsAggregatedProductMetrics(
-    businessMetrics: BusinessMetric[],
+function createAllLocationsAggregatedProductMetricsSafe(
+    { calgaryProductMetrics, edmontonProductMetrics, vancouverProductMetrics }:
+        {
+            calgaryProductMetrics: ProductMetric[];
+            edmontonProductMetrics: ProductMetric[];
+            vancouverProductMetrics: ProductMetric[];
+        },
 ): SafeResult<ProductMetric[]> {
-    // find all product metrics for each store location
-    const initialProductMetrics: Record<string, ProductMetric[]> = {
-        edmontonProductMetrics: [],
-        calgaryProductMetrics: [],
-        vancouverProductMetrics: [],
-    };
-
     try {
-        const {
-            calgaryProductMetrics,
-            edmontonProductMetrics,
-            vancouverProductMetrics,
-        } = businessMetrics.reduce((productMetricsAcc, businessMetric) => {
-            const { storeLocation, productMetrics } = businessMetric;
-
-            switch (storeLocation) {
-                case "Calgary": {
-                    productMetricsAcc.calgaryProductMetrics = productMetrics;
-                    break;
-                }
-                case "Edmonton": {
-                    productMetricsAcc.edmontonProductMetrics = structuredClone(
-                        productMetrics,
-                    );
-                    break;
-                }
-                // case "Vancouver"
-                default: {
-                    productMetricsAcc.vancouverProductMetrics = productMetrics;
-                    break;
-                }
-            }
-
-            return productMetricsAcc;
-        }, initialProductMetrics);
-
-        // as edmonton metrics are a superset of all other stores' metrics, it is being used as
+        // as edmonton metrics overlaps other stores' metrics, it is being used as
         // the base to which all other store locations' metrics are aggregated into
 
         const aggregatedBaseProductMetrics =
@@ -866,7 +834,7 @@ function createAllLocationsAggregatedProductMetrics(
 }
 
 export {
-    createAggregatedProductMetrics,
-    createAllLocationsAggregatedProductMetrics,
-    createRandomProductMetrics,
+    createAllLocationsAggregatedProductMetricsSafe,
+    createAllProductsAggregatedProductMetricsSafe,
+    createRandomProductMetricsSafe,
 };

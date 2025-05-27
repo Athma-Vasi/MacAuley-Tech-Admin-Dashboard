@@ -23,8 +23,8 @@
 
 import { SafeResult, StoreLocation } from "../../types";
 import { createSafeErrorResult, createSafeSuccessResult } from "../../utils";
+import { REPAIR_CATEGORIES } from "../dashboard/constants";
 import {
-    BusinessMetric,
     DaysInMonthsInYears,
     LocationYearSpread,
     RepairCategory,
@@ -67,13 +67,11 @@ function createRepairCategoryUnitsRepairedRevenueTuple({
     return [unitsSold, revenue];
 }
 
-function createRandomRepairMetrics({
+function createRandomRepairMetricsSafe({
     daysInMonthsInYears,
-    repairCategories,
     storeLocation,
 }: {
     daysInMonthsInYears: DaysInMonthsInYears;
-    repairCategories: RepairCategory[];
     storeLocation: StoreLocation;
 }): SafeResult<RepairMetric[]> {
     /**
@@ -118,7 +116,7 @@ function createRandomRepairMetrics({
     };
 
     try {
-        const randomRepairMetrics = repairCategories.map((repairCategory) => {
+        const randomRepairMetrics = REPAIR_CATEGORIES.map((repairCategory) => {
             const yearlyRepairMetrics = Array.from(daysInMonthsInYears)
                 .map(
                     (yearTuple) => {
@@ -233,7 +231,7 @@ function createRandomRepairMetrics({
 /**
  * - aggregate repair metrics for each store location into 'All Repairs' metrics
  */
-function createAggregatedRepairMetrics(
+function createAllRepairsAggregatedRepairMetricsSafe(
     repairMetrics: Omit<RepairMetric[], "All Repairs">,
 ): SafeResult<RepairMetric> {
     const REPAIR_METRIC_TEMPLATE: RepairMetric = {
@@ -383,45 +381,15 @@ function createAggregatedRepairMetrics(
     }
 }
 
-function createAllLocationsAggregatedRepairMetrics(
-    businessMetrics: BusinessMetric[],
+function createAllLocationsAggregatedRepairMetricsSafe(
+    { calgaryRepairMetrics, edmontonRepairMetrics, vancouverRepairMetrics }: {
+        calgaryRepairMetrics: RepairMetric[];
+        edmontonRepairMetrics: RepairMetric[];
+        vancouverRepairMetrics: RepairMetric[];
+    },
 ): SafeResult<RepairMetric[]> {
-    try { // find all repair metrics for each store location
-        const initialRepairMetrics: Record<string, RepairMetric[]> = {
-            edmontonRepairMetrics: [],
-            calgaryRepairMetrics: [],
-            vancouverRepairMetrics: [],
-        };
-
-        const {
-            calgaryRepairMetrics,
-            edmontonRepairMetrics,
-            vancouverRepairMetrics,
-        } = businessMetrics.reduce((repairMetricsAcc, businessMetric) => {
-            const { storeLocation, repairMetrics } = businessMetric;
-
-            switch (storeLocation) {
-                case "Calgary": {
-                    repairMetricsAcc.calgaryRepairMetrics = repairMetrics;
-                    break;
-                }
-                case "Edmonton": {
-                    repairMetricsAcc.edmontonRepairMetrics = structuredClone(
-                        repairMetrics,
-                    );
-                    break;
-                }
-                // case "Vancouver"
-                default: {
-                    repairMetricsAcc.vancouverRepairMetrics = repairMetrics;
-                    break;
-                }
-            }
-
-            return repairMetricsAcc;
-        }, initialRepairMetrics);
-
-        // as edmonton metrics are a superset of all other stores' metrics, it is being used as
+    try {
+        // as edmonton metrics overlaps other stores' metrics, it is being used as
         // the base to which all other store locations' metrics are aggregated into
 
         const aggregatedBaseRepairMetrics =
@@ -527,7 +495,7 @@ function createAllLocationsAggregatedRepairMetrics(
 }
 
 export {
-    createAggregatedRepairMetrics,
-    createAllLocationsAggregatedRepairMetrics,
-    createRandomRepairMetrics,
+    createAllLocationsAggregatedRepairMetricsSafe,
+    createAllRepairsAggregatedRepairMetricsSafe,
+    createRandomRepairMetricsSafe,
 };

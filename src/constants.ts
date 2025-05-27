@@ -230,8 +230,8 @@ const SCREENSHOT_IMAGE_TYPE_DATA: CheckboxRadioSelectData<ScreenshotImageType> =
 const FETCH_REQUEST_TIMEOUT = 10000;
 
 const STORE_LOCATIONS: CheckboxRadioSelectData<StoreLocation> = [
-  { label: "Edmonton", value: "Edmonton" },
   { label: "Calgary", value: "Calgary" },
+  { label: "Edmonton", value: "Edmonton" },
   { label: "Vancouver", value: "Vancouver" },
 ];
 
