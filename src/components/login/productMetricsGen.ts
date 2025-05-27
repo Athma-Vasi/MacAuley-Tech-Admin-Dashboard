@@ -10,10 +10,70 @@ import {
     ProductMonthlyMetric,
     ProductYearlyMetric,
 } from "../dashboard/types";
-import {
-    createProductCategoryUnitsRevenueTuple,
-    createRandomNumber,
-} from "../dashboard/utils";
+import { createRandomNumber } from "../dashboard/utils";
+
+/**
+ * - calculates the number of unitsSold and revenue for a specific product category and store location
+ */
+function createProductCategoryUnitsRevenueTuple({
+    productCategory,
+    storeLocation,
+    year,
+    yearUnitsSoldSpread,
+}: {
+    productCategory: ProductCategory;
+    storeLocation: StoreLocation;
+    year: string;
+    yearUnitsSoldSpread: LocationYearSpread;
+}) {
+    const unitsSold = productCategory === "Central Processing Unit (CPU)" ||
+            productCategory === "Graphics Processing Unit (GPU)" ||
+            productCategory === "Motherboard" ||
+            productCategory === "Headphone" ||
+            productCategory === "Speaker" ||
+            productCategory === "Display" ||
+            productCategory === "Power Supply Unit (PSU)"
+        ? createRandomNumber({
+            storeLocation,
+            year,
+            yearUnitsSpread: yearUnitsSoldSpread,
+        }) + 5
+        : productCategory === "Accessory"
+        ? createRandomNumber({
+            storeLocation,
+            year,
+            yearUnitsSpread: yearUnitsSoldSpread,
+        }) + 30
+        : createRandomNumber({
+            storeLocation,
+            year,
+            yearUnitsSpread: yearUnitsSoldSpread,
+        }) + 7;
+
+    const spread: Record<ProductCategory, [number, number]> = {
+        "Central Processing Unit (CPU)": [150, 400],
+        "Computer Case": [50, 150],
+        "Desktop Computer": [700, 2500],
+        Display: [150, 750],
+        "Graphics Processing Unit (GPU)": [150, 900],
+        "Memory (RAM)": [50, 300],
+        "Power Supply Unit (PSU)": [75, 400],
+        Accessory: [10, 100],
+        Headphone: [50, 500],
+        Keyboard: [50, 200],
+        Microphone: [50, 300],
+        Motherboard: [150, 700],
+        Mouse: [50, 200],
+        Speaker: [100, 600],
+        Storage: [75, 500],
+        Webcam: [100, 300],
+    };
+
+    const [min, max] = spread[productCategory] ?? [50, 500];
+    const revenue = unitsSold * Math.round(Math.random() * (max - min) + min);
+
+    return [unitsSold, revenue];
+}
 
 /**
  *  productMetrics: {

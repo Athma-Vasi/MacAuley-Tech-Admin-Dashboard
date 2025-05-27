@@ -9,7 +9,12 @@ import localforage from "localforage";
 import { z } from "zod";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
-import { AllStoreLocations } from "./components/dashboard/types";
+import {
+  AllStoreLocations,
+  DaysInMonthsInYears,
+  Month,
+  Year,
+} from "./components/dashboard/types";
 import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
@@ -17,8 +22,10 @@ import {
   ResponsePayloadSafe,
   SafeError,
   SafeResult,
+  StoreLocation,
   ThemeObject,
 } from "./types";
+import { DAYS_PER_MONTH, MONTHS } from "./components/dashboard/constants";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -695,11 +702,87 @@ function createMetricsForageKey(
   }`;
 }
 
+/**
+ * Generate a map of days in months for a range of years.
+ */
+function createDaysInMonthsInYearsSafe({
+  monthEnd = 11,
+  monthStart = 0,
+  storeLocation,
+  yearEnd = new Date().getFullYear(),
+  yearStart = storeLocation === "Calgary"
+    ? 2017
+    : storeLocation === "Vancouver"
+    ? 2019
+    : 2013,
+}: {
+  monthEnd?: number;
+  monthStart?: number;
+  storeLocation: StoreLocation | "All Locations";
+  yearEnd?: number;
+  yearStart?: number;
+}): SafeResult<DaysInMonthsInYears> {
+  try {
+    const yearsRange = Array.from(
+      { length: yearEnd - yearStart + 1 },
+      (_, idx) => idx + yearStart,
+    );
+
+    const daysInMonthsInYears = yearsRange.reduce<
+      Map<Year, Map<Month, string[]>>
+    >(
+      (yearsAcc, year) => {
+        const isCurrentYear = year === new Date().getFullYear();
+        const currentMonth = new Date().getMonth();
+        const slicedMonths = isCurrentYear
+          ? MONTHS.slice(0, currentMonth + 1)
+          : MONTHS.slice(monthStart, monthEnd + 1);
+
+        const daysInMonthsMap = slicedMonths.reduce<Map<Month, string[]>>(
+          (monthsAcc, month, monthIdx) => {
+            const days = DAYS_PER_MONTH[monthIdx];
+            const isCurrentMonth = isCurrentYear && monthIdx === currentMonth;
+            const currentDay = isCurrentYear
+              ? isCurrentMonth ? new Date().getDate() : days
+              : days;
+
+            const isLeapYear = (year % 4 === 0 && year % 100 !== 0) ||
+              year % 400 === 0;
+            const daysWithLeapYear = monthIdx === 1 && isLeapYear
+              ? currentDay + 1
+              : currentDay;
+
+            const daysRange = Array.from(
+              { length: daysWithLeapYear },
+              (_, idx) => idx + 1,
+            ).map((day) => day.toString().padStart(2, "0"));
+
+            monthsAcc.set(month, daysRange);
+
+            return monthsAcc;
+          },
+          new Map(),
+        );
+
+        yearsAcc.set(year.toString() as Year, daysInMonthsMap);
+
+        return yearsAcc;
+      },
+      new Map(),
+    );
+
+    return createSafeSuccessResult(daysInMonthsInYears);
+  } catch (error: unknown) {
+    return createSafeErrorResult(error);
+  }
+}
+
 export {
   addCommaSeparator,
   capitalizeJoinWithAnd,
   captureScreenshot,
   catchHandlerErrorSafe,
+  createDaysInMonthsInYearsSafe,
   createDirectoryURLCacheKey,
   createMetricsForageKey,
   createMetricsURLCacheKey,

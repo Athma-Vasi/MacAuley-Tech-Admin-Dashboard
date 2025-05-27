@@ -94,7 +94,6 @@ import {
     toFixedFloat,
 } from "../../utils";
 import {
-    BusinessMetric,
     CustomerDailyMetric,
     CustomerMetrics,
     CustomerMonthlyMetric,
@@ -104,15 +103,13 @@ import {
 } from "../dashboard/types";
 import { createRandomNumber } from "../dashboard/utils";
 
-type CreateRandomCustomerMetricsInput = {
-    daysInMonthsInYears: DaysInMonthsInYears;
-    storeLocation: StoreLocation;
-};
-
-function createRandomCustomerMetrics({
+function createRandomCustomerMetricsSafe({
     daysInMonthsInYears,
     storeLocation,
-}: CreateRandomCustomerMetricsInput): SafeResult<CustomerMetrics> {
+}: {
+    daysInMonthsInYears: DaysInMonthsInYears;
+    storeLocation: StoreLocation;
+}): SafeResult<CustomerMetrics> {
     /**
      * churn rate spread between [min, max] per year
      * @see https://customergauge.com/blog/average-churn-rate-by-industry
@@ -627,60 +624,19 @@ function createRandomCustomerMetrics({
     }
 }
 
-function createAllLocationsAggregatedCustomerMetrics(
-    businessMetrics: BusinessMetric[],
+function createAllLocationsAggregatedCustomerMetricsSafe(
+    {
+        calgaryCustomerMetrics,
+        edmontonCustomerMetrics,
+        vancouverCustomerMetrics,
+    }: {
+        calgaryCustomerMetrics: CustomerMetrics;
+        edmontonCustomerMetrics: CustomerMetrics;
+        vancouverCustomerMetrics: CustomerMetrics;
+    },
 ): SafeResult<CustomerMetrics> {
-    // find all customer metrics for each store location
-    const initialCustomerMetrics: Record<string, CustomerMetrics> = {
-        edmontonCustomerMetrics: {
-            lifetimeValue: 0,
-            totalCustomers: 0,
-            yearlyMetrics: [],
-        },
-        calgaryCustomerMetrics: {
-            lifetimeValue: 0,
-            totalCustomers: 0,
-            yearlyMetrics: [],
-        },
-        vancouverCustomerMetrics: {
-            lifetimeValue: 0,
-            totalCustomers: 0,
-            yearlyMetrics: [],
-        },
-    };
-
     try {
-        const {
-            calgaryCustomerMetrics,
-            edmontonCustomerMetrics,
-            vancouverCustomerMetrics,
-        } = businessMetrics.reduce((customerMetricsAcc, businessMetric) => {
-            const { storeLocation, customerMetrics } = businessMetric;
-
-            switch (storeLocation) {
-                case "Calgary": {
-                    customerMetricsAcc.calgaryCustomerMetrics = customerMetrics;
-                    break;
-                }
-                case "Edmonton": {
-                    customerMetricsAcc.edmontonCustomerMetrics =
-                        structuredClone(
-                            customerMetrics,
-                        );
-                    break;
-                }
-                // case "Vancouver"
-                default: {
-                    customerMetricsAcc.vancouverCustomerMetrics =
-                        customerMetrics;
-                    break;
-                }
-            }
-
-            return customerMetricsAcc;
-        }, initialCustomerMetrics);
-
-        // as edmonton metrics are a superset of all other stores' metrics, it is being used as
+        // as edmonton metrics overlaps other stores' metrics, it is being used as
         // the base to which all other store locations' metrics are aggregated into
 
         const aggregatedBaseCustomerMetrics =
@@ -864,3 +820,8 @@ function createAllLocationsAggregatedCustomerMetrics(
         return createSafeErrorResult(error);
     }
 }
+
+export {
+    createAllLocationsAggregatedCustomerMetricsSafe,
+    createRandomCustomerMetricsSafe,
+};

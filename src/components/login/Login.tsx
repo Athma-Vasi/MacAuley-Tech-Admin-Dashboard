@@ -14,9 +14,8 @@ import {
 } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
-import { Link, useNavigate } from "react-router-dom";
-
 import { TbCheck } from "react-icons/tb";
+import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES, METRICS_URL } from "../../constants";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
@@ -27,6 +26,7 @@ import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
+import CustomerMetricsWorker from "./customerMetricsWorker?worker";
 import {
   handleLoginClick,
   handleMessageEventLoginFetchWorkerToMain,
@@ -62,7 +62,7 @@ function Login() {
   const { showBoundary } = useErrorBoundary();
   const isComponentMountedRef = useMountedRef();
 
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
     usernameRef.current?.focus();
   }, []);
@@ -80,13 +80,40 @@ function Login() {
     // })();
   }, []);
 
-  useEffect(()=>{
-    const newFinancialChartsWorker = new 
-      
-  },[])
+  useEffect(() => {
+    const newCustomerMetricsWorker = new CustomerMetricsWorker();
+
+    loginDispatch({
+      action: loginAction.setCustomerMetricsWorker,
+      payload: newCustomerMetricsWorker,
+    });
+
+    newCustomerMetricsWorker.onmessage = async (
+      event: MessageEvent,
+    ) => {
+      if (event.data.err || event.data.val.none) {
+        console.error("Error in customer metrics worker:", event.data);
+        return;
+      }
+
+      console.log("Customer metrics worker data:", event.data.val.val);
+    };
+
+    return () => {
+      newCustomerMetricsWorker.terminate();
+      isComponentMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
-    
+    if (!customerMetricsWorker) {
+      return;
+    }
+
+    customerMetricsWorker.postMessage(true);
+  }, [customerMetricsWorker]);
+
+  useEffect(() => {
     const newFetchParseWorker = new FetchParseWorker();
 
     loginDispatch({

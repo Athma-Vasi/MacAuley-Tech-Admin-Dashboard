@@ -33,7 +33,39 @@ import {
     RepairMonthlyMetric,
     RepairYearlyMetric,
 } from "../dashboard/types";
-import { createRepairCategoryUnitsRepairedRevenueTuple } from "../dashboard/utils";
+import { createRandomNumber } from "../dashboard/utils";
+
+function createRepairCategoryUnitsRepairedRevenueTuple({
+    repairCategory,
+    storeLocation,
+    year,
+    yearUnitsRepairedSpread,
+}: {
+    repairCategory: RepairCategory;
+    storeLocation: StoreLocation;
+    year: string;
+    yearUnitsRepairedSpread: LocationYearSpread;
+}): [number, number] {
+    const unitsSold = createRandomNumber({
+        storeLocation,
+        year,
+        yearUnitsSpread: yearUnitsRepairedSpread,
+    });
+
+    const spread: Record<RepairCategory, [number, number]> = {
+        "Computer Component": [150, 400],
+        "Electronic Device": [150, 400],
+        "Mobile Device": [125, 200],
+        "Audio/Video": [50, 150],
+        Accessory: [50, 150],
+        Peripheral: [50, 150],
+    };
+
+    const [min, max] = spread[repairCategory] ?? [50, 150];
+    const revenue = unitsSold * Math.round(Math.random() * (max - min) + min);
+
+    return [unitsSold, revenue];
+}
 
 function createRandomRepairMetrics({
     daysInMonthsInYears,
