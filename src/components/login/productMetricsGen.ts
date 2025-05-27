@@ -15,6 +15,54 @@ import {
     createRandomNumber,
 } from "../dashboard/utils";
 
+/**
+ *  productMetrics: {
+    name: ProductCategory;
+
+    yearlyMetrics: {
+      year: string;
+      unitsSold: {
+        total: number;
+        online: number;
+        inStore: number;
+      };
+      revenue: {
+        total: number;
+        online: number;
+        inStore: number;
+      };
+
+      monthlyMetrics: {
+        month: string;
+        unitsSold: {
+          total: number;
+          online: number;
+          inStore: number;
+        };
+        revenue: {
+          total: number;
+          online: number;
+          inStore: number;
+        };
+
+        dailyMetrics: {
+          day: string;
+          unitsSold: {
+            total: number;
+            online: number;
+            inStore: number;
+          };
+          revenue: {
+            total: number;
+            online: number;
+            inStore: number;
+          };
+        }[];
+      }[];
+    }[];
+  }
+ */
+
 function createRandomProductMetrics({
     daysInMonthsInYears,
     productCategories,
