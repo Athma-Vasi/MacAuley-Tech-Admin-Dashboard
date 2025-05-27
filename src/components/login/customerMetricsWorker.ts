@@ -1,9 +1,11 @@
-import { STORE_LOCATIONS } from "../../constants";
+import { METRICS_URL, STORE_LOCATIONS } from "../../constants";
 import { SafeResult } from "../../types";
 import {
     createDaysInMonthsInYearsSafe,
+    createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
+    setCachedItemAsyncSafe,
 } from "../../utils";
 import { AllStoreLocations, CustomerMetrics } from "../dashboard/types";
 import {
@@ -13,7 +15,7 @@ import {
 
 type MessageEventCustomerWorkerToMain = MessageEvent<
     SafeResult<
-        Record<AllStoreLocations, CustomerMetrics>
+        string
     >
 >;
 type MessageEventCustomerMainToWorker = MessageEvent<
@@ -99,14 +101,79 @@ self.onmessage = async (
             return;
         }
 
-        self.postMessage(createSafeSuccessResult(
-            {
-                Calgary: calgaryCustomerMetricsResult.val.val,
-                Edmonton: edmontonCustomerMetricsResult.val.val,
-                Vancouver: vancouverCustomerMetricsResult.val.val,
-                "All Locations": allLocationsAggregatedCustomerMetrics.val.val,
-            },
-        ));
+        const setCalgaryMetricsResult = await setCustomerMetricsInCache(
+            "Calgary",
+            calgaryCustomerMetricsResult.val.val,
+        );
+        if (setCalgaryMetricsResult.err) {
+            self.postMessage(setCalgaryMetricsResult);
+            return;
+        }
+        if (setCalgaryMetricsResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to set Calgary customer metrics in cache",
+                ),
+            );
+            return;
+        }
+
+        const setEdmontonMetricsResult = await setCustomerMetricsInCache(
+            "Edmonton",
+            edmontonCustomerMetricsResult.val.val,
+        );
+        if (setEdmontonMetricsResult.err) {
+            self.postMessage(setEdmontonMetricsResult);
+            return;
+        }
+        if (setEdmontonMetricsResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to set Edmonton customer metrics in cache",
+                ),
+            );
+            return;
+        }
+
+        const setVancouverMetricsResult = await setCustomerMetricsInCache(
+            "Vancouver",
+            vancouverCustomerMetricsResult.val.val,
+        );
+        if (setVancouverMetricsResult.err) {
+            self.postMessage(setVancouverMetricsResult);
+            return;
+        }
+        if (setVancouverMetricsResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to set Vancouver customer metrics in cache",
+                ),
+            );
+            return;
+        }
+
+        const setAllLocationsMetricsResult = await setCustomerMetricsInCache(
+            "All Locations",
+            allLocationsAggregatedCustomerMetrics.val.val,
+        );
+        if (setAllLocationsMetricsResult.err) {
+            self.postMessage(setAllLocationsMetricsResult);
+            return;
+        }
+        if (setAllLocationsMetricsResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to set All Locations customer metrics in cache",
+                ),
+            );
+            return;
+        }
+
+        self.postMessage(
+            createSafeSuccessResult(
+                "Customer metrics successfully generated and cached",
+            ),
+        );
     } catch (error) {
         console.error("Customer Charts Worker error:", error);
         self.postMessage(
@@ -134,3 +201,31 @@ export type {
     MessageEventCustomerMainToWorker,
     MessageEventCustomerWorkerToMain,
 };
+
+async function setCustomerMetricsInCache(
+    storeLocation: AllStoreLocations,
+    metrics: CustomerMetrics,
+): Promise<SafeResult<string>> {
+    try {
+        const metricCacheKey = createMetricsURLCacheKey(
+            {
+                metricsUrl: METRICS_URL,
+                storeLocation,
+                metricsView: "customers",
+                productMetricCategory: "All Products",
+                repairMetricCategory: "All Repairs",
+            },
+        );
+        const setMetricsResult = await setCachedItemAsyncSafe(
+            metricCacheKey,
+            metrics,
+        );
+        if (setMetricsResult.err) {
+            return setMetricsResult;
+        }
+
+        return createSafeSuccessResult(metricCacheKey);
+    } catch (error: unknown) {
+        return createSafeErrorResult(error);
+    }
+}
