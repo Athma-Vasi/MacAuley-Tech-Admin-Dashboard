@@ -34,135 +34,146 @@ self.onmessage = async (
 
     try {
         const [
-            calgaryRepairMetricsResult,
-            edmontonRepairMetricsResult,
-            vancouverRepairMetricsResult,
-        ] = STORE_LOCATIONS.map(
-            ({ value: storeLocation }) => {
-                const defaultMetrics: RepairMetric[] = [];
+            calgaryRepairMetricsSettledResult,
+            edmontonRepairMetricsSettledResult,
+            vancouverRepairMetricsSettledResult,
+        ] = await Promise.allSettled(
+            STORE_LOCATIONS.map(async ({ value: storeLocation }) => {
+                try {
+                    const defaultMetrics: RepairMetric[] = [];
 
-                const daysInMonthsInYearsResult = createDaysInMonthsInYearsSafe(
-                    {
-                        storeLocation,
-                    },
-                );
-                if (
-                    daysInMonthsInYearsResult.err ||
-                    daysInMonthsInYearsResult.val.none
-                ) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
-                const daysInMonthsInYears = daysInMonthsInYearsResult.val.val;
+                    const daysInMonthsInYearsResult =
+                        createDaysInMonthsInYearsSafe(
+                            {
+                                storeLocation,
+                            },
+                        );
+                    if (
+                        daysInMonthsInYearsResult.err ||
+                        daysInMonthsInYearsResult.val.none
+                    ) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+                    const daysInMonthsInYears =
+                        daysInMonthsInYearsResult.val.val;
 
-                const repairMetricsResult = createRandomRepairMetricsSafe({
-                    storeLocation,
-                    daysInMonthsInYears,
-                });
-                if (repairMetricsResult.err || repairMetricsResult.val.none) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
-
-                const aggregatedRepairMetricsResult =
-                    createAllRepairsAggregatedRepairMetricsSafe(
-                        repairMetricsResult.val.val,
+                    const repairMetricsResult = createRandomRepairMetricsSafe(
+                        {
+                            storeLocation,
+                            daysInMonthsInYears,
+                        },
                     );
-                if (
-                    aggregatedRepairMetricsResult.err ||
-                    aggregatedRepairMetricsResult.val.none
-                ) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
+                    if (
+                        repairMetricsResult.err ||
+                        repairMetricsResult.val.none
+                    ) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
 
-                return createSafeSuccessResult([
-                    ...repairMetricsResult.val.val,
-                    aggregatedRepairMetricsResult.val.val,
-                ]);
-            },
+                    const aggregatedRepairMetricsResult =
+                        createAllRepairsAggregatedRepairMetricsSafe(
+                            repairMetricsResult.val.val,
+                        );
+                    if (
+                        aggregatedRepairMetricsResult.err ||
+                        aggregatedRepairMetricsResult.val.none
+                    ) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+
+                    const concatenatedMetrics = [
+                        ...repairMetricsResult.val.val,
+                        aggregatedRepairMetricsResult.val.val,
+                    ];
+
+                    const setMetricsInCacheResult =
+                        await setRepairMetricsInCache(
+                            storeLocation,
+                            concatenatedMetrics,
+                        );
+                    if (setMetricsInCacheResult.err) {
+                        return setMetricsInCacheResult;
+                    }
+                    if (setMetricsInCacheResult.val.none) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+
+                    return createSafeSuccessResult(concatenatedMetrics);
+                } catch (error: unknown) {
+                    return createSafeErrorResult(error);
+                }
+            }),
         );
 
         if (
-            calgaryRepairMetricsResult.err ||
-            calgaryRepairMetricsResult.val.none ||
-            edmontonRepairMetricsResult.err ||
-            edmontonRepairMetricsResult.val.none ||
-            vancouverRepairMetricsResult.err ||
-            vancouverRepairMetricsResult.val.none
+            calgaryRepairMetricsSettledResult.status === "rejected" ||
+            edmontonRepairMetricsSettledResult.status === "rejected" ||
+            vancouverRepairMetricsSettledResult.status === "rejected"
         ) {
             self.postMessage(
-                createSafeErrorResult("Failed to generate repair metrics"),
+                createSafeErrorResult(
+                    "Failed to generate repair metrics",
+                ),
+            );
+            return;
+        }
+
+        if (calgaryRepairMetricsSettledResult.value.err) {
+            self.postMessage(calgaryRepairMetricsSettledResult.value);
+            return;
+        }
+        if (calgaryRepairMetricsSettledResult.value.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to generate Calgary repair metrics",
+                ),
+            );
+            return;
+        }
+
+        if (edmontonRepairMetricsSettledResult.value.err) {
+            self.postMessage(edmontonRepairMetricsSettledResult.value);
+            return;
+        }
+        if (edmontonRepairMetricsSettledResult.value.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to generate Edmonton repair metrics",
+                ),
+            );
+            return;
+        }
+
+        if (vancouverRepairMetricsSettledResult.value.err) {
+            self.postMessage(vancouverRepairMetricsSettledResult.value);
+            return;
+        }
+        if (vancouverRepairMetricsSettledResult.value.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to generate Vancouver repair metrics",
+                ),
             );
             return;
         }
 
         const allLocationsAggregatedRepairMetrics =
             createAllLocationsAggregatedRepairMetricsSafe({
-                calgaryRepairMetrics: calgaryRepairMetricsResult.val.val,
-                edmontonRepairMetrics: edmontonRepairMetricsResult.val.val,
-                vancouverRepairMetrics: vancouverRepairMetricsResult.val.val,
+                calgaryRepairMetrics:
+                    calgaryRepairMetricsSettledResult.value.val.val,
+                edmontonRepairMetrics:
+                    edmontonRepairMetricsSettledResult.value.val.val,
+                vancouverRepairMetrics:
+                    vancouverRepairMetricsSettledResult.value.val.val,
             });
-        if (
-            allLocationsAggregatedRepairMetrics.err ||
-            allLocationsAggregatedRepairMetrics.val.none
-        ) {
+
+        if (allLocationsAggregatedRepairMetrics.err) {
+            self.postMessage(allLocationsAggregatedRepairMetrics);
+            return;
+        }
+        if (allLocationsAggregatedRepairMetrics.val.none) {
             self.postMessage(
                 createSafeErrorResult("Failed to aggregate repair metrics"),
-            );
-            return;
-        }
-
-        const setCalgaryMetricsInCacheResult = await setRepairMetricsInCache(
-            "Calgary",
-            calgaryRepairMetricsResult.val.val,
-        );
-        if (setCalgaryMetricsInCacheResult.err) {
-            self.postMessage(
-                setCalgaryMetricsInCacheResult,
-            );
-            return;
-        }
-        if (setCalgaryMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No Calgary repair metrics set in cache",
-                ),
-            );
-            return;
-        }
-
-        const setEdmontonMetricsInCacheResult = await setRepairMetricsInCache(
-            "Edmonton",
-            edmontonRepairMetricsResult.val.val,
-        );
-        if (setEdmontonMetricsInCacheResult.err) {
-            self.postMessage(
-                setEdmontonMetricsInCacheResult,
-            );
-            return;
-        }
-        if (setEdmontonMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No Edmonton repair metrics set in cache",
-                ),
-            );
-            return;
-        }
-
-        const setVancouverMetricsInCacheResult = await setRepairMetricsInCache(
-            "Vancouver",
-            vancouverRepairMetricsResult.val.val,
-        );
-        if (setVancouverMetricsInCacheResult.err) {
-            self.postMessage(
-                setVancouverMetricsInCacheResult,
-            );
-            return;
-        }
-        if (setVancouverMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No Vancouver repair metrics set in cache",
-                ),
             );
             return;
         }

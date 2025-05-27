@@ -34,135 +34,146 @@ self.onmessage = async (
 
     try {
         const [
-            calgaryProductMetricsResult,
-            edmontonProductMetricsResult,
-            vancouverProductMetricsResult,
-        ] = STORE_LOCATIONS.map(
-            ({ value: storeLocation }) => {
-                const defaultMetrics: ProductMetric[] = [];
+            calgaryProductMetricsSettledResult,
+            edmontonProductMetricsSettledResult,
+            vancouverProductMetricsSettledResult,
+        ] = await Promise.allSettled(
+            STORE_LOCATIONS.map(async ({ value: storeLocation }) => {
+                try {
+                    const defaultMetrics: ProductMetric[] = [];
 
-                const daysInMonthsInYearsResult = createDaysInMonthsInYearsSafe(
-                    {
-                        storeLocation,
-                    },
-                );
-                if (
-                    daysInMonthsInYearsResult.err ||
-                    daysInMonthsInYearsResult.val.none
-                ) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
-                const daysInMonthsInYears = daysInMonthsInYearsResult.val.val;
+                    const daysInMonthsInYearsResult =
+                        createDaysInMonthsInYearsSafe(
+                            {
+                                storeLocation,
+                            },
+                        );
+                    if (
+                        daysInMonthsInYearsResult.err ||
+                        daysInMonthsInYearsResult.val.none
+                    ) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+                    const daysInMonthsInYears =
+                        daysInMonthsInYearsResult.val.val;
 
-                const productMetricsResult = createRandomProductMetricsSafe({
-                    storeLocation,
-                    daysInMonthsInYears,
-                });
-                if (productMetricsResult.err || productMetricsResult.val.none) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
-
-                const aggregatedProductMetricsResult =
-                    createAllProductsAggregatedProductMetricsSafe(
-                        productMetricsResult.val.val,
+                    const productMetricsResult = createRandomProductMetricsSafe(
+                        {
+                            storeLocation,
+                            daysInMonthsInYears,
+                        },
                     );
-                if (
-                    aggregatedProductMetricsResult.err ||
-                    aggregatedProductMetricsResult.val.none
-                ) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
+                    if (
+                        productMetricsResult.err ||
+                        productMetricsResult.val.none
+                    ) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
 
-                return createSafeSuccessResult([
-                    ...productMetricsResult.val.val,
-                    aggregatedProductMetricsResult.val.val,
-                ]);
-            },
+                    const aggregatedProductMetricsResult =
+                        createAllProductsAggregatedProductMetricsSafe(
+                            productMetricsResult.val.val,
+                        );
+                    if (
+                        aggregatedProductMetricsResult.err ||
+                        aggregatedProductMetricsResult.val.none
+                    ) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+
+                    const concatenatedMetrics = [
+                        ...productMetricsResult.val.val,
+                        aggregatedProductMetricsResult.val.val,
+                    ];
+
+                    const setMetricsInCacheResult =
+                        await setProductMetricsInCache(
+                            storeLocation,
+                            concatenatedMetrics,
+                        );
+                    if (setMetricsInCacheResult.err) {
+                        return setMetricsInCacheResult;
+                    }
+                    if (setMetricsInCacheResult.val.none) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+
+                    return createSafeSuccessResult(concatenatedMetrics);
+                } catch (error: unknown) {
+                    return createSafeErrorResult(error);
+                }
+            }),
         );
 
         if (
-            calgaryProductMetricsResult.err ||
-            calgaryProductMetricsResult.val.none ||
-            edmontonProductMetricsResult.err ||
-            edmontonProductMetricsResult.val.none ||
-            vancouverProductMetricsResult.err ||
-            vancouverProductMetricsResult.val.none
+            calgaryProductMetricsSettledResult.status === "rejected" ||
+            edmontonProductMetricsSettledResult.status === "rejected" ||
+            vancouverProductMetricsSettledResult.status === "rejected"
         ) {
             self.postMessage(
-                createSafeErrorResult("Failed to generate product metrics"),
+                createSafeErrorResult(
+                    "Failed to generate product metrics",
+                ),
+            );
+            return;
+        }
+
+        if (calgaryProductMetricsSettledResult.value.err) {
+            self.postMessage(calgaryProductMetricsSettledResult.value);
+            return;
+        }
+        if (calgaryProductMetricsSettledResult.value.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to generate Calgary product metrics",
+                ),
+            );
+            return;
+        }
+
+        if (edmontonProductMetricsSettledResult.value.err) {
+            self.postMessage(edmontonProductMetricsSettledResult.value);
+            return;
+        }
+        if (edmontonProductMetricsSettledResult.value.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to generate Edmonton product metrics",
+                ),
+            );
+            return;
+        }
+
+        if (vancouverProductMetricsSettledResult.value.err) {
+            self.postMessage(vancouverProductMetricsSettledResult.value);
+            return;
+        }
+        if (vancouverProductMetricsSettledResult.value.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to generate Vancouver product metrics",
+                ),
             );
             return;
         }
 
         const allLocationsAggregatedProductMetrics =
             createAllLocationsAggregatedProductMetricsSafe({
-                calgaryProductMetrics: calgaryProductMetricsResult.val.val,
-                edmontonProductMetrics: edmontonProductMetricsResult.val.val,
-                vancouverProductMetrics: vancouverProductMetricsResult.val.val,
+                calgaryProductMetrics:
+                    calgaryProductMetricsSettledResult.value.val.val,
+                edmontonProductMetrics:
+                    edmontonProductMetricsSettledResult.value.val.val,
+                vancouverProductMetrics:
+                    vancouverProductMetricsSettledResult.value.val.val,
             });
-        if (
-            allLocationsAggregatedProductMetrics.err ||
-            allLocationsAggregatedProductMetrics.val.none
-        ) {
+
+        if (allLocationsAggregatedProductMetrics.err) {
+            self.postMessage(allLocationsAggregatedProductMetrics);
+            return;
+        }
+        if (allLocationsAggregatedProductMetrics.val.none) {
             self.postMessage(
                 createSafeErrorResult("Failed to aggregate product metrics"),
-            );
-            return;
-        }
-
-        const setCalgaryMetricsInCacheResult = await setProductMetricsInCache(
-            "Calgary",
-            calgaryProductMetricsResult.val.val,
-        );
-        if (setCalgaryMetricsInCacheResult.err) {
-            self.postMessage(
-                setCalgaryMetricsInCacheResult,
-            );
-            return;
-        }
-        if (setCalgaryMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No Calgary product metrics set in cache",
-                ),
-            );
-            return;
-        }
-
-        const setEdmontonMetricsInCacheResult = await setProductMetricsInCache(
-            "Edmonton",
-            edmontonProductMetricsResult.val.val,
-        );
-        if (setEdmontonMetricsInCacheResult.err) {
-            self.postMessage(
-                setEdmontonMetricsInCacheResult,
-            );
-            return;
-        }
-        if (setEdmontonMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No Edmonton product metrics set in cache",
-                ),
-            );
-            return;
-        }
-
-        const setVancouverMetricsInCacheResult = await setProductMetricsInCache(
-            "Vancouver",
-            vancouverProductMetricsResult.val.val,
-        );
-        if (setVancouverMetricsInCacheResult.err) {
-            self.postMessage(
-                setVancouverMetricsInCacheResult,
-            );
-            return;
-        }
-        if (setVancouverMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No Vancouver product metrics set in cache",
-                ),
             );
             return;
         }

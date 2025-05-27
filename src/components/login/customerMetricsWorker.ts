@@ -39,48 +39,55 @@ self.onmessage = async (
             vancouverCustomerMetricsSettledResult,
         ] = await Promise.allSettled(
             STORE_LOCATIONS.map(async ({ value: storeLocation }) => {
-                const defaultMetrics: CustomerMetrics = {
-                    lifetimeValue: 0,
-                    totalCustomers: 0,
-                    yearlyMetrics: [],
-                };
+                try {
+                    const defaultMetrics: CustomerMetrics = {
+                        lifetimeValue: 0,
+                        totalCustomers: 0,
+                        yearlyMetrics: [],
+                    };
 
-                const daysInMonthsInYearsResult = createDaysInMonthsInYearsSafe(
-                    {
-                        storeLocation,
-                    },
-                );
-                if (
-                    daysInMonthsInYearsResult.err ||
-                    daysInMonthsInYearsResult.val.none
-                ) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
-                const daysInMonthsInYears = daysInMonthsInYearsResult.val.val;
+                    const daysInMonthsInYearsResult =
+                        createDaysInMonthsInYearsSafe({
+                            storeLocation,
+                        });
+                    if (daysInMonthsInYearsResult.err) {
+                        return daysInMonthsInYearsResult;
+                    }
+                    if (daysInMonthsInYearsResult.val.none) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
 
-                const customerMetricsResult = createRandomCustomerMetricsSafe({
-                    storeLocation,
-                    daysInMonthsInYears,
-                });
-                if (customerMetricsResult.err) {
+                    const daysInMonthsInYears =
+                        daysInMonthsInYearsResult.val.val;
+
+                    const customerMetricsResult =
+                        createRandomCustomerMetricsSafe({
+                            storeLocation,
+                            daysInMonthsInYears,
+                        });
+                    if (customerMetricsResult.err) {
+                        return customerMetricsResult;
+                    }
+                    if (customerMetricsResult.val.none) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+
+                    const setMetricsInCacheResult =
+                        await setCustomerMetricsInCache(
+                            storeLocation,
+                            customerMetricsResult.val.val,
+                        );
+                    if (setMetricsInCacheResult.err) {
+                        return setMetricsInCacheResult;
+                    }
+                    if (setMetricsInCacheResult.val.none) {
+                        return createSafeErrorResult(defaultMetrics);
+                    }
+
                     return customerMetricsResult;
+                } catch (error: unknown) {
+                    return createSafeErrorResult(error);
                 }
-                if (customerMetricsResult.val.none) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
-
-                const setMetricsInCacheResult = await setCustomerMetricsInCache(
-                    storeLocation,
-                    customerMetricsResult.val.val,
-                );
-                if (setMetricsInCacheResult.err) {
-                    return setMetricsInCacheResult;
-                }
-                if (setMetricsInCacheResult.val.none) {
-                    return createSafeErrorResult(defaultMetrics);
-                }
-
-                return customerMetricsResult;
             }),
         );
 
@@ -136,7 +143,7 @@ self.onmessage = async (
             return;
         }
 
-        const allLocationsAggregatedCustomerMetrics =
+        const allLocationsAggregatedCustomerMetricsResult =
             createAllLocationsAggregatedCustomerMetricsSafe({
                 calgaryCustomerMetrics:
                     calgaryCustomerMetricsSettledResult.value.val.val,
@@ -145,12 +152,35 @@ self.onmessage = async (
                 vancouverCustomerMetrics:
                     vancouverCustomerMetricsSettledResult.value.val.val,
             });
+        if (allLocationsAggregatedCustomerMetricsResult.err) {
+            self.postMessage(allLocationsAggregatedCustomerMetricsResult);
+            return;
+        }
         if (
-            allLocationsAggregatedCustomerMetrics.err ||
-            allLocationsAggregatedCustomerMetrics.val.none
+            allLocationsAggregatedCustomerMetricsResult.val.none
         ) {
             self.postMessage(
-                createSafeErrorResult("Failed to aggregate customer metrics"),
+                createSafeErrorResult(
+                    "Failed to aggregate customer metrics",
+                ),
+            );
+            return;
+        }
+
+        const setAllLocationsMetricsInCacheResult =
+            await setCustomerMetricsInCache(
+                "All Locations",
+                allLocationsAggregatedCustomerMetricsResult.val.val,
+            );
+        if (setAllLocationsMetricsInCacheResult.err) {
+            self.postMessage(setAllLocationsMetricsInCacheResult);
+            return;
+        }
+        if (setAllLocationsMetricsInCacheResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult(
+                    "Failed to set all locations customer metrics in cache",
+                ),
             );
             return;
         }
@@ -210,7 +240,9 @@ async function setCustomerMetricsInCache(
             return setMetricsResult;
         }
 
-        return createSafeSuccessResult(metricCacheKey);
+        return createSafeSuccessResult(
+            `Customer metrics for ${storeLocation} successfully cached`,
+        );
     } catch (error: unknown) {
         return createSafeErrorResult(error);
     }
