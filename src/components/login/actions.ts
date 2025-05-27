@@ -10,12 +10,16 @@ type LoginAction = Prettify<
 >;
 
 const loginAction: LoginAction = {
+  setCustomerMetricsWorker: "setCustomerMetricsWorker",
   setErrorMessage: "setErrorMessage",
+  setFinancialMetricsWorker: "setFinancialMetricsWorker",
   setIsLoading: "setIsLoading",
   setIsSubmitting: "setIsSubmitting",
   setIsSuccessful: "setIsSuccessful",
   setLoginFetchWorker: "setLoginFetchWorker",
   setPassword: "setPassword",
+  setProductMetricsWorker: "setProductMetricsWorker",
+  setRepairMetricsWorker: "setRepairMetricsWorker",
   setUsername: "setUsername",
 };
 

@@ -2,12 +2,16 @@ import { parseSyncSafe } from "../../utils";
 import { type LoginAction, loginAction } from "./actions";
 import {
   LoginDispatch,
+  setCustomerMetricsWorkerLoginDispatchZod,
   setErrorMessageLoginDispatchZod,
+  setFinancialMetricsWorkerLoginDispatchZod,
   setIsLoadingLoginDispatchZod,
   setIsSubmittingLoginDispatchZod,
   setIsSuccessfulLoginDispatchZod,
   setLoginFetchWorkerLoginDispatchZod,
   setPasswordLoginDispatchZod,
+  setProductMetricsWorkerLoginDispatchZod,
+  setRepairMetricsWorkerLoginDispatchZod,
   setUsernameLoginDispatchZod,
 } from "./schemas";
 import type { LoginState } from "./types";
@@ -24,14 +28,42 @@ const loginReducersMap = new Map<
   LoginAction[keyof LoginAction],
   (state: LoginState, dispatch: LoginDispatch) => LoginState
 >([
+  [loginAction.setCustomerMetricsWorker, loginReducer_setCustomerMetricsWorker],
   [loginAction.setErrorMessage, loginReducer_setErrorMessage],
+  [
+    loginAction.setFinancialMetricsWorker,
+    loginReducer_setFinancialMetricsWorker,
+  ],
   [loginAction.setIsLoading, loginReducer_setIsLoading],
   [loginAction.setIsSubmitting, loginReducer_setIsSubmitting],
   [loginAction.setIsSuccessful, loginReducer_setIsSuccessful],
   [loginAction.setLoginFetchWorker, loginReducer_setLoginFetchWorker],
   [loginAction.setPassword, loginReducer_setPassword],
+  [loginAction.setProductMetricsWorker, loginReducer_setProductMetricsWorker],
+  [loginAction.setRepairMetricsWorker, loginReducer_setRepairMetricsWorker],
   [loginAction.setUsername, loginReducer_setUsername],
 ]);
+
+function loginReducer_setCustomerMetricsWorker(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setCustomerMetricsWorkerLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    customerMetricsWorker: parsedResult.val.val.payload as Worker,
+  };
+}
 
 function loginReducer_setErrorMessage(
   state: LoginState,
@@ -51,6 +83,27 @@ function loginReducer_setErrorMessage(
   return {
     ...state,
     errorMessage: parsedResult.val.val.payload as string,
+  };
+}
+
+function loginReducer_setFinancialMetricsWorker(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setFinancialMetricsWorkerLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    financialMetricsWorker: parsedResult.val.val.payload as Worker,
   };
 }
 
@@ -156,6 +209,48 @@ function loginReducer_setPassword(
   return {
     ...state,
     password: parsedResult.val.val.payload as string,
+  };
+}
+
+function loginReducer_setProductMetricsWorker(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setProductMetricsWorkerLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    productMetricsWorker: parsedResult.val.val.payload as Worker,
+  };
+}
+
+function loginReducer_setRepairMetricsWorker(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setRepairMetricsWorkerLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    repairMetricsWorker: parsedResult.val.val.payload as Worker,
   };
 }
 

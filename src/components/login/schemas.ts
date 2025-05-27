@@ -31,6 +31,26 @@ const setErrorMessageLoginDispatchZod = z.object({
     payload: z.string(),
 });
 
+const setFinancialMetricsWorkerLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setFinancialMetricsWorker),
+    payload: z.instanceof(Worker),
+});
+
+const setProductMetricsWorkerLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setProductMetricsWorker),
+    payload: z.instanceof(Worker),
+});
+
+const setRepairMetricsWorkerLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setRepairMetricsWorker),
+    payload: z.instanceof(Worker),
+});
+
+const setCustomerMetricsWorkerLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setCustomerMetricsWorker),
+    payload: z.instanceof(Worker),
+});
+
 type LoginDispatch =
     | z.infer<typeof setIsLoadingLoginDispatchZod>
     | z.infer<typeof setIsSubmittingLoginDispatchZod>
@@ -38,7 +58,11 @@ type LoginDispatch =
     | z.infer<typeof setPasswordLoginDispatchZod>
     | z.infer<typeof setUsernameLoginDispatchZod>
     | z.infer<typeof setLoginFetchWorkerLoginDispatchZod>
-    | z.infer<typeof setErrorMessageLoginDispatchZod>;
+    | z.infer<typeof setErrorMessageLoginDispatchZod>
+    | z.infer<typeof setFinancialMetricsWorkerLoginDispatchZod>
+    | z.infer<typeof setProductMetricsWorkerLoginDispatchZod>
+    | z.infer<typeof setRepairMetricsWorkerLoginDispatchZod>
+    | z.infer<typeof setCustomerMetricsWorkerLoginDispatchZod>;
 
 const handleLoginClickInputZod = z.object({
     isLoading: z.boolean(),
@@ -66,12 +90,16 @@ const handleMessageEventLoginFetchWorkerToMainInputZod = z.object({
 export {
     handleLoginClickInputZod,
     handleMessageEventLoginFetchWorkerToMainInputZod,
+    setCustomerMetricsWorkerLoginDispatchZod,
     setErrorMessageLoginDispatchZod,
+    setFinancialMetricsWorkerLoginDispatchZod,
     setIsLoadingLoginDispatchZod,
     setIsSubmittingLoginDispatchZod,
     setIsSuccessfulLoginDispatchZod,
     setLoginFetchWorkerLoginDispatchZod,
     setPasswordLoginDispatchZod,
+    setProductMetricsWorkerLoginDispatchZod,
+    setRepairMetricsWorkerLoginDispatchZod,
     setUsernameLoginDispatchZod,
 };
 export type { LoginDispatch };

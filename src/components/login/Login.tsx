@@ -40,12 +40,16 @@ function Login() {
     initialLoginState,
   );
   const {
+    customerMetricsWorker,
     errorMessage,
+    financialMetricsWorker,
     isLoading,
     isSubmitting,
     isSuccessful,
     loginFetchWorker,
     password,
+    productMetricsWorker,
+    repairMetricsWorker,
     username,
   } = loginState;
 
@@ -74,7 +78,15 @@ function Login() {
     //   });
 
     // })();
+  }, []);
 
+  useEffect(()=>{
+    const newFinancialChartsWorker = new 
+      
+  },[])
+
+  useEffect(() => {
+    
     const newFetchParseWorker = new FetchParseWorker();
 
     loginDispatch({

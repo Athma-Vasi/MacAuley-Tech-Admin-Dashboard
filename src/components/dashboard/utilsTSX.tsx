@@ -92,8 +92,7 @@ function returnDashboardCardElement(
     <div
       className={`statistics-card c${idx ?? 0} ${isActive ? "active" : ""}`}
       data-testid={`statistics-card-${heading}`}
-      // style={{ border: `1px solid ${grayBorderShade}` }}
-      style={{ border: "1px solid gray" }}
+      style={{ border: `1px solid ${grayBorderShade}` }}
     >
       {cardHeading}
       {cardBody}
@@ -538,7 +537,6 @@ function consolidateCardsAndStatisticsModals(
 
     card.icon = statisticsButton;
     const cardElement = returnDashboardCardElement({ ...card, idx });
-
     acc.set(key, cardElement);
 
     return acc;
