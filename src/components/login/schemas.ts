@@ -51,6 +51,11 @@ const setCustomerMetricsWorkerLoginDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
+const setTriggerFinancialMetricsCreationLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setTriggerFinancialMetricsCreation),
+    payload: z.boolean(),
+});
+
 type LoginDispatch =
     | z.infer<typeof setIsLoadingLoginDispatchZod>
     | z.infer<typeof setIsSubmittingLoginDispatchZod>
@@ -62,7 +67,8 @@ type LoginDispatch =
     | z.infer<typeof setFinancialMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setProductMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setRepairMetricsWorkerLoginDispatchZod>
-    | z.infer<typeof setCustomerMetricsWorkerLoginDispatchZod>;
+    | z.infer<typeof setCustomerMetricsWorkerLoginDispatchZod>
+    | z.infer<typeof setTriggerFinancialMetricsCreationLoginDispatchZod>;
 
 const handleLoginClickInputZod = z.object({
     isLoading: z.boolean(),
@@ -100,6 +106,7 @@ export {
     setPasswordLoginDispatchZod,
     setProductMetricsWorkerLoginDispatchZod,
     setRepairMetricsWorkerLoginDispatchZod,
+    setTriggerFinancialMetricsCreationLoginDispatchZod,
     setUsernameLoginDispatchZod,
 };
 export type { LoginDispatch };

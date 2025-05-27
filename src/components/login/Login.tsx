@@ -27,6 +27,7 @@ import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
 import CustomerMetricsWorker from "./customerMetricsWorker?worker";
+import FinancialMetricsWorker from "./financialMetricsWorker?worker";
 import {
   handleLoginClick,
   handleMessageEventLoginFetchWorkerToMain,
@@ -52,6 +53,7 @@ function Login() {
     password,
     productMetricsWorker,
     repairMetricsWorker,
+    triggerFinancialMetricsCreation,
     username,
   } = loginState;
 
@@ -130,11 +132,28 @@ function Login() {
       console.log("Repair metrics worker data:", event.data.val.val);
     };
 
+    const newFinancialMetricsWorker = new FinancialMetricsWorker();
+    loginDispatch({
+      action: loginAction.setFinancialMetricsWorker,
+      payload: newFinancialMetricsWorker,
+    });
+    newFinancialMetricsWorker.onmessage = async (
+      event: MessageEvent,
+    ) => {
+      if (event.data.err || event.data.val.none) {
+        console.error("Error in financial metrics worker:", event.data);
+        return;
+      }
+
+      console.log("Financial metrics worker data:", event.data.val.val);
+    };
+
     return () => {
+      isComponentMountedRef.current = false;
       newCustomerMetricsWorker.terminate();
+      newFinancialMetricsWorker.terminate();
       newProductMetricsWorker.terminate();
       newRepairMetricsWorker.terminate();
-      isComponentMountedRef.current = false;
     };
   }, []);
 

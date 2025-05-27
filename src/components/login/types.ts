@@ -9,6 +9,7 @@ type LoginState = {
   password: string;
   productMetricsWorker: Worker | null;
   repairMetricsWorker: Worker | null;
+  triggerFinancialMetricsCreation: boolean;
   username: string;
 };
 

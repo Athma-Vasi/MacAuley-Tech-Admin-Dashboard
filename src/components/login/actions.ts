@@ -20,6 +20,7 @@ const loginAction: LoginAction = {
   setPassword: "setPassword",
   setProductMetricsWorker: "setProductMetricsWorker",
   setRepairMetricsWorker: "setRepairMetricsWorker",
+  setTriggerFinancialMetricsCreation: "setTriggerFinancialMetricsCreation",
   setUsername: "setUsername",
 };
 

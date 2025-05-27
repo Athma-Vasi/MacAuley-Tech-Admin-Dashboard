@@ -12,6 +12,7 @@ import {
   setPasswordLoginDispatchZod,
   setProductMetricsWorkerLoginDispatchZod,
   setRepairMetricsWorkerLoginDispatchZod,
+  setTriggerFinancialMetricsCreationLoginDispatchZod,
   setUsernameLoginDispatchZod,
 } from "./schemas";
 import type { LoginState } from "./types";
@@ -41,6 +42,10 @@ const loginReducersMap = new Map<
   [loginAction.setPassword, loginReducer_setPassword],
   [loginAction.setProductMetricsWorker, loginReducer_setProductMetricsWorker],
   [loginAction.setRepairMetricsWorker, loginReducer_setRepairMetricsWorker],
+  [
+    loginAction.setTriggerFinancialMetricsCreation,
+    loginReducer_setTriggerFinancialMetricsCreation,
+  ],
   [loginAction.setUsername, loginReducer_setUsername],
 ]);
 
@@ -251,6 +256,27 @@ function loginReducer_setRepairMetricsWorker(
   return {
     ...state,
     repairMetricsWorker: parsedResult.val.val.payload as Worker,
+  };
+}
+
+function loginReducer_setTriggerFinancialMetricsCreation(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setTriggerFinancialMetricsCreationLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    triggerFinancialMetricsCreation: parsedResult.val.val.payload as boolean,
   };
 }
 
