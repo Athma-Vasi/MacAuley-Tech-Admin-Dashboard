@@ -13,10 +13,7 @@ type RoutesZodSchemasMapKey = keyof typeof ROUTES_ZOD_SCHEMAS_MAP;
  */
 const ROUTES_ZOD_SCHEMAS_MAP = {
     directory: userDocumentOptionalsZod,
-    login: z.object({
-        userDocument: userDocumentOptionalsZod,
-        financialMetricsDocument: financialMetricsDocumentZod,
-    }),
+    login: userDocumentOptionalsZod,
     productMetrics: productMetricsDocumentZod,
     financialMetrics: financialMetricsDocumentZod,
     customerMetrics: customerMetricsDocumentZod,

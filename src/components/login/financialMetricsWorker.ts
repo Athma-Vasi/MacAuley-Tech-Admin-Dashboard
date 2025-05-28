@@ -1,6 +1,11 @@
 import { Err, Ok, Option } from "ts-results";
 import { ALL_STORE_LOCATIONS_DATA, METRICS_URL } from "../../constants";
-import { SafeError, SafeResult, StoreLocation } from "../../types";
+import {
+    FinancialMetricsDocument,
+    SafeError,
+    SafeResult,
+    StoreLocation,
+} from "../../types";
 import {
     createMetricsURLCacheKey,
     createSafeErrorResult,
@@ -298,6 +303,26 @@ export type {
     MessageEventFinancialWorkerToMain,
 };
 
+function createFinancialMetricsDocument(
+    storeLocation: AllStoreLocations,
+    financialMetrics: YearlyFinancialMetric[],
+): FinancialMetricsDocument {
+    return {
+        _id: createMetricsURLCacheKey({
+            metricsUrl: METRICS_URL,
+            metricsView: "financials",
+            productMetricCategory: "All Products",
+            repairMetricCategory: "All Repairs",
+            storeLocation,
+        }) ?? crypto.randomUUID(),
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        financialMetrics,
+        storeLocation,
+        updatedAt: new Date().toISOString(),
+    };
+}
+
 async function setFinancialMetricsInCache(
     storeLocation: AllStoreLocations,
     metrics: YearlyFinancialMetric[],
@@ -314,7 +339,10 @@ async function setFinancialMetricsInCache(
         );
         const setMetricsResult = await setCachedItemAsyncSafe(
             metricCacheKey,
-            metrics,
+            createFinancialMetricsDocument(
+                storeLocation,
+                metrics,
+            ),
         );
         if (setMetricsResult.err) {
             return setMetricsResult;

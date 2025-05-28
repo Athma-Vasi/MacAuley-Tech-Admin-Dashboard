@@ -1,6 +1,6 @@
 import { Err, Ok, Option } from "ts-results";
 import { METRICS_URL, STORE_LOCATIONS } from "../../constants";
-import { SafeError, SafeResult } from "../../types";
+import { ProductMetricsDocument, SafeError, SafeResult } from "../../types";
 import {
     createDaysInMonthsInYearsSafe,
     createMetricsURLCacheKey,
@@ -8,7 +8,12 @@ import {
     createSafeSuccessResult,
     setCachedItemAsyncSafe,
 } from "../../utils";
-import { AllStoreLocations, ProductMetric } from "../dashboard/types";
+import {
+    AllStoreLocations,
+    ProductCategory,
+    ProductMetric,
+    ProductYearlyMetric,
+} from "../dashboard/types";
 import {
     createAllLocationsAggregatedProductMetricsSafe,
     createAllProductsAggregatedProductMetricsSafe,
@@ -251,6 +256,28 @@ export type {
     MessageEventProductWorkerToMain,
 };
 
+function createProductMetricsDocument(
+    metricCategory: "All Products" | ProductCategory,
+    productMetrics: ProductYearlyMetric[],
+    storeLocation: AllStoreLocations,
+): ProductMetricsDocument {
+    return {
+        _id: createMetricsURLCacheKey({
+            metricsUrl: METRICS_URL,
+            metricsView: "products",
+            productMetricCategory: metricCategory,
+            repairMetricCategory: "All Repairs",
+            storeLocation,
+        }) ?? crypto.randomUUID(),
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        metricCategory,
+        yearlyMetrics: productMetrics,
+        storeLocation,
+        updatedAt: new Date().toISOString(),
+    };
+}
+
 async function setProductMetricsInCache(
     storeLocation: AllStoreLocations,
     metrics: ProductMetric[],
@@ -273,7 +300,11 @@ async function setProductMetricsInCache(
 
                         const setItemResult = await setCachedItemAsyncSafe(
                             metricCacheKey,
-                            yearlyMetrics,
+                            createProductMetricsDocument(
+                                name,
+                                yearlyMetrics,
+                                storeLocation,
+                            ),
                         );
                         if (setItemResult.err) {
                             return setItemResult;

@@ -1,6 +1,6 @@
 import { Err, Ok, Option } from "ts-results";
 import { METRICS_URL, STORE_LOCATIONS } from "../../constants";
-import { SafeError, SafeResult } from "../../types";
+import { RepairMetricsDocument, SafeError, SafeResult } from "../../types";
 import {
     createDaysInMonthsInYearsSafe,
     createMetricsURLCacheKey,
@@ -8,7 +8,12 @@ import {
     createSafeSuccessResult,
     setCachedItemAsyncSafe,
 } from "../../utils";
-import { AllStoreLocations, RepairMetric } from "../dashboard/types";
+import {
+    AllStoreLocations,
+    RepairCategory,
+    RepairMetric,
+    RepairYearlyMetric,
+} from "../dashboard/types";
 import {
     createAllLocationsAggregatedRepairMetricsSafe,
     createAllRepairsAggregatedRepairMetricsSafe,
@@ -248,6 +253,28 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 
 export type { MessageEventRepairMainToWorker, MessageEventRepairWorkerToMain };
 
+function createRepairMetricsDocument(
+    metricCategory: "All Repairs" | RepairCategory,
+    repairMetrics: RepairYearlyMetric[],
+    storeLocation: AllStoreLocations,
+): RepairMetricsDocument {
+    return {
+        _id: createMetricsURLCacheKey({
+            metricsUrl: METRICS_URL,
+            metricsView: "repairs",
+            productMetricCategory: "All Products",
+            repairMetricCategory: metricCategory,
+            storeLocation,
+        }) ?? crypto.randomUUID(),
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        metricCategory,
+        yearlyMetrics: repairMetrics,
+        storeLocation,
+        updatedAt: new Date().toISOString(),
+    };
+}
+
 async function setRepairMetricsInCache(
     storeLocation: AllStoreLocations,
     metrics: RepairMetric[],
@@ -270,7 +297,11 @@ async function setRepairMetricsInCache(
 
                         const setItemResult = await setCachedItemAsyncSafe(
                             metricCacheKey,
-                            yearlyMetrics,
+                            createRepairMetricsDocument(
+                                name,
+                                yearlyMetrics,
+                                storeLocation,
+                            ),
                         );
                         if (setItemResult.err) {
                             return setItemResult;

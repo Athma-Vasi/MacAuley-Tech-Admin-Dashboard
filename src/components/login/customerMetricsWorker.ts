@@ -1,5 +1,5 @@
 import { METRICS_URL, STORE_LOCATIONS } from "../../constants";
-import { SafeResult } from "../../types";
+import { CustomerMetricsDocument, SafeResult } from "../../types";
 import {
     createDaysInMonthsInYearsSafe,
     createMetricsURLCacheKey,
@@ -218,6 +218,26 @@ export type {
     MessageEventCustomerWorkerToMain,
 };
 
+function createCustomerMetricsDocument(
+    storeLocation: AllStoreLocations,
+    customerMetrics: CustomerMetrics,
+): CustomerMetricsDocument {
+    return {
+        _id: createMetricsURLCacheKey({
+            metricsUrl: METRICS_URL,
+            metricsView: "customers",
+            productMetricCategory: "All Products",
+            repairMetricCategory: "All Repairs",
+            storeLocation,
+        }) ?? crypto.randomUUID(),
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        customerMetrics,
+        storeLocation,
+        updatedAt: new Date().toISOString(),
+    };
+}
+
 async function setCustomerMetricsInCache(
     storeLocation: AllStoreLocations,
     metrics: CustomerMetrics,
@@ -234,7 +254,10 @@ async function setCustomerMetricsInCache(
         );
         const setMetricsResult = await setCachedItemAsyncSafe(
             metricCacheKey,
-            metrics,
+            createCustomerMetricsDocument(
+                storeLocation,
+                metrics,
+            ),
         );
         if (setMetricsResult.err) {
             return setMetricsResult;

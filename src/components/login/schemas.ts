@@ -94,7 +94,6 @@ const handleMessageEventLoginFetchWorkerToMainInputZod = z.object({
     globalDispatch: z.function().args(z.any()).returns(z.void()),
     isComponentMountedRef: z.object({ current: z.boolean() }),
     loginDispatch: z.function().args(z.any()).returns(z.void()),
-    metricsUrl: z.string().url(),
     navigate: z.function().args(z.any()).returns(z.void()),
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });

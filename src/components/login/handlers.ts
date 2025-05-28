@@ -5,21 +5,15 @@ import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
-import {
-  FinancialMetricsDocument,
-  SafeResult,
-  UserDocument,
-} from "../../types";
+import { SafeResult, UserDocument } from "../../types";
 import {
   catchHandlerErrorSafe,
-  createMetricsURLCacheKey,
   createSafeErrorResult,
   createSafeSuccessResult,
   parseSyncSafe,
-  setCachedItemAsyncSafe,
 } from "../../utils";
-import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { loginAction } from "./actions";
+import { MessageEventLoginFetchWorkerToMain } from "./fetchWorker";
 import {
   handleLoginClickInputZod,
   handleMessageEventLoginFetchWorkerToMainInputZod,
@@ -98,16 +92,12 @@ async function handleLoginClick(input: {
 async function handleMessageEventLoginFetchWorkerToMain(
   input: {
     authDispatch: React.Dispatch<AuthDispatch>;
-    event: MessageEventFetchWorkerToMain<
-      {
-        userDocument: UserDocument;
-        financialMetricsDocument: FinancialMetricsDocument;
-      }
+    event: MessageEventLoginFetchWorkerToMain<
+      UserDocument
     >;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
     loginDispatch: React.Dispatch<LoginDispatch>;
-    metricsUrl: string;
     navigate: NavigateFunction;
     showBoundary: (error: unknown) => void;
   },
@@ -135,7 +125,6 @@ async function handleMessageEventLoginFetchWorkerToMain(
       globalDispatch,
       isComponentMountedRef,
       loginDispatch,
-      metricsUrl,
       navigate,
       showBoundary,
     } = parsedInputResult.val.val;
@@ -171,7 +160,8 @@ async function handleMessageEventLoginFetchWorkerToMain(
       return createSafeErrorResult("Invalid credentials");
     }
 
-    const { responsePayloadSafe, decodedToken } = messageEventResult.val.val;
+    const { financialMetricsDocument, responsePayloadSafe, decodedToken } =
+      messageEventResult.val.val;
     const { accessToken, data, triggerLogout } = responsePayloadSafe;
 
     if (triggerLogout || decodedToken.none) {
@@ -214,38 +204,13 @@ async function handleMessageEventLoginFetchWorkerToMain(
     });
     authDispatch({
       action: authAction.setUserDocument,
-      payload: data[0].userDocument,
+      payload: data[0],
     });
 
     globalDispatch({
       action: globalAction.setFinancialMetricsDocument,
-      payload: data[0].financialMetricsDocument,
+      payload: financialMetricsDocument,
     });
-
-    const cacheKey = createMetricsURLCacheKey({
-      metricsUrl,
-      metricsView: "financials",
-      productMetricCategory: "All Products",
-      repairMetricCategory: "All Repairs",
-      storeLocation: "All Locations",
-    });
-
-    const setCachedItemResult = await setCachedItemAsyncSafe<
-      FinancialMetricsDocument
-    >(
-      cacheKey,
-      data[0].financialMetricsDocument,
-    );
-
-    if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
-    }
-    if (setCachedItemResult.err) {
-      showBoundary(setCachedItemResult);
-      return createSafeErrorResult(
-        "Error setting cached item",
-      );
-    }
 
     loginDispatch({
       action: loginAction.setIsSubmitting,

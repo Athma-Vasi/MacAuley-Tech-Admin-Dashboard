@@ -16,17 +16,17 @@ import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
-import { COLORS_SWATCHES, METRICS_URL } from "../../constants";
+import { COLORS_SWATCHES } from "../../constants";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
-import { FinancialMetricsDocument, UserDocument } from "../../types";
+import { UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
-import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
-import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { loginAction } from "./actions";
 import CustomerMetricsWorker from "./customerMetricsWorker?worker";
+import { MessageEventLoginFetchWorkerToMain } from "./fetchWorker";
+import LoginFetchWorker from "./fetchWorker?worker";
 import FinancialMetricsWorker from "./financialMetricsWorker?worker";
 import {
   handleLoginClick,
@@ -203,19 +203,16 @@ function Login() {
   }, [financialMetricsWorker, productMetricsGenerated, repairMetricsGenerated]);
 
   useEffect(() => {
-    const newFetchParseWorker = new FetchParseWorker();
+    const newLoginFetchWorker = new LoginFetchWorker();
 
     loginDispatch({
       action: loginAction.setLoginFetchWorker,
-      payload: newFetchParseWorker,
+      payload: newLoginFetchWorker,
     });
 
-    newFetchParseWorker.onmessage = async (
-      event: MessageEventFetchWorkerToMain<
-        {
-          userDocument: UserDocument;
-          financialMetricsDocument: FinancialMetricsDocument;
-        }
+    newLoginFetchWorker.onmessage = async (
+      event: MessageEventLoginFetchWorkerToMain<
+        UserDocument
       >,
     ) => {
       await handleMessageEventLoginFetchWorkerToMain({
@@ -224,14 +221,13 @@ function Login() {
         globalDispatch,
         isComponentMountedRef,
         loginDispatch,
-        metricsUrl: METRICS_URL,
         navigate,
         showBoundary,
       });
     };
 
     return () => {
-      newFetchParseWorker.terminate();
+      newLoginFetchWorker.terminate();
       isComponentMountedRef.current = false;
     };
   }, []);
