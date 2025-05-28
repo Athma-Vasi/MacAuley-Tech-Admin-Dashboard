@@ -25,7 +25,7 @@ type DashboardRepairMetric = RepairCategory | "All Repairs";
 type DashboardState = {
   calendarView: DashboardCalendarView;
   currentSelectedInput: string;
-  dashboardFetchWorker: Worker | null;
+  dashboardCacheWorker: Worker | null;
   isLoading: boolean;
   loadingMessage: string;
 };
@@ -36,7 +36,7 @@ type DashboardDispatch =
     payload: string;
   }
   | {
-    action: DashboardAction["setDashboardFetchWorker"];
+    action: DashboardAction["setDashboardCacheWorker"];
     payload: Worker;
   }
   | {

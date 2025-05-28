@@ -4,7 +4,7 @@ import {
     setClickedNavlinkSidebarDispatchZod,
     setDirectoryFetchWorkerSidebarDispatchZod,
     setLogoutFetchWorkerSidebarDispatchZod,
-    setMetricsFetchWorkerSidebarDispatchZod,
+    setMetricsCacheWorkerSidebarDispatchZod,
 } from "./schemas";
 import { SidebarDispatch, SidebarNavlinks, SidebarState } from "./types";
 
@@ -23,7 +23,7 @@ const reducersMap = new Map<
         sidebarReducer_setDirectoryFetchWorker,
     ],
     [sidebarAction.setLogoutFetchWorker, sidebarReducer_setLogoutFetchWorker],
-    [sidebarAction.setMetricsFetchWorker, sidebarReducer_setMetricsFetchWorker],
+    [sidebarAction.setMetricsCacheWorker, sidebarReducer_setMetricsCacheWorker],
 ]);
 
 function sidebarReducer_setClickedNavlink(
@@ -84,13 +84,13 @@ function sidebarReducer_setLogoutFetchWorker(
     };
 }
 
-function sidebarReducer_setMetricsFetchWorker(
+function sidebarReducer_setMetricsCacheWorker(
     state: SidebarState,
     dispatch: SidebarDispatch,
 ) {
     const parsedResult = parseSyncSafe({
         object: dispatch,
-        zSchema: setMetricsFetchWorkerSidebarDispatchZod,
+        zSchema: setMetricsCacheWorkerSidebarDispatchZod,
     });
 
     if (parsedResult.err || parsedResult.val.none) {
@@ -99,7 +99,7 @@ function sidebarReducer_setMetricsFetchWorker(
 
     return {
         ...state,
-        metricsFetchWorker: parsedResult.val.val.payload as Worker,
+        metricsCacheWorker: parsedResult.val.val.payload as Worker,
     };
 }
 
@@ -108,5 +108,5 @@ export {
     sidebarReducer_setClickedNavlink,
     sidebarReducer_setDirectoryFetchWorker,
     sidebarReducer_setLogoutFetchWorker,
-    sidebarReducer_setMetricsFetchWorker,
+    sidebarReducer_setMetricsCacheWorker,
 };

@@ -5,7 +5,6 @@ import { AuthDispatch } from "../../context/authProvider/types";
 import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
-  BusinessMetricsDocument,
   CustomerMetricsDocument,
   FinancialMetricsDocument,
   ProductMetricsDocument,
@@ -24,7 +23,7 @@ import {
   setCachedItemAsyncSafe,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
-import { MessageEventDashboardFetchWorkerToMain } from "../dashboard/fetchWorker";
+import { MessageEventDashboardCacheWorkerToMain } from "../dashboard/cacheWorker";
 import { ProductMetricCategory } from "../dashboard/product/types";
 import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
@@ -35,23 +34,21 @@ import {
   handleLogoutClickInputZod,
   handleMessageEventDirectoryFetchWorkerToMainInputZod,
   handleMessageEventLogoutFetchWorkerToMainInputZod,
-  handleMessageEventMetricsFetchWorkerToMainInputZod,
+  handleMessageEventMetricsCacheWorkerToMainInputZod,
   handleMetricCategoryNavClickInputZod,
 } from "./schemas";
 
-async function handleMessageEventMetricsFetchWorkerToMain(input: {
-  authDispatch: React.Dispatch<AuthDispatch>;
-  event: MessageEventDashboardFetchWorkerToMain;
+async function handleMessageEventMetricsCacheWorkerToMain(input: {
+  event: MessageEventDashboardCacheWorkerToMain;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
-  metricsUrl: string;
   navigate: NavigateFunction;
   showBoundary: (error: unknown) => void;
 }): Promise<SafeResult<string>> {
   try {
     const parsedResult = parseSyncSafe({
       object: input,
-      zSchema: handleMessageEventMetricsFetchWorkerToMainInputZod,
+      zSchema: handleMessageEventMetricsCacheWorkerToMainInputZod,
     });
     if (parsedResult.err) {
       input?.showBoundary?.(parsedResult);
@@ -66,11 +63,9 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
     }
 
     const {
-      authDispatch,
       event,
       globalDispatch,
       isComponentMountedRef,
-      metricsUrl,
       navigate,
       showBoundary,
     } = parsedResult.val.val;
@@ -99,110 +94,36 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
 
     const {
       metricsView,
-      responsePayloadSafe,
-      decodedToken,
-      productMetricCategory,
-      repairMetricCategory,
-      storeLocation,
+      metricsDocument,
     } = messageEventResult.val.val;
-    const { accessToken: newAccessToken, triggerLogout, kind, message } =
-      responsePayloadSafe;
 
-    if (triggerLogout) {
-      authDispatch({
-        action: authAction.setAccessToken,
-        payload: "",
+    if (metricsView === "financials") {
+      globalDispatch({
+        action: globalAction.setFinancialMetricsDocument,
+        payload: metricsDocument as FinancialMetricsDocument,
       });
-      authDispatch({
-        action: authAction.setIsLoggedIn,
-        payload: false,
-      });
-      authDispatch({
-        action: authAction.setDecodedToken,
-        payload: Object.create(null),
-      });
-      authDispatch({
-        action: authAction.setUserDocument,
-        payload: Object.create(null),
-      });
-
-      await localforage.clear();
-      const safeErrorResult = createSafeErrorResult(
-        "Logout triggered",
-      );
-      showBoundary(safeErrorResult);
-      return safeErrorResult;
     }
 
-    if (kind === "error") {
-      const safeErrorResult = createSafeErrorResult(
-        `Server error: ${message}`,
-      );
-      showBoundary(safeErrorResult);
-      return safeErrorResult;
+    if (metricsView === "products") {
+      globalDispatch({
+        action: globalAction.setProductMetricsDocument,
+        payload: metricsDocument as ProductMetricsDocument,
+      });
     }
 
-    responsePayloadSafe.data.forEach(
-      async (payload: BusinessMetricsDocument) => {
-        if (metricsView === "financials") {
-          globalDispatch({
-            action: globalAction.setFinancialMetricsDocument,
-            payload: payload as FinancialMetricsDocument,
-          });
-        }
+    if (metricsView === "customers") {
+      globalDispatch({
+        action: globalAction.setCustomerMetricsDocument,
+        payload: metricsDocument as CustomerMetricsDocument,
+      });
+    }
 
-        if (metricsView === "products") {
-          globalDispatch({
-            action: globalAction.setProductMetricsDocument,
-            payload: payload as ProductMetricsDocument,
-          });
-        }
-
-        if (metricsView === "customers") {
-          globalDispatch({
-            action: globalAction.setCustomerMetricsDocument,
-            payload: payload as CustomerMetricsDocument,
-          });
-        }
-
-        if (metricsView === "repairs") {
-          globalDispatch({
-            action: globalAction.setRepairMetricsDocument,
-            payload: payload as RepairMetricsDocument,
-          });
-        }
-
-        const cacheKey = createMetricsURLCacheKey({
-          metricsView,
-          metricsUrl,
-          productMetricCategory,
-          repairMetricCategory,
-          storeLocation,
-        });
-
-        const setCachedItemResult = await setCachedItemAsyncSafe<
-          BusinessMetricsDocument
-        >(
-          cacheKey,
-          payload,
-        );
-        if (setCachedItemResult.err) {
-          showBoundary(setCachedItemResult);
-          return createSafeErrorResult(
-            "Error setting cached item",
-          );
-        }
-      },
-    );
-
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: newAccessToken.none ? "" : newAccessToken.val,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
+    if (metricsView === "repairs") {
+      globalDispatch({
+        action: globalAction.setRepairMetricsDocument,
+        payload: metricsDocument as RepairMetricsDocument,
+      });
+    }
 
     globalDispatch({
       action: globalAction.setIsFetching,
@@ -222,18 +143,15 @@ async function handleMessageEventMetricsFetchWorkerToMain(input: {
 
 async function handleMetricCategoryNavClick(
   input: {
-    accessToken: string;
-    metricsFetchWorker: Worker | null;
+    metricsCacheWorker: Worker | null;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
     metricsUrl: string;
     metricsView: Lowercase<DashboardMetricsView>;
-    navigate: NavigateFunction;
     productMetricCategory: ProductMetricCategory;
     repairMetricCategory: RepairMetricCategory;
     showBoundary: (error: unknown) => void;
     storeLocation: AllStoreLocations;
-    toLocation: string;
   },
 ): Promise<SafeResult<string>> {
   const parsedInputResult = parseSyncSafe({
@@ -251,27 +169,14 @@ async function handleMetricCategoryNavClick(
   }
 
   const {
-    accessToken,
-    metricsFetchWorker,
+    metricsCacheWorker,
     globalDispatch,
-    isComponentMountedRef,
     metricsUrl,
     metricsView,
-    navigate,
     productMetricCategory,
     repairMetricCategory,
-    showBoundary,
     storeLocation,
-    toLocation,
   } = parsedInputResult.val.val;
-
-  const requestInit: RequestInit = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
 
   const cacheKey = createMetricsURLCacheKey({
     metricsView,
@@ -287,66 +192,8 @@ async function handleMetricCategoryNavClick(
   });
 
   try {
-    const metricsDocumentResult = await getCachedItemAsyncSafe<
-      BusinessMetricsDocument
-    >(cacheKey);
-
-    if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
-    }
-    if (metricsDocumentResult.err) {
-      showBoundary(metricsDocumentResult.val);
-      return metricsDocumentResult;
-    }
-
-    if (metricsDocumentResult.val.some) {
-      if (metricsView === "customers") {
-        globalDispatch({
-          action: globalAction.setCustomerMetricsDocument,
-          payload: metricsDocumentResult.val
-            .val as CustomerMetricsDocument,
-        });
-      }
-
-      if (metricsView === "financials") {
-        globalDispatch({
-          action: globalAction.setFinancialMetricsDocument,
-          payload: metricsDocumentResult.val
-            .val as FinancialMetricsDocument,
-        });
-      }
-
-      if (metricsView === "products") {
-        globalDispatch({
-          action: globalAction.setProductMetricsDocument,
-          payload: metricsDocumentResult.val
-            .val as ProductMetricsDocument,
-        });
-      }
-
-      if (metricsView === "repairs") {
-        globalDispatch({
-          action: globalAction.setRepairMetricsDocument,
-          payload: metricsDocumentResult.val
-            .val as RepairMetricsDocument,
-        });
-      }
-
-      globalDispatch({
-        action: globalAction.setIsFetching,
-        payload: false,
-      });
-
-      navigate(toLocation);
-
-      return createSafeSuccessResult("Metrics fetch successful");
-    }
-
-    metricsFetchWorker?.postMessage({
+    metricsCacheWorker?.postMessage({
       metricsView,
-      productMetricCategory,
-      repairMetricCategory,
-      requestInit,
       routesZodSchemaMapKey: metricsView === "products"
         ? "productMetrics"
         : metricsView === "repairs"
@@ -354,8 +201,7 @@ async function handleMetricCategoryNavClick(
         : metricsView === "financials"
         ? "financialMetrics"
         : "customerMetrics",
-      storeLocation,
-      url: cacheKey,
+      cacheKey,
     });
 
     return createSafeSuccessResult("Metrics fetch in progress");
@@ -756,6 +602,6 @@ export {
   handleLogoutClick,
   handleMessageEventDirectoryFetchWorkerToMain,
   handleMessageEventLogoutFetchWorkerToMain,
-  handleMessageEventMetricsFetchWorkerToMain,
+  handleMessageEventMetricsCacheWorkerToMain,
   handleMetricCategoryNavClick,
 };

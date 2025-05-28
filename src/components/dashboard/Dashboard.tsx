@@ -21,7 +21,7 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useWindowSize } from "../../hooks/useWindowSize";
@@ -34,6 +34,8 @@ import {
 import { returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
+import { MessageEventDashboardCacheWorkerToMain } from "./cacheWorker";
+import DashboardCacheWorker from "./cacheWorker?worker";
 import {
   CALENDAR_VIEW_DATA,
   MONTHS,
@@ -42,12 +44,10 @@ import {
 } from "./constants";
 import { CUSTOMER_METRICS_CATEGORY_DATA } from "./customer/constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
-import { MessageEventDashboardFetchWorkerToMain } from "./fetchWorker";
-import DashboardFetchWorker from "./fetchWorker?worker";
 import { FINANCIAL_METRICS_CATEGORY_DATA } from "./financial/constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
 import {
-  handleMessageEventStoreAndCategoryFetchWorkerToMain,
+  handleMessageEventDashboardCacheWorkerToMain,
   handleStoreAndCategoryClicks,
 } from "./handlers";
 import {
@@ -69,8 +69,7 @@ function Dashboard() {
     initialDashboardState,
   );
   const { windowWidth } = useWindowSize();
-  const navigateFn = useNavigate();
-  const { authState: { userDocument, accessToken }, authDispatch } = useAuth();
+  const { authState: { userDocument } } = useAuth();
   const { metricsView } = useParams();
   const { showBoundary } = useErrorBoundary();
   const {
@@ -114,7 +113,7 @@ function Dashboard() {
   const {
     calendarView,
     currentSelectedInput,
-    dashboardFetchWorker,
+    dashboardCacheWorker,
     isLoading,
     loadingMessage,
   } = dashboardState;
@@ -122,31 +121,28 @@ function Dashboard() {
   const isComponentMountedRef = useMountedRef();
 
   useEffect(() => {
-    const newDashboardFetchWorker = new DashboardFetchWorker();
+    const newDashboardCacheWorker = new DashboardCacheWorker();
 
     dashboardDispatch({
-      action: dashboardAction.setDashboardFetchWorker,
-      payload: newDashboardFetchWorker,
+      action: dashboardAction.setDashboardCacheWorker,
+      payload: newDashboardCacheWorker,
     });
 
-    newDashboardFetchWorker.onmessage = async (
-      event: MessageEventDashboardFetchWorkerToMain,
+    newDashboardCacheWorker.onmessage = async (
+      event: MessageEventDashboardCacheWorkerToMain,
     ) => {
-      await handleMessageEventStoreAndCategoryFetchWorkerToMain({
-        authDispatch,
+      await handleMessageEventDashboardCacheWorkerToMain({
         dashboardDispatch,
         event,
         globalDispatch,
         isComponentMountedRef,
-        metricsUrl: METRICS_URL,
-        navigateFn,
         showBoundary,
       });
     };
 
     return () => {
       isComponentMountedRef.current = false;
-      newDashboardFetchWorker.terminate();
+      newDashboardCacheWorker.terminate();
     };
   }, []);
 
@@ -210,10 +206,8 @@ function Dashboard() {
           });
 
           await handleStoreAndCategoryClicks({
-            accessToken,
             dashboardDispatch,
-            dashboardFetchWorker,
-            globalDispatch,
+            dashboardCacheWorker,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
@@ -254,10 +248,8 @@ function Dashboard() {
           });
 
           await handleStoreAndCategoryClicks({
-            accessToken,
             dashboardDispatch,
-            dashboardFetchWorker,
-            globalDispatch,
+            dashboardCacheWorker,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,
@@ -310,10 +302,8 @@ function Dashboard() {
           });
 
           await handleStoreAndCategoryClicks({
-            accessToken,
             dashboardDispatch,
-            dashboardFetchWorker,
-            globalDispatch,
+            dashboardCacheWorker,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: metricsView as Lowercase<DashboardMetricsView>,

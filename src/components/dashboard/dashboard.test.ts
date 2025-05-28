@@ -9,7 +9,7 @@ import {
 import { dashboardAction } from "./actions";
 import {
     dashboardReducer_setCalendarView,
-    dashboardReducer_setDashboardFetchWorker,
+    dashboardReducer_setDashboardCacheWorker,
     dashboardReducer_setIsLoading,
     dashboardReducer_setLoadingMessage,
 } from "./reducers";
@@ -53,17 +53,17 @@ describe("dashboardReducer", () => {
         });
     });
 
-    describe(dashboardAction.setDashboardFetchWorker, () => {
+    describe(dashboardAction.setDashboardCacheWorker, () => {
         it("should set the dashboard fetch worker", () => {
             const dispatch: DashboardDispatch = {
-                action: dashboardAction.setDashboardFetchWorker,
+                action: dashboardAction.setDashboardCacheWorker,
                 payload: new Worker(""),
             };
-            const state = dashboardReducer_setDashboardFetchWorker(
+            const state = dashboardReducer_setDashboardCacheWorker(
                 initialDashboardState,
                 dispatch,
             );
-            expect(state.dashboardFetchWorker).toBeInstanceOf(Worker);
+            expect(state.dashboardCacheWorker).toBeInstanceOf(Worker);
         });
     });
 

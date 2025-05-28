@@ -11,7 +11,7 @@ type SidebarState = {
     clickedNavlink: SidebarNavlinks;
     directoryFetchWorker: Worker | null;
     logoutFetchWorker: Worker | null;
-    metricsFetchWorker: Worker | null;
+    metricsCacheWorker: Worker | null;
 };
 
 type SidebarDispatch =
@@ -28,7 +28,7 @@ type SidebarDispatch =
         payload: Worker;
     }
     | {
-        action: SidebarAction["setMetricsFetchWorker"];
+        action: SidebarAction["setMetricsCacheWorker"];
         payload: Worker;
     };
 

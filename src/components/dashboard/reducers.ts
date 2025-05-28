@@ -3,7 +3,7 @@ import { dashboardAction } from "./actions";
 import {
   setCalendarViewDashboardDispatchZod,
   setCurrentSelectedInputDashboardDispatchZod,
-  setDashboardFetchWorkerDashboardDispatchZod,
+  setDashboardCacheWorkerDashboardDispatchZod,
   setIsLoadingDashboardDispatchZod,
   setLoadingMessageDashboardDispatchZod,
 } from "./schemas";
@@ -30,8 +30,8 @@ const dashboardReducersMap = new Map<
   [dashboardAction.setLoadingMessage, dashboardReducer_setLoadingMessage],
   [dashboardAction.setCalendarView, dashboardReducer_setCalendarView],
   [
-    dashboardAction.setDashboardFetchWorker,
-    dashboardReducer_setDashboardFetchWorker,
+    dashboardAction.setDashboardCacheWorker,
+    dashboardReducer_setDashboardCacheWorker,
   ],
   [
     dashboardAction.setCurrentSelectedInput,
@@ -97,13 +97,13 @@ function dashboardReducer_setCalendarView(
   };
 }
 
-function dashboardReducer_setDashboardFetchWorker(
+function dashboardReducer_setDashboardCacheWorker(
   state: DashboardState,
   dispatch: DashboardDispatch,
 ): DashboardState {
   const parsedResult = parseSyncSafe({
     object: dispatch,
-    zSchema: setDashboardFetchWorkerDashboardDispatchZod,
+    zSchema: setDashboardCacheWorkerDashboardDispatchZod,
   });
 
   if (parsedResult.err || parsedResult.val.none) {
@@ -112,7 +112,7 @@ function dashboardReducer_setDashboardFetchWorker(
 
   return {
     ...state,
-    dashboardFetchWorker: parsedResult.val.val.payload as Worker,
+    dashboardCacheWorker: parsedResult.val.val.payload as Worker,
   };
 }
 
@@ -138,7 +138,7 @@ function dashboardReducer_setCurrentSelectedInput(
 export {
   dashboardReducer,
   dashboardReducer_setCalendarView,
-  dashboardReducer_setDashboardFetchWorker,
+  dashboardReducer_setDashboardCacheWorker,
   dashboardReducer_setIsLoading,
   dashboardReducer_setLoadingMessage,
 };

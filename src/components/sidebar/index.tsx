@@ -25,8 +25,8 @@ import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
-import { MessageEventDashboardFetchWorkerToMain } from "../dashboard/fetchWorker";
-import MetricsParseWorker from "../dashboard/fetchWorker?worker";
+import { MessageEventDashboardCacheWorkerToMain } from "../dashboard/cacheWorker";
+import MetricsCacheWorker from "../dashboard/cacheWorker?worker";
 import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
 import DirectoryFetchWorker from "../directory/fetchWorker?worker";
 import { sidebarAction } from "./actions";
@@ -35,7 +35,7 @@ import {
   handleLogoutClick,
   handleMessageEventDirectoryFetchWorkerToMain,
   handleMessageEventLogoutFetchWorkerToMain,
-  handleMessageEventMetricsFetchWorkerToMain,
+  handleMessageEventMetricsCacheWorkerToMain,
   handleMetricCategoryNavClick,
 } from "./handlers";
 import { sidebarReducer } from "./reducers";
@@ -73,25 +73,23 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     clickedNavlink,
     directoryFetchWorker,
     logoutFetchWorker,
-    metricsFetchWorker,
+    metricsCacheWorker,
   } = sidebarState;
 
   useEffect(() => {
-    const newMetricsFetchWorker = new MetricsParseWorker();
+    const newMetricsFetchWorker = new MetricsCacheWorker();
     sidebarDispatch({
-      action: sidebarAction.setMetricsFetchWorker,
+      action: sidebarAction.setMetricsCacheWorker,
       payload: newMetricsFetchWorker,
     });
 
     newMetricsFetchWorker.onmessage = async (
-      event: MessageEventDashboardFetchWorkerToMain,
+      event: MessageEventDashboardCacheWorkerToMain,
     ) => {
-      await handleMessageEventMetricsFetchWorkerToMain({
-        authDispatch,
+      await handleMessageEventMetricsCacheWorkerToMain({
         event,
         globalDispatch,
         isComponentMountedRef,
-        metricsUrl: METRICS_URL,
         navigate,
         showBoundary,
       });
@@ -160,18 +158,15 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           });
 
           await handleMetricCategoryNavClick({
-            accessToken,
-            metricsFetchWorker,
+            metricsCacheWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "products",
-            navigate,
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocation,
-            toLocation: "/dashboard/products",
           });
 
           setOpened(false);
@@ -196,18 +191,15 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           });
 
           await handleMetricCategoryNavClick({
-            accessToken,
-            metricsFetchWorker,
+            metricsCacheWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "financials",
-            navigate,
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocation,
-            toLocation: "/dashboard/financials",
           });
 
           setOpened(false);
@@ -232,18 +224,15 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           });
 
           await handleMetricCategoryNavClick({
-            accessToken,
-            metricsFetchWorker,
+            metricsCacheWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "customers",
-            navigate,
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocation,
-            toLocation: "/dashboard/customers",
           });
 
           setOpened(false);
@@ -268,18 +257,15 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           });
 
           await handleMetricCategoryNavClick({
-            accessToken,
-            metricsFetchWorker,
+            metricsCacheWorker,
             globalDispatch,
             isComponentMountedRef,
             metricsUrl: METRICS_URL,
             metricsView: "repairs",
-            navigate,
             productMetricCategory,
             repairMetricCategory,
             showBoundary,
             storeLocation,
-            toLocation: "/dashboard/repairs",
           });
 
           setOpened(false);

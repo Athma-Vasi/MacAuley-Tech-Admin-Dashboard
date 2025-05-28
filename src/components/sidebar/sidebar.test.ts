@@ -6,7 +6,7 @@ import {
     sidebarReducer_setClickedNavlink,
     sidebarReducer_setDirectoryFetchWorker,
     sidebarReducer_setLogoutFetchWorker,
-    sidebarReducer_setMetricsFetchWorker,
+    sidebarReducer_setMetricsCacheWorker,
 } from "./reducers";
 import { initialSidebarState } from "./state";
 import { SidebarDispatch, SidebarNavlinks } from "./types";
@@ -111,30 +111,30 @@ describe("Sidebar", () => {
             });
         });
 
-        describe(sidebarAction.setMetricsFetchWorker, () => {
+        describe(sidebarAction.setMetricsCacheWorker, () => {
             it("should allow valid value", () => {
                 const dispatch: SidebarDispatch = {
-                    action: sidebarAction.setMetricsFetchWorker,
+                    action: sidebarAction.setMetricsCacheWorker,
                     payload: new Worker(""),
                 };
-                const state = sidebarReducer_setMetricsFetchWorker(
+                const state = sidebarReducer_setMetricsCacheWorker(
                     initialSidebarState,
                     dispatch,
                 );
-                expect(state.metricsFetchWorker).toBeInstanceOf(Worker);
+                expect(state.metricsCacheWorker).toBeInstanceOf(Worker);
             });
 
             it("should not allow invalid value", () => {
                 const dispatch: SidebarDispatch = {
-                    action: sidebarAction.setMetricsFetchWorker,
+                    action: sidebarAction.setMetricsCacheWorker,
                     payload: {} as any,
                 };
-                const state = sidebarReducer_setMetricsFetchWorker(
+                const state = sidebarReducer_setMetricsCacheWorker(
                     initialSidebarState,
                     dispatch,
                 );
-                expect(state.metricsFetchWorker).toBe(
-                    initialSidebarState.metricsFetchWorker,
+                expect(state.metricsCacheWorker).toBe(
+                    initialSidebarState.metricsCacheWorker,
                 );
             });
         });

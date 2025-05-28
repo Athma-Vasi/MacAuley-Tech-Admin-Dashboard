@@ -12,7 +12,7 @@ const sidebarAction: SidebarAction = {
     setClickedNavlink: "setClickedNavlink",
     setDirectoryFetchWorker: "setDirectoryFetchWorker",
     setLogoutFetchWorker: "setLogoutFetchWorker",
-    setMetricsFetchWorker: "setMetricsFetchWorker",
+    setMetricsCacheWorker: "setMetricsCacheWorker",
 };
 
 export { sidebarAction };

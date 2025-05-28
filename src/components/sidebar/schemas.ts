@@ -7,8 +7,8 @@ import {
 } from "../../schemas";
 import { sidebarAction } from "./actions";
 
-const setMetricsFetchWorkerSidebarDispatchZod = z.object({
-    action: z.literal(sidebarAction.setMetricsFetchWorker),
+const setMetricsCacheWorkerSidebarDispatchZod = z.object({
+    action: z.literal(sidebarAction.setMetricsCacheWorker),
     payload: z.instanceof(Worker),
 });
 
@@ -96,29 +96,24 @@ const handleMessageEventDirectoryFetchWorkerToMainInputZod = z.object({
     toLocation: z.string().min(1).max(1000).optional(),
 });
 
-const handleMessageEventMetricsFetchWorkerToMainInputZod = z.object({
-    authDispatch: z.function().args(z.any()).returns(z.void()),
+const handleMessageEventMetricsCacheWorkerToMainInputZod = z.object({
     event: z.instanceof(MessageEvent),
     globalDispatch: z.function().args(z.any()).returns(z.void()),
     isComponentMountedRef: z.object({ current: z.boolean() }),
-    metricsUrl: z.string().url(),
     navigate: z.function().args(z.any()).returns(z.void()),
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
 const handleMetricCategoryNavClickInputZod = z.object({
-    accessToken: z.string().min(1).max(1000),
-    metricsFetchWorker: z.instanceof(Worker).nullable(),
+    metricsCacheWorker: z.instanceof(Worker).nullable(),
     globalDispatch: z.function().args(z.any()).returns(z.any()),
     isComponentMountedRef: z.object({ current: z.boolean() }),
     metricsUrl: z.string().url(),
     metricsView: metricsViewZod,
-    navigate: z.function().args(z.any()).returns(z.any()),
     productMetricCategory: productMetricCategoryZod,
     repairMetricCategory: repairMetricCategoryZod,
     showBoundary: z.function().args(z.any()).returns(z.void()),
     storeLocation: allStoreLocationsZod,
-    toLocation: z.string().min(1).max(1000),
 });
 
 export {
@@ -126,10 +121,10 @@ export {
     handleLogoutClickInputZod,
     handleMessageEventDirectoryFetchWorkerToMainInputZod,
     handleMessageEventLogoutFetchWorkerToMainInputZod,
-    handleMessageEventMetricsFetchWorkerToMainInputZod,
+    handleMessageEventMetricsCacheWorkerToMainInputZod,
     handleMetricCategoryNavClickInputZod,
     setClickedNavlinkSidebarDispatchZod,
     setDirectoryFetchWorkerSidebarDispatchZod,
     setLogoutFetchWorkerSidebarDispatchZod,
-    setMetricsFetchWorkerSidebarDispatchZod,
+    setMetricsCacheWorkerSidebarDispatchZod,
 };

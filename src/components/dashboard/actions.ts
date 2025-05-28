@@ -11,7 +11,7 @@ type DashboardAction = Prettify<
 const dashboardAction: DashboardAction = {
   setCurrentSelectedInput: "setCurrentSelectedInput",
   setCalendarView: "setCalendarView",
-  setDashboardFetchWorker: "setDashboardFetchWorker",
+  setDashboardCacheWorker: "setDashboardCacheWorker",
   setIsLoading: "setIsLoading",
   setLoadingMessage: "setLoadingMessage",
 };

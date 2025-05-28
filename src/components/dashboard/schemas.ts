@@ -22,8 +22,8 @@ const setCalendarViewDashboardDispatchZod = z.object({
     payload: z.enum(["Daily", "Monthly", "Yearly"]),
 });
 
-const setDashboardFetchWorkerDashboardDispatchZod = z.object({
-    action: z.literal(dashboardAction.setDashboardFetchWorker),
+const setDashboardCacheWorkerDashboardDispatchZod = z.object({
+    action: z.literal(dashboardAction.setDashboardCacheWorker),
     payload: z.instanceof(Worker),
 });
 
@@ -33,10 +33,8 @@ const setCurrentSelectedInputDashboardDispatchZod = z.object({
 });
 
 const handleStoreAndCategoryClicksInputZod = z.object({
-    accessToken: z.string(),
     dashboardDispatch: z.function().args(z.any()).returns(z.void()),
-    dashboardFetchWorker: z.instanceof(Worker),
-    globalDispatch: z.function().args(z.any()).returns(z.void()),
+    dashboardCacheWorker: z.instanceof(Worker),
     isComponentMountedRef: z.object({ current: z.boolean() }),
     metricsUrl: z.string().url(),
     metricsView: metricsViewZod,
@@ -46,34 +44,27 @@ const handleStoreAndCategoryClicksInputZod = z.object({
     storeLocation: allStoreLocationsZod,
 });
 
-const handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod = z.object({
-    authDispatch: z.function().args(z.any()).returns(z.void()),
+const handleMessageEventDashboardCacheWorkerToMainInputZod = z.object({
     dashboardDispatch: z.function().args(z.any()).returns(z.void()),
     event: z.instanceof(MessageEvent),
     globalDispatch: z.function().args(z.any()).returns(z.void()),
     isComponentMountedRef: z.object({ current: z.boolean() }),
-    metricsUrl: z.string().url(),
-    navigateFn: z.function().args(z.any()).returns(z.void()),
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
 const messageEventDashboardFetchMainToWorkerZod = z.object({
     metricsView: metricsViewZod,
-    productMetricCategory: productMetricCategoryZod,
-    repairMetricCategory: repairMetricCategoryZod,
-    requestInit: z.any(),
     routesZodSchemaMapKey: z.string(),
-    storeLocation: allStoreLocationsZod,
-    url: z.string().url(),
+    cacheKey: z.string().url(),
 });
 
 export {
-    handleMessageEventStoreAndCategoryFetchWorkerToMainInputZod,
+    handleMessageEventDashboardCacheWorkerToMainInputZod,
     handleStoreAndCategoryClicksInputZod,
     messageEventDashboardFetchMainToWorkerZod,
     setCalendarViewDashboardDispatchZod,
     setCurrentSelectedInputDashboardDispatchZod,
-    setDashboardFetchWorkerDashboardDispatchZod,
+    setDashboardCacheWorkerDashboardDispatchZod,
     setIsLoadingDashboardDispatchZod,
     setLoadingMessageDashboardDispatchZod,
 };
