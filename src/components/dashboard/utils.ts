@@ -3301,7 +3301,7 @@ function createRandomNumber({
   defaultMax = 5,
   isFraction = false,
 }: CreateRandomNumberInput) {
-  const store = yearUnitsSpread[storeLocation];
+  const store = yearUnitsSpread[storeLocation] ?? "Edmonton";
   const yearSpread =
     Object.entries(store).find(([yearKey]) => yearKey === year)?.[1] ?? [
       defaultMin,
@@ -3406,7 +3406,7 @@ function createRepairCategoryUnitsRepairedRevenueTuple({
     Peripheral: [50, 150],
   };
 
-  const [min, max] = spread[repairCategory];
+  const [min, max] = spread[repairCategory] ?? [50, 150];
   const revenue = unitsSold * Math.round(Math.random() * (max - min) + min);
 
   return [unitsSold, revenue];

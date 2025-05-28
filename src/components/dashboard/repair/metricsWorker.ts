@@ -1,11 +1,11 @@
-import { Err, Ok, Option } from "ts-results";
 import { METRICS_URL, STORE_LOCATIONS } from "../../../constants";
-import { RepairMetricsDocument, SafeError, SafeResult } from "../../../types";
+import { RepairMetricsDocument, SafeResult } from "../../../types";
 import {
     createDaysInMonthsInYearsSafe,
     createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
+    handlePromiseSettledResults,
     setCachedItemAsyncSafe,
 } from "../../../utils";
 import {
@@ -315,49 +315,17 @@ async function setRepairMetricsInCache(
             ),
         );
 
-        const [sucesses, errors] = setItemResults.reduce<
-            [Ok<Option<NonNullable<boolean>>>[], Err<SafeError>[]]
-        >(
-            (acc, result) => {
-                if (result.status === "fulfilled") {
-                    if (result.value.err) {
-                        acc[1].push(result.value);
-                    } else if (result.value.val.none) {
-                        acc[1].push(createSafeErrorResult("No data"));
-                    } else {
-                        acc[0].push(result.value);
-                    }
-                } else {
-                    acc[1].push(
-                        createSafeErrorResult(
-                            result.reason ?? "Unknown error",
-                        ),
-                    );
-                }
-                return acc;
-            },
-            [[], []],
+        const handledSettledResult = handlePromiseSettledResults(
+            setItemResults,
         );
-
-        if (errors.length > 0) {
-            return createSafeErrorResult(
-                `Failed to set some repair metrics in cache: ${
-                    errors.map(
-                        (error) => error.val,
-                    ).join(", ")
-                }`,
-            );
+        if (handledSettledResult.err) {
+            return handledSettledResult;
+        }
+        if (handledSettledResult.val.none) {
+            return createSafeErrorResult("No repair metrics set in cache");
         }
 
-        if (sucesses.length === 0) {
-            return createSafeErrorResult(
-                "No repair metrics set in cache",
-            );
-        }
-
-        return createSafeSuccessResult(
-            `Successfully set ${sucesses.length} repair metrics in cache`,
-        );
+        return handledSettledResult;
     } catch (error: unknown) {
         return createSafeErrorResult(error);
     }

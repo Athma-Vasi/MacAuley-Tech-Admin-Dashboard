@@ -1,8 +1,6 @@
-import { Err, Ok, Option } from "ts-results";
 import { ALL_STORE_LOCATIONS_DATA, METRICS_URL } from "../../../constants";
 import {
     FinancialMetricsDocument,
-    SafeError,
     SafeResult,
     StoreLocation,
 } from "../../../types";
@@ -11,6 +9,7 @@ import {
     createSafeErrorResult,
     createSafeSuccessResult,
     getCachedItemAsyncSafe,
+    handlePromiseSettledResults,
     removeCachedItemAsyncSafe,
     setCachedItemAsyncSafe,
 } from "../../../utils";
@@ -216,46 +215,20 @@ self.onmessage = async (
             ),
         );
 
-        const [sucesses, errors] = setItemsInCacheResults.reduce<
-            [Ok<Option<NonNullable<string>>>[], Err<SafeError>[]]
-        >(
-            (acc, result) => {
-                if (result.status === "fulfilled") {
-                    if (result.value.err) {
-                        acc[1].push(result.value);
-                    } else if (result.value.val.none) {
-                        acc[1].push(createSafeErrorResult("No data"));
-                    } else {
-                        acc[0].push(result.value);
-                    }
-                } else {
-                    acc[1].push(
-                        createSafeErrorResult(
-                            result.reason ?? "Unknown error",
-                        ),
-                    );
-                }
-                return acc;
-            },
-            [[], []],
+        const handledSettledResult = handlePromiseSettledResults(
+            setItemsInCacheResults,
         );
-
-        if (errors.length > 0) {
+        if (handledSettledResult.err) {
             self.postMessage(
-                createSafeErrorResult(
-                    `Errors occurred while setting financial metrics in cache: ${
-                        errors
-                            .map((error) => error.val)
-                            .join(", ")
-                    }`,
-                ),
+                createSafeErrorResult(handledSettledResult),
             );
             return;
         }
-
-        if (sucesses.length === 0) {
+        if (handledSettledResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("No financial metrics set in cache"),
+                createSafeErrorResult(
+                    "Unable to set financial metrics in cache",
+                ),
             );
             return;
         }
@@ -276,9 +249,7 @@ self.onmessage = async (
             return;
         }
 
-        return createSafeSuccessResult(
-            `Successfully set ${sucesses.length} product metrics in cache`,
-        );
+        return handledSettledResult;
     } catch (error) {
         console.error("Financial Charts Worker error:", error);
         self.postMessage(

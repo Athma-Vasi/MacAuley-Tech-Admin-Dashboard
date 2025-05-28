@@ -160,6 +160,9 @@ function UsersQuery() {
             <Pagination
                 value={currentPage}
                 onChange={async (page) => {
+                    if (isLoading) {
+                        return;
+                    }
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
                         arrangeByDirection,

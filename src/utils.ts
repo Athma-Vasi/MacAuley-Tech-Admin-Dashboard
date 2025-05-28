@@ -7,6 +7,7 @@ import { ColorsSwatches, PROPERTY_DESCRIPTOR } from "./constants";
 import { compress, ICompressConfig } from "image-conversion";
 import localforage from "localforage";
 import { z } from "zod";
+import { DAYS_PER_MONTH, MONTHS } from "./components/dashboard/constants";
 import { ProductMetricCategory } from "./components/dashboard/product/types";
 import { RepairMetricCategory } from "./components/dashboard/repair/types";
 import {
@@ -25,7 +26,6 @@ import {
   StoreLocation,
   ThemeObject,
 } from "./types";
-import { DAYS_PER_MONTH, MONTHS } from "./components/dashboard/constants";
 
 type CaptureScreenshotInput = {
   chartRef: any;
@@ -788,6 +788,56 @@ function createDaysInMonthsInYearsSafe({
   }
 }
 
+function handlePromiseSettledResults(
+  results: PromiseSettledResult<
+    Err<SafeError> | Ok<Option<NonNullable<unknown>>>
+  >[],
+): SafeResult<string> {
+  try {
+    const [successes, errors] = results.reduce<
+      [Ok<Option<NonNullable<unknown>>>[], Err<SafeError>[]]
+    >(
+      (acc, result) => {
+        if (result.status === "fulfilled") {
+          if (result.value.err) {
+            acc[1].push(result.value);
+          } else if (result.value.val.none) {
+            acc[1].push(createSafeErrorResult("No data"));
+          } else {
+            acc[0].push(result.value);
+          }
+        } else {
+          acc[1].push(
+            createSafeErrorResult(
+              result.reason ?? "Unknown error",
+            ),
+          );
+        }
+        return acc;
+      },
+      [[], []],
+    );
+
+    if (errors.length > 0) {
+      return createSafeErrorResult(
+        `Some promises were rejected: ${
+          errors.map((error) => error.val.message ?? "unknown").join("\n")
+        }`,
+      );
+    }
+
+    if (successes.length === 0) {
+      return createSafeErrorResult("No successful results");
+    }
+
+    return createSafeSuccessResult(
+      "All promises were fulfilled with successful results",
+    );
+  } catch (error: unknown) {
+    return createSafeErrorResult(error);
+  }
+}
+
 export {
   addCommaSeparator,
   capitalizeJoinWithAnd,
@@ -805,6 +855,7 @@ export {
   fetchResponseSafe,
   formatDate,
   getCachedItemAsyncSafe,
+  handlePromiseSettledResults,
   modifyImageSafe,
   parseResponsePayloadAsyncSafe,
   parseSyncSafe,
