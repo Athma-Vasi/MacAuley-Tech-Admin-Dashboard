@@ -1,11 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useErrorBoundary } from "react-error-boundary";
 import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import {
   addCommaSeparator,
+  createSafeErrorResult,
+  returnStatisticsSafe,
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
@@ -30,7 +33,6 @@ import {
   createExpandChartNavigateLinks,
   returnChartTitles,
   returnSelectedCalendarCharts,
-  returnStatistics,
 } from "../../utils";
 import {
   consolidateCardsAndStatisticsModals,
@@ -92,10 +94,21 @@ function PERT({
 }: PERTProps) {
   const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
-
+  const { showBoundary } = useErrorBoundary();
   const [pertState, pertDispatch] = React.useReducer(
     pertReducer,
     initialPERTState,
+  );
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Map<string, boolean>
+  >(
+    new Map([
+      ["Total", false],
+      ["Sales Total", false],
+      ["Repair", false],
+      ["Sales In-Store", false],
+      ["Sales Online", false],
+    ]),
   );
 
   const {
@@ -363,26 +376,26 @@ function PERT({
     },
   );
 
-  const statisticsMap = returnStatistics(barCharts);
+  const statisticsMapResult = returnStatisticsSafe(barCharts);
+  if (statisticsMapResult.err) {
+    showBoundary(statisticsMapResult);
+    return null;
+  }
+  if (statisticsMapResult.val.none) {
+    showBoundary(
+      createSafeErrorResult(
+        "No statistics data available for the selected metric category.",
+      ),
+    );
+    return null;
+  }
 
   const statisticsElementsMap = createFinancialStatisticsElements(
     calendarView,
     metricCategory,
     "pert",
-    statisticsMap,
+    statisticsMapResult.val.val,
     storeLocation,
-  );
-
-  const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Map<string, boolean>
-  >(
-    new Map([
-      ["Total", false],
-      ["Sales Total", false],
-      ["Repair", false],
-      ["Sales In-Store", false],
-      ["Sales Online", false],
-    ]),
   );
 
   const { themeColorShade } = returnThemeColors({

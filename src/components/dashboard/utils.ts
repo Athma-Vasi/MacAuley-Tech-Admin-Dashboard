@@ -1,14 +1,5 @@
-import {
-  interquartileRange,
-  mean,
-  median,
-  mode,
-  standardDeviation,
-} from "simple-statistics";
-
 import type { StoreLocation } from "../../types";
 import { addCommaSeparator, splitCamelCase, toFixedFloat } from "../../utils";
-import type { BarChartData } from "../charts/responsiveBarChart/types";
 import { CalendarChartData } from "../charts/responsiveCalendarChart/types";
 import { DAYS_PER_MONTH, MONTHS } from "./constants";
 import { CustomerMetricsCategory } from "./customer/types";
@@ -3412,127 +3403,6 @@ function createRepairCategoryUnitsRepairedRevenueTuple({
   return [unitsSold, revenue];
 }
 
-type StatisticsObject = {
-  min: {
-    value: number;
-    occurred: string;
-  };
-  max: {
-    value: number;
-    occurred: string;
-  };
-  mean: number;
-  mode: number;
-  median: number;
-  standardDeviation: number;
-  interquartileRange: number;
-};
-/**
- * - Return statistics for each key in the barChartsObj of the dailyChartsObj returned by the `return${metric}ChartData` functions
- * - barChartsObj is used as it is generated (along with lineChartsObj) for all metrics and sub-metrics, and has a reasonably simple structure (when compared to lineChartsObj)
- */
-function returnStatistics<
-  BarObjKeys extends string = string,
-  BarChartObj extends Record<string, string | number> = Record<
-    string,
-    string | number
-  >,
->(
-  barChartsObj: Record<BarObjKeys, BarChartData<BarChartObj>[]>,
-): Map<BarObjKeys, StatisticsObject> {
-  return Object.entries(barChartsObj).reduce(
-    (statisticsAcc, [_barObjKey, barObjsArr]) => {
-      if (Array.isArray(barObjsArr)) {
-        // returns an map without the 'Days', 'Months', and 'Years' keyVals
-        const filteredBarObjsArr = barObjsArr.reduce(
-          (filteredBarObjAcc, barObj: BarChartObj) => {
-            Object.entries(barObj).forEach(([key, value]) => {
-              if (key === "Days" || key === "Months" || key === "Years") {
-                return;
-              }
-
-              if (filteredBarObjAcc.has(key)) {
-                filteredBarObjAcc.get(key).push(value);
-              } else {
-                filteredBarObjAcc.set(key, [value]);
-              }
-            });
-
-            return filteredBarObjAcc;
-          },
-          new Map<
-            Omit<[keyof BarChartObj], "Days" | "Months" | "Years">,
-            number[]
-          >(),
-        );
-
-        Array.from(filteredBarObjsArr).forEach((filteredBarObj) => {
-          const [key, value] = filteredBarObj as [BarObjKeys, number[]];
-
-          const min = Math.min(...value);
-          const max_ = Math.max(...value);
-
-          // find the first barObj that has the min value
-          const minOccurenceBarObj = barObjsArr.find((barObj) =>
-            Object.entries(barObj).find(([_, val]) => val === min)
-          );
-          // return the keyVal that has the min value
-          const [minOccurenceKey, minOccurenceVal] = Object.entries(
-            minOccurenceBarObj,
-          ).filter(([_, val]) => val !== min)[0];
-          // format the date (key will be either 'Days', 'Months', or 'Years')
-          const minOccurenceDate = `${
-            minOccurenceKey.slice(
-              0,
-              minOccurenceKey.length - 1,
-            )
-          } - ${minOccurenceVal}`;
-
-          const maxOccurenceBarObj = barObjsArr.find((barObj) =>
-            Object.entries(barObj).find(([_, val]) => val === max_)
-          );
-          const [maxOccurenceKey, maxOccurenceVal] = Object.entries(
-            maxOccurenceBarObj,
-          ).filter(([_, val]) => val !== max_)[0];
-          const maxOccurenceDate = `${
-            maxOccurenceKey.slice(
-              0,
-              maxOccurenceKey.length - 1,
-            )
-          } - ${maxOccurenceVal}`;
-
-          const mean_ = mean(value);
-          const mode_ = mode(value);
-          const median_ = median(value);
-          const standardDeviation_ = standardDeviation(value);
-          const interquartileRange_ = interquartileRange(value);
-
-          const statisticsObj: StatisticsObject = {
-            min: {
-              value: min,
-              occurred: minOccurenceDate ?? "",
-            },
-            max: {
-              value: max_,
-              occurred: maxOccurenceDate ?? "",
-            },
-            mean: mean_,
-            mode: mode_,
-            median: median_,
-            standardDeviation: standardDeviation_,
-            interquartileRange: interquartileRange_,
-          };
-
-          statisticsAcc.set(key, statisticsObj);
-        });
-      }
-
-      return statisticsAcc;
-    },
-    new Map<BarObjKeys, StatisticsObject>(),
-  );
-}
-
 type SplitSelectedCalendarDateInput = {
   calendarDate: string;
   months: Month[];
@@ -3643,17 +3513,6 @@ function returnChartTitles(
   },
 ) {
   return {
-    // barLineRadialChartHeading: `${calendarView} ${
-    //   splitCamelCase(metricCategory)
-    // } ${splitCamelCase(subMetric)} ${
-    //   splitCamelCase(barLineRadialChartYAxis)
-    // } for ${storeLocation}`,
-    // calendarChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
-    //   splitCamelCase(subMetric)
-    // } ${splitCamelCase(calendarChartYAxis ?? "")} for ${storeLocation}`,
-    // pieChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
-    //   splitCamelCase(subMetric)
-    // } ${splitCamelCase(pieChartYAxis ?? "")} for ${storeLocation}`,
     yAxisKeyChartHeading: `${calendarView} ${splitCamelCase(metricCategory)} ${
       splitCamelCase(subMetric)
     } ${splitCamelCase(yAxisKey ?? "")} for ${storeLocation}`,
@@ -3801,7 +3660,5 @@ export {
   returnDaysInMonthsInYears,
   returnIsTabDisabled,
   returnSelectedCalendarCharts,
-  returnStatistics,
   splitSelectedCalendarDate,
 };
-export type { StatisticsObject };

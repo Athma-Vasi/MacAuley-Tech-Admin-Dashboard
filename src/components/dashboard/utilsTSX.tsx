@@ -12,7 +12,12 @@ import type { ReactNode } from "react";
 import React from "react";
 import { TbFolderCancel, TbFolderOpen } from "react-icons/tb";
 import { INPUT_WIDTH, TEXT_SHADOW } from "../../constants";
-import { addCommaSeparator, formatDate, splitCamelCase } from "../../utils";
+import {
+  addCommaSeparator,
+  formatDate,
+  splitCamelCase,
+  StatisticsObject,
+} from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { GoldenGrid } from "../goldenGrid";
 import { MONTHS } from "./constants";
@@ -25,7 +30,6 @@ import {
   FinancialMetricCategory,
 } from "./financial/types";
 import { AllStoreLocations, DashboardCalendarView } from "./types";
-import { StatisticsObject } from "./utils";
 
 type DashboardCardInfo = {
   date?: string;

@@ -1,11 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useErrorBoundary } from "react-error-boundary";
 import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import {
   addCommaSeparator,
+  createSafeErrorResult,
+  returnStatisticsSafe,
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
@@ -24,11 +27,7 @@ import type {
   DashboardMetricsView,
   Year,
 } from "../../types";
-import {
-  createExpandChartNavigateLinks,
-  returnChartTitles,
-  returnStatistics,
-} from "../../utils";
+import { createExpandChartNavigateLinks, returnChartTitles } from "../../utils";
 import {
   consolidateCardsAndStatisticsModals,
   createStatisticsElements,
@@ -87,10 +86,20 @@ function RepairRUS(
 ) {
   const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
+  const { showBoundary } = useErrorBoundary();
   const [repairRUSState, repairRUSDispatch] = React.useReducer(
     repairRUSReducer,
     initialRepairRUSState,
   );
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Map<string, boolean>
+  >(
+    new Map([
+      ["Revenue", false],
+      ["Units Repaired", false],
+    ]),
+  );
+
   const {
     yAxisKey,
   } = repairRUSState;
@@ -308,22 +317,25 @@ function RepairRUS(
     },
   );
 
-  const statisticsMap = returnStatistics(barCharts);
+  const statisticsMapResult = returnStatisticsSafe(barCharts);
+  if (statisticsMapResult.err) {
+    showBoundary(statisticsMapResult);
+    return null;
+  }
+  if (statisticsMapResult.val.none) {
+    showBoundary(
+      createSafeErrorResult(
+        "No statistics data available for the selected metric category.",
+      ),
+    );
+    return null;
+  }
 
   const statisticsElementsMap = createStatisticsElements(
     calendarView,
     yAxisKey,
-    statisticsMap,
+    statisticsMapResult.val.val,
     storeLocation,
-  );
-
-  const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Map<string, boolean>
-  >(
-    new Map([
-      ["Revenue", false],
-      ["Units Repaired", false],
-    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({

@@ -2,10 +2,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Stack } from "@mantine/core";
+import { useErrorBoundary } from "react-error-boundary";
 import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator, returnThemeColors } from "../../../../utils";
+import {
+  addCommaSeparator,
+  createSafeErrorResult,
+  returnStatisticsSafe,
+  returnThemeColors,
+} from "../../../../utils";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
@@ -27,7 +33,6 @@ import {
   createExpandChartNavigateLinks,
   returnChartTitles,
   returnSelectedCalendarCharts,
-  returnStatistics,
 } from "../../utils";
 import {
   consolidateCardsAndStatisticsModals,
@@ -42,7 +47,6 @@ import {
 import {
   CustomerMetricsCalendarCharts,
   type CustomerMetricsCharts,
-  type CustomerMetricsChurnRetentionChartsKey,
   returnCalendarViewCustomerCharts,
 } from "../chartsData";
 import {
@@ -89,10 +93,18 @@ function ChurnRetention(
 ) {
   const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
-
+  const { showBoundary } = useErrorBoundary();
   const [churnRetentionState, churnRetentionDispatch] = React.useReducer(
     churnRetentionReducer,
     initialChurnRetentionState,
+  );
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Map<string, boolean>
+  >(
+    new Map([
+      ["Churn Rate", false],
+      ["Retention Rate", false],
+    ]),
   );
 
   const {
@@ -329,11 +341,19 @@ function ChurnRetention(
     />
   );
 
-  const statisticsMap = returnStatistics<
-    CustomerMetricsChurnRetentionChartsKey
-  >(
-    barCharts,
-  );
+  const statisticsMapResult = returnStatisticsSafe(barCharts);
+  if (statisticsMapResult.err) {
+    showBoundary(statisticsMapResult);
+    return null;
+  }
+  if (statisticsMapResult.val.none) {
+    showBoundary(
+      createSafeErrorResult(
+        "No statistics data available for the selected metric category.",
+      ),
+    );
+    return null;
+  }
 
   const cardsMap = returnCustomerMetricsCardsMap(
     {
@@ -348,17 +368,8 @@ function ChurnRetention(
   const statisticsElementsMap = createStatisticsElements(
     calendarView,
     metricCategory,
-    statisticsMap,
+    statisticsMapResult.val.val,
     storeLocation,
-  );
-
-  const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Map<string, boolean>
-  >(
-    new Map([
-      ["Churn Rate", false],
-      ["Retention Rate", false],
-    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({

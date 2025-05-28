@@ -1,11 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useErrorBoundary } from "react-error-boundary";
 import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import {
   addCommaSeparator,
+  createSafeErrorResult,
+  returnStatisticsSafe,
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
@@ -38,7 +41,6 @@ import {
   createExpandChartNavigateLinks,
   returnChartTitles,
   returnSelectedCalendarCharts,
-  returnStatistics,
 } from "../../utils";
 import {
   consolidateCardsAndStatisticsModals,
@@ -93,8 +95,17 @@ function RUS(
 ) {
   const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
-
+  const { showBoundary } = useErrorBoundary();
   const [rusState, rusDispatch] = React.useReducer(rusReducer, initialRUSState);
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Map<string, boolean>
+  >(
+    new Map([
+      ["Total", false],
+      ["In-Store", false],
+      ["Online", false],
+    ]),
+  );
 
   const {
     yAxisKey,
@@ -357,23 +368,25 @@ function RUS(
     },
   );
 
-  const statisticsMap = returnStatistics(barCharts);
+  const statisticsMapResult = returnStatisticsSafe(barCharts);
+  if (statisticsMapResult.err) {
+    showBoundary(statisticsMapResult);
+    return null;
+  }
+  if (statisticsMapResult.val.none) {
+    showBoundary(
+      createSafeErrorResult(
+        "No statistics data available for the selected metric category.",
+      ),
+    );
+    return null;
+  }
 
   const statisticsElementsMap = createStatisticsElements(
     calendarView,
     subMetric,
-    statisticsMap,
+    statisticsMapResult.val.val,
     storeLocation,
-  );
-
-  const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Map<string, boolean>
-  >(
-    new Map([
-      ["Total", false],
-      ["In-Store", false],
-      ["Online", false],
-    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({

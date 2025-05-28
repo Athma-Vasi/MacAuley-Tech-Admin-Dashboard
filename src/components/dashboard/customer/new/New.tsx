@@ -1,10 +1,16 @@
 import { Stack } from "@mantine/core";
 import React from "react";
+import { useErrorBoundary } from "react-error-boundary";
 import { useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
-import { addCommaSeparator, returnThemeColors } from "../../../../utils";
+import {
+  addCommaSeparator,
+  createSafeErrorResult,
+  returnStatisticsSafe,
+  returnThemeColors,
+} from "../../../../utils";
 import { AccessibleSelectInput } from "../../../accessibleInputs/AccessibleSelectInput";
 import {
   ResponsiveBarChart,
@@ -27,7 +33,6 @@ import {
   createExpandChartNavigateLinks,
   returnChartTitles,
   returnSelectedCalendarCharts,
-  returnStatistics,
 } from "../../utils";
 import {
   consolidateCardsAndStatisticsModals,
@@ -46,10 +51,7 @@ import {
   CUSTOMER_NEW_RETURNING_Y_AXIS_DATA,
   CUSTOMER_NEW_YAXIS_KEY_TO_CARDS_KEY_MAP,
 } from "../constants";
-import {
-  CustomerMetricsCategory,
-  CustomerNewReturningYAxisKey,
-} from "../types";
+import { CustomerMetricsCategory } from "../types";
 import { newAction } from "./actions";
 import { newReducer } from "./reducers";
 import { initialNewState } from "./state";
@@ -88,10 +90,21 @@ function New(
 ) {
   const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
-
+  const { showBoundary } = useErrorBoundary();
   const [newState, newDispatch] = React.useReducer(
     newReducer,
     initialNewState,
+  );
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Map<string, boolean>
+  >(
+    new Map([
+      ["Total New", false],
+      ["Sales", false],
+      ["Sales Online", false],
+      ["Sales In-Store", false],
+      ["Repair", false],
+    ]),
   );
 
   const {
@@ -334,11 +347,19 @@ function New(
     />
   );
 
-  const statisticsMap = returnStatistics<
-    CustomerNewReturningYAxisKey
-  >(
-    barCharts,
-  );
+  const statisticsMapResult = returnStatisticsSafe(barCharts);
+  if (statisticsMapResult.err) {
+    showBoundary(statisticsMapResult);
+    return null;
+  }
+  if (statisticsMapResult.val.none) {
+    showBoundary(
+      createSafeErrorResult(
+        "No statistics data available for the selected metric category.",
+      ),
+    );
+    return null;
+  }
 
   const cardsMap = returnCustomerMetricsCardsMap(
     {
@@ -352,20 +373,8 @@ function New(
   const statisticsElementsMap = createStatisticsElements(
     calendarView,
     metricCategory,
-    statisticsMap,
+    statisticsMapResult.val.val,
     storeLocation,
-  );
-
-  const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Map<string, boolean>
-  >(
-    new Map([
-      ["Total New", false],
-      ["Sales", false],
-      ["Sales Online", false],
-      ["Sales In-Store", false],
-      ["Repair", false],
-    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({

@@ -1,11 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useErrorBoundary } from "react-error-boundary";
 import { COLORS_SWATCHES } from "../../../../constants";
 import { globalAction } from "../../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../../hooks/useGlobalState";
 import {
   addCommaSeparator,
+  createSafeErrorResult,
+  returnStatisticsSafe,
   returnThemeColors,
   splitCamelCase,
 } from "../../../../utils";
@@ -28,7 +31,6 @@ import {
   createExpandChartNavigateLinks,
   returnChartTitles,
   returnSelectedCalendarCharts,
-  returnStatistics,
 } from "../../utils";
 import {
   consolidateCardsAndStatisticsModals,
@@ -86,10 +88,19 @@ function OtherMetrics({
 }: OtherMetricsProps) {
   const { globalState: { themeObject }, globalDispatch } = useGlobalState();
   const navigate = useNavigate();
-
+  const { showBoundary } = useErrorBoundary();
   const [otherMetricsState, otherMetricsDispatch] = React.useReducer(
     otherMetricsReducer,
     initialOtherMetricsState,
+  );
+  const [modalsOpenedState, setModalsOpenedState] = React.useState<
+    Map<string, boolean>
+  >(
+    new Map([
+      ["Net Profit Margin", false],
+      ["Average Order Value", false],
+      ["Conversion Rate", false],
+    ]),
   );
 
   const {
@@ -316,24 +327,26 @@ function OtherMetrics({
     },
   );
 
-  const statisticsMap = returnStatistics(barCharts);
+  const statisticsMapResult = returnStatisticsSafe(barCharts);
+  if (statisticsMapResult.err) {
+    showBoundary(statisticsMapResult);
+    return null;
+  }
+  if (statisticsMapResult.val.none) {
+    showBoundary(
+      createSafeErrorResult(
+        "No statistics data available for the selected metric category.",
+      ),
+    );
+    return null;
+  }
 
   const statisticsElementsMap = createFinancialStatisticsElements(
     calendarView,
     metricCategory,
     "otherMetrics",
-    statisticsMap,
+    statisticsMapResult.val.val,
     storeLocation,
-  );
-
-  const [modalsOpenedState, setModalsOpenedState] = React.useState<
-    Map<string, boolean>
-  >(
-    new Map([
-      ["Net Profit Margin", false],
-      ["Average Order Value", false],
-      ["Conversion Rate", false],
-    ]),
   );
 
   const consolidatedCards = consolidateCardsAndStatisticsModals({
