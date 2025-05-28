@@ -1,17 +1,17 @@
-import { METRICS_URL, STORE_LOCATIONS } from "../../constants";
-import { CustomerMetricsDocument, SafeResult } from "../../types";
+import { METRICS_URL, STORE_LOCATIONS } from "../../../constants";
+import { CustomerMetricsDocument, SafeResult } from "../../../types";
 import {
     createDaysInMonthsInYearsSafe,
     createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
     setCachedItemAsyncSafe,
-} from "../../utils";
-import { AllStoreLocations, CustomerMetrics } from "../dashboard/types";
+} from "../../../utils";
+import { AllStoreLocations, CustomerMetrics } from "../types";
 import {
     createAllLocationsAggregatedCustomerMetricsSafe,
     createRandomCustomerMetricsSafe,
-} from "./customerMetricsGen";
+} from "./generators";
 
 type MessageEventCustomerWorkerToMain = MessageEvent<
     SafeResult<

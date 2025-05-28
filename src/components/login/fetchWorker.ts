@@ -1,4 +1,4 @@
-import { None, Option } from "ts-results";
+import { Option } from "ts-results";
 import { z } from "zod";
 import { FETCH_REQUEST_TIMEOUT, METRICS_URL } from "../../constants";
 import {
@@ -37,7 +37,6 @@ type MessageEventLoginFetchMainToWorker = MessageEvent<
     {
         requestInit: RequestInit;
         routesZodSchemaMapKey: RoutesZodSchemasMapKey;
-        skipTokenDecode?: boolean;
         url: string;
     }
 >;
@@ -59,8 +58,7 @@ self.onmessage = async (
                 {
                     requestInit: z.any(),
                     routesZodSchemaMapKey: z.string(),
-                    skipTokenDecode: z.boolean().optional(),
-                    url: z.string(),
+                    url: z.string().url(),
                 },
             ),
         },
@@ -79,7 +77,6 @@ self.onmessage = async (
     const {
         requestInit,
         routesZodSchemaMapKey,
-        skipTokenDecode,
         url,
     } = parsedMessageResult.val.val;
 
@@ -181,16 +178,6 @@ self.onmessage = async (
                 createSafeErrorResult(
                     "Error parsing server response",
                 ),
-            );
-            return;
-        }
-
-        if (skipTokenDecode) {
-            self.postMessage(
-                createSafeSuccessResult({
-                    responsePayloadSafe: responsePayloadSafeResult.val.val,
-                    decodedToken: None,
-                }),
             );
             return;
         }

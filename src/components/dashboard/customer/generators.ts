@@ -87,12 +87,12 @@
   }
  */
 
-import { SafeResult, StoreLocation } from "../../types";
+import { SafeResult, StoreLocation } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
     toFixedFloat,
-} from "../../utils";
+} from "../../../utils";
 import {
     CustomerDailyMetric,
     CustomerMetrics,
@@ -100,8 +100,8 @@ import {
     CustomerYearlyMetric,
     DaysInMonthsInYears,
     LocationYearSpread,
-} from "../dashboard/types";
-import { createRandomNumber } from "../dashboard/utils";
+} from "../types";
+import { createRandomNumber } from "../utils";
 
 function createRandomCustomerMetricsSafe({
     daysInMonthsInYears,

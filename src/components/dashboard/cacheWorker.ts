@@ -1,4 +1,3 @@
-import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import { BusinessMetricsDocument, SafeResult } from "../../types";
 import {
     createSafeErrorResult,
@@ -59,9 +58,6 @@ self.onmessage = async (
         routesZodSchemaMapKey,
     } = parsedMessageResult.val.val;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
-
     try {
         const businessMetricsDocumentResult = await getCachedItemAsyncSafe<
             BusinessMetricsDocument
@@ -104,8 +100,6 @@ self.onmessage = async (
         self.postMessage(
             createSafeErrorResult(error),
         );
-    } finally {
-        clearTimeout(timeout);
     }
 };
 

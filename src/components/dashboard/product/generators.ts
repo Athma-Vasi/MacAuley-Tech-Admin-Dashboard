@@ -1,6 +1,6 @@
-import { SafeResult, StoreLocation } from "../../types";
-import { createSafeErrorResult, createSafeSuccessResult } from "../../utils";
-import { PRODUCT_CATEGORIES } from "../dashboard/constants";
+import { SafeResult, StoreLocation } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
+import { PRODUCT_CATEGORIES } from "../constants";
 import {
     DaysInMonthsInYears,
     LocationYearSpread,
@@ -9,8 +9,8 @@ import {
     ProductMetric,
     ProductMonthlyMetric,
     ProductYearlyMetric,
-} from "../dashboard/types";
-import { createRandomNumber } from "../dashboard/utils";
+} from "../types";
+import { createRandomNumber } from "../utils";
 
 /**
  * - calculates the number of unitsSold and revenue for a specific product category and store location

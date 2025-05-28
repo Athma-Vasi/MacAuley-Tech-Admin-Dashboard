@@ -1,11 +1,11 @@
 import { Err, Ok, Option } from "ts-results";
-import { ALL_STORE_LOCATIONS_DATA, METRICS_URL } from "../../constants";
+import { ALL_STORE_LOCATIONS_DATA, METRICS_URL } from "../../../constants";
 import {
     FinancialMetricsDocument,
     SafeError,
     SafeResult,
     StoreLocation,
-} from "../../types";
+} from "../../../types";
 import {
     createMetricsURLCacheKey,
     createSafeErrorResult,
@@ -13,7 +13,7 @@ import {
     getCachedItemAsyncSafe,
     removeCachedItemAsyncSafe,
     setCachedItemAsyncSafe,
-} from "../../utils";
+} from "../../../utils";
 import {
     AllStoreLocations,
     BusinessMetric,
@@ -21,11 +21,11 @@ import {
     ProductMetric,
     RepairMetric,
     YearlyFinancialMetric,
-} from "../dashboard/types";
+} from "../types";
 import {
     createAllLocationsAggregatedFinancialMetricsSafe,
     createRandomFinancialMetricsSafe,
-} from "./financialMetricsGen";
+} from "./generators";
 
 type MessageEventFinancialWorkerToMain = MessageEvent<
     SafeResult<
@@ -241,19 +241,23 @@ self.onmessage = async (
         );
 
         if (errors.length > 0) {
-            return createSafeErrorResult(
-                `Failed to set some product metrics in cache: ${
-                    errors.map(
-                        (error) => error.val,
-                    ).join(", ")
-                }`,
+            self.postMessage(
+                createSafeErrorResult(
+                    `Errors occurred while setting financial metrics in cache: ${
+                        errors
+                            .map((error) => error.val)
+                            .join(", ")
+                    }`,
+                ),
             );
+            return;
         }
 
         if (sucesses.length === 0) {
-            return createSafeErrorResult(
-                "No product metrics set in cache",
+            self.postMessage(
+                createSafeErrorResult("No financial metrics set in cache"),
             );
+            return;
         }
 
         const removeProductMetricsCacheResult = await removeCachedItemAsyncSafe(

@@ -1,34 +1,34 @@
 import { Err, Ok, Option } from "ts-results";
-import { METRICS_URL, STORE_LOCATIONS } from "../../constants";
-import { RepairMetricsDocument, SafeError, SafeResult } from "../../types";
+import { METRICS_URL, STORE_LOCATIONS } from "../../../constants";
+import { ProductMetricsDocument, SafeError, SafeResult } from "../../../types";
 import {
     createDaysInMonthsInYearsSafe,
     createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
     setCachedItemAsyncSafe,
-} from "../../utils";
+} from "../../../utils";
 import {
     AllStoreLocations,
-    RepairCategory,
-    RepairMetric,
-    RepairYearlyMetric,
-} from "../dashboard/types";
+    ProductCategory,
+    ProductMetric,
+    ProductYearlyMetric,
+} from "../types";
 import {
-    createAllLocationsAggregatedRepairMetricsSafe,
-    createAllRepairsAggregatedRepairMetricsSafe,
-    createRandomRepairMetricsSafe,
-} from "./repairMetricsGen";
+    createAllLocationsAggregatedProductMetricsSafe,
+    createAllProductsAggregatedProductMetricsSafe,
+    createRandomProductMetricsSafe,
+} from "./generators";
 
-type MessageEventRepairWorkerToMain = MessageEvent<
+type MessageEventProductWorkerToMain = MessageEvent<
     SafeResult<string>
 >;
-type MessageEventRepairMainToWorker = MessageEvent<
+type MessageEventProductMainToWorker = MessageEvent<
     boolean
 >;
 
 self.onmessage = async (
-    event: MessageEventRepairMainToWorker,
+    event: MessageEventProductMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -39,13 +39,13 @@ self.onmessage = async (
 
     try {
         const [
-            calgaryRepairMetricsSettledResult,
-            edmontonRepairMetricsSettledResult,
-            vancouverRepairMetricsSettledResult,
+            calgaryProductMetricsSettledResult,
+            edmontonProductMetricsSettledResult,
+            vancouverProductMetricsSettledResult,
         ] = await Promise.allSettled(
             STORE_LOCATIONS.map(async ({ value: storeLocation }) => {
                 try {
-                    const defaultMetrics: RepairMetric[] = [];
+                    const defaultMetrics: ProductMetric[] = [];
 
                     const daysInMonthsInYearsResult =
                         createDaysInMonthsInYearsSafe(
@@ -62,37 +62,37 @@ self.onmessage = async (
                     const daysInMonthsInYears =
                         daysInMonthsInYearsResult.val.val;
 
-                    const repairMetricsResult = createRandomRepairMetricsSafe(
+                    const productMetricsResult = createRandomProductMetricsSafe(
                         {
                             storeLocation,
                             daysInMonthsInYears,
                         },
                     );
                     if (
-                        repairMetricsResult.err ||
-                        repairMetricsResult.val.none
+                        productMetricsResult.err ||
+                        productMetricsResult.val.none
                     ) {
                         return createSafeErrorResult(defaultMetrics);
                     }
 
-                    const aggregatedRepairMetricsResult =
-                        createAllRepairsAggregatedRepairMetricsSafe(
-                            repairMetricsResult.val.val,
+                    const aggregatedProductMetricsResult =
+                        createAllProductsAggregatedProductMetricsSafe(
+                            productMetricsResult.val.val,
                         );
                     if (
-                        aggregatedRepairMetricsResult.err ||
-                        aggregatedRepairMetricsResult.val.none
+                        aggregatedProductMetricsResult.err ||
+                        aggregatedProductMetricsResult.val.none
                     ) {
                         return createSafeErrorResult(defaultMetrics);
                     }
 
                     const concatenatedMetrics = [
-                        ...repairMetricsResult.val.val,
-                        aggregatedRepairMetricsResult.val.val,
+                        ...productMetricsResult.val.val,
+                        aggregatedProductMetricsResult.val.val,
                     ];
 
                     const setMetricsInCacheResult =
-                        await setRepairMetricsInCache(
+                        await setProductMetricsInCache(
                             storeLocation,
                             concatenatedMetrics,
                         );
@@ -111,87 +111,87 @@ self.onmessage = async (
         );
 
         if (
-            calgaryRepairMetricsSettledResult.status === "rejected" ||
-            edmontonRepairMetricsSettledResult.status === "rejected" ||
-            vancouverRepairMetricsSettledResult.status === "rejected"
+            calgaryProductMetricsSettledResult.status === "rejected" ||
+            edmontonProductMetricsSettledResult.status === "rejected" ||
+            vancouverProductMetricsSettledResult.status === "rejected"
         ) {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate repair metrics",
+                    "Failed to generate product metrics",
                 ),
             );
             return;
         }
 
-        if (calgaryRepairMetricsSettledResult.value.err) {
-            self.postMessage(calgaryRepairMetricsSettledResult.value);
+        if (calgaryProductMetricsSettledResult.value.err) {
+            self.postMessage(calgaryProductMetricsSettledResult.value);
             return;
         }
-        if (calgaryRepairMetricsSettledResult.value.val.none) {
+        if (calgaryProductMetricsSettledResult.value.val.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate Calgary repair metrics",
+                    "Failed to generate Calgary product metrics",
                 ),
             );
             return;
         }
-        const calgaryRepairMetrics =
-            calgaryRepairMetricsSettledResult.value.val.val;
+        const calgaryProductMetrics =
+            calgaryProductMetricsSettledResult.value.val.val;
 
-        if (edmontonRepairMetricsSettledResult.value.err) {
-            self.postMessage(edmontonRepairMetricsSettledResult.value);
+        if (edmontonProductMetricsSettledResult.value.err) {
+            self.postMessage(edmontonProductMetricsSettledResult.value);
             return;
         }
-        if (edmontonRepairMetricsSettledResult.value.val.none) {
+        if (edmontonProductMetricsSettledResult.value.val.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate Edmonton repair metrics",
+                    "Failed to generate Edmonton product metrics",
                 ),
             );
             return;
         }
-        const edmontonRepairMetrics =
-            edmontonRepairMetricsSettledResult.value.val.val;
+        const edmontonProductMetrics =
+            edmontonProductMetricsSettledResult.value.val.val;
 
-        if (vancouverRepairMetricsSettledResult.value.err) {
-            self.postMessage(vancouverRepairMetricsSettledResult.value);
+        if (vancouverProductMetricsSettledResult.value.err) {
+            self.postMessage(vancouverProductMetricsSettledResult.value);
             return;
         }
-        if (vancouverRepairMetricsSettledResult.value.val.none) {
+        if (vancouverProductMetricsSettledResult.value.val.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    true,
+                    "Failed to generate Vancouver product metrics",
                 ),
             );
             return;
         }
-        const vancouverRepairMetrics =
-            vancouverRepairMetricsSettledResult.value.val.val;
+        const vancouverProductMetrics =
+            vancouverProductMetricsSettledResult.value.val.val;
 
-        const allLocationsAggregatedRepairMetricsResult =
-            createAllLocationsAggregatedRepairMetricsSafe({
-                calgaryRepairMetrics,
-                edmontonRepairMetrics,
-                vancouverRepairMetrics,
+        const allLocationsAggregatedProductMetricsResult =
+            createAllLocationsAggregatedProductMetricsSafe({
+                calgaryProductMetrics,
+                edmontonProductMetrics,
+                vancouverProductMetrics,
             });
 
-        if (allLocationsAggregatedRepairMetricsResult.err) {
-            self.postMessage(allLocationsAggregatedRepairMetricsResult);
+        if (allLocationsAggregatedProductMetricsResult.err) {
+            self.postMessage(allLocationsAggregatedProductMetricsResult);
             return;
         }
-        if (allLocationsAggregatedRepairMetricsResult.val.none) {
+        if (allLocationsAggregatedProductMetricsResult.val.none) {
             self.postMessage(
-                createSafeErrorResult("Failed to aggregate repair metrics"),
+                createSafeErrorResult("Failed to aggregate product metrics"),
             );
             return;
         }
-        const allLocationsAggregatedRepairMetrics =
-            allLocationsAggregatedRepairMetricsResult.val.val;
+        const allLocationsAggregatedProductMetrics =
+            allLocationsAggregatedProductMetricsResult.val.val;
 
         const setAllLocationsMetricsInCacheResult =
-            await setRepairMetricsInCache(
+            await setProductMetricsInCache(
                 "All Locations",
-                allLocationsAggregatedRepairMetricsResult.val.val,
+                allLocationsAggregatedProductMetricsResult.val.val,
             );
         if (setAllLocationsMetricsInCacheResult.err) {
             self.postMessage(
@@ -202,24 +202,24 @@ self.onmessage = async (
         if (setAllLocationsMetricsInCacheResult.val.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    "No All Locations repair metrics set in cache",
+                    "No All Locations product metrics set in cache",
                 ),
             );
             return;
         }
 
         // for financial metrics generation
-        const setRepairMetricsCacheResult = await setCachedItemAsyncSafe(
-            "repairMetrics",
+        const setProductMetricsCacheResult = await setCachedItemAsyncSafe(
+            "productMetrics",
             {
-                Calgary: calgaryRepairMetrics,
-                Edmonton: edmontonRepairMetrics,
-                Vancouver: vancouverRepairMetrics,
-                "All Locations": allLocationsAggregatedRepairMetrics,
+                Calgary: calgaryProductMetrics,
+                Edmonton: edmontonProductMetrics,
+                Vancouver: vancouverProductMetrics,
+                "All Locations": allLocationsAggregatedProductMetrics,
             },
         );
-        if (setRepairMetricsCacheResult.err) {
-            self.postMessage(setRepairMetricsCacheResult);
+        if (setProductMetricsCacheResult.err) {
+            self.postMessage(setProductMetricsCacheResult);
             return;
         }
 
@@ -229,7 +229,7 @@ self.onmessage = async (
             ),
         );
     } catch (error) {
-        console.error("Repair Charts Worker error:", error);
+        console.error("Product Charts Worker error:", error);
         self.postMessage(
             createSafeErrorResult(error),
         );
@@ -237,7 +237,7 @@ self.onmessage = async (
 };
 
 self.onerror = (event: string | Event) => {
-    console.error("Repair Charts Worker error:", event);
+    console.error("Product Charts Worker error:", event);
     self.postMessage(
         createSafeErrorResult(event),
     );
@@ -251,33 +251,36 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     );
 });
 
-export type { MessageEventRepairMainToWorker, MessageEventRepairWorkerToMain };
+export type {
+    MessageEventProductMainToWorker,
+    MessageEventProductWorkerToMain,
+};
 
-function createRepairMetricsDocument(
-    metricCategory: "All Repairs" | RepairCategory,
-    repairMetrics: RepairYearlyMetric[],
+function createProductMetricsDocument(
+    metricCategory: "All Products" | ProductCategory,
+    productMetrics: ProductYearlyMetric[],
     storeLocation: AllStoreLocations,
-): RepairMetricsDocument {
+): ProductMetricsDocument {
     return {
         _id: createMetricsURLCacheKey({
             metricsUrl: METRICS_URL,
-            metricsView: "repairs",
-            productMetricCategory: "All Products",
-            repairMetricCategory: metricCategory,
+            metricsView: "products",
+            productMetricCategory: metricCategory,
+            repairMetricCategory: "All Repairs",
             storeLocation,
         }) ?? crypto.randomUUID(),
         __v: 0,
         createdAt: new Date().toISOString(),
         metricCategory,
-        yearlyMetrics: repairMetrics,
+        yearlyMetrics: productMetrics,
         storeLocation,
         updatedAt: new Date().toISOString(),
     };
 }
 
-async function setRepairMetricsInCache(
+async function setProductMetricsInCache(
     storeLocation: AllStoreLocations,
-    metrics: RepairMetric[],
+    metrics: ProductMetric[],
 ): Promise<SafeResult<string>> {
     try {
         const setItemResults = await Promise.allSettled(
@@ -289,15 +292,15 @@ async function setRepairMetricsInCache(
                             {
                                 metricsUrl: METRICS_URL,
                                 storeLocation,
-                                metricsView: "repairs",
-                                productMetricCategory: "All Products",
-                                repairMetricCategory: name,
+                                metricsView: "products",
+                                productMetricCategory: name,
+                                repairMetricCategory: "All Repairs",
                             },
                         );
 
                         const setItemResult = await setCachedItemAsyncSafe(
                             metricCacheKey,
-                            createRepairMetricsDocument(
+                            createProductMetricsDocument(
                                 name,
                                 yearlyMetrics,
                                 storeLocation,
@@ -341,7 +344,7 @@ async function setRepairMetricsInCache(
 
         if (errors.length > 0) {
             return createSafeErrorResult(
-                `Failed to set some repair metrics in cache: ${
+                `Failed to set some product metrics in cache: ${
                     errors.map(
                         (error) => error.val,
                     ).join(", ")
@@ -351,12 +354,12 @@ async function setRepairMetricsInCache(
 
         if (sucesses.length === 0) {
             return createSafeErrorResult(
-                "No repair metrics set in cache",
+                "No product metrics set in cache",
             );
         }
 
         return createSafeSuccessResult(
-            `Successfully set ${sucesses.length} repair metrics in cache`,
+            `Successfully set ${sucesses.length} product metrics in cache`,
         );
     } catch (error: unknown) {
         return createSafeErrorResult(error);

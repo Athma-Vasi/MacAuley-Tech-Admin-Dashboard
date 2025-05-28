@@ -21,9 +21,9 @@
   }[]
  */
 
-import { SafeResult, StoreLocation } from "../../types";
-import { createSafeErrorResult, createSafeSuccessResult } from "../../utils";
-import { REPAIR_CATEGORIES } from "../dashboard/constants";
+import { SafeResult, StoreLocation } from "../../../types";
+import { createSafeErrorResult, createSafeSuccessResult } from "../../../utils";
+import { REPAIR_CATEGORIES } from "../constants";
 import {
     DaysInMonthsInYears,
     LocationYearSpread,
@@ -32,8 +32,8 @@ import {
     RepairMetric,
     RepairMonthlyMetric,
     RepairYearlyMetric,
-} from "../dashboard/types";
-import { createRandomNumber } from "../dashboard/utils";
+} from "../types";
+import { createRandomNumber } from "../utils";
 
 function createRepairCategoryUnitsRepairedRevenueTuple({
     repairCategory,

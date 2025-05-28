@@ -145,14 +145,14 @@
   }[];
  */
 
-import { STORE_LOCATIONS } from "../../constants";
-import { SafeResult, StoreLocation } from "../../types";
+import { STORE_LOCATIONS } from "../../../constants";
+import { SafeResult, StoreLocation } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
     toFixedFloat,
-} from "../../utils";
-import { DAYS_PER_MONTH, MONTHS } from "../dashboard/constants";
+} from "../../../utils";
+import { DAYS_PER_MONTH, MONTHS } from "../constants";
 import {
     BusinessMetric,
     DailyFinancialMetric,
@@ -160,11 +160,8 @@ import {
     LocationYearSpread,
     MonthlyFinancialMetric,
     YearlyFinancialMetric,
-} from "../dashboard/types";
-import {
-    createRandomNumber,
-    returnDaysInMonthsInYears,
-} from "../dashboard/utils";
+} from "../types";
+import { createRandomNumber, returnDaysInMonthsInYears } from "../utils";
 
 function createRandomFinancialMetricsSafe(
     businessMetrics: BusinessMetric[],
@@ -1152,9 +1149,8 @@ function createRandomFinancialMetricsSafe(
                                                         .netProfitMargin;
 
                                             yearlyFinancialMetricAcc.expenses
-                                                .total +=
-                                                    monthlyFinancialMetric
-                                                        .expenses.total;
+                                                .total += monthlyFinancialMetric
+                                                    .expenses.total;
                                             yearlyFinancialMetricAcc.expenses
                                                 .repair +=
                                                     monthlyFinancialMetric
@@ -1177,9 +1173,8 @@ function createRandomFinancialMetricsSafe(
                                                         .online;
 
                                             yearlyFinancialMetricAcc.profit
-                                                .total +=
-                                                    monthlyFinancialMetric
-                                                        .profit.total;
+                                                .total += monthlyFinancialMetric
+                                                    .profit.total;
                                             yearlyFinancialMetricAcc.profit
                                                 .repair +=
                                                     monthlyFinancialMetric
@@ -1198,9 +1193,8 @@ function createRandomFinancialMetricsSafe(
                                                         .profit.sales.online;
 
                                             yearlyFinancialMetricAcc.revenue
-                                                .total +=
-                                                    monthlyFinancialMetric
-                                                        .revenue.total;
+                                                .total += monthlyFinancialMetric
+                                                    .revenue.total;
                                             yearlyFinancialMetricAcc.revenue
                                                 .repair +=
                                                     monthlyFinancialMetric
@@ -1230,10 +1224,9 @@ function createRandomFinancialMetricsSafe(
                                                         .transactions.repair;
                                             yearlyFinancialMetricAcc
                                                 .transactions.sales
-                                                .total +=
-                                                    monthlyFinancialMetric
-                                                        .transactions
-                                                        .sales.total;
+                                                .total += monthlyFinancialMetric
+                                                    .transactions
+                                                    .sales.total;
                                             yearlyFinancialMetricAcc
                                                 .transactions.sales
                                                 .inStore +=

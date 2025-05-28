@@ -23,18 +23,18 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
+import CustomerMetricsWorker from "../dashboard/customer/metricsWorker?worker";
+import FinancialMetricsWorker from "../dashboard/financial/metricsWorker?worker";
+import ProductMetricsWorker from "../dashboard/product/metricsWorker?worker";
+import RepairMetricsWorker from "../dashboard/repair/metricsWorker?worker";
 import { loginAction } from "./actions";
-import CustomerMetricsWorker from "./customerMetricsWorker?worker";
 import { MessageEventLoginFetchWorkerToMain } from "./fetchWorker";
 import LoginFetchWorker from "./fetchWorker?worker";
-import FinancialMetricsWorker from "./financialMetricsWorker?worker";
 import {
   handleLoginClick,
   handleMessageEventLoginFetchWorkerToMain,
 } from "./handlers";
-import ProductMetricsWorker from "./productMetricsWorker?worker";
 import { loginReducer } from "./reducers";
-import RepairMetricsWorker from "./repairMetricsWorker?worker";
 import { initialLoginState } from "./state";
 
 function Login() {
