@@ -51,8 +51,13 @@ const setCustomerMetricsWorkerLoginDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
-const setTriggerFinancialMetricsCreationLoginDispatchZod = z.object({
-    action: z.literal(loginAction.setTriggerFinancialMetricsCreation),
+const setProductMetricsGeneratedLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setProductMetricsGenerated),
+    payload: z.boolean(),
+});
+
+const setRepairMetricsGeneratedLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setRepairMetricsGenerated),
     payload: z.boolean(),
 });
 
@@ -68,7 +73,8 @@ type LoginDispatch =
     | z.infer<typeof setProductMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setRepairMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setCustomerMetricsWorkerLoginDispatchZod>
-    | z.infer<typeof setTriggerFinancialMetricsCreationLoginDispatchZod>;
+    | z.infer<typeof setProductMetricsGeneratedLoginDispatchZod>
+    | z.infer<typeof setRepairMetricsGeneratedLoginDispatchZod>;
 
 const handleLoginClickInputZod = z.object({
     isLoading: z.boolean(),
@@ -104,9 +110,10 @@ export {
     setIsSuccessfulLoginDispatchZod,
     setLoginFetchWorkerLoginDispatchZod,
     setPasswordLoginDispatchZod,
+    setProductMetricsGeneratedLoginDispatchZod,
     setProductMetricsWorkerLoginDispatchZod,
+    setRepairMetricsGeneratedLoginDispatchZod,
     setRepairMetricsWorkerLoginDispatchZod,
-    setTriggerFinancialMetricsCreationLoginDispatchZod,
     setUsernameLoginDispatchZod,
 };
 export type { LoginDispatch };

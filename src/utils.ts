@@ -523,6 +523,17 @@ async function setCachedItemAsyncSafe<Data = unknown>(
   }
 }
 
+async function removeCachedItemAsyncSafe(
+  key: string,
+): Promise<SafeResult> {
+  try {
+    await localforage.removeItem(key);
+    return new Ok(None);
+  } catch (error: unknown) {
+    return createSafeErrorResult(error);
+  }
+}
+
 function parseSyncSafe<Output = unknown>(
   { object, zSchema }: {
     object: Output;
@@ -797,6 +808,7 @@ export {
   modifyImageSafe,
   parseResponsePayloadAsyncSafe,
   parseSyncSafe,
+  removeCachedItemAsyncSafe,
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,

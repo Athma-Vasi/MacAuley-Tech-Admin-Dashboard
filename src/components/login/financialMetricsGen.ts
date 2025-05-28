@@ -145,6 +145,7 @@
   }[];
  */
 
+import { STORE_LOCATIONS } from "../../constants";
 import { SafeResult, StoreLocation } from "../../types";
 import {
     createSafeErrorResult,
@@ -165,15 +166,9 @@ import {
     returnDaysInMonthsInYears,
 } from "../dashboard/utils";
 
-type CreateRandomFinancialMetricsInput = {
-    businessMetrics: BusinessMetric[];
-    storeLocations: StoreLocation[];
-};
-
-function createRandomFinancialMetrics({
-    businessMetrics,
-    storeLocations,
-}: CreateRandomFinancialMetricsInput): SafeResult<
+function createRandomFinancialMetricsSafe(
+    businessMetrics: BusinessMetric[],
+): SafeResult<
     (StoreLocation | YearlyFinancialMetric[])[][]
 > {
     /**
@@ -569,587 +564,723 @@ function createRandomFinancialMetrics({
     };
 
     try {
-        const randomFinancialMetrics = storeLocations.map((storeLocation) => {
-            // for this store location, find the created product and repair metrics
-            const businessMetric = businessMetrics.find(
-                (businessMetric) =>
-                    businessMetric.storeLocation === storeLocation,
-            );
-            if (!businessMetric) {
-                return [];
-            }
+        const randomFinancialMetrics = STORE_LOCATIONS.map(
+            ({ value: storeLocation }) => {
+                // for this store location, find the created product and repair metrics
+                const businessMetric = businessMetrics.find(
+                    (businessMetric) =>
+                        businessMetric.storeLocation === storeLocation,
+                );
+                if (!businessMetric) {
+                    return [];
+                }
 
-            const { productMetrics, repairMetrics } = businessMetric;
+                const { productMetrics, repairMetrics } = businessMetric;
 
-            // 'All Products' category in productMetrics is already aggregated from other product categories
-            const allProductsCategory = productMetrics.find(
-                (productMetric) => productMetric.name === "All Products",
-            );
-            // 'All Repairs' category in repairMetrics is already aggregated from other repair categories
-            const allRepairsCategory = repairMetrics.find(
-                (repairMetric) => repairMetric.name === "All Repairs",
-            );
-            if (!allProductsCategory || !allRepairsCategory) {
-                return [];
-            }
+                // 'All Products' category in productMetrics is already aggregated from other product categories
+                const allProductsCategory = productMetrics.find(
+                    (productMetric) => productMetric.name === "All Products",
+                );
+                // 'All Repairs' category in repairMetrics is already aggregated from other repair categories
+                const allRepairsCategory = repairMetrics.find(
+                    (repairMetric) => repairMetric.name === "All Repairs",
+                );
+                if (!allProductsCategory || !allRepairsCategory) {
+                    return [];
+                }
 
-            const daysInMonthsInYears = returnDaysInMonthsInYears({
-                daysPerMonth: DAYS_PER_MONTH,
-                months: MONTHS,
-                storeLocation,
-            });
+                const daysInMonthsInYears = returnDaysInMonthsInYears({
+                    daysPerMonth: DAYS_PER_MONTH,
+                    months: MONTHS,
+                    storeLocation,
+                });
 
-            const yearlyFinancialMetrics = Array.from(daysInMonthsInYears).map(
-                (yearTuple) => {
-                    const [year, daysInMonthsMap] = yearTuple;
+                const yearlyFinancialMetrics = Array.from(daysInMonthsInYears)
+                    .map(
+                        (yearTuple) => {
+                            const [year, daysInMonthsMap] = yearTuple;
 
-                    const yearlyProductMetrics = allProductsCategory
-                        .yearlyMetrics.find(
-                            (yearlyProductMetric) =>
-                                yearlyProductMetric.year === year,
-                        );
-                    const yearlyRepairMetrics = allRepairsCategory.yearlyMetrics
-                        .find(
-                            (yearlyRepairMetric) =>
-                                yearlyRepairMetric.year === year,
-                        );
-                    if (!yearlyProductMetrics || !yearlyRepairMetrics) {
-                        return YEARLY_FINANCIAL_METRICS_TEMPLATE;
-                    }
+                            const yearlyProductMetrics = allProductsCategory
+                                .yearlyMetrics.find(
+                                    (yearlyProductMetric) =>
+                                        yearlyProductMetric.year === year,
+                                );
+                            const yearlyRepairMetrics = allRepairsCategory
+                                .yearlyMetrics
+                                .find(
+                                    (yearlyRepairMetric) =>
+                                        yearlyRepairMetric.year === year,
+                                );
+                            if (!yearlyProductMetrics || !yearlyRepairMetrics) {
+                                return YEARLY_FINANCIAL_METRICS_TEMPLATE;
+                            }
 
-                    const monthlyFinancialMetrics = Array.from(daysInMonthsMap)
-                        .map(
-                            (monthTuple) => {
-                                const [month, daysRange] = monthTuple;
+                            const monthlyFinancialMetrics = Array.from(
+                                daysInMonthsMap,
+                            )
+                                .map(
+                                    (monthTuple) => {
+                                        const [month, daysRange] = monthTuple;
 
-                                const monthlyProductMetrics =
-                                    yearlyProductMetrics
-                                        .monthlyMetrics.find(
-                                            (monthlyProductMetric) =>
-                                                monthlyProductMetric.month ===
-                                                    month,
-                                        );
-                                const monthlyRepairMetrics = yearlyRepairMetrics
-                                    .monthlyMetrics.find(
-                                        (monthlyRepairMetric) =>
-                                            monthlyRepairMetric.month === month,
-                                    );
-                                if (
-                                    !monthlyProductMetrics ||
-                                    !monthlyRepairMetrics
-                                ) {
-                                    return MONTHLY_FINANCIAL_METRICS_TEMPLATE;
-                                }
-
-                                const dailyFinancialMetrics = daysRange.map(
-                                    (day) => {
-                                        const dailyProductMetrics =
-                                            monthlyProductMetrics
-                                                .dailyMetrics.find(
-                                                    (dailyProductMetric) =>
-                                                        dailyProductMetric
-                                                            .day ===
-                                                            day,
+                                        const monthlyProductMetrics =
+                                            yearlyProductMetrics
+                                                .monthlyMetrics.find(
+                                                    (monthlyProductMetric) =>
+                                                        monthlyProductMetric
+                                                            .month ===
+                                                            month,
                                                 );
-                                        const dailyRepairMetrics =
-                                            monthlyRepairMetrics
-                                                .dailyMetrics.find(
-                                                    (dailyRepairMetric) =>
-                                                        dailyRepairMetric
-                                                            .day ===
-                                                            day,
+                                        const monthlyRepairMetrics =
+                                            yearlyRepairMetrics
+                                                .monthlyMetrics.find(
+                                                    (monthlyRepairMetric) =>
+                                                        monthlyRepairMetric
+                                                            .month === month,
                                                 );
                                         if (
-                                            !dailyProductMetrics ||
-                                            !dailyRepairMetrics
+                                            !monthlyProductMetrics ||
+                                            !monthlyRepairMetrics
                                         ) {
-                                            return DAILY_FINANCIAL_METRICS_TEMPLATE;
+                                            return MONTHLY_FINANCIAL_METRICS_TEMPLATE;
                                         }
 
-                                        const dailyTransactions:
-                                            FinancialMetricCategories = {
-                                                total: dailyProductMetrics
-                                                    .unitsSold
-                                                    .total +
-                                                    dailyRepairMetrics
-                                                        .unitsRepaired,
-                                                repair: dailyRepairMetrics
-                                                    .unitsRepaired,
-                                                sales: {
-                                                    total: dailyProductMetrics
-                                                        .unitsSold.total,
-                                                    inStore: dailyProductMetrics
-                                                        .unitsSold.inStore,
-                                                    online: dailyProductMetrics
-                                                        .unitsSold.online,
-                                                },
-                                            };
+                                        const dailyFinancialMetrics = daysRange
+                                            .map(
+                                                (day) => {
+                                                    const dailyProductMetrics =
+                                                        monthlyProductMetrics
+                                                            .dailyMetrics.find(
+                                                                (
+                                                                    dailyProductMetric,
+                                                                ) => dailyProductMetric
+                                                                    .day ===
+                                                                    day,
+                                                            );
+                                                    const dailyRepairMetrics =
+                                                        monthlyRepairMetrics
+                                                            .dailyMetrics.find(
+                                                                (
+                                                                    dailyRepairMetric,
+                                                                ) => dailyRepairMetric
+                                                                    .day ===
+                                                                    day,
+                                                            );
+                                                    if (
+                                                        !dailyProductMetrics ||
+                                                        !dailyRepairMetrics
+                                                    ) {
+                                                        return DAILY_FINANCIAL_METRICS_TEMPLATE;
+                                                    }
 
-                                        const dailyRevenues:
-                                            FinancialMetricCategories = {
-                                                total:
-                                                    dailyProductMetrics.revenue
-                                                        .total +
-                                                    dailyRepairMetrics.revenue,
-                                                repair:
-                                                    dailyRepairMetrics.revenue,
-                                                sales: {
-                                                    total: dailyProductMetrics
-                                                        .revenue
-                                                        .total,
-                                                    inStore: dailyProductMetrics
-                                                        .revenue
-                                                        .inStore,
-                                                    online: dailyProductMetrics
-                                                        .revenue
-                                                        .inStore,
-                                                },
-                                            };
+                                                    const dailyTransactions:
+                                                        FinancialMetricCategories =
+                                                            {
+                                                                total:
+                                                                    dailyProductMetrics
+                                                                        .unitsSold
+                                                                        .total +
+                                                                    dailyRepairMetrics
+                                                                        .unitsRepaired,
+                                                                repair:
+                                                                    dailyRepairMetrics
+                                                                        .unitsRepaired,
+                                                                sales: {
+                                                                    total:
+                                                                        dailyProductMetrics
+                                                                            .unitsSold
+                                                                            .total,
+                                                                    inStore:
+                                                                        dailyProductMetrics
+                                                                            .unitsSold
+                                                                            .inStore,
+                                                                    online:
+                                                                        dailyProductMetrics
+                                                                            .unitsSold
+                                                                            .online,
+                                                                },
+                                                            };
 
-                                        const dailyAverageOrderValue = Math
-                                            .round(
-                                                dailyRevenues.total /
-                                                    dailyTransactions.total,
+                                                    const dailyRevenues:
+                                                        FinancialMetricCategories =
+                                                            {
+                                                                total:
+                                                                    dailyProductMetrics
+                                                                        .revenue
+                                                                        .total +
+                                                                    dailyRepairMetrics
+                                                                        .revenue,
+                                                                repair:
+                                                                    dailyRepairMetrics
+                                                                        .revenue,
+                                                                sales: {
+                                                                    total:
+                                                                        dailyProductMetrics
+                                                                            .revenue
+                                                                            .total,
+                                                                    inStore:
+                                                                        dailyProductMetrics
+                                                                            .revenue
+                                                                            .inStore,
+                                                                    online:
+                                                                        dailyProductMetrics
+                                                                            .revenue
+                                                                            .inStore,
+                                                                },
+                                                            };
+
+                                                    const dailyAverageOrderValue =
+                                                        Math
+                                                            .round(
+                                                                dailyRevenues
+                                                                    .total /
+                                                                    dailyTransactions
+                                                                        .total,
+                                                            );
+
+                                                    let dailyConversionRate =
+                                                        createRandomNumber({
+                                                            storeLocation,
+                                                            year,
+                                                            yearUnitsSpread:
+                                                                YEAR_CONVERSION_RATE_SPREAD,
+                                                            defaultMax: 0.03,
+                                                            defaultMin: 0.01,
+                                                            isFraction: true,
+                                                        });
+                                                    dailyConversionRate =
+                                                        toFixedFloat(
+                                                            dailyConversionRate,
+                                                        );
+
+                                                    // generate expenses to calculate profit
+
+                                                    let dailyNetProfitMargin =
+                                                        createRandomNumber({
+                                                            storeLocation,
+                                                            year,
+                                                            yearUnitsSpread:
+                                                                YEAR_PROFIT_MARGIN_SPREAD,
+                                                            defaultMax: 0.3,
+                                                            defaultMin: 0.1,
+                                                            isFraction: true,
+                                                        });
+                                                    dailyNetProfitMargin =
+                                                        toFixedFloat(
+                                                            dailyNetProfitMargin,
+                                                        );
+
+                                                    const dailyProfit = Math
+                                                        .round(
+                                                            dailyRevenues
+                                                                .total *
+                                                                dailyNetProfitMargin,
+                                                        );
+
+                                                    const dailyRepairProfitFraction =
+                                                        createRandomNumber({
+                                                            storeLocation,
+                                                            year,
+                                                            yearUnitsSpread:
+                                                                YEAR_REPAIR_PROFIT_SPREAD,
+                                                            defaultMax: 0.3,
+                                                            defaultMin: 0.1,
+                                                            isFraction: true,
+                                                        });
+                                                    const dailyRepairProfit =
+                                                        Math.round(
+                                                            dailyRepairProfitFraction *
+                                                                dailyProfit,
+                                                        );
+
+                                                    const dailySalesProfit =
+                                                        Math.round(
+                                                            dailyProfit -
+                                                                dailyRepairProfit,
+                                                        );
+
+                                                    const dailyOnlineProfitFraction =
+                                                        createRandomNumber({
+                                                            storeLocation,
+                                                            year,
+                                                            yearUnitsSpread:
+                                                                YEAR_ONLINE_PROFIT_SPREAD,
+                                                            defaultMax: 0.03,
+                                                            defaultMin: 0.01,
+                                                            isFraction: true,
+                                                        });
+                                                    const dailyOnlineProfit =
+                                                        Math.round(
+                                                            dailySalesProfit *
+                                                                dailyOnlineProfitFraction,
+                                                        );
+
+                                                    const dailyInStoreProfit =
+                                                        dailySalesProfit -
+                                                        dailyOnlineProfit;
+
+                                                    const dailyProfits:
+                                                        FinancialMetricCategories =
+                                                            {
+                                                                total:
+                                                                    dailyProfit,
+                                                                repair:
+                                                                    dailyRepairProfit,
+                                                                sales: {
+                                                                    total:
+                                                                        dailySalesProfit,
+                                                                    inStore:
+                                                                        dailyInStoreProfit,
+                                                                    online:
+                                                                        dailyOnlineProfit,
+                                                                },
+                                                            };
+
+                                                    const dailyExpense = Math
+                                                        .round(
+                                                            dailyRevenues
+                                                                .total -
+                                                                dailyProfit,
+                                                        );
+
+                                                    const dailyRepairExpenseFraction =
+                                                        createRandomNumber({
+                                                            storeLocation,
+                                                            year,
+                                                            yearUnitsSpread:
+                                                                YEAR_REPAIR_EXPENSES_SPREAD,
+                                                            defaultMax: 0.3,
+                                                            defaultMin: 0.1,
+                                                            isFraction: true,
+                                                        });
+                                                    const dailyRepairExpense =
+                                                        Math.round(
+                                                            dailyRepairExpenseFraction *
+                                                                dailyExpense,
+                                                        );
+
+                                                    const dailySalesExpense =
+                                                        dailyExpense -
+                                                        dailyRepairExpense;
+
+                                                    const dailyOnlineExpenseFraction =
+                                                        createRandomNumber({
+                                                            storeLocation,
+                                                            year,
+                                                            yearUnitsSpread:
+                                                                YEAR_ONLINE_EXPENSES_SPREAD,
+                                                            defaultMax: 0.03,
+                                                            defaultMin: 0.01,
+                                                            isFraction: true,
+                                                        });
+                                                    const dailyOnlineExpense =
+                                                        Math.round(
+                                                            dailySalesExpense *
+                                                                dailyOnlineExpenseFraction,
+                                                        );
+
+                                                    const dailyInStoreExpense =
+                                                        dailySalesExpense -
+                                                        dailyOnlineExpense;
+
+                                                    const dailyExpenses:
+                                                        FinancialMetricCategories =
+                                                            {
+                                                                total:
+                                                                    dailyExpense,
+                                                                repair:
+                                                                    dailyRepairExpense,
+                                                                sales: {
+                                                                    total:
+                                                                        dailySalesExpense,
+                                                                    inStore:
+                                                                        dailyInStoreExpense,
+                                                                    online:
+                                                                        dailyOnlineExpense,
+                                                                },
+                                                            };
+
+                                                    const dailyFinancialMetric:
+                                                        DailyFinancialMetric = {
+                                                            day,
+                                                            averageOrderValue:
+                                                                dailyAverageOrderValue,
+                                                            conversionRate:
+                                                                dailyConversionRate,
+                                                            netProfitMargin:
+                                                                dailyNetProfitMargin,
+                                                            expenses:
+                                                                dailyExpenses,
+                                                            profit:
+                                                                dailyProfits,
+                                                            revenue:
+                                                                dailyRevenues,
+                                                            transactions:
+                                                                dailyTransactions,
+                                                        };
+
+                                                    return dailyFinancialMetric;
+                                                },
                                             );
 
-                                        let dailyConversionRate =
-                                            createRandomNumber({
-                                                storeLocation,
-                                                year,
-                                                yearUnitsSpread:
-                                                    YEAR_CONVERSION_RATE_SPREAD,
-                                                defaultMax: 0.03,
-                                                defaultMin: 0.01,
-                                                isFraction: true,
-                                            });
-                                        dailyConversionRate = toFixedFloat(
-                                            dailyConversionRate,
-                                        );
+                                        // aggregate created daily financial metrics into monthly financial metrics
 
-                                        // generate expenses to calculate profit
+                                        const monthlyFinancialMetric =
+                                            dailyFinancialMetrics
+                                                .reduce<MonthlyFinancialMetric>(
+                                                    (
+                                                        monthlyFinancialMetricAcc,
+                                                        dailyFinancialMetric,
+                                                    ) => {
+                                                        monthlyFinancialMetricAcc
+                                                            .month = month;
 
-                                        let dailyNetProfitMargin =
-                                            createRandomNumber({
-                                                storeLocation,
-                                                year,
-                                                yearUnitsSpread:
-                                                    YEAR_PROFIT_MARGIN_SPREAD,
-                                                defaultMax: 0.3,
-                                                defaultMin: 0.1,
-                                                isFraction: true,
-                                            });
-                                        dailyNetProfitMargin = toFixedFloat(
-                                            dailyNetProfitMargin,
-                                        );
+                                                        monthlyFinancialMetricAcc
+                                                            .averageOrderValue +=
+                                                                dailyFinancialMetric
+                                                                    .averageOrderValue;
+                                                        monthlyFinancialMetricAcc
+                                                            .conversionRate +=
+                                                                dailyFinancialMetric
+                                                                    .conversionRate;
+                                                        monthlyFinancialMetricAcc
+                                                            .netProfitMargin +=
+                                                                dailyFinancialMetric
+                                                                    .netProfitMargin;
 
-                                        const dailyProfit = Math.round(
-                                            dailyRevenues.total *
-                                                dailyNetProfitMargin,
-                                        );
+                                                        monthlyFinancialMetricAcc
+                                                            .expenses
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .expenses
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .expenses
+                                                            .repair +=
+                                                                dailyFinancialMetric
+                                                                    .expenses
+                                                                    .repair;
+                                                        monthlyFinancialMetricAcc
+                                                            .expenses.sales
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .expenses
+                                                                    .sales
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .expenses.sales
+                                                            .inStore +=
+                                                                dailyFinancialMetric
+                                                                    .expenses
+                                                                    .sales
+                                                                    .inStore;
+                                                        monthlyFinancialMetricAcc
+                                                            .expenses.sales
+                                                            .online +=
+                                                                dailyFinancialMetric
+                                                                    .expenses
+                                                                    .sales
+                                                                    .online;
 
-                                        const dailyRepairProfitFraction =
-                                            createRandomNumber({
-                                                storeLocation,
-                                                year,
-                                                yearUnitsSpread:
-                                                    YEAR_REPAIR_PROFIT_SPREAD,
-                                                defaultMax: 0.3,
-                                                defaultMin: 0.1,
-                                                isFraction: true,
-                                            });
-                                        const dailyRepairProfit = Math.round(
-                                            dailyRepairProfitFraction *
-                                                dailyProfit,
-                                        );
+                                                        monthlyFinancialMetricAcc
+                                                            .profit
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .profit
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .profit
+                                                            .repair +=
+                                                                dailyFinancialMetric
+                                                                    .profit
+                                                                    .repair;
+                                                        monthlyFinancialMetricAcc
+                                                            .profit
+                                                            .sales
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .profit
+                                                                    .sales
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .profit
+                                                            .sales
+                                                            .inStore +=
+                                                                dailyFinancialMetric
+                                                                    .profit
+                                                                    .sales
+                                                                    .inStore;
+                                                        monthlyFinancialMetricAcc
+                                                            .profit
+                                                            .sales
+                                                            .online +=
+                                                                dailyFinancialMetric
+                                                                    .profit
+                                                                    .sales
+                                                                    .online;
 
-                                        const dailySalesProfit = Math.round(
-                                            dailyProfit - dailyRepairProfit,
-                                        );
+                                                        monthlyFinancialMetricAcc
+                                                            .revenue
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .revenue
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .revenue
+                                                            .repair +=
+                                                                dailyFinancialMetric
+                                                                    .revenue
+                                                                    .repair;
+                                                        monthlyFinancialMetricAcc
+                                                            .revenue.sales
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .revenue
+                                                                    .sales
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .revenue.sales
+                                                            .inStore +=
+                                                                dailyFinancialMetric
+                                                                    .revenue
+                                                                    .sales
+                                                                    .inStore;
+                                                        monthlyFinancialMetricAcc
+                                                            .revenue.sales
+                                                            .online +=
+                                                                dailyFinancialMetric
+                                                                    .revenue
+                                                                    .sales
+                                                                    .online;
 
-                                        const dailyOnlineProfitFraction =
-                                            createRandomNumber({
-                                                storeLocation,
-                                                year,
-                                                yearUnitsSpread:
-                                                    YEAR_ONLINE_PROFIT_SPREAD,
-                                                defaultMax: 0.03,
-                                                defaultMin: 0.01,
-                                                isFraction: true,
-                                            });
-                                        const dailyOnlineProfit = Math.round(
-                                            dailySalesProfit *
-                                                dailyOnlineProfitFraction,
-                                        );
+                                                        monthlyFinancialMetricAcc
+                                                            .transactions
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .transactions
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .transactions
+                                                            .repair +=
+                                                                dailyFinancialMetric
+                                                                    .transactions
+                                                                    .repair;
+                                                        monthlyFinancialMetricAcc
+                                                            .transactions
+                                                            .sales
+                                                            .total +=
+                                                                dailyFinancialMetric
+                                                                    .transactions
+                                                                    .sales
+                                                                    .total;
+                                                        monthlyFinancialMetricAcc
+                                                            .transactions
+                                                            .sales
+                                                            .inStore +=
+                                                                dailyFinancialMetric
+                                                                    .transactions
+                                                                    .sales
+                                                                    .inStore;
+                                                        monthlyFinancialMetricAcc
+                                                            .transactions
+                                                            .sales
+                                                            .online +=
+                                                                dailyFinancialMetric
+                                                                    .transactions
+                                                                    .sales
+                                                                    .online;
 
-                                        const dailyInStoreProfit =
-                                            dailySalesProfit -
-                                            dailyOnlineProfit;
+                                                        return monthlyFinancialMetricAcc;
+                                                    },
+                                                    structuredClone(
+                                                        MONTHLY_FINANCIAL_METRICS_TEMPLATE,
+                                                    ),
+                                                );
 
-                                        const dailyProfits:
-                                            FinancialMetricCategories = {
-                                                total: dailyProfit,
-                                                repair: dailyRepairProfit,
-                                                sales: {
-                                                    total: dailySalesProfit,
-                                                    inStore: dailyInStoreProfit,
-                                                    online: dailyOnlineProfit,
-                                                },
-                                            };
+                                        monthlyFinancialMetric
+                                            .averageOrderValue = Math
+                                                .round(
+                                                    monthlyFinancialMetric
+                                                        .averageOrderValue /
+                                                        dailyFinancialMetrics
+                                                            .length,
+                                                );
+                                        monthlyFinancialMetric.conversionRate =
+                                            toFixedFloat(
+                                                monthlyFinancialMetric
+                                                    .conversionRate /
+                                                    dailyFinancialMetrics
+                                                        .length,
+                                            );
+                                        monthlyFinancialMetric.netProfitMargin =
+                                            toFixedFloat(
+                                                monthlyFinancialMetric
+                                                    .netProfitMargin /
+                                                    dailyFinancialMetrics
+                                                        .length,
+                                                2,
+                                            );
+                                        monthlyFinancialMetric.dailyMetrics =
+                                            dailyFinancialMetrics;
 
-                                        const dailyExpense = Math.round(
-                                            dailyRevenues.total - dailyProfit,
-                                        );
-
-                                        const dailyRepairExpenseFraction =
-                                            createRandomNumber({
-                                                storeLocation,
-                                                year,
-                                                yearUnitsSpread:
-                                                    YEAR_REPAIR_EXPENSES_SPREAD,
-                                                defaultMax: 0.3,
-                                                defaultMin: 0.1,
-                                                isFraction: true,
-                                            });
-                                        const dailyRepairExpense = Math.round(
-                                            dailyRepairExpenseFraction *
-                                                dailyExpense,
-                                        );
-
-                                        const dailySalesExpense = dailyExpense -
-                                            dailyRepairExpense;
-
-                                        const dailyOnlineExpenseFraction =
-                                            createRandomNumber({
-                                                storeLocation,
-                                                year,
-                                                yearUnitsSpread:
-                                                    YEAR_ONLINE_EXPENSES_SPREAD,
-                                                defaultMax: 0.03,
-                                                defaultMin: 0.01,
-                                                isFraction: true,
-                                            });
-                                        const dailyOnlineExpense = Math.round(
-                                            dailySalesExpense *
-                                                dailyOnlineExpenseFraction,
-                                        );
-
-                                        const dailyInStoreExpense =
-                                            dailySalesExpense -
-                                            dailyOnlineExpense;
-
-                                        const dailyExpenses:
-                                            FinancialMetricCategories = {
-                                                total: dailyExpense,
-                                                repair: dailyRepairExpense,
-                                                sales: {
-                                                    total: dailySalesExpense,
-                                                    inStore:
-                                                        dailyInStoreExpense,
-                                                    online: dailyOnlineExpense,
-                                                },
-                                            };
-
-                                        const dailyFinancialMetric:
-                                            DailyFinancialMetric = {
-                                                day,
-                                                averageOrderValue:
-                                                    dailyAverageOrderValue,
-                                                conversionRate:
-                                                    dailyConversionRate,
-                                                netProfitMargin:
-                                                    dailyNetProfitMargin,
-                                                expenses: dailyExpenses,
-                                                profit: dailyProfits,
-                                                revenue: dailyRevenues,
-                                                transactions: dailyTransactions,
-                                            };
-
-                                        return dailyFinancialMetric;
+                                        return monthlyFinancialMetric;
                                     },
                                 );
 
-                                // aggregate created daily financial metrics into monthly financial metrics
+                            // aggregate created monthly financial metrics into yearly financial metrics
 
-                                const monthlyFinancialMetric =
-                                    dailyFinancialMetrics
-                                        .reduce<MonthlyFinancialMetric>(
-                                            (
-                                                monthlyFinancialMetricAcc,
-                                                dailyFinancialMetric,
-                                            ) => {
-                                                monthlyFinancialMetricAcc
-                                                    .month = month;
+                            const yearlyFinancialMetric =
+                                monthlyFinancialMetrics
+                                    .reduce<YearlyFinancialMetric>(
+                                        (
+                                            yearlyFinancialMetricAcc,
+                                            monthlyFinancialMetric,
+                                        ) => {
+                                            yearlyFinancialMetricAcc.year =
+                                                year;
 
-                                                monthlyFinancialMetricAcc
-                                                    .averageOrderValue +=
-                                                        dailyFinancialMetric
-                                                            .averageOrderValue;
-                                                monthlyFinancialMetricAcc
-                                                    .conversionRate +=
-                                                        dailyFinancialMetric
-                                                            .conversionRate;
-                                                monthlyFinancialMetricAcc
-                                                    .netProfitMargin +=
-                                                        dailyFinancialMetric
-                                                            .netProfitMargin;
+                                            yearlyFinancialMetricAcc
+                                                .averageOrderValue +=
+                                                    monthlyFinancialMetric
+                                                        .averageOrderValue;
+                                            yearlyFinancialMetricAcc
+                                                .conversionRate +=
+                                                    monthlyFinancialMetric
+                                                        .conversionRate;
+                                            yearlyFinancialMetricAcc
+                                                .netProfitMargin +=
+                                                    monthlyFinancialMetric
+                                                        .netProfitMargin;
 
-                                                monthlyFinancialMetricAcc
-                                                    .expenses
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .expenses
-                                                            .total;
-                                                monthlyFinancialMetricAcc
-                                                    .expenses
-                                                    .repair +=
-                                                        dailyFinancialMetric
-                                                            .expenses
-                                                            .repair;
-                                                monthlyFinancialMetricAcc
-                                                    .expenses.sales
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .expenses
-                                                            .sales.total;
-                                                monthlyFinancialMetricAcc
-                                                    .expenses.sales
-                                                    .inStore +=
-                                                        dailyFinancialMetric
-                                                            .expenses
-                                                            .sales.inStore;
-                                                monthlyFinancialMetricAcc
-                                                    .expenses.sales
-                                                    .online +=
-                                                        dailyFinancialMetric
-                                                            .expenses
-                                                            .sales.online;
+                                            yearlyFinancialMetricAcc.expenses
+                                                .total +=
+                                                    monthlyFinancialMetric
+                                                        .expenses.total;
+                                            yearlyFinancialMetricAcc.expenses
+                                                .repair +=
+                                                    monthlyFinancialMetric
+                                                        .expenses.repair;
+                                            yearlyFinancialMetricAcc.expenses
+                                                .sales.total +=
+                                                    monthlyFinancialMetric
+                                                        .expenses.sales.total;
+                                            yearlyFinancialMetricAcc.expenses
+                                                .sales
+                                                .inStore +=
+                                                    monthlyFinancialMetric
+                                                        .expenses.sales
+                                                        .inStore;
+                                            yearlyFinancialMetricAcc.expenses
+                                                .sales
+                                                .online +=
+                                                    monthlyFinancialMetric
+                                                        .expenses.sales
+                                                        .online;
 
-                                                monthlyFinancialMetricAcc.profit
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .profit
-                                                            .total;
-                                                monthlyFinancialMetricAcc.profit
-                                                    .repair +=
-                                                        dailyFinancialMetric
-                                                            .profit
-                                                            .repair;
-                                                monthlyFinancialMetricAcc.profit
-                                                    .sales
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .profit
-                                                            .sales.total;
-                                                monthlyFinancialMetricAcc.profit
-                                                    .sales
-                                                    .inStore +=
-                                                        dailyFinancialMetric
-                                                            .profit
-                                                            .sales.inStore;
-                                                monthlyFinancialMetricAcc.profit
-                                                    .sales
-                                                    .online +=
-                                                        dailyFinancialMetric
-                                                            .profit
-                                                            .sales.online;
+                                            yearlyFinancialMetricAcc.profit
+                                                .total +=
+                                                    monthlyFinancialMetric
+                                                        .profit.total;
+                                            yearlyFinancialMetricAcc.profit
+                                                .repair +=
+                                                    monthlyFinancialMetric
+                                                        .profit.repair;
+                                            yearlyFinancialMetricAcc.profit
+                                                .sales.total +=
+                                                    monthlyFinancialMetric
+                                                        .profit.sales.total;
+                                            yearlyFinancialMetricAcc.profit
+                                                .sales.inStore +=
+                                                    monthlyFinancialMetric
+                                                        .profit.sales.inStore;
+                                            yearlyFinancialMetricAcc.profit
+                                                .sales.online +=
+                                                    monthlyFinancialMetric
+                                                        .profit.sales.online;
 
-                                                monthlyFinancialMetricAcc
-                                                    .revenue
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .revenue
-                                                            .total;
-                                                monthlyFinancialMetricAcc
-                                                    .revenue
-                                                    .repair +=
-                                                        dailyFinancialMetric
-                                                            .revenue
-                                                            .repair;
-                                                monthlyFinancialMetricAcc
-                                                    .revenue.sales
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .revenue
-                                                            .sales.total;
-                                                monthlyFinancialMetricAcc
-                                                    .revenue.sales
-                                                    .inStore +=
-                                                        dailyFinancialMetric
-                                                            .revenue
-                                                            .sales.inStore;
-                                                monthlyFinancialMetricAcc
-                                                    .revenue.sales
-                                                    .online +=
-                                                        dailyFinancialMetric
-                                                            .revenue
-                                                            .sales.online;
+                                            yearlyFinancialMetricAcc.revenue
+                                                .total +=
+                                                    monthlyFinancialMetric
+                                                        .revenue.total;
+                                            yearlyFinancialMetricAcc.revenue
+                                                .repair +=
+                                                    monthlyFinancialMetric
+                                                        .revenue.repair;
+                                            yearlyFinancialMetricAcc.revenue
+                                                .sales.total +=
+                                                    monthlyFinancialMetric
+                                                        .revenue.sales.total;
+                                            yearlyFinancialMetricAcc.revenue
+                                                .sales
+                                                .inStore +=
+                                                    monthlyFinancialMetric
+                                                        .revenue.sales
+                                                        .inStore;
+                                            yearlyFinancialMetricAcc.revenue
+                                                .sales.online +=
+                                                    monthlyFinancialMetric
+                                                        .revenue.sales.online;
 
-                                                monthlyFinancialMetricAcc
-                                                    .transactions
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .transactions.total;
-                                                monthlyFinancialMetricAcc
-                                                    .transactions
-                                                    .repair +=
-                                                        dailyFinancialMetric
-                                                            .transactions
-                                                            .repair;
-                                                monthlyFinancialMetricAcc
-                                                    .transactions
-                                                    .sales
-                                                    .total +=
-                                                        dailyFinancialMetric
-                                                            .transactions.sales
-                                                            .total;
-                                                monthlyFinancialMetricAcc
-                                                    .transactions
-                                                    .sales
-                                                    .inStore +=
-                                                        dailyFinancialMetric
-                                                            .transactions.sales
-                                                            .inStore;
-                                                monthlyFinancialMetricAcc
-                                                    .transactions
-                                                    .sales
-                                                    .online +=
-                                                        dailyFinancialMetric
-                                                            .transactions.sales
-                                                            .online;
+                                            yearlyFinancialMetricAcc
+                                                .transactions.total +=
+                                                    monthlyFinancialMetric
+                                                        .transactions.total;
+                                            yearlyFinancialMetricAcc
+                                                .transactions.repair +=
+                                                    monthlyFinancialMetric
+                                                        .transactions.repair;
+                                            yearlyFinancialMetricAcc
+                                                .transactions.sales
+                                                .total +=
+                                                    monthlyFinancialMetric
+                                                        .transactions
+                                                        .sales.total;
+                                            yearlyFinancialMetricAcc
+                                                .transactions.sales
+                                                .inStore +=
+                                                    monthlyFinancialMetric
+                                                        .transactions
+                                                        .sales
+                                                        .inStore;
+                                            yearlyFinancialMetricAcc
+                                                .transactions.sales
+                                                .online +=
+                                                    monthlyFinancialMetric
+                                                        .transactions
+                                                        .sales
+                                                        .online;
 
-                                                return monthlyFinancialMetricAcc;
-                                            },
-                                            structuredClone(
-                                                MONTHLY_FINANCIAL_METRICS_TEMPLATE,
-                                            ),
-                                        );
-
-                                monthlyFinancialMetric.averageOrderValue = Math
-                                    .round(
-                                        monthlyFinancialMetric
-                                            .averageOrderValue /
-                                            dailyFinancialMetrics.length,
+                                            return yearlyFinancialMetricAcc;
+                                        },
+                                        structuredClone(
+                                            YEARLY_FINANCIAL_METRICS_TEMPLATE,
+                                        ),
                                     );
-                                monthlyFinancialMetric.conversionRate =
-                                    toFixedFloat(
-                                        monthlyFinancialMetric.conversionRate /
-                                            dailyFinancialMetrics.length,
-                                    );
-                                monthlyFinancialMetric.netProfitMargin =
-                                    toFixedFloat(
-                                        monthlyFinancialMetric.netProfitMargin /
-                                            dailyFinancialMetrics.length,
-                                        2,
-                                    );
-                                monthlyFinancialMetric.dailyMetrics =
-                                    dailyFinancialMetrics;
 
-                                return monthlyFinancialMetric;
-                            },
-                        );
+                            yearlyFinancialMetric.averageOrderValue = Math
+                                .round(
+                                    yearlyFinancialMetric.averageOrderValue /
+                                        monthlyFinancialMetrics.length,
+                                );
+                            yearlyFinancialMetric.conversionRate = toFixedFloat(
+                                yearlyFinancialMetric.conversionRate /
+                                    monthlyFinancialMetrics.length,
+                            );
+                            yearlyFinancialMetric.netProfitMargin =
+                                toFixedFloat(
+                                    yearlyFinancialMetric.netProfitMargin /
+                                        monthlyFinancialMetrics.length,
+                                    2,
+                                );
+                            yearlyFinancialMetric.monthlyMetrics =
+                                monthlyFinancialMetrics;
 
-                    // aggregate created monthly financial metrics into yearly financial metrics
-
-                    const yearlyFinancialMetric = monthlyFinancialMetrics
-                        .reduce<YearlyFinancialMetric>(
-                            (
-                                yearlyFinancialMetricAcc,
-                                monthlyFinancialMetric,
-                            ) => {
-                                yearlyFinancialMetricAcc.year = year;
-
-                                yearlyFinancialMetricAcc.averageOrderValue +=
-                                    monthlyFinancialMetric.averageOrderValue;
-                                yearlyFinancialMetricAcc.conversionRate +=
-                                    monthlyFinancialMetric.conversionRate;
-                                yearlyFinancialMetricAcc.netProfitMargin +=
-                                    monthlyFinancialMetric.netProfitMargin;
-
-                                yearlyFinancialMetricAcc.expenses.total +=
-                                    monthlyFinancialMetric.expenses.total;
-                                yearlyFinancialMetricAcc.expenses.repair +=
-                                    monthlyFinancialMetric.expenses.repair;
-                                yearlyFinancialMetricAcc.expenses.sales.total +=
-                                    monthlyFinancialMetric.expenses.sales.total;
-                                yearlyFinancialMetricAcc.expenses.sales
-                                    .inStore +=
-                                        monthlyFinancialMetric.expenses.sales
-                                            .inStore;
-                                yearlyFinancialMetricAcc.expenses.sales
-                                    .online +=
-                                        monthlyFinancialMetric.expenses.sales
-                                            .online;
-
-                                yearlyFinancialMetricAcc.profit.total +=
-                                    monthlyFinancialMetric.profit.total;
-                                yearlyFinancialMetricAcc.profit.repair +=
-                                    monthlyFinancialMetric.profit.repair;
-                                yearlyFinancialMetricAcc.profit.sales.total +=
-                                    monthlyFinancialMetric.profit.sales.total;
-                                yearlyFinancialMetricAcc.profit.sales.inStore +=
-                                    monthlyFinancialMetric.profit.sales.inStore;
-                                yearlyFinancialMetricAcc.profit.sales.online +=
-                                    monthlyFinancialMetric.profit.sales.online;
-
-                                yearlyFinancialMetricAcc.revenue.total +=
-                                    monthlyFinancialMetric.revenue.total;
-                                yearlyFinancialMetricAcc.revenue.repair +=
-                                    monthlyFinancialMetric.revenue.repair;
-                                yearlyFinancialMetricAcc.revenue.sales.total +=
-                                    monthlyFinancialMetric.revenue.sales.total;
-                                yearlyFinancialMetricAcc.revenue.sales
-                                    .inStore +=
-                                        monthlyFinancialMetric.revenue.sales
-                                            .inStore;
-                                yearlyFinancialMetricAcc.revenue.sales.online +=
-                                    monthlyFinancialMetric.revenue.sales.online;
-
-                                yearlyFinancialMetricAcc.transactions.total +=
-                                    monthlyFinancialMetric.transactions.total;
-                                yearlyFinancialMetricAcc.transactions.repair +=
-                                    monthlyFinancialMetric.transactions.repair;
-                                yearlyFinancialMetricAcc.transactions.sales
-                                    .total +=
-                                        monthlyFinancialMetric.transactions
-                                            .sales.total;
-                                yearlyFinancialMetricAcc.transactions.sales
-                                    .inStore +=
-                                        monthlyFinancialMetric.transactions
-                                            .sales
-                                            .inStore;
-                                yearlyFinancialMetricAcc.transactions.sales
-                                    .online +=
-                                        monthlyFinancialMetric.transactions
-                                            .sales
-                                            .online;
-
-                                return yearlyFinancialMetricAcc;
-                            },
-                            structuredClone(YEARLY_FINANCIAL_METRICS_TEMPLATE),
-                        );
-
-                    yearlyFinancialMetric.averageOrderValue = Math.round(
-                        yearlyFinancialMetric.averageOrderValue /
-                            monthlyFinancialMetrics.length,
+                            return yearlyFinancialMetric;
+                        },
                     );
-                    yearlyFinancialMetric.conversionRate = toFixedFloat(
-                        yearlyFinancialMetric.conversionRate /
-                            monthlyFinancialMetrics.length,
-                    );
-                    yearlyFinancialMetric.netProfitMargin = toFixedFloat(
-                        yearlyFinancialMetric.netProfitMargin /
-                            monthlyFinancialMetrics.length,
-                        2,
-                    );
-                    yearlyFinancialMetric.monthlyMetrics =
-                        monthlyFinancialMetrics;
 
-                    return yearlyFinancialMetric;
-                },
-            );
-
-            return [storeLocation, yearlyFinancialMetrics];
-        });
+                return [storeLocation, yearlyFinancialMetrics];
+            },
+        );
 
         return createSafeSuccessResult(randomFinancialMetrics);
     } catch (error: unknown) {
@@ -1157,7 +1288,7 @@ function createRandomFinancialMetrics({
     }
 }
 
-function createAllLocationsAggregatedFinancialMetrics(
+function createAllLocationsAggregatedFinancialMetricsSafe(
     businessMetrics: BusinessMetric[],
 ): SafeResult<YearlyFinancialMetric[]> {
     // find all financial metrics for each store location
@@ -1443,6 +1574,6 @@ function createAllLocationsAggregatedFinancialMetrics(
 }
 
 export {
-    createAllLocationsAggregatedFinancialMetrics,
-    createRandomFinancialMetrics,
+    createAllLocationsAggregatedFinancialMetricsSafe,
+    createRandomFinancialMetricsSafe,
 };

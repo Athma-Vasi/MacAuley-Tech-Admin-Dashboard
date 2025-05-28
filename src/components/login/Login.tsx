@@ -51,9 +51,10 @@ function Login() {
     isSuccessful,
     loginFetchWorker,
     password,
+    productMetricsGenerated,
     productMetricsWorker,
+    repairMetricsGenerated,
     repairMetricsWorker,
-    triggerFinancialMetricsCreation,
     username,
   } = loginState;
 
@@ -114,6 +115,10 @@ function Login() {
         return;
       }
 
+      loginDispatch({
+        action: loginAction.setProductMetricsGenerated,
+        payload: event.data.val.val,
+      });
       console.log("Product metrics worker data:", event.data.val.val);
     };
 
@@ -129,6 +134,11 @@ function Login() {
         console.error("Error in repair metrics worker:", event.data);
         return;
       }
+
+      loginDispatch({
+        action: loginAction.setRepairMetricsGenerated,
+        payload: event.data.val.val,
+      });
       console.log("Repair metrics worker data:", event.data.val.val);
     };
 
@@ -180,6 +190,17 @@ function Login() {
 
     repairMetricsWorker.postMessage(true);
   }, [repairMetricsWorker]);
+
+  useEffect(() => {
+    if (
+      !financialMetricsWorker || !productMetricsGenerated ||
+      !repairMetricsGenerated
+    ) {
+      return;
+    }
+
+    financialMetricsWorker.postMessage(true);
+  }, [financialMetricsWorker, productMetricsGenerated, repairMetricsGenerated]);
 
   useEffect(() => {
     const newFetchParseWorker = new FetchParseWorker();

@@ -130,6 +130,8 @@ self.onmessage = async (
             );
             return;
         }
+        const calgaryProductMetrics =
+            calgaryProductMetricsSettledResult.value.val.val;
 
         if (edmontonProductMetricsSettledResult.value.err) {
             self.postMessage(edmontonProductMetricsSettledResult.value);
@@ -143,6 +145,8 @@ self.onmessage = async (
             );
             return;
         }
+        const edmontonProductMetrics =
+            edmontonProductMetricsSettledResult.value.val.val;
 
         if (vancouverProductMetricsSettledResult.value.err) {
             self.postMessage(vancouverProductMetricsSettledResult.value);
@@ -156,32 +160,33 @@ self.onmessage = async (
             );
             return;
         }
+        const vancouverProductMetrics =
+            vancouverProductMetricsSettledResult.value.val.val;
 
-        const allLocationsAggregatedProductMetrics =
+        const allLocationsAggregatedProductMetricsResult =
             createAllLocationsAggregatedProductMetricsSafe({
-                calgaryProductMetrics:
-                    calgaryProductMetricsSettledResult.value.val.val,
-                edmontonProductMetrics:
-                    edmontonProductMetricsSettledResult.value.val.val,
-                vancouverProductMetrics:
-                    vancouverProductMetricsSettledResult.value.val.val,
+                calgaryProductMetrics,
+                edmontonProductMetrics,
+                vancouverProductMetrics,
             });
 
-        if (allLocationsAggregatedProductMetrics.err) {
-            self.postMessage(allLocationsAggregatedProductMetrics);
+        if (allLocationsAggregatedProductMetricsResult.err) {
+            self.postMessage(allLocationsAggregatedProductMetricsResult);
             return;
         }
-        if (allLocationsAggregatedProductMetrics.val.none) {
+        if (allLocationsAggregatedProductMetricsResult.val.none) {
             self.postMessage(
                 createSafeErrorResult("Failed to aggregate product metrics"),
             );
             return;
         }
+        const allLocationsAggregatedProductMetrics =
+            allLocationsAggregatedProductMetricsResult.val.val;
 
         const setAllLocationsMetricsInCacheResult =
             await setProductMetricsInCache(
                 "All Locations",
-                allLocationsAggregatedProductMetrics.val.val,
+                allLocationsAggregatedProductMetricsResult.val.val,
             );
         if (setAllLocationsMetricsInCacheResult.err) {
             self.postMessage(
@@ -198,9 +203,24 @@ self.onmessage = async (
             return;
         }
 
+        // for financial metrics generation
+        const setProductMetricsCacheResult = await setCachedItemAsyncSafe(
+            "productMetrics",
+            {
+                Calgary: calgaryProductMetrics,
+                Edmonton: edmontonProductMetrics,
+                Vancouver: vancouverProductMetrics,
+                "All Locations": allLocationsAggregatedProductMetrics,
+            },
+        );
+        if (setProductMetricsCacheResult.err) {
+            self.postMessage(setProductMetricsCacheResult);
+            return;
+        }
+
         self.postMessage(
             createSafeSuccessResult(
-                "Successfully set product metrics in cache for all locations",
+                true,
             ),
         );
     } catch (error) {

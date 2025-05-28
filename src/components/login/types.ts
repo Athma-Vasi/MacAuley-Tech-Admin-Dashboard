@@ -7,9 +7,10 @@ type LoginState = {
   isSuccessful: boolean;
   loginFetchWorker: Worker | null;
   password: string;
+  productMetricsGenerated: boolean;
   productMetricsWorker: Worker | null;
+  repairMetricsGenerated: boolean;
   repairMetricsWorker: Worker | null;
-  triggerFinancialMetricsCreation: boolean;
   username: string;
 };
 

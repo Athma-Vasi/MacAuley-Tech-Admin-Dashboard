@@ -10,9 +10,10 @@ import {
   setIsSuccessfulLoginDispatchZod,
   setLoginFetchWorkerLoginDispatchZod,
   setPasswordLoginDispatchZod,
+  setProductMetricsGeneratedLoginDispatchZod,
   setProductMetricsWorkerLoginDispatchZod,
+  setRepairMetricsGeneratedLoginDispatchZod,
   setRepairMetricsWorkerLoginDispatchZod,
-  setTriggerFinancialMetricsCreationLoginDispatchZod,
   setUsernameLoginDispatchZod,
 } from "./schemas";
 import type { LoginState } from "./types";
@@ -40,12 +41,16 @@ const loginReducersMap = new Map<
   [loginAction.setIsSuccessful, loginReducer_setIsSuccessful],
   [loginAction.setLoginFetchWorker, loginReducer_setLoginFetchWorker],
   [loginAction.setPassword, loginReducer_setPassword],
-  [loginAction.setProductMetricsWorker, loginReducer_setProductMetricsWorker],
-  [loginAction.setRepairMetricsWorker, loginReducer_setRepairMetricsWorker],
   [
-    loginAction.setTriggerFinancialMetricsCreation,
-    loginReducer_setTriggerFinancialMetricsCreation,
+    loginAction.setProductMetricsGenerated,
+    loginReducer_setProductMetricsGenerated,
   ],
+  [loginAction.setProductMetricsWorker, loginReducer_setProductMetricsWorker],
+  [
+    loginAction.setRepairMetricsGenerated,
+    loginReducer_setRepairMetricsGenerated,
+  ],
+  [loginAction.setRepairMetricsWorker, loginReducer_setRepairMetricsWorker],
   [loginAction.setUsername, loginReducer_setUsername],
 ]);
 
@@ -217,6 +222,27 @@ function loginReducer_setPassword(
   };
 }
 
+function loginReducer_setProductMetricsGenerated(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setProductMetricsGeneratedLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    productMetricsGenerated: parsedResult.val.val.payload as boolean,
+  };
+}
+
 function loginReducer_setProductMetricsWorker(
   state: LoginState,
   dispatch: LoginDispatch,
@@ -238,6 +264,27 @@ function loginReducer_setProductMetricsWorker(
   };
 }
 
+function loginReducer_setRepairMetricsGenerated(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setRepairMetricsGeneratedLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    repairMetricsGenerated: parsedResult.val.val.payload as boolean,
+  };
+}
+
 function loginReducer_setRepairMetricsWorker(
   state: LoginState,
   dispatch: LoginDispatch,
@@ -256,27 +303,6 @@ function loginReducer_setRepairMetricsWorker(
   return {
     ...state,
     repairMetricsWorker: parsedResult.val.val.payload as Worker,
-  };
-}
-
-function loginReducer_setTriggerFinancialMetricsCreation(
-  state: LoginState,
-  dispatch: LoginDispatch,
-): LoginState {
-  const parsedResult = parseSyncSafe(
-    {
-      object: dispatch,
-      zSchema: setTriggerFinancialMetricsCreationLoginDispatchZod,
-    },
-  );
-
-  if (parsedResult.err || parsedResult.val.none) {
-    return state;
-  }
-
-  return {
-    ...state,
-    triggerFinancialMetricsCreation: parsedResult.val.val.payload as boolean,
   };
 }
 

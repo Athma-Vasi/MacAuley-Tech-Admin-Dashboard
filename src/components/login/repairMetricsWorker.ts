@@ -130,6 +130,8 @@ self.onmessage = async (
             );
             return;
         }
+        const calgaryRepairMetrics =
+            calgaryRepairMetricsSettledResult.value.val.val;
 
         if (edmontonRepairMetricsSettledResult.value.err) {
             self.postMessage(edmontonRepairMetricsSettledResult.value);
@@ -143,6 +145,8 @@ self.onmessage = async (
             );
             return;
         }
+        const edmontonRepairMetrics =
+            edmontonRepairMetricsSettledResult.value.val.val;
 
         if (vancouverRepairMetricsSettledResult.value.err) {
             self.postMessage(vancouverRepairMetricsSettledResult.value);
@@ -151,37 +155,38 @@ self.onmessage = async (
         if (vancouverRepairMetricsSettledResult.value.val.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate Vancouver repair metrics",
+                    true,
                 ),
             );
             return;
         }
+        const vancouverRepairMetrics =
+            vancouverRepairMetricsSettledResult.value.val.val;
 
-        const allLocationsAggregatedRepairMetrics =
+        const allLocationsAggregatedRepairMetricsResult =
             createAllLocationsAggregatedRepairMetricsSafe({
-                calgaryRepairMetrics:
-                    calgaryRepairMetricsSettledResult.value.val.val,
-                edmontonRepairMetrics:
-                    edmontonRepairMetricsSettledResult.value.val.val,
-                vancouverRepairMetrics:
-                    vancouverRepairMetricsSettledResult.value.val.val,
+                calgaryRepairMetrics,
+                edmontonRepairMetrics,
+                vancouverRepairMetrics,
             });
 
-        if (allLocationsAggregatedRepairMetrics.err) {
-            self.postMessage(allLocationsAggregatedRepairMetrics);
+        if (allLocationsAggregatedRepairMetricsResult.err) {
+            self.postMessage(allLocationsAggregatedRepairMetricsResult);
             return;
         }
-        if (allLocationsAggregatedRepairMetrics.val.none) {
+        if (allLocationsAggregatedRepairMetricsResult.val.none) {
             self.postMessage(
                 createSafeErrorResult("Failed to aggregate repair metrics"),
             );
             return;
         }
+        const allLocationsAggregatedRepairMetrics =
+            allLocationsAggregatedRepairMetricsResult.val.val;
 
         const setAllLocationsMetricsInCacheResult =
             await setRepairMetricsInCache(
                 "All Locations",
-                allLocationsAggregatedRepairMetrics.val.val,
+                allLocationsAggregatedRepairMetricsResult.val.val,
             );
         if (setAllLocationsMetricsInCacheResult.err) {
             self.postMessage(
@@ -198,9 +203,24 @@ self.onmessage = async (
             return;
         }
 
+        // for financial metrics generation
+        const setRepairMetricsCacheResult = await setCachedItemAsyncSafe(
+            "repairMetrics",
+            {
+                Calgary: calgaryRepairMetrics,
+                Edmonton: edmontonRepairMetrics,
+                Vancouver: vancouverRepairMetrics,
+                "All Locations": allLocationsAggregatedRepairMetrics,
+            },
+        );
+        if (setRepairMetricsCacheResult.err) {
+            self.postMessage(setRepairMetricsCacheResult);
+            return;
+        }
+
         self.postMessage(
             createSafeSuccessResult(
-                "Successfully set repair metrics in cache for all locations",
+                true,
             ),
         );
     } catch (error) {
