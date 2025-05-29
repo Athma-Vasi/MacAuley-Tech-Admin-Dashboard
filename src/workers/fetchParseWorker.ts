@@ -1,6 +1,10 @@
 import { None, Option } from "ts-results";
 import { z } from "zod";
-import { FETCH_REQUEST_TIMEOUT } from "../constants";
+import {
+    FETCH_REQUEST_TIMEOUT,
+    ROUTES_ZOD_SCHEMAS_MAP,
+    RoutesZodSchemasMapKey,
+} from "../constants";
 import { DecodedToken, ResponsePayloadSafe, SafeResult } from "../types";
 import {
     createSafeErrorResult,
@@ -11,7 +15,6 @@ import {
     parseResponsePayloadAsyncSafe,
     parseSyncSafe,
 } from "../utils";
-import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "./constants";
 
 type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
     SafeResult<
@@ -106,13 +109,6 @@ self.onmessage = async (
             );
             return;
         }
-
-        // if (jsonResult.val.message === "Invalid credentials") {
-        //     self.postMessage(
-        //         new Ok({ data: None, kind: "success" }),
-        //     );
-        //     return;
-        // }
 
         const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
             object: jsonResult.val.val,

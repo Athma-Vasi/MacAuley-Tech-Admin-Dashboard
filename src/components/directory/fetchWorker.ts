@@ -1,5 +1,9 @@
 import { Ok, Some } from "ts-results";
-import { FETCH_REQUEST_TIMEOUT } from "../../constants";
+import {
+    FETCH_REQUEST_TIMEOUT,
+    ROUTES_ZOD_SCHEMAS_MAP,
+    RoutesZodSchemasMapKey,
+} from "../../constants";
 import {
     DecodedToken,
     ResponsePayloadSafe,
@@ -18,10 +22,6 @@ import {
     parseSyncSafe,
     setCachedItemAsyncSafe,
 } from "../../utils";
-import {
-    ROUTES_ZOD_SCHEMAS_MAP,
-    RoutesZodSchemasMapKey,
-} from "../../workers/constants";
 import { AllStoreLocations } from "../dashboard/types";
 import { messageEventDirectoryFetchMainToWorkerZod } from "./schemas";
 import { DepartmentsWithDefaultKey } from "./types";

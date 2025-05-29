@@ -1,5 +1,10 @@
 import { Ok, Some } from "ts-results";
-import { FETCH_REQUEST_TIMEOUT, PROPERTY_DESCRIPTOR } from "../../constants";
+import {
+    FETCH_REQUEST_TIMEOUT,
+    PROPERTY_DESCRIPTOR,
+    ROUTES_ZOD_SCHEMAS_MAP,
+    RoutesZodSchemasMapKey,
+} from "../../constants";
 import {
     DecodedToken,
     ResponsePayloadSafe,
@@ -18,10 +23,6 @@ import {
     parseSyncSafe,
     setCachedItemAsyncSafe,
 } from "../../utils";
-import {
-    ROUTES_ZOD_SCHEMAS_MAP,
-    RoutesZodSchemasMapKey,
-} from "../../workers/constants";
 import { SortDirection } from "../query/types";
 import { messageEventUsersFetchMainToWorkerZod } from "./schemas";
 

@@ -11,16 +11,13 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
   SafeResult,
-  UserDocument,
 } from "../../types";
 import {
   catchHandlerErrorSafe,
   createMetricsURLCacheKey,
   createSafeErrorResult,
   createSafeSuccessResult,
-  getCachedItemAsyncSafe,
   parseSyncSafe,
-  setCachedItemAsyncSafe,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import { MessageEventDashboardCacheWorkerToMain } from "../dashboard/cacheWorker";
@@ -29,7 +26,6 @@ import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
 import { DepartmentsWithDefaultKey } from "../directory/types";
-import { createDirectoryURLCacheKey } from "../directory/utils";
 import {
   handleDirectoryNavClickInputZod,
   handleLogoutClickInputZod,
@@ -195,13 +191,7 @@ async function handleMetricCategoryNavClick(
   try {
     metricsCacheWorker?.postMessage({
       metricsView,
-      routesZodSchemaMapKey: metricsView === "products"
-        ? "productMetrics"
-        : metricsView === "repairs"
-        ? "repairMetrics"
-        : metricsView === "financials"
-        ? "financialMetrics"
-        : "customerMetrics",
+      routesZodSchemaMapKey: metricsView,
       cacheKey,
     });
 

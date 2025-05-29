@@ -105,7 +105,10 @@ function Chain(
                                     );
 
                                     const timelineText = (
-                                        <Text data-testid="query-link-text">
+                                        <Text
+                                            data-testid="query-link-text"
+                                            size="md"
+                                        >
                                             {`${queryLinkStatement}${
                                                 linkIndex ===
                                                         queryChain.length - 1
@@ -122,7 +125,6 @@ function Chain(
                                             bulletSize={26}
                                         >
                                             {timelineText}
-                                            {/* {buttons} */}
                                         </Timeline.Item>
                                     );
                                 },
@@ -189,7 +191,7 @@ function Chain(
                 }
                 bulletSize={26}
             >
-                <Text>
+                <Text size="md">
                     {`${splitAndJoinedGeneralSearchExclusionValue} ${
                         generalSearchExclusionValue.split(" ").length > 1
                             ? "are"
@@ -217,7 +219,7 @@ function Chain(
                 }
                 bulletSize={26}
             >
-                <Text>
+                <Text size="md">
                     {`${splitAndJoinedGeneralSearchInclusionValue} ${
                         generalSearchInclusionValue.split(" ").length > 1
                             ? "are"
@@ -251,7 +253,7 @@ function Chain(
 
     const projectionExclusionLink = (
         <Timeline.Item bullet={<TbLogicNot size={18} />} bulletSize={26}>
-            <Text>
+            <Text size="md">
                 {`${capitalizeJoinWithAnd(projectionFields)} excluded.`}
             </Text>
         </Timeline.Item>

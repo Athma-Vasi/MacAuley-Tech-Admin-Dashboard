@@ -1,4 +1,4 @@
-import { Box, Group, Modal, Table, Text, Title } from "@mantine/core";
+import { Box, Group, Loader, Modal, Table, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import {
     COLORS_SWATCHES,
@@ -247,9 +247,16 @@ function DisplayResource(
             pos="relative"
         >
             <Group w="100%" position="apart" p="md">
-                <Title order={3} color={textColor} className="resource-title">
-                    Resources
-                </Title>
+                <Group spacing="xs">
+                    <Title
+                        order={3}
+                        color={textColor}
+                        className="resource-title"
+                    >
+                        Resources
+                    </Title>
+                    {isLoading ? <Loader size="xs" /> : null}
+                </Group>
 
                 <Text color={textColor} data-testid="usersQuery-totalDocuments">
                     Total Documents: {totalDocuments || 0}

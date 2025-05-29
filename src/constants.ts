@@ -1,5 +1,11 @@
+import { z } from "zod";
+import { customerMetricsDocumentZod } from "./components/dashboard/customer/schemas";
+import { financialMetricsDocumentZod } from "./components/dashboard/financial/schemas";
+import { productMetricsDocumentZod } from "./components/dashboard/product/schemas";
+import { repairMetricsDocumentZod } from "./components/dashboard/repair/schemas";
 import { AllStoreLocations } from "./components/dashboard/types";
 import { SortDirection } from "./components/query/types";
+import { userDocumentOptionalsZod } from "./components/usersQuery/schemas";
 import {
   CheckboxRadioSelectData,
   Country,
@@ -678,6 +684,31 @@ const PROPERTY_DESCRIPTOR: PropertyDescriptor = {
   writable: true,
 };
 
+type RoutesZodSchemasMapKey = keyof typeof ROUTES_ZOD_SCHEMAS_MAP;
+
+/**
+ * because zod schemas are not serializable, we need to create a map of
+ * schemas to be used in the worker
+ */
+const ROUTES_ZOD_SCHEMAS_MAP = {
+  directory: userDocumentOptionalsZod,
+  login: userDocumentOptionalsZod,
+  products: productMetricsDocumentZod,
+  financials: financialMetricsDocumentZod,
+  customers: customerMetricsDocumentZod,
+  repairs: repairMetricsDocumentZod,
+  users: userDocumentOptionalsZod,
+  checkUsername: z.boolean(),
+  checkEmail: z.boolean(),
+  dashboard: z.union([
+    customerMetricsDocumentZod,
+    financialMetricsDocumentZod,
+    productMetricsDocumentZod,
+    repairMetricsDocumentZod,
+  ]),
+  logout: z.boolean(),
+};
+
 export {
   ACCORDION_BREAKPOINT,
   ALL_STORE_LOCATIONS_DATA,
@@ -719,6 +750,7 @@ export {
   REPAIR_URL,
   RESOURCES_DATE_FIELDS,
   RESOURCES_IMAGE_URL_FIELDS,
+  ROUTES_ZOD_SCHEMAS_MAP,
   SCREENSHOT_IMAGE_TYPE_DATA,
   STATES_US,
   STORE_LOCATIONS,
@@ -728,4 +760,4 @@ export {
   VALID_STRINGS,
   VALID_USERNAMES,
 };
-export type { ColorsSwatches };
+export type { ColorsSwatches, RoutesZodSchemasMapKey };
