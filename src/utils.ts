@@ -732,24 +732,6 @@ async function parseResponsePayloadAsyncSafe<Data = unknown, Output = unknown>(
   }
 }
 
-function createDirectoryURLCacheKey(
-  { department, directoryUrl, storeLocation }: {
-    department: DepartmentsWithDefaultKey;
-    directoryUrl: string;
-    storeLocation: AllStoreLocations;
-  },
-) {
-  const urlWithQuery = department === "All Departments"
-    ? new URL(
-      `${directoryUrl}/user/?&limit=1000&newQueryFlag=true&totalDocuments=0`,
-    )
-    : new URL(
-      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
-    );
-
-  return urlWithQuery.toString();
-}
-
 function createUsersURLCacheKey(
   { currentPage, newQueryFlag, queryString, totalDocuments, url }: {
     url: string;
@@ -1077,7 +1059,6 @@ export {
   captureScreenshot,
   catchHandlerErrorSafe,
   createDaysInMonthsInYearsSafe,
-  createDirectoryURLCacheKey,
   createHttpResponseError,
   createHttpResponseSuccess,
   createMetricsForageKey,

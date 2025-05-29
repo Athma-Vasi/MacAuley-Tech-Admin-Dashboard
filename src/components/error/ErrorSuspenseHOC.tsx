@@ -1,15 +1,13 @@
 import { Loader } from "@mantine/core";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Err } from "ts-results";
-import { SafeError } from "../../types";
 import ErrorFallback from "./ErrorFallback";
 
 function ErrorSuspenseHOC<
-  P extends Record<string | symbol | number, unknown> = {
-    safeError: Err<SafeError>;
-    resetErrorBoundary: () => void;
-  },
+  P extends Record<string | symbol | number, unknown> = Record<
+    string | symbol | number,
+    unknown
+  >,
 >(
   Component: React.ComponentType<P>,
 ) {

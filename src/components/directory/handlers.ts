@@ -1,19 +1,19 @@
 import { globalAction, GlobalDispatch } from "../../context/globalProvider";
-import { SafeResult, UserDocument } from "../../types";
+import { DecodedToken, SafeResult } from "../../types";
 import {
     catchHandlerErrorSafe,
-    createDirectoryURLCacheKey,
     createSafeErrorResult,
-    getCachedItemAsyncSafe,
     parseSyncSafe,
 } from "../../utils";
 import { AllStoreLocations } from "../dashboard/types";
 import { handleDirectoryDepartmentAndLocationClicksInputZod } from "./schemas";
 import { DepartmentsWithDefaultKey } from "./types";
+import { createDirectoryURLCacheKey } from "./utils";
 
 async function handleDirectoryDepartmentAndLocationClicks(
     input: {
         accessToken: string;
+        decodedToken: DecodedToken;
         department: DepartmentsWithDefaultKey;
         directoryFetchWorker: Worker | null;
         directoryUrl: string;
@@ -42,12 +42,11 @@ async function handleDirectoryDepartmentAndLocationClicks(
 
         const {
             accessToken,
+            decodedToken,
             department,
             directoryFetchWorker,
             directoryUrl,
             globalDispatch,
-            isComponentMountedRef,
-            showBoundary,
             storeLocation,
         } = parsedInputResult.val.val;
 
@@ -70,33 +69,9 @@ async function handleDirectoryDepartmentAndLocationClicks(
             payload: true,
         });
 
-        const userDocumentsResult = await getCachedItemAsyncSafe<
-            UserDocument[]
-        >(cacheKey);
-
-        if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
-        }
-        if (userDocumentsResult.err) {
-            showBoundary(userDocumentsResult);
-            return userDocumentsResult;
-        }
-
-        if (userDocumentsResult.val.some) {
-            globalDispatch({
-                action: globalAction.setDirectory,
-                payload: userDocumentsResult.val.val as UserDocument[],
-            });
-
-            globalDispatch({
-                action: globalAction.setIsFetching,
-                payload: false,
-            });
-
-            return createSafeErrorResult("Data already fetched");
-        }
-
         directoryFetchWorker?.postMessage({
+            accessToken,
+            decodedToken,
             department,
             requestInit,
             routesZodSchemaMapKey: "directory",

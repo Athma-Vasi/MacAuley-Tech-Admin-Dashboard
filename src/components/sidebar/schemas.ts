@@ -6,6 +6,7 @@ import {
     repairMetricCategoryZod,
 } from "../../schemas";
 import { sidebarAction } from "./actions";
+import { decodedTokenZod } from "../usersQuery/schemas";
 
 const setMetricsCacheWorkerSidebarDispatchZod = z.object({
     action: z.literal(sidebarAction.setMetricsCacheWorker),
@@ -54,6 +55,7 @@ const handleMessageEventLogoutFetchWorkerToMainInputZod = z.object({
 
 const handleDirectoryNavClickInputZod = z.object({
     accessToken: z.string().min(1).max(1000),
+    decodedToken: decodedTokenZod,
     department: z.enum([
         "All Departments",
         "Executive Management",
@@ -74,7 +76,6 @@ const handleDirectoryNavClickInputZod = z.object({
     directoryUrl: z.string().url(),
     globalDispatch: z.function().args(z.any()).returns(z.void()),
     isComponentMountedRef: z.object({ current: z.boolean() }),
-    navigate: z.optional(z.function().args(z.any()).returns(z.void())),
     showBoundary: z.function().args(z.any()).returns(z.void()),
     storeLocation: z.enum([
         "All Locations",
@@ -82,12 +83,10 @@ const handleDirectoryNavClickInputZod = z.object({
         "Calgary",
         "Vancouver",
     ]),
-    toLocation: z.string().min(1).max(1000),
 });
 
 const handleMessageEventDirectoryFetchWorkerToMainInputZod = z.object({
     authDispatch: z.function().args(z.any()).returns(z.void()),
-    directoryUrl: z.string().url(),
     event: z.instanceof(MessageEvent),
     globalDispatch: z.function().args(z.any()).returns(z.void()),
     isComponentMountedRef: z.object({ current: z.boolean() }),

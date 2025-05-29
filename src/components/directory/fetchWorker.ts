@@ -1,3 +1,4 @@
+import { Ok, Some } from "ts-results";
 import { FETCH_REQUEST_TIMEOUT } from "../../constants";
 import {
     DecodedToken,
@@ -6,13 +7,16 @@ import {
     UserDocument,
 } from "../../types";
 import {
+    createHttpResponseSuccess,
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
+    getCachedItemAsyncSafe,
     parseResponsePayloadAsyncSafe,
     parseSyncSafe,
+    setCachedItemAsyncSafe,
 } from "../../utils";
 import {
     ROUTES_ZOD_SCHEMAS_MAP,
@@ -26,15 +30,15 @@ type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
     SafeResult<
         {
             decodedToken: DecodedToken;
-            department: DepartmentsWithDefaultKey;
             responsePayloadSafe: ResponsePayloadSafe<UserDocument>;
-            storeLocation: AllStoreLocations;
         }
     >
 >;
 
 type MessageEventDirectoryFetchMainToWorker = MessageEvent<
     {
+        accessToken: string;
+        decodedToken: DecodedToken;
         department: DepartmentsWithDefaultKey;
         requestInit: RequestInit;
         routesZodSchemaMapKey: RoutesZodSchemasMapKey;
@@ -69,6 +73,8 @@ self.onmessage = async (
     }
 
     const {
+        accessToken: accessTokenFromMessage,
+        decodedToken,
         department,
         requestInit,
         routesZodSchemaMapKey,
@@ -80,6 +86,65 @@ self.onmessage = async (
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
     try {
+        const userDocumentsResult = await getCachedItemAsyncSafe<
+            UserDocument[]
+        >(url);
+        if (userDocumentsResult.err) {
+            self.postMessage(userDocumentsResult);
+            return;
+        }
+        if (userDocumentsResult.val.some) {
+            const userDocuments = userDocumentsResult.val.val;
+            const unparsedResponsePayload = createHttpResponseSuccess<
+                UserDocument[]
+            >({
+                safeSuccessResult: new Ok(
+                    Some(userDocuments),
+                ),
+                accessToken: accessTokenFromMessage,
+            });
+
+            const parsedResponsePayloadSafeResult =
+                await parseResponsePayloadAsyncSafe<UserDocument>({
+                    object: unparsedResponsePayload,
+                    zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
+                });
+            if (parsedResponsePayloadSafeResult.err) {
+                self.postMessage(parsedResponsePayloadSafeResult);
+                return;
+            }
+            if (parsedResponsePayloadSafeResult.val.none) {
+                self.postMessage(
+                    createSafeErrorResult("No parsed result received"),
+                );
+                return;
+            }
+
+            const {
+                data,
+            } = parsedResponsePayloadSafeResult.val.val;
+
+            const setItemCacheResult = await setCachedItemAsyncSafe(
+                url,
+                data,
+            );
+            if (setItemCacheResult.err) {
+                self.postMessage(setItemCacheResult);
+                return;
+            }
+
+            self.postMessage(
+                createSafeSuccessResult({
+                    decodedToken: new Ok(Some(decodedToken)),
+                    department,
+                    responsePayloadSafe:
+                        parsedResponsePayloadSafeResult.val.val,
+                    storeLocation,
+                }),
+            );
+            return;
+        }
+
         const responseResult = await fetchResponseSafe(url, {
             ...requestInit,
             signal: controller.signal,
@@ -109,7 +174,7 @@ self.onmessage = async (
             return;
         }
 
-        const parsedResult = await parseResponsePayloadAsyncSafe({
+        const parsedResult = await parseResponsePayloadAsyncSafe<UserDocument>({
             object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
@@ -123,6 +188,15 @@ self.onmessage = async (
                     "Error parsing server response",
                 ),
             );
+            return;
+        }
+
+        const setItemCacheResult = await setCachedItemAsyncSafe(
+            url,
+            parsedResult.val.val.data,
+        );
+        if (setItemCacheResult.err) {
+            self.postMessage(setItemCacheResult);
             return;
         }
 

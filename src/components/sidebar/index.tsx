@@ -47,7 +47,7 @@ type SidebarProps = {
 };
 
 function Sidebar({ opened, setOpened }: SidebarProps) {
-  const { authState: { accessToken }, authDispatch } = useAuth();
+  const { authState: { accessToken, decodedToken }, authDispatch } = useAuth();
   const {
     globalState,
     globalDispatch,
@@ -106,7 +106,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     ) => {
       await handleMessageEventDirectoryFetchWorkerToMain({
         authDispatch,
-        directoryUrl: API_URL,
         event,
         globalDispatch,
         isComponentMountedRef,
@@ -284,6 +283,10 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           : <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: async () => {
+          if (!decodedToken) {
+            return;
+          }
+
           sidebarDispatch({
             action: sidebarAction.setClickedNavlink,
             payload: "directory",
@@ -296,14 +299,13 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
 
           await handleDirectoryNavClick({
             accessToken,
+            decodedToken,
             department: "Executive Management",
             directoryFetchWorker,
             directoryUrl: API_URL,
             globalDispatch,
             isComponentMountedRef,
-            navigate,
             showBoundary,
-            toLocation: "/dashboard/directory",
             storeLocation: "All Locations",
           });
 

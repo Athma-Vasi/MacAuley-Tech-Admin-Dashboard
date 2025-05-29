@@ -6,6 +6,7 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   CustomerMetricsDocument,
+  DecodedToken,
   FinancialMetricsDocument,
   ProductMetricsDocument,
   RepairMetricsDocument,
@@ -14,7 +15,6 @@ import {
 } from "../../types";
 import {
   catchHandlerErrorSafe,
-  createDirectoryURLCacheKey,
   createMetricsURLCacheKey,
   createSafeErrorResult,
   createSafeSuccessResult,
@@ -29,6 +29,7 @@ import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
 import { DepartmentsWithDefaultKey } from "../directory/types";
+import { createDirectoryURLCacheKey } from "../directory/utils";
 import {
   handleDirectoryNavClickInputZod,
   handleLogoutClickInputZod,
@@ -348,15 +349,14 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
 async function handleDirectoryNavClick(
   input: {
     accessToken: string;
+    decodedToken: DecodedToken;
     department: DepartmentsWithDefaultKey;
     directoryFetchWorker: Worker | null;
     directoryUrl: string;
     globalDispatch: React.Dispatch<GlobalDispatch>;
     isComponentMountedRef: React.RefObject<boolean>;
-    navigate: NavigateFunction;
     showBoundary: (error: unknown) => void;
     storeLocation: AllStoreLocations;
-    toLocation: string;
   },
 ): Promise<SafeResult<string>> {
   const parsedInputResult = parseSyncSafe({
@@ -375,15 +375,12 @@ async function handleDirectoryNavClick(
 
   const {
     accessToken,
+    decodedToken,
     department,
     directoryFetchWorker,
     directoryUrl,
     globalDispatch,
-    isComponentMountedRef,
-    navigate,
-    showBoundary,
     storeLocation,
-    toLocation,
   } = parsedInputResult.val.val;
 
   const requestInit: RequestInit = {
@@ -408,34 +405,9 @@ async function handleDirectoryNavClick(
   });
 
   try {
-    const userDocumentsResult = await getCachedItemAsyncSafe<
-      UserDocument[]
-    >(urlWithQuery.toString());
-
-    if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
-    }
-    if (userDocumentsResult.err) {
-      showBoundary(userDocumentsResult);
-      return userDocumentsResult;
-    }
-    if (userDocumentsResult.val.some) {
-      globalDispatch({
-        action: globalAction.setDirectory,
-        payload: userDocumentsResult.val.val as UserDocument[],
-      });
-      globalDispatch({
-        action: globalAction.setIsFetching,
-        payload: false,
-      });
-      navigate(toLocation);
-
-      return createSafeSuccessResult(
-        "Directory fetch successful",
-      );
-    }
-
     directoryFetchWorker?.postMessage({
+      accessToken,
+      decodedToken,
       department,
       requestInit,
       routesZodSchemaMapKey: "directory",
@@ -457,7 +429,6 @@ async function handleDirectoryNavClick(
 
 async function handleMessageEventDirectoryFetchWorkerToMain(input: {
   authDispatch: React.Dispatch<AuthDispatch>;
-  directoryUrl: string;
   event: MessageEventDirectoryFetchWorkerToMain;
   globalDispatch: React.Dispatch<GlobalDispatch>;
   isComponentMountedRef: React.RefObject<boolean>;
@@ -482,7 +453,6 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
 
     const {
       authDispatch,
-      directoryUrl,
       event,
       globalDispatch,
       isComponentMountedRef,
@@ -512,8 +482,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    const { responsePayloadSafe, decodedToken, department, storeLocation } =
-      messageEventResult.val.val;
+    const { responsePayloadSafe, decodedToken } = messageEventResult.val.val;
 
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       responsePayloadSafe;
@@ -553,20 +522,6 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
     }
 
     const userDocuments = responsePayloadSafe.data;
-    const cacheKey = createDirectoryURLCacheKey({
-      department,
-      directoryUrl,
-      storeLocation,
-    });
-
-    const setCachedItemResult = await setCachedItemAsyncSafe<UserDocument[]>(
-      cacheKey,
-      userDocuments,
-    );
-    if (setCachedItemResult.err) {
-      showBoundary(setCachedItemResult);
-      return setCachedItemResult;
-    }
 
     authDispatch({
       action: authAction.setAccessToken,

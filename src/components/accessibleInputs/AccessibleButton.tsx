@@ -193,7 +193,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     : attributes.leftIcon ?? leftIconTable[kind];
   const label = setIconAsLabel ? leftIconTable[kind] : (
     <Text
-      size="sm"
+      size={size}
       color={colorScheme === "dark" ? themeColorShade : "white"}
     >
       {attributes.label ?? splitCamelCase(name)}

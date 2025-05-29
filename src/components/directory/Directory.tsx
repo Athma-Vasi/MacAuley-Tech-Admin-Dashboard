@@ -40,8 +40,8 @@ function Directory() {
     storeLocation,
   } = directoryState;
   const { showBoundary } = useErrorBoundary();
-  const { authState: { accessToken }, authDispatch } = useAuth();
-
+  const { authState, authDispatch } = useAuth();
+  const { accessToken, decodedToken } = authState;
   const {
     globalState: { themeObject, directory },
     globalDispatch,
@@ -53,6 +53,8 @@ function Directory() {
 
   const isComponentMountedRef = useMountedRef();
   const fetchAbortControllerRef = useFetchAbortControllerRef();
+
+  console.log("auth state inside Directory:", authState);
 
   useEffect(() => {
     const newDirectoryFetchWorker = new DirectoryFetchWorker();
@@ -67,7 +69,6 @@ function Directory() {
     ) => {
       await handleMessageEventDirectoryFetchWorkerToMain({
         authDispatch,
-        directoryUrl: API_URL,
         event,
         globalDispatch,
         isComponentMountedRef,
@@ -93,12 +94,16 @@ function Directory() {
         data: ALL_DEPARTMENTS_DATA,
         name: "department",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          if (!decodedToken) {
+            return;
+          }
           const isStoreLocationDisabled = returnIsStoreLocationDisabled(
             event.currentTarget.value as DepartmentsWithDefaultKey,
           );
 
           await handleDirectoryDepartmentAndLocationClicks({
             accessToken,
+            decodedToken,
             department: event.currentTarget.value as DepartmentsWithDefaultKey,
             directoryFetchWorker,
             directoryUrl: API_URL,
@@ -138,8 +143,13 @@ function Directory() {
         disabled: isStoreLocationDisabled,
         name: "storeLocation",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
+          if (!decodedToken) {
+            return;
+          }
+
           await handleDirectoryDepartmentAndLocationClicks({
             accessToken,
+            decodedToken,
             department,
             directoryFetchWorker,
             directoryUrl: API_URL,
