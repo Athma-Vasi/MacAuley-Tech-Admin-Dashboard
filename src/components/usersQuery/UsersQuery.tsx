@@ -16,7 +16,7 @@ import DisplayResource from "./DisplayResource";
 import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
 import UsersFetchWorker from "./fetchWorker?worker";
 import {
-    handleUsersQueryOnmessageCallback,
+    handleMessageEventUsersFetchWorkerToMain,
     handleUsersQuerySubmitGETClick,
 } from "./handlers";
 import { usersQueryReducer } from "./reducers";
@@ -24,7 +24,8 @@ import { initialUsersQueryState } from "./state";
 
 function UsersQuery() {
     const { windowWidth } = useWindowSize();
-    const { authState: { accessToken }, authDispatch } = useAuth();
+    const { authState: { accessToken, decodedToken }, authDispatch } =
+        useAuth();
     const { showBoundary } = useErrorBoundary();
     const [
         usersQueryState,
@@ -52,15 +53,12 @@ function UsersQuery() {
         newUsersFetchWorker.onmessage = async (
             event: MessageEventUsersFetchWorkerToMain,
         ) => {
-            await handleUsersQueryOnmessageCallback({
-                arrangeByDirection,
-                arrangeByField,
+            await handleMessageEventUsersFetchWorkerToMain({
                 authDispatch,
                 event,
                 isComponentMountedRef,
                 navigate,
                 showBoundary,
-                url: API_URL,
                 usersQueryDispatch,
             });
         };
@@ -95,12 +93,16 @@ function UsersQuery() {
                 kind: "submit",
                 onClick: async (event) => {
                     event.preventDefault();
+                    if (isLoading || !decodedToken) {
+                        return;
+                    }
 
                     await handleUsersQuerySubmitGETClick({
                         accessToken,
                         arrangeByDirection,
                         arrangeByField,
                         currentPage,
+                        decodedToken,
                         isComponentMountedRef,
                         newQueryFlag,
                         queryString,
@@ -160,7 +162,7 @@ function UsersQuery() {
             <Pagination
                 value={currentPage}
                 onChange={async (page) => {
-                    if (isLoading) {
+                    if (isLoading || !decodedToken) {
                         return;
                     }
                     await handleUsersQuerySubmitGETClick({
@@ -168,6 +170,7 @@ function UsersQuery() {
                         arrangeByDirection,
                         arrangeByField,
                         currentPage: page,
+                        decodedToken,
                         isComponentMountedRef,
                         newQueryFlag: false,
                         queryString,

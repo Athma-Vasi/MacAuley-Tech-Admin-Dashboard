@@ -3,7 +3,6 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import CustomFonts from "./components/customFonts";
 import Dashboard from "./components/dashboard/Dashboard";
 
-import localforage from "localforage";
 import DisplayResponsiveChartWrapper from "./components/charts/display";
 import DirectoryWrapper from "./components/directory";
 import HomeWrapper from "./components/home";
@@ -11,7 +10,6 @@ import LoginWrapper from "./components/login";
 import RegisterWrapper from "./components/register";
 import Testing from "./components/testing";
 import UsersQuery from "./components/usersQuery/UsersQuery";
-import { useUnload } from "./hooks";
 import { useGlobalState } from "./hooks/useGlobalState";
 
 function App() {
@@ -20,18 +18,18 @@ function App() {
   } = useGlobalState();
   const navigate = useNavigate();
 
-  useUnload((event: Event) => {
-    event?.preventDefault();
+  // useUnload((event: Event) => {
+  //   event?.preventDefault();
 
-    const confirmationMessage =
-      "Are you sure you want to leave? All unsaved changes will be lost.";
-    const exit = confirm(confirmationMessage);
-    if (exit) {
-      localforage.clear();
-      window.close();
-      navigate("/login");
-    }
-  });
+  //   const confirmationMessage =
+  //     "Are you sure you want to leave? All unsaved changes will be lost.";
+  //   const exit = confirm(confirmationMessage);
+  //   if (exit) {
+  //     localforage.clear();
+  //     window.close();
+  //     navigate("/login");
+  //   }
+  // });
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS theme={themeObject}>

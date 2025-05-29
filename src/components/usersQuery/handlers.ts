@@ -2,21 +2,19 @@ import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
-import { SafeResult, UserDocument } from "../../types";
+import { DecodedToken, SafeResult, UserDocument } from "../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
     createSafeSuccessResult,
     createUsersURLCacheKey,
-    getCachedItemAsyncSafe,
     parseSyncSafe,
-    setCachedItemAsyncSafe,
 } from "../../utils";
 import { SortDirection } from "../query/types";
 import { usersQueryAction } from "./actions";
 import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
 import {
-    handleUsersQueryOnmessageCallbackInputZod,
+    handleMessageEventUsersFetchWorkerToMainInputZod,
     handleUsersQuerySubmitGETClickInputZod,
     UsersQueryDispatch,
 } from "./schemas";
@@ -27,6 +25,7 @@ async function handleUsersQuerySubmitGETClick(
         arrangeByDirection: SortDirection;
         arrangeByField: keyof UserDocument;
         currentPage: number;
+        decodedToken: DecodedToken;
         isComponentMountedRef: React.RefObject<boolean>;
         newQueryFlag: boolean;
         queryString: string;
@@ -37,119 +36,68 @@ async function handleUsersQuerySubmitGETClick(
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
     },
 ): Promise<SafeResult<string>> {
-    const parsedInputResult = parseSyncSafe({
-        object: input,
-        zSchema: handleUsersQuerySubmitGETClickInputZod,
-    });
-    if (parsedInputResult.err) {
-        input?.showBoundary?.(parsedInputResult);
-        return parsedInputResult;
-    }
-    if (parsedInputResult.val.none) {
-        const safeErrorResult = createSafeErrorResult(
-            "Error parsing input",
-        );
-        input?.showBoundary?.(safeErrorResult);
-        return safeErrorResult;
-    }
-
-    const {
-        accessToken,
-        arrangeByDirection,
-        arrangeByField,
-        currentPage,
-        isComponentMountedRef,
-        newQueryFlag,
-        queryString,
-        showBoundary,
-        totalDocuments,
-        url,
-        usersFetchWorker,
-        usersQueryDispatch,
-    } = parsedInputResult.val.val;
-
-    const requestInit: RequestInit = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-        },
-    };
-
-    const cacheKey = createUsersURLCacheKey({
-        currentPage,
-        newQueryFlag,
-        queryString,
-        totalDocuments,
-        url,
-    });
-
-    usersQueryDispatch({
-        action: usersQueryAction.setCurrentPage,
-        payload: currentPage,
-    });
-    usersQueryDispatch({
-        action: usersQueryAction.setIsLoading,
-        payload: true,
-    });
-
     try {
-        const userDocumentsResult = await getCachedItemAsyncSafe<
-            UserDocument[]
-        >(cacheKey);
-
-        if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
+        const parsedInputResult = parseSyncSafe({
+            object: input,
+            zSchema: handleUsersQuerySubmitGETClickInputZod,
+        });
+        if (parsedInputResult.err) {
+            input?.showBoundary?.(parsedInputResult);
+            return parsedInputResult;
         }
-        if (userDocumentsResult.err) {
-            showBoundary(userDocumentsResult);
-            return userDocumentsResult;
-        }
-
-        if (userDocumentsResult.val.some) {
-            const userDocuments = userDocumentsResult.val.val;
-
-            const sorted = userDocuments.sort((a, b) => {
-                const aValue = a[arrangeByField];
-                const bValue = b[arrangeByField];
-
-                if (aValue === undefined && bValue === undefined) return 0;
-                if (aValue === undefined) return 1;
-                if (bValue === undefined) return -1;
-
-                if (arrangeByDirection === "ascending") {
-                    return aValue > bValue ? 1 : -1;
-                } else {
-                    return aValue < bValue ? 1 : -1;
-                }
-            });
-
-            const withFUIAndPPUFieldsAdded = sorted.map(
-                (userDocument) => {
-                    return {
-                        ...userDocument,
-                        fileUploadId: userDocument.fileUploadId
-                            ? userDocument.fileUploadId
-                            : "",
-                        profilePictureUrl: userDocument.profilePictureUrl
-                            ? userDocument.profilePictureUrl
-                            : "",
-                    };
-                },
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
             );
-
-            usersQueryDispatch({
-                action: usersQueryAction.setResourceData,
-                payload: withFUIAndPPUFieldsAdded,
-            });
-
-            return createSafeSuccessResult(
-                "User documents fetched successfully",
-            );
+            input?.showBoundary?.(safeErrorResult);
+            return safeErrorResult;
         }
+
+        const {
+            accessToken,
+            arrangeByDirection,
+            arrangeByField,
+            currentPage,
+            decodedToken,
+            newQueryFlag,
+            queryString,
+            totalDocuments,
+            url,
+            usersFetchWorker,
+            usersQueryDispatch,
+        } = parsedInputResult.val.val;
+
+        const requestInit: RequestInit = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+
+        const cacheKey = createUsersURLCacheKey({
+            currentPage,
+            newQueryFlag,
+            queryString,
+            totalDocuments,
+            url,
+        });
+
+        usersQueryDispatch({
+            action: usersQueryAction.setCurrentPage,
+            payload: currentPage,
+        });
+        usersQueryDispatch({
+            action: usersQueryAction.setIsLoading,
+            payload: true,
+        });
 
         usersFetchWorker?.postMessage({
+            accessToken,
+            arrangeByDirection,
+            arrangeByField,
             currentPage,
+            decodedToken,
             newQueryFlag,
             queryString,
             requestInit,
@@ -170,23 +118,20 @@ async function handleUsersQuerySubmitGETClick(
     }
 }
 
-async function handleUsersQueryOnmessageCallback(
+async function handleMessageEventUsersFetchWorkerToMain(
     input: {
-        arrangeByDirection: SortDirection;
-        arrangeByField: keyof UserDocument;
         authDispatch: React.Dispatch<AuthDispatch>;
         event: MessageEventUsersFetchWorkerToMain;
         isComponentMountedRef: React.RefObject<boolean>;
         navigate: NavigateFunction;
         showBoundary: (error: unknown) => void;
-        url: string;
         usersQueryDispatch: React.Dispatch<UsersQueryDispatch>;
     },
 ): Promise<SafeResult<string>> {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
-            zSchema: handleUsersQueryOnmessageCallbackInputZod,
+            zSchema: handleMessageEventUsersFetchWorkerToMainInputZod,
         });
         if (parsedInputResult.err) {
             input?.showBoundary?.(parsedInputResult);
@@ -201,14 +146,11 @@ async function handleUsersQueryOnmessageCallback(
         }
 
         const {
-            arrangeByDirection,
-            arrangeByField,
             authDispatch,
             event,
             isComponentMountedRef,
             navigate,
             showBoundary,
-            url,
             usersQueryDispatch,
         } = parsedInputResult.val.val;
 
@@ -237,10 +179,6 @@ async function handleUsersQueryOnmessageCallback(
         const {
             responsePayloadSafe,
             decodedToken,
-            currentPage,
-            newQueryFlag,
-            queryString,
-            totalDocuments,
         } = messageEventResult.val.val;
         const {
             accessToken: newAccessToken,
@@ -290,58 +228,9 @@ async function handleUsersQueryOnmessageCallback(
             return safeErrorResult;
         }
 
-        const sorted = userDocuments.sort((a, b) => {
-            const aValue = a[arrangeByField];
-            const bValue = b[arrangeByField];
-
-            if (aValue === undefined && bValue === undefined) return 0;
-            if (aValue === undefined) return 1;
-            if (bValue === undefined) return -1;
-
-            if (arrangeByDirection === "ascending") {
-                return aValue > bValue ? 1 : -1;
-            } else {
-                return aValue < bValue ? 1 : -1;
-            }
-        });
-
-        const withFUIAndPPUFieldsAdded = sorted.map(
-            (userDocument) => {
-                return {
-                    ...userDocument,
-                    fileUploadId: userDocument.fileUploadId
-                        ? userDocument.fileUploadId
-                        : "",
-                    profilePictureUrl: userDocument.profilePictureUrl
-                        ? userDocument.profilePictureUrl
-                        : "",
-                };
-            },
-        );
-
-        const cacheKey = createUsersURLCacheKey({
-            currentPage,
-            newQueryFlag,
-            queryString,
-            totalDocuments,
-            url,
-        });
-
-        const setItemCacheResult = await setCachedItemAsyncSafe(
-            cacheKey,
-            withFUIAndPPUFieldsAdded,
-        );
-        if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
-        }
-        if (setItemCacheResult.err) {
-            showBoundary(setItemCacheResult);
-            return setItemCacheResult;
-        }
-
         usersQueryDispatch({
             action: usersQueryAction.setResourceData,
-            payload: withFUIAndPPUFieldsAdded,
+            payload: userDocuments,
         });
         usersQueryDispatch({
             action: usersQueryAction.setTotalDocuments,
@@ -376,4 +265,7 @@ async function handleUsersQueryOnmessageCallback(
     }
 }
 
-export { handleUsersQueryOnmessageCallback, handleUsersQuerySubmitGETClick };
+export {
+    handleMessageEventUsersFetchWorkerToMain,
+    handleUsersQuerySubmitGETClick,
+};

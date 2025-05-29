@@ -87,8 +87,6 @@ function Chain(
                                     const queryLinkStatement =
                                         createQueryLinkStatement({
                                             field,
-                                            index: linkIndex,
-                                            logicalOperator,
                                             operator,
                                             queryChainKind,
                                             value,
@@ -316,15 +314,11 @@ function createQueryLinkHeading({
 
 function createQueryLinkStatement({
     field,
-    index,
-    logicalOperator,
     operator,
     queryChainKind,
     value,
 }: {
     field: string;
-    index: number;
-    logicalOperator: LogicalOperator;
     operator: string;
     queryChainKind: QueryChainKind;
     value: string;
@@ -333,9 +327,9 @@ function createQueryLinkStatement({
     let queryLinkStatement = "";
 
     if (queryChainKind === "filter") {
-        queryLinkStatement = `${index === 0 ? logicalOperator + " " : ""}${
-            splitCamelCase(field)
-        } ${operator === "in" ? "equals" : `is ${operator}`} ${value}`;
+        queryLinkStatement = `${splitCamelCase(field)} ${
+            operator === "in" ? "equals" : `is ${operator}`
+        } ${value}`;
     }
 
     if (queryChainKind === "sort") {
@@ -346,167 +340,3 @@ function createQueryLinkStatement({
 }
 
 export { Chain };
-
-// const deleteQueryLinkButton = (
-//     <AccessibleButton
-//         attributes={{
-//             enabledScreenreaderText:
-//                 `Delete link ${queryLinkStatement}`,
-//             index: linkIndex,
-//             kind: "delete",
-//             setIconAsLabel: true,
-//             onClick: (
-//                 _event:
-//                     | React.MouseEvent<
-//                         HTMLButtonElement,
-//                         MouseEvent
-//                     >
-//                     | React.PointerEvent<
-//                         HTMLButtonElement
-//                     >,
-//             ) => {
-//                 queryDispatch({
-//                     action: queryAction
-//                         .modifyQueryChains,
-//                     payload: {
-//                         index: linkIndex,
-//                         logicalOperator,
-//                         queryChainActions:
-//                             "delete",
-//                         queryChainKind,
-//                         queryLink: [
-//                             "",
-//                             "equal to",
-//                             "",
-//                         ],
-//                     },
-//                 });
-//             },
-//             size: "xs",
-//         }}
-//     />
-// );
-
-// const insertQueryLinkButton = (
-//   <AccessibleButton
-//     attributes={{
-//       disabled: linkIndex === MAX_LINKS_AMOUNT - 1,
-//       disabledScreenreaderText: "Max query links amount reached",
-//       enabledScreenreaderText: `Insert link before ${queryLinkStatement}`,
-//       index: linkIndex,
-//       kind: "insert",
-//       setIconAsLabel: true,
-//       onClick: (
-//         _event:
-//           | React.MouseEvent<HTMLButtonElement, MouseEvent>
-//           | React.PointerEvent<HTMLButtonElement>
-//       ) => {
-//         queryDispatch({
-//           action: queryAction.modifyQueryChains,
-//           payload: {
-//             index: linkIndex,
-//             queryChainActions: "insert",
-//             queryChainKind,
-//             value: ["", "", ""],
-//           },
-//         });
-//       },
-//     }}
-//   />
-// );
-
-// const slideQueryChainUpButton = (
-//     <AccessibleButton
-//         attributes={{
-//             disabled: linkIndex === 0,
-//             disabledScreenreaderText:
-//                 "Cannot move up. Already at the top",
-//             enabledScreenreaderText:
-//                 `Move link ${queryLinkStatement} up`,
-//             index: linkIndex,
-//             kind: "up",
-//             setIconAsLabel: true,
-//             onClick: (
-//                 _event:
-//                     | React.MouseEvent<
-//                         HTMLButtonElement,
-//                         MouseEvent
-//                     >
-//                     | React.PointerEvent<
-//                         HTMLButtonElement
-//                     >,
-//             ) => {
-//                 queryDispatch({
-//                     action: queryAction
-//                         .modifyQueryChains,
-//                     payload: {
-//                         index: linkIndex,
-//                         logicalOperator,
-//                         queryChainActions:
-//                             "slideUp",
-//                         queryChainKind,
-//                         queryLink: [
-//                             "",
-//                             "equal to",
-//                             "",
-//                         ],
-//                     },
-//                 });
-//             },
-//             size: "xs",
-//         }}
-//     />
-// );
-
-// const slideQueryChainDownButton = (
-//     <AccessibleButton
-//         attributes={{
-//             disabled: linkIndex ===
-//                 queryChain.length - 1,
-//             disabledScreenreaderText:
-//                 "Cannot move link down. Already at the bottom",
-//             enabledScreenreaderText:
-//                 `Move link ${queryLinkStatement} down`,
-//             index: linkIndex,
-//             kind: "down",
-//             setIconAsLabel: true,
-//             onClick: (
-//                 _event:
-//                     | React.MouseEvent<
-//                         HTMLButtonElement,
-//                         MouseEvent
-//                     >
-//                     | React.PointerEvent<
-//                         HTMLButtonElement
-//                     >,
-//             ) => {
-//                 queryDispatch({
-//                     action: queryAction
-//                         .modifyQueryChains,
-//                     payload: {
-//                         index: linkIndex,
-//                         logicalOperator,
-//                         queryChainActions:
-//                             "slideDown",
-//                         queryChainKind,
-//                         queryLink: [
-//                             "",
-//                             "equal to",
-//                             "",
-//                         ],
-//                     },
-//                 });
-//             },
-//             size: "xs",
-//         }}
-//     />
-// );
-
-// const buttons = (
-//     <Group>
-//         {deleteQueryLinkButton}
-//         {/* {insertQueryLinkButton} */}
-//         {slideQueryChainUpButton}
-//         {slideQueryChainDownButton}
-//     </Group>
-// );

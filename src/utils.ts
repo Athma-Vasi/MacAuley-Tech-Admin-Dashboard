@@ -28,10 +28,13 @@ import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
+  ErrorPayload,
+  ResponsePayload,
   ResponsePayloadSafe,
   SafeError,
   SafeResult,
   StoreLocation,
+  SuccessPayload,
   ThemeObject,
 } from "./types";
 
@@ -456,6 +459,101 @@ function createSafeErrorResult(error: unknown, trace?: {
     original: serializeSafe(error),
     ...additional,
   });
+}
+
+// copy of backend fns with modification: remove express req and add accessToken
+// used when cached data is returned from worker
+// has same signature as backend response payload
+function createHttpResponseError<
+  Data = unknown,
+>({
+  accessToken,
+  pages,
+  safeErrorResult,
+  status,
+  totalDocuments,
+  triggerLogout,
+}: {
+  accessToken?: string;
+  pages?: number;
+  safeErrorResult: Err<SafeError>;
+  status?: number;
+  totalDocuments?: number;
+  triggerLogout?: boolean;
+}): ResponsePayload<Data> {
+  const errorPayload: ErrorPayload = {
+    data: [],
+    kind: "error",
+    message: safeErrorResult.val.message,
+  };
+
+  const optionalFields = {
+    accessToken,
+    pages,
+    status,
+    totalDocuments,
+    triggerLogout,
+  };
+
+  return Object.entries(optionalFields).reduce((acc, [key, value]) => {
+    if (value !== undefined) {
+      Object.defineProperty(acc, key, {
+        value,
+        ...PROPERTY_DESCRIPTOR,
+      });
+    }
+
+    return acc;
+  }, errorPayload);
+}
+
+// copy of backend fns with modification: remove express req and add accessToken
+// used when cached data is returned from worker
+// has same signature as backend response payload
+function createHttpResponseSuccess<
+  Data = unknown,
+>({
+  accessToken,
+  message,
+  pages,
+  safeSuccessResult,
+  status,
+  totalDocuments,
+  triggerLogout,
+}: {
+  accessToken?: string;
+  message?: string;
+  pages?: number;
+  safeSuccessResult: Ok<Option<NonNullable<Data>>>;
+  status?: number;
+  totalDocuments?: number;
+  triggerLogout?: boolean;
+}): ResponsePayload<Data> {
+  const newData = safeSuccessResult.val.none ? [] : safeSuccessResult.val.val;
+  const successPayload: SuccessPayload<Data> = {
+    data: Array.isArray(newData) ? newData : [newData],
+    kind: "success",
+  };
+
+  const optionalFields = {
+    accessToken,
+    message,
+    pages,
+    status,
+    totalDocuments,
+    triggerLogout,
+  };
+
+  return Object.entries(optionalFields).reduce((acc, [key, value]) => {
+    if (value !== undefined) {
+      Object.defineProperty(acc, key, {
+        value,
+        ...PROPERTY_DESCRIPTOR,
+      });
+    }
+
+    return acc;
+  }, successPayload);
 }
 
 function catchHandlerErrorSafe(
@@ -980,6 +1078,8 @@ export {
   catchHandlerErrorSafe,
   createDaysInMonthsInYearsSafe,
   createDirectoryURLCacheKey,
+  createHttpResponseError,
+  createHttpResponseSuccess,
   createMetricsForageKey,
   createMetricsURLCacheKey,
   createSafeErrorResult,

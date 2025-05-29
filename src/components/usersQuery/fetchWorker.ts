@@ -1,4 +1,5 @@
-import { FETCH_REQUEST_TIMEOUT } from "../../constants";
+import { Ok, Some } from "ts-results";
+import { FETCH_REQUEST_TIMEOUT, PROPERTY_DESCRIPTOR } from "../../constants";
 import {
     DecodedToken,
     ResponsePayloadSafe,
@@ -6,36 +7,40 @@ import {
     UserDocument,
 } from "../../types";
 import {
+    createHttpResponseSuccess,
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
+    getCachedItemAsyncSafe,
     parseResponsePayloadAsyncSafe,
     parseSyncSafe,
+    setCachedItemAsyncSafe,
 } from "../../utils";
 import {
     ROUTES_ZOD_SCHEMAS_MAP,
     RoutesZodSchemasMapKey,
 } from "../../workers/constants";
+import { SortDirection } from "../query/types";
 import { messageEventUsersFetchMainToWorkerZod } from "./schemas";
 
 type MessageEventUsersFetchWorkerToMain = MessageEvent<
     SafeResult<
         {
-            currentPage: number;
             decodedToken: DecodedToken;
-            newQueryFlag: boolean;
             responsePayloadSafe: ResponsePayloadSafe<UserDocument>;
-            queryString: string;
-            totalDocuments: number;
         }
     >
 >;
 
 type MessageEventUsersFetchMainToWorker = MessageEvent<
     {
+        accessToken: string;
+        arrangeByDirection: SortDirection;
+        arrangeByField: keyof UserDocument;
         currentPage: number;
+        decodedToken: DecodedToken;
         newQueryFlag: boolean;
         queryString: string;
         requestInit: RequestInit;
@@ -71,19 +76,116 @@ self.onmessage = async (
     }
 
     const {
-        requestInit,
-        routesZodSchemaMapKey,
-        url,
+        accessToken: accessTokenFromMessage,
+        arrangeByDirection,
+        arrangeByField,
         currentPage,
+        decodedToken,
         newQueryFlag,
         queryString,
+        requestInit,
+        routesZodSchemaMapKey,
         totalDocuments,
+        url,
     } = parsedMessageResult.val.val;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
+    const timeout = setTimeout(
+        () => controller.abort(),
+        FETCH_REQUEST_TIMEOUT,
+    );
 
     try {
+        const userDocumentsResult = await getCachedItemAsyncSafe<
+            UserDocument[]
+        >(url);
+
+        if (userDocumentsResult.err) {
+            self.postMessage(userDocumentsResult);
+            return;
+        }
+
+        if (userDocumentsResult.val.some) {
+            const queryParams = new URLSearchParams(queryString);
+            const limit = queryParams.get("limit");
+            if (limit == null) {
+                self.postMessage(
+                    createSafeErrorResult("No limit found in query string"),
+                );
+                return;
+            }
+
+            const userDocuments = userDocumentsResult.val.val;
+            const unparsedResponsePayload = createHttpResponseSuccess<
+                UserDocument[]
+            >({
+                safeSuccessResult: new Ok(
+                    Some(userDocuments),
+                ),
+                accessToken: accessTokenFromMessage,
+                message: "Cached user documents retrieved successfully",
+                pages: totalDocuments / parseInt(limit, 10),
+                totalDocuments,
+            });
+
+            const parsedResponsePayloadSafeResult =
+                await parseResponsePayloadAsyncSafe<UserDocument>({
+                    object: unparsedResponsePayload,
+                    zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
+                });
+            if (parsedResponsePayloadSafeResult.err) {
+                self.postMessage(parsedResponsePayloadSafeResult);
+                return;
+            }
+            if (parsedResponsePayloadSafeResult.val.none) {
+                self.postMessage(
+                    createSafeErrorResult("No parsed result received"),
+                );
+                return;
+            }
+
+            const {
+                data,
+            } = parsedResponsePayloadSafeResult.val.val;
+
+            const withFUIAndPPUFieldsAdded = sortUserDocumentsAndAddFields(
+                data,
+                arrangeByDirection,
+                arrangeByField,
+            );
+
+            const setItemCacheResult = await setCachedItemAsyncSafe(
+                url,
+                withFUIAndPPUFieldsAdded,
+            );
+            if (setItemCacheResult.err) {
+                self.postMessage(setItemCacheResult);
+                return;
+            }
+
+            Object.defineProperty(
+                parsedResponsePayloadSafeResult.val.val,
+                "data",
+                {
+                    value: withFUIAndPPUFieldsAdded,
+                    ...PROPERTY_DESCRIPTOR,
+                },
+            );
+
+            self.postMessage(
+                createSafeSuccessResult({
+                    currentPage,
+                    decodedToken: new Ok(Some(decodedToken)),
+                    newQueryFlag,
+                    responsePayloadSafe:
+                        parsedResponsePayloadSafeResult.val.val,
+                    queryString,
+                }),
+            );
+            return;
+        }
+
+        // if no cached data, proceed with fetch
         const responseResult = await fetchResponseSafe(url, {
             ...requestInit,
             signal: controller.signal,
@@ -113,7 +215,9 @@ self.onmessage = async (
             return;
         }
 
-        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
+        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe<
+            UserDocument
+        >({
             object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
@@ -128,7 +232,11 @@ self.onmessage = async (
             return;
         }
 
-        const { accessToken } = responsePayloadSafeResult.val.val;
+        const {
+            data,
+            accessToken,
+        } = responsePayloadSafeResult.val.val;
+
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
@@ -137,6 +245,31 @@ self.onmessage = async (
             );
             return;
         }
+
+        const withFUIAndPPUFieldsAdded = sortUserDocumentsAndAddFields(
+            data,
+            arrangeByDirection,
+            arrangeByField,
+        );
+
+        const setItemCacheResult = await setCachedItemAsyncSafe(
+            url,
+            withFUIAndPPUFieldsAdded,
+        );
+        if (setItemCacheResult.err) {
+            self.postMessage(setItemCacheResult);
+            return;
+        }
+
+        Object.defineProperty(
+            responsePayloadSafeResult.val.val,
+            "data",
+            {
+                value: withFUIAndPPUFieldsAdded,
+                ...PROPERTY_DESCRIPTOR,
+            },
+        );
+
         const decodedTokenResult = decodeJWTSafe(accessToken.val);
         if (decodedTokenResult.err) {
             self.postMessage(decodedTokenResult);
@@ -152,11 +285,10 @@ self.onmessage = async (
         self.postMessage(
             createSafeSuccessResult({
                 currentPage,
-                decodedToken: decodedTokenResult.val.val,
+                decodedToken: decodedTokenResult,
                 newQueryFlag,
                 responsePayloadSafe: responsePayloadSafeResult.val.val,
                 queryString,
-                totalDocuments,
             }),
         );
     } catch (error: unknown) {
@@ -182,6 +314,41 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
         createSafeErrorResult(event),
     );
 });
+
+function sortUserDocumentsAndAddFields(
+    userDocuments: UserDocument[],
+    arrangeByDirection: SortDirection,
+    arrangeByField: keyof UserDocument,
+): UserDocument[] {
+    const sorted = userDocuments.sort((a, b) => {
+        const aValue = a[arrangeByField];
+        const bValue = b[arrangeByField];
+
+        if (aValue === undefined && bValue === undefined) return 0;
+        if (aValue === undefined) return 1;
+        if (bValue === undefined) return -1;
+
+        if (arrangeByDirection === "ascending") {
+            return aValue > bValue ? 1 : -1;
+        } else {
+            return aValue < bValue ? 1 : -1;
+        }
+    });
+
+    return sorted.map(
+        (userDocument) => {
+            return {
+                ...userDocument,
+                fileUploadId: userDocument.fileUploadId
+                    ? userDocument.fileUploadId
+                    : "",
+                profilePictureUrl: userDocument.profilePictureUrl
+                    ? userDocument.profilePictureUrl
+                    : "",
+            };
+        },
+    );
+}
 
 export type {
     MessageEventUsersFetchMainToWorker,

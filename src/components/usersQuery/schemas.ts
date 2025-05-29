@@ -203,31 +203,39 @@ const arrangeByFieldZod = z.enum([
     "__v",
 ]);
 const arrangeByDirectionZod = z.enum(["ascending", "descending"]);
+const userRolesZod = z.array(z.string().regex(USER_ROLES_REGEX));
+
+const decodedTokenZod = z.object({
+    userId: z.string(),
+    username: z.string(),
+    roles: userRolesZod,
+    sessionId: z.string(),
+    iat: z.number(),
+    exp: z.number(),
+});
 
 const handleUsersQuerySubmitGETClickInputZod = z.object({
     accessToken: z.string(),
+    arrangeByDirection: arrangeByDirectionZod,
+    arrangeByField: arrangeByFieldZod,
     currentPage: z.number().min(0),
+    decodedToken: decodedTokenZod,
     isComponentMountedRef: z.object({ current: z.boolean() }),
     newQueryFlag: z.boolean(),
+    queryString: z.string(),
     showBoundary: z.function().args(z.any()).returns(z.void()),
+    totalDocuments: z.number().min(0),
     url: z.string().url(),
     usersFetchWorker: z.instanceof(Worker),
     usersQueryDispatch: z.function().args(z.any()).returns(z.void()),
-    arrangeByDirection: arrangeByDirectionZod,
-    arrangeByField: arrangeByFieldZod,
-    queryString: z.string(),
-    totalDocuments: z.number().min(0),
 });
 
-const handleUsersQueryOnmessageCallbackInputZod = z.object({
-    arrangeByDirection: arrangeByDirectionZod,
-    arrangeByField: arrangeByFieldZod,
+const handleMessageEventUsersFetchWorkerToMainInputZod = z.object({
     authDispatch: z.function().args(z.any()).returns(z.void()),
     event: z.instanceof(MessageEvent),
     isComponentMountedRef: z.object({ current: z.boolean() }),
     navigate: z.function().args(z.any()).returns(z.void()),
     showBoundary: z.function().args(z.any()).returns(z.void()),
-    url: z.string().url(),
     usersQueryDispatch: z.function().args(z.any()).returns(z.void()),
 });
 
@@ -246,6 +254,9 @@ type UsersQueryDispatch =
     | z.infer<typeof setUsersFetchWorkerUsersQueryDispatchZod>;
 
 const messageEventUsersFetchMainToWorkerZod = z.object({
+    accessToken: z.string(),
+    arrangeByDirection: arrangeByDirectionZod,
+    arrangeByField: arrangeByFieldZod,
     currentPage: z.number().min(0),
     newQueryFlag: z.boolean(),
     queryString: z.string(),
@@ -256,7 +267,8 @@ const messageEventUsersFetchMainToWorkerZod = z.object({
 });
 
 export {
-    handleUsersQueryOnmessageCallbackInputZod,
+    decodedTokenZod,
+    handleMessageEventUsersFetchWorkerToMainInputZod,
     handleUsersQuerySubmitGETClickInputZod,
     messageEventUsersFetchMainToWorkerZod,
     resetToInitialUsersQueryDispatchZod,
@@ -273,5 +285,6 @@ export {
     setUsersFetchWorkerUsersQueryDispatchZod,
     userDocumentOptionalsZod,
     userDocumentRequiredZod,
+    userRolesZod,
 };
 export type { UsersQueryDispatch };
