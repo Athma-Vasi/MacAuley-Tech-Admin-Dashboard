@@ -14,6 +14,11 @@ const setDepartmentDirectoryDispatchZod = z.object({
     payload: allDepartmentsZod,
 });
 
+const setIsLoadingDirectoryDispatchZod = z.object({
+    action: z.literal(directoryAction.setIsLoading),
+    payload: z.boolean(),
+});
+
 const setOrientationDirectoryDispatchZod = z.object({
     action: z.literal(directoryAction.setOrientation),
     payload: z.enum(["horizontal", "vertical"]),
@@ -28,9 +33,9 @@ const handleDirectoryDepartmentAndLocationClicksInputZod = z.object({
     accessToken: z.string().min(1),
     decodedToken: decodedTokenZod,
     department: allDepartmentsZod,
+    directoryDispatch: z.function().args(z.any()).returns(z.void()),
     directoryFetchWorker: z.instanceof(Worker),
     directoryUrl: z.string().url(),
-    globalDispatch: z.function().args(z.any()).returns(z.void()),
     isComponentMountedRef: z.object({ current: z.boolean() }),
     showBoundary: z.function().args(z.any()).returns(z.void()),
     storeLocation: allStoreLocationsZod,
@@ -51,6 +56,7 @@ export {
     messageEventDirectoryFetchMainToWorkerZod,
     setDepartmentDirectoryDispatchZod,
     setDirectoryFetchWorkerDirectoryDispatchZod,
+    setIsLoadingDirectoryDispatchZod,
     setOrientationDirectoryDispatchZod,
     setStoreLocationDirectoryDispatchZod,
 };

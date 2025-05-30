@@ -488,7 +488,7 @@ const selectedDateCustomerMetricsZod = z.object({
     }),
 });
 
-const messageEventCustomerMainToWorkerZod = z.object({
+const messageEventCustomerChartsMainToWorkerZod = z.object({
     calendarView: z.string(),
     grayBorderShade: z.string(),
     customerMetricsDocument: customerMetricsDocumentZod,
@@ -504,7 +504,7 @@ export {
     calendarChartDataZod,
     customerMetricsDocumentZod,
     handleMessageEventCustomerWorkerToMainInputZod,
-    messageEventCustomerMainToWorkerZod,
+    messageEventCustomerChartsMainToWorkerZod,
     selectedDateCustomerMetricsZod,
     setCalendarChartsCustomerMetricsDispatchZod,
     setChartsCustomerMetricsDispatchZod,

@@ -14,9 +14,9 @@ import {
     CustomerMetricsCharts,
     returnSelectedDateCustomerMetricsSafe,
 } from "./chartsData";
-import { messageEventCustomerMainToWorkerZod } from "./schemas";
+import { messageEventCustomerChartsMainToWorkerZod } from "./schemas";
 
-type MessageEventCustomerWorkerToMain = MessageEvent<
+type MessageEventCustomerChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
             currentYear: CustomerMetricsCalendarCharts;
@@ -26,7 +26,7 @@ type MessageEventCustomerWorkerToMain = MessageEvent<
         }
     >
 >;
-type MessageEventCustomerMainToWorker = MessageEvent<
+type MessageEventCustomerChartsMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         grayBorderShade: string;
@@ -41,7 +41,7 @@ type MessageEventCustomerMainToWorker = MessageEvent<
 >;
 
 self.onmessage = async (
-    event: MessageEventCustomerMainToWorker,
+    event: MessageEventCustomerChartsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -52,7 +52,7 @@ self.onmessage = async (
 
     const parsedMessageResult = parseSyncSafe({
         object: event.data,
-        zSchema: messageEventCustomerMainToWorkerZod,
+        zSchema: messageEventCustomerChartsMainToWorkerZod,
     });
     if (parsedMessageResult.err) {
         self.postMessage(parsedMessageResult);
@@ -204,6 +204,6 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventCustomerMainToWorker,
-    MessageEventCustomerWorkerToMain,
+    MessageEventCustomerChartsMainToWorker,
+    MessageEventCustomerChartsWorkerToMain,
 };

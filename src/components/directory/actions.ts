@@ -11,6 +11,7 @@ type DirectoryAction = Prettify<
 const directoryAction: DirectoryAction = {
   setDepartment: "setDepartment",
   setDirectoryFetchWorker: "setDirectoryFetchWorker",
+  setIsLoading: "setIsLoading",
   setOrientation: "setOrientation",
   setStoreLocation: "setStoreLocation",
 };

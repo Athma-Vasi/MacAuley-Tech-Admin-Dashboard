@@ -4,6 +4,7 @@ import { directoryAction } from "./actions";
 import {
   setDepartmentDirectoryDispatchZod,
   setDirectoryFetchWorkerDirectoryDispatchZod,
+  setIsLoadingDirectoryDispatchZod,
   setOrientationDirectoryDispatchZod,
   setStoreLocationDirectoryDispatchZod,
 } from "./schemas";
@@ -32,6 +33,7 @@ const directoryReducers = new Map<
     directoryAction.setDirectoryFetchWorker,
     directoryReducer_setDirectoryFetchWorker,
   ],
+  [directoryAction.setIsLoading, directoryReducer_setIsLoading],
   [directoryAction.setOrientation, directoryReducer_setOrientation],
   [directoryAction.setStoreLocation, directoryReducer_setStoreLocation],
 ]);
@@ -72,6 +74,25 @@ function directoryReducer_setDirectoryFetchWorker(
   return {
     ...state,
     directoryFetchWorker: parsedResult.val.val.payload as Worker,
+  };
+}
+
+function directoryReducer_setIsLoading(
+  state: DirectoryState,
+  dispatch: DirectoryDispatch,
+): DirectoryState {
+  const parsedResult = parseSyncSafe({
+    object: dispatch,
+    zSchema: setIsLoadingDirectoryDispatchZod,
+  });
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    isLoading: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -118,6 +139,8 @@ export {
   directoryReducer,
   directoryReducer_setDepartment,
   directoryReducer_setDirectoryFetchWorker,
+  directoryReducer_setIsLoading,
   directoryReducer_setOrientation,
-  directoryReducer_setStoreLocation,
+  directoryReducer_setStoreLocation
 };
+

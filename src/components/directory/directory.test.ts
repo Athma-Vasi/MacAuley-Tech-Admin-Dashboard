@@ -7,6 +7,7 @@ import { DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 import {
     directoryReducer_setDepartment,
     directoryReducer_setDirectoryFetchWorker,
+    directoryReducer_setIsLoading,
     directoryReducer_setOrientation,
     directoryReducer_setStoreLocation,
 } from "./reducers";
@@ -57,6 +58,34 @@ describe("Directory Reducers", () => {
                 dispatch,
             );
             expect(state.directoryFetchWorker).toBeInstanceOf(Worker);
+        });
+    });
+
+    describe(directoryAction.setIsLoading, () => {
+        it("should allow valid payload", () => {
+            const dispatch: DirectoryDispatch = {
+                action: directoryAction.setIsLoading,
+                payload: true,
+            };
+            const state = directoryReducer_setIsLoading(
+                initialDirectoryState,
+                dispatch,
+            );
+            expect(state.isLoading).toBe(true);
+        });
+
+        it("should not allow invalid payload", () => {
+            INVALID_STRINGS.forEach((value) => {
+                const dispatch: DirectoryDispatch = {
+                    action: directoryAction.setIsLoading,
+                    payload: value as any,
+                };
+                const state = directoryReducer_setIsLoading(
+                    initialDirectoryState,
+                    dispatch,
+                );
+                expect(state.isLoading).toBe(initialDirectoryState.isLoading);
+            });
         });
     });
 

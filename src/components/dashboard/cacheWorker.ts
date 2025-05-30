@@ -1,3 +1,4 @@
+import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "../../constants";
 import { BusinessMetricsDocument, SafeResult } from "../../types";
 import {
     createSafeErrorResult,
@@ -5,10 +6,6 @@ import {
     getCachedItemAsyncSafe,
     parseSyncSafe,
 } from "../../utils";
-import {
-    ROUTES_ZOD_SCHEMAS_MAP,
-    RoutesZodSchemasMapKey,
-} from "../../workers/constants";
 import { messageEventDashboardFetchMainToWorkerZod } from "./schemas";
 import { DashboardMetricsView } from "./types";
 
@@ -120,5 +117,6 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 
 export type {
     MessageEventDashboardCacheMainToWorker,
-    MessageEventDashboardCacheWorkerToMain,
+    MessageEventDashboardCacheWorkerToMain
 };
+

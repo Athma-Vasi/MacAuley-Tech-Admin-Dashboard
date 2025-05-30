@@ -6,12 +6,12 @@ import {
     parseSyncSafe,
 } from "../../../utils";
 import { productMetricsAction } from "./actions";
-import { MessageEventProductWorkerToMain } from "./chartsWorker";
-import { handleMessageEventProductWorkerToMainInputZod } from "./schemas";
+import { MessageEventProductChartsWorkerToMain } from "./chartsWorker";
+import { handleMessageEventProductChartsWorkerToMainInputZod } from "./schemas";
 import { ProductMetricsDispatch } from "./types";
 
-async function handleMessageEventProductWorkerToMain(input: {
-    event: MessageEventProductWorkerToMain;
+async function handleMessageEventProductChartsWorkerToMain(input: {
+    event: MessageEventProductChartsWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
     productMetricsDispatch: React.Dispatch<ProductMetricsDispatch>;
     showBoundary: (error: unknown) => void;
@@ -19,7 +19,7 @@ async function handleMessageEventProductWorkerToMain(input: {
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
-            zSchema: handleMessageEventProductWorkerToMainInputZod,
+            zSchema: handleMessageEventProductChartsWorkerToMainInputZod,
         });
         if (parsedInputResult.err) {
             input?.showBoundary?.(parsedInputResult);
@@ -93,4 +93,4 @@ async function handleMessageEventProductWorkerToMain(input: {
     }
 }
 
-export { handleMessageEventProductWorkerToMain };
+export { handleMessageEventProductChartsWorkerToMain };

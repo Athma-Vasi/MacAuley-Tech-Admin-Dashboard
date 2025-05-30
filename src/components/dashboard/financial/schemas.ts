@@ -433,7 +433,7 @@ const handleMessageEventFinancialWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
-const messageEventFinancialMainToWorkerZod = z.object({
+const messageEventFinancialChartsMainToWorkerZod = z.object({
     calendarView: z.string(),
     grayBorderShade: z.string(),
     financialMetricsDocument: financialMetricsDocumentZod,
@@ -449,7 +449,7 @@ export {
     financialChartsZod,
     financialMetricsDocumentZod,
     handleMessageEventFinancialWorkerToMainInputZod,
-    messageEventFinancialMainToWorkerZod,
+    messageEventFinancialChartsMainToWorkerZod,
     setCalendarChartsFinancialMetricsDispatchZod,
     setChartsFinancialMetricsDispatchZod,
     setChartsWorkerFinancialMetricsDispatchZod,

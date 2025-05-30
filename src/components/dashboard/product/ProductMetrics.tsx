@@ -13,9 +13,9 @@ import type {
   Year,
 } from "../types";
 import { productMetricsAction } from "./actions";
-import { MessageEventProductWorkerToMain } from "./chartsWorker";
+import { MessageEventProductChartsWorkerToMain } from "./chartsWorker";
 import ProductChartsWorker from "./chartsWorker?worker";
-import { handleMessageEventProductWorkerToMain } from "./handlers";
+import { handleMessageEventProductChartsWorkerToMain } from "./handlers";
 import { productMetricsReducer } from "./reducers";
 import { RUS } from "./rus/RUS";
 import { initialProductMetricsState } from "./state";
@@ -111,9 +111,9 @@ function ProductMetrics(
     });
 
     newProductChartsWorker.onmessage = async (
-      event: MessageEventProductWorkerToMain,
+      event: MessageEventProductChartsWorkerToMain,
     ) => {
-      await handleMessageEventProductWorkerToMain({
+      await handleMessageEventProductChartsWorkerToMain({
         event,
         isComponentMountedRef,
         productMetricsDispatch,

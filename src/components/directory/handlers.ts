@@ -1,4 +1,3 @@
-import { globalAction, GlobalDispatch } from "../../context/globalProvider";
 import { DecodedToken, SafeResult } from "../../types";
 import {
     catchHandlerErrorSafe,
@@ -6,8 +5,9 @@ import {
     parseSyncSafe,
 } from "../../utils";
 import { AllStoreLocations } from "../dashboard/types";
+import { directoryAction } from "./actions";
 import { handleDirectoryDepartmentAndLocationClicksInputZod } from "./schemas";
-import { DepartmentsWithDefaultKey } from "./types";
+import { DepartmentsWithDefaultKey, DirectoryDispatch } from "./types";
 import { createDirectoryURLCacheKey } from "./utils";
 
 async function handleDirectoryDepartmentAndLocationClicks(
@@ -15,9 +15,9 @@ async function handleDirectoryDepartmentAndLocationClicks(
         accessToken: string;
         decodedToken: DecodedToken;
         department: DepartmentsWithDefaultKey;
+        directoryDispatch: React.Dispatch<DirectoryDispatch>;
         directoryFetchWorker: Worker | null;
         directoryUrl: string;
-        globalDispatch: React.Dispatch<GlobalDispatch>;
         isComponentMountedRef: React.RefObject<boolean>;
         showBoundary: (error: unknown) => void;
         storeLocation: AllStoreLocations;
@@ -44,9 +44,9 @@ async function handleDirectoryDepartmentAndLocationClicks(
             accessToken,
             decodedToken,
             department,
+            directoryDispatch,
             directoryFetchWorker,
             directoryUrl,
-            globalDispatch,
             storeLocation,
         } = parsedInputResult.val.val;
 
@@ -64,8 +64,8 @@ async function handleDirectoryDepartmentAndLocationClicks(
             storeLocation,
         });
 
-        globalDispatch({
-            action: globalAction.setIsFetching,
+        directoryDispatch({
+            action: directoryAction.setIsLoading,
             payload: true,
         });
 

@@ -14,9 +14,9 @@ import {
     ProductMetricsCharts,
     returnSelectedDateProductMetricsSafe,
 } from "./chartsData";
-import { messageEventProductMainToWorkerZod } from "./schemas";
+import { messageEventProductChartsMainToWorkerZod } from "./schemas";
 
-type MessageEventProductWorkerToMain = MessageEvent<
+type MessageEventProductChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
             currentYear: ProductMetricsCalendarCharts;
@@ -26,7 +26,7 @@ type MessageEventProductWorkerToMain = MessageEvent<
         }
     >
 >;
-type MessageEventProductMainToWorker = MessageEvent<
+type MessageEventProductChartsMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         grayBorderShade: string;
@@ -41,7 +41,7 @@ type MessageEventProductMainToWorker = MessageEvent<
 >;
 
 self.onmessage = async (
-    event: MessageEventProductMainToWorker,
+    event: MessageEventProductChartsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -52,7 +52,7 @@ self.onmessage = async (
 
     const parsedMessageResult = parseSyncSafe({
         object: event.data,
-        zSchema: messageEventProductMainToWorkerZod,
+        zSchema: messageEventProductChartsMainToWorkerZod,
     });
     if (parsedMessageResult.err) {
         self.postMessage(parsedMessageResult);
@@ -199,6 +199,6 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventProductMainToWorker,
-    MessageEventProductWorkerToMain,
+    MessageEventProductChartsMainToWorker,
+    MessageEventProductChartsWorkerToMain,
 };

@@ -20,15 +20,15 @@ import {
     createRandomProductMetricsSafe,
 } from "./generators";
 
-type MessageEventProductWorkerToMain = MessageEvent<
+type MessageEventProductMetricsWorkerToMain = MessageEvent<
     SafeResult<string>
 >;
-type MessageEventProductMainToWorker = MessageEvent<
+type MessageEventProductMetricsMainToWorker = MessageEvent<
     boolean
 >;
 
 self.onmessage = async (
-    event: MessageEventProductMainToWorker,
+    event: MessageEventProductMetricsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -252,8 +252,8 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventProductMainToWorker,
-    MessageEventProductWorkerToMain,
+    MessageEventProductMetricsMainToWorker,
+    MessageEventProductMetricsWorkerToMain,
 };
 
 function createProductMetricsDocument(

@@ -13,7 +13,7 @@ import type {
   Year,
 } from "../types";
 import { repairMetricsAction } from "./actions";
-import { MessageEventRepairWorkerToMain } from "./chartsWorker";
+import { MessageEventRepairChartsWorkerToMain } from "./chartsWorker";
 import RepairChartsWorker from "./chartsWorker?worker";
 import { handleMessageEventRepairWorkerToMain } from "./handlers";
 import { repairMetricsReducer } from "./reducers";
@@ -84,7 +84,7 @@ function RepairMetrics(
     });
 
     newRepairChartsWorker.onmessage = async (
-      event: MessageEventRepairWorkerToMain,
+      event: MessageEventRepairChartsWorkerToMain,
     ) => {
       await handleMessageEventRepairWorkerToMain({
         event,

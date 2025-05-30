@@ -32,6 +32,9 @@ const initialThemeObject: ThemeObject = {
   },
 };
 
+const yesterday= new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+
 const initialGlobalState: GlobalState = {
   customerMetricsCategory: "new",
   customerMetricsDocument: null,
@@ -53,7 +56,7 @@ const initialGlobalState: GlobalState = {
   repairMetricCategory: "All Repairs",
   repairMetricsDocument: null,
   selectedChartKind: "bar",
-  selectedYYYYMMDD: new Date().toISOString().split("T")[0],
+  selectedYYYYMMDD: yesterday.toISOString().split("T")[0],
   storeLocation: "All Locations",
   themeObject: initialThemeObject,
 };

@@ -20,15 +20,15 @@ import {
     createRandomRepairMetricsSafe,
 } from "./generators";
 
-type MessageEventRepairWorkerToMain = MessageEvent<
+type MessageEventRepairMetricsWorkerToMain = MessageEvent<
     SafeResult<string>
 >;
-type MessageEventRepairMainToWorker = MessageEvent<
+type MessageEventRepairMetricsMainToWorker = MessageEvent<
     boolean
 >;
 
 self.onmessage = async (
-    event: MessageEventRepairMainToWorker,
+    event: MessageEventRepairMetricsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -251,7 +251,10 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     );
 });
 
-export type { MessageEventRepairMainToWorker, MessageEventRepairWorkerToMain };
+export type {
+    MessageEventRepairMetricsMainToWorker,
+    MessageEventRepairMetricsWorkerToMain,
+};
 
 function createRepairMetricsDocument(
     metricCategory: "All Repairs" | RepairCategory,

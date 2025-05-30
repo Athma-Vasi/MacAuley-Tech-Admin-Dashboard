@@ -26,7 +26,7 @@ import {
     createRandomFinancialMetricsSafe,
 } from "./generators";
 
-type MessageEventFinancialWorkerToMain = MessageEvent<
+type MessageEventFinancialMetricsWorkerToMain = MessageEvent<
     SafeResult<
         {
             financialMetrics: Array<
@@ -38,12 +38,12 @@ type MessageEventFinancialWorkerToMain = MessageEvent<
         }
     >
 >;
-type MessageEventFinancialMainToWorker = MessageEvent<
+type MessageEventFinancialMetricsMainToWorker = MessageEvent<
     boolean
 >;
 
 self.onmessage = async (
-    event: MessageEventFinancialMainToWorker,
+    event: MessageEventFinancialMetricsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -274,8 +274,8 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventFinancialMainToWorker,
-    MessageEventFinancialWorkerToMain,
+    MessageEventFinancialMetricsMainToWorker,
+    MessageEventFinancialMetricsWorkerToMain,
 };
 
 function createFinancialMetricsDocument(

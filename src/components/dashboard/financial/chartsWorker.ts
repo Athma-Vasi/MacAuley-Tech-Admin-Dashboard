@@ -17,9 +17,9 @@ import {
     FinancialMetricsCharts,
     returnSelectedDateFinancialMetricsSafe,
 } from "./chartsData";
-import { messageEventFinancialMainToWorkerZod } from "./schemas";
+import { messageEventFinancialChartsMainToWorkerZod } from "./schemas";
 
-type MessageEventFinancialWorkerToMain = MessageEvent<
+type MessageEventFinancialChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
             currentYear: FinancialMetricsCalendarCharts;
@@ -29,7 +29,7 @@ type MessageEventFinancialWorkerToMain = MessageEvent<
         }
     >
 >;
-type MessageEventFinancialMainToWorker = MessageEvent<
+type MessageEventFinancialChartsMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         grayBorderShade: string;
@@ -44,7 +44,7 @@ type MessageEventFinancialMainToWorker = MessageEvent<
 >;
 
 self.onmessage = async (
-    event: MessageEventFinancialMainToWorker,
+    event: MessageEventFinancialChartsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -55,7 +55,7 @@ self.onmessage = async (
 
     const parsedMessageResult = parseSyncSafe({
         object: event.data,
-        zSchema: messageEventFinancialMainToWorkerZod,
+        zSchema: messageEventFinancialChartsMainToWorkerZod,
     });
     if (parsedMessageResult.err) {
         self.postMessage(parsedMessageResult);
@@ -206,6 +206,6 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventFinancialMainToWorker,
-    MessageEventFinancialWorkerToMain,
+    MessageEventFinancialChartsMainToWorker,
+    MessageEventFinancialChartsWorkerToMain,
 };

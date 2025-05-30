@@ -36,6 +36,7 @@ function Directory() {
   const {
     directoryFetchWorker,
     department,
+    isLoading,
     orientation,
     storeLocation,
   } = directoryState;
@@ -74,6 +75,11 @@ function Directory() {
         isComponentMountedRef,
         showBoundary,
       });
+
+      directoryDispatch({
+        action: directoryAction.setIsLoading,
+        payload: false,
+      });
     };
 
     return () => {
@@ -94,7 +100,7 @@ function Directory() {
         data: ALL_DEPARTMENTS_DATA,
         name: "department",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
-          if (!decodedToken) {
+          if (!decodedToken || isLoading) {
             return;
           }
           const isStoreLocationDisabled = returnIsStoreLocationDisabled(
@@ -105,9 +111,9 @@ function Directory() {
             accessToken,
             decodedToken,
             department: event.currentTarget.value as DepartmentsWithDefaultKey,
+            directoryDispatch,
             directoryFetchWorker,
             directoryUrl: API_URL,
-            globalDispatch,
             isComponentMountedRef,
             showBoundary,
             storeLocation: isStoreLocationDisabled
@@ -143,7 +149,7 @@ function Directory() {
         disabled: isStoreLocationDisabled,
         name: "storeLocation",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
-          if (!decodedToken) {
+          if (!decodedToken || isLoading) {
             return;
           }
 
@@ -151,9 +157,9 @@ function Directory() {
             accessToken,
             decodedToken,
             department,
+            directoryDispatch,
             directoryFetchWorker,
             directoryUrl: API_URL,
-            globalDispatch,
             isComponentMountedRef,
             showBoundary,
             storeLocation: isStoreLocationDisabled

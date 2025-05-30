@@ -6,12 +6,12 @@ import {
     parseSyncSafe,
 } from "../../../utils";
 import { customerMetricsAction } from "./actions";
-import { MessageEventCustomerWorkerToMain } from "./chartsWorker";
+import { MessageEventCustomerChartsWorkerToMain } from "./chartsWorker";
 import { handleMessageEventCustomerWorkerToMainInputZod } from "./schemas";
 import { CustomerMetricsDispatch } from "./types";
 
 async function handleMessageEventCustomerWorkerToMain(input: {
-    event: MessageEventCustomerWorkerToMain;
+    event: MessageEventCustomerChartsWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
     customerMetricsDispatch: React.Dispatch<CustomerMetricsDispatch>;
     showBoundary: (error: unknown) => void;

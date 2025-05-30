@@ -13,7 +13,7 @@ import type {
   Year,
 } from "../types";
 import { customerMetricsAction } from "./actions";
-import { MessageEventCustomerWorkerToMain } from "./chartsWorker";
+import { MessageEventCustomerChartsWorkerToMain } from "./chartsWorker";
 import CustomerChartsWorker from "./chartsWorker?worker";
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
 import { handleMessageEventCustomerWorkerToMain } from "./handlers";
@@ -113,7 +113,7 @@ function CustomerMetrics(
     });
 
     newCustomerChartsWorker.onmessage = async (
-      event: MessageEventCustomerWorkerToMain,
+      event: MessageEventCustomerChartsWorkerToMain,
     ) => {
       await handleMessageEventCustomerWorkerToMain({
         event,

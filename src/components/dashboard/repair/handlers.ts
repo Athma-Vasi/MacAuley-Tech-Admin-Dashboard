@@ -6,12 +6,12 @@ import {
     parseSyncSafe,
 } from "../../../utils";
 import { repairMetricsAction } from "./actions";
-import { MessageEventRepairWorkerToMain } from "./chartsWorker";
+import { MessageEventRepairChartsWorkerToMain } from "./chartsWorker";
 import { handleMessageEventRepairWorkerToMainInputZod } from "./schemas";
 import { RepairMetricsDispatch } from "./types";
 
 async function handleMessageEventRepairWorkerToMain(input: {
-    event: MessageEventRepairWorkerToMain;
+    event: MessageEventRepairChartsWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
     repairMetricsDispatch: React.Dispatch<RepairMetricsDispatch>;
     showBoundary: (error: unknown) => void;

@@ -13,17 +13,17 @@ import {
     createRandomCustomerMetricsSafe,
 } from "./generators";
 
-type MessageEventCustomerWorkerToMain = MessageEvent<
+type MessageEventCustomerMetricsWorkerToMain = MessageEvent<
     SafeResult<
         string
     >
 >;
-type MessageEventCustomerMainToWorker = MessageEvent<
+type MessageEventCustomerMetricsMainToWorker = MessageEvent<
     boolean
 >;
 
 self.onmessage = async (
-    event: MessageEventCustomerMainToWorker,
+    event: MessageEventCustomerMetricsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -214,8 +214,8 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 export type {
-    MessageEventCustomerMainToWorker,
-    MessageEventCustomerWorkerToMain,
+    MessageEventCustomerMetricsMainToWorker,
+    MessageEventCustomerMetricsWorkerToMain,
 };
 
 function createCustomerMetricsDocument(

@@ -183,7 +183,7 @@ const handleMessageEventRepairWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
-const messageEventRepairMainToWorkerZod = z.object({
+const messageEventRepairChartsMainToWorkerZod = z.object({
     calendarView: z.string(),
     grayBorderShade: z.string(),
     greenColorShade: z.string(),
@@ -197,7 +197,7 @@ const messageEventRepairMainToWorkerZod = z.object({
 
 export {
     handleMessageEventRepairWorkerToMainInputZod,
-    messageEventRepairMainToWorkerZod,
+    messageEventRepairChartsMainToWorkerZod,
     repairMetricsDocumentZod,
     setCalendarChartsDataRepairMetricsDispatchZod,
     setChartsRepairMetricsDispatchZod,

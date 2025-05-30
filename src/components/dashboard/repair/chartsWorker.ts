@@ -14,9 +14,9 @@ import {
     RepairMetricsCharts,
     returnSelectedDateRepairMetricsSafe,
 } from "./chartsData";
-import { messageEventRepairMainToWorkerZod } from "./schemas";
+import { messageEventRepairChartsMainToWorkerZod } from "./schemas";
 
-type MessageEventRepairWorkerToMain = MessageEvent<
+type MessageEventRepairChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
             currentYear: RepairMetricCalendarCharts;
@@ -26,7 +26,7 @@ type MessageEventRepairWorkerToMain = MessageEvent<
         }
     >
 >;
-type MessageEventRepairMainToWorker = MessageEvent<
+type MessageEventRepairChartsMainToWorker = MessageEvent<
     {
         calendarView: DashboardCalendarView;
         grayBorderShade: string;
@@ -41,7 +41,7 @@ type MessageEventRepairMainToWorker = MessageEvent<
 >;
 
 self.onmessage = async (
-    event: MessageEventRepairMainToWorker,
+    event: MessageEventRepairChartsMainToWorker,
 ) => {
     if (!event.data) {
         self.postMessage(
@@ -52,7 +52,7 @@ self.onmessage = async (
 
     const parsedMessageResult = parseSyncSafe({
         object: event.data,
-        zSchema: messageEventRepairMainToWorkerZod,
+        zSchema: messageEventRepairChartsMainToWorkerZod,
     });
     if (parsedMessageResult.err) {
         self.postMessage(parsedMessageResult);
@@ -200,4 +200,7 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     );
 });
 
-export type { MessageEventRepairMainToWorker, MessageEventRepairWorkerToMain };
+export type {
+    MessageEventRepairChartsMainToWorker,
+    MessageEventRepairChartsWorkerToMain,
+};

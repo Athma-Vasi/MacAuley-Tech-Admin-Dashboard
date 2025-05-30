@@ -233,14 +233,14 @@ const setChartsWorkerProductMetricsDispatchZod = z.object({
     payload: z.instanceof(Worker),
 });
 
-const handleMessageEventProductWorkerToMainInputZod = z.object({
+const handleMessageEventProductChartsWorkerToMainInputZod = z.object({
     event: z.instanceof(MessageEvent),
     isComponentMountedRef: z.object({ current: z.boolean() }),
     productMetricsDispatch: z.function().args(z.any()).returns(z.void()),
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
-const messageEventProductMainToWorkerZod = z.object({
+const messageEventProductChartsMainToWorkerZod = z.object({
     calendarView: z.string(),
     grayBorderShade: z.string(),
     greenColorShade: z.string(),
@@ -253,8 +253,8 @@ const messageEventProductMainToWorkerZod = z.object({
 });
 
 export {
-    handleMessageEventProductWorkerToMainInputZod,
-    messageEventProductMainToWorkerZod,
+    handleMessageEventProductChartsWorkerToMainInputZod,
+    messageEventProductChartsMainToWorkerZod,
     productMetricsDocumentZod,
     setCalendarChartsDataProductMetricsDispatchZod,
     setChartsProductMetricsDispatchZod,

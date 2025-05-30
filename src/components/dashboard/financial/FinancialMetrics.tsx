@@ -13,7 +13,7 @@ import type {
   Year,
 } from "../types";
 import { financialMetricsAction } from "./actions";
-import { MessageEventFinancialWorkerToMain } from "./chartsWorker";
+import { MessageEventFinancialChartsWorkerToMain } from "./chartsWorker";
 import FinancialChartsWorker from "./chartsWorker?worker";
 import { PERT_SET } from "./constants";
 import { handleMessageEventFinancialWorkerToMain } from "./handlers";
@@ -111,7 +111,7 @@ function FinancialMetrics(
     });
 
     newFinancialChartsWorker.onmessage = async (
-      event: MessageEventFinancialWorkerToMain,
+      event: MessageEventFinancialChartsWorkerToMain,
     ) => {
       await handleMessageEventFinancialWorkerToMain({
         event,
