@@ -117,6 +117,7 @@ self.onmessage = async (
 
             self.postMessage(
                 createSafeSuccessResult({
+                    decodedToken: None,
                     from: "cache",
                     responsePayloadSafe:
                         responsePayloadWithModifiedUserDocResult.val.val,
@@ -225,7 +226,7 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                decodedToken: decodedTokenResult,
+                decodedToken: decodedTokenResult.val,
                 kind: "fetched",
                 responsePayloadSafe: sortedAndModifiedUserDocsResult.val.val,
             }),

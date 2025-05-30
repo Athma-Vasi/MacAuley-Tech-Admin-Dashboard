@@ -255,9 +255,6 @@ type UsersQueryDispatch =
 const messageEventUsersFetchMainToWorkerZod = z.object({
     arrangeByDirection: arrangeByDirectionZod,
     arrangeByField: arrangeByFieldZod,
-    currentPage: z.number().min(0),
-    newQueryFlag: z.boolean(),
-    queryString: z.string(),
     requestInit: z.any(),
     routesZodSchemaMapKey: z.string(),
     url: z.string().url(),
