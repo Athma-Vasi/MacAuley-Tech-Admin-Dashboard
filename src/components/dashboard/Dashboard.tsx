@@ -187,14 +187,14 @@ function Dashboard() {
       attributes={{
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
-        label: currentSelectedInput === "storeLocation"
-          ? (
-            <Group spacing="xs">
-              <Text>Store Location</Text>
-              {isLoading && <Loader size="xs" />}
-            </Group>
-          )
-          : <Text>Store Location</Text>,
+        label: (
+          <Group spacing="xs">
+            <Text>Store Location</Text>
+            {currentSelectedInput === "storeLocation" && isLoading
+              ? <Loader size="xs" />
+              : null}
+          </Group>
+        ),
         name: "storeLocation",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           if (isLoading || isFetching) {
@@ -229,14 +229,14 @@ function Dashboard() {
     <AccessibleSelectInput
       attributes={{
         data: REPAIR_METRICS_DATA,
-        label: currentSelectedInput === "repairs"
-          ? (
-            <Group spacing="xs">
-              <Text>Repair Metrics</Text>
-              {isLoading && <Loader size="xs" />}
-            </Group>
-          )
-          : <Text>Repair Metrics</Text>,
+        label: (
+          <Group spacing="xs">
+            <Text>Repair Metrics</Text>
+            {currentSelectedInput === "repairs" && isLoading
+              ? <Loader size="xs" />
+              : null}
+          </Group>
+        ),
         name: "repairs",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           if (isLoading || isFetching) {
@@ -283,14 +283,14 @@ function Dashboard() {
     <AccessibleSelectInput
       attributes={{
         data: PRODUCT_METRIC_CATEGORY_DATA,
-        label: currentSelectedInput === "product metrics"
-          ? (
-            <Group spacing="xs">
-              <Text>Product Metrics</Text>
-              {isLoading && <Loader size="xs" />}
-            </Group>
-          )
-          : <Text>Product Metrics</Text>,
+        label: (
+          <Group spacing="xs">
+            <Text>Product Metrics</Text>
+            {currentSelectedInput === "product metrics" && isLoading
+              ? <Loader size="xs" />
+              : null}
+          </Group>
+        ),
         name: "product metrics",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           if (isLoading || isFetching) {
