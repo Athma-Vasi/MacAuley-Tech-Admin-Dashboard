@@ -2,7 +2,10 @@ import { Orientation } from "react-d3-tree";
 import { Department, StoreLocation } from "../../types";
 import { DirectoryAction } from "./actions";
 
+type DirectoryClickedInput = "department" | "storeLocation" | "";
+
 type DirectoryState = {
+  clickedInput: DirectoryClickedInput;
   department: DepartmentsWithDefaultKey;
   directoryFetchWorker: Worker | null;
   isLoading: boolean;
@@ -15,6 +18,10 @@ type DepartmentsWithDefaultKey = Department | "All Departments";
 type StoreLocationsWithDefaultKey = StoreLocation | "All Locations";
 
 type DirectoryDispatch =
+  | {
+    action: DirectoryAction["setClickedInput"];
+    payload: DirectoryClickedInput;
+  }
   | {
     action: DirectoryAction["setDepartment"];
     payload: DepartmentsWithDefaultKey;

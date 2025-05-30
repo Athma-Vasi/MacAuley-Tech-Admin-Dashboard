@@ -1,4 +1,4 @@
-import { Box, Group, Stack } from "@mantine/core";
+import { Box, Group, Loader, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer } from "react";
 
 import { useErrorBoundary } from "react-error-boundary";
@@ -34,6 +34,7 @@ function Directory() {
     initialDirectoryState,
   );
   const {
+    clickedInput,
     directoryFetchWorker,
     department,
     isLoading,
@@ -95,6 +96,14 @@ function Directory() {
     <AccessibleSelectInput
       attributes={{
         data: ALL_DEPARTMENTS_DATA,
+        label: (
+          <Group spacing="xs">
+            <Text>Department</Text>
+            {clickedInput === "department" && isLoading
+              ? <Loader size="xs" />
+              : null}
+          </Group>
+        ),
         name: "department",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           if (!decodedToken || isLoading) {
@@ -103,6 +112,11 @@ function Directory() {
           const isStoreLocationDisabled = returnIsStoreLocationDisabled(
             event.currentTarget.value as DepartmentsWithDefaultKey,
           );
+
+          directoryDispatch({
+            action: directoryAction.setClickedInput,
+            payload: "department",
+          });
 
           await handleDirectoryDepartmentAndLocationClicks({
             accessToken,
@@ -143,11 +157,24 @@ function Directory() {
       attributes={{
         data: storeLocationData,
         disabled: isStoreLocationDisabled,
+        label: (
+          <Group spacing="xs">
+            <Text>Store Location</Text>
+            {clickedInput === "storeLocation" && isLoading
+              ? <Loader size="xs" />
+              : null}
+          </Group>
+        ),
         name: "storeLocation",
         onChange: async (event: React.ChangeEvent<HTMLSelectElement>) => {
           if (!decodedToken || isLoading) {
             return;
           }
+
+          directoryDispatch({
+            action: directoryAction.setClickedInput,
+            payload: "storeLocation",
+          });
 
           await handleDirectoryDepartmentAndLocationClicks({
             accessToken,

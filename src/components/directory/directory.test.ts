@@ -5,6 +5,7 @@ import { directoryAction } from "./actions";
 import { DEPARTMENTS_DATA, ORIENTATIONS_DATA } from "./constants";
 
 import {
+    directoryReducer_setClickedInput,
     directoryReducer_setDepartment,
     directoryReducer_setDirectoryFetchWorker,
     directoryReducer_setIsLoading,
@@ -148,6 +149,39 @@ describe("Directory Reducers", () => {
                 );
                 expect(state.storeLocation).toBe(
                     initialDirectoryState.storeLocation,
+                );
+            });
+        });
+    });
+
+    describe(directoryAction.setClickedInput, () => {
+        it("should allow valid payload", () => {
+            const validInputs = ["department", "storeLocation", ""] as const;
+            validInputs.forEach((input) => {
+                const dispatch: DirectoryDispatch = {
+                    action: directoryAction.setClickedInput,
+                    payload: input,
+                };
+                const state = directoryReducer_setClickedInput(
+                    initialDirectoryState,
+                    dispatch,
+                );
+                expect(state.clickedInput).toBe(input);
+            });
+        });
+
+        it("should not allow invalid payload", () => {
+            INVALID_STRINGS.forEach((value) => {
+                const dispatch: DirectoryDispatch = {
+                    action: directoryAction.setClickedInput,
+                    payload: value as any,
+                };
+                const state = directoryReducer_setClickedInput(
+                    initialDirectoryState,
+                    dispatch,
+                );
+                expect(state.clickedInput).toBe(
+                    initialDirectoryState.clickedInput,
                 );
             });
         });

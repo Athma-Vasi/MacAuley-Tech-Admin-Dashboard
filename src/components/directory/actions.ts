@@ -9,6 +9,7 @@ type DirectoryAction = Prettify<
 >;
 
 const directoryAction: DirectoryAction = {
+  setClickedInput: "setClickedInput",
   setDepartment: "setDepartment",
   setDirectoryFetchWorker: "setDirectoryFetchWorker",
   setIsLoading: "setIsLoading",

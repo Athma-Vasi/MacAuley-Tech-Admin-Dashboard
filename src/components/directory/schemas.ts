@@ -27,6 +27,11 @@ const setStoreLocationDirectoryDispatchZod = z.object({
     payload: allStoreLocationsZod,
 });
 
+const setClickedInputDirectoryDispatchZod = z.object({
+    action: z.literal(directoryAction.setClickedInput),
+    payload: z.enum(["department", "storeLocation", ""]),
+});
+
 const handleDirectoryDepartmentAndLocationClicksInputZod = z.object({
     accessToken: z.string().min(1),
     department: allDepartmentsZod,
@@ -47,6 +52,7 @@ const messageEventDirectoryFetchMainToWorkerZod = z.object({
 export {
     handleDirectoryDepartmentAndLocationClicksInputZod,
     messageEventDirectoryFetchMainToWorkerZod,
+    setClickedInputDirectoryDispatchZod,
     setDepartmentDirectoryDispatchZod,
     setDirectoryFetchWorkerDirectoryDispatchZod,
     setIsLoadingDirectoryDispatchZod,

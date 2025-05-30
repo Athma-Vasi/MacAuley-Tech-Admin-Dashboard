@@ -2,6 +2,7 @@ import { Orientation } from "react-d3-tree";
 import { parseSyncSafe } from "../../utils";
 import { directoryAction } from "./actions";
 import {
+  setClickedInputDirectoryDispatchZod,
   setDepartmentDirectoryDispatchZod,
   setDirectoryFetchWorkerDirectoryDispatchZod,
   setIsLoadingDirectoryDispatchZod,
@@ -28,6 +29,7 @@ const directoryReducers = new Map<
   DirectoryAction[keyof DirectoryAction],
   (state: DirectoryState, dispatch: DirectoryDispatch) => DirectoryState
 >([
+  [directoryAction.setClickedInput, directoryReducer_setClickedInput],
   [directoryAction.setDepartment, directoryReducer_setDepartment],
   [
     directoryAction.setDirectoryFetchWorker,
@@ -37,6 +39,26 @@ const directoryReducers = new Map<
   [directoryAction.setOrientation, directoryReducer_setOrientation],
   [directoryAction.setStoreLocation, directoryReducer_setStoreLocation],
 ]);
+
+function directoryReducer_setClickedInput(
+  state: DirectoryState,
+  dispatch: DirectoryDispatch,
+): DirectoryState {
+  const parsedResult = parseSyncSafe({
+    object: dispatch,
+    zSchema: setClickedInputDirectoryDispatchZod,
+  });
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    clickedInput: parsedResult.val.val
+      .payload as DirectoryState["clickedInput"],
+  };
+}
 
 function directoryReducer_setDepartment(
   state: DirectoryState,
@@ -137,10 +159,10 @@ function directoryReducer_setStoreLocation(
 
 export {
   directoryReducer,
+  directoryReducer_setClickedInput,
   directoryReducer_setDepartment,
   directoryReducer_setDirectoryFetchWorker,
   directoryReducer_setIsLoading,
   directoryReducer_setOrientation,
-  directoryReducer_setStoreLocation
+  directoryReducer_setStoreLocation,
 };
-
