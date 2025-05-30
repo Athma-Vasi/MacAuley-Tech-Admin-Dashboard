@@ -1,4 +1,4 @@
-import { Ok, Some } from "ts-results";
+import { None, Option } from "ts-results";
 import {
     FETCH_REQUEST_TIMEOUT,
     PROPERTY_DESCRIPTOR,
@@ -28,7 +28,9 @@ import { messageEventUsersFetchMainToWorkerZod } from "./schemas";
 type MessageEventUsersFetchWorkerToMain = MessageEvent<
     SafeResult<
         {
-            decodedToken: DecodedToken;
+            decodedToken: Option<DecodedToken>;
+            // accessToken is not cached, only kept in memory
+            from: "fetch" | "cache";
             responsePayloadSafe: ResponsePayloadSafe<UserDocument>;
         }
     >
@@ -38,10 +40,6 @@ type MessageEventUsersFetchMainToWorker = MessageEvent<
     {
         arrangeByDirection: SortDirection;
         arrangeByField: keyof UserDocument;
-        currentPage: number;
-        decodedToken: DecodedToken;
-        newQueryFlag: boolean;
-        queryString: string;
         requestInit: RequestInit;
         routesZodSchemaMapKey: RoutesZodSchemasMapKey;
         url: string;
@@ -76,10 +74,6 @@ self.onmessage = async (
     const {
         arrangeByDirection,
         arrangeByField,
-        currentPage,
-        decodedToken,
-        newQueryFlag,
-        queryString,
         requestInit,
         routesZodSchemaMapKey,
         url,
@@ -103,10 +97,10 @@ self.onmessage = async (
 
         if (cachedResponsePayloadSafeResult.val.some) {
             const responsePayloadWithModifiedUserDocResult =
-                sortUserDocumentsAndAddFields(
-                    cachedResponsePayloadSafeResult.val.val,
+                sortAndModifyUserDocumentsSafe(
                     arrangeByDirection,
                     arrangeByField,
+                    cachedResponsePayloadSafeResult.val.val,
                 );
             if (responsePayloadWithModifiedUserDocResult.err) {
                 self.postMessage(
@@ -123,18 +117,15 @@ self.onmessage = async (
 
             self.postMessage(
                 createSafeSuccessResult({
-                    currentPage,
-                    decodedToken: new Ok(Some(decodedToken)),
-                    newQueryFlag,
+                    from: "cache",
                     responsePayloadSafe:
                         responsePayloadWithModifiedUserDocResult.val.val,
-                    queryString,
                 }),
             );
             return;
         }
 
-        // if no cached data, proceed with fetch
+        // if there is no cached data, proceed with fetch
         const responseResult = await fetchResponseSafe(url, {
             ...requestInit,
             signal: controller.signal,
@@ -203,42 +194,40 @@ self.onmessage = async (
             return;
         }
 
-        const setItemCacheResult = await setCachedItemAsyncSafe(
-            url,
+        const sortedAndModifiedUserDocsResult = sortAndModifyUserDocumentsSafe(
+            arrangeByDirection,
+            arrangeByField,
             responsePayloadSafeResult.val.val,
         );
-        if (setItemCacheResult.err) {
-            self.postMessage(setItemCacheResult);
+        if (sortedAndModifiedUserDocsResult.err) {
+            self.postMessage(sortedAndModifiedUserDocsResult);
             return;
         }
-
-        const responsePayloadWithModifiedUserDocResult =
-            sortUserDocumentsAndAddFields(
-                responsePayloadSafeResult.val.val,
-                arrangeByDirection,
-                arrangeByField,
-            );
-        if (responsePayloadWithModifiedUserDocResult.err) {
-            self.postMessage(
-                responsePayloadWithModifiedUserDocResult,
-            );
-            return;
-        }
-        if (responsePayloadWithModifiedUserDocResult.val.none) {
+        if (sortedAndModifiedUserDocsResult.val.none) {
             self.postMessage(
                 createSafeErrorResult("No data found to sort"),
             );
             return;
         }
 
+        const responseWithoutAccessToken = {
+            ...sortedAndModifiedUserDocsResult.val.val,
+            accessToken: None,
+        };
+        const setItemCacheResult = await setCachedItemAsyncSafe(
+            url,
+            responseWithoutAccessToken,
+        );
+        if (setItemCacheResult.err) {
+            self.postMessage(setItemCacheResult);
+            return;
+        }
+
         self.postMessage(
             createSafeSuccessResult({
-                currentPage,
                 decodedToken: decodedTokenResult,
-                newQueryFlag,
-                responsePayloadSafe:
-                    responsePayloadWithModifiedUserDocResult.val.val,
-                queryString,
+                kind: "fetched",
+                responsePayloadSafe: sortedAndModifiedUserDocsResult.val.val,
             }),
         );
     } catch (error: unknown) {
@@ -265,52 +254,75 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     );
 });
 
-function sortUserDocumentsAndAddFields(
-    responsePayloadSafe: ResponsePayloadSafe<UserDocument>,
+function sortAndModifyUserDocumentsSafe(
     arrangeByDirection: SortDirection,
     arrangeByField: keyof UserDocument,
+    responsePayloadSafe: ResponsePayloadSafe<UserDocument>,
 ): SafeResult<ResponsePayloadSafe<UserDocument>> {
     try {
-        const cloned = structuredClone(responsePayloadSafe);
-        const sorted = cloned.data.sort((a, b) => {
-            const aValue = a[arrangeByField];
-            const bValue = b[arrangeByField];
+        const modifiedAndSorted = Object.entries(responsePayloadSafe).reduce<
+            ResponsePayloadSafe<UserDocument>
+        >(
+            (acc, [key, value]) => {
+                if (key === "data" && Array.isArray(value)) {
+                    const sorted = value.sort((a, b) => {
+                        const aValue = a[arrangeByField];
+                        const bValue = b[arrangeByField];
+                        if (aValue === undefined && bValue === undefined) {
+                            return 0;
+                        }
+                        if (aValue === undefined) {
+                            return 1;
+                        }
+                        if (bValue === undefined) {
+                            return -1;
+                        }
+                        if (arrangeByDirection === "ascending") {
+                            return aValue > bValue ? 1 : -1;
+                        }
 
-            if (aValue === undefined && bValue === undefined) return 0;
-            if (aValue === undefined) return 1;
-            if (bValue === undefined) return -1;
+                        return aValue < bValue ? 1 : -1;
+                    });
+                    const withFUIAndPPUFieldsAdded = sorted.map(
+                        (userDocument) => {
+                            return {
+                                ...userDocument,
+                                fileUploadId: userDocument.fileUploadId
+                                    ? userDocument.fileUploadId
+                                    : "",
+                                profilePictureUrl:
+                                    userDocument.profilePictureUrl
+                                        ? userDocument.profilePictureUrl
+                                        : "",
+                            };
+                        },
+                    );
 
-            if (arrangeByDirection === "ascending") {
-                return aValue > bValue ? 1 : -1;
-            } else {
-                return aValue < bValue ? 1 : -1;
-            }
-        });
+                    Object.defineProperty(
+                        acc,
+                        key,
+                        {
+                            value: withFUIAndPPUFieldsAdded,
+                            ...PROPERTY_DESCRIPTOR,
+                        },
+                    );
+                }
 
-        const withFUIAndPPUFieldsAdded = sorted.map(
-            (userDocument) => {
-                return {
-                    ...userDocument,
-                    fileUploadId: userDocument.fileUploadId
-                        ? userDocument.fileUploadId
-                        : "",
-                    profilePictureUrl: userDocument.profilePictureUrl
-                        ? userDocument.profilePictureUrl
-                        : "",
-                };
+                Object.defineProperty(
+                    acc,
+                    key,
+                    {
+                        value: value,
+                        ...PROPERTY_DESCRIPTOR,
+                    },
+                );
+
+                return acc;
             },
+            Object.create(null),
         );
 
-        Object.defineProperty(
-            responsePayloadSafe,
-            "data",
-            {
-                value: withFUIAndPPUFieldsAdded,
-                ...PROPERTY_DESCRIPTOR,
-            },
-        );
-
-        return createSafeSuccessResult(responsePayloadSafe);
+        return createSafeSuccessResult(modifiedAndSorted);
     } catch (error: unknown) {
         return createSafeErrorResult(error);
     }

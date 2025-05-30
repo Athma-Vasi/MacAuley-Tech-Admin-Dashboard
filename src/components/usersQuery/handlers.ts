@@ -2,7 +2,7 @@ import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
-import { DecodedToken, SafeResult, UserDocument } from "../../types";
+import { ResponsePayloadSafe, SafeResult, UserDocument } from "../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
@@ -11,7 +11,7 @@ import {
     parseSyncSafe,
 } from "../../utils";
 import { SortDirection } from "../query/types";
-import { usersQueryAction } from "./actions";
+import { UsersQueryAction, usersQueryAction } from "./actions";
 import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
 import {
     handleMessageEventUsersFetchWorkerToMainInputZod,
@@ -25,7 +25,6 @@ async function handleUsersQuerySubmitGETClick(
         arrangeByDirection: SortDirection;
         arrangeByField: keyof UserDocument;
         currentPage: number;
-        decodedToken: DecodedToken;
         isComponentMountedRef: React.RefObject<boolean>;
         newQueryFlag: boolean;
         queryString: string;
@@ -58,7 +57,6 @@ async function handleUsersQuerySubmitGETClick(
             arrangeByDirection,
             arrangeByField,
             currentPage,
-            decodedToken,
             newQueryFlag,
             queryString,
             totalDocuments,
@@ -95,10 +93,6 @@ async function handleUsersQuerySubmitGETClick(
         usersFetchWorker?.postMessage({
             arrangeByDirection,
             arrangeByField,
-            currentPage,
-            decodedToken,
-            newQueryFlag,
-            queryString,
             requestInit,
             routesZodSchemaMapKey: "users",
             url: cacheKey,
@@ -176,6 +170,7 @@ async function handleMessageEventUsersFetchWorkerToMain(
 
         const {
             responsePayloadSafe,
+            from,
             decodedToken,
         } = messageEventResult.val.val;
         const {
@@ -183,7 +178,6 @@ async function handleMessageEventUsersFetchWorkerToMain(
             kind,
             message,
             triggerLogout,
-            data: userDocuments,
         } = responsePayloadSafe;
 
         if (triggerLogout) {
@@ -209,13 +203,39 @@ async function handleMessageEventUsersFetchWorkerToMain(
             return createSafeErrorResult("Logged out");
         }
 
+        if (from === "cache") {
+            updateUsersQueryState(
+                responsePayloadSafe,
+                usersQueryAction,
+                usersQueryDispatch,
+            );
+            return createSafeSuccessResult(
+                "User documents retrieved from cache successfully",
+            );
+        }
+
+        if (newAccessToken.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Access token is missing from parsed response from worker",
+            );
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
+        }
         authDispatch({
             action: authAction.setAccessToken,
-            payload: newAccessToken.none ? "" : newAccessToken.val,
+            payload: newAccessToken.val,
         });
+
+        if (decodedToken.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Decoded token is missing from parsed response from worker",
+            );
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
+        }
         authDispatch({
             action: authAction.setDecodedToken,
-            payload: decodedToken,
+            payload: decodedToken.val,
         });
 
         if (kind === "error") {
@@ -226,30 +246,11 @@ async function handleMessageEventUsersFetchWorkerToMain(
             return safeErrorResult;
         }
 
-        usersQueryDispatch({
-            action: usersQueryAction.setResourceData,
-            payload: userDocuments,
-        });
-        usersQueryDispatch({
-            action: usersQueryAction.setTotalDocuments,
-            payload: responsePayloadSafe.totalDocuments.none
-                ? 0
-                : responsePayloadSafe.totalDocuments.val,
-        });
-        usersQueryDispatch({
-            action: usersQueryAction.setPages,
-            payload: responsePayloadSafe.pages.none
-                ? 0
-                : responsePayloadSafe.pages.val,
-        });
-        usersQueryDispatch({
-            action: usersQueryAction.setNewQueryFlag,
-            payload: true,
-        });
-        usersQueryDispatch({
-            action: usersQueryAction.setIsLoading,
-            payload: false,
-        });
+        updateUsersQueryState(
+            responsePayloadSafe,
+            usersQueryAction,
+            usersQueryDispatch,
+        );
 
         return createSafeSuccessResult(
             "User documents fetched successfully",
@@ -261,6 +262,37 @@ async function handleMessageEventUsersFetchWorkerToMain(
             input?.showBoundary,
         );
     }
+}
+
+function updateUsersQueryState(
+    responsePayloadSafe: ResponsePayloadSafe<UserDocument>,
+    usersQueryAction: UsersQueryAction,
+    usersQueryDispatch: React.Dispatch<UsersQueryDispatch>,
+): void {
+    usersQueryDispatch({
+        action: usersQueryAction.setResourceData,
+        payload: responsePayloadSafe.data,
+    });
+    usersQueryDispatch({
+        action: usersQueryAction.setTotalDocuments,
+        payload: responsePayloadSafe.totalDocuments.none
+            ? 0
+            : responsePayloadSafe.totalDocuments.val,
+    });
+    usersQueryDispatch({
+        action: usersQueryAction.setPages,
+        payload: responsePayloadSafe.pages.none
+            ? 0
+            : responsePayloadSafe.pages.val,
+    });
+    usersQueryDispatch({
+        action: usersQueryAction.setNewQueryFlag,
+        payload: true,
+    });
+    usersQueryDispatch({
+        action: usersQueryAction.setIsLoading,
+        payload: false,
+    });
 }
 
 export {

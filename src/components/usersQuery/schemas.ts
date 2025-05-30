@@ -219,7 +219,6 @@ const handleUsersQuerySubmitGETClickInputZod = z.object({
     arrangeByDirection: arrangeByDirectionZod,
     arrangeByField: arrangeByFieldZod,
     currentPage: z.number().min(0),
-    decodedToken: decodedTokenZod,
     isComponentMountedRef: z.object({ current: z.boolean() }),
     newQueryFlag: z.boolean(),
     queryString: z.string(),
