@@ -299,7 +299,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
 
           await handleDirectoryNavClick({
             accessToken,
-            decodedToken,
             department: "Executive Management",
             directoryFetchWorker,
             directoryUrl: API_URL,

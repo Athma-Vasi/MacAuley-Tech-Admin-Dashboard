@@ -27,7 +27,7 @@ function createDirectoryURLCacheKey(
       `${directoryUrl}/user/?&limit=200&newQueryFlag=true&totalDocuments=0`,
     )
     : new URL(
-      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
+      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=200&newQueryFlag=true&totalDocuments=0`,
     );
 
   return urlWithQuery.toString();

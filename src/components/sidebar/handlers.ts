@@ -6,7 +6,6 @@ import { globalAction } from "../../context/globalProvider/actions";
 import { GlobalDispatch } from "../../context/globalProvider/types";
 import {
   CustomerMetricsDocument,
-  DecodedToken,
   FinancialMetricsDocument,
   ProductMetricsDocument,
   RepairMetricsDocument,
@@ -339,7 +338,6 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
 async function handleDirectoryNavClick(
   input: {
     accessToken: string;
-    decodedToken: DecodedToken;
     department: DepartmentsWithDefaultKey;
     directoryFetchWorker: Worker | null;
     directoryUrl: string;
@@ -365,7 +363,6 @@ async function handleDirectoryNavClick(
 
   const {
     accessToken,
-    decodedToken,
     department,
     directoryFetchWorker,
     directoryUrl,
@@ -383,10 +380,10 @@ async function handleDirectoryNavClick(
 
   const urlWithQuery = department === "All Departments"
     ? new URL(
-      `${directoryUrl}/user/?&limit=1000&newQueryFlag=true&totalDocuments=0`,
+      `${directoryUrl}/user/?&limit=200&newQueryFlag=true&totalDocuments=0`,
     )
     : new URL(
-      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=1000&newQueryFlag=true&totalDocuments=0`,
+      `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=200&newQueryFlag=true&totalDocuments=0`,
     );
 
   globalDispatch({
@@ -396,12 +393,8 @@ async function handleDirectoryNavClick(
 
   try {
     directoryFetchWorker?.postMessage({
-      accessToken,
-      decodedToken,
-      department,
       requestInit,
       routesZodSchemaMapKey: "directory",
-      storeLocation,
       url: urlWithQuery.toString(),
     });
 
@@ -472,7 +465,8 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    const { responsePayloadSafe, decodedToken } = messageEventResult.val.val;
+    const { decodedToken, from, responsePayloadSafe } =
+      messageEventResult.val.val;
 
     const { accessToken: newAccessToken, triggerLogout, kind, message } =
       responsePayloadSafe;
@@ -503,6 +497,45 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
+    if (from === "cache") {
+      globalDispatch({
+        action: globalAction.setDirectory,
+        payload: responsePayloadSafe.data,
+      });
+      globalDispatch({
+        action: globalAction.setIsFetching,
+        payload: false,
+      });
+
+      return createSafeSuccessResult(
+        "Directory fetch successful from cache",
+      );
+    }
+
+    if (newAccessToken.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Access token is missing from parsed response from worker",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
+    authDispatch({
+      action: authAction.setAccessToken,
+      payload: newAccessToken.val,
+    });
+
+    if (decodedToken.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Decoded token is missing from parsed response from worker",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
+    authDispatch({
+      action: authAction.setDecodedToken,
+      payload: decodedToken.val,
+    });
+
     if (kind === "error") {
       const safeErrorResult = createSafeErrorResult(
         `Server error: ${message}`,
@@ -511,20 +544,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    const userDocuments = responsePayloadSafe.data;
-
-    authDispatch({
-      action: authAction.setAccessToken,
-      payload: newAccessToken.none ? "" : newAccessToken.val,
-    });
-    authDispatch({
-      action: authAction.setDecodedToken,
-      payload: decodedToken,
-    });
-
     globalDispatch({
       action: globalAction.setDirectory,
-      payload: userDocuments,
+      payload: responsePayloadSafe.data,
     });
     globalDispatch({
       action: globalAction.setIsFetching,

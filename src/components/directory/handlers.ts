@@ -1,4 +1,4 @@
-import { DecodedToken, SafeResult } from "../../types";
+import { SafeResult } from "../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
@@ -13,7 +13,6 @@ import { createDirectoryURLCacheKey } from "./utils";
 async function handleDirectoryDepartmentAndLocationClicks(
     input: {
         accessToken: string;
-        decodedToken: DecodedToken;
         department: DepartmentsWithDefaultKey;
         directoryDispatch: React.Dispatch<DirectoryDispatch>;
         directoryFetchWorker: Worker | null;
@@ -42,7 +41,6 @@ async function handleDirectoryDepartmentAndLocationClicks(
 
         const {
             accessToken,
-            decodedToken,
             department,
             directoryDispatch,
             directoryFetchWorker,
@@ -70,12 +68,8 @@ async function handleDirectoryDepartmentAndLocationClicks(
         });
 
         directoryFetchWorker?.postMessage({
-            accessToken,
-            decodedToken,
-            department,
             requestInit,
             routesZodSchemaMapKey: "directory",
-            storeLocation,
             url: cacheKey,
         });
 

@@ -1,4 +1,4 @@
-import { Ok, Some } from "ts-results";
+import { None, Option } from "ts-results";
 import {
     FETCH_REQUEST_TIMEOUT,
     ROUTES_ZOD_SCHEMAS_MAP,
@@ -11,7 +11,6 @@ import {
     UserDocument,
 } from "../../types";
 import {
-    createHttpResponseSuccess,
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
@@ -22,14 +21,13 @@ import {
     parseSyncSafe,
     setCachedItemAsyncSafe,
 } from "../../utils";
-import { AllStoreLocations } from "../dashboard/types";
 import { messageEventDirectoryFetchMainToWorkerZod } from "./schemas";
-import { DepartmentsWithDefaultKey } from "./types";
 
 type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
     SafeResult<
         {
-            decodedToken: DecodedToken;
+            decodedToken: Option<DecodedToken>;
+            from: "fetch" | "cache";
             responsePayloadSafe: ResponsePayloadSafe<UserDocument>;
         }
     >
@@ -37,12 +35,8 @@ type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
 
 type MessageEventDirectoryFetchMainToWorker = MessageEvent<
     {
-        accessToken: string;
-        decodedToken: DecodedToken;
-        department: DepartmentsWithDefaultKey;
         requestInit: RequestInit;
         routesZodSchemaMapKey: RoutesZodSchemasMapKey;
-        storeLocation: AllStoreLocations;
         url: string;
     }
 >;
@@ -73,12 +67,8 @@ self.onmessage = async (
     }
 
     const {
-        accessToken: accessTokenFromMessage,
-        decodedToken,
-        department,
         requestInit,
         routesZodSchemaMapKey,
-        storeLocation,
         url,
     } = parsedMessageResult.val.val;
 
@@ -86,60 +76,20 @@ self.onmessage = async (
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
     try {
-        const userDocumentsResult = await getCachedItemAsyncSafe<
-            UserDocument[]
+        const cachedResponsePayloadSafeResult = await getCachedItemAsyncSafe<
+            ResponsePayloadSafe<UserDocument>
         >(url);
-        if (userDocumentsResult.err) {
-            self.postMessage(userDocumentsResult);
+        if (cachedResponsePayloadSafeResult.err) {
+            self.postMessage(cachedResponsePayloadSafeResult);
             return;
         }
-        if (userDocumentsResult.val.some) {
-            const userDocuments = userDocumentsResult.val.val;
-            const unparsedResponsePayload = createHttpResponseSuccess<
-                UserDocument[]
-            >({
-                safeSuccessResult: new Ok(
-                    Some(userDocuments),
-                ),
-                accessToken: accessTokenFromMessage,
-            });
-
-            const parsedResponsePayloadSafeResult =
-                await parseResponsePayloadAsyncSafe<UserDocument>({
-                    object: unparsedResponsePayload,
-                    zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
-                });
-            if (parsedResponsePayloadSafeResult.err) {
-                self.postMessage(parsedResponsePayloadSafeResult);
-                return;
-            }
-            if (parsedResponsePayloadSafeResult.val.none) {
-                self.postMessage(
-                    createSafeErrorResult("No parsed result received"),
-                );
-                return;
-            }
-
-            const {
-                data,
-            } = parsedResponsePayloadSafeResult.val.val;
-
-            const setItemCacheResult = await setCachedItemAsyncSafe(
-                url,
-                data,
-            );
-            if (setItemCacheResult.err) {
-                self.postMessage(setItemCacheResult);
-                return;
-            }
-
+        if (cachedResponsePayloadSafeResult.val.some) {
             self.postMessage(
                 createSafeSuccessResult({
-                    decodedToken: new Ok(Some(decodedToken)),
-                    department,
+                    decodedToken: None,
+                    from: "cache",
                     responsePayloadSafe:
-                        parsedResponsePayloadSafeResult.val.val,
-                    storeLocation,
+                        cachedResponsePayloadSafeResult.val.val,
                 }),
             );
             return;
@@ -174,15 +124,17 @@ self.onmessage = async (
             return;
         }
 
-        const parsedResult = await parseResponsePayloadAsyncSafe<UserDocument>({
+        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe<
+            UserDocument
+        >({
             object: jsonResult.val.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        if (parsedResult.err) {
-            self.postMessage(parsedResult);
+        if (responsePayloadSafeResult.err) {
+            self.postMessage(responsePayloadSafeResult);
             return;
         }
-        if (parsedResult.val.none) {
+        if (responsePayloadSafeResult.val.none) {
             self.postMessage(
                 createSafeErrorResult(
                     "Error parsing server response",
@@ -191,16 +143,7 @@ self.onmessage = async (
             return;
         }
 
-        const setItemCacheResult = await setCachedItemAsyncSafe(
-            url,
-            parsedResult.val.val.data,
-        );
-        if (setItemCacheResult.err) {
-            self.postMessage(setItemCacheResult);
-            return;
-        }
-
-        const { accessToken } = parsedResult.val.val;
+        const { accessToken } = responsePayloadSafeResult.val.val;
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
@@ -222,12 +165,24 @@ self.onmessage = async (
             return;
         }
 
+        const responseWithoutAccessToken = {
+            ...responsePayloadSafeResult.val.val,
+            accessToken: None,
+        };
+        const setItemCacheResult = await setCachedItemAsyncSafe(
+            url,
+            responseWithoutAccessToken,
+        );
+        if (setItemCacheResult.err) {
+            self.postMessage(setItemCacheResult);
+            return;
+        }
+
         self.postMessage(
             createSafeSuccessResult({
-                decodedToken: decodedTokenResult.val.val,
-                department,
-                responsePayloadSafe: parsedResult.val.val,
-                storeLocation,
+                decodedToken: decodedTokenResult.val,
+                from: "fetch",
+                responsePayloadSafe: responsePayloadSafeResult.val.val,
             }),
         );
     } catch (error: unknown) {

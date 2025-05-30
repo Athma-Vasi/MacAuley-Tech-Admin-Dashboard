@@ -6,7 +6,6 @@ import {
     repairMetricCategoryZod,
 } from "../../schemas";
 import { sidebarAction } from "./actions";
-import { decodedTokenZod } from "../usersQuery/schemas";
 
 const setMetricsCacheWorkerSidebarDispatchZod = z.object({
     action: z.literal(sidebarAction.setMetricsCacheWorker),
@@ -55,7 +54,6 @@ const handleMessageEventLogoutFetchWorkerToMainInputZod = z.object({
 
 const handleDirectoryNavClickInputZod = z.object({
     accessToken: z.string().min(1).max(1000),
-    decodedToken: decodedTokenZod,
     department: z.enum([
         "All Departments",
         "Executive Management",

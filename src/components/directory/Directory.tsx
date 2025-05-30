@@ -106,7 +106,6 @@ function Directory() {
 
           await handleDirectoryDepartmentAndLocationClicks({
             accessToken,
-            decodedToken,
             department: event.currentTarget.value as DepartmentsWithDefaultKey,
             directoryDispatch,
             directoryFetchWorker,
@@ -152,7 +151,6 @@ function Directory() {
 
           await handleDirectoryDepartmentAndLocationClicks({
             accessToken,
-            decodedToken,
             department,
             directoryDispatch,
             directoryFetchWorker,
