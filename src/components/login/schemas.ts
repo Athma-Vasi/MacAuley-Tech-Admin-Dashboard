@@ -61,6 +61,11 @@ const setRepairMetricsGeneratedLoginDispatchZod = z.object({
     payload: z.boolean(),
 });
 
+const setFinancialMetricsGeneratedLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setFinancialMetricsGenerated),
+    payload: z.boolean(),
+});
+
 type LoginDispatch =
     | z.infer<typeof setIsLoadingLoginDispatchZod>
     | z.infer<typeof setIsSubmittingLoginDispatchZod>
@@ -74,7 +79,8 @@ type LoginDispatch =
     | z.infer<typeof setRepairMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setCustomerMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setProductMetricsGeneratedLoginDispatchZod>
-    | z.infer<typeof setRepairMetricsGeneratedLoginDispatchZod>;
+    | z.infer<typeof setRepairMetricsGeneratedLoginDispatchZod>
+    | z.infer<typeof setFinancialMetricsGeneratedLoginDispatchZod>;
 
 const handleLoginClickInputZod = z.object({
     isLoading: z.boolean(),
@@ -98,11 +104,43 @@ const handleMessageEventLoginFetchWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
+const handleMessageEventCustomerMetricsWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
+const handleMessageEventProductMetricsWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    loginDispatch: z.function().args(z.any()).returns(z.void()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
+const handleMessageEventRepairMetricsWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    loginDispatch: z.function().args(z.any()).returns(z.void()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
+const handleMessageEventFinancialMetricsWorkerToMainInputZod = z.object({
+    event: z.instanceof(MessageEvent),
+    loginDispatch: z.function().args(z.any()).returns(z.void()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
 export {
     handleLoginClickInputZod,
+    handleMessageEventCustomerMetricsWorkerToMainInputZod,
+    handleMessageEventFinancialMetricsWorkerToMainInputZod,
     handleMessageEventLoginFetchWorkerToMainInputZod,
+    handleMessageEventProductMetricsWorkerToMainInputZod,
+    handleMessageEventRepairMetricsWorkerToMainInputZod,
     setCustomerMetricsWorkerLoginDispatchZod,
     setErrorMessageLoginDispatchZod,
+    setFinancialMetricsGeneratedLoginDispatchZod,
     setFinancialMetricsWorkerLoginDispatchZod,
     setIsLoadingLoginDispatchZod,
     setIsSubmittingLoginDispatchZod,

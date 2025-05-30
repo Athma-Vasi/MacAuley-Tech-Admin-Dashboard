@@ -28,14 +28,7 @@ import {
 
 type MessageEventFinancialMetricsWorkerToMain = MessageEvent<
     SafeResult<
-        {
-            financialMetrics: Array<
-                {
-                    storeLocation: AllStoreLocations;
-                    financialMetrics: YearlyFinancialMetric[];
-                }
-            >;
-        }
+        boolean
     >
 >;
 type MessageEventFinancialMetricsMainToWorker = MessageEvent<
@@ -249,7 +242,10 @@ self.onmessage = async (
             return;
         }
 
-        return handledSettledResult;
+        self.postMessage(
+            createSafeSuccessResult(true),
+        );
+        return;
     } catch (error) {
         console.error("Financial Charts Worker error:", error);
         self.postMessage(

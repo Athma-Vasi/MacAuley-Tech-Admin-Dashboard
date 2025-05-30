@@ -21,7 +21,7 @@ import {
 } from "./generators";
 
 type MessageEventRepairMetricsWorkerToMain = MessageEvent<
-    SafeResult<string>
+    SafeResult<boolean>
 >;
 type MessageEventRepairMetricsMainToWorker = MessageEvent<
     boolean

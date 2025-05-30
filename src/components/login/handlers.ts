@@ -12,11 +12,19 @@ import {
   createSafeSuccessResult,
   parseSyncSafe,
 } from "../../utils";
+import { MessageEventCustomerMetricsWorkerToMain } from "../dashboard/customer/metricsWorker";
+import { MessageEventFinancialMetricsWorkerToMain } from "../dashboard/financial/metricsWorker";
+import { MessageEventProductMetricsWorkerToMain } from "../dashboard/product/metricsWorker";
+import { MessageEventRepairMetricsWorkerToMain } from "../dashboard/repair/metricsWorker";
 import { loginAction } from "./actions";
 import { MessageEventLoginFetchWorkerToMain } from "./fetchWorker";
 import {
   handleLoginClickInputZod,
+  handleMessageEventCustomerMetricsWorkerToMainInputZod,
+  handleMessageEventFinancialMetricsWorkerToMainInputZod,
   handleMessageEventLoginFetchWorkerToMainInputZod,
+  handleMessageEventProductMetricsWorkerToMainInputZod,
+  handleMessageEventRepairMetricsWorkerToMainInputZod,
   LoginDispatch,
 } from "./schemas";
 
@@ -233,4 +241,270 @@ async function handleMessageEventLoginFetchWorkerToMain(
   }
 }
 
-export { handleLoginClick, handleMessageEventLoginFetchWorkerToMain };
+async function handleMessageEventCustomerMetricsWorkerToMain(
+  input: {
+    event: MessageEventCustomerMetricsWorkerToMain;
+    isComponentMountedRef: React.RefObject<boolean>;
+    showBoundary: (error: unknown) => void;
+  },
+): Promise<SafeResult<string>> {
+  try {
+    const parsedInputResult = parseSyncSafe({
+      object: input,
+      zSchema: handleMessageEventCustomerMetricsWorkerToMainInputZod,
+    });
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const {
+      event,
+      isComponentMountedRef,
+      showBoundary,
+    } = parsedInputResult.val.val;
+
+    if (!isComponentMountedRef.current) {
+      return createSafeErrorResult("Component unmounted");
+    }
+
+    const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createSafeErrorResult("No data received");
+    }
+
+    if (messageEventResult.err) {
+      showBoundary(messageEventResult);
+      return messageEventResult;
+    }
+
+    if (messageEventResult.val.none) {
+      return createSafeErrorResult("No customer metrics data found");
+    }
+
+    return messageEventResult;
+  } catch (error: unknown) {
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
+  }
+}
+
+async function handleMessageEventProductMetricsWorkerToMain(input: {
+  event: MessageEventProductMetricsWorkerToMain;
+  loginDispatch: React.Dispatch<LoginDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
+  showBoundary: (error: unknown) => void;
+}): Promise<SafeResult<boolean>> {
+  try {
+    const parsedInputResult = parseSyncSafe({
+      object: input,
+      zSchema: handleMessageEventProductMetricsWorkerToMainInputZod,
+    });
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const {
+      event,
+      loginDispatch,
+      isComponentMountedRef,
+      showBoundary,
+    } = parsedInputResult.val.val;
+
+    if (!isComponentMountedRef.current) {
+      return createSafeErrorResult("Component unmounted");
+    }
+
+    const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createSafeErrorResult("No data received");
+    }
+
+    if (messageEventResult.err) {
+      showBoundary(messageEventResult);
+      return messageEventResult;
+    }
+
+    if (messageEventResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "No product metrics data found",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    loginDispatch({
+      action: loginAction.setProductMetricsGenerated,
+      payload: true,
+    });
+
+    return messageEventResult;
+  } catch (error: unknown) {
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
+  }
+}
+
+async function handleMessageEventRepairMetricsWorkerToMain(input: {
+  event: MessageEventRepairMetricsWorkerToMain;
+  loginDispatch: React.Dispatch<LoginDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
+  showBoundary: (error: unknown) => void;
+}): Promise<SafeResult<boolean>> {
+  try {
+    const parsedInputResult = parseSyncSafe({
+      object: input,
+      zSchema: handleMessageEventRepairMetricsWorkerToMainInputZod,
+    });
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const {
+      event,
+      loginDispatch,
+      isComponentMountedRef,
+      showBoundary,
+    } = parsedInputResult.val.val;
+
+    if (!isComponentMountedRef.current) {
+      return createSafeErrorResult("Component unmounted");
+    }
+
+    const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createSafeErrorResult("No data received");
+    }
+
+    if (messageEventResult.err) {
+      showBoundary(messageEventResult);
+      return messageEventResult;
+    }
+
+    if (messageEventResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "No repair metrics data found",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    loginDispatch({
+      action: loginAction.setRepairMetricsGenerated,
+      payload: true,
+    });
+
+    return messageEventResult;
+  } catch (error: unknown) {
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
+  }
+}
+
+async function handleMessageEventFinancialMetricsWorkerToMain(input: {
+  event: MessageEventFinancialMetricsWorkerToMain;
+  loginDispatch: React.Dispatch<LoginDispatch>;
+  isComponentMountedRef: React.RefObject<boolean>;
+  showBoundary: (error: unknown) => void;
+}): Promise<SafeResult<boolean>> {
+  try {
+    const parsedInputResult = parseSyncSafe({
+      object: input,
+      zSchema: handleMessageEventFinancialMetricsWorkerToMainInputZod,
+    });
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const {
+      event,
+      loginDispatch,
+      isComponentMountedRef,
+      showBoundary,
+    } = parsedInputResult.val.val;
+
+    if (!isComponentMountedRef.current) {
+      return createSafeErrorResult("Component unmounted");
+    }
+
+    const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createSafeErrorResult("No data received");
+    }
+
+    if (messageEventResult.err) {
+      showBoundary(messageEventResult);
+      return messageEventResult;
+    }
+
+    if (messageEventResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "No financial metrics data found",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    loginDispatch({
+      action: loginAction.setFinancialMetricsGenerated,
+      payload: true,
+    });
+
+    return messageEventResult;
+  } catch (error: unknown) {
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
+  }
+}
+
+export {
+  handleLoginClick,
+  handleMessageEventCustomerMetricsWorkerToMain,
+  handleMessageEventFinancialMetricsWorkerToMain,
+  handleMessageEventLoginFetchWorkerToMain,
+  handleMessageEventProductMetricsWorkerToMain,
+  handleMessageEventRepairMetricsWorkerToMain,
+};

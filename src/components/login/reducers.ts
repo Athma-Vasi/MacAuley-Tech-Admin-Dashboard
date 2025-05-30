@@ -4,6 +4,7 @@ import {
   LoginDispatch,
   setCustomerMetricsWorkerLoginDispatchZod,
   setErrorMessageLoginDispatchZod,
+  setFinancialMetricsGeneratedLoginDispatchZod,
   setFinancialMetricsWorkerLoginDispatchZod,
   setIsLoadingLoginDispatchZod,
   setIsSubmittingLoginDispatchZod,
@@ -32,6 +33,10 @@ const loginReducersMap = new Map<
 >([
   [loginAction.setCustomerMetricsWorker, loginReducer_setCustomerMetricsWorker],
   [loginAction.setErrorMessage, loginReducer_setErrorMessage],
+  [
+    loginAction.setFinancialMetricsGenerated,
+    loginReducer_setFinancialMetricsGenerated,
+  ],
   [
     loginAction.setFinancialMetricsWorker,
     loginReducer_setFinancialMetricsWorker,
@@ -93,6 +98,27 @@ function loginReducer_setErrorMessage(
   return {
     ...state,
     errorMessage: parsedResult.val.val.payload as string,
+  };
+}
+
+function loginReducer_setFinancialMetricsGenerated(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setFinancialMetricsGeneratedLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    financialMetricsGenerated: parsedResult.val.val.payload as boolean,
   };
 }
 
@@ -329,10 +355,18 @@ function loginReducer_setUsername(
 
 export {
   loginReducer,
+  loginReducer_setCustomerMetricsWorker,
+  loginReducer_setErrorMessage,
+  loginReducer_setFinancialMetricsGenerated,
+  loginReducer_setFinancialMetricsWorker,
   loginReducer_setIsLoading,
   loginReducer_setIsSubmitting,
   loginReducer_setIsSuccessful,
   loginReducer_setLoginFetchWorker,
   loginReducer_setPassword,
+  loginReducer_setProductMetricsGenerated,
+  loginReducer_setProductMetricsWorker,
+  loginReducer_setRepairMetricsGenerated,
+  loginReducer_setRepairMetricsWorker,
   loginReducer_setUsername,
 };

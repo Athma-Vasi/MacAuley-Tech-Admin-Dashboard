@@ -23,16 +23,24 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
+import { MessageEventCustomerMetricsWorkerToMain } from "../dashboard/customer/metricsWorker";
 import CustomerMetricsWorker from "../dashboard/customer/metricsWorker?worker";
+import { MessageEventFinancialMetricsWorkerToMain } from "../dashboard/financial/metricsWorker";
 import FinancialMetricsWorker from "../dashboard/financial/metricsWorker?worker";
+import { MessageEventProductMetricsWorkerToMain } from "../dashboard/product/metricsWorker";
 import ProductMetricsWorker from "../dashboard/product/metricsWorker?worker";
+import { MessageEventRepairMetricsWorkerToMain } from "../dashboard/repair/metricsWorker";
 import RepairMetricsWorker from "../dashboard/repair/metricsWorker?worker";
 import { loginAction } from "./actions";
 import { MessageEventLoginFetchWorkerToMain } from "./fetchWorker";
 import LoginFetchWorker from "./fetchWorker?worker";
 import {
   handleLoginClick,
+  handleMessageEventCustomerMetricsWorkerToMain,
+  handleMessageEventFinancialMetricsWorkerToMain,
   handleMessageEventLoginFetchWorkerToMain,
+  handleMessageEventProductMetricsWorkerToMain,
+  handleMessageEventRepairMetricsWorkerToMain,
 } from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
@@ -45,6 +53,7 @@ function Login() {
   const {
     customerMetricsWorker,
     errorMessage,
+    financialMetricsGenerated,
     financialMetricsWorker,
     isLoading,
     isSubmitting,
@@ -92,14 +101,13 @@ function Login() {
       payload: newCustomerMetricsWorker,
     });
     newCustomerMetricsWorker.onmessage = async (
-      event: MessageEvent,
+      event: MessageEventCustomerMetricsWorkerToMain,
     ) => {
-      if (event.data.err || event.data.val.none) {
-        console.error("Error in customer metrics worker:", event.data);
-        return;
-      }
-
-      console.log("Customer metrics worker data:", event.data.val.val);
+      await handleMessageEventCustomerMetricsWorkerToMain({
+        event,
+        isComponentMountedRef,
+        showBoundary,
+      });
     };
 
     const newProductMetricsWorker = new ProductMetricsWorker();
@@ -108,18 +116,14 @@ function Login() {
       payload: newProductMetricsWorker,
     });
     newProductMetricsWorker.onmessage = async (
-      event: MessageEvent,
+      event: MessageEventProductMetricsWorkerToMain,
     ) => {
-      if (event.data.err || event.data.val.none) {
-        console.error("Error in product metrics worker:", event.data);
-        return;
-      }
-
-      loginDispatch({
-        action: loginAction.setProductMetricsGenerated,
-        payload: event.data.val.val,
+      await handleMessageEventProductMetricsWorkerToMain({
+        event,
+        isComponentMountedRef,
+        loginDispatch,
+        showBoundary,
       });
-      console.log("Product metrics worker data:", event.data.val.val);
     };
 
     const newRepairMetricsWorker = new RepairMetricsWorker();
@@ -128,18 +132,14 @@ function Login() {
       payload: newRepairMetricsWorker,
     });
     newRepairMetricsWorker.onmessage = async (
-      event: MessageEvent,
+      event: MessageEventRepairMetricsWorkerToMain,
     ) => {
-      if (event.data.err || event.data.val.none) {
-        console.error("Error in repair metrics worker:", event.data);
-        return;
-      }
-
-      loginDispatch({
-        action: loginAction.setRepairMetricsGenerated,
-        payload: event.data.val.val,
+      await handleMessageEventRepairMetricsWorkerToMain({
+        event,
+        isComponentMountedRef,
+        loginDispatch,
+        showBoundary,
       });
-      console.log("Repair metrics worker data:", event.data.val.val);
     };
 
     const newFinancialMetricsWorker = new FinancialMetricsWorker();
@@ -148,14 +148,14 @@ function Login() {
       payload: newFinancialMetricsWorker,
     });
     newFinancialMetricsWorker.onmessage = async (
-      event: MessageEvent,
+      event: MessageEventFinancialMetricsWorkerToMain,
     ) => {
-      if (event.data.err || event.data.val.none) {
-        console.error("Error in financial metrics worker:", event.data);
-        return;
-      }
-
-      console.log("Financial metrics worker data:", event.data.val.val);
+      await handleMessageEventFinancialMetricsWorkerToMain({
+        event,
+        isComponentMountedRef,
+        loginDispatch,
+        showBoundary,
+      });
     };
 
     return () => {
@@ -284,6 +284,7 @@ function Login() {
     <AccessibleButton
       attributes={{
         dataTestId: "login-button",
+        disabled: !financialMetricsGenerated,
         kind: "submit",
         leftIcon: isSubmitting
           ? (

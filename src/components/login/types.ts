@@ -1,6 +1,7 @@
 type LoginState = {
   customerMetricsWorker: Worker | null;
   errorMessage: string;
+  financialMetricsGenerated: boolean;
   financialMetricsWorker: Worker | null;
   isLoading: boolean;
   isSubmitting: boolean;
