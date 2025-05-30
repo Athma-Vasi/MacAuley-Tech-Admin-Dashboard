@@ -3,7 +3,7 @@ import { useEffect, useReducer } from "react";
 
 import { useErrorBoundary } from "react-error-boundary";
 import { API_URL, COLORS_SWATCHES, STORE_LOCATIONS } from "../../constants";
-import { useFetchAbortControllerRef, useMountedRef } from "../../hooks";
+import { useMountedRef } from "../../hooks";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import type { CheckboxRadioSelectData } from "../../types";
@@ -53,7 +53,6 @@ function Directory() {
   } = returnThemeColors({ colorsSwatches: COLORS_SWATCHES, themeObject });
 
   const isComponentMountedRef = useMountedRef();
-  const fetchAbortControllerRef = useFetchAbortControllerRef();
 
   console.log("auth state inside Directory:", authState);
 
@@ -84,8 +83,6 @@ function Directory() {
 
     return () => {
       isComponentMountedRef.current = false;
-      fetchAbortControllerRef.current?.abort("Component unmounted");
-      fetchAbortControllerRef.current = null;
       newDirectoryFetchWorker.terminate();
     };
   }, []);

@@ -12,7 +12,6 @@ import {
     UserDocument,
 } from "../../types";
 import {
-    createHttpResponseSuccess,
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
@@ -37,7 +36,6 @@ type MessageEventUsersFetchWorkerToMain = MessageEvent<
 
 type MessageEventUsersFetchMainToWorker = MessageEvent<
     {
-        accessToken: string;
         arrangeByDirection: SortDirection;
         arrangeByField: keyof UserDocument;
         currentPage: number;
@@ -46,7 +44,6 @@ type MessageEventUsersFetchMainToWorker = MessageEvent<
         queryString: string;
         requestInit: RequestInit;
         routesZodSchemaMapKey: RoutesZodSchemasMapKey;
-        totalDocuments: number;
         url: string;
     }
 >;
@@ -77,7 +74,6 @@ self.onmessage = async (
     }
 
     const {
-        accessToken: accessTokenFromMessage,
         arrangeByDirection,
         arrangeByField,
         currentPage,
@@ -86,7 +82,6 @@ self.onmessage = async (
         queryString,
         requestInit,
         routesZodSchemaMapKey,
-        totalDocuments,
         url,
     } = parsedMessageResult.val.val;
 
@@ -97,81 +92,34 @@ self.onmessage = async (
     );
 
     try {
-        const userDocumentsResult = await getCachedItemAsyncSafe<
-            UserDocument[]
+        const cachedResponsePayloadSafeResult = await getCachedItemAsyncSafe<
+            ResponsePayloadSafe<UserDocument>
         >(url);
 
-        if (userDocumentsResult.err) {
-            self.postMessage(userDocumentsResult);
+        if (cachedResponsePayloadSafeResult.err) {
+            self.postMessage(cachedResponsePayloadSafeResult);
             return;
         }
 
-        if (userDocumentsResult.val.some) {
-            const queryParams = new URLSearchParams(queryString);
-            const limit = queryParams.get("limit");
-            if (limit == null) {
+        if (cachedResponsePayloadSafeResult.val.some) {
+            const responsePayloadWithModifiedUserDocResult =
+                sortUserDocumentsAndAddFields(
+                    cachedResponsePayloadSafeResult.val.val,
+                    arrangeByDirection,
+                    arrangeByField,
+                );
+            if (responsePayloadWithModifiedUserDocResult.err) {
                 self.postMessage(
-                    createSafeErrorResult("No limit found in query string"),
+                    responsePayloadWithModifiedUserDocResult,
                 );
                 return;
             }
-
-            const userDocuments = userDocumentsResult.val.val;
-            const unparsedResponsePayload = createHttpResponseSuccess<
-                UserDocument[]
-            >({
-                safeSuccessResult: new Ok(
-                    Some(userDocuments),
-                ),
-                accessToken: accessTokenFromMessage,
-                message: "Cached user documents retrieved successfully",
-                pages: totalDocuments / parseInt(limit, 10),
-                totalDocuments,
-            });
-
-            const parsedResponsePayloadSafeResult =
-                await parseResponsePayloadAsyncSafe<UserDocument>({
-                    object: unparsedResponsePayload,
-                    zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
-                });
-            if (parsedResponsePayloadSafeResult.err) {
-                self.postMessage(parsedResponsePayloadSafeResult);
-                return;
-            }
-            if (parsedResponsePayloadSafeResult.val.none) {
+            if (responsePayloadWithModifiedUserDocResult.val.none) {
                 self.postMessage(
-                    createSafeErrorResult("No parsed result received"),
+                    createSafeErrorResult("No data found to sort"),
                 );
                 return;
             }
-
-            const {
-                data,
-            } = parsedResponsePayloadSafeResult.val.val;
-
-            const withFUIAndPPUFieldsAdded = sortUserDocumentsAndAddFields(
-                data,
-                arrangeByDirection,
-                arrangeByField,
-            );
-
-            const setItemCacheResult = await setCachedItemAsyncSafe(
-                url,
-                withFUIAndPPUFieldsAdded,
-            );
-            if (setItemCacheResult.err) {
-                self.postMessage(setItemCacheResult);
-                return;
-            }
-
-            Object.defineProperty(
-                parsedResponsePayloadSafeResult.val.val,
-                "data",
-                {
-                    value: withFUIAndPPUFieldsAdded,
-                    ...PROPERTY_DESCRIPTOR,
-                },
-            );
 
             self.postMessage(
                 createSafeSuccessResult({
@@ -179,7 +127,7 @@ self.onmessage = async (
                     decodedToken: new Ok(Some(decodedToken)),
                     newQueryFlag,
                     responsePayloadSafe:
-                        parsedResponsePayloadSafeResult.val.val,
+                        responsePayloadWithModifiedUserDocResult.val.val,
                     queryString,
                 }),
             );
@@ -233,11 +181,7 @@ self.onmessage = async (
             return;
         }
 
-        const {
-            data,
-            accessToken,
-        } = responsePayloadSafeResult.val.val;
-
+        const { accessToken } = responsePayloadSafeResult.val.val;
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
@@ -246,30 +190,6 @@ self.onmessage = async (
             );
             return;
         }
-
-        const withFUIAndPPUFieldsAdded = sortUserDocumentsAndAddFields(
-            data,
-            arrangeByDirection,
-            arrangeByField,
-        );
-
-        const setItemCacheResult = await setCachedItemAsyncSafe(
-            url,
-            withFUIAndPPUFieldsAdded,
-        );
-        if (setItemCacheResult.err) {
-            self.postMessage(setItemCacheResult);
-            return;
-        }
-
-        Object.defineProperty(
-            responsePayloadSafeResult.val.val,
-            "data",
-            {
-                value: withFUIAndPPUFieldsAdded,
-                ...PROPERTY_DESCRIPTOR,
-            },
-        );
 
         const decodedTokenResult = decodeJWTSafe(accessToken.val);
         if (decodedTokenResult.err) {
@@ -283,12 +203,41 @@ self.onmessage = async (
             return;
         }
 
+        const setItemCacheResult = await setCachedItemAsyncSafe(
+            url,
+            responsePayloadSafeResult.val.val,
+        );
+        if (setItemCacheResult.err) {
+            self.postMessage(setItemCacheResult);
+            return;
+        }
+
+        const responsePayloadWithModifiedUserDocResult =
+            sortUserDocumentsAndAddFields(
+                responsePayloadSafeResult.val.val,
+                arrangeByDirection,
+                arrangeByField,
+            );
+        if (responsePayloadWithModifiedUserDocResult.err) {
+            self.postMessage(
+                responsePayloadWithModifiedUserDocResult,
+            );
+            return;
+        }
+        if (responsePayloadWithModifiedUserDocResult.val.none) {
+            self.postMessage(
+                createSafeErrorResult("No data found to sort"),
+            );
+            return;
+        }
+
         self.postMessage(
             createSafeSuccessResult({
                 currentPage,
                 decodedToken: decodedTokenResult,
                 newQueryFlag,
-                responsePayloadSafe: responsePayloadSafeResult.val.val,
+                responsePayloadSafe:
+                    responsePayloadWithModifiedUserDocResult.val.val,
                 queryString,
             }),
         );
@@ -317,38 +266,54 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 });
 
 function sortUserDocumentsAndAddFields(
-    userDocuments: UserDocument[],
+    responsePayloadSafe: ResponsePayloadSafe<UserDocument>,
     arrangeByDirection: SortDirection,
     arrangeByField: keyof UserDocument,
-): UserDocument[] {
-    const sorted = userDocuments.sort((a, b) => {
-        const aValue = a[arrangeByField];
-        const bValue = b[arrangeByField];
+): SafeResult<ResponsePayloadSafe<UserDocument>> {
+    try {
+        const cloned = structuredClone(responsePayloadSafe);
+        const sorted = cloned.data.sort((a, b) => {
+            const aValue = a[arrangeByField];
+            const bValue = b[arrangeByField];
 
-        if (aValue === undefined && bValue === undefined) return 0;
-        if (aValue === undefined) return 1;
-        if (bValue === undefined) return -1;
+            if (aValue === undefined && bValue === undefined) return 0;
+            if (aValue === undefined) return 1;
+            if (bValue === undefined) return -1;
 
-        if (arrangeByDirection === "ascending") {
-            return aValue > bValue ? 1 : -1;
-        } else {
-            return aValue < bValue ? 1 : -1;
-        }
-    });
+            if (arrangeByDirection === "ascending") {
+                return aValue > bValue ? 1 : -1;
+            } else {
+                return aValue < bValue ? 1 : -1;
+            }
+        });
 
-    return sorted.map(
-        (userDocument) => {
-            return {
-                ...userDocument,
-                fileUploadId: userDocument.fileUploadId
-                    ? userDocument.fileUploadId
-                    : "",
-                profilePictureUrl: userDocument.profilePictureUrl
-                    ? userDocument.profilePictureUrl
-                    : "",
-            };
-        },
-    );
+        const withFUIAndPPUFieldsAdded = sorted.map(
+            (userDocument) => {
+                return {
+                    ...userDocument,
+                    fileUploadId: userDocument.fileUploadId
+                        ? userDocument.fileUploadId
+                        : "",
+                    profilePictureUrl: userDocument.profilePictureUrl
+                        ? userDocument.profilePictureUrl
+                        : "",
+                };
+            },
+        );
+
+        Object.defineProperty(
+            responsePayloadSafe,
+            "data",
+            {
+                value: withFUIAndPPUFieldsAdded,
+                ...PROPERTY_DESCRIPTOR,
+            },
+        );
+
+        return createSafeSuccessResult(responsePayloadSafe);
+    } catch (error: unknown) {
+        return createSafeErrorResult(error);
+    }
 }
 
 export type {

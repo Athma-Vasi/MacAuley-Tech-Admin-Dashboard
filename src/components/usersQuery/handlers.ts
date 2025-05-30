@@ -93,7 +93,6 @@ async function handleUsersQuerySubmitGETClick(
         });
 
         usersFetchWorker?.postMessage({
-            accessToken,
             arrangeByDirection,
             arrangeByField,
             currentPage,
@@ -102,7 +101,6 @@ async function handleUsersQuerySubmitGETClick(
             queryString,
             requestInit,
             routesZodSchemaMapKey: "users",
-            totalDocuments,
             url: cacheKey,
         });
 

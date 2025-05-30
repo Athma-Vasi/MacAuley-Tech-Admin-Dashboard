@@ -254,7 +254,6 @@ type UsersQueryDispatch =
     | z.infer<typeof setUsersFetchWorkerUsersQueryDispatchZod>;
 
 const messageEventUsersFetchMainToWorkerZod = z.object({
-    accessToken: z.string(),
     arrangeByDirection: arrangeByDirectionZod,
     arrangeByField: arrangeByFieldZod,
     currentPage: z.number().min(0),
@@ -262,7 +261,6 @@ const messageEventUsersFetchMainToWorkerZod = z.object({
     queryString: z.string(),
     requestInit: z.any(),
     routesZodSchemaMapKey: z.string(),
-    totalDocuments: z.number().min(0),
     url: z.string().url(),
 });
 
