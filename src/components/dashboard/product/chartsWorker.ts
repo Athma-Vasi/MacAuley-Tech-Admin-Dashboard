@@ -2,6 +2,7 @@ import { ProductMetricsDocument, SafeResult } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
+    handleErrorResultAndNoneOptionInWorker,
     parseSyncSafe,
 } from "../../../utils";
 import { MONTHS } from "../constants";
@@ -54,14 +55,11 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventProductChartsMainToWorkerZod,
     });
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("Error parsing input"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -75,7 +73,7 @@ self.onmessage = async (
         selectedMonth,
         selectedYear,
         selectedYYYYMMDD,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     try {
         const selectedDateProductMetricsSafeResult =
@@ -86,93 +84,67 @@ self.onmessage = async (
                 months: MONTHS,
                 year: selectedYear,
             });
-        if (selectedDateProductMetricsSafeResult.err) {
-            self.postMessage(selectedDateProductMetricsSafeResult);
-            return;
-        }
-        if (selectedDateProductMetricsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No product metrics found for the selected date",
-                ),
+        const selectedDateProductMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                selectedDateProductMetricsSafeResult,
+                "No product metrics found for the selected date",
             );
+        if (selectedDateProductMetricsOption.none) {
             return;
         }
-        const selectedDateProductMetrics = selectedDateProductMetricsSafeResult
-            .val.val;
 
         const createProductMetricsCalendarChartsSafeResult =
             createProductMetricsCalendarChartsSafe(
                 calendarView,
-                selectedDateProductMetrics,
+                selectedDateProductMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        if (createProductMetricsCalendarChartsSafeResult.err) {
-            self.postMessage(
+        const createProductMetricsCalendarChartsOption =
+            handleErrorResultAndNoneOptionInWorker(
                 createProductMetricsCalendarChartsSafeResult,
+                "No product metrics calendar charts found",
             );
+        if (createProductMetricsCalendarChartsOption.none) {
             return;
         }
-        if (createProductMetricsCalendarChartsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No product metrics calendar charts found",
-                ),
-            );
-            return;
-        }
-        const { currentYear, previousYear } =
-            createProductMetricsCalendarChartsSafeResult.val.val;
 
         const productMetricsChartsSafeResult = createProductMetricsChartsSafe({
             productMetricsDocument,
             months: MONTHS,
-            selectedDateProductMetrics,
+            selectedDateProductMetrics: selectedDateProductMetricsOption.val,
         });
-        if (productMetricsChartsSafeResult.err) {
-            self.postMessage(productMetricsChartsSafeResult);
-            return;
-        }
-        if (productMetricsChartsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No product metrics charts found",
-                ),
+        const productMetricsChartsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                productMetricsChartsSafeResult,
+                "No product metrics charts found",
             );
+        if (productMetricsChartsOption.none) {
             return;
         }
-        const productMetricsCharts = productMetricsChartsSafeResult.val
-            .val;
 
         const productMetricsCardsSafeResult = createProductMetricsCardsSafe({
             grayBorderShade,
             greenColorShade,
             redColorShade,
-            selectedDateProductMetrics,
+            selectedDateProductMetrics: selectedDateProductMetricsOption.val,
         });
-        if (productMetricsCardsSafeResult.err) {
-            self.postMessage(
+        const productMetricsCardsOption =
+            handleErrorResultAndNoneOptionInWorker(
                 productMetricsCardsSafeResult,
+                "No product metrics cards found",
             );
+        if (productMetricsCardsOption.none) {
             return;
         }
-        if (productMetricsCardsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No product metrics cards found",
-                ),
-            );
-            return;
-        }
-        const productMetricsCards = productMetricsCardsSafeResult.val
-            .val;
 
         self.postMessage(
             createSafeSuccessResult({
-                currentYear,
-                previousYear,
-                productMetricsCharts,
-                productMetricsCards,
+                currentYear:
+                    createProductMetricsCalendarChartsOption.val.currentYear,
+                previousYear:
+                    createProductMetricsCalendarChartsOption.val.previousYear,
+                productMetricsCharts: productMetricsChartsOption.val,
+                productMetricsCards: productMetricsCardsOption.val,
             }),
         );
     } catch (error) {
