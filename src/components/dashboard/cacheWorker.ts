@@ -1,9 +1,13 @@
-import { ROUTES_ZOD_SCHEMAS_MAP, RoutesZodSchemasMapKey } from "../../constants";
+import {
+    ROUTES_ZOD_SCHEMAS_MAP,
+    RoutesZodSchemasMapKey,
+} from "../../constants";
 import { BusinessMetricsDocument, SafeResult } from "../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
     getCachedItemAsyncSafe,
+    handleErrorResultAndNoneOptionInWorker,
     parseSyncSafe,
 } from "../../utils";
 import { messageEventDashboardFetchMainToWorkerZod } from "./schemas";
@@ -38,14 +42,11 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventDashboardFetchMainToWorkerZod,
     });
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("Error parsing input"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -53,43 +54,36 @@ self.onmessage = async (
         cacheKey,
         metricsView,
         routesZodSchemaMapKey,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     try {
         const businessMetricsDocumentResult = await getCachedItemAsyncSafe<
             BusinessMetricsDocument
         >(cacheKey);
-        if (businessMetricsDocumentResult.err) {
-            self.postMessage(businessMetricsDocumentResult);
-            return;
-        }
-        if (businessMetricsDocumentResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("No data received"),
+        const businessMetricsDocumentOption =
+            handleErrorResultAndNoneOptionInWorker(
+                businessMetricsDocumentResult,
+                "Error fetching cached metrics document",
             );
+        if (businessMetricsDocumentOption.none) {
             return;
         }
 
         const parsedResult = parseSyncSafe({
-            object: businessMetricsDocumentResult.val.val,
+            object: businessMetricsDocumentOption.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        if (parsedResult.err) {
-            self.postMessage(parsedResult);
-            return;
-        }
-        if (parsedResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Parsed result not found",
-                ),
-            );
+        const parsedResultOption = handleErrorResultAndNoneOptionInWorker(
+            parsedResult,
+            "Parsed result not found",
+        );
+        if (parsedResultOption.none) {
             return;
         }
 
         self.postMessage(
             createSafeSuccessResult({
-                metricsDocument: parsedResult.val.val,
+                metricsDocument: parsedResultOption.val,
                 metricsView,
             }),
         );
@@ -117,6 +111,5 @@ self.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
 
 export type {
     MessageEventDashboardCacheMainToWorker,
-    MessageEventDashboardCacheWorkerToMain
+    MessageEventDashboardCacheWorkerToMain,
 };
-
