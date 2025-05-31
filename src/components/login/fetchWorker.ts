@@ -1,7 +1,8 @@
-import { Option } from "ts-results";
+import { None, Ok, Option } from "ts-results";
 import { z } from "zod";
 import {
     FETCH_REQUEST_TIMEOUT,
+    INVALID_CREDENTIALS,
     METRICS_URL,
     ROUTES_ZOD_SCHEMAS_MAP,
     RoutesZodSchemasMapKey,
@@ -177,7 +178,17 @@ self.onmessage = async (
         }
 
         const responsePayloadSafe = responsePayloadSafeResult.val.val;
-        const { accessToken } = responsePayloadSafe;
+        const { accessToken, message, kind } = responsePayloadSafe;
+
+        if (
+            kind === "error" && message.some &&
+            message.val === INVALID_CREDENTIALS
+        ) {
+            console.log("Invalid credentials error received");
+            self.postMessage(new Ok(None));
+            return;
+        }
+
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult("Access token not found"),

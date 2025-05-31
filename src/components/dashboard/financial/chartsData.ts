@@ -96,11 +96,6 @@ function returnSelectedDateFinancialMetricsSafe({
       );
     }
 
-   
-
-    console.log("DAY:", day); 
-
-
     const selectedDayMetrics = selectedMonthMetrics?.dailyMetrics.find(
       (dailyMetric) => dailyMetric.day === day,
     );
@@ -3713,7 +3708,7 @@ export {
   createFinancialMetricsChartsSafe,
   createYearlyFinancialChartsSafe,
   returnCalendarViewFinancialCharts,
-  returnSelectedDateFinancialMetricsSafe
+  returnSelectedDateFinancialMetricsSafe,
 };
 export type {
   FinancialMetricsBarCharts,
@@ -3726,6 +3721,5 @@ export type {
   FinancialMetricsPieCharts,
   FinancialMetricsPieChartsKey,
   ReturnFinancialMetricsChartsInput,
-  SelectedDateFinancialMetrics
+  SelectedDateFinancialMetrics,
 };
-

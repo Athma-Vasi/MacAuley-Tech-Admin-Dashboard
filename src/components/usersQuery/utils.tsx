@@ -204,6 +204,7 @@ function returnResourceCardElement(
     return (
         <div
             className="resource"
+            key={`resource-${resourceIndex}`}
             style={{ border: `1px solid ${grayBorderShade}` }}
         >
             {Object.entries(resource).map(

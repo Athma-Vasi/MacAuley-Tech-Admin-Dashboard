@@ -25,6 +25,8 @@ const FONT_FAMILY_DATA: CheckboxRadioSelectData<FontFamily> = [
   { value: "Open-Dyslexic", label: "Dyslexic" },
 ];
 
+const INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
+
 type ColorsSwatches = {
   dark: string[];
   gray: string[];
@@ -730,6 +732,7 @@ export {
   FONT_FAMILY_DATA,
   INPUT_WIDTH,
   INVALID_BOOLEANS,
+  INVALID_CREDENTIALS,
   INVALID_NUMBERS,
   INVALID_STRINGS,
   JOB_POSITIONS_DATA,
