@@ -12,6 +12,7 @@ import {
     decodeJWTSafe,
     extractJSONFromResponseSafe,
     fetchResponseSafe,
+    handleErrorResultAndNoneOptionInWorker,
     parseResponsePayloadAsyncSafe,
     parseSyncSafe,
 } from "../utils";
@@ -57,14 +58,11 @@ self.onmessage = async (
             ),
         },
     );
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("Error parsing message"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -73,7 +71,7 @@ self.onmessage = async (
         routesZodSchemaMapKey,
         skipTokenDecode,
         url,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
@@ -83,61 +81,49 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err) {
-            self.postMessage(responseResult);
-            return;
-        }
-        if (responseResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Error fetching response"),
-            );
+        const responseOption = handleErrorResultAndNoneOptionInWorker(
+            responseResult,
+            "Error fetching response",
+        );
+        if (responseOption.none) {
             return;
         }
 
         const jsonResult = await extractJSONFromResponseSafe(
-            responseResult.val.val,
+            responseOption.val,
         );
-        if (jsonResult.err) {
-            self.postMessage(jsonResult);
-            return;
-        }
-        if (jsonResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Error extracting JSON from response",
-                ),
-            );
+        const jsonOption = handleErrorResultAndNoneOptionInWorker(
+            jsonResult,
+            "Error extracting JSON from response",
+        );
+        if (jsonOption.none) {
             return;
         }
 
         const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
-            object: jsonResult.val.val,
+            object: jsonOption.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        if (responsePayloadSafeResult.err) {
-            self.postMessage(responsePayloadSafeResult);
-            return;
-        }
-        if (responsePayloadSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Error parsing server response",
-                ),
+        const responsePayloadSafeOption =
+            handleErrorResultAndNoneOptionInWorker(
+                responsePayloadSafeResult,
+                "Error parsing server response",
             );
+        if (responsePayloadSafeOption.none) {
             return;
         }
 
         if (skipTokenDecode) {
             self.postMessage(
                 createSafeSuccessResult({
-                    responsePayloadSafe: responsePayloadSafeResult.val.val,
+                    responsePayloadSafe: responsePayloadSafeOption.val,
                     decodedToken: None,
                 }),
             );
             return;
         }
 
-        const responsePayloadSafe = responsePayloadSafeResult.val.val;
+        const responsePayloadSafe = responsePayloadSafeOption.val;
         const { accessToken } = responsePayloadSafe;
         if (accessToken.none) {
             self.postMessage(
@@ -147,21 +133,18 @@ self.onmessage = async (
         }
 
         const decodedTokenSafeResult = decodeJWTSafe(accessToken.val);
-        if (decodedTokenSafeResult.err) {
-            self.postMessage(decodedTokenSafeResult);
-            return;
-        }
-        if (decodedTokenSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Error decoding token"),
-            );
+        const decodedTokenOption = handleErrorResultAndNoneOptionInWorker(
+            decodedTokenSafeResult,
+            "Error decoding token",
+        );
+        if (decodedTokenOption.none) {
             return;
         }
 
         self.postMessage(
             createSafeSuccessResult({
                 responsePayloadSafe,
-                decodedToken: decodedTokenSafeResult.val,
+                decodedToken: decodedTokenOption,
             }),
         );
     } catch (error: unknown) {

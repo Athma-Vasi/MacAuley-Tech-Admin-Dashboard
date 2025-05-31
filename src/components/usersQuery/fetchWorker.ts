@@ -209,7 +209,7 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                decodedToken: decodedTokenResult.val,
+                decodedToken: decodedTokenOption,
                 kind: "fetched",
                 responsePayloadSafe: sortedAndModifiedUserDocsOption.val,
             }),
