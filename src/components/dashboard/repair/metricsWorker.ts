@@ -5,6 +5,7 @@ import {
     createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
+    handleErrorResultAndNoneOptionInWorker,
     handlePromiseSettledResults,
     setCachedItemAsyncSafe,
 } from "../../../utils";
@@ -53,10 +54,10 @@ self.onmessage = async (
                                 storeLocation,
                             },
                         );
-                    if (
-                        daysInMonthsInYearsResult.err ||
-                        daysInMonthsInYearsResult.val.none
-                    ) {
+                    if (daysInMonthsInYearsResult.err) {
+                        return daysInMonthsInYearsResult;
+                    }
+                    if (daysInMonthsInYearsResult.val.none) {
                         return createSafeErrorResult(defaultMetrics);
                     }
                     const daysInMonthsInYears =
@@ -68,10 +69,10 @@ self.onmessage = async (
                             daysInMonthsInYears,
                         },
                     );
-                    if (
-                        repairMetricsResult.err ||
-                        repairMetricsResult.val.none
-                    ) {
+                    if (repairMetricsResult.err) {
+                        return repairMetricsResult;
+                    }
+                    if (repairMetricsResult.val.none) {
                         return createSafeErrorResult(defaultMetrics);
                     }
 
@@ -79,10 +80,10 @@ self.onmessage = async (
                         createAllRepairsAggregatedRepairMetricsSafe(
                             repairMetricsResult.val.val,
                         );
-                    if (
-                        aggregatedRepairMetricsResult.err ||
-                        aggregatedRepairMetricsResult.val.none
-                    ) {
+                    if (aggregatedRepairMetricsResult.err) {
+                        return aggregatedRepairMetricsResult;
+                    }
+                    if (aggregatedRepairMetricsResult.val.none) {
                         return createSafeErrorResult(defaultMetrics);
                     }
 
@@ -110,101 +111,83 @@ self.onmessage = async (
             }),
         );
 
-        if (
-            calgaryRepairMetricsSettledResult.status === "rejected" ||
-            edmontonRepairMetricsSettledResult.status === "rejected" ||
-            vancouverRepairMetricsSettledResult.status === "rejected"
-        ) {
+        if (calgaryRepairMetricsSettledResult.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate repair metrics",
+                    calgaryRepairMetricsSettledResult.reason,
                 ),
             );
+            return;
+        }
+        const calgaryRepairMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                calgaryRepairMetricsSettledResult.value,
+                "Failed to generate Calgary repair metrics",
+            );
+        if (calgaryRepairMetricsOption.none) {
             return;
         }
 
-        if (calgaryRepairMetricsSettledResult.value.err) {
-            self.postMessage(calgaryRepairMetricsSettledResult.value);
-            return;
-        }
-        if (calgaryRepairMetricsSettledResult.value.val.none) {
+        if (edmontonRepairMetricsSettledResult.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate Calgary repair metrics",
+                    edmontonRepairMetricsSettledResult.reason,
                 ),
             );
             return;
         }
-        const calgaryRepairMetrics =
-            calgaryRepairMetricsSettledResult.value.val.val;
+        const edmontonRepairMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                edmontonRepairMetricsSettledResult.value,
+                "Failed to generate Edmonton repair metrics",
+            );
+        if (edmontonRepairMetricsOption.none) {
+            return;
+        }
 
-        if (edmontonRepairMetricsSettledResult.value.err) {
-            self.postMessage(edmontonRepairMetricsSettledResult.value);
-            return;
-        }
-        if (edmontonRepairMetricsSettledResult.value.val.none) {
+        if (vancouverRepairMetricsSettledResult.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate Edmonton repair metrics",
+                    vancouverRepairMetricsSettledResult.reason,
                 ),
             );
             return;
         }
-        const edmontonRepairMetrics =
-            edmontonRepairMetricsSettledResult.value.val.val;
-
-        if (vancouverRepairMetricsSettledResult.value.err) {
-            self.postMessage(vancouverRepairMetricsSettledResult.value);
-            return;
-        }
-        if (vancouverRepairMetricsSettledResult.value.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    true,
-                ),
+        const vancouverRepairMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                vancouverRepairMetricsSettledResult.value,
+                "Failed to generate Vancouver repair metrics",
             );
+        if (vancouverRepairMetricsOption.none) {
             return;
         }
-        const vancouverRepairMetrics =
-            vancouverRepairMetricsSettledResult.value.val.val;
 
         const allLocationsAggregatedRepairMetricsResult =
             createAllLocationsAggregatedRepairMetricsSafe({
-                calgaryRepairMetrics,
-                edmontonRepairMetrics,
-                vancouverRepairMetrics,
+                calgaryRepairMetrics: calgaryRepairMetricsOption.val,
+                edmontonRepairMetrics: edmontonRepairMetricsOption.val,
+                vancouverRepairMetrics: vancouverRepairMetricsOption.val,
             });
-
-        if (allLocationsAggregatedRepairMetricsResult.err) {
-            self.postMessage(allLocationsAggregatedRepairMetricsResult);
-            return;
-        }
-        if (allLocationsAggregatedRepairMetricsResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Failed to aggregate repair metrics"),
+        const allLocationsAggregatedRepairMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                allLocationsAggregatedRepairMetricsResult,
+                "Failed to aggregate all locations repair metrics",
             );
+        if (allLocationsAggregatedRepairMetricsOption.none) {
             return;
         }
-        const allLocationsAggregatedRepairMetrics =
-            allLocationsAggregatedRepairMetricsResult.val.val;
 
         const setAllLocationsMetricsInCacheResult =
             await setRepairMetricsInCache(
                 "All Locations",
-                allLocationsAggregatedRepairMetricsResult.val.val,
+                allLocationsAggregatedRepairMetricsOption.val,
             );
-        if (setAllLocationsMetricsInCacheResult.err) {
-            self.postMessage(
+        const setAllLocationsMetricsInCacheOption =
+            handleErrorResultAndNoneOptionInWorker(
                 setAllLocationsMetricsInCacheResult,
+                "Failed to set All Locations repair metrics in cache",
             );
-            return;
-        }
-        if (setAllLocationsMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No All Locations repair metrics set in cache",
-                ),
-            );
+        if (setAllLocationsMetricsInCacheOption.none) {
             return;
         }
 
@@ -212,10 +195,10 @@ self.onmessage = async (
         const setRepairMetricsCacheResult = await setCachedItemAsyncSafe(
             "repairMetrics",
             {
-                Calgary: calgaryRepairMetrics,
-                Edmonton: edmontonRepairMetrics,
-                Vancouver: vancouverRepairMetrics,
-                "All Locations": allLocationsAggregatedRepairMetrics,
+                Calgary: calgaryRepairMetricsOption.val,
+                Edmonton: edmontonRepairMetricsOption.val,
+                Vancouver: vancouverRepairMetricsOption.val,
+                "All Locations": allLocationsAggregatedRepairMetricsOption.val,
             },
         );
         if (setRepairMetricsCacheResult.err) {
@@ -224,9 +207,7 @@ self.onmessage = async (
         }
 
         self.postMessage(
-            createSafeSuccessResult(
-                true,
-            ),
+            createSafeSuccessResult(true),
         );
     } catch (error) {
         console.error("Repair Charts Worker error:", error);

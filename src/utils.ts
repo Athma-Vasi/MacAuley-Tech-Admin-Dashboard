@@ -900,16 +900,18 @@ function handlePromiseSettledResults(
       [Ok<Option<NonNullable<unknown>>>[], Err<SafeError>[]]
     >(
       (acc, result) => {
+        const [successes, errors] = acc;
+
         if (result.status === "fulfilled") {
           if (result.value.err) {
-            acc[1].push(result.value);
+            errors.push(result.value);
           } else if (result.value.val.none) {
-            acc[1].push(createSafeErrorResult("No data"));
+            errors.push(createSafeErrorResult("No data"));
           } else {
-            acc[0].push(result.value);
+            successes.push(result.value);
           }
         } else {
-          acc[1].push(
+          errors.push(
             createSafeErrorResult(
               result.reason ?? "Unknown error",
             ),
