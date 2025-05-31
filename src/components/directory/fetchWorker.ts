@@ -17,6 +17,7 @@ import {
     extractJSONFromResponseSafe,
     fetchResponseSafe,
     getCachedItemAsyncSafe,
+    handleErrorResultAndNoneOptionInWorker,
     parseResponsePayloadAsyncSafe,
     parseSyncSafe,
     setCachedItemAsyncSafe,
@@ -55,14 +56,11 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventDirectoryFetchMainToWorkerZod,
     });
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("Error parsing input"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -70,12 +68,13 @@ self.onmessage = async (
         requestInit,
         routesZodSchemaMapKey,
         url,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
     try {
+        // Check cache first
         const cachedResponsePayloadSafeResult = await getCachedItemAsyncSafe<
             ResponsePayloadSafe<UserDocument>
         >(url);
@@ -95,55 +94,45 @@ self.onmessage = async (
             return;
         }
 
+        // Proceed with fetch if no cache hit
         const responseResult = await fetchResponseSafe(url, {
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err) {
-            self.postMessage(responseResult);
-            return;
-        }
-        if (responseResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Error fetching response"),
-            );
+        const responseOption = handleErrorResultAndNoneOptionInWorker(
+            responseResult,
+            "Error fetching response",
+        );
+        if (responseOption.none) {
             return;
         }
 
         const jsonResult = await extractJSONFromResponseSafe<
             ResponsePayloadSafe<UserDocument>
-        >(responseResult.val.val);
-        if (jsonResult.err) {
-            self.postMessage(jsonResult);
-            return;
-        }
-        if (jsonResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Error extracting JSON from response"),
-            );
+        >(responseOption.val);
+        const jsonOption = handleErrorResultAndNoneOptionInWorker(
+            jsonResult,
+            "Error extracting JSON from response",
+        );
+        if (jsonOption.none) {
             return;
         }
 
         const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe<
             UserDocument
         >({
-            object: jsonResult.val.val,
+            object: jsonOption.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        if (responsePayloadSafeResult.err) {
-            self.postMessage(responsePayloadSafeResult);
-            return;
-        }
-        if (responsePayloadSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Error parsing server response",
-                ),
-            );
+        const responsePayloadOption = handleErrorResultAndNoneOptionInWorker(
+            responsePayloadSafeResult,
+            "Error parsing server response",
+        );
+        if (responsePayloadOption.none) {
             return;
         }
 
-        const { accessToken } = responsePayloadSafeResult.val.val;
+        const { accessToken } = responsePayloadOption.val;
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
@@ -154,19 +143,16 @@ self.onmessage = async (
         }
 
         const decodedTokenResult = decodeJWTSafe(accessToken.val);
-        if (decodedTokenResult.err) {
-            self.postMessage(decodedTokenResult);
-            return;
-        }
-        if (decodedTokenResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Error decoding JWT"),
-            );
+        const decodedTokenOption = handleErrorResultAndNoneOptionInWorker(
+            decodedTokenResult,
+            "Error decoding JWT",
+        );
+        if (decodedTokenOption.none) {
             return;
         }
 
         const responseWithoutAccessToken = {
-            ...responsePayloadSafeResult.val.val,
+            ...responsePayloadOption.val,
             accessToken: None,
         };
         const setItemCacheResult = await setCachedItemAsyncSafe(
@@ -180,9 +166,9 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                decodedToken: decodedTokenResult.val,
+                decodedToken: decodedTokenOption,
                 from: "fetch",
-                responsePayloadSafe: responsePayloadSafeResult.val.val,
+                responsePayloadSafe: responsePayloadOption.val,
             }),
         );
     } catch (error: unknown) {
