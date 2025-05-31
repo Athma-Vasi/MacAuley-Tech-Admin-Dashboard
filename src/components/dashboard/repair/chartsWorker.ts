@@ -55,16 +55,6 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventRepairChartsMainToWorkerZod,
     });
-    // if (parsedMessageResult.err) {
-    //     self.postMessage(parsedMessageResult);
-    //     return;
-    // }
-    // if (parsedMessageResult.val.none) {
-    //     self.postMessage(
-    //         createSafeErrorResult("Error parsing input"),
-    //     );
-    //     return;
-    // }
     const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
         parsedMessageResult,
         "Error parsing message",
@@ -94,22 +84,6 @@ self.onmessage = async (
                 months: MONTHS,
                 year: selectedYear,
             });
-        // if (selectedDateRepairMetricsSafeResult.err) {
-        //     self.postMessage(
-        //         selectedDateRepairMetricsSafeResult,
-        //     );
-        //     return;
-        // }
-        // if (selectedDateRepairMetricsSafeResult.val.none) {
-        //     self.postMessage(
-        //         createSafeErrorResult(
-        //             "No repair metrics found for the selected date",
-        //         ),
-        //     );
-        //     return;
-        // }
-        // const selectedDateRepairMetrics = selectedDateRepairMetricsSafeResult
-        //     .val.val;
         const selectedDateRepairMetricsOption =
             handleErrorResultAndNoneOptionInWorker(
                 selectedDateRepairMetricsSafeResult,
@@ -125,20 +99,6 @@ self.onmessage = async (
                 selectedDateRepairMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        // if (createRepairMetricsCalendarChartsSafeResult.err) {
-        //     self.postMessage(
-        //         createRepairMetricsCalendarChartsSafeResult,
-        //     );
-        //     return;
-        // }
-        // if (createRepairMetricsCalendarChartsSafeResult.val.none) {
-        //     self.postMessage(
-        //         createSafeErrorResult(
-        //             "No repair metrics calendar charts found",
-        //         ),
-        //     );
-        //     return;
-        // }
         const createRepairMetricsCalendarChartsOption =
             handleErrorResultAndNoneOptionInWorker(
                 createRepairMetricsCalendarChartsSafeResult,
@@ -147,28 +107,12 @@ self.onmessage = async (
         if (createRepairMetricsCalendarChartsOption.none) {
             return;
         }
-        // const { currentYear, previousYear } =
-        //     createRepairMetricsCalendarChartsSafeResult.val.val;
 
         const repairMetricsChartsSafeResult = createRepairMetricsChartsSafe({
             repairMetricsDocument,
             months: MONTHS,
             selectedDateRepairMetrics: selectedDateRepairMetricsOption.val,
         });
-        // if (repairMetricsChartsSafeResult.err) {
-        //     self.postMessage(repairMetricsChartsSafeResult);
-        //     return;
-        // }
-        // if (repairMetricsChartsSafeResult.val.none) {
-        //     self.postMessage(
-        //         createSafeErrorResult(
-        //             "No repair metrics charts found",
-        //         ),
-        //     );
-        //     return;
-        // }
-        // const repairMetricsCharts = repairMetricsChartsSafeResult.val
-        //     .val;
         const repairMetricsChartsOption =
             handleErrorResultAndNoneOptionInWorker(
                 repairMetricsChartsSafeResult,
@@ -184,22 +128,6 @@ self.onmessage = async (
             redColorShade,
             selectedDateRepairMetrics: selectedDateRepairMetricsOption.val,
         });
-        // if (repairMetricsCardsSafeResult.err) {
-        //     self.postMessage(
-        //         repairMetricsCardsSafeResult,
-        //     );
-        //     return;
-        // }
-        // if (repairMetricsCardsSafeResult.val.none) {
-        //     self.postMessage(
-        //         createSafeErrorResult(
-        //             "No repair metrics cards found",
-        //         ),
-        //     );
-        //     return;
-        // }
-        // const repairMetricsCards = repairMetricsCardsSafeResult.val
-        //     .val;
         const repairMetricsCardsOption = handleErrorResultAndNoneOptionInWorker(
             repairMetricsCardsSafeResult,
             "No repair metrics cards found",
