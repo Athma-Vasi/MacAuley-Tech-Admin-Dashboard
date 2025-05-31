@@ -18,6 +18,7 @@ import {
     extractJSONFromResponseSafe,
     fetchResponseSafe,
     getCachedItemAsyncSafe,
+    handleErrorResultAndNoneOptionInWorker,
     parseResponsePayloadAsyncSafe,
     parseSyncSafe,
     setCachedItemAsyncSafe,
@@ -89,7 +90,6 @@ self.onmessage = async (
         const cachedResponsePayloadSafeResult = await getCachedItemAsyncSafe<
             ResponsePayloadSafe<UserDocument>
         >(url);
-
         if (cachedResponsePayloadSafeResult.err) {
             self.postMessage(cachedResponsePayloadSafeResult);
             return;
@@ -102,16 +102,12 @@ self.onmessage = async (
                     arrangeByField,
                     cachedResponsePayloadSafeResult.val.val,
                 );
-            if (responsePayloadWithModifiedUserDocResult.err) {
-                self.postMessage(
+            const responsePayloadWithModifiedUserDocOption =
+                handleErrorResultAndNoneOptionInWorker(
                     responsePayloadWithModifiedUserDocResult,
+                    "No data found to sort",
                 );
-                return;
-            }
-            if (responsePayloadWithModifiedUserDocResult.val.none) {
-                self.postMessage(
-                    createSafeErrorResult("No data found to sort"),
-                );
+            if (responsePayloadWithModifiedUserDocOption.none) {
                 return;
             }
 
@@ -120,7 +116,7 @@ self.onmessage = async (
                     decodedToken: None,
                     from: "cache",
                     responsePayloadSafe:
-                        responsePayloadWithModifiedUserDocResult.val.val,
+                        responsePayloadWithModifiedUserDocOption.val,
                 }),
             );
             return;
@@ -131,49 +127,41 @@ self.onmessage = async (
             ...requestInit,
             signal: controller.signal,
         });
-        if (responseResult.err) {
-            self.postMessage(responseResult);
-            return;
-        }
-        if (responseResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("No response received"),
-            );
+        const responseOption = handleErrorResultAndNoneOptionInWorker(
+            responseResult,
+            "No response received",
+        );
+        if (responseOption.none) {
             return;
         }
 
         const jsonResult = await extractJSONFromResponseSafe<
             ResponsePayloadSafe<UserDocument>
-        >(responseResult.val.val);
-        if (jsonResult.err) {
-            self.postMessage(jsonResult);
-            return;
-        }
-        if (jsonResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("No JSON response received"),
-            );
+        >(responseOption.val);
+        const jsonOption = handleErrorResultAndNoneOptionInWorker(
+            jsonResult,
+            "No JSON response received",
+        );
+        if (jsonOption.none) {
             return;
         }
 
         const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe<
             UserDocument
         >({
-            object: jsonResult.val.val,
+            object: jsonOption.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        if (responsePayloadSafeResult.err) {
-            self.postMessage(responsePayloadSafeResult);
-            return;
-        }
-        if (responsePayloadSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("No parsed result received"),
+        const responsePayloadSafeOption =
+            handleErrorResultAndNoneOptionInWorker(
+                responsePayloadSafeResult,
+                "No parsed result received",
             );
+        if (responsePayloadSafeOption.none) {
             return;
         }
 
-        const { accessToken } = responsePayloadSafeResult.val.val;
+        const { accessToken } = responsePayloadSafeOption.val;
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
@@ -184,35 +172,30 @@ self.onmessage = async (
         }
 
         const decodedTokenResult = decodeJWTSafe(accessToken.val);
-        if (decodedTokenResult.err) {
-            self.postMessage(decodedTokenResult);
-            return;
-        }
-        if (decodedTokenResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("No decoded token received"),
-            );
+        const decodedTokenOption = handleErrorResultAndNoneOptionInWorker(
+            decodedTokenResult,
+            "No decoded token received",
+        );
+        if (decodedTokenOption.none) {
             return;
         }
 
         const sortedAndModifiedUserDocsResult = sortAndModifyUserDocumentsSafe(
             arrangeByDirection,
             arrangeByField,
-            responsePayloadSafeResult.val.val,
+            responsePayloadSafeOption.val,
         );
-        if (sortedAndModifiedUserDocsResult.err) {
-            self.postMessage(sortedAndModifiedUserDocsResult);
-            return;
-        }
-        if (sortedAndModifiedUserDocsResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("No data found to sort"),
+        const sortedAndModifiedUserDocsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                sortedAndModifiedUserDocsResult,
+                "No data found to sort",
             );
+        if (sortedAndModifiedUserDocsOption.none) {
             return;
         }
 
         const responseWithoutAccessToken = {
-            ...sortedAndModifiedUserDocsResult.val.val,
+            ...sortedAndModifiedUserDocsOption.val,
             accessToken: None,
         };
         const setItemCacheResult = await setCachedItemAsyncSafe(
@@ -228,7 +211,7 @@ self.onmessage = async (
             createSafeSuccessResult({
                 decodedToken: decodedTokenResult.val,
                 kind: "fetched",
-                responsePayloadSafe: sortedAndModifiedUserDocsResult.val.val,
+                responsePayloadSafe: sortedAndModifiedUserDocsOption.val,
             }),
         );
     } catch (error: unknown) {

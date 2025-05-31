@@ -24,7 +24,6 @@ import {
   Month,
   Year,
 } from "./components/dashboard/types";
-import { DepartmentsWithDefaultKey } from "./components/directory/types";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
@@ -459,6 +458,21 @@ function createSafeErrorResult(error: unknown, trace?: {
     original: serializeSafe(error),
     ...additional,
   });
+}
+
+function handleErrorResultAndNoneOptionInWorker<Data = unknown>(
+  result: SafeResult<Data>,
+  errorMessageIfNone: string,
+): Option<Data> {
+  if (result.err) {
+    self.postMessage(result);
+    return None;
+  }
+  if (result.val.none) {
+    self.postMessage(createSafeErrorResult(errorMessageIfNone));
+    return None;
+  }
+  return result.val;
 }
 
 // copy of backend fns with modification: remove express req and add accessToken
@@ -1071,6 +1085,7 @@ export {
   fetchResponseSafe,
   formatDate,
   getCachedItemAsyncSafe,
+  handleErrorResultAndNoneOptionInWorker,
   handlePromiseSettledResults,
   modifyImageSafe,
   parseResponsePayloadAsyncSafe,
