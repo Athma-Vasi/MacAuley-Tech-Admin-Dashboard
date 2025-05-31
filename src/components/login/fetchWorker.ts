@@ -21,6 +21,7 @@ import {
     extractJSONFromResponseSafe,
     fetchResponseSafe,
     getCachedItemAsyncSafe,
+    handleErrorResultAndNoneOptionInWorker,
     parseResponsePayloadAsyncSafe,
     parseSyncSafe,
 } from "../../utils";
@@ -65,14 +66,11 @@ self.onmessage = async (
             ),
         },
     );
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("Error parsing message"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -80,7 +78,7 @@ self.onmessage = async (
         requestInit,
         routesZodSchemaMapKey,
         url,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
@@ -103,14 +101,6 @@ self.onmessage = async (
                 getCachedItemAsyncSafe<FinancialMetricsDocument>(cacheKey),
             ]);
 
-        if (responseResultSettled.status === "rejected") {
-            self.postMessage(
-                createSafeErrorResult(
-                    responseResultSettled.reason,
-                ),
-            );
-            return;
-        }
         if (financialMetricsDocumentResultSettled.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
@@ -119,65 +109,56 @@ self.onmessage = async (
             );
             return;
         }
-
-        if (financialMetricsDocumentResultSettled.value.err) {
-            self.postMessage(financialMetricsDocumentResultSettled.value);
+        const financialMetricsDocumentResultOption =
+            handleErrorResultAndNoneOptionInWorker(
+                financialMetricsDocumentResultSettled.value,
+                "Error fetching financial metrics document",
+            );
+        if (financialMetricsDocumentResultOption.none) {
             return;
         }
-        if (financialMetricsDocumentResultSettled.value.val.none) {
+
+        if (responseResultSettled.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    "Financial metrics not found in cache",
+                    responseResultSettled.reason,
                 ),
             );
             return;
         }
-
-        if (responseResultSettled.value.err) {
-            self.postMessage(responseResultSettled.value);
-            return;
-        }
-        if (responseResultSettled.value.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Error fetching response"),
-            );
+        const responseResultOption = handleErrorResultAndNoneOptionInWorker(
+            responseResultSettled.value,
+            "Error fetching response",
+        );
+        if (responseResultOption.none) {
             return;
         }
 
         const jsonResult = await extractJSONFromResponseSafe(
-            responseResultSettled.value.val.val,
+            responseResultOption.val,
         );
-        if (jsonResult.err) {
-            self.postMessage(jsonResult);
-            return;
-        }
-        if (jsonResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Error extracting JSON from response",
-                ),
-            );
+        const jsonOption = handleErrorResultAndNoneOptionInWorker(
+            jsonResult,
+            "Error extracting JSON from response",
+        );
+        if (jsonOption.none) {
             return;
         }
 
         const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
-            object: jsonResult.val.val,
+            object: jsonOption.val,
             zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        if (responsePayloadSafeResult.err) {
-            self.postMessage(responsePayloadSafeResult);
-            return;
-        }
-        if (responsePayloadSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Error parsing server response",
-                ),
+        const responsePayloadSafeOption =
+            handleErrorResultAndNoneOptionInWorker(
+                responsePayloadSafeResult,
+                "Error parsing server response",
             );
+        if (responsePayloadSafeOption.none) {
             return;
         }
 
-        const responsePayloadSafe = responsePayloadSafeResult.val.val;
+        const responsePayloadSafe = responsePayloadSafeOption.val;
         const { accessToken, message, kind } = responsePayloadSafe;
 
         if (
@@ -197,23 +178,20 @@ self.onmessage = async (
         }
 
         const decodedTokenSafeResult = decodeJWTSafe(accessToken.val);
-        if (decodedTokenSafeResult.err) {
-            self.postMessage(decodedTokenSafeResult);
-            return;
-        }
-        if (decodedTokenSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("Error decoding token"),
-            );
+        const decodedTokenSafeOption = handleErrorResultAndNoneOptionInWorker(
+            decodedTokenSafeResult,
+            "Error decoding token",
+        );
+        if (decodedTokenSafeOption.none) {
             return;
         }
 
         self.postMessage(
             createSafeSuccessResult({
                 financialMetricsDocument:
-                    financialMetricsDocumentResultSettled.value.val.val,
+                    financialMetricsDocumentResultOption.val,
                 responsePayloadSafe,
-                decodedToken: decodedTokenSafeResult.val,
+                decodedToken: decodedTokenSafeOption,
             }),
         );
     } catch (error: unknown) {
