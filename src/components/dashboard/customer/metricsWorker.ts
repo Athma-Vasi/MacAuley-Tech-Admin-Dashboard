@@ -5,6 +5,7 @@ import {
     createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
+    handleErrorResultAndNoneOptionInWorker,
     setCachedItemAsyncSafe,
 } from "../../../utils";
 import { AllStoreLocations, CustomerMetrics } from "../types";
@@ -91,97 +92,85 @@ self.onmessage = async (
             }),
         );
 
-        if (
-            calgaryCustomerMetricsSettledResult.status === "rejected" ||
-            edmontonCustomerMetricsSettledResult.status === "rejected" ||
-            vancouverCustomerMetricsSettledResult.status === "rejected"
-        ) {
+        if (calgaryCustomerMetricsSettledResult.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate customer metrics",
+                    calgaryCustomerMetricsSettledResult.reason,
                 ),
             );
+            return;
+        }
+        const calgaryCustomerMetricsSettledOption =
+            handleErrorResultAndNoneOptionInWorker(
+                calgaryCustomerMetricsSettledResult.value,
+                "Failed to generate Calgary customer metrics",
+            );
+        if (calgaryCustomerMetricsSettledOption.none) {
             return;
         }
 
-        if (calgaryCustomerMetricsSettledResult.value.err) {
-            self.postMessage(calgaryCustomerMetricsSettledResult.value);
-            return;
-        }
-        if (calgaryCustomerMetricsSettledResult.value.val.none) {
+        if (edmontonCustomerMetricsSettledResult.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate Calgary customer metrics",
+                    edmontonCustomerMetricsSettledResult.reason,
                 ),
             );
+            return;
+        }
+        const edmontonCustomerMetricsSettledOption =
+            handleErrorResultAndNoneOptionInWorker(
+                edmontonCustomerMetricsSettledResult.value,
+                "Failed to generate Edmonton customer metrics",
+            );
+        if (edmontonCustomerMetricsSettledOption.none) {
             return;
         }
 
-        if (edmontonCustomerMetricsSettledResult.value.err) {
-            self.postMessage(edmontonCustomerMetricsSettledResult.value);
-            return;
-        }
-        if (edmontonCustomerMetricsSettledResult.value.val.none) {
+        if (vancouverCustomerMetricsSettledResult.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    "Failed to generate Edmonton customer metrics",
+                    vancouverCustomerMetricsSettledResult.reason,
                 ),
             );
             return;
         }
-
-        if (vancouverCustomerMetricsSettledResult.value.err) {
-            self.postMessage(vancouverCustomerMetricsSettledResult.value);
-            return;
-        }
-        if (vancouverCustomerMetricsSettledResult.value.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Failed to generate Vancouver customer metrics",
-                ),
+        const vancouverCustomerMetricsSettledOption =
+            handleErrorResultAndNoneOptionInWorker(
+                vancouverCustomerMetricsSettledResult.value,
+                "Failed to generate Vancouver customer metrics",
             );
+        if (vancouverCustomerMetricsSettledOption.none) {
             return;
         }
 
         const allLocationsAggregatedCustomerMetricsResult =
             createAllLocationsAggregatedCustomerMetricsSafe({
-                calgaryCustomerMetrics:
-                    calgaryCustomerMetricsSettledResult.value.val.val,
+                calgaryCustomerMetrics: calgaryCustomerMetricsSettledOption.val,
                 edmontonCustomerMetrics:
-                    edmontonCustomerMetricsSettledResult.value.val.val,
+                    edmontonCustomerMetricsSettledOption.val,
                 vancouverCustomerMetrics:
-                    vancouverCustomerMetricsSettledResult.value.val.val,
+                    vancouverCustomerMetricsSettledOption.val,
             });
-        if (allLocationsAggregatedCustomerMetricsResult.err) {
-            self.postMessage(allLocationsAggregatedCustomerMetricsResult);
-            return;
-        }
-        if (
-            allLocationsAggregatedCustomerMetricsResult.val.none
-        ) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Failed to aggregate customer metrics",
-                ),
+        const allLocationsAggregatedCustomerMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                allLocationsAggregatedCustomerMetricsResult,
+                "Failed to aggregate customer metrics",
             );
+        if (allLocationsAggregatedCustomerMetricsOption.none) {
             return;
         }
 
         const setAllLocationsMetricsInCacheResult =
             await setCustomerMetricsInCache(
                 "All Locations",
-                allLocationsAggregatedCustomerMetricsResult.val.val,
+                allLocationsAggregatedCustomerMetricsOption.val,
             );
-        if (setAllLocationsMetricsInCacheResult.err) {
-            self.postMessage(setAllLocationsMetricsInCacheResult);
-            return;
-        }
-        if (setAllLocationsMetricsInCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Failed to set all locations customer metrics in cache",
-                ),
+        const setAllLocationsMetricsInCacheOption =
+            handleErrorResultAndNoneOptionInWorker(
+                setAllLocationsMetricsInCacheResult,
+                "Failed to set all locations customer metrics in cache",
             );
+        if (setAllLocationsMetricsInCacheOption.none) {
             return;
         }
 

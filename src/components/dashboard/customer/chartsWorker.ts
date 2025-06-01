@@ -2,6 +2,7 @@ import { CustomerMetricsDocument, SafeResult } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
+    handleErrorResultAndNoneOptionInWorker,
     parseSyncSafe,
 } from "../../../utils";
 import { MONTHS } from "../constants";
@@ -54,14 +55,11 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventCustomerChartsMainToWorkerZod,
     });
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("Error parsing input"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -75,7 +73,7 @@ self.onmessage = async (
         selectedMonth,
         selectedYear,
         selectedYYYYMMDD,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     try {
         const selectedDateCustomerMetricsSafeResult =
@@ -86,98 +84,73 @@ self.onmessage = async (
                 months: MONTHS,
                 year: selectedYear,
             });
-        if (selectedDateCustomerMetricsSafeResult.err) {
-            self.postMessage(selectedDateCustomerMetricsSafeResult);
-            return;
-        }
-        if (selectedDateCustomerMetricsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No customer metrics found for the selected date",
-                ),
+        const selectedDateCustomerMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                selectedDateCustomerMetricsSafeResult,
+                "No customer metrics found for the selected date",
             );
+        if (selectedDateCustomerMetricsOption.none) {
             return;
         }
-        const selectedDateCustomerMetrics =
-            selectedDateCustomerMetricsSafeResult
-                .val.val;
 
         const createCustomerMetricsCalendarChartsSafeResult =
             createCustomerMetricsCalendarChartsSafe(
                 calendarView,
-                selectedDateCustomerMetrics,
+                selectedDateCustomerMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        if (createCustomerMetricsCalendarChartsSafeResult.err) {
-            self.postMessage(
+        const createCustomerMetricsCalendarChartsOption =
+            handleErrorResultAndNoneOptionInWorker(
                 createCustomerMetricsCalendarChartsSafeResult,
+                "No customer metrics calendar charts found",
             );
+        if (createCustomerMetricsCalendarChartsOption.none) {
             return;
         }
-        if (createCustomerMetricsCalendarChartsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No customer metrics calendar charts found",
-                ),
-            );
-            return;
-        }
-        const { currentYear, previousYear } =
-            createCustomerMetricsCalendarChartsSafeResult.val.val;
 
         const customerMetricsChartsSafeResult = createCustomerMetricsChartsSafe(
             {
                 customerMetricsDocument,
                 months: MONTHS,
-                selectedDateCustomerMetrics,
+                selectedDateCustomerMetrics:
+                    selectedDateCustomerMetricsOption.val,
             },
         );
-        if (customerMetricsChartsSafeResult.err) {
-            self.postMessage(customerMetricsChartsSafeResult);
-            return;
-        }
-        if (customerMetricsChartsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No customer metrics charts found",
-                ),
+        const customerMetricsChartsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                customerMetricsChartsSafeResult,
+                "No customer metrics charts found",
             );
+        if (customerMetricsChartsOption.none) {
             return;
         }
-        const customerMetricsCharts = customerMetricsChartsSafeResult.val
-            .val;
 
         const customerMetricsCardsSafeResult = createCustomerMetricsCardsSafe(
             {
                 grayBorderShade,
                 greenColorShade,
                 redColorShade,
-                selectedDateCustomerMetrics,
+                selectedDateCustomerMetrics:
+                    selectedDateCustomerMetricsOption.val,
             },
         );
-        if (customerMetricsCardsSafeResult.err) {
-            self.postMessage(
+        const customerMetricsCardsOption =
+            handleErrorResultAndNoneOptionInWorker(
                 customerMetricsCardsSafeResult,
+                "No customer metrics cards found",
             );
+        if (customerMetricsCardsOption.none) {
             return;
         }
-        if (customerMetricsCardsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No customer metrics cards found",
-                ),
-            );
-            return;
-        }
-        const customerMetricsCards = customerMetricsCardsSafeResult.val
-            .val;
 
         self.postMessage(
             createSafeSuccessResult({
-                currentYear,
-                previousYear,
-                customerMetricsCharts,
-                customerMetricsCards,
+                currentYear:
+                    createCustomerMetricsCalendarChartsOption.val.currentYear,
+                previousYear:
+                    createCustomerMetricsCalendarChartsOption.val.previousYear,
+                customerMetricsCharts: customerMetricsChartsOption.val,
+                customerMetricsCards: customerMetricsCardsOption.val,
             }),
         );
     } catch (error) {
