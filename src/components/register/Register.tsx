@@ -213,7 +213,7 @@ function Register() {
           : "",
         kind: "next",
         onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
-          const result = handlePrevNextStepClick({
+          handlePrevNextStepClick({
             activeStep,
             isComponentMountedRef,
             kind: "next",

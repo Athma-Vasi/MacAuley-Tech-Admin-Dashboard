@@ -4,6 +4,7 @@ import {
   catchHandlerErrorSafe,
   createSafeErrorResult,
   createSafeSuccessResult,
+  makeTransition,
   parseSyncSafe,
 } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
@@ -649,9 +650,11 @@ function handlePrevNextStepClick(
       },
     });
 
-    registerDispatch({
-      action: registerAction.setActiveStep,
-      payload: kind === "next" ? activeStep + 1 : activeStep - 1,
+    makeTransition(() => {
+      registerDispatch({
+        action: registerAction.setActiveStep,
+        payload: kind === "next" ? activeStep + 1 : activeStep - 1,
+      });
     });
 
     return createSafeSuccessResult(

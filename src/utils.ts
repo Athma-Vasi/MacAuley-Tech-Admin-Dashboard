@@ -6,6 +6,8 @@ import { ColorsSwatches, PROPERTY_DESCRIPTOR } from "./constants";
 
 import { compress, ICompressConfig } from "image-conversion";
 import localforage from "localforage";
+import React from "react";
+import { flushSync } from "react-dom";
 import {
   interquartileRange,
   mean,
@@ -1069,6 +1071,28 @@ function returnStatisticsSafe<
   }
 }
 
+function makeTransition(transition: () => void): SafeResult<boolean> {
+  try {
+    // check if browser supports transitions
+    if (
+      typeof document !== "undefined" && "transition" in document.body.style
+    ) {
+      document.startViewTransition(() => {
+        flushSync(() => {
+          transition();
+        });
+      });
+    } else {
+      // if not, just call the transition function
+      transition();
+    }
+
+    return createSafeSuccessResult(true);
+  } catch (error) {
+    return createSafeErrorResult(error);
+  }
+}
+
 export {
   addCommaSeparator,
   capitalizeJoinWithAnd,
@@ -1089,6 +1113,7 @@ export {
   getCachedItemAsyncSafe,
   handleErrorResultAndNoneOptionInWorker,
   handlePromiseSettledResults,
+  makeTransition,
   modifyImageSafe,
   parseResponsePayloadAsyncSafe,
   parseSyncSafe,
