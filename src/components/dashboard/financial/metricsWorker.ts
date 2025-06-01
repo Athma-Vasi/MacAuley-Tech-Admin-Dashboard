@@ -9,6 +9,7 @@ import {
     createSafeErrorResult,
     createSafeSuccessResult,
     getCachedItemAsyncSafe,
+    handleErrorResultAndNoneOptionInWorker,
     handlePromiseSettledResults,
     removeCachedItemAsyncSafe,
     setCachedItemAsyncSafe,
@@ -51,56 +52,39 @@ self.onmessage = async (
         >(
             "productMetrics",
         );
-        if (getProductMetricsCacheResult.err) {
-            self.postMessage(
-                createSafeErrorResult(getProductMetricsCacheResult),
+        const productMetricsCacheOption =
+            handleErrorResultAndNoneOptionInWorker(
+                getProductMetricsCacheResult,
+                "No product metrics found in cache",
             );
+        if (productMetricsCacheOption.none) {
             return;
         }
-        if (getProductMetricsCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No product metrics found in cache",
-                ),
-            );
-            return;
-        }
-        const productMetrics = getProductMetricsCacheResult.val.val;
 
         const getRepairMetricsCacheResult = await getCachedItemAsyncSafe<
             Record<AllStoreLocations, RepairMetric[]>
         >(
             "repairMetrics",
         );
-        if (getRepairMetricsCacheResult.err) {
-            self.postMessage(
-                createSafeErrorResult(getRepairMetricsCacheResult),
-            );
+        const repairMetricsCacheOption = handleErrorResultAndNoneOptionInWorker(
+            getRepairMetricsCacheResult,
+            "No repair metrics found in cache",
+        );
+        if (repairMetricsCacheOption.none) {
             return;
         }
-        if (getRepairMetricsCacheResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No repair metrics found in cache",
-                ),
-            );
-            return;
-        }
-        const repairMetrics = getRepairMetricsCacheResult.val.val;
 
         const businessMetrics: BusinessMetric[] = ALL_STORE_LOCATIONS_DATA.map(
             ({ value: storeLocation }) => {
-                const productMetricsForLocation =
-                    productMetrics[storeLocation] ?? [];
-                const repairMetricsForLocation = repairMetrics[storeLocation] ??
-                    [];
-
                 return {
                     storeLocation,
                     financialMetrics: [] as YearlyFinancialMetric[],
                     customerMetrics: {} as CustomerMetrics,
-                    productMetrics: productMetricsForLocation,
-                    repairMetrics: repairMetricsForLocation,
+                    productMetrics:
+                        productMetricsCacheOption.val[storeLocation] ?? [],
+                    repairMetrics:
+                        repairMetricsCacheOption.val[storeLocation] ??
+                            [],
                 };
             },
         );
@@ -108,22 +92,17 @@ self.onmessage = async (
         const financialMetricsResult = createRandomFinancialMetricsSafe(
             businessMetrics,
         );
-        if (financialMetricsResult.err) {
-            self.postMessage(
-                createSafeErrorResult(financialMetricsResult),
-            );
-            return;
-        }
-        if (financialMetricsResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult("No financial metrics generated"),
-            );
+        const financialMetricsOption = handleErrorResultAndNoneOptionInWorker(
+            financialMetricsResult,
+            "No financial metrics generated",
+        );
+        if (financialMetricsOption.none) {
             return;
         }
 
         // empty 'All Locations' financial metrics atm
-        const businessMetricsWithIncompleteFinancials = financialMetricsResult
-            .val.val.reduce<
+        const businessMetricsWithIncompleteFinancials = financialMetricsOption
+            .val.reduce<
             BusinessMetric[]
         >((businessMetricsAcc, tuple) => {
             const [storeLocation, financialMetrics] = tuple as [
@@ -148,38 +127,25 @@ self.onmessage = async (
             createAllLocationsAggregatedFinancialMetricsSafe(
                 businessMetricsWithIncompleteFinancials,
             );
-        if (allLocationsAggregatedFinancialMetrics.err) {
-            self.postMessage(
-                createSafeErrorResult(
-                    allLocationsAggregatedFinancialMetrics,
-                ),
+        const allLocationsAggregatedFinancialMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                allLocationsAggregatedFinancialMetrics,
+                "Failed to aggregate financial metrics for All Locations",
             );
-            return;
-        }
-        if (
-            allLocationsAggregatedFinancialMetrics.val.none
-        ) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Failed to aggregate financial metrics for All Locations",
-                ),
-            );
+        if (allLocationsAggregatedFinancialMetricsOption.none) {
             return;
         }
 
-        const completeFinancials = businessMetricsWithIncompleteFinancials
-            .map(
-                (businessMetric) => {
-                    if (businessMetric.storeLocation === "All Locations") {
-                        businessMetric.financialMetrics =
-                            allLocationsAggregatedFinancialMetrics.val.none
-                                ? []
-                                : allLocationsAggregatedFinancialMetrics.val
-                                    .val;
-                    }
-                    return businessMetric;
-                },
-            );
+        const completeFinancials = businessMetricsWithIncompleteFinancials.map(
+            (businessMetric) => {
+                if (businessMetric.storeLocation === "All Locations") {
+                    businessMetric.financialMetrics =
+                        allLocationsAggregatedFinancialMetricsOption.val;
+                }
+
+                return businessMetric;
+            },
+        );
 
         const setItemsInCacheResults = await Promise.allSettled(
             completeFinancials.map(
@@ -211,18 +177,12 @@ self.onmessage = async (
         const handledSettledResult = handlePromiseSettledResults(
             setItemsInCacheResults,
         );
-        if (handledSettledResult.err) {
-            self.postMessage(
-                createSafeErrorResult(handledSettledResult),
+        const handledSettledResultOption =
+            handleErrorResultAndNoneOptionInWorker(
+                handledSettledResult,
+                "Unable to set financial metrics in cache",
             );
-            return;
-        }
-        if (handledSettledResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "Unable to set financial metrics in cache",
-                ),
-            );
+        if (handledSettledResultOption.none) {
             return;
         }
 

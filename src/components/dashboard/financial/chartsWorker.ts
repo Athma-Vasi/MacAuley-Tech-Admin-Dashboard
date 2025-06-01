@@ -2,6 +2,7 @@ import { FinancialMetricsDocument, SafeResult } from "../../../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
+    handleErrorResultAndNoneOptionInWorker,
     parseSyncSafe,
 } from "../../../utils";
 import { MONTHS } from "../constants";
@@ -57,14 +58,11 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventFinancialChartsMainToWorkerZod,
     });
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("Error parsing input"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -78,7 +76,7 @@ self.onmessage = async (
         selectedMonth,
         selectedYear,
         selectedYYYYMMDD,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     try {
         const selectedDateFinancialMetricsSafeResult =
@@ -89,97 +87,72 @@ self.onmessage = async (
                 months: MONTHS,
                 year: selectedYear,
             });
-        if (selectedDateFinancialMetricsSafeResult.err) {
-            self.postMessage(selectedDateFinancialMetricsSafeResult);
-            return;
-        }
-        if (selectedDateFinancialMetricsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No financial metrics found for the selected date",
-                ),
+        const selectedDateFinancialMetricsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                selectedDateFinancialMetricsSafeResult,
+                "No financial metrics found for the selected date",
             );
+        if (selectedDateFinancialMetricsOption.none) {
             return;
         }
-        const selectedDateFinancialMetrics =
-            selectedDateFinancialMetricsSafeResult
-                .val.val;
 
         const createFinancialMetricsCalendarChartsSafeResult =
             createFinancialMetricsCalendarChartsSafe(
                 calendarView,
-                selectedDateFinancialMetrics,
+                selectedDateFinancialMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        if (createFinancialMetricsCalendarChartsSafeResult.err) {
-            self.postMessage(
+        const createFinancialMetricsCalendarChartsOption =
+            handleErrorResultAndNoneOptionInWorker(
                 createFinancialMetricsCalendarChartsSafeResult,
+                "No financial metrics calendar charts found",
             );
+        if (createFinancialMetricsCalendarChartsOption.none) {
             return;
         }
-        if (createFinancialMetricsCalendarChartsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No financial metrics calendar charts found",
-                ),
-            );
-            return;
-        }
-        const { currentYear, previousYear } =
-            createFinancialMetricsCalendarChartsSafeResult.val.val;
 
         const financialMetricsChartsSafeResult =
             createFinancialMetricsChartsSafe({
                 financialMetricsDocument,
                 months: MONTHS,
-                selectedDateFinancialMetrics,
+                selectedDateFinancialMetrics:
+                    selectedDateFinancialMetricsOption.val,
             });
-        if (financialMetricsChartsSafeResult.err) {
-            self.postMessage(financialMetricsChartsSafeResult);
-            return;
-        }
-        if (financialMetricsChartsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No financial metrics charts found",
-                ),
+        const financialMetricsChartsOption =
+            handleErrorResultAndNoneOptionInWorker(
+                financialMetricsChartsSafeResult,
+                "No financial metrics charts found",
             );
+        if (financialMetricsChartsOption.none) {
             return;
         }
-        const financialMetricsCharts = financialMetricsChartsSafeResult.val
-            .val;
 
         const financialMetricsCardsSafeResult = createFinancialMetricsCardsSafe(
             {
                 grayBorderShade,
                 greenColorShade,
                 redColorShade,
-                selectedDateFinancialMetrics,
+                selectedDateFinancialMetrics:
+                    selectedDateFinancialMetricsOption.val,
             },
         );
-        if (financialMetricsCardsSafeResult.err) {
-            self.postMessage(
+        const financialMetricsCardsOption =
+            handleErrorResultAndNoneOptionInWorker(
                 financialMetricsCardsSafeResult,
+                "No financial metrics cards found",
             );
+        if (financialMetricsCardsOption.none) {
             return;
         }
-        if (financialMetricsCardsSafeResult.val.none) {
-            self.postMessage(
-                createSafeErrorResult(
-                    "No financial metrics cards found",
-                ),
-            );
-            return;
-        }
-        const financialMetricsCards = financialMetricsCardsSafeResult.val
-            .val;
 
         self.postMessage(
             createSafeSuccessResult({
-                currentYear,
-                previousYear,
-                financialMetricsCharts,
-                financialMetricsCards,
+                currentYear:
+                    createFinancialMetricsCalendarChartsOption.val.currentYear,
+                previousYear: createFinancialMetricsCalendarChartsOption.val
+                    .previousYear,
+                financialMetricsCharts: financialMetricsChartsOption.val,
+                financialMetricsCards: financialMetricsCardsOption.val,
             }),
         );
     } catch (error) {
