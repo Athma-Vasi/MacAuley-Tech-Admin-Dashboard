@@ -10,7 +10,7 @@ import { MessageEventRepairChartsWorkerToMain } from "./chartsWorker";
 import { handleMessageEventRepairWorkerToMainInputZod } from "./schemas";
 import { RepairMetricsDispatch } from "./types";
 
-async function handleMessageEventRepairWorkerToMain(input: {
+async function handleMessageEventRepairChartsWorkerToMain(input: {
     event: MessageEventRepairChartsWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
     repairMetricsDispatch: React.Dispatch<RepairMetricsDispatch>;
@@ -67,18 +67,14 @@ async function handleMessageEventRepairWorkerToMain(input: {
         }
 
         const {
-            currentYear,
-            previousYear,
+            calendarChartsData,
             repairMetricsCharts,
             repairMetricsCards,
         } = messageEventResult.val.val;
 
         repairMetricsDispatch({
             action: repairMetricsAction.setCalendarChartsData,
-            payload: {
-                currentYear,
-                previousYear,
-            },
+            payload: calendarChartsData,
         });
 
         repairMetricsDispatch({
@@ -103,4 +99,4 @@ async function handleMessageEventRepairWorkerToMain(input: {
     }
 }
 
-export { handleMessageEventRepairWorkerToMain };
+export { handleMessageEventRepairChartsWorkerToMain };

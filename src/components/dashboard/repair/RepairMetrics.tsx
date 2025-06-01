@@ -15,7 +15,7 @@ import type {
 import { repairMetricsAction } from "./actions";
 import { MessageEventRepairChartsWorkerToMain } from "./chartsWorker";
 import RepairChartsWorker from "./chartsWorker?worker";
-import { handleMessageEventRepairWorkerToMain } from "./handlers";
+import { handleMessageEventRepairChartsWorkerToMain } from "./handlers";
 import { repairMetricsReducer } from "./reducers";
 import { RepairRUS } from "./repairRUS/RepairRUS";
 import { initialRepairMetricsState } from "./state";
@@ -86,7 +86,7 @@ function RepairMetrics(
     newRepairChartsWorker.onmessage = async (
       event: MessageEventRepairChartsWorkerToMain,
     ) => {
-      await handleMessageEventRepairWorkerToMain({
+      await handleMessageEventRepairChartsWorkerToMain({
         event,
         isComponentMountedRef,
         repairMetricsDispatch,

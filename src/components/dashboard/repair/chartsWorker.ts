@@ -20,8 +20,10 @@ import { messageEventRepairChartsMainToWorkerZod } from "./schemas";
 type MessageEventRepairChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
-            currentYear: RepairMetricCalendarCharts;
-            previousYear: RepairMetricCalendarCharts;
+            calendarChartsData: {
+                currentYear: RepairMetricCalendarCharts;
+                previousYear: RepairMetricCalendarCharts;
+            };
             repairMetricsCharts: RepairMetricsCharts;
             repairMetricsCards: RepairMetricsCards;
         }
@@ -99,12 +101,12 @@ self.onmessage = async (
                 selectedDateRepairMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        const createRepairMetricsCalendarChartsOption =
+        const repairMetricsCalendarChartsOption =
             handleErrorResultAndNoneOptionInWorker(
                 createRepairMetricsCalendarChartsSafeResult,
                 "No repair metrics calendar charts found",
             );
-        if (createRepairMetricsCalendarChartsOption.none) {
+        if (repairMetricsCalendarChartsOption.none) {
             return;
         }
 
@@ -138,10 +140,7 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                currentYear:
-                    createRepairMetricsCalendarChartsOption.val.currentYear,
-                previousYear:
-                    createRepairMetricsCalendarChartsOption.val.previousYear,
+                calendarChartsData: repairMetricsCalendarChartsOption.val,
                 repairMetricsCharts: repairMetricsChartsOption.val,
                 repairMetricsCards: repairMetricsCardsOption.val,
             }),

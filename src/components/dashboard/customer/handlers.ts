@@ -10,7 +10,7 @@ import { MessageEventCustomerChartsWorkerToMain } from "./chartsWorker";
 import { handleMessageEventCustomerWorkerToMainInputZod } from "./schemas";
 import { CustomerMetricsDispatch } from "./types";
 
-async function handleMessageEventCustomerWorkerToMain(input: {
+async function handleMessageEventCustomerChartsWorkerToMain(input: {
     event: MessageEventCustomerChartsWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
     customerMetricsDispatch: React.Dispatch<CustomerMetricsDispatch>;
@@ -65,18 +65,14 @@ async function handleMessageEventCustomerWorkerToMain(input: {
         }
 
         const {
-            currentYear,
-            previousYear,
+            calendarChartsData,
             customerMetricsCharts,
             customerMetricsCards,
         } = messageEventResult.val.val;
 
         customerMetricsDispatch({
             action: customerMetricsAction.setCalendarChartsData,
-            payload: {
-                currentYear,
-                previousYear,
-            },
+            payload: calendarChartsData,
         });
 
         customerMetricsDispatch({
@@ -101,4 +97,4 @@ async function handleMessageEventCustomerWorkerToMain(input: {
     }
 }
 
-export { handleMessageEventCustomerWorkerToMain };
+export { handleMessageEventCustomerChartsWorkerToMain };

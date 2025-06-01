@@ -16,7 +16,7 @@ import { financialMetricsAction } from "./actions";
 import { MessageEventFinancialChartsWorkerToMain } from "./chartsWorker";
 import FinancialChartsWorker from "./chartsWorker?worker";
 import { PERT_SET } from "./constants";
-import { handleMessageEventFinancialWorkerToMain } from "./handlers";
+import { handleMessageEventFinancialChartsWorkerToMain } from "./handlers";
 import OtherMetrics from "./otherMetrics/OtherMetrics";
 import PERT from "./pert/PERT";
 import { financialMetricsReducer } from "./reducers";
@@ -113,7 +113,7 @@ function FinancialMetrics(
     newFinancialChartsWorker.onmessage = async (
       event: MessageEventFinancialChartsWorkerToMain,
     ) => {
-      await handleMessageEventFinancialWorkerToMain({
+      await handleMessageEventFinancialChartsWorkerToMain({
         event,
         isComponentMountedRef,
         financialMetricsDispatch,

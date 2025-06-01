@@ -6,12 +6,12 @@ import {
     parseSyncSafe,
 } from "../../../utils";
 import { financialMetricsAction } from "./actions";
-import { MessageEventFinancialWorkerToMain } from "./chartsWorker";
+import { MessageEventFinancialChartsWorkerToMain } from "./chartsWorker";
 import { handleMessageEventFinancialWorkerToMainInputZod } from "./schemas";
 import { FinancialMetricsDispatch } from "./types";
 
-async function handleMessageEventFinancialWorkerToMain(input: {
-    event: MessageEventFinancialWorkerToMain;
+async function handleMessageEventFinancialChartsWorkerToMain(input: {
+    event: MessageEventFinancialChartsWorkerToMain;
     isComponentMountedRef: React.RefObject<boolean>;
     financialMetricsDispatch: React.Dispatch<FinancialMetricsDispatch>;
     showBoundary: (error: unknown) => void;
@@ -65,18 +65,14 @@ async function handleMessageEventFinancialWorkerToMain(input: {
         }
 
         const {
-            currentYear,
-            previousYear,
+            calendarChartsData,
             financialMetricsCharts,
             financialMetricsCards,
         } = messageEventResult.val.val;
 
         financialMetricsDispatch({
             action: financialMetricsAction.setCalendarChartsData,
-            payload: {
-                currentYear,
-                previousYear,
-            },
+            payload: calendarChartsData,
         });
 
         financialMetricsDispatch({
@@ -101,4 +97,4 @@ async function handleMessageEventFinancialWorkerToMain(input: {
     }
 }
 
-export { handleMessageEventFinancialWorkerToMain };
+export { handleMessageEventFinancialChartsWorkerToMain };

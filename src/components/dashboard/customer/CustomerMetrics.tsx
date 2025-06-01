@@ -16,7 +16,7 @@ import { customerMetricsAction } from "./actions";
 import { MessageEventCustomerChartsWorkerToMain } from "./chartsWorker";
 import CustomerChartsWorker from "./chartsWorker?worker";
 import { ChurnRetention } from "./churnRetention/ChurnRetention";
-import { handleMessageEventCustomerWorkerToMain } from "./handlers";
+import { handleMessageEventCustomerChartsWorkerToMain } from "./handlers";
 import New from "./new/New";
 import { customerMetricsReducer } from "./reducers";
 import Returning from "./returning/Returning";
@@ -115,7 +115,7 @@ function CustomerMetrics(
     newCustomerChartsWorker.onmessage = async (
       event: MessageEventCustomerChartsWorkerToMain,
     ) => {
-      await handleMessageEventCustomerWorkerToMain({
+      await handleMessageEventCustomerChartsWorkerToMain({
         event,
         isComponentMountedRef,
         customerMetricsDispatch,

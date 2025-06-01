@@ -23,8 +23,10 @@ import { messageEventFinancialChartsMainToWorkerZod } from "./schemas";
 type MessageEventFinancialChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
-            currentYear: FinancialMetricsCalendarCharts;
-            previousYear: FinancialMetricsCalendarCharts;
+            calendarChartsData: {
+                currentYear: FinancialMetricsCalendarCharts;
+                previousYear: FinancialMetricsCalendarCharts;
+            };
             financialMetricsCharts: FinancialMetricsCharts;
             financialMetricsCards: FinancialMetricsCards;
         }
@@ -96,18 +98,18 @@ self.onmessage = async (
             return;
         }
 
-        const createFinancialMetricsCalendarChartsSafeResult =
+        const financialMetricsCalendarChartsSafeResult =
             createFinancialMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateFinancialMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        const createFinancialMetricsCalendarChartsOption =
+        const financialMetricsCalendarChartsOption =
             handleErrorResultAndNoneOptionInWorker(
-                createFinancialMetricsCalendarChartsSafeResult,
+                financialMetricsCalendarChartsSafeResult,
                 "No financial metrics calendar charts found",
             );
-        if (createFinancialMetricsCalendarChartsOption.none) {
+        if (financialMetricsCalendarChartsOption.none) {
             return;
         }
 
@@ -147,10 +149,7 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                currentYear:
-                    createFinancialMetricsCalendarChartsOption.val.currentYear,
-                previousYear: createFinancialMetricsCalendarChartsOption.val
-                    .previousYear,
+                calendarChartsData: financialMetricsCalendarChartsOption.val,
                 financialMetricsCharts: financialMetricsChartsOption.val,
                 financialMetricsCards: financialMetricsCardsOption.val,
             }),

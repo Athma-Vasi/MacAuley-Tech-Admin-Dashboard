@@ -57,18 +57,14 @@ async function handleMessageEventProductChartsWorkerToMain(input: {
         }
 
         const {
-            currentYear,
-            previousYear,
+            calendarChartsData,
             productMetricsCharts,
             productMetricsCards,
         } = messageEventResult.val.val;
 
         productMetricsDispatch({
             action: productMetricsAction.setCalendarChartsData,
-            payload: {
-                currentYear,
-                previousYear,
-            },
+            payload: calendarChartsData,
         });
 
         productMetricsDispatch({

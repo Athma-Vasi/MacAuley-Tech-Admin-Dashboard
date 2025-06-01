@@ -20,8 +20,10 @@ import { messageEventCustomerChartsMainToWorkerZod } from "./schemas";
 type MessageEventCustomerChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
-            currentYear: CustomerMetricsCalendarCharts;
-            previousYear: CustomerMetricsCalendarCharts;
+            calendarChartsData: {
+                currentYear: CustomerMetricsCalendarCharts;
+                previousYear: CustomerMetricsCalendarCharts;
+            };
             customerMetricsCharts: CustomerMetricsCharts;
             customerMetricsCards: CustomerMetricsCards;
         }
@@ -93,18 +95,18 @@ self.onmessage = async (
             return;
         }
 
-        const createCustomerMetricsCalendarChartsSafeResult =
+        const customerMetricsCalendarChartsSafeResult =
             createCustomerMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateCustomerMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        const createCustomerMetricsCalendarChartsOption =
+        const customerMetricsCalendarChartsOption =
             handleErrorResultAndNoneOptionInWorker(
-                createCustomerMetricsCalendarChartsSafeResult,
+                customerMetricsCalendarChartsSafeResult,
                 "No customer metrics calendar charts found",
             );
-        if (createCustomerMetricsCalendarChartsOption.none) {
+        if (customerMetricsCalendarChartsOption.none) {
             return;
         }
 
@@ -145,10 +147,7 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                currentYear:
-                    createCustomerMetricsCalendarChartsOption.val.currentYear,
-                previousYear:
-                    createCustomerMetricsCalendarChartsOption.val.previousYear,
+                calendarChartsData: customerMetricsCalendarChartsOption.val,
                 customerMetricsCharts: customerMetricsChartsOption.val,
                 customerMetricsCards: customerMetricsCardsOption.val,
             }),

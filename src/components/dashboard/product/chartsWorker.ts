@@ -20,8 +20,10 @@ import { messageEventProductChartsMainToWorkerZod } from "./schemas";
 type MessageEventProductChartsWorkerToMain = MessageEvent<
     SafeResult<
         {
-            currentYear: ProductMetricsCalendarCharts;
-            previousYear: ProductMetricsCalendarCharts;
+            calendarChartsData: {
+                currentYear: ProductMetricsCalendarCharts;
+                previousYear: ProductMetricsCalendarCharts;
+            };
             productMetricsCharts: ProductMetricsCharts;
             productMetricsCards: ProductMetricsCards;
         }
@@ -93,18 +95,18 @@ self.onmessage = async (
             return;
         }
 
-        const createProductMetricsCalendarChartsSafeResult =
+        const productMetricsCalendarChartsSafeResult =
             createProductMetricsCalendarChartsSafe(
                 calendarView,
                 selectedDateProductMetricsOption.val,
                 selectedYYYYMMDD,
             );
-        const createProductMetricsCalendarChartsOption =
+        const productMetricsCalendarChartsOption =
             handleErrorResultAndNoneOptionInWorker(
-                createProductMetricsCalendarChartsSafeResult,
+                productMetricsCalendarChartsSafeResult,
                 "No product metrics calendar charts found",
             );
-        if (createProductMetricsCalendarChartsOption.none) {
+        if (productMetricsCalendarChartsOption.none) {
             return;
         }
 
@@ -139,10 +141,7 @@ self.onmessage = async (
 
         self.postMessage(
             createSafeSuccessResult({
-                currentYear:
-                    createProductMetricsCalendarChartsOption.val.currentYear,
-                previousYear:
-                    createProductMetricsCalendarChartsOption.val.previousYear,
+                calendarChartsData: productMetricsCalendarChartsOption.val,
                 productMetricsCharts: productMetricsChartsOption.val,
                 productMetricsCards: productMetricsCardsOption.val,
             }),
