@@ -249,6 +249,25 @@ function Login() {
           payload: "",
         });
       }}
+      onKeyDown={async (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (isSubmitting || !financialMetricsGenerated) {
+            return;
+          }
+
+          await handleLoginClick({
+            isComponentMountedRef,
+            isLoading,
+            isSubmitting,
+            isSuccessful,
+            loginDispatch,
+            loginFetchWorker,
+            schema: { username, password },
+            showBoundary,
+          });
+        }
+      }}
       ref={usernameRef}
       required
     />
@@ -271,6 +290,25 @@ function Login() {
           payload: "",
         });
       }}
+      onKeyDown={async (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (isSubmitting || !financialMetricsGenerated) {
+            return;
+          }
+
+          await handleLoginClick({
+            isComponentMountedRef,
+            isLoading,
+            isSubmitting,
+            isSuccessful,
+            loginDispatch,
+            loginFetchWorker,
+            schema: { username, password },
+            showBoundary,
+          });
+        }
+      }}
       required
     />
   );
@@ -284,9 +322,8 @@ function Login() {
     <AccessibleButton
       attributes={{
         dataTestId: "login-button",
-        disabled: !financialMetricsGenerated,
         kind: "submit",
-        leftIcon: isSubmitting
+        leftIcon: isSubmitting || !financialMetricsGenerated
           ? (
             <Loader
               size="xs"
