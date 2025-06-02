@@ -22,7 +22,9 @@ function Home() {
   });
 
   const home = (
-    <div className={`app-shell ${opened ? "opened" : ""}`}>
+    <div
+      className={`app-shell ${opened ? "opened" : ""}`}
+    >
       <Header opened={opened} setOpened={setOpened} />
 
       <Sidebar opened={opened} setOpened={setOpened} />

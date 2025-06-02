@@ -45,6 +45,7 @@ function DashboardLayoutContainer(
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
+  const nodeRef = React.useRef<HTMLDivElement | null>(null);
 
   const isPieChartSafe = pieChart && chartsToYAxisKeysMap.pie.has(
     yAxisKey,
@@ -109,7 +110,12 @@ function DashboardLayoutContainer(
       data-testid="chart-titles"
     >
       {yAxisKeyChartHeading?.split(" ").map((word, idx) => (
-        <Title order={5} size={24} key={`${idx}-${word}-${calendarView}`}>
+        <Title
+          order={5}
+          size={24}
+          key={`${idx}-${word}-${calendarView}`}
+          ref={nodeRef}
+        >
           {word}
         </Title>
       ))}
@@ -129,6 +135,17 @@ function DashboardLayoutContainer(
     </div>
   );
 
+  const gridItems = [
+    yAxisKeyChartHeadingTitle,
+    yAxisKeyControlsCard,
+    isPieChartSafe ? pieChartCard : null,
+    isCalendarChartSafe ? calendarChartCard : null,
+    barChartCard,
+    lineChartCard,
+    radialChartCard,
+    ...consolidatedCards,
+  ].filter(Boolean);
+
   const newGridLayout = (
     <div
       className={`grid-section ${
@@ -143,6 +160,22 @@ function DashboardLayoutContainer(
       {lineChartCard}
       {radialChartCard}
       {consolidatedCards}
+
+      {
+        /* <TransitionGroup>
+        {gridItems.map((item, index) => (
+          <CSSTransition
+            key={index}
+            nodeRef={nodeRef}
+            timeout={300}
+            unmountOnExit
+            classNames="grid-item-transition"
+          >
+            <div ref={nodeRef}>{item}</div>
+          </CSSTransition>
+        ))}
+      </TransitionGroup> */
+      }
     </div>
   );
 

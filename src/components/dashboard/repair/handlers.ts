@@ -3,6 +3,7 @@ import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
     createSafeSuccessResult,
+    makeTransition,
     parseSyncSafe,
 } from "../../../utils";
 import { repairMetricsAction } from "./actions";
@@ -72,19 +73,25 @@ async function handleMessageEventRepairChartsWorkerToMain(input: {
             repairMetricsCards,
         } = messageEventResult.val.val;
 
-        repairMetricsDispatch({
-            action: repairMetricsAction.setCalendarChartsData,
-            payload: calendarChartsData,
+        makeTransition(() => {
+            repairMetricsDispatch({
+                action: repairMetricsAction.setCalendarChartsData,
+                payload: calendarChartsData,
+            });
         });
 
-        repairMetricsDispatch({
-            action: repairMetricsAction.setCharts,
-            payload: repairMetricsCharts,
+        makeTransition(() => {
+            repairMetricsDispatch({
+                action: repairMetricsAction.setCharts,
+                payload: repairMetricsCharts,
+            });
         });
 
-        repairMetricsDispatch({
-            action: repairMetricsAction.setCards,
-            payload: repairMetricsCards,
+        makeTransition(() => {
+            repairMetricsDispatch({
+                action: repairMetricsAction.setCards,
+                payload: repairMetricsCards,
+            });
         });
 
         return createSafeSuccessResult(

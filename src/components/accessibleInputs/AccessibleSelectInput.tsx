@@ -30,6 +30,7 @@ type AccessibleSelectInputAttributes<
   }>;
   ref?: React.RefObject<HTMLSelectElement>;
   required?: boolean;
+  shouldTransition?: boolean;
   size?: MantineSize;
   validValueAction: ValidValueAction;
   value: string;

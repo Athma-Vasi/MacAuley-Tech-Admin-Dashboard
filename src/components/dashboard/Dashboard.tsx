@@ -31,7 +31,7 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
-import { returnThemeColors } from "../../utils";
+import { makeTransition, returnThemeColors } from "../../utils";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import { MessageEventDashboardCacheWorkerToMain } from "./cacheWorker";
@@ -167,9 +167,11 @@ function Dashboard() {
       onChange={(event) => {
         const { value } = event.currentTarget;
 
-        globalDispatch({
-          action: globalAction.setSelectedYYYYMMDD,
-          payload: value,
+        makeTransition(() => {
+          globalDispatch({
+            action: globalAction.setSelectedYYYYMMDD,
+            payload: value,
+          });
         });
       }}
       type="date"

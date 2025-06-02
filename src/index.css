@@ -90,6 +90,25 @@
   );
 }
 
+.grid-item-transition-enter {
+  opacity: 0;
+  transform: scale(0.5);
+}
+.grid-item-transition-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.7s ease-in-out;
+}
+.grid-item-transition-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+.grid-item-transition-exit-active {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.7s ease-in-out;
+}
+
 .accessible-input {
   width: var(--input-width);
 }

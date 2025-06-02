@@ -124,7 +124,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     globalState: { themeObject },
   } = useGlobalState();
   const { colorScheme } = themeObject;
-  const { themeColorShade, textColor, grayColorShade } = returnThemeColors({
+  const { themeColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });

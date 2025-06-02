@@ -3,6 +3,7 @@ import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
     createSafeSuccessResult,
+    makeTransition,
     parseSyncSafe,
 } from "../../../utils";
 import { productMetricsAction } from "./actions";
@@ -62,19 +63,25 @@ async function handleMessageEventProductChartsWorkerToMain(input: {
             productMetricsCards,
         } = messageEventResult.val.val;
 
-        productMetricsDispatch({
-            action: productMetricsAction.setCalendarChartsData,
-            payload: calendarChartsData,
+        makeTransition(() => {
+            productMetricsDispatch({
+                action: productMetricsAction.setCalendarChartsData,
+                payload: calendarChartsData,
+            });
         });
 
-        productMetricsDispatch({
-            action: productMetricsAction.setCharts,
-            payload: productMetricsCharts,
+        makeTransition(() => {
+            productMetricsDispatch({
+                action: productMetricsAction.setCharts,
+                payload: productMetricsCharts,
+            });
         });
 
-        productMetricsDispatch({
-            action: productMetricsAction.setCards,
-            payload: productMetricsCards,
+        makeTransition(() => {
+            productMetricsDispatch({
+                action: productMetricsAction.setCards,
+                payload: productMetricsCards,
+            });
         });
 
         return createSafeSuccessResult(

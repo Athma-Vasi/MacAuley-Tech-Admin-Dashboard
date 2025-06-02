@@ -11,6 +11,7 @@ import {
     createMetricsURLCacheKey,
     createSafeErrorResult,
     createSafeSuccessResult,
+    makeTransition,
     parseSyncSafe,
 } from "../../utils";
 import { dashboardAction } from "./actions";
@@ -155,36 +156,46 @@ async function handleMessageEventDashboardCacheWorkerToMain(
         const { metricsDocument, metricsView } = messageEventResult.val.val;
 
         if (metricsView === "financials") {
-            globalDispatch({
-                action: globalAction.setFinancialMetricsDocument,
-                payload: metricsDocument as FinancialMetricsDocument,
+            makeTransition(() => {
+                globalDispatch({
+                    action: globalAction.setFinancialMetricsDocument,
+                    payload: metricsDocument as FinancialMetricsDocument,
+                });
             });
         }
 
         if (metricsView === "products") {
-            globalDispatch({
-                action: globalAction.setProductMetricsDocument,
-                payload: metricsDocument as ProductMetricsDocument,
+            makeTransition(() => {
+                globalDispatch({
+                    action: globalAction.setProductMetricsDocument,
+                    payload: metricsDocument as ProductMetricsDocument,
+                });
             });
         }
 
         if (metricsView === "customers") {
-            globalDispatch({
-                action: globalAction.setCustomerMetricsDocument,
-                payload: metricsDocument as CustomerMetricsDocument,
+            makeTransition(() => {
+                globalDispatch({
+                    action: globalAction.setCustomerMetricsDocument,
+                    payload: metricsDocument as CustomerMetricsDocument,
+                });
             });
         }
 
         if (metricsView === "repairs") {
-            globalDispatch({
-                action: globalAction.setRepairMetricsDocument,
-                payload: metricsDocument as RepairMetricsDocument,
+            makeTransition(() => {
+                globalDispatch({
+                    action: globalAction.setRepairMetricsDocument,
+                    payload: metricsDocument as RepairMetricsDocument,
+                });
             });
         }
 
-        dashboardDispatch({
-            action: dashboardAction.setIsLoading,
-            payload: false,
+        makeTransition(() => {
+            dashboardDispatch({
+                action: dashboardAction.setIsLoading,
+                payload: false,
+            });
         });
 
         return createSafeSuccessResult("Data fetching completed");

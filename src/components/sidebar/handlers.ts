@@ -16,6 +16,7 @@ import {
   createMetricsURLCacheKey,
   createSafeErrorResult,
   createSafeSuccessResult,
+  makeTransition,
   parseSyncSafe,
 } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
@@ -94,30 +95,38 @@ async function handleMessageEventMetricsCacheWorkerToMain(input: {
     } = messageEventResult.val.val;
 
     if (metricsView === "financials") {
-      globalDispatch({
-        action: globalAction.setFinancialMetricsDocument,
-        payload: metricsDocument as FinancialMetricsDocument,
+      makeTransition(() => {
+        globalDispatch({
+          action: globalAction.setFinancialMetricsDocument,
+          payload: metricsDocument as FinancialMetricsDocument,
+        });
       });
     }
 
     if (metricsView === "products") {
-      globalDispatch({
-        action: globalAction.setProductMetricsDocument,
-        payload: metricsDocument as ProductMetricsDocument,
+      makeTransition(() => {
+        globalDispatch({
+          action: globalAction.setProductMetricsDocument,
+          payload: metricsDocument as ProductMetricsDocument,
+        });
       });
     }
 
     if (metricsView === "customers") {
-      globalDispatch({
-        action: globalAction.setCustomerMetricsDocument,
-        payload: metricsDocument as CustomerMetricsDocument,
+      makeTransition(() => {
+        globalDispatch({
+          action: globalAction.setCustomerMetricsDocument,
+          payload: metricsDocument as CustomerMetricsDocument,
+        });
       });
     }
 
     if (metricsView === "repairs") {
-      globalDispatch({
-        action: globalAction.setRepairMetricsDocument,
-        payload: metricsDocument as RepairMetricsDocument,
+      makeTransition(() => {
+        globalDispatch({
+          action: globalAction.setRepairMetricsDocument,
+          payload: metricsDocument as RepairMetricsDocument,
+        });
       });
     }
 
@@ -498,10 +507,13 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
     }
 
     if (from === "cache") {
-      globalDispatch({
-        action: globalAction.setDirectory,
-        payload: responsePayloadSafe.data,
+      makeTransition(() => {
+        globalDispatch({
+          action: globalAction.setDirectory,
+          payload: responsePayloadSafe.data,
+        });
       });
+
       globalDispatch({
         action: globalAction.setIsFetching,
         payload: false,
@@ -544,14 +556,18 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return safeErrorResult;
     }
 
-    globalDispatch({
-      action: globalAction.setDirectory,
-      payload: responsePayloadSafe.data,
+    makeTransition(() => {
+      globalDispatch({
+        action: globalAction.setDirectory,
+        payload: responsePayloadSafe.data,
+      });
     });
+
     globalDispatch({
       action: globalAction.setIsFetching,
       payload: false,
     });
+
     navigate?.(toLocation ?? "/dashboard/directory");
 
     return createSafeSuccessResult("Directory fetch successful");

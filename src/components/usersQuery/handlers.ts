@@ -8,6 +8,7 @@ import {
     createSafeErrorResult,
     createSafeSuccessResult,
     createUsersURLCacheKey,
+    makeTransition,
     parseSyncSafe,
 } from "../../utils";
 import { SortDirection } from "../query/types";
@@ -269,9 +270,11 @@ function updateUsersQueryState(
     usersQueryAction: UsersQueryAction,
     usersQueryDispatch: React.Dispatch<UsersQueryDispatch>,
 ): void {
-    usersQueryDispatch({
-        action: usersQueryAction.setResourceData,
-        payload: responsePayloadSafe.data,
+    makeTransition(() => {
+        usersQueryDispatch({
+            action: usersQueryAction.setResourceData,
+            payload: responsePayloadSafe.data,
+        });
     });
     usersQueryDispatch({
         action: usersQueryAction.setTotalDocuments,

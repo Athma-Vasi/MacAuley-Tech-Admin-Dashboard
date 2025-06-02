@@ -283,10 +283,6 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           : <TbFileDatabase size={18} />,
         name: "Directory",
         onClick: async () => {
-          if (!decodedToken) {
-            return;
-          }
-
           sidebarDispatch({
             action: sidebarAction.setClickedNavlink,
             payload: "directory",
