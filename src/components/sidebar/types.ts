@@ -12,6 +12,7 @@ type SidebarState = {
     directoryFetchWorker: Worker | null;
     logoutFetchWorker: Worker | null;
     metricsCacheWorker: Worker | null;
+    prefetchAndCacheWorker: Worker | null;
 };
 
 type SidebarDispatch =
@@ -29,6 +30,10 @@ type SidebarDispatch =
     }
     | {
         action: SidebarAction["setMetricsCacheWorker"];
+        payload: Worker;
+    }
+    | {
+        action: SidebarAction["setPrefetchAndCacheWorker"];
         payload: Worker;
     };
 

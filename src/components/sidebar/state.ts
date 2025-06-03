@@ -5,6 +5,7 @@ const initialSidebarState: SidebarState = {
     directoryFetchWorker: null,
     logoutFetchWorker: null,
     metricsCacheWorker: null,
+    prefetchAndCacheWorker: null,
 };
 
 export { initialSidebarState };

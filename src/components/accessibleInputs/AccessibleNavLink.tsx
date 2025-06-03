@@ -23,6 +23,7 @@ type AccessibleNavLinkAttributes = {
   noWrap?: boolean;
   onChange?: (opened: boolean) => void;
   onClick: () => void;
+  onMouseEnter?: () => void;
   opened?: boolean;
   rightSection?: ReactNode;
   variant?: Variants<"light" | "filled" | "subtle">;
@@ -59,6 +60,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
     noWrap = false,
     onChange,
     onClick,
+    onMouseEnter = () => {},
     opened = false,
     rightSection = null,
     variant = "light",
@@ -88,6 +90,7 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
       noWrap={noWrap}
       onChange={onChange}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       opened={opened}
       rightSection={rightSection}
       style={{ color: textColor }}

@@ -33,6 +33,7 @@ import {
   handleMessageEventLogoutFetchWorkerToMainInputZod,
   handleMessageEventMetricsCacheWorkerToMainInputZod,
   handleMetricCategoryNavClickInputZod,
+  triggerMessageEventDirectoryPrefetchAndCacheMainToWorkerInputZod,
 } from "./schemas";
 
 async function handleMessageEventMetricsCacheWorkerToMain(input: {
@@ -514,11 +515,14 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
         });
       });
 
-      globalDispatch({
-        action: globalAction.setIsFetching,
-        payload: false,
+      makeTransition(() => {
+        globalDispatch({
+          action: globalAction.setIsFetching,
+          payload: false,
+        });
       });
 
+      navigate?.(toLocation ?? "/dashboard/directory");
       return createSafeSuccessResult(
         "Directory fetch successful from cache",
       );
@@ -580,6 +584,76 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
   }
 }
 
+async function triggerMessageEventDirectoryPrefetchAndCacheMainToWorker(
+  input: {
+    accessToken: string;
+    department: DepartmentsWithDefaultKey;
+    directoryUrl: string;
+    isComponentMountedRef: React.RefObject<boolean>;
+    prefetchAndCacheWorker: Worker | null;
+    showBoundary: (error: unknown) => void;
+    storeLocation: AllStoreLocations;
+  },
+) {
+  try {
+    const parsedInputResult = parseSyncSafe({
+      object: input,
+      zSchema: triggerMessageEventDirectoryPrefetchAndCacheMainToWorkerInputZod,
+    });
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const {
+      accessToken,
+      department,
+      directoryUrl,
+      prefetchAndCacheWorker,
+      storeLocation,
+    } = parsedInputResult.val.val;
+
+    const requestInit: RequestInit = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const urlWithQuery = department === "All Departments"
+      ? new URL(
+        `${directoryUrl}/user/?&limit=200&newQueryFlag=true&totalDocuments=0`,
+      )
+      : new URL(
+        `${directoryUrl}/user/?&$and[storeLocation][$eq]=${storeLocation}&$and[department][$eq]=${department}&limit=200&newQueryFlag=true&totalDocuments=0`,
+      );
+
+    prefetchAndCacheWorker?.postMessage({
+      requestInit,
+      routesZodSchemaMapKey: "directory",
+      url: urlWithQuery.toString(),
+    });
+
+    return createSafeSuccessResult(
+      "Prefetch and cache data...",
+    );
+  } catch (error: unknown) {
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
+  }
+}
+
 export {
   handleDirectoryNavClick,
   handleLogoutClick,
@@ -587,4 +661,5 @@ export {
   handleMessageEventLogoutFetchWorkerToMain,
   handleMessageEventMetricsCacheWorkerToMain,
   handleMetricCategoryNavClick,
+  triggerMessageEventDirectoryPrefetchAndCacheMainToWorker,
 };

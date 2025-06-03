@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+    allDepartmentsZod,
     allStoreLocationsZod,
     metricsViewZod,
     productMetricCategoryZod,
@@ -113,6 +114,22 @@ const handleMetricCategoryNavClickInputZod = z.object({
     storeLocation: allStoreLocationsZod,
 });
 
+const setPrefetchAndCacheWorkerSidebarDispatchZod = z.object({
+    action: z.literal(sidebarAction.setPrefetchAndCacheWorker),
+    payload: z.instanceof(Worker),
+});
+
+const triggerMessageEventDirectoryPrefetchAndCacheMainToWorkerInputZod = z
+    .object({
+        accessToken: z.string().min(1).max(1000),
+        department: allDepartmentsZod,
+        directoryUrl: z.string().url(),
+        isComponentMountedRef: z.object({ current: z.boolean() }),
+        prefetchAndCacheWorker: z.instanceof(Worker),
+        showBoundary: z.function().args(z.any()).returns(z.void()),
+        storeLocation: allStoreLocationsZod,
+    });
+
 export {
     handleDirectoryNavClickInputZod,
     handleLogoutClickInputZod,
@@ -124,4 +141,6 @@ export {
     setDirectoryFetchWorkerSidebarDispatchZod,
     setLogoutFetchWorkerSidebarDispatchZod,
     setMetricsCacheWorkerSidebarDispatchZod,
+    setPrefetchAndCacheWorkerSidebarDispatchZod,
+    triggerMessageEventDirectoryPrefetchAndCacheMainToWorkerInputZod,
 };

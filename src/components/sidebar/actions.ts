@@ -13,6 +13,7 @@ const sidebarAction: SidebarAction = {
     setDirectoryFetchWorker: "setDirectoryFetchWorker",
     setLogoutFetchWorker: "setLogoutFetchWorker",
     setMetricsCacheWorker: "setMetricsCacheWorker",
+    setPrefetchAndCacheWorker: "setPrefetchAndCacheWorker",
 };
 
 export { sidebarAction };

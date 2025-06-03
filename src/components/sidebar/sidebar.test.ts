@@ -7,6 +7,7 @@ import {
     sidebarReducer_setDirectoryFetchWorker,
     sidebarReducer_setLogoutFetchWorker,
     sidebarReducer_setMetricsCacheWorker,
+    sidebarReducer_setPrefetchAndCacheWorker,
 } from "./reducers";
 import { initialSidebarState } from "./state";
 import { SidebarDispatch, SidebarNavlinks } from "./types";
@@ -135,6 +136,34 @@ describe("Sidebar", () => {
                 );
                 expect(state.metricsCacheWorker).toBe(
                     initialSidebarState.metricsCacheWorker,
+                );
+            });
+        });
+
+        describe(sidebarAction.setPrefetchAndCacheWorker, () => {
+            it("should allow valid value", () => {
+                const dispatch: SidebarDispatch = {
+                    action: sidebarAction.setPrefetchAndCacheWorker,
+                    payload: new Worker(""),
+                };
+                const state = sidebarReducer_setPrefetchAndCacheWorker(
+                    initialSidebarState,
+                    dispatch,
+                );
+                expect(state.prefetchAndCacheWorker).toBeInstanceOf(Worker);
+            });
+
+            it("should not allow invalid value", () => {
+                const dispatch: SidebarDispatch = {
+                    action: sidebarAction.setPrefetchAndCacheWorker,
+                    payload: {} as any,
+                };
+                const state = sidebarReducer_setPrefetchAndCacheWorker(
+                    initialSidebarState,
+                    dispatch,
+                );
+                expect(state.prefetchAndCacheWorker).toBe(
+                    initialSidebarState.prefetchAndCacheWorker,
                 );
             });
         });

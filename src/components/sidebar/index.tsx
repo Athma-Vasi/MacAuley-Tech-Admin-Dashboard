@@ -23,12 +23,15 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
 import FetchParseWorker from "../../workers/fetchParseWorker?worker";
+import { MessageEventPrefetchAndCacheWorkerToMain } from "../../workers/prefetchAndCacheWorker";
+import PrefetchAndCacheWorker from "../../workers/prefetchAndCacheWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleNavLink } from "../accessibleInputs/AccessibleNavLink";
 import { MessageEventDashboardCacheWorkerToMain } from "../dashboard/cacheWorker";
 import MetricsCacheWorker from "../dashboard/cacheWorker?worker";
 import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
 import DirectoryFetchWorker from "../directory/fetchWorker?worker";
+import { handleMessageEventUsersPrefetchAndCacheWorkerToMain } from "../usersQuery/handlers";
 import { sidebarAction } from "./actions";
 import {
   handleDirectoryNavClick,
@@ -37,6 +40,7 @@ import {
   handleMessageEventLogoutFetchWorkerToMain,
   handleMessageEventMetricsCacheWorkerToMain,
   handleMetricCategoryNavClick,
+  triggerMessageEventDirectoryPrefetchAndCacheMainToWorker,
 } from "./handlers";
 import { sidebarReducer } from "./reducers";
 import { initialSidebarState } from "./state";
@@ -74,16 +78,17 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
     directoryFetchWorker,
     logoutFetchWorker,
     metricsCacheWorker,
+    prefetchAndCacheWorker,
   } = sidebarState;
 
   useEffect(() => {
-    const newMetricsFetchWorker = new MetricsCacheWorker();
+    const newMetricsCacheWorker = new MetricsCacheWorker();
     sidebarDispatch({
       action: sidebarAction.setMetricsCacheWorker,
-      payload: newMetricsFetchWorker,
+      payload: newMetricsCacheWorker,
     });
 
-    newMetricsFetchWorker.onmessage = async (
+    newMetricsCacheWorker.onmessage = async (
       event: MessageEventDashboardCacheWorkerToMain,
     ) => {
       await handleMessageEventMetricsCacheWorkerToMain({
@@ -133,11 +138,28 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
       });
     };
 
+    const newPrefetchAndCacheWorker = new PrefetchAndCacheWorker();
+    sidebarDispatch({
+      action: sidebarAction.setPrefetchAndCacheWorker,
+      payload: newPrefetchAndCacheWorker,
+    });
+    newPrefetchAndCacheWorker.onmessage = async (
+      event: MessageEventPrefetchAndCacheWorkerToMain,
+    ) => {
+      await handleMessageEventUsersPrefetchAndCacheWorkerToMain({
+        authDispatch,
+        event,
+        isComponentMountedRef,
+        showBoundary,
+      });
+    };
+
     return () => {
       isComponentMountedRef.current = false;
-      newMetricsFetchWorker.terminate();
+      newMetricsCacheWorker.terminate();
       newDirectoryFetchWorker.terminate();
       newLogoutFetchWorker.terminate();
+      newPrefetchAndCacheWorker.terminate();
     };
   }, []);
 
@@ -305,6 +327,17 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
           });
 
           setOpened(false);
+        },
+        onMouseEnter: async () => {
+          await triggerMessageEventDirectoryPrefetchAndCacheMainToWorker({
+            accessToken,
+            department: "Executive Management",
+            directoryUrl: API_URL,
+            isComponentMountedRef,
+            prefetchAndCacheWorker,
+            showBoundary,
+            storeLocation: "All Locations",
+          });
         },
       }}
     />
