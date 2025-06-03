@@ -29,13 +29,10 @@ import {
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
-  ErrorPayload,
-  ResponsePayload,
   ResponsePayloadSafe,
   SafeError,
   SafeResult,
   StoreLocation,
-  SuccessPayload,
   ThemeObject,
 } from "./types";
 
@@ -477,101 +474,6 @@ function handleErrorResultAndNoneOptionInWorker<Data = unknown>(
   return result.val;
 }
 
-// copy of backend fns with modification: remove express req and add accessToken
-// used when cached data is returned from worker
-// has same signature as backend response payload
-function createHttpResponseError<
-  Data = unknown,
->({
-  accessToken,
-  pages,
-  safeErrorResult,
-  status,
-  totalDocuments,
-  triggerLogout,
-}: {
-  accessToken?: string;
-  pages?: number;
-  safeErrorResult: Err<SafeError>;
-  status?: number;
-  totalDocuments?: number;
-  triggerLogout?: boolean;
-}): ResponsePayload<Data> {
-  const errorPayload: ErrorPayload = {
-    data: [],
-    kind: "error",
-    message: safeErrorResult.val.message,
-  };
-
-  const optionalFields = {
-    accessToken,
-    pages,
-    status,
-    totalDocuments,
-    triggerLogout,
-  };
-
-  return Object.entries(optionalFields).reduce((acc, [key, value]) => {
-    if (value !== undefined) {
-      Object.defineProperty(acc, key, {
-        value,
-        ...PROPERTY_DESCRIPTOR,
-      });
-    }
-
-    return acc;
-  }, errorPayload);
-}
-
-// copy of backend fns with modification: remove express req and add accessToken
-// used when cached data is returned from worker
-// has same signature as backend response payload
-function createHttpResponseSuccess<
-  Data = unknown,
->({
-  accessToken,
-  message,
-  pages,
-  safeSuccessResult,
-  status,
-  totalDocuments,
-  triggerLogout,
-}: {
-  accessToken?: string;
-  message?: string;
-  pages?: number;
-  safeSuccessResult: Ok<Option<NonNullable<Data>>>;
-  status?: number;
-  totalDocuments?: number;
-  triggerLogout?: boolean;
-}): ResponsePayload<Data> {
-  const newData = safeSuccessResult.val.none ? [] : safeSuccessResult.val.val;
-  const successPayload: SuccessPayload<Data> = {
-    data: Array.isArray(newData) ? newData : [newData],
-    kind: "success",
-  };
-
-  const optionalFields = {
-    accessToken,
-    message,
-    pages,
-    status,
-    totalDocuments,
-    triggerLogout,
-  };
-
-  return Object.entries(optionalFields).reduce((acc, [key, value]) => {
-    if (value !== undefined) {
-      Object.defineProperty(acc, key, {
-        value,
-        ...PROPERTY_DESCRIPTOR,
-      });
-    }
-
-    return acc;
-  }, successPayload);
-}
-
 function catchHandlerErrorSafe(
   error: unknown,
   isComponentMountedRef: React.RefObject<boolean> = { current: true },
@@ -586,18 +488,91 @@ function catchHandlerErrorSafe(
   return safeErrorResult;
 }
 
+type RetryOptions = {
+  backOffFactor?: number;
+  retries?: number;
+  delayMs?: number;
+};
+async function retryAsyncSafe<Data = unknown>(
+  asyncFn: () => Promise<Data>,
+  retryOptions?: RetryOptions,
+): Promise<SafeResult<Data>> {
+  const {
+    backOffFactor = 2,
+    retries = 3,
+    delayMs = 1000,
+  } = retryOptions ?? {};
+
+  async function tryAgain(attempt: number): Promise<
+    SafeResult<Data>
+  > {
+    try {
+      const data = await asyncFn();
+      return createSafeSuccessResult(data);
+    } catch (error: unknown) {
+      if (attempt === retries) {
+        return Promise.resolve(
+          createSafeErrorResult(error),
+        );
+      }
+
+      console.log(
+        `Attempt ${attempt + 1} failed. Retrying in ${delayMs}ms...`,
+      );
+
+      // Exponential backoff with jitter
+      const backOff = Math.pow(backOffFactor, attempt) * delayMs;
+      const jitter = backOff * 0.2 * (Math.random() - 0.5);
+      const delay = backOff + jitter;
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          tryAgain(attempt + 1).then(resolve);
+        }, delay);
+      });
+    }
+  }
+
+  const initialAttempt = 0;
+  return tryAgain(initialAttempt);
+  // function tryAgain(attempt: number): Promise<SafeResult<Data>> {
+  //   return asyncFn()
+  //     .then((data) => createSafeSuccessResult(data))
+  //     .catch((error: unknown) => {
+  //       if (attempt === retries) {
+  //         return Promise.resolve(createSafeErrorResult(error));
+  //       }
+
+  //       console.log(
+  //         `Attempt ${attempt + 1} failed. Retrying in ${delayMs}ms...`,
+  //       );
+
+  //       const backOff = Math.pow(backOffFactor, attempt) * delayMs;
+  //       const jitter = backOff * 0.2 * (Math.random() - 0.5);
+  //       const delay = backOff + jitter;
+
+  //       return new Promise((resolve) => {
+  //         setTimeout(() => {
+  //           tryAgain(attempt + 1).then(resolve);
+  //         }, delay);
+  //       });
+  //     });
+  // }
+
+  // return tryAgain(0);
+}
+
 async function fetchResponseSafe(
   input: RequestInfo | URL,
   init?: RequestInit,
+  retryOptions?: RetryOptions,
 ): Promise<
   SafeResult<Response>
 > {
-  try {
-    const response: Response = await fetch(input, init);
-    return createSafeSuccessResult(response);
-  } catch (error: unknown) {
-    return createSafeErrorResult(error);
-  }
+  return await retryAsyncSafe<Response>(
+    () => fetch(input, init),
+    retryOptions,
+  );
 }
 
 async function extractJSONFromResponseSafe<Data = unknown>(
@@ -626,7 +601,7 @@ async function getCachedItemAsyncSafe<Data = unknown>(
   key: string,
 ): Promise<SafeResult<Data>> {
   try {
-    const data: Data = await localforage.getItem(key);
+    const data = await localforage.getItem<Data>(key);
     return createSafeSuccessResult(data);
   } catch (error: unknown) {
     return createSafeErrorResult(error);
@@ -863,9 +838,12 @@ function createDaysInMonthsInYearsSafe({
 
             const isLeapYear = (year % 4 === 0 && year % 100 !== 0) ||
               year % 400 === 0;
+            const safeCurrentDay = typeof currentDay === "number"
+              ? currentDay
+              : 0;
             const daysWithLeapYear = monthIdx === 1 && isLeapYear
-              ? currentDay + 1
-              : currentDay;
+              ? safeCurrentDay + 1
+              : safeCurrentDay;
 
             const daysRange = Array.from(
               { length: daysWithLeapYear },
@@ -1099,8 +1077,6 @@ export {
   captureScreenshot,
   catchHandlerErrorSafe,
   createDaysInMonthsInYearsSafe,
-  createHttpResponseError,
-  createHttpResponseSuccess,
   createMetricsForageKey,
   createMetricsURLCacheKey,
   createSafeErrorResult,

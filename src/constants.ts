@@ -235,7 +235,8 @@ const SCREENSHOT_IMAGE_TYPE_DATA: CheckboxRadioSelectData<ScreenshotImageType> =
     { value: "image/webp", label: "Image/webp" },
   ];
 
-const FETCH_REQUEST_TIMEOUT = 10000;
+// summation of Math.pow(backOffFactor=2, attempt) * retryDelayMs=1000 from attempt 0 to 3
+const FETCH_REQUEST_TIMEOUT = 15000;
 
 const STORE_LOCATIONS: CheckboxRadioSelectData<StoreLocation> = [
   { label: "Calgary", value: "Calgary" },
