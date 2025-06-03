@@ -11,16 +11,177 @@ import {
     makeTransition,
     parseSyncSafe,
 } from "../../utils";
+import { MessageEventPrefetchAndCacheWorkerToMain } from "../../workers/prefetchAndCacheWorker";
 import { SortDirection } from "../query/types";
 import { UsersQueryAction, usersQueryAction } from "./actions";
 import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
 import {
     handleMessageEventUsersFetchWorkerToMainInputZod,
-    handleUsersQuerySubmitGETClickInputZod,
+    handleMessageEventUsersPrefetchAndCacheWorkerToMainInputZod,
+    triggerMessageEventFetchMainToWorkerUsersQueryInputZod,
+    triggerMessageEventUsersPrefetchAndCacheMainToWorkerInputZod,
     UsersQueryDispatch,
 } from "./schemas";
 
-async function handleUsersQuerySubmitGETClick(
+async function triggerMessageEventUsersPrefetchAndCacheMainToWorker(
+    input: {
+        accessToken: string;
+        arrangeByDirection: SortDirection;
+        arrangeByField: keyof UserDocument;
+        currentPage: number;
+        isComponentMountedRef: React.RefObject<boolean>;
+        newQueryFlag: boolean;
+        prefetchAndCacheWorker: Worker | null;
+        queryString: string;
+        showBoundary: (error: unknown) => void;
+        totalDocuments: number;
+        url: string;
+    },
+) {
+    try {
+        const parsedInputResult = parseSyncSafe({
+            object: input,
+            zSchema:
+                triggerMessageEventUsersPrefetchAndCacheMainToWorkerInputZod,
+        });
+        if (parsedInputResult.err) {
+            input?.showBoundary?.(parsedInputResult);
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input?.showBoundary?.(safeErrorResult);
+            return safeErrorResult;
+        }
+
+        const {
+            accessToken,
+            arrangeByDirection,
+            arrangeByField,
+            currentPage,
+            newQueryFlag,
+            queryString,
+            totalDocuments,
+            url,
+            prefetchAndCacheWorker,
+        } = parsedInputResult.val.val;
+
+        const requestInit: RequestInit = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+
+        const cacheKey = createUsersURLCacheKey({
+            currentPage,
+            newQueryFlag,
+            queryString,
+            totalDocuments,
+            url,
+        });
+
+        prefetchAndCacheWorker?.postMessage({
+            arrangeByDirection,
+            arrangeByField,
+            requestInit,
+            routesZodSchemaMapKey: "users",
+            url: cacheKey,
+        });
+
+        return createSafeSuccessResult(
+            "Fetching data...",
+        );
+    } catch (error: unknown) {
+        return catchHandlerErrorSafe(
+            error,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
+        );
+    }
+}
+
+async function handleMessageEventUsersPrefetchAndCacheWorkerToMain(
+    input: {
+        authDispatch: React.Dispatch<AuthDispatch>;
+        event: MessageEventPrefetchAndCacheWorkerToMain;
+        isComponentMountedRef: React.RefObject<boolean>;
+        showBoundary: (error: unknown) => void;
+    },
+): Promise<SafeResult<string>> {
+    try {
+        const parsedInputResult = parseSyncSafe({
+            object: input,
+            zSchema:
+                handleMessageEventUsersPrefetchAndCacheWorkerToMainInputZod,
+        });
+        if (parsedInputResult.err) {
+            input?.showBoundary?.(parsedInputResult);
+            return parsedInputResult;
+        }
+        if (parsedInputResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "Error parsing input",
+            );
+            input?.showBoundary?.(safeErrorResult);
+            return safeErrorResult;
+        }
+        const { authDispatch, event, isComponentMountedRef, showBoundary } =
+            parsedInputResult.val.val;
+        const messageEventResult = event.data;
+        if (!messageEventResult) {
+            return createSafeErrorResult(
+                "No data in message event",
+            );
+        }
+        if (!isComponentMountedRef.current) {
+            return createSafeErrorResult("Component unmounted");
+        }
+        if (messageEventResult.err) {
+            return messageEventResult;
+        }
+        if (messageEventResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "No data found",
+            );
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
+        }
+
+        const {
+            accessTokenOption,
+            decodedTokenOption,
+        } = messageEventResult.val.val;
+
+        if (accessTokenOption.some) {
+            authDispatch({
+                action: authAction.setAccessToken,
+                payload: accessTokenOption.val,
+            });
+        }
+        if (decodedTokenOption.some) {
+            authDispatch({
+                action: authAction.setDecodedToken,
+                payload: decodedTokenOption.val,
+            });
+        }
+
+        return createSafeSuccessResult(
+            "User documents prefetched and cached successfully",
+        );
+    } catch (error: unknown) {
+        return catchHandlerErrorSafe(
+            error,
+            input?.isComponentMountedRef,
+            input?.showBoundary,
+        );
+    }
+}
+
+async function triggerMessageEventFetchMainToWorkerUsersQuery(
     input: {
         accessToken: string;
         arrangeByDirection: SortDirection;
@@ -39,7 +200,7 @@ async function handleUsersQuerySubmitGETClick(
     try {
         const parsedInputResult = parseSyncSafe({
             object: input,
-            zSchema: handleUsersQuerySubmitGETClickInputZod,
+            zSchema: triggerMessageEventFetchMainToWorkerUsersQueryInputZod,
         });
         if (parsedInputResult.err) {
             input?.showBoundary?.(parsedInputResult);
@@ -300,5 +461,7 @@ function updateUsersQueryState(
 
 export {
     handleMessageEventUsersFetchWorkerToMain,
-    handleUsersQuerySubmitGETClick,
+    handleMessageEventUsersPrefetchAndCacheWorkerToMain,
+    triggerMessageEventFetchMainToWorkerUsersQuery,
+    triggerMessageEventUsersPrefetchAndCacheMainToWorker,
 };

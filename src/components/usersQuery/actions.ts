@@ -21,6 +21,7 @@ const usersQueryAction: UsersQueryAction = {
     setIsLoading: "setIsLoading",
     setNewQueryFlag: "setNewQueryFlag",
     setPages: "setPages",
+    setPrefetchAndCacheWorker: "setPrefetchAndCacheWorker",
     setQueryString: "setQueryString",
     setResourceData: "setResourceData",
     setTotalDocuments: "setTotalDocuments",

@@ -81,10 +81,7 @@ self.onmessage = async (
     } = parsedMessageResult.val.val;
 
     const controller = new AbortController();
-    const timeout = setTimeout(
-        () => controller.abort(),
-        FETCH_REQUEST_TIMEOUT,
-    );
+    const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
     try {
         const cachedResponsePayloadSafeResult = await getCachedItemAsyncSafe<

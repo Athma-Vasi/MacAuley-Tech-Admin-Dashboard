@@ -214,7 +214,7 @@ const decodedTokenZod = z.object({
     exp: z.number(),
 });
 
-const handleUsersQuerySubmitGETClickInputZod = z.object({
+const triggerMessageEventFetchMainToWorkerUsersQueryInputZod = z.object({
     accessToken: z.string(),
     arrangeByDirection: arrangeByDirectionZod,
     arrangeByField: arrangeByFieldZod,
@@ -238,6 +238,33 @@ const handleMessageEventUsersFetchWorkerToMainInputZod = z.object({
     usersQueryDispatch: z.function().args(z.any()).returns(z.void()),
 });
 
+const setPrefetchAndCacheWorkerUsersQueryDispatchZod = z.object({
+    action: z.literal(usersQueryAction.setPrefetchAndCacheWorker),
+    payload: z.instanceof(Worker),
+});
+
+const triggerMessageEventUsersPrefetchAndCacheMainToWorkerInputZod = z
+    .object({
+        accessToken: z.string(),
+        arrangeByDirection: arrangeByDirectionZod,
+        arrangeByField: arrangeByFieldZod,
+        currentPage: z.number().min(0),
+        isComponentMountedRef: z.object({ current: z.boolean() }),
+        newQueryFlag: z.boolean(),
+        queryString: z.string(),
+        showBoundary: z.function().args(z.any()).returns(z.void()),
+        totalDocuments: z.number().min(0),
+        url: z.string().url(),
+        prefetchAndCacheWorker: z.instanceof(Worker),
+    });
+
+const handleMessageEventUsersPrefetchAndCacheWorkerToMainInputZod = z.object({
+    authDispatch: z.function().args(z.any()).returns(z.void()),
+    event: z.instanceof(MessageEvent),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
 type UsersQueryDispatch =
     | z.infer<typeof setArrangeByDirectionUsersQueryDispatchZod>
     | z.infer<typeof setArrangeByFieldUsersQueryDispatchZod>
@@ -250,7 +277,8 @@ type UsersQueryDispatch =
     | z.infer<typeof setResourceDataUsersQueryDispatchZod>
     | z.infer<typeof setTotalDocumentsUsersQueryDispatchZod>
     | z.infer<typeof resetToInitialUsersQueryDispatchZod>
-    | z.infer<typeof setUsersFetchWorkerUsersQueryDispatchZod>;
+    | z.infer<typeof setUsersFetchWorkerUsersQueryDispatchZod>
+    | z.infer<typeof setPrefetchAndCacheWorkerUsersQueryDispatchZod>;
 
 const messageEventUsersFetchMainToWorkerZod = z.object({
     arrangeByDirection: arrangeByDirectionZod,
@@ -261,9 +289,11 @@ const messageEventUsersFetchMainToWorkerZod = z.object({
 });
 
 export {
+    arrangeByDirectionZod,
+    arrangeByFieldZod,
     decodedTokenZod,
     handleMessageEventUsersFetchWorkerToMainInputZod,
-    handleUsersQuerySubmitGETClickInputZod,
+    handleMessageEventUsersPrefetchAndCacheWorkerToMainInputZod,
     messageEventUsersFetchMainToWorkerZod,
     resetToInitialUsersQueryDispatchZod,
     setArrangeByDirectionUsersQueryDispatchZod,
@@ -273,10 +303,13 @@ export {
     setIsLoadingUsersQueryDispatchZod,
     setNewQueryFlagUsersQueryDispatchZod,
     setPagesUsersQueryDispatchZod,
+    setPrefetchAndCacheWorkerUsersQueryDispatchZod,
     setQueryStringUsersQueryDispatchZod,
     setResourceDataUsersQueryDispatchZod,
     setTotalDocumentsUsersQueryDispatchZod,
     setUsersFetchWorkerUsersQueryDispatchZod,
+    triggerMessageEventFetchMainToWorkerUsersQueryInputZod,
+    triggerMessageEventUsersPrefetchAndCacheMainToWorkerInputZod,
     userDocumentOptionalsZod,
     userDocumentRequiredZod,
     userRolesZod,

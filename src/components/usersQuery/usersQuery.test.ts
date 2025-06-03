@@ -18,15 +18,17 @@ import {
     usersQueryReducer_setIsLoading,
     usersQueryReducer_setNewQueryFlag,
     usersQueryReducer_setPages,
+    usersQueryReducer_setPrefetchAndCacheWorker,
     usersQueryReducer_setQueryString,
     usersQueryReducer_setResourceData,
     usersQueryReducer_setTotalDocuments,
+    usersQueryReducer_setUsersFetchWorker,
 } from "./reducers";
 import { UsersQueryDispatch } from "./schemas";
 import { initialUsersQueryState } from "./state";
 
 describe("usersQueryReducer", () => {
-    describe("usersQueryReducer_resetToInitial", () => {
+    describe(usersQueryAction.resetToInitial, () => {
         it("should return the initial state", () => {
             const dispatch: UsersQueryDispatch = {
                 action: usersQueryAction.resetToInitial,
@@ -40,7 +42,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setArrangeByDirection", () => {
+    describe(usersQueryAction.setArrangeByDirection, () => {
         it("should allow valid string values", () => {
             ARRANGE_BY_DIRECTIONS.forEach((value) => {
                 const dispatch: UsersQueryDispatch = {
@@ -73,7 +75,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setArrangeByField", () => {
+    describe(usersQueryAction.setArrangeByField, () => {
         it("should allow valid string values", () => {
             const VALID_FIELDS: Array<keyof UserDocument> = [
                 "addressLine",
@@ -129,7 +131,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setCurrentPage", () => {
+    describe(usersQueryAction.setCurrentPage, () => {
         it("should allow valid number values", () => {
             const VALID_NUMBERS = [0, 1, 2, 3, 4, 5];
             VALID_NUMBERS.forEach((value) => {
@@ -161,7 +163,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setIsError", () => {
+    describe(usersQueryAction.setIsError, () => {
         it("should allow valid boolean values", () => {
             VALID_BOOLEANS.forEach((value) => {
                 const dispatch: UsersQueryDispatch = {
@@ -191,7 +193,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setIsLoading", () => {
+    describe(usersQueryAction.setIsLoading, () => {
         it("should allow valid boolean values", () => {
             VALID_BOOLEANS.forEach((value) => {
                 const dispatch: UsersQueryDispatch = {
@@ -221,7 +223,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setNewQueryFlag", () => {
+    describe(usersQueryAction.setNewQueryFlag, () => {
         it("should allow valid boolean values", () => {
             VALID_BOOLEANS.forEach((value) => {
                 const dispatch: UsersQueryDispatch = {
@@ -251,7 +253,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setPages", () => {
+    describe(usersQueryAction.setPages, () => {
         it("should allow valid number values", () => {
             const VALID_NUMBERS = [0, 1, 2, 3, 4, 5];
             VALID_NUMBERS.forEach((value) => {
@@ -282,7 +284,41 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setQueryString", () => {
+    describe(usersQueryAction.setPrefetchAndCacheWorker, () => {
+        it("should allow valid worker values", () => {
+            const VALID_WORKER = new Worker(
+                new URL("./fetchWorker?worker", import.meta.url),
+            );
+            const dispatch: UsersQueryDispatch = {
+                action: usersQueryAction.setPrefetchAndCacheWorker,
+                payload: VALID_WORKER,
+            };
+            const state = usersQueryReducer_setPrefetchAndCacheWorker(
+                initialUsersQueryState,
+                dispatch,
+            );
+            expect(state.prefetchAndCacheWorker).toBe(VALID_WORKER);
+        });
+        it("should not allow invalid worker values", () => {
+            const initialPrefetchAndCacheWorker =
+                initialUsersQueryState.prefetchAndCacheWorker;
+            INVALID_STRINGS.forEach((value) => {
+                const dispatch: UsersQueryDispatch = {
+                    action: usersQueryAction.setPrefetchAndCacheWorker,
+                    payload: value as any,
+                };
+                const state = usersQueryReducer_setPrefetchAndCacheWorker(
+                    initialUsersQueryState,
+                    dispatch,
+                );
+                expect(state.prefetchAndCacheWorker).toBe(
+                    initialPrefetchAndCacheWorker,
+                );
+            });
+        });
+    });
+
+    describe(usersQueryAction.setQueryString, () => {
         it("should allow valid string values", () => {
             const VALID_STRINGS = ["", "test", "query"];
             VALID_STRINGS.forEach((value) => {
@@ -313,7 +349,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setResourceData", () => {
+    describe(usersQueryAction.setResourceData, () => {
         it("should allow valid array values", () => {
             const VALID_ARRAYS: Array<Omit<UserDocument, "password">> = [
                 SAMPLE_USER_DOCUMENT,
@@ -345,7 +381,7 @@ describe("usersQueryReducer", () => {
         });
     });
 
-    describe("usersQueryReducer_setTotalDocuments", () => {
+    describe(usersQueryAction.setTotalDocuments, () => {
         it("should allow valid number values", () => {
             const VALID_NUMBERS = [0, 1, 2, 3, 4, 5];
             VALID_NUMBERS.forEach((value) => {
@@ -372,6 +408,40 @@ describe("usersQueryReducer", () => {
                     dispatch,
                 );
                 expect(state.totalDocuments).toBe(initialTotalDocuments);
+            });
+        });
+    });
+
+    describe(usersQueryAction.setUsersFetchWorker, () => {
+        it("should allow valid worker values", () => {
+            const VALID_WORKER = new Worker(
+                new URL("./fetchWorker?worker", import.meta.url),
+            );
+            const dispatch: UsersQueryDispatch = {
+                action: usersQueryAction.setUsersFetchWorker,
+                payload: VALID_WORKER,
+            };
+            const state = usersQueryReducer_setUsersFetchWorker(
+                initialUsersQueryState,
+                dispatch,
+            );
+            expect(state.usersFetchWorker).toBe(VALID_WORKER);
+        });
+        it("should not allow invalid worker values", () => {
+            const initialUsersFetchWorker =
+                initialUsersQueryState.usersFetchWorker;
+            INVALID_STRINGS.forEach((value) => {
+                const dispatch: UsersQueryDispatch = {
+                    action: usersQueryAction.setUsersFetchWorker,
+                    payload: value as any,
+                };
+                const state = usersQueryReducer_setUsersFetchWorker(
+                    initialUsersQueryState,
+                    dispatch,
+                );
+                expect(state.usersFetchWorker).toBe(
+                    initialUsersFetchWorker,
+                );
             });
         });
     });

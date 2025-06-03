@@ -99,6 +99,9 @@ type AccessibleButtonAttributes = ButtonProps & {
     event: MouseEvent<HTMLButtonElement> | PointerEvent<HTMLButtonElement>,
   ) => void;
   onKeyDown?: (event: KeyboardEvent<HTMLButtonElement>) => void;
+  onMouseEnter?: (
+    event: MouseEvent<HTMLButtonElement> | PointerEvent<HTMLButtonElement>,
+  ) => void;
   ref?: RefObject<HTMLButtonElement>;
   rightIcon?: ReactNode;
   size?: MantineSize;
@@ -142,6 +145,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     name = kind,
     onClick,
     onKeyDown = () => {},
+    onMouseEnter,
     ref = null,
     rightIcon = null,
     setIconAsLabel = false,
@@ -227,6 +231,7 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
       leftIcon={leftIcon}
       name={name}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       onKeyDown={onKeyDown}
       ref={ref}
       rightIcon={rightIcon}

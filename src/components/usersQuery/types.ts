@@ -10,6 +10,7 @@ type UsersQueryState = {
     isLoading: boolean;
     newQueryFlag: boolean;
     pages: number;
+    prefetchAndCacheWorker: Worker | null;
     queryString: string;
     resourceData: Array<Omit<UserDocument, "password">>;
     totalDocuments: number;

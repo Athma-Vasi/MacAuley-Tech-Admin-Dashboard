@@ -11,6 +11,7 @@ import {
     setIsLoadingUsersQueryDispatchZod,
     setNewQueryFlagUsersQueryDispatchZod,
     setPagesUsersQueryDispatchZod,
+    setPrefetchAndCacheWorkerUsersQueryDispatchZod,
     setQueryStringUsersQueryDispatchZod,
     setResourceDataUsersQueryDispatchZod,
     setTotalDocumentsUsersQueryDispatchZod,
@@ -50,6 +51,10 @@ const usersQueryReducers = new Map<
     [usersQueryAction.setIsLoading, usersQueryReducer_setIsLoading],
     [usersQueryAction.setNewQueryFlag, usersQueryReducer_setNewQueryFlag],
     [usersQueryAction.setPages, usersQueryReducer_setPages],
+    [
+        usersQueryAction.setPrefetchAndCacheWorker,
+        usersQueryReducer_setPrefetchAndCacheWorker,
+    ],
     [usersQueryAction.setQueryString, usersQueryReducer_setQueryString],
     [usersQueryAction.setResourceData, usersQueryReducer_setResourceData],
     [usersQueryAction.setTotalDocuments, usersQueryReducer_setTotalDocuments],
@@ -247,6 +252,25 @@ function usersQueryReducer_setPages(
     };
 }
 
+function usersQueryReducer_setPrefetchAndCacheWorker(
+    state: UsersQueryState,
+    dispatch: UsersQueryDispatch,
+): UsersQueryState {
+    const parsedResult = parseSyncSafe({
+        object: dispatch,
+        zSchema: setPrefetchAndCacheWorkerUsersQueryDispatchZod,
+    });
+
+    if (parsedResult.err || parsedResult.val.none) {
+        return state;
+    }
+
+    return {
+        ...state,
+        prefetchAndCacheWorker: parsedResult.val.val.payload as Worker,
+    };
+}
+
 function usersQueryReducer_setQueryString(
     state: UsersQueryState,
     dispatch: UsersQueryDispatch,
@@ -316,7 +340,9 @@ export {
     usersQueryReducer_setIsLoading,
     usersQueryReducer_setNewQueryFlag,
     usersQueryReducer_setPages,
+    usersQueryReducer_setPrefetchAndCacheWorker,
     usersQueryReducer_setQueryString,
     usersQueryReducer_setResourceData,
     usersQueryReducer_setTotalDocuments,
+    usersQueryReducer_setUsersFetchWorker,
 };

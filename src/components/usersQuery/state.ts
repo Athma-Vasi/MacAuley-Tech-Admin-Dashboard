@@ -9,6 +9,7 @@ const initialUsersQueryState: UsersQueryState = {
     isLoading: false,
     newQueryFlag: false,
     pages: 0,
+    prefetchAndCacheWorker: null,
     queryString: "",
     resourceData: [],
     totalDocuments: 0,

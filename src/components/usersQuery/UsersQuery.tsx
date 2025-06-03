@@ -8,6 +8,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { returnThemeColors } from "../../utils";
+import { MessageEventPrefetchAndCacheWorkerToMain } from "../../workers/prefetchAndCacheWorker";
+import PrefetchAndCacheWorker from "../../workers/prefetchAndCacheWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { Query } from "../query/Query";
 import { usersQueryAction } from "./actions";
@@ -17,7 +19,9 @@ import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
 import UsersFetchWorker from "./fetchWorker?worker";
 import {
     handleMessageEventUsersFetchWorkerToMain,
-    handleUsersQuerySubmitGETClick,
+    handleMessageEventUsersPrefetchAndCacheWorkerToMain,
+    triggerMessageEventFetchMainToWorkerUsersQuery,
+    triggerMessageEventUsersPrefetchAndCacheMainToWorker,
 } from "./handlers";
 import { usersQueryReducer } from "./reducers";
 import { initialUsersQueryState } from "./state";
@@ -44,6 +48,25 @@ function UsersQuery() {
     const isComponentMountedRef = useMountedRef();
 
     useEffect(() => {
+        const newPrefetchAndCacheWorker = new PrefetchAndCacheWorker();
+        usersQueryDispatch({
+            action: usersQueryAction.setPrefetchAndCacheWorker,
+            payload: newPrefetchAndCacheWorker,
+        });
+        newPrefetchAndCacheWorker.onmessage = async (
+            event: MessageEventPrefetchAndCacheWorkerToMain,
+        ) => {
+            const result =
+                await handleMessageEventUsersPrefetchAndCacheWorkerToMain({
+                    authDispatch,
+                    event,
+                    isComponentMountedRef,
+                    showBoundary,
+                });
+
+            console.log("Prefetch and cache result:", result.val);
+        };
+
         const newUsersFetchWorker = new UsersFetchWorker();
         usersQueryDispatch({
             action: usersQueryAction.setUsersFetchWorker,
@@ -65,6 +88,7 @@ function UsersQuery() {
 
         return () => {
             isComponentMountedRef.current = false;
+            newPrefetchAndCacheWorker.terminate();
             newUsersFetchWorker.terminate();
         };
     }, []);
@@ -79,6 +103,7 @@ function UsersQuery() {
         isLoading,
         queryString,
         pages,
+        prefetchAndCacheWorker,
         resourceData,
         totalDocuments,
     } = usersQueryState;
@@ -97,7 +122,7 @@ function UsersQuery() {
                         return;
                     }
 
-                    await handleUsersQuerySubmitGETClick({
+                    await triggerMessageEventFetchMainToWorkerUsersQuery({
                         accessToken,
                         arrangeByDirection,
                         arrangeByField,
@@ -112,12 +137,37 @@ function UsersQuery() {
                         usersQueryDispatch,
                     });
                 },
+                onMouseEnter: async () => {
+                    if (isLoading || !decodedToken) {
+                        return;
+                    }
+
+                    await triggerMessageEventUsersPrefetchAndCacheMainToWorker(
+                        {
+                            accessToken,
+                            arrangeByDirection,
+                            arrangeByField,
+                            currentPage,
+                            isComponentMountedRef,
+                            newQueryFlag,
+                            prefetchAndCacheWorker,
+                            queryString,
+                            showBoundary,
+                            totalDocuments,
+                            url: API_URL,
+                        },
+                    );
+                },
             }}
         />
     );
 
     const buttons = (
-        <Group w="100%" position="center" px="md">
+        <Group
+            w="100%"
+            position="center"
+            px="md"
+        >
             {submitButton}
         </Group>
     );
@@ -164,7 +214,7 @@ function UsersQuery() {
                     if (isLoading || !decodedToken) {
                         return;
                     }
-                    await handleUsersQuerySubmitGETClick({
+                    await triggerMessageEventFetchMainToWorkerUsersQuery({
                         accessToken,
                         arrangeByDirection,
                         arrangeByField,
@@ -178,6 +228,26 @@ function UsersQuery() {
                         usersFetchWorker,
                         usersQueryDispatch,
                     });
+                }}
+                onMouseEnter={async () => {
+                    if (isLoading || !decodedToken) {
+                        return;
+                    }
+                    await triggerMessageEventUsersPrefetchAndCacheMainToWorker(
+                        {
+                            accessToken,
+                            arrangeByDirection,
+                            arrangeByField,
+                            currentPage: currentPage + 1, // optimistically prefetch next page
+                            isComponentMountedRef,
+                            newQueryFlag: false,
+                            prefetchAndCacheWorker,
+                            queryString,
+                            showBoundary,
+                            totalDocuments,
+                            url: API_URL,
+                        },
+                    );
                 }}
                 total={pages}
                 w="100%"
