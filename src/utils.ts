@@ -2,7 +2,12 @@ import html2canvas from "html2canvas";
 import jwtDecode from "jwt-decode";
 import { Err, None, Ok, Option, Some } from "ts-results";
 import { v4 as uuidv4 } from "uuid";
-import { ColorsSwatches, PROPERTY_DESCRIPTOR } from "./constants";
+import {
+  ColorsSwatches,
+  PROPERTY_DESCRIPTOR,
+  ROUTES_ZOD_SCHEMAS_MAP,
+  RoutesZodSchemasMapKey,
+} from "./constants";
 
 import { compress, ICompressConfig } from "image-conversion";
 import localforage from "localforage";
@@ -26,6 +31,18 @@ import {
   Month,
   Year,
 } from "./components/dashboard/types";
+import {
+  AbortError,
+  AppError,
+  CacheError,
+  HTTPError,
+  InvariantError,
+  JSONError,
+  NetworkError,
+  ParseError,
+  TimeoutError,
+  UnknownError,
+} from "./components/error";
 import { SidebarNavlinks } from "./components/sidebar/types";
 import {
   DecodedToken,
@@ -390,33 +407,39 @@ function createSafeSuccessResult<Data = unknown>(
   return new Ok(data == null ? None : Some(data));
 }
 
-function createSafeErrorResult(error: unknown, trace?: {
-  fileName?: string;
-  lineNumber?: number;
-  columnNumber?: number;
-}): Err<SafeError> {
+function createSafeErrorResult(
+  error: AppError | unknown,
+  trace?: {
+    fileName?: string;
+    lineNumber?: number;
+    columnNumber?: number;
+  },
+): Err<SafeError> {
   const additional = {
     fileName: trace?.fileName ? Some(trace.fileName) : None,
     lineNumber: trace?.lineNumber ? Some(trace.lineNumber) : None,
     columnNumber: trace?.columnNumber ? Some(trace.columnNumber) : None,
+    timestamp: Date.now(),
   };
 
   if (error instanceof Error) {
     return new Err({
-      name: error.name == null ? "Error" : error.name,
       message: error.message == null ? "Unknown error" : error.message,
-      stack: error.stack == null ? None : Some(error.stack),
+      name: error.name == null ? "Error" : error.name,
       original: None,
+      stack: error.stack == null ? None : Some(error.stack),
+      status: None,
       ...additional,
     });
   }
 
   if (typeof error === "string") {
     return new Err({
-      name: "Error",
       message: error,
-      stack: None,
+      name: "Error",
       original: None,
+      stack: None,
+      status: None,
       ...additional,
     });
   }
@@ -425,7 +448,7 @@ function createSafeErrorResult(error: unknown, trace?: {
     try {
       const serializedData = JSON.stringify(data, null, 2);
       return Some(serializedData);
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       return Some("Unserializable data");
     }
   }
@@ -433,28 +456,60 @@ function createSafeErrorResult(error: unknown, trace?: {
   if (error instanceof Event) {
     if (error instanceof PromiseRejectionEvent) {
       return new Err({
-        name: `PromiseRejectionEvent: ${error.type}`,
         message: error.reason.toString() ?? "",
-        stack: None,
+        name: `PromiseRejectionEvent: ${error.type}`,
         original: serializeSafe(error),
+        stack: None,
+        status: None,
         ...additional,
       });
     }
 
     return new Err({
-      name: `EventError: ${error.type}`,
       message: error.timeStamp.toString() ?? "",
-      stack: None,
+      name: `EventError: ${error.type}`,
       original: serializeSafe(error),
+      stack: None,
+      status: None,
+      ...additional,
+    });
+  }
+
+  if (error instanceof HTTPError) {
+    return new Err({
+      message: error.message,
+      name: error._tag,
+      original: serializeSafe(error.data),
+      stack: error.stack ?? None,
+      status: error.status ? Some(error.status) : None,
+      ...additional,
+    });
+  } else if (
+    error instanceof AbortError ||
+    error instanceof CacheError ||
+    error instanceof InvariantError ||
+    error instanceof JSONError ||
+    error instanceof NetworkError ||
+    error instanceof ParseError ||
+    error instanceof TimeoutError ||
+    error instanceof UnknownError
+  ) {
+    return new Err({
+      message: error.message,
+      name: error._tag,
+      original: serializeSafe(error.data),
+      stack: error.stack ?? None,
+      status: None,
       ...additional,
     });
   }
 
   return new Err({
-    name: "👾 SimulationDysfunction",
     message: "🪞 You've seen it before. Déjà vu. Something's off...",
-    stack: None,
+    name: "👾 SimulationDysfunction",
     original: serializeSafe(error),
+    stack: None,
+    status: None,
     ...additional,
   });
 }
@@ -493,22 +548,87 @@ type RetryOptions = {
   retries?: number;
   delayMs?: number;
 };
-async function retryAsyncSafe<Data = unknown>(
-  asyncFn: () => Promise<Data>,
-  retryOptions?: RetryOptions,
-): Promise<SafeResult<Data>> {
+async function retryFetchSafe<Data = unknown>(
+  { init, input, routesZodSchemaMapKey, retryOptions }: {
+    init: RequestInit;
+    input: RequestInfo | URL;
+    retryOptions?: RetryOptions;
+    routesZodSchemaMapKey: RoutesZodSchemasMapKey;
+  },
+): Promise<SafeResult<ResponsePayloadSafe<Data>>> {
   const {
     backOffFactor = 2,
     retries = 3,
     delayMs = 1000,
   } = retryOptions ?? {};
 
-  async function tryAgain(attempt: number): Promise<
-    SafeResult<Data>
-  > {
+  const retryStatusCodes = new Set([
+    408, // Request Timeout
+    429, // Too Many Requests
+    500, // Internal Server Error
+    502, // Bad Gateway
+    503, // Service Unavailable
+    504, // Gateway Timeout
+  ]);
+
+  async function tryAgain(
+    attempt: number,
+  ): Promise<SafeResult<ResponsePayloadSafe<Data>>> {
     try {
-      const data = await asyncFn();
-      return createSafeSuccessResult(data);
+      const response: Response = await fetch(input, init);
+      if (response == null) {
+        // perhaps a network-level failure occurred before any HTTP response could be received
+        // trigger a retry
+        throw new InvariantError("Response is null or undefined");
+      }
+
+      try {
+        const data = await response.json();
+        if (data == null) {
+          // trigger a retry
+          throw new JSONError("Response data is null or undefined");
+        }
+
+        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe<
+          Data
+        >({
+          object: data,
+          zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
+        });
+        if (responsePayloadSafeResult.err) {
+          return Promise.resolve(responsePayloadSafeResult);
+        }
+        if (responsePayloadSafeResult.val.none) {
+          return Promise.resolve(
+            createSafeErrorResult(
+              new InvariantError(
+                "Response payload is None, expected a valid response",
+              ),
+            ),
+          );
+        }
+
+        if (retryStatusCodes.has(response.status)) {
+          throw new HTTPError(
+            response.status,
+            `Retryable HTTP error: ${response.status}`,
+          );
+        }
+
+        return Promise.resolve(
+          createSafeSuccessResult<ResponsePayloadSafe<Data>>(
+            responsePayloadSafeResult.val.val,
+          ),
+        );
+      } catch (error_: unknown) {
+        if (attempt === retries) {
+          return Promise.resolve(
+            createSafeErrorResult(error_),
+          );
+        }
+
+        throw new JSONError(error_);
+      }
     } catch (error: unknown) {
       if (attempt === retries) {
         return Promise.resolve(
@@ -516,14 +636,14 @@ async function retryAsyncSafe<Data = unknown>(
         );
       }
 
-      console.log(
-        `Attempt ${attempt + 1} failed. Retrying in ${delayMs}ms...`,
-      );
-
       // Exponential backoff with jitter
       const backOff = Math.pow(backOffFactor, attempt) * delayMs;
       const jitter = backOff * 0.2 * (Math.random() - 0.5);
       const delay = backOff + jitter;
+
+      console.log(
+        `Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`,
+      );
 
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -533,46 +653,20 @@ async function retryAsyncSafe<Data = unknown>(
     }
   }
 
-  const initialAttempt = 0;
-  return tryAgain(initialAttempt);
-  // function tryAgain(attempt: number): Promise<SafeResult<Data>> {
-  //   return asyncFn()
-  //     .then((data) => createSafeSuccessResult(data))
-  //     .catch((error: unknown) => {
-  //       if (attempt === retries) {
-  //         return Promise.resolve(createSafeErrorResult(error));
-  //       }
-
-  //       console.log(
-  //         `Attempt ${attempt + 1} failed. Retrying in ${delayMs}ms...`,
-  //       );
-
-  //       const backOff = Math.pow(backOffFactor, attempt) * delayMs;
-  //       const jitter = backOff * 0.2 * (Math.random() - 0.5);
-  //       const delay = backOff + jitter;
-
-  //       return new Promise((resolve) => {
-  //         setTimeout(() => {
-  //           tryAgain(attempt + 1).then(resolve);
-  //         }, delay);
-  //       });
-  //     });
-  // }
-
-  // return tryAgain(0);
+  return tryAgain(0);
 }
 
 async function fetchResponseSafe(
   input: RequestInfo | URL,
-  init?: RequestInit,
+  init: RequestInit,
   retryOptions?: RetryOptions,
-): Promise<
-  SafeResult<Response>
-> {
-  return await retryAsyncSafe<Response>(
-    () => fetch(input, init),
-    retryOptions,
-  );
+): Promise<SafeResult<Response>> {
+  try {
+    const response: Response = await fetch(input, init);
+    return createSafeSuccessResult(response);
+  } catch (error: unknown) {
+    return createSafeErrorResult(error);
+  }
 }
 
 async function extractJSONFromResponseSafe<Data = unknown>(
@@ -692,7 +786,9 @@ async function parseResponsePayloadAsyncSafe<Data = unknown, Output = unknown>(
       );
 
     if (!success) {
-      return createSafeErrorResult(error);
+      return createSafeErrorResult(
+        new ParseError(error),
+      );
     }
 
     const safeData = Object.entries(data).reduce<ResponsePayloadSafe<Data>>(

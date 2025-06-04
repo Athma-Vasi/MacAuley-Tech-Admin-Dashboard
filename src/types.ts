@@ -261,6 +261,8 @@ type SafeError = {
   name: string;
   original: Option<string>;
   stack: Option<string>;
+  status: Option<number>;
+  timestamp: number;
 };
 type SafeResult<Data = unknown> = Result<
   Option<Data>,
