@@ -26,6 +26,7 @@ import { RepairMetricCategory } from "../dashboard/repair/types";
 import { AllStoreLocations, DashboardMetricsView } from "../dashboard/types";
 import { MessageEventDirectoryFetchWorkerToMain } from "../directory/fetchWorker";
 import { DepartmentsWithDefaultKey } from "../directory/types";
+import { AuthError, InvariantError, UnknownError } from "../error";
 import {
   handleDirectoryNavClickInputZod,
   handleLogoutClickInputZod,
@@ -54,7 +55,9 @@ async function handleMessageEventMetricsCacheWorkerToMain(input: {
     }
     if (parsedResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No data in message event",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -70,11 +73,15 @@ async function handleMessageEventMetricsCacheWorkerToMain(input: {
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
-      return createSafeErrorResult("No data in message event");
+      return createSafeErrorResult(
+        new InvariantError("No data received from worker"),
+      );
     }
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component is not mounted"),
+      );
     }
 
     if (messageEventResult.err) {
@@ -84,7 +91,7 @@ async function handleMessageEventMetricsCacheWorkerToMain(input: {
 
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No data found",
+        new InvariantError("No data received from the worker"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -169,7 +176,11 @@ async function handleMetricCategoryNavClick(
     return parsedInputResult;
   }
   if (parsedInputResult.val.none) {
-    const safeErrorResult = createSafeErrorResult("No data in input");
+    const safeErrorResult = createSafeErrorResult(
+      new InvariantError(
+        "Unexpected None option in input parsing",
+      ),
+    );
     input?.showBoundary?.(safeErrorResult);
     return safeErrorResult;
   }
@@ -231,7 +242,11 @@ async function handleLogoutClick(input: {
     return parsedInputResult;
   }
   if (parsedInputResult.val.none) {
-    const safeErrorResult = createSafeErrorResult("No data in input");
+    const safeErrorResult = createSafeErrorResult(
+      new InvariantError(
+        "Unexpected None option in input parsing",
+      ),
+    );
     input?.showBoundary?.(safeErrorResult);
     return safeErrorResult;
   }
@@ -288,7 +303,9 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
     }
     if (parsedResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No data in input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -304,7 +321,9 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
 
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component is not mounted"),
+      );
     }
     if (messageEventResult.err) {
       showBoundary(messageEventResult.val);
@@ -312,7 +331,7 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
     }
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No data found",
+        new InvariantError("No data received from worker"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -321,7 +340,7 @@ async function handleMessageEventLogoutFetchWorkerToMain(input: {
     const { responsePayloadSafe } = messageEventResult.val.val;
     if (responsePayloadSafe.kind === "error") {
       const safeErrorResult = createSafeErrorResult(
-        "Error in server response",
+        new UnknownError("Error in server response"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -366,7 +385,11 @@ async function handleDirectoryNavClick(
     return parsedInputResult;
   }
   if (parsedInputResult.val.none) {
-    const safeErrorResult = createSafeErrorResult("No data in input");
+    const safeErrorResult = createSafeErrorResult(
+      new InvariantError(
+        "Unexpected None option in input parsing",
+      ),
+    );
     input?.showBoundary?.(safeErrorResult);
     return safeErrorResult;
   }
@@ -439,7 +462,11 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return parsedResult;
     }
     if (parsedResult.val.none) {
-      const safeErrorResult = createSafeErrorResult("No data in input");
+      const safeErrorResult = createSafeErrorResult(
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
+      );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
     }
@@ -456,11 +483,13 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
 
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component is not mounted"),
+      );
     }
     if (!messageEventResult) {
       const safeErrorResult = createSafeErrorResult(
-        "No data in message event",
+        new InvariantError("No data received from worker"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -470,7 +499,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
       return messageEventResult;
     }
     if (messageEventResult.val.none) {
-      const safeErrorResult = createSafeErrorResult("No data found");
+      const safeErrorResult = createSafeErrorResult(
+        new InvariantError("No data received from worker"),
+      );
       showBoundary(safeErrorResult);
       return safeErrorResult;
     }
@@ -501,7 +532,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
 
       await localforage.clear();
       const safeErrorResult = createSafeErrorResult(
-        "Logout triggered",
+        new AuthError(
+          "Logout triggered",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -530,7 +563,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
 
     if (newAccessToken.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Access token is missing from parsed response from worker",
+        new InvariantError(
+          "Access token is missing in response payload",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -542,7 +577,9 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
 
     if (decodedToken.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Decoded token is missing from parsed response from worker",
+        new InvariantError(
+          "Decoded token is missing in response payload",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -554,7 +591,7 @@ async function handleMessageEventDirectoryFetchWorkerToMain(input: {
 
     if (kind === "error") {
       const safeErrorResult = createSafeErrorResult(
-        `Server error: ${message}`,
+        new UnknownError(`Server error: ${message}`),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -606,7 +643,9 @@ async function triggerMessageEventDirectoryPrefetchAndCacheMainToWorker(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
