@@ -6,6 +6,7 @@ import {
     makeTransition,
     parseSyncSafe,
 } from "../../../utils";
+import { InvariantError } from "../../error";
 import { productMetricsAction } from "./actions";
 import { MessageEventProductChartsWorkerToMain } from "./chartsWorker";
 import { handleMessageEventProductChartsWorkerToMainInputZod } from "./schemas";
@@ -28,7 +29,9 @@ async function handleMessageEventProductChartsWorkerToMain(input: {
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -42,19 +45,25 @@ async function handleMessageEventProductChartsWorkerToMain(input: {
         } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
+            return createSafeErrorResult(
+                new InvariantError("Component is not mounted"),
+            );
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createSafeErrorResult("No data received");
+            return createSafeErrorResult(
+                new InvariantError("No data received from the worker"),
+            );
         }
         if (messageEventResult.err) {
             showBoundary(messageEventResult);
             return messageEventResult;
         }
         if (messageEventResult.val.none) {
-            return createSafeErrorResult("Error parsing message event");
+            return createSafeErrorResult(
+                new InvariantError("Error parsing message event"),
+            );
         }
 
         const {
