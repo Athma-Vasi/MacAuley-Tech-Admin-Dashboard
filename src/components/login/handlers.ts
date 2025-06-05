@@ -17,6 +17,7 @@ import { MessageEventCustomerMetricsWorkerToMain } from "../dashboard/customer/m
 import { MessageEventFinancialMetricsWorkerToMain } from "../dashboard/financial/metricsWorker";
 import { MessageEventProductMetricsWorkerToMain } from "../dashboard/product/metricsWorker";
 import { MessageEventRepairMetricsWorkerToMain } from "../dashboard/repair/metricsWorker";
+import { AuthError, InvariantError } from "../error";
 import { loginAction } from "./actions";
 import { MessageEventLoginFetchWorkerToMain } from "./fetchWorker";
 import {
@@ -52,7 +53,9 @@ async function handleLoginClick(input: {
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -68,7 +71,11 @@ async function handleLoginClick(input: {
     } = parsedInputResult.val.val;
 
     if (isLoading || isSubmitting || isSuccessful) {
-      return createSafeErrorResult("Already loading or submitting");
+      return createSafeErrorResult(
+        new InvariantError(
+          "Login is already in progress or has been successful",
+        ),
+      );
     }
 
     loginDispatch({
@@ -123,7 +130,9 @@ async function triggerMessageEventLoginPrefetchAndCacheMainToWorker(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -139,7 +148,9 @@ async function triggerMessageEventLoginPrefetchAndCacheMainToWorker(
     } = parsedInputResult.val.val;
 
     if (isLoading || isSubmitting || isSuccessful) {
-      return createSafeErrorResult("Already loading or submitting");
+      return createSafeErrorResult(
+        new InvariantError("Already loading or submitting"),
+      );
     }
 
     const requestInit: RequestInit = {
@@ -191,7 +202,9 @@ async function handleMessageEventLoginPrefetchAndCacheWorkerToMain(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -210,14 +223,20 @@ async function handleMessageEventLoginPrefetchAndCacheWorkerToMain(
       );
     }
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError(
+          "Component is not mounted",
+        ),
+      );
     }
     if (messageEventResult.err) {
       return messageEventResult;
     }
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No data found",
+        new InvariantError(
+          "No data received from the worker",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -282,7 +301,9 @@ async function handleMessageEventLoginFetchWorkerToMain(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -300,11 +321,17 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
-      return createSafeErrorResult("No data received");
+      return createSafeErrorResult(
+        new InvariantError(
+          "No data in message event",
+        ),
+      );
     }
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component is not mounted"),
+      );
     }
 
     if (messageEventResult.err) {
@@ -326,7 +353,9 @@ async function handleMessageEventLoginFetchWorkerToMain(
         payload: false,
       });
 
-      return createSafeErrorResult("Invalid credentials");
+      return createSafeErrorResult(
+        new AuthError("Invalid credentials"),
+      );
     }
 
     const { financialMetricsDocument, responsePayloadSafe, decodedToken } =
@@ -353,7 +382,7 @@ async function handleMessageEventLoginFetchWorkerToMain(
 
       await localforage.clear();
       const safeErrorResult = createSafeErrorResult(
-        "Session expired",
+        new AuthError("Session expired"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -420,7 +449,9 @@ async function handleMessageEventCustomerMetricsWorkerToMain(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -433,12 +464,16 @@ async function handleMessageEventCustomerMetricsWorkerToMain(
     } = parsedInputResult.val.val;
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component is not mounted"),
+      );
     }
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
-      return createSafeErrorResult("No data received");
+      return createSafeErrorResult(
+        new InvariantError("No data received from the worker"),
+      );
     }
 
     if (messageEventResult.err) {
@@ -447,7 +482,9 @@ async function handleMessageEventCustomerMetricsWorkerToMain(
     }
 
     if (messageEventResult.val.none) {
-      return createSafeErrorResult("No customer metrics data found");
+      return createSafeErrorResult(
+        new InvariantError("No customer metrics data found"),
+      );
     }
 
     return messageEventResult;
@@ -477,7 +514,9 @@ async function handleMessageEventProductMetricsWorkerToMain(input: {
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -491,12 +530,16 @@ async function handleMessageEventProductMetricsWorkerToMain(input: {
     } = parsedInputResult.val.val;
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component unmounted"),
+      );
     }
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
-      return createSafeErrorResult("No data received");
+      return createSafeErrorResult(
+        new InvariantError("No data received from the worker"),
+      );
     }
 
     if (messageEventResult.err) {
@@ -506,7 +549,7 @@ async function handleMessageEventProductMetricsWorkerToMain(input: {
 
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No product metrics data found",
+        new InvariantError("No product metrics data found"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -544,7 +587,9 @@ async function handleMessageEventRepairMetricsWorkerToMain(input: {
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -558,12 +603,16 @@ async function handleMessageEventRepairMetricsWorkerToMain(input: {
     } = parsedInputResult.val.val;
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component is not mounted"),
+      );
     }
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
-      return createSafeErrorResult("No data received");
+      return createSafeErrorResult(
+        new InvariantError("No data received from the worker"),
+      );
     }
 
     if (messageEventResult.err) {
@@ -573,7 +622,7 @@ async function handleMessageEventRepairMetricsWorkerToMain(input: {
 
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No repair metrics data found",
+        new InvariantError("No repair metrics data found"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -611,7 +660,9 @@ async function handleMessageEventFinancialMetricsWorkerToMain(input: {
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -625,12 +676,16 @@ async function handleMessageEventFinancialMetricsWorkerToMain(input: {
     } = parsedInputResult.val.val;
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError("Component is not mounted"),
+      );
     }
 
     const messageEventResult = event.data;
     if (!messageEventResult) {
-      return createSafeErrorResult("No data received");
+      return createSafeErrorResult(
+        new InvariantError("No data received from the worker"),
+      );
     }
 
     if (messageEventResult.err) {
@@ -640,7 +695,7 @@ async function handleMessageEventFinancialMetricsWorkerToMain(input: {
 
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "No financial metrics data found",
+        new InvariantError("No financial metrics data found"),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
