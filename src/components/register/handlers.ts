@@ -9,6 +9,7 @@ import {
 } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE } from "../../validations";
 import { MessageEventFetchWorkerToMain } from "../../workers/fetchParseWorker";
+import { InvariantError, UnknownError } from "../error";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, STEPS_INPUTNAMES_MAP } from "./constants";
 import {
@@ -44,7 +45,9 @@ async function handleCheckEmail(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -63,7 +66,11 @@ async function handleCheckEmail(
     });
 
     if (!isEmailValid) {
-      return createSafeErrorResult("Email is invalid");
+      return createSafeErrorResult(
+        new InvariantError(
+          "Email is invalid",
+        ),
+      );
     }
 
     const requestInit: RequestInit = {
@@ -112,7 +119,9 @@ async function handleMessageEventCheckEmailWorkerToMain(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -122,7 +131,11 @@ async function handleMessageEventCheckEmailWorkerToMain(
       parsedInputResult.val.val;
     const messageEventResult = event.data;
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError(
+          "Component unmounted",
+        ),
+      );
     }
     if (messageEventResult.err) {
       showBoundary(messageEventResult);
@@ -130,7 +143,9 @@ async function handleMessageEventCheckEmailWorkerToMain(
     }
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error from worker",
+        new InvariantError(
+          "Unexpected None option in message event result",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -146,14 +161,20 @@ async function handleMessageEventCheckEmailWorkerToMain(
     const { data, kind, message } = responsePayloadSafe;
 
     if (kind === "error") {
-      const safeErrorResult = createSafeErrorResult(`Server error: ${message}`);
+      const safeErrorResult = createSafeErrorResult(
+        new UnknownError(
+          `Server error: ${message}`,
+        ),
+      );
       showBoundary(safeErrorResult);
       return safeErrorResult;
     }
 
     if (data.length === 0) {
       const safeErrorResult = createSafeErrorResult(
-        "No data received",
+        new InvariantError(
+          "No data received from the worker",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -196,7 +217,9 @@ async function handleCheckUsername(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -215,7 +238,11 @@ async function handleCheckUsername(
     });
 
     if (!isUsernameValid) {
-      return createSafeErrorResult("Username is invalid");
+      return createSafeErrorResult(
+        new InvariantError(
+          "Username is invalid",
+        ),
+      );
     }
 
     const requestInit: RequestInit = {
@@ -264,7 +291,9 @@ async function handleMessageEventCheckUsernameWorkerToMain(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -276,7 +305,11 @@ async function handleMessageEventCheckUsernameWorkerToMain(
     const messageEventResult = event.data;
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError(
+          "Component unmounted",
+        ),
+      );
     }
 
     if (messageEventResult.err) {
@@ -286,7 +319,9 @@ async function handleMessageEventCheckUsernameWorkerToMain(
 
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error from worker",
+        new InvariantError(
+          "Unexpected None option in message event result",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -303,7 +338,9 @@ async function handleMessageEventCheckUsernameWorkerToMain(
 
     if (kind === "error") {
       const safeErrorResult = createSafeErrorResult(
-        `Server error: ${message}`,
+        new UnknownError(
+          `Server error: ${message}`,
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -311,7 +348,9 @@ async function handleMessageEventCheckUsernameWorkerToMain(
 
     if (data.length === 0) {
       const safeErrorResult = createSafeErrorResult(
-        "No data received",
+        new InvariantError(
+          "No data received from the worker",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -354,7 +393,9 @@ async function handleRegisterButtonSubmit(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -411,7 +452,9 @@ async function handleMessageEventRegisterFetchWorkerToMain(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -429,7 +472,11 @@ async function handleMessageEventRegisterFetchWorkerToMain(
     const messageEventResult = event.data;
 
     if (!isComponentMountedRef.current) {
-      return createSafeErrorResult("Component unmounted");
+      return createSafeErrorResult(
+        new InvariantError(
+          "Component unmounted",
+        ),
+      );
     }
 
     if (messageEventResult.err) {
@@ -439,7 +486,9 @@ async function handleMessageEventRegisterFetchWorkerToMain(
 
     if (messageEventResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error from worker",
+        new InvariantError(
+          "Unexpected None option in message event result",
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -464,7 +513,9 @@ async function handleMessageEventRegisterFetchWorkerToMain(
       });
 
       const safeErrorResult = createSafeErrorResult(
-        `Server error: ${responsePayloadSafe.message}`,
+        new UnknownError(
+          `Server error: ${responsePayloadSafe.message.val}`,
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -489,7 +540,9 @@ async function handleMessageEventRegisterFetchWorkerToMain(
       });
 
       const safeErrorResult = createSafeErrorResult(
-        `Registration failed: ${errorMessage}`,
+        new UnknownError(
+          `Registration failed: ${errorMessage}`,
+        ),
       );
       showBoundary(safeErrorResult);
       return safeErrorResult;
@@ -546,7 +599,9 @@ function handlePrevNextStepClick(
     }
     if (parsedInputResult.val.none) {
       const safeErrorResult = createSafeErrorResult(
-        "Error parsing input",
+        new InvariantError(
+          "Unexpected None option in input parsing",
+        ),
       );
       input?.showBoundary?.(safeErrorResult);
       return safeErrorResult;
@@ -557,7 +612,9 @@ function handlePrevNextStepClick(
 
     if (activeStep === MAX_REGISTER_STEPS) {
       return createSafeErrorResult(
-        "You are already on the last step",
+        new InvariantError(
+          "Cannot go to next step, already at the last step",
+        ),
       );
     }
 
