@@ -14,6 +14,7 @@ import {
     makeTransition,
     parseSyncSafe,
 } from "../../utils";
+import { InvariantError } from "../error";
 import { dashboardAction } from "./actions";
 import { MessageEventDashboardCacheWorkerToMain } from "./cacheWorker";
 import { ProductMetricCategory } from "./product/types";
@@ -52,7 +53,9 @@ async function handleStoreAndCategoryClicks(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -117,7 +120,9 @@ async function handleMessageEventDashboardCacheWorkerToMain(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -132,12 +137,16 @@ async function handleMessageEventDashboardCacheWorkerToMain(
         } = parsedInputResult.val.val;
 
         if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
+            return createSafeErrorResult(
+                new InvariantError("Component is not mounted"),
+            );
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
-            return createSafeErrorResult("No data received");
+            return createSafeErrorResult(
+                new InvariantError("No data received from the worker"),
+            );
         }
 
         if (messageEventResult.err) {
@@ -147,7 +156,7 @@ async function handleMessageEventDashboardCacheWorkerToMain(
 
         if (messageEventResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "No data received",
+                new InvariantError("No data received from the worker"),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
