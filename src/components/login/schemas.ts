@@ -66,21 +66,27 @@ const setFinancialMetricsGeneratedLoginDispatchZod = z.object({
     payload: z.boolean(),
 });
 
+const setPrefetchAndCacheWorkerLoginDispatchZod = z.object({
+    action: z.literal(loginAction.setPrefetchAndCacheWorker),
+    payload: z.instanceof(Worker),
+});
+
 type LoginDispatch =
+    | z.infer<typeof setCustomerMetricsWorkerLoginDispatchZod>
+    | z.infer<typeof setErrorMessageLoginDispatchZod>
+    | z.infer<typeof setFinancialMetricsGeneratedLoginDispatchZod>
+    | z.infer<typeof setFinancialMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setIsLoadingLoginDispatchZod>
     | z.infer<typeof setIsSubmittingLoginDispatchZod>
     | z.infer<typeof setIsSuccessfulLoginDispatchZod>
-    | z.infer<typeof setPasswordLoginDispatchZod>
-    | z.infer<typeof setUsernameLoginDispatchZod>
     | z.infer<typeof setLoginFetchWorkerLoginDispatchZod>
-    | z.infer<typeof setErrorMessageLoginDispatchZod>
-    | z.infer<typeof setFinancialMetricsWorkerLoginDispatchZod>
-    | z.infer<typeof setProductMetricsWorkerLoginDispatchZod>
-    | z.infer<typeof setRepairMetricsWorkerLoginDispatchZod>
-    | z.infer<typeof setCustomerMetricsWorkerLoginDispatchZod>
+    | z.infer<typeof setPasswordLoginDispatchZod>
+    | z.infer<typeof setPrefetchAndCacheWorkerLoginDispatchZod>
     | z.infer<typeof setProductMetricsGeneratedLoginDispatchZod>
+    | z.infer<typeof setProductMetricsWorkerLoginDispatchZod>
     | z.infer<typeof setRepairMetricsGeneratedLoginDispatchZod>
-    | z.infer<typeof setFinancialMetricsGeneratedLoginDispatchZod>;
+    | z.infer<typeof setRepairMetricsWorkerLoginDispatchZod>
+    | z.infer<typeof setUsernameLoginDispatchZod>;
 
 const handleLoginClickInputZod = z.object({
     isLoading: z.boolean(),
@@ -131,13 +137,37 @@ const handleMessageEventFinancialMetricsWorkerToMainInputZod = z.object({
     showBoundary: z.function().args(z.any()).returns(z.void()),
 });
 
+const handleMessageEventTriggerPrefetchWorkerToMainInputZod = z.object({
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    isLoading: z.boolean(),
+    isSubmitting: z.boolean(),
+    isSuccessful: z.boolean(),
+    loginDispatch: z.function().args(z.any()).returns(z.void()),
+    prefetchAndCacheWorker: z.instanceof(Worker),
+    schema: z.object({
+        username: z.string(),
+        password: z.string(),
+    }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
+const handleMessageEventLoginPrefetchAndCacheWorkerToMainInputZod = z.object({
+    authDispatch: z.function().args(z.any()).returns(z.void()),
+    event: z.instanceof(MessageEvent),
+    loginDispatch: z.function().args(z.any()).returns(z.void()),
+    isComponentMountedRef: z.object({ current: z.boolean() }),
+    showBoundary: z.function().args(z.any()).returns(z.void()),
+});
+
 export {
     handleLoginClickInputZod,
     handleMessageEventCustomerMetricsWorkerToMainInputZod,
     handleMessageEventFinancialMetricsWorkerToMainInputZod,
     handleMessageEventLoginFetchWorkerToMainInputZod,
+    handleMessageEventLoginPrefetchAndCacheWorkerToMainInputZod,
     handleMessageEventProductMetricsWorkerToMainInputZod,
     handleMessageEventRepairMetricsWorkerToMainInputZod,
+    handleMessageEventTriggerPrefetchWorkerToMainInputZod,
     setCustomerMetricsWorkerLoginDispatchZod,
     setErrorMessageLoginDispatchZod,
     setFinancialMetricsGeneratedLoginDispatchZod,
@@ -147,6 +177,7 @@ export {
     setIsSuccessfulLoginDispatchZod,
     setLoginFetchWorkerLoginDispatchZod,
     setPasswordLoginDispatchZod,
+    setPrefetchAndCacheWorkerLoginDispatchZod,
     setProductMetricsGeneratedLoginDispatchZod,
     setProductMetricsWorkerLoginDispatchZod,
     setRepairMetricsGeneratedLoginDispatchZod,

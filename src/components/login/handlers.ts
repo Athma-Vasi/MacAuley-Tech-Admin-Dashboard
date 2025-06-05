@@ -12,6 +12,7 @@ import {
   createSafeSuccessResult,
   parseSyncSafe,
 } from "../../utils";
+import { MessageEventPrefetchAndCacheWorkerToMain } from "../../workers/prefetchAndCacheWorker";
 import { MessageEventCustomerMetricsWorkerToMain } from "../dashboard/customer/metricsWorker";
 import { MessageEventFinancialMetricsWorkerToMain } from "../dashboard/financial/metricsWorker";
 import { MessageEventProductMetricsWorkerToMain } from "../dashboard/product/metricsWorker";
@@ -23,8 +24,10 @@ import {
   handleMessageEventCustomerMetricsWorkerToMainInputZod,
   handleMessageEventFinancialMetricsWorkerToMainInputZod,
   handleMessageEventLoginFetchWorkerToMainInputZod,
+  handleMessageEventLoginPrefetchAndCacheWorkerToMainInputZod,
   handleMessageEventProductMetricsWorkerToMainInputZod,
   handleMessageEventRepairMetricsWorkerToMainInputZod,
+  handleMessageEventTriggerPrefetchWorkerToMainInputZod,
   LoginDispatch,
 } from "./schemas";
 
@@ -88,6 +91,164 @@ async function handleLoginClick(input: {
     });
 
     return createSafeSuccessResult("Login request sent");
+  } catch (error: unknown) {
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
+  }
+}
+
+async function triggerMessageEventLoginPrefetchAndCacheMainToWorker(
+  input: {
+    isComponentMountedRef: React.RefObject<boolean>;
+    isLoading: boolean;
+    isSubmitting: boolean;
+    isSuccessful: boolean;
+    loginDispatch: React.Dispatch<LoginDispatch>;
+    prefetchAndCacheWorker: Worker | null;
+    schema: { username: string; password: string };
+    showBoundary: (error: unknown) => void;
+  },
+) {
+  try {
+    const parsedInputResult = parseSyncSafe({
+      object: input,
+      zSchema: handleMessageEventTriggerPrefetchWorkerToMainInputZod,
+    });
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const {
+      isLoading,
+      isSubmitting,
+      isSuccessful,
+      loginDispatch,
+      prefetchAndCacheWorker,
+      schema,
+    } = parsedInputResult.val.val;
+
+    if (isLoading || isSubmitting || isSuccessful) {
+      return createSafeErrorResult("Already loading or submitting");
+    }
+
+    const requestInit: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ schema }),
+    };
+
+    prefetchAndCacheWorker?.postMessage({
+      requestInit,
+      url: LOGIN_URL,
+      routesZodSchemaMapKey: "login",
+    });
+
+    loginDispatch({
+      action: loginAction.setIsLoading,
+      payload: true,
+    });
+
+    return createSafeSuccessResult("Prefetch worker triggered");
+  } catch (error: unknown) {
+    return catchHandlerErrorSafe(
+      error,
+      input?.isComponentMountedRef,
+      input?.showBoundary,
+    );
+  }
+}
+
+async function handleMessageEventLoginPrefetchAndCacheWorkerToMain(
+  input: {
+    authDispatch: React.Dispatch<AuthDispatch>;
+    event: MessageEventPrefetchAndCacheWorkerToMain;
+    loginDispatch: React.Dispatch<LoginDispatch>;
+    isComponentMountedRef: React.RefObject<boolean>;
+    showBoundary: (error: unknown) => void;
+  },
+): Promise<SafeResult<string>> {
+  try {
+    const parsedInputResult = parseSyncSafe({
+      object: input,
+      zSchema: handleMessageEventLoginPrefetchAndCacheWorkerToMainInputZod,
+    });
+    if (parsedInputResult.err) {
+      input?.showBoundary?.(parsedInputResult);
+      return parsedInputResult;
+    }
+    if (parsedInputResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "Error parsing input",
+      );
+      input?.showBoundary?.(safeErrorResult);
+      return safeErrorResult;
+    }
+    const {
+      authDispatch,
+      event,
+      loginDispatch,
+      isComponentMountedRef,
+      showBoundary,
+    } = parsedInputResult.val.val;
+    const messageEventResult = event.data;
+    if (!messageEventResult) {
+      return createSafeErrorResult(
+        "No data in message event",
+      );
+    }
+    if (!isComponentMountedRef.current) {
+      return createSafeErrorResult("Component unmounted");
+    }
+    if (messageEventResult.err) {
+      return messageEventResult;
+    }
+    if (messageEventResult.val.none) {
+      const safeErrorResult = createSafeErrorResult(
+        "No data found",
+      );
+      showBoundary(safeErrorResult);
+      return safeErrorResult;
+    }
+
+    const {
+      accessTokenOption,
+      decodedTokenOption,
+    } = messageEventResult.val.val;
+
+    if (accessTokenOption.some) {
+      authDispatch({
+        action: authAction.setAccessToken,
+        payload: accessTokenOption.val,
+      });
+    }
+    if (decodedTokenOption.some) {
+      authDispatch({
+        action: authAction.setDecodedToken,
+        payload: decodedTokenOption.val,
+      });
+    }
+
+    loginDispatch({
+      action: loginAction.setIsLoading,
+      payload: false,
+    });
+
+    return createSafeSuccessResult(
+      "User documents prefetched and cached successfully",
+    );
   } catch (error: unknown) {
     return catchHandlerErrorSafe(
       error,
@@ -505,6 +666,8 @@ export {
   handleMessageEventCustomerMetricsWorkerToMain,
   handleMessageEventFinancialMetricsWorkerToMain,
   handleMessageEventLoginFetchWorkerToMain,
+  handleMessageEventLoginPrefetchAndCacheWorkerToMain,
   handleMessageEventProductMetricsWorkerToMain,
   handleMessageEventRepairMetricsWorkerToMain,
+  triggerMessageEventLoginPrefetchAndCacheMainToWorker,
 };

@@ -19,6 +19,7 @@ const loginAction: LoginAction = {
   setIsSuccessful: "setIsSuccessful",
   setLoginFetchWorker: "setLoginFetchWorker",
   setPassword: "setPassword",
+  setPrefetchAndCacheWorker: "setPrefetchAndCacheWorker",
   setProductMetricsGenerated: "setProductMetricsGenerated",
   setProductMetricsWorker: "setProductMetricsWorker",
   setRepairMetricsGenerated: "setRepairMetricsGenerated",

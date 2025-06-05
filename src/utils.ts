@@ -605,7 +605,7 @@ async function retryFetchSafe<Data = unknown>(
           object: data,
           zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
-        // don't throw
+        // don't retry
         if (responsePayloadSafeResult.err) {
           return Promise.resolve(responsePayloadSafeResult);
         }
@@ -613,7 +613,7 @@ async function retryFetchSafe<Data = unknown>(
           return Promise.resolve(
             createSafeErrorResult(
               new InvariantError(
-                "Response payload is None, expected a valid response",
+                "Response payload is None, expected a valid parsed response",
               ),
             ),
           );

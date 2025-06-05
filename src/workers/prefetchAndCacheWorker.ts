@@ -1,7 +1,11 @@
-import { None, Option } from "ts-results";
+import { None, Ok, Option } from "ts-results";
 import { z } from "zod";
 import { InvariantError } from "../components/error";
-import { FETCH_REQUEST_TIMEOUT, RoutesZodSchemasMapKey } from "../constants";
+import {
+    FETCH_REQUEST_TIMEOUT,
+    INVALID_CREDENTIALS,
+    RoutesZodSchemasMapKey,
+} from "../constants";
 import { DecodedToken, ResponsePayloadSafe, SafeResult } from "../types";
 import {
     createSafeErrorResult,
@@ -108,8 +112,17 @@ self.onmessage = async (
             return;
         }
 
-        const { accessToken: accessTokenOption } =
+        const { accessToken: accessTokenOption, kind, message } =
             responsePayloadSafeOption.val;
+
+        if (
+            kind === "error" && message.some &&
+            message.val === INVALID_CREDENTIALS
+        ) {
+            self.postMessage(new Ok(None));
+            return;
+        }
+
         if (accessTokenOption.none) {
             self.postMessage(
                 createSafeErrorResult(

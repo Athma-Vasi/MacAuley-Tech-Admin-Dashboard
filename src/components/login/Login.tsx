@@ -22,6 +22,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { UserDocument } from "../../types";
 import { returnThemeColors } from "../../utils";
+import { MessageEventPrefetchAndCacheWorkerToMain } from "../../workers/prefetchAndCacheWorker";
+import PrefetchAndCacheWorker from "../../workers/prefetchAndCacheWorker?worker";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { MessageEventCustomerMetricsWorkerToMain } from "../dashboard/customer/metricsWorker";
 import CustomerMetricsWorker from "../dashboard/customer/metricsWorker?worker";
@@ -39,8 +41,10 @@ import {
   handleMessageEventCustomerMetricsWorkerToMain,
   handleMessageEventFinancialMetricsWorkerToMain,
   handleMessageEventLoginFetchWorkerToMain,
+  handleMessageEventLoginPrefetchAndCacheWorkerToMain,
   handleMessageEventProductMetricsWorkerToMain,
   handleMessageEventRepairMetricsWorkerToMain,
+  triggerMessageEventLoginPrefetchAndCacheMainToWorker,
 } from "./handlers";
 import { loginReducer } from "./reducers";
 import { initialLoginState } from "./state";
@@ -60,6 +64,7 @@ function Login() {
     isSuccessful,
     loginFetchWorker,
     password,
+    prefetchAndCacheWorker,
     productMetricsGenerated,
     productMetricsWorker,
     repairMetricsGenerated,
@@ -79,19 +84,6 @@ function Login() {
   const usernameRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
     usernameRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    // (async function wrapper() {
-    //   const businessMetrics = await createRandomBusinessMetrics({
-    //     daysPerMonth: DAYS_PER_MONTH,
-    //     months: MONTHS,
-    //     productCategories: PRODUCT_CATEGORIES,
-    //     repairCategories: REPAIR_CATEGORIES,
-    //     storeLocations: STORE_LOCATIONS.map((location) => location.value),
-    //   });
-
-    // })();
   }, []);
 
   useEffect(() => {
@@ -158,10 +150,50 @@ function Login() {
       });
     };
 
+    const newPrefetchAndCacheWorker = new PrefetchAndCacheWorker();
+    loginDispatch({
+      action: loginAction.setPrefetchAndCacheWorker,
+      payload: newPrefetchAndCacheWorker,
+    });
+    newPrefetchAndCacheWorker.onmessage = async (
+      event: MessageEventPrefetchAndCacheWorkerToMain,
+    ) => {
+      await handleMessageEventLoginPrefetchAndCacheWorkerToMain({
+        authDispatch,
+        event,
+        loginDispatch,
+        isComponentMountedRef,
+        showBoundary,
+      });
+    };
+
+    const newLoginFetchWorker = new LoginFetchWorker();
+    loginDispatch({
+      action: loginAction.setLoginFetchWorker,
+      payload: newLoginFetchWorker,
+    });
+    newLoginFetchWorker.onmessage = async (
+      event: MessageEventLoginFetchWorkerToMain<
+        UserDocument
+      >,
+    ) => {
+      await handleMessageEventLoginFetchWorkerToMain({
+        event,
+        authDispatch,
+        globalDispatch,
+        isComponentMountedRef,
+        loginDispatch,
+        navigate,
+        showBoundary,
+      });
+    };
+
     return () => {
       isComponentMountedRef.current = false;
       newCustomerMetricsWorker.terminate();
       newFinancialMetricsWorker.terminate();
+      newLoginFetchWorker.terminate();
+      newPrefetchAndCacheWorker.terminate();
       newProductMetricsWorker.terminate();
       newRepairMetricsWorker.terminate();
     };
@@ -201,36 +233,6 @@ function Login() {
 
     financialMetricsWorker.postMessage(true);
   }, [financialMetricsWorker, productMetricsGenerated, repairMetricsGenerated]);
-
-  useEffect(() => {
-    const newLoginFetchWorker = new LoginFetchWorker();
-
-    loginDispatch({
-      action: loginAction.setLoginFetchWorker,
-      payload: newLoginFetchWorker,
-    });
-
-    newLoginFetchWorker.onmessage = async (
-      event: MessageEventLoginFetchWorkerToMain<
-        UserDocument
-      >,
-    ) => {
-      await handleMessageEventLoginFetchWorkerToMain({
-        event,
-        authDispatch,
-        globalDispatch,
-        isComponentMountedRef,
-        loginDispatch,
-        navigate,
-        showBoundary,
-      });
-    };
-
-    return () => {
-      newLoginFetchWorker.terminate();
-      isComponentMountedRef.current = false;
-    };
-  }, []);
 
   const usernameTextInput = (
     <TextInput
@@ -352,6 +354,22 @@ function Login() {
             isSuccessful,
             loginDispatch,
             loginFetchWorker,
+            schema: { username, password },
+            showBoundary,
+          });
+        },
+        onMouseEnter: async () => {
+          if (isLoading || isSubmitting) {
+            return;
+          }
+
+          await triggerMessageEventLoginPrefetchAndCacheMainToWorker({
+            isComponentMountedRef,
+            isLoading,
+            isSubmitting,
+            isSuccessful,
+            loginDispatch,
+            prefetchAndCacheWorker,
             schema: { username, password },
             showBoundary,
           });

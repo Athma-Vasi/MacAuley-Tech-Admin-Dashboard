@@ -57,12 +57,14 @@ function UsersQuery() {
             event: MessageEventPrefetchAndCacheWorkerToMain,
         ) => {
             const result =
-                await handleMessageEventUsersPrefetchAndCacheWorkerToMain({
-                    authDispatch,
-                    event,
-                    isComponentMountedRef,
-                    showBoundary,
-                });
+                await handleMessageEventUsersPrefetchAndCacheWorkerToMain(
+                    {
+                        authDispatch,
+                        event,
+                        isComponentMountedRef,
+                        showBoundary,
+                    },
+                );
 
             console.log("Prefetch and cache result:", result.val);
         };

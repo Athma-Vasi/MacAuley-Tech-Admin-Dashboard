@@ -8,6 +8,7 @@ type LoginState = {
   isSuccessful: boolean;
   loginFetchWorker: Worker | null;
   password: string;
+  prefetchAndCacheWorker: Worker | null;
   productMetricsGenerated: boolean;
   productMetricsWorker: Worker | null;
   repairMetricsGenerated: boolean;

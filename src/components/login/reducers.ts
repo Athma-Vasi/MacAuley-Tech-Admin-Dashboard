@@ -11,6 +11,7 @@ import {
   setIsSuccessfulLoginDispatchZod,
   setLoginFetchWorkerLoginDispatchZod,
   setPasswordLoginDispatchZod,
+  setPrefetchAndCacheWorkerLoginDispatchZod,
   setProductMetricsGeneratedLoginDispatchZod,
   setProductMetricsWorkerLoginDispatchZod,
   setRepairMetricsGeneratedLoginDispatchZod,
@@ -46,6 +47,10 @@ const loginReducersMap = new Map<
   [loginAction.setIsSuccessful, loginReducer_setIsSuccessful],
   [loginAction.setLoginFetchWorker, loginReducer_setLoginFetchWorker],
   [loginAction.setPassword, loginReducer_setPassword],
+  [
+    loginAction.setPrefetchAndCacheWorker,
+    loginReducer_setPrefetchAndCacheWorker,
+  ],
   [
     loginAction.setProductMetricsGenerated,
     loginReducer_setProductMetricsGenerated,
@@ -248,6 +253,27 @@ function loginReducer_setPassword(
   };
 }
 
+function loginReducer_setPrefetchAndCacheWorker(
+  state: LoginState,
+  dispatch: LoginDispatch,
+): LoginState {
+  const parsedResult = parseSyncSafe(
+    {
+      object: dispatch,
+      zSchema: setPrefetchAndCacheWorkerLoginDispatchZod,
+    },
+  );
+
+  if (parsedResult.err || parsedResult.val.none) {
+    return state;
+  }
+
+  return {
+    ...state,
+    prefetchAndCacheWorker: parsedResult.val.val.payload as Worker,
+  };
+}
+
 function loginReducer_setProductMetricsGenerated(
   state: LoginState,
   dispatch: LoginDispatch,
@@ -364,6 +390,7 @@ export {
   loginReducer_setIsSuccessful,
   loginReducer_setLoginFetchWorker,
   loginReducer_setPassword,
+  loginReducer_setPrefetchAndCacheWorker,
   loginReducer_setProductMetricsGenerated,
   loginReducer_setProductMetricsWorker,
   loginReducer_setRepairMetricsGenerated,
