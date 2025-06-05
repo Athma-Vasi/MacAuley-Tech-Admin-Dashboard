@@ -1,10 +1,8 @@
-import { ResponsePayloadSafe, UserDocument } from "../../types";
 import {
     catchHandlerErrorSafe,
     createSafeErrorResult,
     createSafeSuccessResult,
-    extractJSONFromResponseSafe,
-    fetchResponseSafe,
+    retryFetchSafe,
 } from "../../utils";
 
 async function postUsersToDB(
@@ -46,54 +44,28 @@ async function postUsersToDB(
     setIsSubmitting(true);
 
     try {
-        const responseResult = await fetchResponseSafe(
-            urlWithQuery,
-            requestInit,
-        );
-
-        if (!isComponentMounted) {
-            return createSafeErrorResult(
-                "Component unmounted before response",
-            );
-        }
-
-        if (responseResult.err) {
-            showBoundary(responseResult);
-            return responseResult;
-        }
-        if (responseResult.val.none) {
+        const responsePayloadSafeResult = await retryFetchSafe({
+            init: requestInit,
+            input: urlWithQuery.toString(),
+            routesZodSchemaMapKey: "users",
+            signal: fetchAbortController.signal,
+        });
+        if (responsePayloadSafeResult.err) {
             const safeErrorResult = createSafeErrorResult(
-                "No data returned from server",
+                responsePayloadSafeResult,
+            );
+            showBoundary(safeErrorResult);
+            return safeErrorResult;
+        }
+        if (responsePayloadSafeResult.val.none) {
+            const safeErrorResult = createSafeErrorResult(
+                "No data received from the server",
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
         }
 
-        const responseUnwrapped = responseResult.val.val;
-
-        const jsonResult = await extractJSONFromResponseSafe<
-            ResponsePayloadSafe<UserDocument>
-        >(responseUnwrapped);
-
-        if (!isComponentMounted) {
-            return createSafeErrorResult(
-                "Component unmounted before response",
-            );
-        }
-
-        if (jsonResult.err) {
-            showBoundary(jsonResult);
-            return jsonResult;
-        }
-        if (jsonResult.val.none) {
-            const safeErrorResult = createSafeErrorResult(
-                "No data returned from server",
-            );
-            showBoundary(safeErrorResult);
-            return safeErrorResult;
-        }
-
-        const serverResponse = jsonResult.val.val;
+        const serverResponse = responsePayloadSafeResult.val.val;
         if (serverResponse.kind === "error") {
             const safeErrorResult = createSafeErrorResult(
                 serverResponse.message,

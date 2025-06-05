@@ -22,6 +22,7 @@ import {
     parseSyncSafe,
     retryFetchSafe,
 } from "../../utils";
+import { InvariantError, PromiseRejectedError } from "../error";
 
 type MessageEventLoginFetchWorkerToMain<Data = unknown> = MessageEvent<
     SafeResult<
@@ -46,7 +47,9 @@ self.onmessage = async (
 ) => {
     if (!event.data) {
         self.postMessage(
-            createSafeErrorResult("No data received"),
+            createSafeErrorResult(
+                new InvariantError("No data received"),
+            ),
         );
         return;
     }
@@ -105,7 +108,10 @@ self.onmessage = async (
         if (financialMetricsDocumentResultSettled.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    financialMetricsDocumentResultSettled.reason,
+                    new PromiseRejectedError(
+                        financialMetricsDocumentResultSettled.reason,
+                        "Financial metrics document promise rejected",
+                    ),
                 ),
             );
             return;
@@ -122,7 +128,10 @@ self.onmessage = async (
         if (responsePayloadSafeResultSettled.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    responsePayloadSafeResultSettled.reason,
+                    new PromiseRejectedError(
+                        responsePayloadSafeResultSettled.reason,
+                        "Response payload promise rejected",
+                    ),
                 ),
             );
             return;
@@ -149,7 +158,11 @@ self.onmessage = async (
 
         if (accessToken.none) {
             self.postMessage(
-                createSafeErrorResult("Access token not found"),
+                createSafeErrorResult(
+                    new InvariantError(
+                        "Access token is missing in response payload",
+                    ),
+                ),
             );
             return;
         }

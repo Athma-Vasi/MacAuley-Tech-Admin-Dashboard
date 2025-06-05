@@ -40,7 +40,9 @@ import {
   JSONError,
   NetworkError,
   ParseError,
+  PromiseRejectedError,
   TimeoutError,
+  TokenDecodeError,
   UnknownError,
 } from "./components/error";
 import { SidebarNavlinks } from "./components/sidebar/types";
@@ -492,6 +494,8 @@ function createSafeErrorResult(
     error instanceof NetworkError ||
     error instanceof ParseError ||
     error instanceof TimeoutError ||
+    error instanceof TokenDecodeError ||
+    error instanceof PromiseRejectedError ||
     error instanceof UnknownError
   ) {
     return new Err({
@@ -523,7 +527,9 @@ function handleErrorResultAndNoneOptionInWorker<Data = unknown>(
     return None;
   }
   if (result.val.none) {
-    self.postMessage(createSafeErrorResult(errorMessageIfNone));
+    self.postMessage(createSafeErrorResult(
+      new InvariantError(errorMessageIfNone),
+    ));
     return None;
   }
   return result.val;
@@ -599,6 +605,7 @@ async function retryFetchSafe<Data = unknown>(
           object: data,
           zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
+        // don't throw
         if (responsePayloadSafeResult.err) {
           return Promise.resolve(responsePayloadSafeResult);
         }
@@ -663,30 +670,6 @@ async function retryFetchSafe<Data = unknown>(
   return tryAgain(0);
 }
 
-async function fetchResponseSafe(
-  input: RequestInfo | URL,
-  init: RequestInit,
-  retryOptions?: RetryOptions,
-): Promise<SafeResult<Response>> {
-  try {
-    const response: Response = await fetch(input, init);
-    return createSafeSuccessResult(response);
-  } catch (error: unknown) {
-    return createSafeErrorResult(error);
-  }
-}
-
-async function extractJSONFromResponseSafe<Data = unknown>(
-  response: Response,
-): Promise<SafeResult<Data>> {
-  try {
-    const data: Data = await response.json();
-    return createSafeSuccessResult(data);
-  } catch (error: unknown) {
-    return createSafeErrorResult(error);
-  }
-}
-
 function decodeJWTSafe<Decoded extends Record<string, unknown> = DecodedToken>(
   token: string,
 ): SafeResult<Decoded> {
@@ -743,9 +726,11 @@ function parseSyncSafe<Output = unknown>(
       ? z.array(zSchema).safeParse(object)
       : zSchema.safeParse(object);
 
-    return success
-      ? createSafeSuccessResult(data)
-      : createSafeErrorResult(error);
+    return success ? createSafeSuccessResult(data) : createSafeErrorResult(
+      new ParseError(
+        `Failed to parse object: ${error.message}`,
+      ),
+    );
   } catch (error_: unknown) {
     return createSafeErrorResult(error_);
   }
@@ -1186,8 +1171,6 @@ export {
   createSafeSuccessResult,
   createUsersURLCacheKey,
   decodeJWTSafe,
-  extractJSONFromResponseSafe,
-  fetchResponseSafe,
   formatDate,
   getCachedItemAsyncSafe,
   handleErrorResultAndNoneOptionInWorker,

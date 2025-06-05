@@ -16,6 +16,7 @@ import {
     retryFetchSafe,
     setCachedItemAsyncSafe,
 } from "../../utils";
+import { InvariantError } from "../error";
 import { messageEventDirectoryFetchMainToWorkerZod } from "./schemas";
 
 type MessageEventDirectoryFetchWorkerToMain = MessageEvent<
@@ -41,7 +42,9 @@ self.onmessage = async (
 ) => {
     if (!event.data) {
         self.postMessage(
-            createSafeErrorResult("No data received"),
+            createSafeErrorResult(
+                new InvariantError("No data received"),
+            ),
         );
         return;
     }
@@ -108,7 +111,9 @@ self.onmessage = async (
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    "Access token not found in response",
+                    new InvariantError(
+                        "Access token is missing in response payload",
+                    ),
                 ),
             );
             return;
@@ -123,13 +128,14 @@ self.onmessage = async (
             return;
         }
 
-        const responsePayloadWithoutAccessToken = {
+        const responsePayloadWithoutAccessAndDecodedToken = {
             ...responsePayloadSafeOption.val,
             accessToken: None,
+            decodedToken: None,
         };
         const setItemCacheResult = await setCachedItemAsyncSafe(
             url,
-            responsePayloadWithoutAccessToken,
+            responsePayloadWithoutAccessAndDecodedToken,
         );
         if (setItemCacheResult.err) {
             self.postMessage(setItemCacheResult);

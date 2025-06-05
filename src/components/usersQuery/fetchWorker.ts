@@ -20,6 +20,7 @@ import {
     retryFetchSafe,
     setCachedItemAsyncSafe,
 } from "../../utils";
+import { InvariantError } from "../error";
 import { SortDirection } from "../query/types";
 import { messageEventUsersFetchMainToWorkerZod } from "./schemas";
 
@@ -49,7 +50,9 @@ self.onmessage = async (
 ) => {
     if (!event.data) {
         self.postMessage(
-            createSafeErrorResult("No data received"),
+            createSafeErrorResult(
+                new InvariantError("No data received"),
+            ),
         );
         return;
     }
@@ -58,14 +61,11 @@ self.onmessage = async (
         object: event.data,
         zSchema: messageEventUsersFetchMainToWorkerZod,
     });
-    if (parsedMessageResult.err) {
-        self.postMessage(parsedMessageResult);
-        return;
-    }
-    if (parsedMessageResult.val.none) {
-        self.postMessage(
-            createSafeErrorResult("No data received"),
-        );
+    const parsedMessageOption = handleErrorResultAndNoneOptionInWorker(
+        parsedMessageResult,
+        "Error parsing message",
+    );
+    if (parsedMessageOption.none) {
         return;
     }
 
@@ -75,7 +75,7 @@ self.onmessage = async (
         requestInit,
         routesZodSchemaMapKey,
         url,
-    } = parsedMessageResult.val.val;
+    } = parsedMessageOption.val;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
@@ -136,7 +136,7 @@ self.onmessage = async (
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    "No access token found in response",
+                    new InvariantError("Access token not found in response"),
                 ),
             );
             return;
@@ -165,13 +165,14 @@ self.onmessage = async (
             return;
         }
 
-        const responseWithoutAccessToken = {
+        const responseWithoutAccessAndDecodedToken = {
             ...sortedAndModifiedUserDocsOption.val,
             accessToken: None,
+            decodedToken: None,
         };
         const setItemCacheResult = await setCachedItemAsyncSafe(
             url,
-            responseWithoutAccessToken,
+            responseWithoutAccessAndDecodedToken,
         );
         if (setItemCacheResult.err) {
             self.postMessage(setItemCacheResult);

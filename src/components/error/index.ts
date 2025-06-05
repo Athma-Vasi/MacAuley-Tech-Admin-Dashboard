@@ -83,6 +83,20 @@ class AbortError<Data = unknown> extends AppErrorBase<Data> {
     }
 }
 
+class PromiseRejectedError<Data = unknown> extends AppErrorBase<Data> {
+    readonly _tag = "PromiseRejectedError";
+    public readonly reason: unknown;
+
+    constructor(reason: unknown, data?: Data) {
+        super(
+            "PromiseRejectedError",
+            "A promise was rejected.",
+            data,
+        );
+        this.reason = reason;
+    }
+}
+
 class InvariantError<Data = unknown> extends AppErrorBase<Data> {
     readonly _tag = "InvariantError";
 
@@ -137,11 +151,12 @@ export type AppError<Data = unknown> =
     | CacheError<Data>
     | HTTPError<Data>
     | InvariantError<Data>
-    | TokenDecodeError<Data>
     | JSONError<Data>
     | NetworkError<Data>
     | ParseError<Data>
+    | PromiseRejectedError<Data>
     | TimeoutError<Data>
+    | TokenDecodeError<Data>
     | UnknownError<Data>;
 
 export {
@@ -153,6 +168,7 @@ export {
     JSONError,
     NetworkError,
     ParseError,
+    PromiseRejectedError,
     TimeoutError,
     TokenDecodeError,
     UnknownError,

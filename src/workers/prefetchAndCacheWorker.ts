@@ -1,5 +1,6 @@
 import { None, Option } from "ts-results";
 import { z } from "zod";
+import { InvariantError } from "../components/error";
 import { FETCH_REQUEST_TIMEOUT, RoutesZodSchemasMapKey } from "../constants";
 import { DecodedToken, ResponsePayloadSafe, SafeResult } from "../types";
 import {
@@ -33,7 +34,9 @@ self.onmessage = async (
 ) => {
     if (!event.data) {
         self.postMessage(
-            createSafeErrorResult("No data received"),
+            createSafeErrorResult(
+                new InvariantError("No data received"),
+            ),
         );
         return;
     }
@@ -80,7 +83,7 @@ self.onmessage = async (
         if (cachedResponsePayloadSafeResult.val.some) {
             self.postMessage(
                 createSafeSuccessResult({
-                    accessTokenOption: None, // No access token in cache
+                    accessTokenOption: None,
                     decodedTokenOption: None,
                 }),
             );
@@ -110,7 +113,7 @@ self.onmessage = async (
         if (accessTokenOption.none) {
             self.postMessage(
                 createSafeErrorResult(
-                    "No access token found in response",
+                    new InvariantError("Access token not found"),
                 ),
             );
             return;
@@ -125,6 +128,7 @@ self.onmessage = async (
             return;
         }
 
+        // accessToken and decodedToken are not cached
         const responseWithoutAccessAndDecodedTokens = {
             ...responsePayloadSafeOption.val,
             accessToken: None,
