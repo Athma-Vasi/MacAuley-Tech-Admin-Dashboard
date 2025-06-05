@@ -1,5 +1,6 @@
 import localforage from "localforage";
 import { NavigateFunction } from "react-router-dom";
+import { INVALID_CREDENTIALS } from "../../constants";
 import { authAction } from "../../context/authProvider";
 import { AuthDispatch } from "../../context/authProvider/types";
 import { ResponsePayloadSafe, SafeResult, UserDocument } from "../../types";
@@ -12,6 +13,7 @@ import {
     parseSyncSafe,
 } from "../../utils";
 import { MessageEventPrefetchAndCacheWorkerToMain } from "../../workers/prefetchAndCacheWorker";
+import { AuthError, InvariantError, UnknownError } from "../error";
 import { SortDirection } from "../query/types";
 import { UsersQueryAction, usersQueryAction } from "./actions";
 import { MessageEventUsersFetchWorkerToMain } from "./fetchWorker";
@@ -50,7 +52,9 @@ async function triggerMessageEventUsersPrefetchAndCacheMainToWorker(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -124,7 +128,9 @@ async function handleMessageEventUsersPrefetchAndCacheWorkerToMain(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -134,18 +140,20 @@ async function handleMessageEventUsersPrefetchAndCacheWorkerToMain(
         const messageEventResult = event.data;
         if (!messageEventResult) {
             return createSafeErrorResult(
-                "No data in message event",
+                new InvariantError("No data received from worker"),
             );
         }
         if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
+            return createSafeErrorResult(
+                new InvariantError("Component unmounted"),
+            );
         }
         if (messageEventResult.err) {
             return messageEventResult;
         }
         if (messageEventResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "No data found",
+                new InvariantError("Unexpected None option in message event"),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -208,7 +216,9 @@ async function triggerMessageEventFetchMainToWorkerUsersQuery(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -293,7 +303,9 @@ async function handleMessageEventUsersFetchWorkerToMain(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -311,11 +323,13 @@ async function handleMessageEventUsersFetchWorkerToMain(
         const messageEventResult = event.data;
         if (!messageEventResult) {
             return createSafeErrorResult(
-                "No data in message event",
+                new InvariantError("No data received from worker"),
             );
         }
         if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component unmounted");
+            return createSafeErrorResult(
+                new InvariantError("Component unmounted"),
+            );
         }
 
         if (messageEventResult.err) {
@@ -324,7 +338,7 @@ async function handleMessageEventUsersFetchWorkerToMain(
         }
         if (messageEventResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "No data found",
+                new InvariantError("Unexpected None option in message event"),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -362,7 +376,11 @@ async function handleMessageEventUsersFetchWorkerToMain(
 
             await localforage.clear();
             navigate("/");
-            return createSafeErrorResult("Logged out");
+            return createSafeErrorResult(
+                new AuthError(
+                    INVALID_CREDENTIALS,
+                ),
+            );
         }
 
         if (from === "cache") {
@@ -378,7 +396,9 @@ async function handleMessageEventUsersFetchWorkerToMain(
 
         if (newAccessToken.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Access token is missing from parsed response from worker",
+                new InvariantError(
+                    "Access token is missing from parsed response from worker",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -390,7 +410,9 @@ async function handleMessageEventUsersFetchWorkerToMain(
 
         if (decodedToken.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Decoded token is missing from parsed response from worker",
+                new InvariantError(
+                    "Decoded token is missing from parsed response from worker",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -402,7 +424,9 @@ async function handleMessageEventUsersFetchWorkerToMain(
 
         if (kind === "error") {
             const safeErrorResult = createSafeErrorResult(
-                `Server error: ${message}`,
+                new UnknownError(
+                    message.some ? message.val : "Unknown error occurred",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;

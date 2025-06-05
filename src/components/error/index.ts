@@ -19,6 +19,14 @@ abstract class AppErrorBase<Data = unknown> {
     }
 }
 
+class AuthError<Data = unknown> extends AppErrorBase<Data> {
+    readonly _tag = "AuthError";
+
+    constructor(data?: Data) {
+        super("AuthError", "An authentication error occurred.", data);
+    }
+}
+
 class JSONError<Data = unknown> extends AppErrorBase<Data> {
     readonly _tag = "JSONError";
 
@@ -147,6 +155,7 @@ class UnknownError<Data = unknown> extends AppErrorBase<Data> {
 }
 
 export type AppError<Data = unknown> =
+    | AuthError<Data>
     | AbortError<Data>
     | CacheError<Data>
     | HTTPError<Data>
@@ -162,6 +171,7 @@ export type AppError<Data = unknown> =
 export {
     AbortError,
     AppErrorBase,
+    AuthError,
     CacheError,
     HTTPError,
     InvariantError,
