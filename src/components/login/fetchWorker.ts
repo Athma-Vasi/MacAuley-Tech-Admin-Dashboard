@@ -4,7 +4,6 @@ import {
     FETCH_REQUEST_TIMEOUT,
     INVALID_CREDENTIALS,
     METRICS_URL,
-    ROUTES_ZOD_SCHEMAS_MAP,
     RoutesZodSchemasMapKey,
 } from "../../constants";
 import {
@@ -18,12 +17,10 @@ import {
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
-    extractJSONFromResponseSafe,
-    fetchResponseSafe,
     getCachedItemAsyncSafe,
     handleErrorResultAndNoneOptionInWorker,
-    parseResponsePayloadAsyncSafe,
     parseSyncSafe,
+    retryFetchSafe,
 } from "../../utils";
 
 type MessageEventLoginFetchWorkerToMain<Data = unknown> = MessageEvent<
@@ -92,14 +89,18 @@ self.onmessage = async (
     });
 
     try {
-        const [responseResultSettled, financialMetricsDocumentResultSettled] =
-            await Promise.allSettled([
-                fetchResponseSafe(url, {
-                    ...requestInit,
-                    signal: controller.signal,
-                }),
-                getCachedItemAsyncSafe<FinancialMetricsDocument>(cacheKey),
-            ]);
+        const [
+            responsePayloadSafeResultSettled,
+            financialMetricsDocumentResultSettled,
+        ] = await Promise.allSettled([
+            retryFetchSafe({
+                init: requestInit,
+                input: url,
+                routesZodSchemaMapKey,
+                signal: controller.signal,
+            }),
+            getCachedItemAsyncSafe<FinancialMetricsDocument>(cacheKey),
+        ]);
 
         if (financialMetricsDocumentResultSettled.status === "rejected") {
             self.postMessage(
@@ -118,41 +119,18 @@ self.onmessage = async (
             return;
         }
 
-        if (responseResultSettled.status === "rejected") {
+        if (responsePayloadSafeResultSettled.status === "rejected") {
             self.postMessage(
                 createSafeErrorResult(
-                    responseResultSettled.reason,
+                    responsePayloadSafeResultSettled.reason,
                 ),
             );
             return;
         }
-        const responseResultOption = handleErrorResultAndNoneOptionInWorker(
-            responseResultSettled.value,
-            "Error fetching response",
-        );
-        if (responseResultOption.none) {
-            return;
-        }
-
-        const jsonResult = await extractJSONFromResponseSafe(
-            responseResultOption.val,
-        );
-        const jsonOption = handleErrorResultAndNoneOptionInWorker(
-            jsonResult,
-            "Error extracting JSON from response",
-        );
-        if (jsonOption.none) {
-            return;
-        }
-
-        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
-            object: jsonOption.val,
-            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
-        });
         const responsePayloadSafeOption =
             handleErrorResultAndNoneOptionInWorker(
-                responsePayloadSafeResult,
-                "Error parsing server response",
+                responsePayloadSafeResultSettled.value,
+                "Error fetching or parsing response",
             );
         if (responsePayloadSafeOption.none) {
             return;
@@ -165,7 +143,6 @@ self.onmessage = async (
             kind === "error" && message.some &&
             message.val === INVALID_CREDENTIALS
         ) {
-            console.log("Invalid credentials error received");
             self.postMessage(new Ok(None));
             return;
         }

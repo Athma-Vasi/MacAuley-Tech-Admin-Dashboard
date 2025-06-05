@@ -2,7 +2,6 @@ import { None, Option } from "ts-results";
 import {
     FETCH_REQUEST_TIMEOUT,
     PROPERTY_DESCRIPTOR,
-    ROUTES_ZOD_SCHEMAS_MAP,
     RoutesZodSchemasMapKey,
 } from "../../constants";
 import {
@@ -15,12 +14,10 @@ import {
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
-    extractJSONFromResponseSafe,
-    fetchResponseSafe,
     getCachedItemAsyncSafe,
     handleErrorResultAndNoneOptionInWorker,
-    parseResponsePayloadAsyncSafe,
     parseSyncSafe,
+    retryFetchSafe,
     setCachedItemAsyncSafe,
 } from "../../utils";
 import { SortDirection } from "../query/types";
@@ -120,39 +117,16 @@ self.onmessage = async (
         }
 
         // if there is no cached data, proceed with fetch
-        const responseResult = await fetchResponseSafe(url, {
-            ...requestInit,
+        const responsePayloadSafeResult = await retryFetchSafe<UserDocument>({
+            init: requestInit,
+            input: url,
+            routesZodSchemaMapKey,
             signal: controller.signal,
-        });
-        const responseOption = handleErrorResultAndNoneOptionInWorker(
-            responseResult,
-            "No response received",
-        );
-        if (responseOption.none) {
-            return;
-        }
-
-        const jsonResult = await extractJSONFromResponseSafe<
-            ResponsePayloadSafe<UserDocument>
-        >(responseOption.val);
-        const jsonOption = handleErrorResultAndNoneOptionInWorker(
-            jsonResult,
-            "No JSON response received",
-        );
-        if (jsonOption.none) {
-            return;
-        }
-
-        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe<
-            UserDocument
-        >({
-            object: jsonOption.val,
-            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
         const responsePayloadSafeOption =
             handleErrorResultAndNoneOptionInWorker(
                 responsePayloadSafeResult,
-                "No parsed result received",
+                "Error fetching or parsing response",
             );
         if (responsePayloadSafeOption.none) {
             return;

@@ -1,20 +1,14 @@
 import { None, Option } from "ts-results";
 import { z } from "zod";
-import {
-    FETCH_REQUEST_TIMEOUT,
-    ROUTES_ZOD_SCHEMAS_MAP,
-    RoutesZodSchemasMapKey,
-} from "../constants";
+import { FETCH_REQUEST_TIMEOUT, RoutesZodSchemasMapKey } from "../constants";
 import { DecodedToken, ResponsePayloadSafe, SafeResult } from "../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
-    extractJSONFromResponseSafe,
-    fetchResponseSafe,
     handleErrorResultAndNoneOptionInWorker,
-    parseResponsePayloadAsyncSafe,
     parseSyncSafe,
+    retryFetchSafe,
 } from "../utils";
 
 type MessageEventFetchWorkerToMain<Data = unknown> = MessageEvent<
@@ -77,37 +71,16 @@ self.onmessage = async (
     const timeout = setTimeout(() => controller.abort(), FETCH_REQUEST_TIMEOUT);
 
     try {
-        const responseResult = await fetchResponseSafe(url, {
-            ...requestInit,
+        const responsePayloadSafeResult = await retryFetchSafe({
+            init: requestInit,
+            input: url,
+            routesZodSchemaMapKey,
             signal: controller.signal,
-        });
-        const responseOption = handleErrorResultAndNoneOptionInWorker(
-            responseResult,
-            "Error fetching response",
-        );
-        if (responseOption.none) {
-            return;
-        }
-
-        const jsonResult = await extractJSONFromResponseSafe(
-            responseOption.val,
-        );
-        const jsonOption = handleErrorResultAndNoneOptionInWorker(
-            jsonResult,
-            "Error extracting JSON from response",
-        );
-        if (jsonOption.none) {
-            return;
-        }
-
-        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
-            object: jsonOption.val,
-            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
         const responsePayloadSafeOption =
             handleErrorResultAndNoneOptionInWorker(
                 responsePayloadSafeResult,
-                "Error parsing server response",
+                "Error fetching or parsing response",
             );
         if (responsePayloadSafeOption.none) {
             return;

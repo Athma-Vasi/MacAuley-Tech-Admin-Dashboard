@@ -549,11 +549,12 @@ type RetryOptions = {
   delayMs?: number;
 };
 async function retryFetchSafe<Data = unknown>(
-  { init, input, routesZodSchemaMapKey, retryOptions }: {
+  { init, input, routesZodSchemaMapKey, retryOptions, signal }: {
     init: RequestInit;
     input: RequestInfo | URL;
     retryOptions?: RetryOptions;
     routesZodSchemaMapKey: RoutesZodSchemasMapKey;
+    signal: AbortSignal | undefined;
   },
 ): Promise<SafeResult<ResponsePayloadSafe<Data>>> {
   const {
@@ -575,7 +576,10 @@ async function retryFetchSafe<Data = unknown>(
     attempt: number,
   ): Promise<SafeResult<ResponsePayloadSafe<Data>>> {
     try {
-      const response: Response = await fetch(input, init);
+      const response: Response = await fetch(input, {
+        ...init,
+        signal,
+      });
       if (response == null) {
         // perhaps a network-level failure occurred before any HTTP response could be received
         // trigger a retry
@@ -608,10 +612,13 @@ async function retryFetchSafe<Data = unknown>(
           );
         }
 
-        if (retryStatusCodes.has(response.status)) {
+        const statusCode = responsePayloadSafeResult.val.val.status.none
+          ? 0
+          : responsePayloadSafeResult.val.val.status.val;
+        if (retryStatusCodes.has(statusCode)) {
           throw new HTTPError(
-            response.status,
-            `Retryable HTTP error: ${response.status}`,
+            statusCode,
+            `Retryable HTTP error: ${statusCode}`,
           );
         }
 
@@ -1193,6 +1200,7 @@ export {
   removeUndefinedAndNull,
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,
+  retryFetchSafe,
   returnSliderMarks,
   returnStatisticsSafe,
   returnThemeColors,

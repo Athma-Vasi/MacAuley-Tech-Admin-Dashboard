@@ -1,9 +1,5 @@
 import { None, Option } from "ts-results";
-import {
-    FETCH_REQUEST_TIMEOUT,
-    ROUTES_ZOD_SCHEMAS_MAP,
-    RoutesZodSchemasMapKey,
-} from "../../constants";
+import { FETCH_REQUEST_TIMEOUT, RoutesZodSchemasMapKey } from "../../constants";
 import {
     DecodedToken,
     ResponsePayloadSafe,
@@ -14,12 +10,10 @@ import {
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
-    extractJSONFromResponseSafe,
-    fetchResponseSafe,
     getCachedItemAsyncSafe,
     handleErrorResultAndNoneOptionInWorker,
-    parseResponsePayloadAsyncSafe,
     parseSyncSafe,
+    retryFetchSafe,
     setCachedItemAsyncSafe,
 } from "../../utils";
 import { messageEventDirectoryFetchMainToWorkerZod } from "./schemas";
@@ -95,44 +89,22 @@ self.onmessage = async (
         }
 
         // Proceed with fetch if no cache hit
-        const responseResult = await fetchResponseSafe(url, {
-            ...requestInit,
+        const responsePayloadSafeResult = await retryFetchSafe({
+            init: requestInit,
+            input: url,
+            routesZodSchemaMapKey,
             signal: controller.signal,
         });
-        const responseOption = handleErrorResultAndNoneOptionInWorker(
-            responseResult,
-            "Error fetching response",
-        );
-        if (responseOption.none) {
+        const responsePayloadSafeOption =
+            handleErrorResultAndNoneOptionInWorker(
+                responsePayloadSafeResult,
+                "Error fetching or parsing response",
+            );
+        if (responsePayloadSafeOption.none) {
             return;
         }
 
-        const jsonResult = await extractJSONFromResponseSafe<
-            ResponsePayloadSafe<UserDocument>
-        >(responseOption.val);
-        const jsonOption = handleErrorResultAndNoneOptionInWorker(
-            jsonResult,
-            "Error extracting JSON from response",
-        );
-        if (jsonOption.none) {
-            return;
-        }
-
-        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe<
-            UserDocument
-        >({
-            object: jsonOption.val,
-            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
-        });
-        const responsePayloadOption = handleErrorResultAndNoneOptionInWorker(
-            responsePayloadSafeResult,
-            "Error parsing server response",
-        );
-        if (responsePayloadOption.none) {
-            return;
-        }
-
-        const { accessToken } = responsePayloadOption.val;
+        const { accessToken } = responsePayloadSafeOption.val;
         if (accessToken.none) {
             self.postMessage(
                 createSafeErrorResult(
@@ -151,13 +123,13 @@ self.onmessage = async (
             return;
         }
 
-        const responseWithoutAccessToken = {
-            ...responsePayloadOption.val,
+        const responsePayloadWithoutAccessToken = {
+            ...responsePayloadSafeOption.val,
             accessToken: None,
         };
         const setItemCacheResult = await setCachedItemAsyncSafe(
             url,
-            responseWithoutAccessToken,
+            responsePayloadWithoutAccessToken,
         );
         if (setItemCacheResult.err) {
             self.postMessage(setItemCacheResult);
@@ -168,7 +140,7 @@ self.onmessage = async (
             createSafeSuccessResult({
                 decodedToken: decodedTokenOption,
                 from: "fetch",
-                responsePayloadSafe: responsePayloadOption.val,
+                responsePayloadSafe: responsePayloadSafeOption.val,
             }),
         );
     } catch (error: unknown) {

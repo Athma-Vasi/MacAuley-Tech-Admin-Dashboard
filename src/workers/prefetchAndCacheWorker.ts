@@ -1,21 +1,15 @@
 import { None, Option } from "ts-results";
 import { z } from "zod";
-import {
-    FETCH_REQUEST_TIMEOUT,
-    ROUTES_ZOD_SCHEMAS_MAP,
-    RoutesZodSchemasMapKey,
-} from "../constants";
+import { FETCH_REQUEST_TIMEOUT, RoutesZodSchemasMapKey } from "../constants";
 import { DecodedToken, ResponsePayloadSafe, SafeResult } from "../types";
 import {
     createSafeErrorResult,
     createSafeSuccessResult,
     decodeJWTSafe,
-    extractJSONFromResponseSafe,
-    fetchResponseSafe,
     getCachedItemAsyncSafe,
     handleErrorResultAndNoneOptionInWorker,
-    parseResponsePayloadAsyncSafe,
     parseSyncSafe,
+    retryFetchSafe,
     setCachedItemAsyncSafe,
 } from "../utils";
 
@@ -93,37 +87,19 @@ self.onmessage = async (
             return;
         }
         // the response is not cached, proceed with fetching
-        const responseResult = await fetchResponseSafe(url, {
-            ...requestInit,
+        const responsePayloadSafeResult = await retryFetchSafe({
+            init: requestInit,
+            input: url,
+            retryOptions: {
+                retries: 0,
+            },
+            routesZodSchemaMapKey,
             signal: controller.signal,
-        });
-        const responseOption = handleErrorResultAndNoneOptionInWorker(
-            responseResult,
-            "Error fetching response",
-        );
-        if (responseOption.none) {
-            return;
-        }
-
-        const jsonResult = await extractJSONFromResponseSafe(
-            responseOption.val,
-        );
-        const jsonOption = handleErrorResultAndNoneOptionInWorker(
-            jsonResult,
-            "Error extracting JSON from response",
-        );
-        if (jsonOption.none) {
-            return;
-        }
-
-        const responsePayloadSafeResult = await parseResponsePayloadAsyncSafe({
-            object: jsonOption.val,
-            zSchema: ROUTES_ZOD_SCHEMAS_MAP[routesZodSchemaMapKey],
         });
         const responsePayloadSafeOption =
             handleErrorResultAndNoneOptionInWorker(
                 responsePayloadSafeResult,
-                "Error parsing server response",
+                "Error fetching or parsing response",
             );
         if (responsePayloadSafeOption.none) {
             return;
