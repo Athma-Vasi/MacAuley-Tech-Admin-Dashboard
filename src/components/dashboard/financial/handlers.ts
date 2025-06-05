@@ -6,6 +6,7 @@ import {
     makeTransition,
     parseSyncSafe,
 } from "../../../utils";
+import { InvariantError } from "../../error";
 import { financialMetricsAction } from "./actions";
 import { MessageEventFinancialChartsWorkerToMain } from "./chartsWorker";
 import { handleMessageEventFinancialWorkerToMainInputZod } from "./schemas";
@@ -28,7 +29,9 @@ async function handleMessageEventFinancialChartsWorkerToMain(input: {
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -43,14 +46,14 @@ async function handleMessageEventFinancialChartsWorkerToMain(input: {
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component unmounted",
+                new InvariantError("Component is not mounted"),
             );
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
             return createSafeErrorResult(
-                "No data received",
+                new InvariantError("No data received from the worker"),
             );
         }
         if (messageEventResult.err) {
@@ -59,7 +62,9 @@ async function handleMessageEventFinancialChartsWorkerToMain(input: {
         }
         if (messageEventResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in  message event result",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
