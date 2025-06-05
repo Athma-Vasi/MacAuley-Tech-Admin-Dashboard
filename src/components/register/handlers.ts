@@ -514,7 +514,7 @@ async function handleMessageEventRegisterFetchWorkerToMain(
 
       const safeErrorResult = createSafeErrorResult(
         new UnknownError(
-          `Server error: ${responsePayloadSafe.message.val}`,
+          `Server error: ${responsePayloadSafe.message}`,
         ),
       );
       showBoundary(safeErrorResult);
