@@ -23,6 +23,8 @@ function StepperFormReview(
         themeObject,
     });
 
+    console.log("formReview", formReview);
+
     const formReviewElem = Object.entries(formReview).map(
         ([sectionKey, section], sectionIdx) => {
             const isStepInError = sectionKey === "Files"

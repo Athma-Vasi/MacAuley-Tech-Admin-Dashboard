@@ -9,6 +9,7 @@ import {
     parseSyncSafe,
     setCachedItemAsyncSafe,
 } from "../../../utils";
+import { InvariantError } from "../../error";
 import { ModifiedFile, OriginalFile } from "../AccessibleFileInput";
 import { accessibleImageInputAction } from "./actions";
 import { ALLOWED_FILE_EXTENSIONS_REGEX } from "./constants";
@@ -46,7 +47,9 @@ async function handleResetImageClick(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -62,7 +65,9 @@ async function handleResetImageClick(
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
 
@@ -77,7 +82,9 @@ async function handleResetImageClick(
         >(originalFilesForageKey);
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (originalFilesResult.err) {
@@ -154,7 +161,9 @@ async function handleRemoveImageClick<
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -173,7 +182,9 @@ async function handleRemoveImageClick<
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
 
@@ -209,7 +220,9 @@ async function handleRemoveImageClick<
         );
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (setModifiedFilesResult.err) {
@@ -222,7 +235,9 @@ async function handleRemoveImageClick<
         >(originalFilesForageKey);
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (originalFilesResult.err) {
@@ -241,14 +256,14 @@ async function handleRemoveImageClick<
         );
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (setOriginalFilesResult.err) {
             showBoundary(setOriginalFilesResult);
-            return createSafeErrorResult(
-                "Unable to set original files",
-            );
+            return setOriginalFilesResult;
         }
 
         const fileNamesResult = await getCachedItemAsyncSafe<Array<string>>(
@@ -256,14 +271,14 @@ async function handleRemoveImageClick<
         );
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (fileNamesResult.err) {
             showBoundary(fileNamesResult);
-            return createSafeErrorResult(
-                "Unable to retrieve file names",
-            );
+            return fileNamesResult;
         }
 
         const fileNames = fileNamesResult.val.none
@@ -278,14 +293,14 @@ async function handleRemoveImageClick<
         );
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (setFileNamesResult.err) {
             showBoundary(setFileNamesResult);
-            return createSafeErrorResult(
-                "Unable to set file names",
-            );
+            return setFileNamesResult;
         }
 
         accessibleImageInputDispatch({
@@ -357,7 +372,9 @@ async function handleMessageEventModifyImagesWorkerToMain<
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -376,14 +393,18 @@ async function handleMessageEventModifyImagesWorkerToMain<
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component unmounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
             return createSafeErrorResult(
-                "No data in message event",
+                new InvariantError(
+                    "No data in message event",
+                ),
             );
         }
         if (messageEventResult.err) {
@@ -393,7 +414,9 @@ async function handleMessageEventModifyImagesWorkerToMain<
         if (messageEventResult.val.none) {
             showBoundary(messageEventResult);
             return createSafeErrorResult(
-                "No data in message event",
+                new InvariantError(
+                    "Unexpected None option in message event result",
+                ),
             );
         }
 
@@ -523,7 +546,9 @@ async function handleImageQualityOrientationSliderChange<
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -548,7 +573,9 @@ async function handleImageQualityOrientationSliderChange<
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
 
@@ -565,7 +592,11 @@ async function handleImageQualityOrientationSliderChange<
             Array<OriginalFile>
         >(originalFilesForageKey);
         if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component is not mounted");
+            return createSafeErrorResult(
+                new InvariantError(
+                    "Component is not mounted",
+                ),
+            );
         }
         if (originalFilesResult.err) {
             showBoundary(originalFilesResult);
@@ -573,7 +604,9 @@ async function handleImageQualityOrientationSliderChange<
         }
         if (originalFilesResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "No original files found",
+                new InvariantError(
+                    "Unexpected None option in original files result",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -581,7 +614,9 @@ async function handleImageQualityOrientationSliderChange<
         const originalFiles = originalFilesResult.val.val;
         if (originalFiles.length === 0) {
             const safeErrorResult = createSafeErrorResult(
-                "No original files found",
+                new InvariantError(
+                    "No original files found",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -592,7 +627,9 @@ async function handleImageQualityOrientationSliderChange<
         );
         if (!imageToModify) {
             return createSafeErrorResult(
-                "Image to modify is undefined",
+                new InvariantError(
+                    "No image found to modify",
+                ),
             );
         }
 
@@ -608,7 +645,11 @@ async function handleImageQualityOrientationSliderChange<
             type,
         });
         if (!isComponentMountedRef.current) {
-            return createSafeErrorResult("Component is not mounted");
+            return createSafeErrorResult(
+                new InvariantError(
+                    "Component is not mounted",
+                ),
+            );
         }
         if (modifyImageResult.err) {
             showBoundary(modifyImageResult.val);
@@ -616,7 +657,9 @@ async function handleImageQualityOrientationSliderChange<
         }
         if (modifyImageResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "No modified image found",
+                new InvariantError(
+                    "Unexpected None option in modify image result",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -637,7 +680,9 @@ async function handleImageQualityOrientationSliderChange<
         >(modifiedFilesForageKey);
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (modifiedFilesResult.err) {
@@ -658,7 +703,9 @@ async function handleImageQualityOrientationSliderChange<
         );
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component is not mounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
         if (setModifiedFilesResult.err) {
@@ -715,7 +762,9 @@ async function handleImageQualityOrientationSliderChange<
             );
             if (!isComponentMountedRef.current) {
                 return createSafeErrorResult(
-                    "Component is not mounted",
+                    new InvariantError(
+                        "Component is not mounted",
+                    ),
                 );
             }
             if (setQualitiesResult.err) {
@@ -739,14 +788,14 @@ async function handleImageQualityOrientationSliderChange<
             );
             if (!isComponentMountedRef.current) {
                 return createSafeErrorResult(
-                    "Component is not mounted",
+                    new InvariantError(
+                        "Component is not mounted",
+                    ),
                 );
             }
             if (setOrientationsResult.err) {
                 showBoundary(setOrientationsResult);
-                return createSafeErrorResult(
-                    "Error setting orientations",
-                );
+                return setOrientationsResult;
             }
 
             accessibleImageInputDispatch({
@@ -793,7 +842,9 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
@@ -808,14 +859,18 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component unmounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
 
         const messageEventResult = event.data;
         if (!messageEventResult) {
             return createSafeErrorResult(
-                "No data in message event",
+                new InvariantError(
+                    "No data in message event",
+                ),
             );
         }
 
@@ -825,7 +880,9 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
         }
         if (messageEventResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "No data in message event",
+                new InvariantError(
+                    "Unexpected None option in message event result",
+                ),
             );
             showBoundary(safeErrorResult);
             return safeErrorResult;
@@ -836,7 +893,9 @@ async function handleMessageEventRetrieveImagesWorkerToMain(
 
         if (!isComponentMountedRef.current) {
             return createSafeErrorResult(
-                "Component unmounted",
+                new InvariantError(
+                    "Component is not mounted",
+                ),
             );
         }
 
