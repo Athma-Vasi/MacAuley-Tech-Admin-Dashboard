@@ -5,6 +5,7 @@ import {
     parseSyncSafe,
 } from "../../utils";
 import { AllStoreLocations } from "../dashboard/types";
+import { InvariantError } from "../error";
 import { directoryAction } from "./actions";
 import { handleDirectoryDepartmentAndLocationClicksInputZod } from "./schemas";
 import { DepartmentsWithDefaultKey, DirectoryDispatch } from "./types";
@@ -33,7 +34,9 @@ async function handleDirectoryDepartmentAndLocationClicks(
         }
         if (parsedInputResult.val.none) {
             const safeErrorResult = createSafeErrorResult(
-                "Error parsing input",
+                new InvariantError(
+                    "Unexpected None option in input parsing",
+                ),
             );
             input?.showBoundary?.(safeErrorResult);
             return safeErrorResult;
