@@ -148,11 +148,11 @@
 import { STORE_LOCATIONS } from "../../../constants";
 import { SafeResult, StoreLocation } from "../../../types";
 import {
+    createDaysInMonthsInYearsSafe,
     createSafeErrorResult,
     createSafeSuccessResult,
     toFixedFloat,
 } from "../../../utils";
-import { DAYS_PER_MONTH, MONTHS } from "../constants";
 import {
     BusinessMetric,
     DailyFinancialMetric,
@@ -161,7 +161,7 @@ import {
     MonthlyFinancialMetric,
     YearlyFinancialMetric,
 } from "../types";
-import { createRandomNumber, returnDaysInMonthsInYears } from "../utils";
+import { createRandomNumber } from "../utils";
 
 function createRandomFinancialMetricsSafe(
     businessMetrics: BusinessMetric[],
@@ -586,11 +586,18 @@ function createRandomFinancialMetricsSafe(
                     return [];
                 }
 
-                const daysInMonthsInYears = returnDaysInMonthsInYears({
-                    daysPerMonth: DAYS_PER_MONTH,
-                    months: MONTHS,
-                    storeLocation,
-                });
+                const daysInMonthsInYearsResult = createDaysInMonthsInYearsSafe(
+                    {
+                        storeLocation,
+                    },
+                );
+                if (
+                    daysInMonthsInYearsResult.err ||
+                    daysInMonthsInYearsResult.val.none
+                ) {
+                    return [];
+                }
+                const daysInMonthsInYears = daysInMonthsInYearsResult.val.val;
 
                 const yearlyFinancialMetrics = Array.from(daysInMonthsInYears)
                     .map(

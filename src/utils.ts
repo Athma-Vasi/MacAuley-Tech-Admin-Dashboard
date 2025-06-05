@@ -70,11 +70,12 @@ async function captureScreenshot({
   screenshotFilename,
   screenshotImageQuality,
   screenshotImageType,
-}: CaptureScreenshotInput): Promise<void> {
-  const canvasPromise = html2canvas(chartRef.current, {
-    useCORS: true,
-  });
-  canvasPromise.then((canvas) => {
+}: CaptureScreenshotInput): Promise<SafeResult<boolean>> {
+  try {
+    const canvas = await html2canvas(chartRef.current, {
+      useCORS: true,
+    });
+
     const dataURL = canvas.toDataURL(
       screenshotImageType,
       screenshotImageQuality,
@@ -98,7 +99,11 @@ async function captureScreenshot({
     a.click();
     // Remove the link from the page
     document.body.removeChild(a);
-  });
+
+    return createSafeSuccessResult(true);
+  } catch (error: unknown) {
+    return createSafeErrorResult(error);
+  }
 }
 
 function addCommaSeparator(numStr: string | number): string {
@@ -487,6 +492,7 @@ function createSafeErrorResult(
       ...additional,
     });
   } else if (
+    // TODO: refactor with purpose
     error instanceof AbortError ||
     error instanceof CacheError ||
     error instanceof InvariantError ||
@@ -509,7 +515,7 @@ function createSafeErrorResult(
   }
 
   return new Err({
-    message: "🪞 You've seen it before. Déjà vu. Something's off...",
+    message: "You've seen it before.🪞 Déjà vu. Something's off...",
     name: "👾 SimulationDysfunction",
     original: serializeSafe(error),
     stack: None,
