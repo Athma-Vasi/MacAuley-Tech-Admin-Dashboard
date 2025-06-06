@@ -141,19 +141,7 @@ function AccessibleSwitchInput<
         value={value.toString()}
       />
 
-      <Box
-        style={
-          // This is an invisible element that is used to provide screen reader users with additional information
-          // @see https://webaim.org/techniques/css/invisiblecontent/
-          {
-            height: "1px",
-            left: "-9999px",
-            position: "absolute",
-            top: "auto",
-            width: "1px",
-          }
-        }
-      >
+      <Box className="visually-hidden">
         {switchOnTextElement}
         {switchOffTextElement}
       </Box>

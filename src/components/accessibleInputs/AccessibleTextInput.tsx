@@ -180,6 +180,7 @@ function AccessibleTextInput<
     (isValueBufferValid && valueBuffer.length > 0
       ? (
         <TbCheck
+          aria-label={`Valid ${name} input`}
           color={greenColorShade}
           data-testid={`${name}-input-valid-icon`}
           size={18}
@@ -189,6 +190,7 @@ function AccessibleTextInput<
       ? null
       : (
         <TbX
+          aria-hidden={true}
           color={redColorShade}
           data-testid={`${name}-input-invalid-icon`}
           size={18}

@@ -90,23 +90,19 @@
   );
 }
 
-.grid-item-transition-enter {
-  opacity: 0;
-  transform: scale(0.5);
-}
-.grid-item-transition-enter-active {
-  opacity: 1;
-  transform: scale(1);
-  transition: all 0.7s ease-in-out;
-}
-.grid-item-transition-exit {
-  opacity: 1;
-  transform: scale(1);
-}
-.grid-item-transition-exit-active {
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.7s ease-in-out;
+/**
+ * @see https://webaim.org/techniques/css/invisiblecontent/
+ */
+.visually-hidden {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
 
 .accessible-input {
