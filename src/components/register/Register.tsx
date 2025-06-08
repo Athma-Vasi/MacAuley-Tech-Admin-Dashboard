@@ -29,7 +29,6 @@ import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
 import {
   handleCheckEmail,
-  handleCheckUsername,
   handleMessageEventCheckEmailWorkerToMain,
   handleMessageEventCheckUsernameWorkerToMain,
   handleMessageEventRegisterFetchWorkerToMain,
@@ -158,20 +157,20 @@ function Register() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!username || username.length === 0 || !checkUsernameWorker) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!username || username.length === 0 || !checkUsernameWorker) {
+  //     return;
+  //   }
 
-    handleCheckUsername({
-      checkUsernameWorker,
-      isComponentMountedRef,
-      registerDispatch,
-      showBoundary,
-      url: AUTH_URL,
-      username,
-    });
-  }, [username]);
+  //   handleCheckUsername({
+  //     checkUsernameWorker,
+  //     isComponentMountedRef,
+  //     registerDispatch,
+  //     showBoundary,
+  //     url: AUTH_URL,
+  //     username,
+  //   });
+  // }, [username]);
 
   useEffect(() => {
     if (!email || email.length === 0 || !checkEmailWorker) {
@@ -476,6 +475,7 @@ function Register() {
   const registerStep = activeStep === 0
     ? (
       <RegisterAuthentication
+        checkUsernameWorker={checkUsernameWorker}
         confirmPassword={confirmPassword}
         email={email}
         isEmailExists={isEmailExists}

@@ -216,6 +216,12 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
       themeObject,
     });
 
+  // console.log(
+  //   `AccessibleButton: Rendering button with name "${name}" and kind "${kind}"`,
+  // );
+  // console.log("disabledScreenreaderText:", disabledScreenreaderText);
+  // console.log("enabledScreenreaderText:", enabledScreenreaderText);
+
   const button = (
     <Button
       aria-describedby={disabled

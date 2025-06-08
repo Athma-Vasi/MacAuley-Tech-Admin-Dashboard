@@ -196,7 +196,7 @@ async function handleMessageEventCheckEmailWorkerToMain(
   }
 }
 
-async function handleCheckUsername(
+function handleCheckUsername(
   input: {
     checkUsernameWorker: Worker | null;
     isComponentMountedRef: React.RefObject<boolean>;
@@ -205,7 +205,11 @@ async function handleCheckUsername(
     url: RequestInfo | URL;
     username: string;
   },
-): Promise<SafeResult<string>> {
+): SafeResult<string> {
+  console.log(
+    "handleCheckUsername called with input:",
+    input,
+  );
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,

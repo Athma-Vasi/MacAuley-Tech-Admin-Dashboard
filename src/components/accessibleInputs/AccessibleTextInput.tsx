@@ -118,7 +118,7 @@ function AccessibleTextInput<
     parentDispatch,
     placeholder = "",
     ref = null,
-    required = false,
+    required = true,
     rightSection = false,
     rightSectionIcon = null,
     rightSectionOnClick = () => {},
@@ -126,7 +126,7 @@ function AccessibleTextInput<
     validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
     validValueAction,
     value,
-    withAsterisk = required,
+    withAsterisk = false,
   } = attributes;
 
   const label = (
@@ -203,7 +203,7 @@ function AccessibleTextInput<
     valueBuffer,
   });
 
-  const { invalidValueTextElement } =
+  const { validValueTextElement, invalidValueTextElement } =
     createAccessibleValueValidationTextElements({
       isPopoverOpened,
       isValueBufferValid,
@@ -215,13 +215,14 @@ function AccessibleTextInput<
 
   return (
     <Box
+      aria-live="polite"
       key={`${name}-${value}-${uniqueId ?? ""}`}
       className="accessible-input"
     >
       <Popover
         opened={isPopoverOpened}
         position="bottom"
-        shadow="md"
+        shadow="lg"
         transitionProps={{ transition: "pop" }}
         width="target"
         withArrow
@@ -231,9 +232,10 @@ function AccessibleTextInput<
             aria-autocomplete={ariaAutoComplete}
             aria-describedby={isValueBufferValid
               // id of validValueTextElement
-              ? `${name}-valid`
+              ? `${name}-valid-text ${name}-exists-text`
               // id of invalidValueTextElement
-              : `${name}-invalid`}
+              : `${name}-invalid-text ${name}-exists-text`}
+            aria-errormessage={`${name}-invalid-text`}
             aria-invalid={!isValueBufferValid}
             aria-label={name}
             aria-required={required}
@@ -252,7 +254,6 @@ function AccessibleTextInput<
                 action: invalidValueAction,
                 payload: !isValueBufferValid,
               });
-
               parentDispatch({
                 action: validValueAction,
                 payload: valueBuffer,
@@ -268,7 +269,6 @@ function AccessibleTextInput<
             }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               setValueBuffer(event.currentTarget.value);
-
               onChange?.(event);
             }}
             onFocus={() => {
@@ -288,9 +288,19 @@ function AccessibleTextInput<
 
         {isPopoverOpened && valueBuffer.length && !isValueBufferValid
           ? (
-            <Popover.Dropdown>
+            <Popover.Dropdown
+              style={{ border: `1px solid ${redColorShade}` }}
+            >
               <Stack>
                 {invalidValueTextElement}
+              </Stack>
+            </Popover.Dropdown>
+          )
+          : isPopoverOpened && valueBuffer.length && isValueBufferValid
+          ? (
+            <Popover.Dropdown aria-live="polite" className="visually-hidden">
+              <Stack>
+                {validValueTextElement}
               </Stack>
             </Popover.Dropdown>
           )

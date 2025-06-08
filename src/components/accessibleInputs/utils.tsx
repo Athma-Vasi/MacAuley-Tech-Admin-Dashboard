@@ -45,6 +45,7 @@ function createAccessibleValueValidationTextElements({
   valueBuffer,
   validationTexts: { valueInvalidText, valueValidText },
 }: CreateAccessibleValueValidationTextElements): {
+  validValueTextElement: React.JSX.Element;
   invalidValueTextElement: React.JSX.Element;
 } {
   const {
@@ -53,8 +54,8 @@ function createAccessibleValueValidationTextElements({
 
   const invalidValueTextElement = (
     <Text
-      aria-live="polite"
-      id={`${name}-invalid`}
+      color={redColorShade}
+      id={`${name}-invalid-text`}
       style={{
         display: isPopoverOpened && valueBuffer && !isValueBufferValid
           ? "inline-block"
@@ -62,55 +63,27 @@ function createAccessibleValueValidationTextElements({
       }}
       w="100%"
     >
-      {
-        /* <Grid columns={14}>
-        <Grid.Col span={2}>
-          <Group position="center">
-            <TbExclamationCircle color={redColorShade} size={22} />
-          </Group>
-        </Grid.Col>
-        <Grid.Col span={12}>
-          <Group position="right">
-            <Text >{valueInvalidText}</Text>
-          </Group>
-        </Grid.Col>
-      </Grid> */
-      }
-      <Text color={redColorShade} data-testid={`${name}-input-invalid-text`}>
-        {valueInvalidText}
-        {arePasswordsDifferent ? "Passwords do not match." : ""}
-      </Text>
+      {valueInvalidText}
+      {arePasswordsDifferent ? "Passwords do not match." : ""}
     </Text>
   );
 
-  // const validValueTextElement = (
-  //   <Text
-  //     id={`${name}-valid`}
-  //     style={{
-  //       display: isPopoverOpened && valueBuffer && isValueBufferValid
-  //         ? "block"
-  //         : "none",
-  //     }}
-  //     color={greenColorShade}
-  //     w="100%"
-  //     aria-live="polite"
-  //   >
-  //     <Grid columns={14}>
-  //       <Grid.Col span={2}>
-  //         <Group position="center">
-  //           <TbCheck color={greenColorShade} size={22} />
-  //         </Group>
-  //       </Grid.Col>
-  //       <Grid.Col span={12}>
-  //         <Group position="left">
-  //           <Text size="sm">{valueValidText}</Text>
-  //         </Group>
-  //       </Grid.Col>
-  //     </Grid>
-  //   </Text>
-  // );
+  const validValueTextElement = (
+    <Text
+      color={redColorShade}
+      id={`${name}-valid-text`}
+      style={{
+        display: isPopoverOpened && valueBuffer && isValueBufferValid
+          ? "block"
+          : "none",
+      }}
+      w="100%"
+    >
+      {valueValidText}
+    </Text>
+  );
 
-  return { invalidValueTextElement };
+  return { invalidValueTextElement, validValueTextElement };
 }
 
 type CreateAccessibleNavLinkTextElements = {
