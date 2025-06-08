@@ -1,191 +1,151 @@
-import {
-  Box,
-  MantineNumberSize,
-  type MantineSize,
-  type MantineTransition,
-  Slider,
-} from "@mantine/core";
-import type { ReactNode } from "react";
-
+import { Box, Slider, SliderProps, Text } from "@mantine/core";
 import { INPUT_WIDTH } from "../../constants";
-import { useGlobalState } from "../../hooks/useGlobalState";
-import type { SliderMarksData } from "../../types";
-import { returnSliderMarks } from "../../utils";
-import { createAccessibleSliderScreenreaderTextElements } from "./utils";
-
-type DynamicSliderInputPayload = {
-  index: number;
-  value: number;
-};
+import { useGlobalState } from "../../hooks";
+import { splitCamelCase } from "../../utils";
 
 type AccessibleSliderInputAttributes<
-  ValidValueAction extends string = string,
-  Payload extends number = number,
-> = {
-  color?: string;
-  disabled?: boolean;
-  /** when the input is created dynamically */
-  index?: number;
-  label?: ReactNode | ((value: number) => ReactNode);
-  labelTransition?: MantineTransition;
-  labelTransitionDuration?: number;
-  labelTransitionTimingFunction?: string;
-  marks?: SliderMarksData;
-  max: number;
-  min: number;
-  name: string;
-  onBlur?: () => void;
-  onChange?: (value: number) => void;
-  onFocus?: () => void;
-  /** default dispatch for non-user-created inputs */
-  parentDispatch?: React.Dispatch<{
-    action: ValidValueAction;
-    payload: Payload;
-  }>;
-  /** default dispatch for user-created dynamic inputs */
-  parentDynamicDispatch?: React.Dispatch<{
-    action: ValidValueAction;
-    payload: DynamicSliderInputPayload;
-  }>;
-  precision?: number;
-  size?: MantineSize;
-  sliderDefaultValue?: number;
-  step?: number;
-  thumbChildren?: ReactNode;
-  thumbLabel?: string;
-  thumbSize?: number;
-  validValueAction: ValidValueAction;
-  value: number;
-  width?: MantineNumberSize;
+    ValidValueAction extends string = string,
+    Payload extends number = number,
+> = SliderProps & {
+    name: string;
+    onChange?: (value: number) => void;
+    parentDispatch: React.Dispatch<{
+        action: ValidValueAction;
+        payload: Payload;
+    }>;
+    validValueAction: ValidValueAction;
 };
 
 type AccessibleSliderInputProps<
-  ValidValueAction extends string = string,
-  Payload extends number = number,
+    ValidValueAction extends string = string,
+    Payload extends number = number,
 > = {
-  attributes: AccessibleSliderInputAttributes<ValidValueAction, Payload>;
-  uniqueId?: string;
+    attributes: AccessibleSliderInputAttributes<ValidValueAction, Payload>;
 };
 
 function AccessibleSliderInput<
-  ValidValueAction extends string = string,
-  Payload extends number = number,
->({
-  attributes,
-  uniqueId,
-}: AccessibleSliderInputProps<ValidValueAction, Payload>) {
-  const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
+    ValidValueAction extends string = string,
+    Payload extends number = number,
+>({ attributes }: AccessibleSliderInputProps<ValidValueAction, Payload>) {
+    const {
+        globalState: {
+            themeObject,
+        },
+    } = useGlobalState();
 
-  const {
-    color = primaryColor,
-    disabled = false,
-    index,
-    label = null,
-    labelTransition = "skew-down",
-    labelTransitionDuration = 100,
-    labelTransitionTimingFunction = "ease",
-    marks,
-    max,
-    min,
-    name,
-    onBlur,
-    onChange,
-    onFocus,
-    parentDispatch,
-    parentDynamicDispatch,
-    precision = 1,
-    size = "sm",
-    sliderDefaultValue = min,
-    step,
-    thumbChildren,
-    thumbLabel,
-    thumbSize,
-    validValueAction,
-    value,
-    width,
-  } = attributes;
+    const {
+        disabled,
+        marks,
+        max,
+        min,
+        name,
+        onChange,
+        parentDispatch,
+        precision = 1,
+        style = {},
+        validValueAction,
+        value,
+        ...sliderProps
+    } = attributes;
 
-  const {
-    globalState: { themeObject },
-  } = useGlobalState();
+    const sliderMarks = marks
+        ? marks
+        : disabled
+        ? void 0
+        : returnSliderMarks({ max, min });
 
-  const sliderMarks = marks
-    ? marks
-    : disabled
-    ? void 0
-    : returnSliderMarks({ max, min });
+    const { screenreaderTextElement } =
+        createAccessibleSliderScreenreaderTextElements({
+            name,
+            value,
+        });
 
-  const { screenreaderTextElement } =
-    createAccessibleSliderScreenreaderTextElements({
-      name,
-      themeObject,
-      value,
+    const sliderInput = (
+        <Slider
+            aria-describedby={`${name}-slider-selected`}
+            aria-label={name}
+            color={themeObject.primaryColor}
+            data-testid={`${name}-sliderInput`}
+            marks={sliderMarks}
+            onChange={(value: Payload) => {
+                parentDispatch({
+                    action: validValueAction,
+                    payload: value,
+                });
+
+                onChange?.(value);
+            }}
+            precision={precision}
+            style={{
+                ...style,
+                border: "none",
+                outline: "none",
+                cursor: disabled ? "not-allowed" : "pointer",
+            }}
+            w={INPUT_WIDTH}
+            {...sliderProps}
+        />
+    );
+
+    return (
+        <Box className="accessible-input">
+            {sliderInput}
+            {screenreaderTextElement}
+        </Box>
+    );
+}
+
+/**
+ * @description creates marks for slider wrapper component
+ */
+function returnSliderMarks({
+    max = 10,
+    min = 0,
+    precision = 0,
+    steps = 2,
+    symbol = "",
+}: {
+    max: number | undefined;
+    min: number | undefined;
+    steps?: number;
+    precision?: number;
+    symbol?: string;
+}): { value: number; label: string }[] {
+    const step = (max - min) / steps;
+
+    return Array.from({ length: steps + 1 }, (_, i) => {
+        const value = min + step * i;
+        const valueFormatted = value.toFixed(precision);
+
+        return {
+            value: Number.parseInt(valueFormatted),
+            label: `${valueFormatted}${symbol}`,
+        };
     });
+}
 
-  const accessibleSliderInput = (
-    <Slider
-      aria-describedby={`${name}-selected`}
-      aria-label={name}
-      color={color}
-      data-testid={`${name}-sliderInput`}
-      defaultValue={sliderDefaultValue}
-      disabled={disabled}
-      label={label}
-      labelTransition={labelTransition}
-      labelTransitionDuration={labelTransitionDuration}
-      labelTransitionTimingFunction={labelTransitionTimingFunction}
-      marks={sliderMarks}
-      max={max}
-      min={min}
-      name={name}
-      onBlur={onBlur}
-      onChange={(value: Payload) => {
-        if (index === undefined) {
-          parentDispatch?.({
-            action: validValueAction,
-            payload: value,
-          });
-        } else {
-          parentDynamicDispatch?.({
-            action: validValueAction,
-            payload: { index, value },
-          });
-        }
+function createAccessibleSliderScreenreaderTextElements({
+    name,
+    value = 0,
+}: {
+    name: string;
+    value?: number;
+}): {
+    screenreaderTextElement: React.JSX.Element;
+} {
+    const screenreaderTextElement = (
+        <Text
+            aria-live="assertive"
+            className="visually-hidden"
+            data-testid={`${name}-slider-screenreader-text`}
+            id={`${name}-slider-selected`}
+            w="100%"
+        >
+            {`${value} is selected for ${splitCamelCase(name)} slider.`}
+        </Text>
+    );
 
-        onChange?.(value);
-      }}
-      onFocus={onFocus}
-      precision={precision}
-      size={size}
-      step={step}
-      style={{
-        border: "none",
-        outline: "none",
-        cursor: disabled ? "not-allowed" : "pointer",
-      }}
-      thumbChildren={thumbChildren}
-      thumbLabel={thumbLabel}
-      thumbSize={thumbSize}
-      value={value}
-    />
-  );
-
-  return (
-    <Box
-      key={`${name}-${value}-${uniqueId ?? ""}`}
-      w={width ?? INPUT_WIDTH}
-    >
-      {accessibleSliderInput}
-      <Box className="visually-hidden">
-        {screenreaderTextElement}
-      </Box>
-    </Box>
-  );
+    return { screenreaderTextElement };
 }
 
 export { AccessibleSliderInput };
-export type {
-  AccessibleSliderInputAttributes,
-  AccessibleSliderInputProps,
-  DynamicSliderInputPayload,
-};

@@ -67,10 +67,9 @@ function AccessibleTextInput<
         ...textInputProps
     } = attributes;
     const value = attributes.value?.toString() ?? "";
-
     const label = (
         <Text color={attributes.disabled ? "gray" : void 0}>
-            {attributes.label ?? splitCamelCase(name)}
+            {attributes.label ?? splitCamelCase(attributes.name)}
         </Text>
     );
 

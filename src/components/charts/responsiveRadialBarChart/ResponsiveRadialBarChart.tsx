@@ -16,8 +16,6 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import {
   NIVO_COLOR_SCHEME_DATA,
   NIVO_MOTION_CONFIG_DATA,
@@ -25,6 +23,8 @@ import {
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
 
+import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
+import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { ChartLegend } from "../chartControls/chartLegend";
 import { ChartMargin } from "../chartControls/chartMargin";
 import { ChartOptions } from "../chartControls/chartOptions";
@@ -337,7 +337,7 @@ function ResponsiveRadialBarChart(
         min: -360,
         name: "startAngle",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveRadialBarChartAction.setStartAngle,
         value: startAngle,
@@ -355,7 +355,7 @@ function ResponsiveRadialBarChart(
         min: -360,
         name: "endAngle",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 270,
+        defaultValue: 270,
         step: 1,
         validValueAction: responsiveRadialBarChartAction.setEndAngle,
         value: endAngle,
@@ -373,7 +373,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "innerRadius",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0.3,
+        defaultValue: 0.3,
         step: 0.05,
         validValueAction: responsiveRadialBarChartAction.setInnerRadius,
         value: innerRadius,
@@ -391,7 +391,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "paddingRing",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0.2,
+        defaultValue: 0.2,
         step: 0.1,
         validValueAction: responsiveRadialBarChartAction.setPaddingRing,
         value: paddingRing,
@@ -409,7 +409,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "padAngle",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveRadialBarChartAction.setPadAngle,
         value: padAngle,
@@ -427,7 +427,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "cornerRadius",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveRadialBarChartAction.setCornerRadius,
         value: cornerRadius,
@@ -475,7 +475,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "ringBorderWidth",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveRadialBarChartAction.setRingBorderWidth,
         value: ringBorderWidth,
@@ -493,7 +493,7 @@ function ResponsiveRadialBarChart(
         onLabel: "On",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setEnableTracks,
-        value: enableTracks,
+        value: enableTracks.toString(),
       }}
     />
   );
@@ -524,7 +524,7 @@ function ResponsiveRadialBarChart(
         onLabel: "On",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setEnableRadialGrid,
-        value: enableRadialGrid,
+        value: enableRadialGrid.toString(),
       }}
     />
   );
@@ -538,7 +538,7 @@ function ResponsiveRadialBarChart(
         onLabel: "On",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setEnableCircularGrid,
-        value: enableCircularGrid,
+        value: enableCircularGrid.toString(),
       }}
     />
   );
@@ -554,7 +554,7 @@ function ResponsiveRadialBarChart(
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction:
           responsiveRadialBarChartAction.setEnableRadialAxisStart,
-        value: enableRadialAxisStart,
+        value: enableRadialAxisStart.toString(),
       }}
     />
   );
@@ -570,7 +570,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "radialAxisStartTickSize",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setRadialAxisStartTickSize,
@@ -590,7 +590,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "radialAxisStartTickPadding",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setRadialAxisStartTickPadding,
@@ -610,7 +610,7 @@ function ResponsiveRadialBarChart(
         min: -90,
         name: "radialAxisStartTickRotation",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setRadialAxisStartTickRotation,
@@ -629,7 +629,7 @@ function ResponsiveRadialBarChart(
         onLabel: "On",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setEnableRadialAxisEnd,
-        value: enableRadialAxisEnd,
+        value: enableRadialAxisEnd.toString(),
       }}
     />
   );
@@ -645,7 +645,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "radialAxisEndTickSize",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setRadialAxisEndTickSize,
@@ -665,7 +665,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "radialAxisEndTickPadding",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setRadialAxisEndTickPadding,
@@ -685,7 +685,7 @@ function ResponsiveRadialBarChart(
         min: -90,
         name: "radialAxisEndTickRotation",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setRadialAxisEndTickRotation,
@@ -705,7 +705,7 @@ function ResponsiveRadialBarChart(
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction:
           responsiveRadialBarChartAction.setEnableCircularAxisInner,
-        value: enableCircularAxisInner,
+        value: enableCircularAxisInner.toString(),
       }}
     />
   );
@@ -721,7 +721,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "circularAxisInnerTickSize",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setCircularAxisInnerTickSize,
@@ -741,7 +741,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "circularAxisInnerTickPadding",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setCircularAxisInnerTickPadding,
@@ -761,7 +761,7 @@ function ResponsiveRadialBarChart(
         min: -90,
         name: "circularAxisInnerTickRotation",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setCircularAxisInnerTickRotation,
@@ -781,7 +781,7 @@ function ResponsiveRadialBarChart(
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction:
           responsiveRadialBarChartAction.setEnableCircularAxisOuter,
-        value: enableCircularAxisOuter,
+        value: enableCircularAxisOuter.toString(),
       }}
     />
   );
@@ -797,7 +797,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "circularAxisOuterTickSize",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setCircularAxisOuterTickSize,
@@ -817,7 +817,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "circularAxisOuterTickPadding",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 5,
+        defaultValue: 5,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setCircularAxisOuterTickPadding,
@@ -837,7 +837,7 @@ function ResponsiveRadialBarChart(
         min: -90,
         name: "circularAxisOuterTickRotation",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction:
           responsiveRadialBarChartAction.setCircularAxisOuterTickRotation,
@@ -856,7 +856,7 @@ function ResponsiveRadialBarChart(
         onLabel: "On",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setEnableLabels,
-        value: enableLabels,
+        value: enableLabels.toString(),
       }}
     />
   );
@@ -872,7 +872,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "labelsSkipAngle",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 10,
+        defaultValue: 10,
         step: 1,
         validValueAction: responsiveRadialBarChartAction.setLabelsSkipAngle,
         value: labelsSkipAngle,
@@ -891,7 +891,7 @@ function ResponsiveRadialBarChart(
         min: 0,
         name: "labelsRadiusOffset",
         parentDispatch: responsiveRadialBarChartDispatch,
-        sliderDefaultValue: 0.5,
+        defaultValue: 0.5,
         step: 0.05,
         validValueAction: responsiveRadialBarChartAction.setLabelsRadiusOffset,
         value: labelsRadiusOffset,
@@ -925,7 +925,7 @@ function ResponsiveRadialBarChart(
         onLabel: "On",
         parentDispatch: responsiveRadialBarChartDispatch,
         validValueAction: responsiveRadialBarChartAction.setEnableAnimate,
-        value: enableAnimate,
+        value: enableAnimate.toString(),
       }}
     />
   );

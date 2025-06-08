@@ -17,8 +17,6 @@ import { useWindowSize } from "../../../hooks/useWindowSize";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { ChartAxisBottom } from "../chartControls/chartAxisBottom";
 import {
   NIVO_CHART_PATTERN_DEFS,
@@ -27,6 +25,8 @@ import {
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
 
+import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
+import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { ChartAxisLeft } from "../chartControls/chartAxisLeft";
 import { ChartAxisRight } from "../chartControls/chartAxisRight";
 import { ChartAxisTop } from "../chartControls/chartAxisTop";
@@ -416,7 +416,7 @@ function ResponsiveBarChart({
         onLabel: "On",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setReverse,
-        value: reverse,
+        value: reverse.toString(),
       }}
     />
   );
@@ -431,7 +431,7 @@ function ResponsiveBarChart({
         min: 0.1,
         name: "paddingBar",
         parentDispatch: responsiveBarChartDispatch,
-        sliderDefaultValue: 0.1,
+        defaultValue: 0.1,
         step: 0.1,
         validValueAction: responsiveBarChartAction.setPaddingBar,
         value: paddingBar,
@@ -449,7 +449,7 @@ function ResponsiveBarChart({
         min: 0,
         name: "innerPaddingBar",
         parentDispatch: responsiveBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveBarChartAction.setInnerPaddingBar,
         value: innerPaddingBar,
@@ -484,7 +484,7 @@ function ResponsiveBarChart({
         min: 0,
         name: "chartBorderRadius",
         parentDispatch: responsiveBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveBarChartAction.setChartBorderRadius,
         value: chartBorderRadius,
@@ -504,7 +504,7 @@ function ResponsiveBarChart({
         min: 0,
         name: "chartBorderWidth",
         parentDispatch: responsiveBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveBarChartAction.setChartBorderWidth,
         value: chartBorderWidth,
@@ -536,7 +536,7 @@ function ResponsiveBarChart({
         onLabel: "On",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setEnableFillPatterns,
-        value: enableFillPatterns,
+        value: enableFillPatterns.toString(),
       }}
     />
   );
@@ -552,7 +552,7 @@ function ResponsiveBarChart({
         onLabel: "On",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setEnableLabels,
-        value: enableLabels,
+        value: enableLabels.toString(),
       }}
     />
   );
@@ -568,7 +568,7 @@ function ResponsiveBarChart({
         min: 0,
         name: "labelSkipWidth",
         parentDispatch: responsiveBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveBarChartAction.setLabelSkipWidth,
         value: labelSkipWidth,
@@ -587,7 +587,7 @@ function ResponsiveBarChart({
         min: 0,
         name: "labelSkipHeight",
         parentDispatch: responsiveBarChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveBarChartAction.setLabelSkipHeight,
         value: labelSkipHeight,
@@ -622,7 +622,7 @@ function ResponsiveBarChart({
         onLabel: "On",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setEnableGridX,
-        value: enableGridX,
+        value: enableGridX.toString(),
       }}
     />
   );
@@ -636,7 +636,7 @@ function ResponsiveBarChart({
         onLabel: "On",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setEnableGridY,
-        value: enableGridY,
+        value: enableGridY.toString(),
       }}
     />
   );
@@ -652,7 +652,7 @@ function ResponsiveBarChart({
         onLabel: "On",
         parentDispatch: responsiveBarChartDispatch,
         validValueAction: responsiveBarChartAction.setEnableAnimate,
-        value: enableAnimate,
+        value: enableAnimate.toString(),
       }}
     />
   );

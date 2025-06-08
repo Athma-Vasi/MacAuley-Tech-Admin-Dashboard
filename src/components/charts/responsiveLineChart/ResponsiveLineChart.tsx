@@ -17,8 +17,6 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { ChartAxisBottom } from "../chartControls/chartAxisBottom";
 import {
   NIVO_CHART_PATTERN_DEFS,
@@ -27,6 +25,8 @@ import {
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
 
+import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
+import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { ChartAxisLeft } from "../chartControls/chartAxisLeft";
 import { ChartAxisRight } from "../chartControls/chartAxisRight";
 import { ChartAxisTop } from "../chartControls/chartAxisTop";
@@ -406,7 +406,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnableYScaleStacked,
-        value: enableYScaleStacked,
+        value: enableYScaleStacked.toString(),
       }}
     />
   );
@@ -420,7 +420,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setReverseScale,
-        value: reverseScale,
+        value: reverseScale.toString(),
       }}
     />
   );
@@ -465,7 +465,7 @@ function ResponsiveLineChart({
         min: 0,
         name: "lineWidth",
         parentDispatch: responsiveLineChartDispatch,
-        sliderDefaultValue: 2,
+        defaultValue: 2,
         step: 1,
         validValueAction: responsiveLineChartAction.setLineWidth,
         value: lineWidth,
@@ -482,7 +482,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnableArea,
-        value: enableArea,
+        value: enableArea.toString(),
       }}
     />
   );
@@ -498,7 +498,7 @@ function ResponsiveLineChart({
         min: 0,
         name: "areaOpacity",
         parentDispatch: responsiveLineChartDispatch,
-        sliderDefaultValue: 0.2,
+        defaultValue: 0.2,
         step: 0.1,
         validValueAction: responsiveLineChartAction.setAreaOpacity,
         value: areaOpacity,
@@ -532,7 +532,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnablePoints,
-        value: enablePoints,
+        value: enablePoints.toString(),
       }}
     />
   );
@@ -548,7 +548,7 @@ function ResponsiveLineChart({
         min: 0,
         name: "pointSize",
         parentDispatch: responsiveLineChartDispatch,
-        sliderDefaultValue: 6,
+        defaultValue: 6,
         step: 1,
         validValueAction: responsiveLineChartAction.setPointSize,
         value: pointSize,
@@ -583,7 +583,7 @@ function ResponsiveLineChart({
         min: 0,
         name: "pointBorderWidth",
         parentDispatch: responsiveLineChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveLineChartAction.setPointBorderWidth,
         value: pointBorderWidth,
@@ -600,7 +600,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnablePointLabel,
-        value: enablePointLabel,
+        value: enablePointLabel.toString(),
       }}
     />
   );
@@ -631,7 +631,7 @@ function ResponsiveLineChart({
         min: -22,
         name: "pointLabelYOffset",
         parentDispatch: responsiveLineChartDispatch,
-        sliderDefaultValue: -12,
+        defaultValue: -12,
         step: 1,
         validValueAction: responsiveLineChartAction.setPointLabelYOffset,
         value: pointLabelYOffset,
@@ -650,7 +650,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnableGridX,
-        value: enableGridX,
+        value: enableGridX.toString(),
       }}
     />
   );
@@ -664,7 +664,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnableGridY,
-        value: enableGridY,
+        value: enableGridY.toString(),
       }}
     />
   );
@@ -680,7 +680,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnableCrosshair,
-        value: enableCrosshair,
+        value: enableCrosshair.toString(),
       }}
     />
   );
@@ -711,7 +711,7 @@ function ResponsiveLineChart({
         onLabel: "On",
         parentDispatch: responsiveLineChartDispatch,
         validValueAction: responsiveLineChartAction.setEnableAnimate,
-        value: enableAnimate,
+        value: enableAnimate.toString(),
       }}
     />
   );

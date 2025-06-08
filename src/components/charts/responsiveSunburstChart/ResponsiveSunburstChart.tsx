@@ -16,9 +16,9 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
+
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
 import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
-
 import { ChartArcLabel } from "../chartControls/chartArcLabel";
 import { ChartMargin } from "../chartControls/chartMargin";
 import { ChartOptions } from "../chartControls/chartOptions";
@@ -191,7 +191,7 @@ function ResponsiveSunburstChart({
         min: 0,
         name: "cornerRadius",
         parentDispatch: responsiveSunburstChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsiveSunburstChartAction.setCornerRadius,
         value: cornerRadius,
@@ -224,7 +224,7 @@ function ResponsiveSunburstChart({
         parentDispatch: responsiveSunburstChartDispatch,
         validValueAction:
           responsiveSunburstChartAction.setInheritColorFromParent,
-        value: inheritColorFromParent,
+        value: inheritColorFromParent.toString(),
       }}
     />
   );
@@ -236,7 +236,7 @@ function ResponsiveSunburstChart({
         min: 0,
         name: "chartBorderWidth",
         parentDispatch: responsiveSunburstChartDispatch,
-        sliderDefaultValue: 1,
+        defaultValue: 1,
         step: 1,
         validValueAction: responsiveSunburstChartAction.setChartBorderWidth,
         value: chartBorderWidth,
@@ -268,7 +268,7 @@ function ResponsiveSunburstChart({
         onLabel: "On",
         parentDispatch: responsiveSunburstChartDispatch,
         validValueAction: responsiveSunburstChartAction.setEnableFillPatterns,
-        value: enableFillPatterns,
+        value: enableFillPatterns.toString(),
       }}
     />
   );
@@ -284,7 +284,7 @@ function ResponsiveSunburstChart({
         onLabel: "On",
         parentDispatch: responsiveSunburstChartDispatch,
         validValueAction: responsiveSunburstChartAction.setEnableAnimate,
-        value: enableAnimate,
+        value: enableAnimate.toString(),
       }}
     />
   );

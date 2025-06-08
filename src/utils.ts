@@ -369,35 +369,6 @@ function returnThemeColors({
 }
 
 /**
- * @description creates marks for slider wrapper component
- */
-function returnSliderMarks({
-  max,
-  min,
-  precision = 0,
-  steps = 2,
-  symbol = "",
-}: {
-  max: number;
-  min: number;
-  steps?: number;
-  precision?: number;
-  symbol?: string;
-}): { value: number; label: string }[] {
-  const step = (max - min) / steps;
-
-  return Array.from({ length: steps + 1 }, (_, i) => {
-    const value = min + step * i;
-    const valueFormatted = value.toFixed(precision);
-
-    return {
-      value: Number.parseInt(valueFormatted),
-      label: `${valueFormatted}${symbol}`,
-    };
-  });
-}
-
-/**
  * @description replaces hyphens & underscores with spaces and capitalizes the first letter of each word
  */
 function splitWordIntoUpperCasedSentence(sentence: string): string {
@@ -1190,7 +1161,6 @@ export {
   replaceLastCommaWithAnd,
   replaceLastCommaWithOr,
   retryFetchSafe,
-  returnSliderMarks,
   returnStatisticsSafe,
   returnThemeColors,
   setCachedItemAsyncSafe,

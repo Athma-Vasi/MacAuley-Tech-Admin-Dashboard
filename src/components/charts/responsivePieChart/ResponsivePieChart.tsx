@@ -16,8 +16,6 @@ import { useGlobalState } from "../../../hooks/useGlobalState";
 import { addCommaSeparator, returnThemeColors } from "../../../utils";
 import { AccessibleButton } from "../../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../../accessibleInputs/AccessibleSelectInput";
-import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
-import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import {
   NIVO_CHART_PATTERN_DEFS,
   NIVO_COLOR_SCHEME_DATA,
@@ -26,6 +24,8 @@ import {
   SLIDER_TOOLTIP_COLOR,
 } from "../constants";
 
+import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
+import { AccessibleSwitchInput } from "../../accessibleInputs/AccessibleSwitchInput";
 import { ChartArcLabel } from "../chartControls/chartArcLabel";
 import { ChartLegend } from "../chartControls/chartLegend";
 import { ChartMargin } from "../chartControls/chartMargin";
@@ -52,12 +52,9 @@ function ResponsivePieChart({
   } = useGlobalState();
 
   const {
-    cardBgGradient,
     darkColorShade,
     bgGradient,
     textColor,
-    grayColorShade,
-    stickyHeaderBgGradient,
     scrollBarStyle,
   } = returnThemeColors({
     themeObject,
@@ -276,7 +273,7 @@ function ResponsivePieChart({
         min: -180,
         name: "startAngle",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setStartAngle,
         value: startAngle,
@@ -294,7 +291,7 @@ function ResponsivePieChart({
         min: -360,
         name: "endAngle",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 360,
+        defaultValue: 360,
         step: 1,
         validValueAction: responsivePieChartAction.setEndAngle,
         value: endAngle,
@@ -312,7 +309,7 @@ function ResponsivePieChart({
         min: 0,
         name: "innerRadius",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 0.05,
         validValueAction: responsivePieChartAction.setInnerRadius,
         value: innerRadius,
@@ -330,7 +327,7 @@ function ResponsivePieChart({
         min: 0,
         name: "padAngle",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setPadAngle,
         value: padAngle,
@@ -348,7 +345,7 @@ function ResponsivePieChart({
         min: 0,
         name: "cornerRadius",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setCornerRadius,
         value: cornerRadius,
@@ -365,7 +362,7 @@ function ResponsivePieChart({
         offLabel: "Off",
         onLabel: "On",
         validValueAction: responsivePieChartAction.setSortByValue,
-        value: sortByValue,
+        value: sortByValue.toString(),
       }}
     />
   );
@@ -408,7 +405,7 @@ function ResponsivePieChart({
         onLabel: "On",
         parentDispatch: responsivePieChartDispatch,
         validValueAction: responsivePieChartAction.setEnableFillPatterns,
-        value: enableFillPatterns,
+        value: enableFillPatterns.toString(),
       }}
     />
   );
@@ -423,7 +420,7 @@ function ResponsivePieChart({
         min: 0,
         name: "arcBorderWidth",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setArcBorderWidth,
         value: arcBorderWidth,
@@ -440,7 +437,7 @@ function ResponsivePieChart({
         onLabel: "On",
         parentDispatch: responsivePieChartDispatch,
         validValueAction: responsivePieChartAction.setEnableArcLinkLabels,
-        value: enableArcLinkLabels,
+        value: enableArcLinkLabels.toString(),
       }}
     />
   );
@@ -456,7 +453,7 @@ function ResponsivePieChart({
         min: 0,
         name: "arcLinkLabelsSkipAngle",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setArcLinkLabelsSkipAngle,
         value: arcLinkLabelsSkipAngle,
@@ -475,7 +472,7 @@ function ResponsivePieChart({
         min: -24,
         name: "arcLinkLabelsOffset",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setArcLinkLabelsOffset,
         value: arcLinkLabelsOffset,
@@ -494,7 +491,7 @@ function ResponsivePieChart({
         min: 0,
         name: "arcLinkLabelsDiagonalLength",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 16,
+        defaultValue: 16,
         step: 1,
         validValueAction:
           responsivePieChartAction.setArcLinkLabelsDiagonalLength,
@@ -514,7 +511,7 @@ function ResponsivePieChart({
         min: 0,
         name: "arcLinkLabelsStraightLength",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 24,
+        defaultValue: 24,
         step: 1,
         validValueAction:
           responsivePieChartAction.setArcLinkLabelsStraightLength,
@@ -534,7 +531,7 @@ function ResponsivePieChart({
         min: 0,
         name: "arcLinkLabelsTextOffset",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 6,
+        defaultValue: 6,
         step: 1,
         validValueAction: responsivePieChartAction.setArcLinkLabelsTextOffset,
         value: arcLinkLabelsTextOffset,
@@ -553,7 +550,7 @@ function ResponsivePieChart({
         min: 0,
         name: "arcLinkLabelsThickness",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 1,
+        defaultValue: 1,
         step: 1,
         validValueAction: responsivePieChartAction.setArcLinkLabelsThickness,
         value: arcLinkLabelsThickness,
@@ -587,7 +584,7 @@ function ResponsivePieChart({
         min: 0,
         name: "activeInnerRadiusOffset",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setActiveInnerRadiusOffset,
         value: activeInnerRadiusOffset,
@@ -605,7 +602,7 @@ function ResponsivePieChart({
         min: 0,
         name: "activeOuterRadiusOffset",
         parentDispatch: responsivePieChartDispatch,
-        sliderDefaultValue: 0,
+        defaultValue: 0,
         step: 1,
         validValueAction: responsivePieChartAction.setActiveOuterRadiusOffset,
         value: activeOuterRadiusOffset,
@@ -622,7 +619,7 @@ function ResponsivePieChart({
         onLabel: "On",
         parentDispatch: responsivePieChartDispatch,
         validValueAction: responsivePieChartAction.setEnableAnimate,
-        value: enableAnimate,
+        value: enableAnimate.toString(),
       }}
     />
   );
