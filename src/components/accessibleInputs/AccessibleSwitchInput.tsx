@@ -40,7 +40,6 @@ type AccessibleSwitchInputAttributes<
 
 type AccessibleSwitchInputProps<
   ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
 > = {
   attributes: AccessibleSwitchInputAttributes<
     ValidValueAction

@@ -1,315 +1,278 @@
-import {
-  Box,
-  Group,
-  type MantineSize,
-  Popover,
-  Stack,
-  Text,
-  TextInput,
-  Tooltip,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import {
-  type ChangeEvent,
-  type Dispatch,
-  type KeyboardEvent,
-  type ReactNode,
-  type RefObject,
-  useState,
-} from "react";
-import { TbCheck, TbRefresh, TbX } from "react-icons/tb";
+import { Box, Text, TextInput, TextInputProps } from "@mantine/core";
 
+import React, { ChangeEvent } from "react";
+import { TbCheck, TbX } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
-import { useGlobalState } from "../../hooks/useGlobalState";
-import type { ValidationFunctionsTable } from "../../types";
+import { useGlobalState } from "../../hooks";
+import { ThemeObject } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
-import {
-  createAccessibleValueValidationTextElements,
-  returnValidationTexts,
-} from "./utils";
 
 type AccessibleTextInputAttributes<
-  ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
-> = {
-  ariaAutoComplete?: "both" | "list" | "none" | "inline";
-  autoComplete?: "on" | "off";
-  dataTestId?: string;
-  disabled?: boolean;
-  // if different from parentDispatch which sets value
-  errorDispatch?: Dispatch<{
-    action: InvalidValueAction;
-    payload: boolean;
-  }>;
-  hideLabel?: boolean;
-  icon?: ReactNode;
-  initialInputValue?: string;
-  invalidValueAction: InvalidValueAction;
-  label?: ReactNode;
-  maxLength?: number;
-  minLength?: number;
-  // must correspond to name in validationFunctionsTable
-  name: ValidationKey;
-  onBlur?: () => void;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  onFocus?: () => void;
-  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
-  parentDispatch: Dispatch<
-    | {
-      action: ValidValueAction;
-      payload: string;
-    }
-    | {
-      action: InvalidValueAction;
-      payload: boolean;
-    }
-  >;
-  placeholder?: string;
-  ref?: RefObject<HTMLInputElement | null> | null;
-  required?: boolean;
-  rightSection?: boolean;
-  rightSectionIcon?: ReactNode;
-  rightSectionOnClick?: () => void;
-  size?: MantineSize;
-  validationFunctionsTable?: ValidationFunctionsTable;
-  validValueAction: ValidValueAction;
-  value: string;
-  withAsterisk?: boolean;
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
+> = TextInputProps & {
+    hideLabel?: boolean;
+    // for username and email inputs
+    isNameExists?: boolean;
+    invalidValueAction: InvalidValueAction;
+    // must correspond to name in validationFunctionsTable
+    name: ValidationKey;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    parentDispatch: React.Dispatch<
+        | {
+            action: ValidValueAction;
+            payload: string;
+        }
+        | {
+            action: InvalidValueAction;
+            payload: boolean;
+        }
+    >;
+    ref?: React.RefObject<HTMLInputElement | null>;
+    validValueAction: ValidValueAction;
 };
 
 type AccessibleTextInputProps<
-  ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
 > = {
-  attributes: AccessibleTextInputAttributes<
-    ValidValueAction,
-    InvalidValueAction
-  >;
-  uniqueId?: string;
+    attributes: AccessibleTextInputAttributes<
+        ValidValueAction,
+        InvalidValueAction
+    >;
 };
 
 function AccessibleTextInput<
-  ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
 >(
-  { attributes, uniqueId }: AccessibleTextInputProps<
-    ValidValueAction,
-    InvalidValueAction
-  >,
+    { attributes }: AccessibleTextInputProps<
+        ValidValueAction,
+        InvalidValueAction
+    >,
 ) {
-  const {
-    ariaAutoComplete = "none",
-    autoComplete = "off",
-    dataTestId = `${attributes.name}-textInput`,
-    disabled = false,
-    errorDispatch,
-    hideLabel = false,
-    icon = null,
-    initialInputValue = "",
-    invalidValueAction,
-    maxLength = 75,
-    minLength = 2,
-    name,
-    onBlur,
-    onChange,
-    onFocus,
-    onKeyDown,
-    parentDispatch,
-    placeholder = "",
-    ref = null,
-    required = true,
-    rightSection = false,
-    rightSectionIcon = null,
-    rightSectionOnClick = () => {},
-    size = "sm",
-    validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
-    validValueAction,
-    value,
-    withAsterisk = false,
-  } = attributes;
+    const [isInputFocused, setIsInputFocused] = React.useState(false);
 
-  const label = (
-    <Text color={disabled ? "gray" : void 0}>
-      {attributes.label ?? splitCamelCase(name)}
-    </Text>
-  );
+    const {
+        hideLabel = false,
+        icon,
+        invalidValueAction,
+        isNameExists = false,
+        name,
+        onChange,
+        parentDispatch,
+        ref,
+        validValueAction,
+        ...textInputProps
+    } = attributes;
+    const value = attributes.value?.toString() ?? "";
 
-  const [valueBuffer, setValueBuffer] = useState<string>(value);
-  const [isPopoverOpened, { open: openPopover, close: closePopover }] =
-    useDisclosure(false);
+    const label = (
+        <Text color={attributes.disabled ? "gray" : void 0}>
+            {attributes.label ?? splitCamelCase(name)}
+        </Text>
+    );
 
-  const {
-    globalState: { themeObject },
-  } = useGlobalState();
+    const {
+        globalState: { themeObject },
+    } = useGlobalState();
 
-  const {
-    greenColorShade,
-    grayColorShade,
-    redColorShade,
-  } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
+    const {
+        greenColorShade,
+        redColorShade,
+    } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
-  const rightIcon = rightSection
-    ? (
-      rightSectionIcon
-        ? rightSectionIcon
-        : (
-          <Tooltip label={`Reset ${name} to ${initialInputValue}`}>
-            <Group style={{ cursor: "pointer" }}>
-              <TbRefresh
-                aria-label={`Reset ${name} value to ${initialInputValue}`}
-                color={grayColorShade}
-                size={18}
-                onClick={rightSectionOnClick}
-              />
-            </Group>
-          </Tooltip>
-        )
-    )
-    : null;
+    const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
+    const isValueValid = value.length === 0 || regexesArray.every(
+        ([regexOrFunc, _validationText]: [any, any]) =>
+            typeof regexOrFunc === "function"
+                ? regexOrFunc(value)
+                : regexOrFunc.test(value),
+    );
 
-  const regexesArray = validationFunctionsTable[name];
-  const isValueBufferValid = valueBuffer.length === 0 || regexesArray.every(
-    ([regexOrFunc, _validationText]: [any, any]) =>
-      typeof regexOrFunc === "function"
-        ? regexOrFunc(valueBuffer)
-        : regexOrFunc.test(valueBuffer),
-  );
+    const leftIcon = icon ??
+        (isValueValid && value.length > 0
+            ? (
+                <TbCheck
+                    aria-label={`Valid ${name} input`}
+                    color={greenColorShade}
+                    data-testid={`${name}-input-valid-icon`}
+                    size={18}
+                />
+            )
+            : value.length === 0
+            ? null
+            : (
+                <TbX
+                    aria-hidden={true}
+                    color={redColorShade}
+                    data-testid={`${name}-input-invalid-icon`}
+                    size={18}
+                />
+            ));
 
-  const leftIcon = icon ??
-    (isValueBufferValid && valueBuffer.length > 0
-      ? (
-        <TbCheck
-          aria-label={`Valid ${name} input`}
-          color={greenColorShade}
-          data-testid={`${name}-input-valid-icon`}
-          size={18}
-        />
-      )
-      : valueBuffer.length === 0
-      ? null
-      : (
-        <TbX
-          aria-hidden={true}
-          color={redColorShade}
-          data-testid={`${name}-input-invalid-icon`}
-          size={18}
-        />
-      ));
-
-  const validationTexts = returnValidationTexts({
-    name,
-    validationFunctionsTable,
-    valueBuffer,
-  });
-
-  const { validValueTextElement, invalidValueTextElement } =
-    createAccessibleValueValidationTextElements({
-      isPopoverOpened,
-      isValueBufferValid,
-      name,
-      themeObject,
-      validationTexts,
-      valueBuffer,
+    const validationTexts = returnValidationTexts({
+        name,
+        value,
     });
 
-  return (
-    <Box
-      aria-live="polite"
-      key={`${name}-${value}-${uniqueId ?? ""}`}
-      className="accessible-input"
-    >
-      <Popover
-        opened={isPopoverOpened}
-        position="bottom"
-        shadow="lg"
-        transitionProps={{ transition: "pop" }}
-        width="target"
-        withArrow
-      >
-        <Popover.Target>
-          <TextInput
-            aria-autocomplete={ariaAutoComplete}
-            aria-describedby={isValueBufferValid
-              // id of validValueTextElement
-              ? `${name}-valid-text ${name}-exists-text`
-              // id of invalidValueTextElement
-              : `${name}-invalid-text ${name}-exists-text`}
+    const { validValueTextElement, invalidValueTextElement } =
+        createAccessibleValueValidationTextElements({
+            isInputFocused,
+            isNameExists,
+            isValueValid,
+            name,
+            themeObject,
+            validationTexts,
+            value,
+        });
+
+    const textInput = (
+        <TextInput
+            // aria-describedby={!isValueValid || isNameExists
+            //     ? `${name}-invalid-text`
+            //     : `${name}-valid-text`}
+            aria-describedby={`${name}-invalid-text ${name}-valid-text`}
             aria-errormessage={`${name}-invalid-text`}
-            aria-invalid={!isValueBufferValid}
+            aria-invalid={!isValueValid || isNameExists}
             aria-label={name}
-            aria-required={required}
-            autoComplete={autoComplete}
-            // color={grayColorShade}
-            data-testid={dataTestId}
-            disabled={disabled}
-            error={!isValueBufferValid && valueBuffer !== initialInputValue}
+            error={!isValueValid || isNameExists}
             icon={leftIcon}
             label={hideLabel ? null : label}
-            maxLength={maxLength}
-            minLength={minLength}
             name={name}
             onBlur={() => {
-              parentDispatch({
-                action: invalidValueAction,
-                payload: !isValueBufferValid,
-              });
-              parentDispatch({
-                action: validValueAction,
-                payload: valueBuffer,
-              });
-
-              errorDispatch?.({
-                action: invalidValueAction,
-                payload: !isValueBufferValid,
-              });
-
-              onBlur?.();
-              closePopover();
+                setIsInputFocused(false);
             }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setValueBuffer(event.currentTarget.value);
-              onChange?.(event);
+                parentDispatch({
+                    action: invalidValueAction,
+                    payload: !isValueValid || isNameExists,
+                });
+                parentDispatch({
+                    action: validValueAction,
+                    payload: event.currentTarget.value,
+                });
+                onChange?.(event);
             }}
             onFocus={() => {
-              openPopover();
-              onFocus?.();
+                setIsInputFocused(true);
             }}
-            onKeyDown={onKeyDown}
-            placeholder={placeholder}
             ref={ref}
-            required={required}
-            rightSection={rightIcon}
-            size={size}
-            value={valueBuffer}
-            withAsterisk={withAsterisk}
-          />
-        </Popover.Target>
+            value={value}
+            {...textInputProps}
+        />
+    );
 
-        {isPopoverOpened && valueBuffer.length && !isValueBufferValid
-          ? (
-            <Popover.Dropdown
-              style={{ border: `1px solid ${redColorShade}` }}
-            >
-              <Stack>
-                {invalidValueTextElement}
-              </Stack>
-            </Popover.Dropdown>
-          )
-          : isPopoverOpened && valueBuffer.length && isValueBufferValid
-          ? (
-            <Popover.Dropdown aria-live="polite" className="visually-hidden">
-              <Stack>
-                {validValueTextElement}
-              </Stack>
-            </Popover.Dropdown>
-          )
-          : null}
-      </Popover>
-    </Box>
-  );
+    return (
+        <Box className="accessible-input">
+            {textInput}
+            {validValueTextElement}
+            {invalidValueTextElement}
+        </Box>
+    );
+}
+
+function returnValidationTexts(
+    { name, value }: {
+        name: ValidationKey;
+        value: string;
+    },
+): {
+    valueValidText: string;
+    valueInvalidText: string;
+} {
+    const initialValidationTexts = {
+        valueInvalidText: "",
+        valueValidText: "",
+    };
+    const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
+    const regexes = regexesArray.map(([regexOrFunc, errorMessage]) => {
+        if (typeof regexOrFunc === "function") {
+            return regexOrFunc(value) ? "" : errorMessage;
+        }
+        return regexOrFunc.test(value) ? "" : errorMessage;
+    });
+    const partialInvalidText = regexes.join(" ");
+    const valueInvalidText = `${
+        splitCamelCase(name)
+    } is invalid. ${partialInvalidText}`;
+    const valueValidText = `${splitCamelCase(name)} is valid.`;
+
+    return {
+        ...initialValidationTexts,
+        valueInvalidText,
+        valueValidText,
+    };
+}
+
+function createAccessibleValueValidationTextElements({
+    arePasswordsDifferent,
+    isInputFocused,
+    isNameExists,
+    isValueValid,
+    name,
+    themeObject,
+    validationTexts: { valueInvalidText, valueValidText },
+    value,
+}: {
+    arePasswordsDifferent?: boolean;
+    isInputFocused: boolean;
+    isNameExists: boolean;
+    isValueValid: boolean;
+    name: string;
+    themeObject: ThemeObject;
+    validationTexts: {
+        valueInvalidText: string;
+        valueValidText: string;
+    };
+    value: string;
+}): {
+    validValueTextElement: React.JSX.Element;
+    invalidValueTextElement: React.JSX.Element;
+} {
+    const { greenColorShade, redColorShade } = returnThemeColors({
+        themeObject,
+        colorsSwatches: COLORS_SWATCHES,
+    });
+
+    const shouldShowInvalidValueText = isInputFocused &&
+        (!isValueValid || isNameExists) &&
+        value.length > 0;
+    const invalidValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={shouldShowInvalidValueText ? "" : "visually-hidden"}
+            color={redColorShade}
+            id={`${name}-invalid-text`}
+            pt={2}
+            w="100%"
+        >
+            {isNameExists
+                ? `${splitCamelCase(name)} already exists.`
+                : arePasswordsDifferent
+                ? "Passwords do not match."
+                : valueInvalidText}
+        </Text>
+    );
+
+    const shouldShowValidValueText = !isNameExists && isInputFocused &&
+        isValueValid &&
+        value.length > 0;
+    const validValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={shouldShowValidValueText ? "" : "visually-hidden"}
+            color={greenColorShade}
+            id={`${name}-valid-text`}
+            pt={2}
+            w="100%"
+        >
+            {valueValidText}
+        </Text>
+    );
+
+    return { invalidValueTextElement, validValueTextElement };
 }
 
 export { AccessibleTextInput };
-
-export type { AccessibleTextInputAttributes };

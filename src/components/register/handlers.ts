@@ -24,7 +24,7 @@ import {
 } from "./schemas";
 import { RegisterState } from "./types";
 
-async function handleCheckEmail(
+function handleCheckEmail(
   input: {
     checkEmailWorker: Worker | null;
     email: string;
@@ -33,7 +33,7 @@ async function handleCheckEmail(
     showBoundary: (error: unknown) => void;
     url: RequestInfo | URL;
   },
-): Promise<SafeResult<string>> {
+): SafeResult<string> {
   try {
     const parsedInputResult = parseSyncSafe({
       object: input,

@@ -8,12 +8,12 @@ import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors } from "../../utils";
 import { AccessiblePasswordInput } from "../accessibleInputs/AccessiblePasswordInput";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
-import { NewTextInput } from "../accessibleInputs/NewTextInput";
 import { registerAction } from "./actions";
-import { handleCheckUsername } from "./handlers";
+import { handleCheckEmail, handleCheckUsername } from "./handlers";
 import { RegisterDispatch } from "./schemas";
 
 type RegisterAuthenticationProps = {
+    checkEmailWorker?: Worker | null;
     checkUsernameWorker?: Worker | null;
     confirmPassword: string;
     email: string;
@@ -26,18 +26,21 @@ type RegisterAuthenticationProps = {
     username: string;
 };
 
-function RegisterAuthentication({
-    checkUsernameWorker,
-    confirmPassword,
-    email,
-    isEmailExists,
-    isEmailExistsSubmitting,
-    isUsernameExists,
-    isUsernameExistsSubmitting,
-    password,
-    registerDispatch,
-    username,
-}: RegisterAuthenticationProps) {
+function RegisterAuthentication(
+    {
+        checkEmailWorker,
+        checkUsernameWorker,
+        confirmPassword,
+        email,
+        isEmailExists,
+        isEmailExistsSubmitting,
+        isUsernameExists,
+        isUsernameExistsSubmitting,
+        password,
+        registerDispatch,
+        username,
+    }: RegisterAuthenticationProps,
+) {
     const {
         globalState: { themeObject },
     } = useGlobalState();
@@ -62,32 +65,11 @@ function RegisterAuthentication({
                     : isUsernameExists && username
                     ? <TbExclamationCircle color={redColorShade} />
                     : null,
-                invalidValueAction: registerAction.setIsError,
-                name: "username",
-                parentDispatch: registerDispatch,
-                ref: usernameInputRef as React.RefObject<HTMLInputElement>,
-
-                validValueAction: registerAction.setUsername,
-                value: username,
-            }}
-        />
-    );
-    const newUsernameTextInput = (
-        <NewTextInput
-            attributes={{
-                icon: isUsernameExistsSubmitting
-                    ? <Loader size="xs" />
-                    : isUsernameExists && username
-                    ? <TbExclamationCircle color={redColorShade} />
-                    : null,
                 isNameExists: isUsernameExists,
                 invalidValueAction: registerAction.setIsError,
                 name: "username",
                 onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
-                    if (
-                        !username || username.length === 0 ||
-                        checkUsernameWorker == null
-                    ) {
+                    if (!username || checkUsernameWorker == null) {
                         return;
                     }
 
@@ -117,6 +99,20 @@ function RegisterAuthentication({
                     : null,
                 invalidValueAction: registerAction.setIsError,
                 name: "email",
+                onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+                    if (!email || checkEmailWorker == null) {
+                        return;
+                    }
+
+                    handleCheckEmail({
+                        checkEmailWorker,
+                        isComponentMountedRef,
+                        registerDispatch,
+                        showBoundary,
+                        url: AUTH_URL,
+                        email: event.currentTarget.value,
+                    });
+                },
                 parentDispatch: registerDispatch,
                 validValueAction: registerAction.setEmail,
                 value: email,
@@ -153,34 +149,8 @@ function RegisterAuthentication({
     const registerAuthentication = (
         <Card className="register-form-card">
             <Text size={24}>Authentication</Text>
-            {newUsernameTextInput}
-            {/* {usernameTextInput} */}
-            {
-                /* {isUsernameExists && username
-                ? (
-                    <Text
-                        aria-live="polite"
-                        color={redColorShade}
-                        data-testid="username-exists-text"
-                        id="username-exists-text"
-                    >
-                        Username already exists!
-                    </Text>
-                )
-                : null} */
-            }
+            {usernameTextInput}
             {emailTextInput}
-            {isEmailExists && email
-                ? (
-                    <Text
-                        aria-live="polite"
-                        color={redColorShade}
-                        data-testid="email-exists-text"
-                    >
-                        Email already exists!
-                    </Text>
-                )
-                : null}
             {passwordTextInput}
             {confirmPasswordTextInput}
         </Card>

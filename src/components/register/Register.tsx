@@ -14,7 +14,7 @@ import { useErrorBoundary } from "react-error-boundary";
 
 import { TbCheck } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
-import { AUTH_URL, COLORS_SWATCHES } from "../../constants";
+import { COLORS_SWATCHES } from "../../constants";
 import { useMountedRef } from "../../hooks";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { FormReview, UserSchema } from "../../types";
@@ -28,7 +28,6 @@ import { MAX_IMAGES } from "../accessibleInputs/image/constants";
 import { registerAction } from "./actions";
 import { MAX_REGISTER_STEPS, REGISTER_STEPS, REGISTER_URL } from "./constants";
 import {
-  handleCheckEmail,
   handleMessageEventCheckEmailWorkerToMain,
   handleMessageEventCheckUsernameWorkerToMain,
   handleMessageEventRegisterFetchWorkerToMain,
@@ -156,36 +155,6 @@ function Register() {
       newRegisterWorker.terminate();
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (!username || username.length === 0 || !checkUsernameWorker) {
-  //     return;
-  //   }
-
-  //   handleCheckUsername({
-  //     checkUsernameWorker,
-  //     isComponentMountedRef,
-  //     registerDispatch,
-  //     showBoundary,
-  //     url: AUTH_URL,
-  //     username,
-  //   });
-  // }, [username]);
-
-  useEffect(() => {
-    if (!email || email.length === 0 || !checkEmailWorker) {
-      return;
-    }
-
-    handleCheckEmail({
-      checkEmailWorker,
-      isComponentMountedRef,
-      registerDispatch,
-      showBoundary,
-      url: AUTH_URL,
-      email,
-    });
-  }, [email]);
 
   const {
     bgGradient,
@@ -475,6 +444,7 @@ function Register() {
   const registerStep = activeStep === 0
     ? (
       <RegisterAuthentication
+        checkEmailWorker={checkEmailWorker}
         checkUsernameWorker={checkUsernameWorker}
         confirmPassword={confirmPassword}
         email={email}
