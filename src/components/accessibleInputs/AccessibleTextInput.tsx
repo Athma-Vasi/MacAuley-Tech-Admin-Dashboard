@@ -1,6 +1,6 @@
 import { Box, Text, TextInput, TextInputProps } from "@mantine/core";
 
-import React, { ChangeEvent } from "react";
+import React from "react";
 import { TbCheck, TbX } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks";
@@ -144,7 +144,7 @@ function AccessibleTextInput<
             onBlur={() => {
                 setIsInputFocused(false);
             }}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 parentDispatch({
                     action: invalidValueAction,
                     payload: !isValueValid || isNameExists,

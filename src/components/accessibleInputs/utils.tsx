@@ -20,7 +20,7 @@ import {
 } from "./AccessibleSelectInput";
 import {
   AccessibleSwitchInput,
-  type AccessibleSwitchInputAttributes,
+  AccessibleSwitchInputAttributes,
 } from "./AccessibleSwitchInput";
 
 type CreateAccessibleValueValidationTextElements = {

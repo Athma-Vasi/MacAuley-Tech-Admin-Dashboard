@@ -1,153 +1,142 @@
-import { Box, type MantineSize, Switch } from "@mantine/core";
-import type { ChangeEvent, ReactNode, RefObject } from "react";
-
-import { useGlobalState } from "../../hooks/useGlobalState";
-import { splitCamelCase } from "../../utils";
-import { createAccessibleSwitchOnOffTextElements } from "./utils";
+import { Box, Switch, SwitchProps, Text } from "@mantine/core";
+import { COLORS_SWATCHES } from "../../constants";
+import { useGlobalState } from "../../hooks";
+import { ThemeObject } from "../../types";
+import { returnThemeColors, splitCamelCase } from "../../utils";
 
 type AccessibleSwitchInputAttributes<
-  ValidValueAction extends string = string,
-> = {
-  checked: boolean;
-  color?: string;
-  disabled?: boolean;
-  label?: ReactNode;
-  labelPosition?: "left" | "right";
-  name: string;
-  offLabel: ReactNode;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  onLabel: ReactNode;
-  parentDispatch: React.Dispatch<
-    {
-      action: ValidValueAction;
-      payload: boolean;
-    }
-  >;
-  radius?: MantineSize;
-  ref?: RefObject<HTMLInputElement>;
-  required?: boolean;
-  size?: MantineSize;
-  page?: number;
-  preventErrorStateWhenOff?: boolean;
-  /** Will be added to end of `${name} is off. ` */
-  switchOffDescription?: string;
-  /** Will be added to end of `${name} is on. ` */
-  switchOnDescription?: string;
-  thumbIcon?: ReactNode;
-  validValueAction: ValidValueAction;
-  value: boolean;
+    ValidValueAction extends string = string,
+> = SwitchProps & {
+    name: string;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    parentDispatch: React.Dispatch<{
+        action: ValidValueAction;
+        payload: boolean;
+    }>;
+    ref?: React.RefObject<HTMLInputElement | null>;
+    switchOffDescription?: string;
+    switchOnDescription?: string;
+    validValueAction: ValidValueAction;
 };
 
 type AccessibleSwitchInputProps<
-  ValidValueAction extends string = string,
-> = {
-  attributes: AccessibleSwitchInputAttributes<
-    ValidValueAction
-  >;
-  uniqueId?: string;
-};
+    ValidValueAction extends string = string,
+> = { attributes: AccessibleSwitchInputAttributes<ValidValueAction> };
 
 function AccessibleSwitchInput<
-  ValidValueAction extends string = string,
->(
-  { attributes, uniqueId }: AccessibleSwitchInputProps<
-    ValidValueAction
-  >,
-) {
-  const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
+    ValidValueAction extends string = string,
+>({ attributes }: AccessibleSwitchInputProps<ValidValueAction>) {
+    const {
+        globalState: {
+            themeObject,
+        },
+    } = useGlobalState();
 
-  const {
-    checked,
-    color = primaryColor,
-    disabled = false,
-    labelPosition = "right",
+    const {
+        checked,
+        onChange,
+        parentDispatch,
+        ref,
+        switchOffDescription,
+        switchOnDescription,
+        validValueAction,
+        ...switchProps
+    } = attributes;
+    const name = splitCamelCase(attributes.name);
+    const label = attributes.label ?? name;
+
+    const { switchOnTextElement, switchOffTextElement } =
+        createAccessibleSwitchOnOffTextElements({
+            name,
+            switchOffDescription,
+            switchOnDescription,
+            themeObject,
+        });
+
+    const switchInput = (
+        <Switch
+            aria-label={name}
+            aria-describedby={`${name}-switch-${checked ? "on" : "off"}`}
+            checked={checked}
+            color={themeObject.primaryColor}
+            description={checked ? switchOnTextElement : switchOffTextElement}
+            label={label}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                parentDispatch({
+                    action: validValueAction,
+                    payload: event.currentTarget.checked,
+                });
+
+                onChange?.(event);
+            }}
+            ref={ref}
+            {...switchProps}
+        />
+    );
+
+    return (
+        <Box className="accessible-input">
+            {switchInput}
+            {switchOnTextElement}
+            {switchOffTextElement}
+        </Box>
+    );
+}
+
+function createAccessibleSwitchOnOffTextElements({
     name,
-    onChange,
-    offLabel,
-    onLabel,
-    parentDispatch,
-    preventErrorStateWhenOff = false,
-    radius = "lg",
-    ref = null,
-    required = false,
-    size = "sm",
-    page = 0,
-    switchOffDescription = "",
-    switchOnDescription = "",
-    thumbIcon = null,
-    validValueAction,
-    value,
-  } = attributes;
-
-  const label = attributes.label ?? splitCamelCase(name);
-
-  const {
-    globalState: { themeObject },
-  } = useGlobalState();
-
-  const { switchOnTextElement, switchOffTextElement } =
-    createAccessibleSwitchOnOffTextElements({
-      checked,
-      name,
-      switchOffDescription,
-      switchOnDescription,
-      themeObject,
+    switchOffDescription,
+    switchOnDescription,
+    themeObject,
+}: {
+    name: string;
+    switchOffDescription?: string;
+    switchOnDescription?: string;
+    themeObject: ThemeObject;
+}): {
+    switchOnTextElement: React.JSX.Element;
+    switchOffTextElement: React.JSX.Element;
+} {
+    const {
+        grayColorShade,
+        redColorShade,
+    } = returnThemeColors({
+        themeObject,
+        colorsSwatches: COLORS_SWATCHES,
     });
 
-  return (
-    <Box
-      key={`${name}-${value}-${uniqueId}`}
-      className="accessible-input"
-    >
-      <Switch
-        aria-label={name}
-        aria-required={required}
-        aria-describedby={checked
-          // id of switchOnTextElement
-          ? `${name}-on`
-          // id of switchOffTextElement
-          : `${name}-off`}
-        checked={checked}
-        color={color}
-        description={preventErrorStateWhenOff
-          ? ""
-          : checked
-          ? switchOnTextElement
-          : switchOffTextElement}
-        disabled={disabled}
-        label={label}
-        labelPosition={labelPosition}
-        name={name}
-        offLabel={offLabel}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const {
-            currentTarget: { checked },
-          } = event;
+    const switchOnText = switchOnDescription ??
+        `${name} is on.`;
+    const switchOnTextElement = (
+        <Text
+            aria-live="polite"
+            className="visually-hidden"
+            color={grayColorShade}
+            data-testid={`${name}-switch-on-screenreader-text`}
+            id={`${name}-switch-on`}
+            w="100%"
+        >
+            {switchOnText}
+        </Text>
+    );
 
-          parentDispatch({
-            action: validValueAction,
-            payload: checked,
-          });
+    const switchOffText = switchOffDescription ??
+        `${name} is off.`;
+    const switchOffTextElement = (
+        <Text
+            aria-live="polite"
+            className="visually-hidden"
+            color={redColorShade}
+            data-testid={`${name}-switch-off-screenreader-text`}
+            id={`${name}-switch-off`}
+            w="100%"
+        >
+            {switchOffText}
+        </Text>
+    );
 
-          onChange?.(event);
-        }}
-        onLabel={onLabel}
-        radius={radius}
-        ref={ref}
-        required={required}
-        size={size}
-        thumbIcon={thumbIcon}
-        value={value.toString()}
-      />
-
-      <Box className="visually-hidden">
-        {switchOnTextElement}
-        {switchOffTextElement}
-      </Box>
-    </Box>
-  );
+    return { switchOnTextElement, switchOffTextElement };
 }
 
 export { AccessibleSwitchInput };
-
-export type { AccessibleSwitchInputAttributes };
+export type { AccessibleSwitchInputAttributes, AccessibleSwitchInputProps };

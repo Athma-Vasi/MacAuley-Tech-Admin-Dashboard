@@ -84,7 +84,7 @@ function ChartArcLabel(props: ChartArcLabelProps) {
         onLabel: "On",
         parentDispatch: parentChartDispatch,
         validValueAction: parentChartAction.setEnableArcLabels,
-        value: enableArcLabels,
+        value: enableArcLabels.toString(),
       }}
     />
   );
