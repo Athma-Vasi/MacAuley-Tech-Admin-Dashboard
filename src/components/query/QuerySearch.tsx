@@ -8,7 +8,7 @@ import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
 import { QueryAction, queryAction } from "./actions";
 import { QUERY_SEARCH_CASE_DATA } from "./constants";
 import { QueryDispatch } from "./schemas";
-import type { QueryState } from "./types";
+import type { GeneralSearchCase, QueryState } from "./types";
 import { SEARCH_CHAIN_HELP_MODAL_CONTENT } from "./utils";
 
 type QuerySearchProps = {
@@ -108,7 +108,10 @@ function QuerySearch({
     );
 
     const caseSensitiveSegmentedControl = (
-        <AccessibleSegmentedControl
+        <AccessibleSegmentedControl<
+            QueryAction["setGeneralSearchCase"],
+            GeneralSearchCase
+        >
             attributes={{
                 data: QUERY_SEARCH_CASE_DATA,
                 name: "case",

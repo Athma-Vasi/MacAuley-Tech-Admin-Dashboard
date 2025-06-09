@@ -1,41 +1,26 @@
 import {
   Box,
-  type MantineColor,
-  type MantineNumberSize,
-  type MantineSize,
   SegmentedControl,
+  SegmentedControlProps,
   Text,
 } from "@mantine/core";
-import { useGlobalState } from "../../hooks/useGlobalState";
-import type { CheckboxRadioSelectData } from "../../types";
+import { useGlobalState } from "../../hooks";
 import { splitCamelCase } from "../../utils";
 
 type AccessibleSegmentedControlAttributes<
   ValidValueAction extends string = string,
   Payload extends string = string,
-> = {
-  color?: MantineColor;
-  data: CheckboxRadioSelectData<Payload>;
+> = SegmentedControlProps & {
   dataTestId?: string;
-  defaultValue?: Payload;
-  disabled?: boolean;
-  fullWidth?: boolean;
   hideName?: boolean;
   label?: React.ReactNode;
   name: string;
   onChange?: (value: Payload) => void;
-  orientation?: "horizontal" | "vertical";
   parentDispatch: React.Dispatch<{
     action: ValidValueAction;
     payload: Payload;
   }>;
-  radius?: MantineNumberSize;
-  readOnly?: boolean;
-  size?: MantineSize;
-  transitionDuration?: number;
-  transitionTimingFunction?: string;
   validValueAction: ValidValueAction;
-  value: Payload;
 };
 
 type AccessibleSegmentedControlProps<
@@ -50,74 +35,75 @@ function AccessibleSegmentedControl<
   Payload extends string = string,
 >({ attributes }: AccessibleSegmentedControlProps<ValidValueAction, Payload>) {
   const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
-
   const {
     color = primaryColor,
-    data,
     dataTestId = `${attributes.name}-segmentedControl`,
-    defaultValue,
-    disabled = false,
-    fullWidth = false,
     hideName = true,
     name,
     onChange,
-    orientation = "horizontal",
     parentDispatch,
-    radius = "sm",
-    readOnly = false,
-    size = "sm",
-    transitionDuration = 150,
-    transitionTimingFunction = "ease",
     validValueAction,
     value,
+    ...segmentedControlProps
   } = attributes;
 
-  //   const {
-  //     globalState: { themeObject },
-  //   } = useGlobalState();
-
-  //   const { switchOnTextElement, switchOffTextElement } =
-  //     createAccessibleSwitchOnOffTextElements({
-  //       checked,
-  //       name,
-  //       switchOffDescription,
-  //       switchOnDescription,
-  //       themeObject,
-  //     });
+  const { segmentedControlTextElement } =
+    createAccessibleSegmentedControlTextElement({
+      name,
+      value,
+    });
+  const segmentedControl = (
+    <SegmentedControl
+      aria-describedby={`${name}-segmentedControl-text`}
+      aria-label={name}
+      color={color}
+      data-testid={dataTestId}
+      onChange={(value: Payload) => {
+        parentDispatch({
+          action: validValueAction,
+          payload: value,
+        });
+        onChange?.(value);
+      }}
+      {...segmentedControlProps}
+    />
+  );
 
   return (
-    <Box>
+    <Box className="accessible-input">
       {hideName ? null : <Text>{splitCamelCase(name)}</Text>}
-      <SegmentedControl
-        aria-label={name}
-        color={color}
-        data={data}
-        data-testid={dataTestId}
-        defaultValue={defaultValue}
-        disabled={disabled}
-        fullWidth={fullWidth}
-        onChange={(value: Payload) => {
-          parentDispatch({ action: validValueAction, payload: value });
-          onChange?.(value);
-        }}
-        orientation={orientation}
-        radius={radius}
-        readOnly={readOnly}
-        size={size}
-        transitionDuration={transitionDuration}
-        transitionTimingFunction={transitionTimingFunction}
-        value={value}
-      />
-
-      <Box className="visually-hidden">
-        {
-          /* {switchOnTextElement}
-        {switchOffTextElement} */
-        }
-      </Box>
+      {segmentedControl}
+      {segmentedControlTextElement}
     </Box>
   );
 }
 
+function createAccessibleSegmentedControlTextElement({
+  name,
+  value,
+}: {
+  name: string;
+  value: string | undefined;
+}): {
+  segmentedControlTextElement: React.ReactNode;
+} {
+  const segmentedControlTextElement = (
+    <Text
+      aria-live="polite"
+      className="visually-hidden"
+      data-testid={`${name}-segmentedControl-screenreader-text`}
+      id={`${name}-segmentedControl-text`}
+      w="100%"
+    >
+      {`${splitCamelCase(name)} is set to ${value ?? "unknown"}.`}
+    </Text>
+  );
+
+  return { segmentedControlTextElement };
+}
+
 export { AccessibleSegmentedControl };
-export type { AccessibleSegmentedControlAttributes };
+export type {
+  AccessibleSegmentedControlAttributes,
+  AccessibleSegmentedControlProps,
+};
