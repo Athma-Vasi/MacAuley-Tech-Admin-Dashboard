@@ -42,7 +42,6 @@ function AccessibleSliderInput<
         onChange,
         parentDispatch,
         precision = 1,
-        style = {},
         validValueAction,
         value,
         ...sliderProps
@@ -66,7 +65,9 @@ function AccessibleSliderInput<
             aria-label={name}
             color={themeObject.primaryColor}
             data-testid={`${name}-sliderInput`}
+            max={max}
             marks={sliderMarks}
+            min={min}
             onChange={(value: Payload) => {
                 parentDispatch({
                     action: validValueAction,
@@ -76,12 +77,6 @@ function AccessibleSliderInput<
                 onChange?.(value);
             }}
             precision={precision}
-            style={{
-                ...style,
-                border: "none",
-                outline: "none",
-                cursor: disabled ? "not-allowed" : "pointer",
-            }}
             w={INPUT_WIDTH}
             {...sliderProps}
         />

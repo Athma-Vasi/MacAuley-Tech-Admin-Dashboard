@@ -309,7 +309,7 @@ function ResponsivePieChart({
         min: 0,
         name: "innerRadius",
         parentDispatch: responsivePieChartDispatch,
-        defaultValue: 0,
+        defaultValue: 0.5,
         step: 0.05,
         validValueAction: responsivePieChartAction.setInnerRadius,
         value: innerRadius,

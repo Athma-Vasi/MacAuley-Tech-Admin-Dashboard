@@ -5,7 +5,7 @@ const initialResponsivePieChartState: ResponsivePieChartState = {
   startAngle: 0,
   endAngle: 360,
   innerRadius: 0.5,
-  padAngle: 4,
+  padAngle: 2,
   cornerRadius: 4,
   sortByValue: false,
 

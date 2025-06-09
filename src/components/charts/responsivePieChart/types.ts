@@ -35,8 +35,8 @@ type ResponsivePieChartState = {
   /** base */
   cornerRadius: number; // 0px - 45px default: 0 step: 1
   endAngle: number; // -360 - 360 default: 360 step: 1
-  innerRadius: number; // 0 - 1 default: 0 step: 0.05
-  padAngle: number; // 0 - 45 default: 0 step: 1
+  innerRadius: number; // 0 - 1 default: 0.5 step: 0.05
+  padAngle: number; // 0 - 45 default: 2 step: 1
   sortByValue: boolean; // default: false
   startAngle: number; // -180 - 360 default: 0 step: 1
 
