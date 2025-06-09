@@ -4,9 +4,12 @@ import React from "react";
 import { TbCheck, TbX } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks";
-import { ThemeObject } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
+import {
+    createAccessibleValueValidationTextElements,
+    returnValidationTexts,
+} from "./utils";
 
 type AccessibleTextInputAttributes<
     ValidValueAction extends string = string,
@@ -184,108 +187,6 @@ function AccessibleTextInput<
             {invalidValueTextElement}
         </Box>
     );
-}
-
-function returnValidationTexts(
-    { name, value }: {
-        name: ValidationKey;
-        value: string;
-    },
-): {
-    valueValidText: string;
-    valueInvalidText: string;
-} {
-    const initialValidationTexts = {
-        valueInvalidText: "",
-        valueValidText: "",
-    };
-    const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
-    const regexes = regexesArray.map(([regexOrFunc, errorMessage]) => {
-        if (typeof regexOrFunc === "function") {
-            return regexOrFunc(value) ? "" : errorMessage;
-        }
-        return regexOrFunc.test(value) ? "" : errorMessage;
-    });
-    const partialInvalidText = regexes.join(" ");
-    const valueInvalidText = `${
-        splitCamelCase(name)
-    } is invalid. ${partialInvalidText}`;
-    const valueValidText = `${splitCamelCase(name)} is valid.`;
-
-    return {
-        ...initialValidationTexts,
-        valueInvalidText,
-        valueValidText,
-    };
-}
-
-function createAccessibleValueValidationTextElements({
-    arePasswordsDifferent,
-    isInputFocused,
-    isNameExists,
-    isValueValid,
-    name,
-    themeObject,
-    validationTexts: { valueInvalidText, valueValidText },
-    value,
-}: {
-    arePasswordsDifferent?: boolean;
-    isInputFocused: boolean;
-    isNameExists: boolean;
-    isValueValid: boolean;
-    name: string;
-    themeObject: ThemeObject;
-    validationTexts: {
-        valueInvalidText: string;
-        valueValidText: string;
-    };
-    value: string;
-}): {
-    validValueTextElement: React.JSX.Element;
-    invalidValueTextElement: React.JSX.Element;
-} {
-    const { greenColorShade, redColorShade } = returnThemeColors({
-        themeObject,
-        colorsSwatches: COLORS_SWATCHES,
-    });
-
-    const shouldShowInvalidValueText = isInputFocused &&
-        (!isValueValid || isNameExists) &&
-        value.length > 0;
-    const invalidValueTextElement = (
-        <Text
-            aria-live="polite"
-            className={shouldShowInvalidValueText ? "" : "visually-hidden"}
-            color={redColorShade}
-            id={`${name}-invalid-text`}
-            pt={2}
-            w="100%"
-        >
-            {isNameExists
-                ? `${splitCamelCase(name)} already exists.`
-                : arePasswordsDifferent
-                ? "Passwords do not match."
-                : valueInvalidText}
-        </Text>
-    );
-
-    const shouldShowValidValueText = !isNameExists && isInputFocused &&
-        isValueValid &&
-        value.length > 0;
-    const validValueTextElement = (
-        <Text
-            aria-live="polite"
-            className={shouldShowValidValueText ? "" : "visually-hidden"}
-            color={greenColorShade}
-            id={`${name}-valid-text`}
-            pt={2}
-            w="100%"
-        >
-            {valueValidText}
-        </Text>
-    );
-
-    return { invalidValueTextElement, validValueTextElement };
 }
 
 export { AccessibleTextInput };

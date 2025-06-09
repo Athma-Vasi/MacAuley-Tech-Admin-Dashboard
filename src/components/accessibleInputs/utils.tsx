@@ -3,80 +3,77 @@ import { TbCheck, TbInfoCircle } from "react-icons/tb";
 
 import { COLORS_SWATCHES } from "../../constants";
 import type { ThemeObject } from "../../context/globalProvider/types";
-import { ValidationFunctionsTable } from "../../types";
 import {
   capitalizeJoinWithAnd,
   returnThemeColors,
   splitCamelCase,
 } from "../../utils";
-import { ValidationKey } from "../../validations";
+import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
 import {
   AccessibleButton,
-  type AccessibleButtonAttributes,
+  AccessibleButtonAttributes,
 } from "./AccessibleButton";
-import {
-  AccessibleSelectInput,
-  type AccessibleSelectInputAttributes,
-} from "./AccessibleSelectInput";
-import {
-  AccessibleSwitchInput,
-  AccessibleSwitchInputAttributes,
-} from "./AccessibleSwitchInput";
 
-type CreateAccessibleValueValidationTextElements = {
-  isPopoverOpened: boolean;
-  isValueBufferValid: boolean;
+function createAccessibleValueValidationTextElements({
+  arePasswordsDifferent,
+  isInputFocused,
+  isNameExists,
+  isValueValid,
+  name,
+  themeObject,
+  validationTexts: { valueInvalidText, valueValidText },
+  value,
+}: {
   arePasswordsDifferent?: boolean;
+  isInputFocused: boolean;
+  isNameExists?: boolean;
+  isValueValid: boolean;
   name: string;
   themeObject: ThemeObject;
-  valueBuffer: string;
   validationTexts: {
     valueInvalidText: string;
     valueValidText: string;
   };
-};
-
-function createAccessibleValueValidationTextElements({
-  isPopoverOpened,
-  isValueBufferValid,
-  arePasswordsDifferent,
-  name,
-  themeObject,
-  valueBuffer,
-  validationTexts: { valueInvalidText, valueValidText },
-}: CreateAccessibleValueValidationTextElements): {
+  value: string;
+}): {
   validValueTextElement: React.JSX.Element;
   invalidValueTextElement: React.JSX.Element;
 } {
-  const {
-    redColorShade,
-  } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
+  const { greenColorShade, redColorShade } = returnThemeColors({
+    themeObject,
+    colorsSwatches: COLORS_SWATCHES,
+  });
 
+  const shouldShowInvalidValueText = isInputFocused &&
+    (!isValueValid || isNameExists) &&
+    value.length > 0;
   const invalidValueTextElement = (
     <Text
+      aria-live="polite"
+      className={shouldShowInvalidValueText ? "" : "visually-hidden"}
       color={redColorShade}
       id={`${name}-invalid-text`}
-      style={{
-        display: isPopoverOpened && valueBuffer && !isValueBufferValid
-          ? "inline-block"
-          : "none",
-      }}
+      pt={2}
       w="100%"
     >
-      {valueInvalidText}
-      {arePasswordsDifferent ? "Passwords do not match." : ""}
+      {isNameExists
+        ? `${splitCamelCase(name)} already exists.`
+        : `${
+          arePasswordsDifferent ? "Passwords do not match." : ""
+        } ${valueInvalidText}`}
     </Text>
   );
 
+  const shouldShowValidValueText = !isNameExists && isInputFocused &&
+    isValueValid &&
+    value.length > 0;
   const validValueTextElement = (
     <Text
-      color={redColorShade}
+      aria-live="polite"
+      className={shouldShowValidValueText ? "" : "visually-hidden"}
+      color={greenColorShade}
       id={`${name}-valid-text`}
-      style={{
-        display: isPopoverOpened && valueBuffer && isValueBufferValid
-          ? "block"
-          : "none",
-      }}
+      pt={2}
       w="100%"
     >
       {valueValidText}
@@ -312,168 +309,25 @@ function createAccessibleImageTextElement(
   return { screenreaderTextElement };
 }
 
-type CreateAccessibleSliderSelectionTextElements = {
-  name: string;
-  theme?: "muted" | "default";
-  themeObject: ThemeObject;
-  value: number;
-};
-
-function createAccessibleSliderScreenreaderTextElements({
-  name,
-  theme = "default",
-  themeObject,
-  value,
-}: CreateAccessibleSliderSelectionTextElements): {
-  screenreaderTextElement: React.JSX.Element;
-} {
-  const {
-    greenColorShade,
-    textColor,
-  } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
-
-  const icon = theme === "default" ? <TbCheck color={greenColorShade} /> : null;
-
-  const screenreaderTextElement = (
-    <Text
-      aria-live="polite"
-      color={theme === "muted" ? textColor : greenColorShade}
-      data-testid={`${name}-slider-screenreader-text`}
-      id={`${name}-selected`}
-      w="100%"
-    >
-      {icon}
-      {`For ${name}, ${value} selected.`}
-    </Text>
-  );
-
-  return { screenreaderTextElement };
-}
-
-type CreateAccessibleSwitchSelectionTextElements = {
-  checked: boolean;
-  name: string;
-  switchOffDescription?: string;
-  switchOnDescription?: string;
-  theme?: "muted" | "default";
-  themeObject: ThemeObject;
-};
-
-function createAccessibleSwitchOnOffTextElements({
-  checked,
-  name,
-  switchOffDescription,
-  switchOnDescription,
-  themeObject,
-  theme = "default",
-}: CreateAccessibleSwitchSelectionTextElements): {
-  switchOnTextElement: React.JSX.Element;
-  switchOffTextElement: React.JSX.Element;
-} {
-  const {
-    grayColorShade,
-    redColorShade,
-  } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
-
-  const switchOnText = switchOnDescription ?? `${name} is on.`;
-
-  const switchOnTextElement = (
-    <Text
-      aria-live="polite"
-      color={grayColorShade}
-      data-testid={`${name}-switch-on-screenreader-text`}
-      id={`${name}-on`}
-      w="100%"
-    >
-      {switchOnText}
-    </Text>
-  );
-
-  const switchOffText = switchOffDescription ?? `${name} is off.`;
-
-  const switchOffTextElement = (
-    <Text
-      aria-live="polite"
-      color={theme === "default" ? redColorShade : grayColorShade}
-      data-testid={`${name}-switch-off-screenreader-text`}
-      id={`${name}-off`}
-      w="100%"
-    >
-      {switchOffText}
-    </Text>
-  );
-
-  return { switchOnTextElement, switchOffTextElement };
-}
-
-function createAccessibleSelectInputs<
-  ValidValueAction extends string = string,
-  Payload extends string = string,
->(
-  attributesArray: AccessibleSelectInputAttributes<
-    ValidValueAction,
-    Payload
-  >[],
-): React.JSX.Element[] {
-  return attributesArray.map((attributes, index) => (
-    <AccessibleSelectInput
-      key={`${index}-${attributes.name}`}
-      attributes={attributes}
-    />
-  ));
-}
-
-function createAccessibleButtons(
-  attributesArray: AccessibleButtonAttributes[],
-): React.JSX.Element[] {
-  return attributesArray.map((attributes, index) => (
-    <AccessibleButton key={index.toString()} attributes={attributes} />
-  ));
-}
-
-function createAccessibleSwitchInputs<
-  ValidValueAction extends string = string,
->(
-  attributesArray: AccessibleSwitchInputAttributes<
-    ValidValueAction
-  >[],
-): React.JSX.Element[] {
-  return attributesArray.map((attributes, index) => (
-    <AccessibleSwitchInput
-      key={`${index}-${attributes.name}`}
-      attributes={attributes}
-    />
-  ));
-}
-
-type ValidationTexts = {
+function returnValidationTexts(
+  { name, value }: {
+    name: ValidationKey;
+    value: string;
+  },
+): {
   valueValidText: string;
   valueInvalidText: string;
-};
-
-function returnValidationTexts(
-  { name, validationFunctionsTable, valueBuffer }: {
-    name: ValidationKey;
-    validationFunctionsTable: ValidationFunctionsTable;
-    valueBuffer: string;
-  },
-): ValidationTexts {
+} {
   const initialValidationTexts = {
     valueInvalidText: "",
     valueValidText: "",
   };
-  const regexesArray = validationFunctionsTable[name];
+  const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
   const regexes = regexesArray.map(([regexOrFunc, errorMessage]) => {
     if (typeof regexOrFunc === "function") {
-      return regexOrFunc(valueBuffer) ? "" : errorMessage;
+      return regexOrFunc(value) ? "" : errorMessage;
     }
-    return regexOrFunc.test(valueBuffer) ? "" : errorMessage;
+    return regexOrFunc.test(value) ? "" : errorMessage;
   });
   const partialInvalidText = regexes.join(" ");
   const valueInvalidText = `${
@@ -488,16 +342,20 @@ function returnValidationTexts(
   };
 }
 
+function createAccessibleButtons(
+  attributesArray: AccessibleButtonAttributes[],
+): React.JSX.Element[] {
+  return attributesArray.map((attributes, index) => (
+    <AccessibleButton key={index.toString()} attributes={attributes} />
+  ));
+}
+
 export {
   createAccessibleButtons,
   createAccessibleButtonScreenreaderTextElements,
   createAccessibleCheckboxSelectionsTextElements,
   createAccessibleImageTextElement,
   createAccessibleNavLinkTextElement,
-  createAccessibleSelectInputs,
-  createAccessibleSliderScreenreaderTextElements,
-  createAccessibleSwitchInputs,
-  createAccessibleSwitchOnOffTextElements,
   createAccessibleValueValidationTextElements,
   returnValidationTexts,
 };

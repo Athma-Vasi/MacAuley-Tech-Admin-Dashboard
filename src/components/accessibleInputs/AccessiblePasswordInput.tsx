@@ -1,251 +1,300 @@
-import {
-  Box,
-  type MantineSize,
-  PasswordInput,
-  Popover,
-  Stack,
-  Text,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import {
-  type ChangeEvent,
-  type Dispatch,
-  type ReactNode,
-  type RefObject,
-  useState,
-} from "react";
-import { TbCheck, TbExclamationCircle } from "react-icons/tb";
+import { Box, PasswordInput, PasswordInputProps, Text } from "@mantine/core";
 
+import React from "react";
+import { TbCheck, TbX } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
-import { useGlobalState } from "../../hooks/useGlobalState";
-import type { ValidationFunctionsTable } from "../../types";
+import { useGlobalState } from "../../hooks";
+import { ThemeObject } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
-import {
-  createAccessibleValueValidationTextElements,
-  returnValidationTexts,
-} from "./utils";
 
 type AccessiblePasswordInputAttributes<
-  ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
-> = {
-  disabled?: boolean;
-  icon?: ReactNode;
-  initialInputValue?: string;
-  invalidValueAction: InvalidValueAction;
-  label?: ReactNode;
-  maxLength?: number;
-  minLength?: number;
-  name: ValidationKey;
-  onBlur?: () => void;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  onFocus?: () => void;
-  parentDispatch: Dispatch<
-    | {
-      action: ValidValueAction;
-      payload: string;
-    }
-    | {
-      action: InvalidValueAction;
-      payload: boolean;
-    }
-  >;
-  // to match passwords
-  passwordValue: string;
-  placeholder?: string;
-  ref?: RefObject<HTMLInputElement>;
-  required?: boolean;
-  size?: MantineSize;
-  validationFunctionsTable?: ValidationFunctionsTable;
-  validValueAction: ValidValueAction;
-  value: string;
-  withAsterisk?: boolean;
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
+> = PasswordInputProps & {
+    dataTestId?: string;
+    hideLabel?: boolean;
+    invalidValueAction: InvalidValueAction;
+    name: ValidationKey;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    parentDispatch: React.Dispatch<
+        | {
+            action: ValidValueAction;
+            payload: string;
+        }
+        | {
+            action: InvalidValueAction;
+            payload: boolean;
+        }
+    >;
+    passwordValue: string; // to match passwords
+    ref?: React.RefObject<HTMLInputElement | null>;
+    validValueAction: ValidValueAction;
 };
 
 type AccessiblePasswordInputProps<
-  ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
 > = {
-  attributes: AccessiblePasswordInputAttributes<
-    ValidValueAction,
-    InvalidValueAction
-  >;
+    attributes: AccessiblePasswordInputAttributes<
+        ValidValueAction,
+        InvalidValueAction
+    >;
 };
 
 function AccessiblePasswordInput<
-  ValidValueAction extends string = string,
-  InvalidValueAction extends string = string,
+    ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
 >(
-  { attributes }: AccessiblePasswordInputProps<
-    ValidValueAction,
-    InvalidValueAction
-  >,
+    { attributes }: AccessiblePasswordInputProps<
+        ValidValueAction,
+        InvalidValueAction
+    >,
 ) {
-  const {
-    disabled = false,
-    icon = null,
-    initialInputValue = "",
-    invalidValueAction,
-    maxLength = 32,
-    minLength = 8,
-    name,
-    onBlur,
-    onChange,
-    onFocus,
-    parentDispatch,
-    passwordValue,
-    placeholder,
-    ref = null,
-    required = false,
-    size = "sm",
-    validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
-    validValueAction,
-    value,
-    withAsterisk = false,
-  } = attributes;
+    const [isInputFocused, setIsInputFocused] = React.useState(false);
 
-  const label = (
-    <Text color={disabled ? "gray" : void 0}>
-      {attributes.label ?? splitCamelCase(name)}
-    </Text>
-  );
+    const {
+        dataTestId = `${attributes.name}-passwordInput`,
+        hideLabel = false,
+        icon,
+        invalidValueAction,
+        name,
+        onChange,
+        parentDispatch,
+        passwordValue,
+        ref,
+        validValueAction,
+        ...passwordInputProps
+    } = attributes;
+    const value = attributes.value?.toString() ?? "";
+    const label = (
+        <Text color={attributes.disabled ? "gray" : void 0}>
+            {attributes.label ?? splitCamelCase(attributes.name)}
+        </Text>
+    );
 
-  const [valueBuffer, setValueBuffer] = useState(value);
-  const [isPopoverOpened, { open: openPopover, close: closePopover }] =
-    useDisclosure(false);
+    const {
+        globalState: { themeObject },
+    } = useGlobalState();
 
-  const {
-    globalState: { themeObject },
-  } = useGlobalState();
+    const {
+        greenColorShade,
+        redColorShade,
+    } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
-  const {
-    greenColorShade,
-    redColorShade,
-  } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
+    const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
+    // empty string is valid
+    let isValueValid = value.length === 0 || regexesArray.every(
+        ([regexOrFunc, _validationText]: [any, any]) =>
+            typeof regexOrFunc === "function"
+                ? regexOrFunc(value)
+                : regexOrFunc.test(value),
+    );
+    if (value.length > 0 && passwordValue.length > 0) {
+        isValueValid = value === passwordValue;
+    }
 
-  const regexesArray = validationFunctionsTable[name];
-  let isValueBufferValid = regexesArray.every(
-    ([regexOrFunc, _validationText]: [any, any]) =>
-      typeof regexOrFunc === "function"
-        ? regexOrFunc(valueBuffer)
-        : regexOrFunc.test(valueBuffer),
-  );
-  isValueBufferValid = passwordValue
-    ? valueBuffer === passwordValue
-    : isValueBufferValid;
+    const leftIcon = icon ??
+        (isValueValid && value.length > 0
+            ? (
+                <TbCheck
+                    aria-label={`Valid ${name} input`}
+                    color={greenColorShade}
+                    data-testid={`${name}-input-valid-icon`}
+                    size={18}
+                />
+            )
+            : value.length === 0
+            ? null
+            : (
+                <TbX
+                    aria-hidden={true}
+                    color={redColorShade}
+                    data-testid={`${name}-input-invalid-icon`}
+                    size={18}
+                />
+            ));
 
-  const leftIcon = icon ??
-    (isValueBufferValid
-      ? (
-        <TbCheck
-          color={greenColorShade}
-          data-testid={`${name}-input-valid-icon`}
-          size={18}
-        />
-      )
-      : valueBuffer.length === 0
-      ? null
-      : (
-        <TbExclamationCircle
-          color={redColorShade}
-          data-testid={`${name}-input-invalid-icon`}
-          size={18}
-        />
-      ));
-
-  const validationTexts = returnValidationTexts({
-    name,
-    validationFunctionsTable,
-    valueBuffer,
-  });
-
-  const { invalidValueTextElement } =
-    createAccessibleValueValidationTextElements({
-      isPopoverOpened,
-      isValueBufferValid,
-      arePasswordsDifferent: valueBuffer !== passwordValue,
-      name,
-      themeObject,
-      validationTexts,
-      valueBuffer,
+    const validationTexts = returnValidationTexts({
+        name,
+        value,
     });
 
-  return (
-    <Box
-      key={`${name}-${value}`}
-      className="accessible-input"
-    >
-      <Popover
-        opened={isPopoverOpened}
-        position="bottom"
-        shadow="md"
-        transitionProps={{ transition: "pop" }}
-        width="target"
-        withArrow
-      >
-        <Popover.Target>
-          <PasswordInput
-            aria-describedby={isValueBufferValid
-              // id of validValueTextElement
-              ? `${name}-valid`
-              // id of invalidValueTextElement
-              : `${name}-invalid`}
-            aria-invalid={!isValueBufferValid}
+    const { screenreaderTextElement } =
+        createAccessiblePasswordInputValidationTextElements({
+            isInputFocused,
+            isValueValid,
+            name,
+            passwordValue,
+            themeObject,
+            validationTexts,
+            value,
+        });
+
+    const passwordInput = (
+        <PasswordInput
+            aria-describedby={`${name}-empty-text ${name}-invalid-text ${name}-valid-text`}
+            aria-errormessage={`${name}-invalid-text`}
+            aria-invalid={!isValueValid}
             aria-label={name}
-            aria-required={required}
-            data-testid={`${name}-input`}
-            error={!isValueBufferValid && value !== initialInputValue}
+            data-testid={dataTestId}
+            error={!isValueValid}
             icon={leftIcon}
-            label={label}
-            maxLength={maxLength}
-            minLength={minLength}
+            label={hideLabel ? null : label}
             name={name}
             onBlur={() => {
-              parentDispatch({
-                action: invalidValueAction,
-                payload: !isValueBufferValid,
-              });
-
-              parentDispatch({
-                action: validValueAction,
-                payload: valueBuffer,
-              });
-
-              onBlur?.();
-              closePopover();
+                setIsInputFocused(false);
             }}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setValueBuffer(event.currentTarget.value);
-              onChange?.(event);
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                parentDispatch({
+                    action: invalidValueAction,
+                    payload: !isValueValid,
+                });
+                parentDispatch({
+                    action: validValueAction,
+                    payload: event.currentTarget.value,
+                });
+
+                onChange?.(event);
             }}
             onFocus={() => {
-              openPopover();
-              onFocus?.();
+                setIsInputFocused(true);
             }}
-            placeholder={placeholder}
             ref={ref}
-            required={required}
-            size={size}
-            value={valueBuffer}
-            withAsterisk={withAsterisk}
-          />
-        </Popover.Target>
+            value={value}
+            {...passwordInputProps}
+        />
+    );
 
-        {isPopoverOpened && valueBuffer.length && !isValueBufferValid
-          ? (
-            <Popover.Dropdown>
-              <Stack>
-                {invalidValueTextElement}
-              </Stack>
-            </Popover.Dropdown>
-          )
-          : null}
-      </Popover>
-    </Box>
-  );
+    return (
+        <Box className="accessible-input">
+            {passwordInput}
+            {screenreaderTextElement}
+        </Box>
+    );
+}
+
+function returnValidationTexts(
+    { name, value }: {
+        name: ValidationKey;
+        value: string;
+    },
+): {
+    valueEmptyText: string;
+    valueInvalidText: string;
+    valueValidText: string;
+} {
+    const initialValidationTexts = {
+        valueValidText: "",
+        valueInvalidText: "",
+        valueEmptyText: "",
+    };
+    const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
+    const regexes = regexesArray.map(([regexOrFunc, errorMessage]) => {
+        if (typeof regexOrFunc === "function") {
+            return regexOrFunc(value) ? "" : errorMessage;
+        }
+        return regexOrFunc.test(value) ? "" : errorMessage;
+    });
+    const splitName = splitCamelCase(name);
+    const partialInvalidText = regexes.join(" ");
+    const valueInvalidText = `${splitName} is invalid. ${partialInvalidText}`;
+
+    return {
+        ...initialValidationTexts,
+        valueInvalidText,
+        valueValidText: `${splitName} is valid.`,
+        valueEmptyText: `${splitName} is empty.`,
+    };
+}
+
+function createAccessiblePasswordInputValidationTextElements({
+    isInputFocused,
+    isValueValid,
+    name,
+    themeObject,
+    validationTexts: { valueEmptyText, valueInvalidText, valueValidText },
+    passwordValue,
+    value,
+}: {
+    isInputFocused: boolean;
+    isValueValid: boolean;
+    name: string;
+    themeObject: ThemeObject;
+    validationTexts: {
+        valueEmptyText: string;
+        valueInvalidText: string;
+        valueValidText: string;
+    };
+    passwordValue: string;
+    value: string;
+}): {
+    screenreaderTextElement: React.ReactNode;
+} {
+    const { greenColorShade, redColorShade } = returnThemeColors({
+        themeObject,
+        colorsSwatches: COLORS_SWATCHES,
+    });
+
+    const arePasswordsDifferent = passwordValue.length > 0 &&
+        value.length > 0 &&
+        passwordValue !== value;
+
+    const shouldShowInvalidValueText = isInputFocused &&
+        (!isValueValid || arePasswordsDifferent) &&
+        value.length > 0;
+    const invalidValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={shouldShowInvalidValueText ? "" : "visually-hidden"}
+            color={redColorShade}
+            id={`${name}-invalid-text`}
+            pt={2}
+            w="100%"
+        >
+            {`${
+                arePasswordsDifferent
+                    ? "Passwords do not match."
+                    : ""
+            } ${valueInvalidText}`}
+        </Text>
+    );
+
+    const shouldShowValidValueText = isInputFocused &&
+        isValueValid && !arePasswordsDifferent &&
+        value.length > 0;
+    const validValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={shouldShowValidValueText ? "" : "visually-hidden"}
+            color={greenColorShade}
+            id={`${name}-valid-text`}
+            pt={2}
+            w="100%"
+        >
+            {valueValidText}
+        </Text>
+    );
+
+    const shouldShowEmptyValueText = isInputFocused && value.length === 0;
+    const emptyValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={"visually-hidden"} // always hidden
+            id={`${name}-empty-text`}
+        >
+            {valueEmptyText}
+        </Text>
+    );
+
+    return {
+        screenreaderTextElement: shouldShowInvalidValueText
+            ? invalidValueTextElement
+            : shouldShowEmptyValueText
+            ? emptyValueTextElement
+            : validValueTextElement,
+    };
 }
 
 export { AccessiblePasswordInput };
-
-export type { AccessiblePasswordInputAttributes };
+export type { AccessiblePasswordInputAttributes, AccessiblePasswordInputProps };
