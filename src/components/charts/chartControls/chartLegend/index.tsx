@@ -164,7 +164,10 @@ function ChartLegend(props: ChartLegendProps) {
   );
 
   const legendAnchorSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartLegendAction["setLegendAnchor"],
+      NivoLegendAnchor
+    >
       attributes={{
         data: NIVO_LEGEND_ANCHOR_DATA,
         description: "Define legend anchor",
@@ -179,7 +182,10 @@ function ChartLegend(props: ChartLegendProps) {
   );
 
   const legendDirectionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartLegendAction["setLegendDirection"],
+      NivoLegendDirection
+    >
       attributes={{
         data: NIVO_LEGEND_DIRECTION_DATA,
         description: "Define legend direction",
@@ -336,7 +342,10 @@ function ChartLegend(props: ChartLegendProps) {
   );
 
   const legendItemDirectionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartLegendAction["setLegendItemDirection"],
+      NivoLegendItemDirection
+    >
       attributes={{
         data: NIVO_LEGEND_ITEM_DIRECTION_DATA,
         description: "Define legend item direction.",
@@ -424,7 +433,10 @@ function ChartLegend(props: ChartLegendProps) {
   );
 
   const legendSymbolShapeSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartLegendAction["setLegendSymbolShape"],
+      NivoLegendSymbolShape
+    >
       attributes={{
         data: NIVO_LEGEND_SYMBOL_SHAPE_DATA,
         description: "Define legend symbol shape.",

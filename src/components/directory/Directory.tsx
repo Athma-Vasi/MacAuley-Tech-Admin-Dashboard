@@ -1,6 +1,7 @@
 import { Box, Group, Loader, Stack, Text } from "@mantine/core";
 import { useEffect, useReducer } from "react";
 
+import { Orientation } from "react-d3-tree";
 import { useErrorBoundary } from "react-error-boundary";
 import { API_URL, COLORS_SWATCHES, STORE_LOCATIONS } from "../../constants";
 import { useMountedRef } from "../../hooks";
@@ -24,6 +25,7 @@ import { directoryReducer } from "./reducers";
 import { initialDirectoryState } from "./state";
 import type {
   DepartmentsWithDefaultKey,
+  DirectoryAction,
   StoreLocationsWithDefaultKey,
 } from "./types";
 import { returnIsStoreLocationDisabled } from "./utils";
@@ -93,7 +95,10 @@ function Directory() {
   }
 
   const departmentSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      DirectoryAction["setDepartment"],
+      DepartmentsWithDefaultKey
+    >
       attributes={{
         data: ALL_DEPARTMENTS_DATA,
         label: (
@@ -153,7 +158,10 @@ function Directory() {
     >);
 
   const storeLocationSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      DirectoryAction["setStoreLocation"],
+      StoreLocationsWithDefaultKey
+    >
       attributes={{
         data: storeLocationData,
         disabled: isStoreLocationDisabled,
@@ -197,7 +205,10 @@ function Directory() {
   );
 
   const orientationSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      DirectoryAction["setOrientation"],
+      Orientation
+    >
       attributes={{
         data: ORIENTATIONS_DATA,
         name: "orientation",

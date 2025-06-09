@@ -202,7 +202,10 @@ function ChartAxisBottom(props: ChartAxisBottomProps) {
   );
 
   const axisBottomLegendPositionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartAxisAction["setAxisBottomLegendPosition"],
+      NivoAxisLegendPosition
+    >
       attributes={{
         data: NIVO_BAR_AXIS_LEGEND_POSITION_DATA,
         description: "Define the position of the bottom axis legend",

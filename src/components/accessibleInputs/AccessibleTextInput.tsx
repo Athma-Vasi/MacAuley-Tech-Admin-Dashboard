@@ -12,6 +12,11 @@ type AccessibleTextInputAttributes<
     ValidValueAction extends string = string,
     InvalidValueAction extends string = string,
 > = TextInputProps & {
+    dataTestId?: string;
+    errorDispatch?: React.Dispatch<{
+        action: InvalidValueAction;
+        payload: boolean;
+    }>;
     hideLabel?: boolean;
     // for username and email inputs
     isNameExists?: boolean;
@@ -55,6 +60,8 @@ function AccessibleTextInput<
     const [isInputFocused, setIsInputFocused] = React.useState(false);
 
     const {
+        dataTestId = `${attributes.name}-textInput`,
+        errorDispatch,
         hideLabel = false,
         icon,
         invalidValueAction,
@@ -136,6 +143,7 @@ function AccessibleTextInput<
             aria-errormessage={`${name}-invalid-text`}
             aria-invalid={!isValueValid || isNameExists}
             aria-label={name}
+            data-testid={dataTestId}
             error={!isValueValid || isNameExists}
             icon={leftIcon}
             label={hideLabel ? null : label}
@@ -152,6 +160,12 @@ function AccessibleTextInput<
                     action: validValueAction,
                     payload: event.currentTarget.value,
                 });
+
+                errorDispatch?.({
+                    action: invalidValueAction,
+                    payload: !isValueValid,
+                });
+
                 onChange?.(event);
             }}
             onFocus={() => {
@@ -275,3 +289,4 @@ function createAccessibleValueValidationTextElements({
 }
 
 export { AccessibleTextInput };
+export type { AccessibleTextInputAttributes, AccessibleTextInputProps };

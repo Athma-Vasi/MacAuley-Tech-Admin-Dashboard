@@ -4,10 +4,10 @@ import type React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { queryAction } from "./actions";
+import { QueryAction, queryAction } from "./actions";
 import { SORT_DIRECTION_DATA } from "./constants";
 import { QueryDispatch } from "./schemas";
-import { type QueryState, type QueryTemplate } from "./types";
+import { type QueryState, type QueryTemplate, SortDirection } from "./types";
 import {
     removeProjectionExclusionFields,
     returnSortableQueryFields,
@@ -63,7 +63,10 @@ function QuerySort({
     );
 
     const sortDirectionSelectInput = (
-        <AccessibleSelectInput
+        <AccessibleSelectInput<
+            QueryAction["setSortDirection"],
+            SortDirection
+        >
             attributes={{
                 data: SORT_DIRECTION_DATA,
                 disabled,

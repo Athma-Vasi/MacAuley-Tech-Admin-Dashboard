@@ -17,7 +17,10 @@ import {
   DASHBOARD_HEADER_HEIGHT_MOBILE,
   METRICS_URL,
 } from "../../constants";
-import { globalAction } from "../../context/globalProvider/actions";
+import {
+  GlobalAction,
+  globalAction,
+} from "../../context/globalProvider/actions";
 import { useGlobalState } from "../../hooks/useGlobalState";
 
 import React from "react";
@@ -44,8 +47,10 @@ import {
 } from "./constants";
 import { CUSTOMER_METRICS_CATEGORY_DATA } from "./customer/constants";
 import { CustomerMetrics } from "./customer/CustomerMetrics";
+import { CustomerMetricsCategory } from "./customer/types";
 import { FINANCIAL_METRICS_CATEGORY_DATA } from "./financial/constants";
 import { FinancialMetrics } from "./financial/FinancialMetrics";
+import { FinancialMetricCategory } from "./financial/types";
 import {
   handleMessageEventDashboardCacheWorkerToMain,
   handleStoreAndCategoryClicks,
@@ -55,7 +60,7 @@ import {
   PRODUCT_METRICS_SUB_CATEGORY_DATA,
 } from "./product/constants";
 import { ProductMetrics } from "./product/ProductMetrics";
-import { ProductMetricCategory } from "./product/types";
+import { ProductMetricCategory, ProductSubMetric } from "./product/types";
 import { dashboardReducer } from "./reducers";
 import { RepairMetrics } from "./repair/RepairMetrics";
 import { RepairMetricCategory } from "./repair/types";
@@ -185,7 +190,10 @@ function Dashboard() {
     (storeLocation === "Edmonton" && Number(selectedYear) < 2013);
 
   const storeLocationSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      GlobalAction["setStoreLocation"],
+      AllStoreLocations
+    >
       attributes={{
         data: STORE_LOCATION_VIEW_DATA,
         disabled: isStoreLocationSegmentDisabled,
@@ -228,7 +236,10 @@ function Dashboard() {
   );
 
   const repairMetricCategorySelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      GlobalAction["setRepairMetricCategory"],
+      RepairMetricCategory
+    >
       attributes={{
         data: REPAIR_METRICS_DATA,
         label: (
@@ -270,7 +281,10 @@ function Dashboard() {
   );
 
   const productSubMetricCategorySelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      GlobalAction["setProductSubMetricCategory"],
+      ProductSubMetric
+    >
       attributes={{
         data: PRODUCT_METRICS_SUB_CATEGORY_DATA,
         name: "product sub-metrics",
@@ -282,7 +296,10 @@ function Dashboard() {
   );
 
   const productMetricCategorySelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      GlobalAction["setProductMetricCategory"],
+      ProductMetricCategory
+    >
       attributes={{
         data: PRODUCT_METRIC_CATEGORY_DATA,
         label: (
@@ -324,7 +341,10 @@ function Dashboard() {
   );
 
   const financialMetricCategorySelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      GlobalAction["setFinancialMetricCategory"],
+      FinancialMetricCategory
+    >
       attributes={{
         data: FINANCIAL_METRICS_CATEGORY_DATA,
         name: "financial metrics",
@@ -336,7 +356,10 @@ function Dashboard() {
   );
 
   const customerMetricCategorySelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      GlobalAction["setCustomerMetricsCategory"],
+      CustomerMetricsCategory
+    >
       attributes={{
         data: CUSTOMER_METRICS_CATEGORY_DATA,
         name: "customer metrics",

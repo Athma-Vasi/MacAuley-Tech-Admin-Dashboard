@@ -184,7 +184,10 @@ function ChartOptions(props: ChartOptionsProps) {
   );
 
   const chartTitlePositionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartOptionsAction["setChartTitlePosition"],
+      NivoChartTitlePosition
+    >
       attributes={{
         data: NIVO_CHART_TITLE_POSITION_DATA,
         description: "Define chart title position",

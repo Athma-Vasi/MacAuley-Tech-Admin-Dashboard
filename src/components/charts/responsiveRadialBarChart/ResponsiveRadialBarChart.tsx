@@ -30,8 +30,12 @@ import { ChartMargin } from "../chartControls/chartMargin";
 import { ChartOptions } from "../chartControls/chartOptions";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { NivoMotionConfig, NivoTransitionMode } from "../types";
 import { createChartHeaderStyles } from "../utils";
-import { responsiveRadialBarChartAction } from "./actions";
+import {
+  ResponsiveRadialBarChartAction,
+  responsiveRadialBarChartAction,
+} from "./actions";
 import { responsiveRadialBarChartReducer } from "./reducers";
 import { initialResponsiveRadialBarChartState } from "./state";
 import type {
@@ -931,7 +935,10 @@ function ResponsiveRadialBarChart(
   );
 
   const motionConfigSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveRadialBarChartAction["setMotionConfig"],
+      NivoMotionConfig
+    >
       attributes={{
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Define motion config",
@@ -946,7 +953,10 @@ function ResponsiveRadialBarChart(
   );
 
   const transitionModeSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveRadialBarChartAction["setTransitionMode"],
+      NivoTransitionMode
+    >
       attributes={{
         data: NIVO_TRANSITION_MODE_DATA,
         description: "Define transition mode",

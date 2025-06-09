@@ -32,8 +32,13 @@ import { ChartMargin } from "../chartControls/chartMargin";
 import { ChartOptions } from "../chartControls/chartOptions";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import {
+  NivoColorScheme,
+  NivoMotionConfig,
+  NivoTransitionMode,
+} from "../types";
 import { createChartHeaderStyles } from "../utils";
-import { responsivePieChartAction } from "./actions";
+import { ResponsivePieChartAction, responsivePieChartAction } from "./actions";
 import { responsivePieChartReducer } from "./reducers";
 import { initialResponsivePieChartState } from "./state";
 import type { ResponsivePieChartProps } from "./types";
@@ -368,7 +373,10 @@ function ResponsivePieChart({
   );
 
   const colorSchemeSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsivePieChartAction["setColorScheme"],
+      NivoColorScheme
+    >
       attributes={{
         data: NIVO_COLOR_SCHEME_DATA,
         description: "Define chart's colors",
@@ -625,7 +633,10 @@ function ResponsivePieChart({
   );
 
   const motionConfigSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsivePieChartAction["setMotionConfig"],
+      NivoMotionConfig
+    >
       attributes={{
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Configure react-spring.",
@@ -640,7 +651,10 @@ function ResponsivePieChart({
   );
 
   const transitionModeSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsivePieChartAction["setTransitionMode"],
+      NivoTransitionMode
+    >
       attributes={{
         data: NIVO_TRANSITION_MODE_DATA,
         description: "Define how transitions behave.",

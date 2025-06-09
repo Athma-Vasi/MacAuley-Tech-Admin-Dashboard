@@ -1,40 +1,21 @@
-import {
-  Box,
-  MantineColor,
-  type MantineSize,
-  NativeSelect,
-} from "@mantine/core";
-
-import { useGlobalState } from "../../hooks/useGlobalState";
-import type { CheckboxRadioSelectData } from "../../types";
+import { Box, NativeSelect, NativeSelectProps, Text } from "@mantine/core";
+import { useGlobalState } from "../../hooks";
 import { splitCamelCase } from "../../utils";
 
 type AccessibleSelectInputAttributes<
   ValidValueAction extends string = string,
   Payload extends string = string,
-> = {
-  color?: MantineColor;
-  data: CheckboxRadioSelectData<Payload>;
+> = NativeSelectProps & {
   dataTestId?: string;
-  describedBy?: string;
-  description?: string;
-  disabled?: boolean;
   hideLabel?: boolean;
-  label?: React.ReactNode;
   name: string;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  /** default generic dispatch */
   parentDispatch: React.Dispatch<{
     action: ValidValueAction;
     payload: Payload;
   }>;
   ref?: React.RefObject<HTMLSelectElement>;
-  required?: boolean;
-  shouldTransition?: boolean;
-  size?: MantineSize;
   validValueAction: ValidValueAction;
-  value: string;
-  withAsterisk?: boolean;
 };
 
 type AccessibleSelectInputProps<
@@ -42,75 +23,100 @@ type AccessibleSelectInputProps<
   Payload extends string = string,
 > = {
   attributes: AccessibleSelectInputAttributes<ValidValueAction, Payload>;
-  uniqueId?: string;
 };
 
 function AccessibleSelectInput<
   ValidValueAction extends string = string,
   Payload extends string = string,
 >(
-  { attributes, uniqueId }: AccessibleSelectInputProps<
+  { attributes }: AccessibleSelectInputProps<
     ValidValueAction,
     Payload
   >,
 ) {
-  const { globalState: { themeObject: { primaryColor } } } = useGlobalState();
+  const {
+    globalState: {
+      themeObject: {
+        primaryColor,
+      },
+    },
+  } = useGlobalState();
 
   const {
-    color = primaryColor,
     data,
     dataTestId = `${attributes.name}-selectInput`,
-    describedBy = "",
     description,
-    disabled = false,
-    hideLabel = false,
+    hideLabel = true,
     name,
     onChange,
     parentDispatch,
-    ref = null,
-    required = false,
-    size = "sm",
+    ref,
     validValueAction,
     value,
-    withAsterisk = required,
+    ...nativeSelectProps
   } = attributes;
-
   const label = attributes.label ?? splitCamelCase(name);
+  const { screenreaderTextElement } =
+    createAccessibleSelectInputScreenreaderTextElements({
+      name,
+      value: value as number,
+    });
+
+  const selectInput = (
+    <NativeSelect
+      aria-describedby={`${name}-selectInput-screenreader-text`}
+      aria-label={`${description}. Currently selected ${value}`}
+      color={primaryColor}
+      data={data}
+      data-testid={dataTestId}
+      label={hideLabel ? null : label}
+      name={name}
+      onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+        parentDispatch({
+          action: validValueAction,
+          payload: event.currentTarget.value as Payload,
+        });
+
+        onChange?.(event);
+      }}
+      ref={ref}
+      value={value}
+      {...nativeSelectProps}
+    />
+  );
 
   return (
-    <Box
-      key={`container-${name}-${uniqueId}`}
-      className="accessible-input"
-    >
-      <NativeSelect
-        aria-describedby={describedBy}
-        aria-label={`${description}. Currently selected ${value}`}
-        aria-required={required}
-        color={color}
-        data={data}
-        data-testid={dataTestId}
-        disabled={disabled}
-        label={hideLabel ? null : label}
-        name={name}
-        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-          parentDispatch?.({
-            action: validValueAction,
-            payload: event.currentTarget.value as Payload,
-          });
-
-          onChange?.(event);
-        }}
-        ref={ref}
-        required={required}
-        size={size}
-        value={value}
-        withAsterisk={withAsterisk}
-        w="100%"
-      />
+    <Box className="accessible-input">
+      {selectInput}
+      {screenreaderTextElement}
     </Box>
   );
 }
 
-export { AccessibleSelectInput };
+function createAccessibleSelectInputScreenreaderTextElements({
+  name,
+  value = 0,
+}: {
+  name: string;
+  value?: number;
+}): {
+  screenreaderTextElement: React.JSX.Element;
+} {
+  const id = `${name}-selectInput-screenreader-text`;
+  const screenreaderTextElement = (
+    <Text
+      aria-live="polite"
+      className="visually-hidden"
+      data-testid={id}
+      id={id}
+      w="100%"
+    >
+      {`${value} is selected for ${splitCamelCase(name)} select input.`}
+    </Text>
+  );
 
-export type { AccessibleSelectInputAttributes };
+  return { screenreaderTextElement };
+}
+
+export { AccessibleSelectInput };
+export type { AccessibleSelectInputAttributes, AccessibleSelectInputProps };

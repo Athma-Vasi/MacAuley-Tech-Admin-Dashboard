@@ -5,7 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSegmentedControl } from "../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleTextInput } from "../accessibleInputs/AccessibleTextInput";
-import { queryAction } from "./actions";
+import { QueryAction, queryAction } from "./actions";
 import { QUERY_SEARCH_CASE_DATA } from "./constants";
 import { QueryDispatch } from "./schemas";
 import type { QueryState } from "./types";
@@ -79,7 +79,10 @@ function QuerySearch({
     ] = useDisclosure(false);
 
     const generalSearchInclusionTextInput = (
-        <AccessibleTextInput
+        <AccessibleTextInput<
+            QuerySearchActions["setInclusion"],
+            QueryAction["setIsError"]
+        >
             attributes={{
                 errorDispatch: queryDispatch,
                 invalidValueAction: queryAction.setIsError,

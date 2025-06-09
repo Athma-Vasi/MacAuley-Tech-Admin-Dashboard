@@ -8,12 +8,12 @@ import { queryReducer } from "./reducers";
 import { Group } from "@mantine/core";
 import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
-import { queryAction } from "./actions";
+import { QueryAction, queryAction } from "./actions";
 import { LIMIT_PER_PAGE_DATA, QUERY_KIND_DATA } from "./constants";
 import { QueryFilter } from "./QueryFilter";
 import { QuerySort } from "./QuerySort";
 import { initialQueryState } from "./state";
-import { QueryTemplate } from "./types";
+import { LimitPerPage, QueryKind, QueryTemplate } from "./types";
 import { createQueryString } from "./utils";
 
 type QueryProps = {
@@ -38,21 +38,14 @@ function Query({
     );
 
     const {
-        filterComparisonOperator,
-        filterField,
-        filterLogicalOperator,
-        filterValue,
         generalSearchCase,
         generalSearchExclusionValue,
         generalSearchInclusionValue,
         isError,
-        isSearchDisabled,
         projectionFields,
         queryChains,
         queryKind,
         limitPerPage,
-        sortDirection,
-        sortField,
     } = queryState;
 
     // this components output is the query string used to fetch data
@@ -125,7 +118,10 @@ function Query({
     );
 
     const queryKindSelectInput = (
-        <AccessibleSelectInput
+        <AccessibleSelectInput<
+            QueryAction["setQueryKind"],
+            QueryKind
+        >
             attributes={{
                 data: QUERY_KIND_DATA,
                 name: "queryKind",
@@ -145,7 +141,10 @@ function Query({
         : querySort;
 
     const limitPerPageSelectInput = (
-        <AccessibleSelectInput
+        <AccessibleSelectInput<
+            QueryAction["setLimitPerPage"],
+            LimitPerPage
+        >
             attributes={{
                 data: LIMIT_PER_PAGE_DATA,
                 name: "limitPerPage",

@@ -7,6 +7,7 @@ import { returnThemeColors, splitCamelCase } from "../../utils";
 type AccessibleSwitchInputAttributes<
     ValidValueAction extends string = string,
 > = SwitchProps & {
+    dataTestId?: string;
     name: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     parentDispatch: React.Dispatch<{
@@ -34,6 +35,7 @@ function AccessibleSwitchInput<
 
     const {
         checked,
+        dataTestId = `${attributes.name}-switchInput`,
         onChange,
         parentDispatch,
         ref,
@@ -59,6 +61,7 @@ function AccessibleSwitchInput<
             aria-describedby={`${name}-switch-${checked ? "on" : "off"}`}
             checked={checked}
             color={themeObject.primaryColor}
+            data-testid={dataTestId}
             description={checked ? switchOnTextElement : switchOffTextElement}
             label={label}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

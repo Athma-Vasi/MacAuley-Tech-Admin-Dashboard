@@ -35,6 +35,14 @@ import { ChartMargin } from "../chartControls/chartMargin";
 import { ChartOptions } from "../chartControls/chartOptions";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import {
+  NivoLineAreaBlendMode,
+  NivoLineAxesScale,
+  NivoLineCrosshairType,
+  NivoLineCurve,
+  NivoLinePointLabel,
+  NivoMotionConfig,
+} from "../types";
 import { createChartHeaderStyles } from "../utils";
 import { responsiveLineChartAction } from "./actions";
 import {
@@ -47,6 +55,7 @@ import {
 import { responsiveLineChartReducer } from "./reducers";
 import { initialResponsiveLineChartState } from "./state";
 import type {
+  ResponsiveLineChartAction,
   ResponsiveLineChartProps,
   ResponsiveLineChartState,
 } from "./types";
@@ -370,7 +379,10 @@ function ResponsiveLineChart({
   // base
 
   const xScaleSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveLineChartAction["setXScale"],
+      NivoLineAxesScale
+    >
       attributes={{
         data: NIVO_LINE_AXES_SCALE,
         description: "Define x scale",
@@ -384,7 +396,10 @@ function ResponsiveLineChart({
   );
 
   const yScaleSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveLineChartAction["setYScale"],
+      NivoLineAxesScale
+    >
       attributes={{
         data: NIVO_LINE_AXES_SCALE,
         description: "Define y scale",
@@ -428,7 +443,10 @@ function ResponsiveLineChart({
   // style
 
   const lineCurveSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveLineChartAction["setLineCurve"],
+      NivoLineCurve
+    >
       attributes={{
         data: NIVO_LINE_CURVE_DATA,
         description: "Define line curve",
@@ -507,7 +525,10 @@ function ResponsiveLineChart({
   );
 
   const areaBlendModeSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveLineChartAction["setAreaBlendMode"],
+      NivoLineAreaBlendMode
+    >
       attributes={{
         data: NIVO_LINE_AREA_BLEND_MODE_DATA,
         description: "Define line area blend mode",
@@ -606,7 +627,10 @@ function ResponsiveLineChart({
   );
 
   const pointLabelSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveLineChartAction["setPointLabel"],
+      NivoLinePointLabel
+    >
       attributes={{
         data: NIVO_LINE_POINT_LABEL_DATA,
         description: "Define point label",
@@ -686,7 +710,10 @@ function ResponsiveLineChart({
   );
 
   const crosshairTypeSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveLineChartAction["setCrosshairType"],
+      NivoLineCrosshairType
+    >
       attributes={{
         data: NIVO_LINE_CROSSHAIR_TYPE_DATA,
         description: "Define crosshair type",
@@ -717,7 +744,10 @@ function ResponsiveLineChart({
   );
 
   const motionConfigSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveLineChartAction["setMotionConfig"],
+      NivoMotionConfig
+    >
       attributes={{
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Define motion config",

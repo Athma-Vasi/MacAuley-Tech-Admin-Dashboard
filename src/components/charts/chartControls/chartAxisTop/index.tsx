@@ -202,7 +202,10 @@ function ChartAxisTop(props: ChartAxisTopProps) {
   );
 
   const axisTopLegendPositionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartAxisAction["setAxisTopLegendPosition"],
+      NivoAxisLegendPosition
+    >
       attributes={{
         data: NIVO_BAR_AXIS_LEGEND_POSITION_DATA,
         description: "Define the position of the top axis legend",

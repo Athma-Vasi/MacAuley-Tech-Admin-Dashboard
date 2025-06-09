@@ -23,6 +23,7 @@ import { ChartOptions } from "../chartControls/chartOptions";
 import { SLIDER_TOOLTIP_COLOR } from "../constants";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import { NivoCalendarAlign, NivoCalendarLegendPosition } from "../types";
 import { createChartHeaderStyles } from "../utils";
 import { responsiveCalendarChartAction } from "./actions";
 import {
@@ -34,6 +35,7 @@ import {
 import { responsiveCalendarChartReducer } from "./reducers";
 import { initialResponsiveCalendarChartState } from "./state";
 import type {
+  ResponsiveCalendarChartAction,
   ResponsiveCalendarChartProps,
   ResponsiveCalendarChartState,
 } from "./types";
@@ -219,7 +221,10 @@ function ResponsiveCalendarChart({
   );
 
   const calendarAlignSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveCalendarChartAction["setCalendarAlign"],
+      NivoCalendarAlign
+    >
       attributes={{
         data: NIVO_CALENDAR_ALIGN_DATA,
         description: "Define calendar align",
@@ -282,7 +287,10 @@ function ResponsiveCalendarChart({
   );
 
   const yearLegendPositionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveCalendarChartAction["setYearLegendPosition"],
+      NivoCalendarLegendPosition
+    >
       attributes={{
         data: NIVO_CALENDAR_LEGEND_POSITION_DATA,
         description: "Define year legend position",
@@ -367,7 +375,10 @@ function ResponsiveCalendarChart({
   );
 
   const monthLegendPositionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveCalendarChartAction["setMonthLegendPosition"],
+      NivoCalendarLegendPosition
+    >
       attributes={{
         data: NIVO_CALENDAR_LEGEND_POSITION_DATA,
         description: "Define month legend position",

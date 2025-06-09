@@ -7,10 +7,15 @@ import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import {
     AccessibleSelectInput,
 } from "../accessibleInputs/AccessibleSelectInput";
-import { queryAction } from "./actions";
+import { QueryAction, queryAction } from "./actions";
 import { LOGICAL_OPERATORS_DATA, MAX_LINKS_AMOUNT } from "./constants";
 import { QueryDispatch } from "./schemas";
-import { type QueryChains, type QueryState, type QueryTemplate } from "./types";
+import {
+    LogicalOperator,
+    type QueryChains,
+    type QueryState,
+    type QueryTemplate,
+} from "./types";
 import {
     createDynamicInput,
     FILTER_HELP_MODAL_CONTENT,
@@ -52,7 +57,10 @@ function QueryFilter(
     );
 
     const logicalOperatorSelectInput = (
-        <AccessibleSelectInput
+        <AccessibleSelectInput<
+            QueryAction["setFilterLogicalOperator"],
+            LogicalOperator
+        >
             attributes={{
                 data: LOGICAL_OPERATORS_DATA,
                 label: "Logical Operator",

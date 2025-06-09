@@ -202,7 +202,10 @@ function ChartAxisRight(props: ChartAxisRightProps) {
   );
 
   const axisRightLegendPositionSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ChartAxisAction["setAxisRightLegendPosition"],
+      NivoAxisLegendPosition
+    >
       attributes={{
         data: NIVO_BAR_AXIS_LEGEND_POSITION_DATA,
         description: "Define the position of the right axis legend",

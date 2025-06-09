@@ -35,6 +35,12 @@ import { ChartMargin } from "../chartControls/chartMargin";
 import { ChartOptions } from "../chartControls/chartOptions";
 import ChartAndControlsDisplay from "../display/ChartAndControlsDisplay";
 import ChartsAndGraphsControlsStacker from "../display/ChartsAndControlsStacker";
+import {
+  NivoBarLayout,
+  NivoBarValueScale,
+  NivoColorScheme,
+  NivoMotionConfig,
+} from "../types";
 import { createChartHeaderStyles } from "../utils";
 import { responsiveBarChartAction } from "./actions";
 import {
@@ -44,7 +50,11 @@ import {
 } from "./constants";
 import { responsiveBarChartReducer } from "./reducers";
 import { initialResponsiveBarChartState } from "./state";
-import type { ResponsiveBarChartProps, ResponsiveBarChartState } from "./types";
+import type {
+  ResponsiveBarChartAction,
+  ResponsiveBarChartProps,
+  ResponsiveBarChartState,
+} from "./types";
 import { createBarFillPatterns } from "./utils";
 
 function ResponsiveBarChart({
@@ -380,7 +390,10 @@ function ResponsiveBarChart({
   );
 
   const layoutSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveBarChartAction["setLayout"],
+      NivoBarLayout
+    >
       attributes={{
         data: NIVO_BAR_LAYOUT_DATA,
         description: "Define the chart layout",
@@ -394,7 +407,10 @@ function ResponsiveBarChart({
   );
 
   const valueScaleSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveBarChartAction["setValueScale"],
+      NivoBarValueScale
+    >
       attributes={{
         data: NIVO_BAR_VALUE_SCALE_DATA,
         description: "Define the scale of the chart",
@@ -459,7 +475,10 @@ function ResponsiveBarChart({
 
   // style
   const chartColorsSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveBarChartAction["setChartColors"],
+      NivoColorScheme
+    >
       attributes={{
         data: NIVO_COLOR_SCHEME_DATA,
         description: "Define chart colors",
@@ -658,7 +677,10 @@ function ResponsiveBarChart({
   );
 
   const motionConfigSelectInput = (
-    <AccessibleSelectInput
+    <AccessibleSelectInput<
+      ResponsiveBarChartAction["setMotionConfig"],
+      NivoMotionConfig
+    >
       attributes={{
         data: NIVO_MOTION_CONFIG_DATA,
         description: "Define motion config.",

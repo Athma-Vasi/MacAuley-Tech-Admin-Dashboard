@@ -7,6 +7,7 @@ type AccessibleSliderInputAttributes<
     ValidValueAction extends string = string,
     Payload extends number = number,
 > = SliderProps & {
+    dataTestId?: string;
     name: string;
     onChange?: (value: number) => void;
     parentDispatch: React.Dispatch<{
@@ -34,6 +35,7 @@ function AccessibleSliderInput<
     } = useGlobalState();
 
     const {
+        dataTestId = `${attributes.name}-sliderInput`,
         disabled,
         marks,
         max,
@@ -64,7 +66,7 @@ function AccessibleSliderInput<
             aria-describedby={`${name}-slider-selected`}
             aria-label={name}
             color={themeObject.primaryColor}
-            data-testid={`${name}-sliderInput`}
+            data-testid={dataTestId}
             max={max}
             marks={sliderMarks}
             min={min}
