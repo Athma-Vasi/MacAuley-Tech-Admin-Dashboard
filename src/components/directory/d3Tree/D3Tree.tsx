@@ -41,7 +41,6 @@ function renderForeignObjectNode({
         alt: nodeDatum.name,
         fit: "cover",
         height: 128,
-        name: nodeDatum.name,
         radius: 9999,
         src: nodeDatum.attributes.profilePictureUrl ?? "",
         width: 128,

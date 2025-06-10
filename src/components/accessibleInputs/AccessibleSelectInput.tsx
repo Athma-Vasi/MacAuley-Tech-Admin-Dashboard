@@ -46,7 +46,7 @@ function AccessibleSelectInput<
     data,
     dataTestId = `${attributes.name}-selectInput`,
     description,
-    hideLabel = true,
+    hideLabel = false,
     name,
     onChange,
     parentDispatch,

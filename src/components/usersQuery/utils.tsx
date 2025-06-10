@@ -1,4 +1,4 @@
-import { Group, Image, ImageProps, Text, Tooltip } from "@mantine/core";
+import { Group, ImageProps, Text, Tooltip } from "@mantine/core";
 import {
     TbArrowDown,
     TbArrowUp,
@@ -10,6 +10,7 @@ import {
     RESOURCES_IMAGE_URL_FIELDS,
 } from "../../constants";
 import { formatDate, splitCamelCase } from "../../utils";
+import AccessibleImage from "../accessibleInputs/AccessibleImage";
 import { SortDirection } from "../query/types";
 
 function returnArrangeByIconsElement(
@@ -136,16 +137,29 @@ function returnImageDropdown(
     },
 ) {
     const dropDownImage = (
-        <Image
-            alt={alt}
-            fit={fit}
-            height={height}
-            key={key}
-            radius={radius}
-            src={src
-                ? src
-                : "https://images.pexels.com/photos/3396661/pexels-photo-3396661.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
-            width={width}
+        // <Image
+        //     alt={alt}
+        //     fit={fit}
+        //     height={height}
+        //     key={key}
+        //     radius={radius}
+        //     src={src
+        //         ? src
+        //         : "https://images.pexels.com/photos/3396661/pexels-photo-3396661.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
+        //     width={width}
+        // />
+        <AccessibleImage
+            attributes={{
+                alt,
+                fit,
+                height,
+                key,
+                radius,
+                src: src
+                    ? src
+                    : "https://images.pexels.com/photos/3396661/pexels-photo-3396661.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                width,
+            }}
         />
     );
 

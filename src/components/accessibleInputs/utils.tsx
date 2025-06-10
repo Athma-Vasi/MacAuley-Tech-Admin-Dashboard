@@ -178,31 +178,6 @@ function createAccessibleButtonScreenreaderTextElements({
   return { enabledTextElement, disabledTextElement };
 }
 
-type AccessibleImageTextElements = {
-  description: string;
-  name: string;
-  themeObject: ThemeObject;
-};
-
-function createAccessibleImageTextElement(
-  { description, name, themeObject }: AccessibleImageTextElements,
-): {
-  screenreaderTextElement: React.JSX.Element;
-} {
-  const screenreaderTextElement = (
-    <Text
-      aria-live="polite"
-      data-testid={`${name}-image-screenreader-text`}
-      id={`${name}-selected`}
-      w="100%"
-    >
-      {description}
-    </Text>
-  );
-
-  return { screenreaderTextElement };
-}
-
 function returnValidationTexts(
   { name, value }: {
     name: ValidationKey;
@@ -249,6 +224,5 @@ export {
   createAccessibleButtons,
   createAccessibleButtonScreenreaderTextElements,
   createAccessibleCheckboxSelectionsTextElements,
-  createAccessibleImageTextElement,
   returnValidationTexts,
 };

@@ -232,12 +232,14 @@ function AccessibleCheckboxInputGroup<
 
     const [leftStack, middleStack, rightStack] = checkboxes.reduce(
         (acc, checkbox, idx) => {
+            const [leftStack, middleStack, rightStack] = acc;
+
             if (idx % 3 === 0) {
-                acc[0].push(checkbox);
+                leftStack.push(checkbox);
             } else if (idx % 3 === 1) {
-                acc[1].push(checkbox);
+                middleStack.push(checkbox);
             } else {
-                acc[2].push(checkbox);
+                rightStack.push(checkbox);
             }
 
             return acc;
