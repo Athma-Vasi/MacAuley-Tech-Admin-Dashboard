@@ -12,7 +12,7 @@ import {
 import { useEffect, useReducer } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 
-import { TbCheck } from "react-icons/tb";
+import { TbCheck, TbUpload } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES } from "../../constants";
 import { useMountedRef } from "../../hooks";
@@ -252,8 +252,8 @@ function Register() {
         leftIcon: isSubmitting
           ? <Loader size="xs" />
           : isSuccessful
-          ? <TbCheck color={themeColorShade} />
-          : null,
+          ? <TbCheck color={themeColorShade} size={18} />
+          : <TbUpload size={18} />,
         name: "submit",
         onClick: async (_event: React.MouseEvent<HTMLButtonElement>) => {
           if (password !== confirmPassword) {

@@ -17,7 +17,7 @@ import {
   globalAction,
 } from "../../../context/globalProvider/actions";
 import { useGlobalState } from "../../../hooks/useGlobalState";
-import { Shade } from "../../../types";
+import { FontFamily, Shade } from "../../../types";
 import { returnThemeColors } from "../../../utils";
 import { AccessibleSegmentedControl } from "../../accessibleInputs/AccessibleSegmentedControl";
 import { AccessibleSliderInput } from "../../accessibleInputs/AccessibleSliderInput";
@@ -120,6 +120,7 @@ function Settings() {
     >
       attributes={{
         color: primaryColor,
+        defaultValue: primaryShade.light,
         disabled: colorScheme === "dark",
         label: (value) => (
           <Text style={{ color: textColorSliderLabel }}>{value}</Text>
@@ -142,6 +143,7 @@ function Settings() {
     >
       attributes={{
         color: primaryColor,
+        defaultValue: primaryShade.dark,
         disabled: colorScheme === "light",
         label: (value) => (
           <Text style={{ color: textColorSliderLabel }}>{value}</Text>
@@ -158,7 +160,10 @@ function Settings() {
   );
 
   const fontFamilySegmentedControl = (
-    <AccessibleSegmentedControl
+    <AccessibleSegmentedControl<
+      GlobalAction["setFontFamily"],
+      FontFamily
+    >
       attributes={{
         data: FONT_FAMILY_DATA,
         name: "fontFamily",

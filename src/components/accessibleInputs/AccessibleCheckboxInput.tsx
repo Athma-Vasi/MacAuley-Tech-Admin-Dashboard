@@ -1,6 +1,7 @@
 import {
     Box,
     Checkbox,
+    CheckboxGroupProps,
     Group,
     type MantineSize,
     Space,
@@ -143,7 +144,7 @@ function AccessibleCheckboxInputSingle<
 type AccessibleCheckboxInputGroupAttributes<
     ValidValueAction extends string = string,
     Payload extends string = string,
-> = {
+> = CheckboxGroupProps & {
     dataTestId?: string;
     /**
      * Set of values that should be disabled. Used by QueryBuilder component to disable values from projection exclusion if they have already been queued for inclusion (by Filter, Sort, or Search).
@@ -158,13 +159,8 @@ type AccessibleCheckboxInputGroupAttributes<
         payload: Payload[];
     }>;
     ref?: RefObject<HTMLInputElement> | null;
-    required?: boolean;
     name: string;
-    size?: MantineSize;
-    style?: React.CSSProperties;
     validValueAction: ValidValueAction;
-    value: string[];
-    withAsterisk?: boolean;
 };
 
 type AccessibleCheckboxInputGroupProps<
@@ -175,14 +171,13 @@ type AccessibleCheckboxInputGroupProps<
         ValidValueAction,
         Payload
     >;
-    uniqueId?: string;
 };
 
 function AccessibleCheckboxInputGroup<
     ValidValueAction extends string = string,
     Payload extends string = string,
 >(
-    { attributes, uniqueId }: AccessibleCheckboxInputGroupProps<
+    { attributes }: AccessibleCheckboxInputGroupProps<
         ValidValueAction,
         Payload
     >,
@@ -196,12 +191,9 @@ function AccessibleCheckboxInputGroup<
         onChange,
         parentDispatch,
         ref = null,
-        required = false,
-        size = "sm",
-        style,
         validValueAction,
-        value,
-        withAsterisk = required,
+        value = [],
+        ...checkboxGroupProps
     } = attributes;
     const label = attributes.label ?? splitCamelCase(name);
 
@@ -252,10 +244,7 @@ function AccessibleCheckboxInputGroup<
     );
 
     return (
-        <Box
-            key={`container-${name}-${uniqueId}`}
-            w="100%"
-        >
+        <Box w="100%">
             <Checkbox.Group
                 aria-describedby={value.length > 0
                     // id of selectedTextElement
@@ -263,7 +252,6 @@ function AccessibleCheckboxInputGroup<
                     // id of deselectedTextElement
                     : `${name}-deselected`}
                 aria-label={name}
-                aria-required={required}
                 description={value.length > 0
                     ? selectedTextElement
                     : deselectedTextElement}
@@ -278,11 +266,8 @@ function AccessibleCheckboxInputGroup<
                     onChange?.(value);
                 }}
                 ref={ref}
-                required={required}
-                size={size}
-                style={style}
                 value={value}
-                withAsterisk={withAsterisk}
+                {...checkboxGroupProps}
             >
                 <Group w="100%" position="left" p="md" spacing="xl">
                     <Stack>

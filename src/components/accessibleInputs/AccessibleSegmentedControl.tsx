@@ -65,6 +65,7 @@ function AccessibleSegmentedControl<
         });
         onChange?.(value);
       }}
+      value={value}
       {...segmentedControlProps}
     />
   );

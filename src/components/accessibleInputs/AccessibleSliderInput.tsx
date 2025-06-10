@@ -2,15 +2,17 @@ import { Box, Slider, SliderProps, Text } from "@mantine/core";
 import { INPUT_WIDTH } from "../../constants";
 import { useGlobalState } from "../../hooks";
 import { splitCamelCase } from "../../utils";
+import { displayOrientationLabel } from "./image/constants";
 
 type AccessibleSliderInputAttributes<
     ValidValueAction extends string = string,
     Payload extends number = number,
 > = SliderProps & {
+    announceOrientation?: boolean;
     dataTestId?: string;
     name: string;
     onChange?: (value: number) => void;
-    parentDispatch: React.Dispatch<{
+    parentDispatch?: React.Dispatch<{
         action: ValidValueAction;
         payload: Payload;
     }>;
@@ -35,8 +37,9 @@ function AccessibleSliderInput<
     } = useGlobalState();
 
     const {
+        announceOrientation = false,
         dataTestId = `${attributes.name}-sliderInput`,
-        disabled,
+        disabled = false,
         marks,
         max,
         min,
@@ -46,6 +49,7 @@ function AccessibleSliderInput<
         precision = 1,
         validValueAction,
         value,
+        w = INPUT_WIDTH,
         ...sliderProps
     } = attributes;
 
@@ -57,6 +61,8 @@ function AccessibleSliderInput<
 
     const { screenreaderTextElement } =
         createAccessibleSliderScreenreaderTextElements({
+            announceOrientation,
+            marks: sliderMarks,
             name,
             value,
         });
@@ -66,12 +72,13 @@ function AccessibleSliderInput<
             aria-describedby={`${name}-slider-selected`}
             aria-label={name}
             color={themeObject.primaryColor}
+            disabled={disabled}
             data-testid={dataTestId}
             max={max}
             marks={sliderMarks}
             min={min}
             onChange={(value: Payload) => {
-                parentDispatch({
+                parentDispatch?.({
                     action: validValueAction,
                     payload: value,
                 });
@@ -79,7 +86,8 @@ function AccessibleSliderInput<
                 onChange?.(value);
             }}
             precision={precision}
-            w={INPUT_WIDTH}
+            value={value}
+            w={w}
             {...sliderProps}
         />
     );
@@ -122,23 +130,36 @@ function returnSliderMarks({
 }
 
 function createAccessibleSliderScreenreaderTextElements({
+    announceOrientation,
+    marks = [],
     name,
     value = 0,
 }: {
+    announceOrientation: boolean;
+    marks: { value: number; label?: React.ReactNode }[] | undefined;
     name: string;
     value?: number;
 }): {
     screenreaderTextElement: React.JSX.Element;
 } {
+    const label = marks?.find((mark) => mark.value === value)?.label;
     const screenreaderTextElement = (
         <Text
-            aria-live="assertive"
+            aria-live="polite"
             className="visually-hidden"
             data-testid={`${name}-slider-screenreader-text`}
             id={`${name}-slider-selected`}
             w="100%"
         >
-            {`${value} is selected for ${splitCamelCase(name)} slider.`}
+            {`${
+                label == null
+                    ? splitCamelCase(name)
+                    : `${label} is selected for ${splitCamelCase(name)}`
+            } slider ${
+                announceOrientation
+                    ? `which is ${displayOrientationLabel(value)}`
+                    : ""
+            }`}
         </Text>
     );
 

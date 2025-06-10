@@ -186,7 +186,7 @@ function AccessibleImageInput<
                     <Text
                         color={greenColorShade}
                         data-testid="image-valid-text"
-                        aria-live="polite"
+                        aria-live="assertive"
                     >
                         Image is valid
                     </Text>
@@ -213,7 +213,7 @@ function AccessibleImageInput<
 
                     <Text
                         color={redColorShade}
-                        aria-live="polite"
+                        aria-live="assertive"
                         data-testid="image-invalid-text"
                     >
                         {invalidImageDescription}
@@ -409,11 +409,11 @@ function AccessibleImageInput<
                                 validValueAction,
                             });
                         },
-                        sliderDefaultValue: 1,
+                        defaultValue: 1,
                         step: 1,
                         validValueAction: accessibleImageInputAction.setQuality,
                         value: qualities[index],
-                        width: "100%",
+                        w: "100%",
                     }}
                 />
             );
@@ -430,8 +430,8 @@ function AccessibleImageInput<
             const imageOrientationSlider = (
                 <AccessibleSliderInput
                     attributes={{
+                        announceOrientation: true,
                         disabled: isImageTypeInvalid || qualities[index] > 8,
-                        index,
                         label: (value) => displayOrientationLabel(value),
                         marks: IMG_ORIENTATION_SLIDER_DATA,
                         max: 8,
@@ -476,12 +476,12 @@ function AccessibleImageInput<
                                 validValueAction,
                             });
                         },
-                        sliderDefaultValue: 1,
+                        defaultValue: 1,
                         step: 1,
                         validValueAction:
                             accessibleImageInputAction.setOrientation,
                         value: orientations[index],
-                        width: "100%",
+                        w: "100%",
                     }}
                 />
             );

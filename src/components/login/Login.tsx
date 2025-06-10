@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { useEffect, useReducer, useRef } from "react";
 import { useErrorBoundary } from "react-error-boundary";
-import { TbCheck } from "react-icons/tb";
+import { TbCheck, TbUpload } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS_SWATCHES } from "../../constants";
 import { useMountedRef } from "../../hooks";
@@ -272,6 +272,7 @@ function Login() {
       }}
       ref={usernameRef}
       required
+      withAsterisk={false}
     />
   );
 
@@ -312,6 +313,7 @@ function Login() {
         }
       }}
       required
+      withAsterisk={false}
     />
   );
 
@@ -338,7 +340,7 @@ function Login() {
               color={themeObject.colorScheme === "light" ? "white" : ""}
             />
           )
-          : null,
+          : <TbUpload size={18} />,
         name: "login",
         onClick: async (
           event:

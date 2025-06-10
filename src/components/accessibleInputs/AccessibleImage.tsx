@@ -1,5 +1,5 @@
 import { Card, Image, ImageProps } from "@mantine/core";
-import React, { type CSSProperties, useState } from "react";
+import React, { useState } from "react";
 import { TbPhotoOff } from "react-icons/tb";
 
 type AccessibleImageAttributes = ImageProps & {
@@ -34,8 +34,6 @@ function AccessibleImage({ attributes }: AccessibleImageProps) {
   const fallbackSrc =
     "https://images.pexels.com/photos/27742215/pexels-photo-27742215/free-photo-of-a-small-brown-and-white-guinea-sitting-on-top-of-a-brick.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
-  const styles: CSSProperties = { ...style, position: "relative" };
-
   const image = (
     <Image
       alt={isImageLoadFailed ? fallbackAlt : alt}
@@ -46,7 +44,6 @@ function AccessibleImage({ attributes }: AccessibleImageProps) {
       placeholder={placeholder}
       ref={imageRef}
       src={isImageLoadFailed ? fallbackSrc : src}
-      style={styles}
       {...imageProps}
     />
   );
@@ -55,7 +52,7 @@ function AccessibleImage({ attributes }: AccessibleImageProps) {
     <Card
       radius={radius}
       style={{
-        ...styles,
+        ...style,
         cursor: isLink ? "pointer" : "default",
       }}
       onClick={onClick}

@@ -4,6 +4,7 @@ import { useErrorBoundary } from "react-error-boundary";
 import {
   TbAffiliate,
   TbFileDatabase,
+  TbLogout,
   TbReportMoney,
   TbTestPipe,
   TbTools,
@@ -384,7 +385,7 @@ function Sidebar({ opened, setOpened }: SidebarProps) {
               color={themeObject.colorScheme === "light" ? "white" : ""}
             />
           )
-          : null,
+          : <TbLogout size={18} />,
         name: "logout",
         onClick: async () => {
           sidebarDispatch({

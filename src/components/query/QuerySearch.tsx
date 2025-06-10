@@ -26,69 +26,19 @@ function QuerySearch({
         generalSearchInclusionValue,
     } = queryState;
 
-    type QuerySearchState = {
-        exclusion: string;
-        inclusion: string;
-    };
-    const initialQuerySearchState: QuerySearchState = {
-        exclusion: generalSearchExclusionValue,
-        inclusion: generalSearchInclusionValue,
-    };
-
-    type QuerySearchActions = {
-        setExclusion: "setExclusion";
-        setInclusion: "setInclusion";
-    };
-    const querySearchActions: QuerySearchActions = {
-        setExclusion: "setExclusion",
-        setInclusion: "setInclusion",
-    };
-
-    type QuerySearchDispatch = {
-        action:
-            | QuerySearchActions["setExclusion"]
-            | QuerySearchActions["setInclusion"];
-        payload: string;
-    };
-
-    function querySearchReducer(
-        state: QuerySearchState,
-        dispatch: QuerySearchDispatch,
-    ) {
-        switch (dispatch.action) {
-            case querySearchActions.setExclusion:
-                return { ...state, exclusion: dispatch.payload };
-
-            case querySearchActions.setInclusion:
-                return { ...state, inclusion: dispatch.payload };
-
-            default:
-                return state;
-        }
-    }
-
-    const [querySearchState, querySearchDispatch] = React.useReducer(
-        querySearchReducer,
-        initialQuerySearchState,
-    );
-    const { exclusion, inclusion } = querySearchState;
-
     const [
         openedSearchHelpModal,
         { open: openSearchHelpModal, close: closeSearchHelpModal },
     ] = useDisclosure(false);
 
     const generalSearchInclusionTextInput = (
-        <AccessibleTextInput<
-            QuerySearchActions["setInclusion"],
-            QueryAction["setIsError"]
-        >
+        <AccessibleTextInput
             attributes={{
                 errorDispatch: queryDispatch,
                 invalidValueAction: queryAction.setIsError,
                 name: "inclusion",
-                parentDispatch: querySearchDispatch as any,
-                validValueAction: querySearchActions.setInclusion,
+                parentDispatch: queryDispatch,
+                validValueAction: queryAction.setGeneralSearchInclusionValue,
                 value: generalSearchInclusionValue,
             }}
         />
@@ -100,8 +50,8 @@ function QuerySearch({
                 errorDispatch: queryDispatch,
                 invalidValueAction: queryAction.setIsError,
                 name: "exclusion",
-                parentDispatch: querySearchDispatch as any,
-                validValueAction: querySearchActions.setExclusion,
+                parentDispatch: queryDispatch,
+                validValueAction: queryAction.setGeneralSearchExclusionValue,
                 value: generalSearchExclusionValue,
             }}
         />
@@ -118,34 +68,6 @@ function QuerySearch({
                 parentDispatch: queryDispatch,
                 validValueAction: queryAction.setGeneralSearchCase,
                 value: generalSearchCase,
-            }}
-        />
-    );
-
-    const addSearchLinkButton = (
-        <AccessibleButton
-            attributes={{
-                dataTestId: "add-search-link-button",
-                disabledScreenreaderText:
-                    "Please fix error(s) before proceeding",
-                disabled: queryState.isError,
-                enabledScreenreaderText: "Add filter link to chain",
-                kind: "add",
-                onClick: (
-                    _event:
-                        | React.MouseEvent<HTMLButtonElement, MouseEvent>
-                        | React.PointerEvent<HTMLButtonElement>,
-                ) => {
-                    queryDispatch({
-                        action: queryAction.setGeneralSearchExclusionValue,
-                        payload: exclusion,
-                    });
-
-                    queryDispatch({
-                        action: queryAction.setGeneralSearchInclusionValue,
-                        payload: inclusion,
-                    });
-                },
             }}
         />
     );
@@ -188,7 +110,6 @@ function QuerySearch({
             </Group>
             <Group w="100%" position="center">
                 {searchHelpButton}
-                {addSearchLinkButton}
                 {searchHelpModal}
             </Group>
         </div>

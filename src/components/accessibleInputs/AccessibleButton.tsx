@@ -3,12 +3,10 @@ import {
   Button,
   type ButtonProps,
   Group,
-  type MantineSize,
   Text,
   Tooltip,
 } from "@mantine/core";
 import type {
-  CSSProperties,
   KeyboardEvent,
   MouseEvent,
   PointerEvent,
@@ -43,11 +41,11 @@ import {
 } from "react-icons/tb";
 import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 
+import React from "react";
 import { VscCollapseAll, VscExpandAll } from "react-icons/vsc";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors, splitCamelCase } from "../../utils";
-import { createAccessibleButtonScreenreaderTextElements } from "./utils";
 
 type AccessibleButtonKind =
   | "add"
@@ -83,17 +81,13 @@ type AccessibleButtonKind =
   | "up";
 
 type AccessibleButtonAttributes = ButtonProps & {
-  compact?: boolean;
   dataTestId?: string;
-  disabled?: boolean;
   disabledScreenreaderText?: string;
   enabledScreenreaderText?: string;
-  index?: number;
+  label?: string;
   isTooltip?: boolean;
   kind: AccessibleButtonKind;
-  label?: ReactNode;
   leftIcon?: ReactNode;
-  setIconAsLabel?: boolean;
   name?: string;
   onClick?: (
     event: MouseEvent<HTMLButtonElement> | PointerEvent<HTMLButtonElement>,
@@ -103,31 +97,19 @@ type AccessibleButtonAttributes = ButtonProps & {
     event: MouseEvent<HTMLButtonElement> | PointerEvent<HTMLButtonElement>,
   ) => void;
   ref?: RefObject<HTMLButtonElement>;
-  rightIcon?: ReactNode;
-  size?: MantineSize;
-  style?: CSSProperties;
-  type?: "button" | "submit" | "reset";
-  variant?:
-    | "outline"
-    | "white"
-    | "light"
-    | "default"
-    | "filled"
-    | "gradient"
-    | "subtle";
+  setIconAsLabel?: boolean;
 };
 
 type AccessibleButtonProps = {
   attributes: AccessibleButtonAttributes;
-  uniqueId?: string;
 };
 
-function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
+function AccessibleButton({ attributes }: AccessibleButtonProps) {
   const {
     globalState: { themeObject },
   } = useGlobalState();
   const { colorScheme } = themeObject;
-  const { themeColorShade } = returnThemeColors({
+  const { grayBorderShade, themeColorShade } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
@@ -139,7 +121,6 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     disabledScreenreaderText,
     dataTestId,
     enabledScreenreaderText,
-    index,
     isTooltip = true,
     kind,
     name = kind,
@@ -150,46 +131,316 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
     rightIcon = null,
     setIconAsLabel = false,
     size = "sm",
-    style,
     type = "button",
     variant = colorScheme === "dark" ? "outline" : "filled",
+    ...buttonProps
   } = attributes;
 
   const iconColor = colorScheme === "dark"
     ? themeColorShade
     : COLORS_SWATCHES.gray[1];
   const leftIconTable: Record<AccessibleButtonKind, ReactNode> = {
-    add: <TbPlus color={iconColor} size={18} />,
-    collapse: <VscCollapseAll color={iconColor} size={18} />,
+    add: (
+      <TbPlus
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    collapse: (
+      <VscCollapseAll
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
     default: null,
-    delete: <TbTrash color={iconColor} size={18} />,
-    dislike: <BiDislike color={iconColor} size={18} />,
-    down: <TbCircleArrowDown color={iconColor} size={18} />,
-    download: <TbDownload color={iconColor} size={18} />,
-    edit: <TbEdit color={iconColor} size={18} />,
-    expand: <VscExpandAll color={iconColor} size={18} />,
-    filter: <TbFilter color={iconColor} size={18} />,
-    insert: <TbRowInsertTop color={iconColor} size={18} />,
-    help: <TbHelp color={iconColor} size={18} />,
-    hide: <TbArrowDown color={iconColor} size={18} />,
-    like: <BiLike color={iconColor} size={18} />,
-    logout: <TbLogout color={iconColor} size={18} />,
-    next: <TiArrowRightThick color={iconColor} size={18} />,
-    open: <TbFolderOpen color={iconColor} size={18} />,
-    pause: <TbPlayerPauseFilled color={iconColor} size={18} />,
-    play: <TbPlayerPlayFilled color={iconColor} size={18} />,
-    previous: <TiArrowLeftThick color={iconColor} size={18} />,
-    quote: <TbQuote color={iconColor} size={18} />,
-    rate: <TbStar color={iconColor} size={18} />,
-    refresh: <TbRefresh color={iconColor} size={18} />,
-    reply: <TbMessageCirclePlus color={iconColor} size={18} />,
-    report: <TbMessageReport color={iconColor} size={18} />,
-    reset: <TbClearAll color={iconColor} size={18} />,
-    search: <TbSearch color={iconColor} size={18} />,
-    show: <TbArrowUp color={iconColor} size={18} />,
-    star: <TbStar color={iconColor} size={18} />,
-    submit: <TbUpload color={iconColor} size={18} />,
-    up: <TbCircleArrowUp color={iconColor} size={18} />,
+    delete: (
+      <TbTrash
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    dislike: (
+      <BiDislike
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    down: (
+      <TbCircleArrowDown
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    download: (
+      <TbDownload
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    edit: (
+      <TbEdit
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    expand: (
+      <VscExpandAll
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    filter: (
+      <TbFilter
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    insert: (
+      <TbRowInsertTop
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    help: (
+      <TbHelp
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    hide: (
+      <TbArrowDown
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    like: (
+      <BiLike
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    logout: (
+      <TbLogout
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    next: (
+      <TiArrowRightThick
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    open: (
+      <TbFolderOpen
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    pause: (
+      <TbPlayerPauseFilled
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    play: (
+      <TbPlayerPlayFilled
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    previous: (
+      <TiArrowLeftThick
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    quote: (
+      <TbQuote
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    rate: (
+      <TbStar
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    refresh: (
+      <TbRefresh
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    reply: (
+      <TbMessageCirclePlus
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    report: (
+      <TbMessageReport
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    reset: (
+      <TbClearAll
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    search: (
+      <TbSearch
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    show: (
+      <TbArrowUp
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    star: (
+      <TbStar
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    submit: (
+      <TbUpload
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
+    up: (
+      <TbCircleArrowUp
+        color={disabled && colorScheme === "dark"
+          ? "black"
+          : disabled && colorScheme === "light"
+          ? grayBorderShade
+          : iconColor}
+        size={18}
+      />
+    ),
   };
 
   const leftIcon = setIconAsLabel
@@ -198,37 +449,37 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
   const label = setIconAsLabel ? leftIconTable[kind] : (
     <Text
       size={size}
-      color={colorScheme === "dark" ? themeColorShade : "white"}
+      // color={colorScheme === "dark"
+      //   ? themeColorShade
+      //   : disabled
+      //   ? grayBorderShade
+      //   : "white"}
+      color={disabled
+        ? colorScheme === "dark" ? "black" : grayBorderShade
+        : colorScheme === "dark"
+        ? themeColorShade
+        : "white"}
     >
       {attributes.label ?? splitCamelCase(name)}
     </Text>
   );
-  // const label = setIconAsLabel
-  //   ? leftIconTable[kind]
-  //   : attributes.label ?? splitCamelCase(name);
+  console.log("leftIcon:", leftIcon);
 
-  const { disabledTextElement, enabledTextElement } =
+  const { screenreaderTextElement } =
     createAccessibleButtonScreenreaderTextElements({
-      isEnabled: !disabled,
       disabledScreenreaderText,
       enabledScreenreaderText,
+      isEnabled: !disabled,
       name,
-      themeObject,
     });
-
-  // console.log(
-  //   `AccessibleButton: Rendering button with name "${name}" and kind "${kind}"`,
-  // );
-  // console.log("disabledScreenreaderText:", disabledScreenreaderText);
-  // console.log("enabledScreenreaderText:", enabledScreenreaderText);
 
   const button = (
     <Button
       aria-describedby={disabled
         // id of disabledTextElement
-        ? `${name}-disabled`
+        ? `${name}-button-disabled`
         // id of enabledTextElement
-        : `${name}-enabled`}
+        : `${name}-button-enabled`}
       aria-label={name}
       color={color}
       compact={compact}
@@ -242,18 +493,16 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
       ref={ref}
       rightIcon={rightIcon}
       size={size}
-      style={style}
       type={type}
       variant={variant}
+      {...buttonProps}
     >
       {label}
     </Button>
   );
 
   return (
-    <Box
-      key={`${name}-${index?.toString() ?? ""}-${uniqueId ?? ""}`}
-    >
+    <Box>
       {isTooltip && enabledScreenreaderText?.length
         ? (
           <Tooltip
@@ -266,14 +515,56 @@ function AccessibleButton({ attributes, uniqueId }: AccessibleButtonProps) {
         )
         : button}
 
-      <Box className="visually-hidden">
-        {disabledTextElement}
-        {enabledTextElement}
-      </Box>
+      {screenreaderTextElement}
     </Box>
   );
 }
 
-export { AccessibleButton };
+function createAccessibleButtonScreenreaderTextElements({
+  disabledScreenreaderText,
+  enabledScreenreaderText,
+  isEnabled,
+  name,
+}: {
+  disabledScreenreaderText?: string;
+  enabledScreenreaderText?: string;
+  isEnabled: boolean;
+  name: string;
+}): {
+  screenreaderTextElement: React.JSX.Element;
+} {
+  const defaultEnabledText =
+    `All form inputs are valid. ${name} is enabled. You may submit the form.`;
+  const enabledTextElement = (
+    <Text
+      aria-live="polite"
+      className="visually-hidden"
+      data-testid={`${name}-button-enabled-screenreader-text`}
+      id={`${name}-button-enabled`}
+    >
+      {`${enabledScreenreaderText ?? ""} ${defaultEnabledText}`}
+    </Text>
+  );
 
+  const defaultDisabledText =
+    `One or more inputs are in error. ${name} disabled. Please fix errors before continuing.`;
+  const disabledTextElement = (
+    <Text
+      aria-live="polite"
+      className="visually-hidden"
+      data-testid={`${name}-button-disabled-screenreader-text`}
+      id={`${name}-button-disabled`}
+    >
+      {`${disabledScreenreaderText ?? ""} ${defaultDisabledText}`}
+    </Text>
+  );
+
+  return {
+    screenreaderTextElement: isEnabled
+      ? enabledTextElement
+      : disabledTextElement,
+  };
+}
+
+export { AccessibleButton };
 export type { AccessibleButtonAttributes, AccessibleButtonKind };
