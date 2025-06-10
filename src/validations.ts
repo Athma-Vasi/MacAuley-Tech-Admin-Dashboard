@@ -10,6 +10,7 @@ type ValidationKey =
   | "axisRightLegend"
   | "axisTopLegend"
   | "brand"
+  | "calendarDate"
   | "chartTitle"
   | "city"
   | "colorVariant"
@@ -161,6 +162,14 @@ const VALIDATION_FUNCTIONS_TABLE: ValidationFunctionsTable = {
       "Must contain only letters, numbers, spaces, periods, commas, hyphens, and apostrophes.",
     ],
     [/^.{2,30}$/, "Must be between 2 and 30 characters length."],
+  ],
+
+  calendarDate: [
+    [
+      /^(19[0-9][0-9]|20[0-2][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,
+      "Must be a valid date from 1900-01-01 to 2029-12-31.",
+    ],
+    [/^.{10}$/, "Must be 10 characters length."],
   ],
 
   chartTitle: [

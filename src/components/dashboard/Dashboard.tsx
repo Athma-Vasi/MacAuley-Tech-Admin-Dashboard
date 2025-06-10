@@ -5,7 +5,6 @@ import {
   Loader,
   Stack,
   Text,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useEffect, useReducer } from "react";
@@ -34,7 +33,8 @@ import {
   ProductMetricsDocument,
   RepairMetricsDocument,
 } from "../../types";
-import { makeTransition, returnThemeColors } from "../../utils";
+import { returnThemeColors } from "../../utils";
+import { AccessibleDateTimeInput } from "../accessibleInputs/AccessibleDateTimeInput";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { dashboardAction } from "./actions";
 import { MessageEventDashboardCacheWorkerToMain } from "./cacheWorker";
@@ -157,30 +157,62 @@ function Dashboard() {
       months: MONTHS,
     });
 
-  const createdYYYYMMDDInput = (
-    <TextInput
-      aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'
-      className="accessible-input"
-      aria-description="View metrics for selected calendar date."
-      label="Calendar Date"
-      max={"2025-03-31"}
-      min={storeLocation === "Vancouver"
-        ? new Date(2019, 0, 1).toISOString().split("T")[0]
-        : storeLocation === "Calgary"
-        ? new Date(2017, 0, 1).toISOString().split("T")[0]
-        : new Date(2013, 0, 1).toISOString().split("T")[0]}
-      onChange={(event) => {
-        const { value } = event.currentTarget;
+  // const name = "calendarDate";
+  // const { screenreaderTextElement } =
+  //   createAccessibleDateTimeScreenreaderTextElements({
+  //     name,
+  //     value: selectedYYYYMMDD,
+  //   });
+  // const calendarDateInput = (
+  //   <Box className="accessible-input">
+  //     {screenreaderTextElement}
+  //     <TextInput
+  //       aria-label='Please enter date in format "date-date-month-month-year-year-year-year"'
+  //       aria-description="View metrics for selected calendar date."
+  //       aria-describedby={`${name}-valid-text ${name}-empty-text`}
+  //       label={splitCamelCase(name)}
+  //       max={"2025-03-31"}
+  //       min={storeLocation === "Vancouver"
+  //         ? new Date(2019, 0, 1).toISOString().split("T")[0]
+  //         : storeLocation === "Calgary"
+  //         ? new Date(2017, 0, 1).toISOString().split("T")[0]
+  //         : new Date(2013, 0, 1).toISOString().split("T")[0]}
+  //       name={name}
+  //       onChange={(event) => {
+  //         const { value } = event.currentTarget;
 
-        makeTransition(() => {
-          globalDispatch({
-            action: globalAction.setSelectedYYYYMMDD,
-            payload: value,
-          });
-        });
+  //         makeTransition(() => {
+  //           globalDispatch({
+  //             action: globalAction.setSelectedYYYYMMDD,
+  //             payload: value,
+  //           });
+  //         });
+  //       }}
+  //       type="date"
+  //       value={selectedYYYYMMDD}
+  //     />
+  //   </Box>
+  // );
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const max = yesterday.toISOString().split("T")[0];
+  const min = storeLocation === "Vancouver"
+    ? new Date(2019, 0, 1).toISOString().split("T")[0]
+    : storeLocation === "Calgary"
+    ? new Date(2017, 0, 1).toISOString().split("T")[0]
+    : new Date(2013, 0, 1).toISOString().split("T")[0];
+  const calendarDateInput = (
+    <AccessibleDateTimeInput
+      attributes={{
+        invalidValueAction: globalAction.setIsError,
+        max,
+        min,
+        name: "calendarDate",
+        parentDispatch: globalDispatch,
+        validValueAction: globalAction.setSelectedYYYYMMDD,
+        value: selectedYYYYMMDD,
       }}
-      type="date"
-      value={selectedYYYYMMDD}
     />
   );
 
@@ -385,7 +417,7 @@ function Dashboard() {
   const headerInputs = (
     <>
       {storeLocationSelectInput}
-      {createdYYYYMMDDInput}
+      {calendarDateInput}
       {metricsView === "products"
         ? (
           <>

@@ -7,6 +7,7 @@ import { useGlobalState } from "../../hooks";
 import { ThemeObject } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
+import { returnValidationTexts } from "./utils";
 
 type AccessiblePasswordInputAttributes<
     ValidValueAction extends string = string,
@@ -174,40 +175,6 @@ function AccessiblePasswordInput<
     );
 }
 
-function returnValidationTexts(
-    { name, value }: {
-        name: ValidationKey;
-        value: string;
-    },
-): {
-    valueEmptyText: string;
-    valueInvalidText: string;
-    valueValidText: string;
-} {
-    const initialValidationTexts = {
-        valueValidText: "",
-        valueInvalidText: "",
-        valueEmptyText: "",
-    };
-    const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
-    const regexes = regexesArray.map(([regexOrFunc, errorMessage]) => {
-        if (typeof regexOrFunc === "function") {
-            return regexOrFunc(value) ? "" : errorMessage;
-        }
-        return regexOrFunc.test(value) ? "" : errorMessage;
-    });
-    const splitName = splitCamelCase(name);
-    const partialInvalidText = regexes.join(" ");
-    const valueInvalidText = `${splitName} is invalid. ${partialInvalidText}`;
-
-    return {
-        ...initialValidationTexts,
-        valueInvalidText,
-        valueValidText: `${splitName} is valid.`,
-        valueEmptyText: `${splitName} is empty.`,
-    };
-}
-
 function createAccessiblePasswordInputValidationTextElements({
     isInputFocused,
     isValueValid,
@@ -240,13 +207,13 @@ function createAccessiblePasswordInputValidationTextElements({
         value.length > 0 &&
         passwordValue !== value;
 
-    const shouldShowInvalidValueText = isInputFocused &&
+    const showInvalidValueText = isInputFocused &&
         (!isValueValid || arePasswordsDifferent) &&
         value.length > 0;
     const invalidValueTextElement = (
         <Text
             aria-live="polite"
-            className={shouldShowInvalidValueText ? "" : "visually-hidden"}
+            className={showInvalidValueText ? "" : "visually-hidden"}
             color={redColorShade}
             id={`${name}-invalid-text`}
             pt={2}
@@ -260,13 +227,13 @@ function createAccessiblePasswordInputValidationTextElements({
         </Text>
     );
 
-    const shouldShowValidValueText = isInputFocused &&
+    const showValidValueText = isInputFocused &&
         isValueValid && !arePasswordsDifferent &&
         value.length > 0;
     const validValueTextElement = (
         <Text
             aria-live="polite"
-            className={shouldShowValidValueText ? "" : "visually-hidden"}
+            className={showValidValueText ? "" : "visually-hidden"}
             color={greenColorShade}
             id={`${name}-valid-text`}
             pt={2}
@@ -276,7 +243,7 @@ function createAccessiblePasswordInputValidationTextElements({
         </Text>
     );
 
-    const shouldShowEmptyValueText = isInputFocused && value.length === 0;
+    const showEmptyValueText = isInputFocused && value.length === 0;
     const emptyValueTextElement = (
         <Text
             aria-live="polite"
@@ -288,9 +255,9 @@ function createAccessiblePasswordInputValidationTextElements({
     );
 
     return {
-        screenreaderTextElement: shouldShowInvalidValueText
+        screenreaderTextElement: showInvalidValueText
             ? invalidValueTextElement
-            : shouldShowEmptyValueText
+            : showEmptyValueText
             ? emptyValueTextElement
             : validValueTextElement,
     };

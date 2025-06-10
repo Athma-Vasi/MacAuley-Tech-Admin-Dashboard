@@ -1,125 +1,84 @@
-import {
-    Box,
-    type MantineSize,
-    Popover,
-    Stack,
-    Text,
-    TextInput,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import {
-    type ChangeEvent,
-    type Dispatch,
-    type ReactNode,
-    type RefObject,
-    useEffect,
-    useState,
-} from "react";
+import { Box, Text, TextInput, TextInputProps } from "@mantine/core";
+import React from "react";
 import { TbCheck, TbX } from "react-icons/tb";
-
 import { COLORS_SWATCHES } from "../../constants";
-import { useGlobalState } from "../../hooks/useGlobalState";
-import { ValidationFunctionsTable } from "../../types";
-import { returnThemeColors, splitCamelCase } from "../../utils";
+import { useGlobalState } from "../../hooks";
+import { formatDate, returnThemeColors, splitCamelCase } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
-import {
-    createAccessibleValueValidationTextElements,
-    returnValidationTexts,
-} from "./utils";
+import { returnValidationTexts } from "./utils";
 
 type AccessibleDateTimeInputAttributes<
     ValidValueAction extends string = string,
-> = {
-    ariaAutoComplete?: "both" | "list" | "none" | "inline";
-    autoComplete?: "on" | "off";
+    InvalidValueAction extends string = string,
+> = TextInputProps & {
     dataTestId?: string;
-    disabled?: boolean;
-    icon?: ReactNode;
-    initialInputValue?: string;
-    inputKind: "date" | "time";
-    label?: ReactNode;
-    max?: string;
-    maxLength?: number;
-    min?: string;
-    minLength?: number;
+    errorDispatch?: React.Dispatch<{
+        action: InvalidValueAction;
+        payload: boolean;
+    }>;
+    hideLabel?: boolean;
+    // for username and email inputs
+    isNameExists?: boolean;
+    invalidValueAction: InvalidValueAction;
+    // must correspond to name in validationFunctionsTable
     name: ValidationKey;
-    onBlur?: () => void;
-    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-    onFocus?: () => void;
-    parentDispatch?: Dispatch<
-        {
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    parentDispatch: React.Dispatch<
+        | {
             action: ValidValueAction;
             payload: string;
         }
+        | {
+            action: InvalidValueAction;
+            payload: boolean;
+        }
     >;
-    placeholder?: string;
-    ref?: RefObject<HTMLInputElement>;
-    required?: boolean;
-    size?: MantineSize;
-    style?: React.CSSProperties;
+    ref?: React.RefObject<HTMLInputElement | null>;
     validValueAction: ValidValueAction;
-    validationFunctionsTable?: ValidationFunctionsTable;
-    value: string;
-    withAsterisk?: boolean;
 };
 
 type AccessibleDateTimeInputProps<
     ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
 > = {
     attributes: AccessibleDateTimeInputAttributes<
-        ValidValueAction
+        ValidValueAction,
+        InvalidValueAction
     >;
 };
 
 function AccessibleDateTimeInput<
     ValidValueAction extends string = string,
+    InvalidValueAction extends string = string,
 >(
     { attributes }: AccessibleDateTimeInputProps<
-        ValidValueAction
+        ValidValueAction,
+        InvalidValueAction
     >,
 ) {
-    const {
-        ariaAutoComplete = "none",
-        autoComplete = "off",
-        dataTestId = `${attributes.name}-dateTimeInput`,
-        disabled = false,
-        icon = null,
-        initialInputValue = "",
-        inputKind,
-        max = new Date().toISOString().split("T")[0], // current date
-        maxLength = inputKind === "date" ? 10 : 5,
-        min = new Date(2013, 0, 1).toISOString().split("T")[0], // 2013-01-01 - date of founding
-        minLength = inputKind === "date" ? 10 : 5,
-        name,
-        onBlur,
-        onChange,
-        onFocus,
-        parentDispatch,
-        placeholder = "",
-        ref = null,
-        required = false,
-        size = "sm",
-        style,
-        validationFunctionsTable = VALIDATION_FUNCTIONS_TABLE,
-        validValueAction,
-        value,
-        withAsterisk = required,
-    } = attributes;
+    const [isInputFocused, setIsInputFocused] = React.useState(false);
 
+    const {
+        dataTestId = `${attributes.name}-textInput`,
+        errorDispatch,
+        hideLabel = false,
+        icon,
+        invalidValueAction,
+        isNameExists = false,
+        name,
+        onChange,
+        parentDispatch,
+        ref,
+        type = "date",
+        validValueAction,
+        ...textInputProps
+    } = attributes;
+    const value = attributes.value?.toString() ?? "";
     const label = (
-        <Text color={disabled ? "gray" : void 0}>
-            {attributes.label ?? splitCamelCase(name)}
+        <Text color={attributes.disabled ? "gray" : void 0}>
+            {attributes.label ?? splitCamelCase(attributes.name)}
         </Text>
     );
-
-    const [valueBuffer, setValueBuffer] = useState(value);
-    const [isPopoverOpened, { open: openPopover, close: closePopover }] =
-        useDisclosure(false);
-
-    // prevents stale values when inputs are dynamically created
-    useEffect(() => {
-        setValueBuffer(value);
-    }, [value]);
 
     const {
         globalState: { themeObject },
@@ -128,128 +87,167 @@ function AccessibleDateTimeInput<
     const {
         greenColorShade,
         redColorShade,
-    } = returnThemeColors({ colorsSwatches: COLORS_SWATCHES, themeObject });
+    } = returnThemeColors({ themeObject, colorsSwatches: COLORS_SWATCHES });
 
-    const regexesArray = validationFunctionsTable[name];
-    const isValueBufferValid = valueBuffer.length > 0 && regexesArray.every(
+    const regexesArray = VALIDATION_FUNCTIONS_TABLE[name];
+    const isValueValid = value.length === 0 || regexesArray.every(
         ([regexOrFunc, _validationText]: [any, any]) =>
             typeof regexOrFunc === "function"
-                ? regexOrFunc(valueBuffer)
-                : regexOrFunc.test(valueBuffer),
+                ? regexOrFunc(value)
+                : regexOrFunc.test(value),
     );
 
     const leftIcon = icon ??
-        (isValueBufferValid
-            ? <TbCheck color={greenColorShade} size={18} />
-            : valueBuffer.length === 0
+        (isValueValid && value.length > 0
+            ? (
+                <TbCheck
+                    aria-label={`Valid ${name} input`}
+                    color={greenColorShade}
+                    data-testid={`${name}-input-valid-icon`}
+                    size={18}
+                />
+            )
+            : value.length === 0
             ? null
-            : <TbX color={redColorShade} size={18} />);
+            : (
+                <TbX
+                    aria-hidden={true}
+                    color={redColorShade}
+                    data-testid={`${name}-input-invalid-icon`}
+                    size={18}
+                />
+            ));
 
     const validationTexts = returnValidationTexts({
         name,
-        validationFunctionsTable,
-        valueBuffer,
+        value,
     });
 
-    const { invalidValueTextElement } =
-        createAccessibleValueValidationTextElements({
-            isPopoverOpened,
-            isValueBufferValid,
+    const { screenreaderTextElement } =
+        createAccessibleDateTimeScreenreaderTextElements({
+            isInputFocused,
+            isValueValid,
             name,
-            themeObject,
-            valueBuffer,
             validationTexts,
+            value,
         });
 
-    const ariaLabel = `Please enter ${name} in format "${
-        inputKind === "date"
-            ? "on Chromium browsers: date-date-month-month-year-year-year-year, or in other browsers year-year-year-year-month-month-date-date"
-            : "hour-hour-minute-minute"
-    }`;
+    const textInput = (
+        <TextInput
+            aria-describedby={`${name}-empty-text ${name}-invalid-text ${name}-valid-text`}
+            aria-errormessage={`${name}-invalid-text`}
+            aria-invalid={!isValueValid || isNameExists}
+            data-testid={dataTestId}
+            error={!isValueValid || isNameExists}
+            icon={leftIcon}
+            label={hideLabel ? null : label}
+            name={name}
+            onBlur={() => {
+                setIsInputFocused(false);
+            }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                parentDispatch({
+                    action: invalidValueAction,
+                    payload: !isValueValid || isNameExists,
+                });
+                parentDispatch({
+                    action: validValueAction,
+                    payload: event.currentTarget.value,
+                });
+
+                errorDispatch?.({
+                    action: invalidValueAction,
+                    payload: !isValueValid,
+                });
+
+                onChange?.(event);
+            }}
+            onFocus={() => {
+                setIsInputFocused(true);
+            }}
+            ref={ref}
+            type={type}
+            value={value}
+            {...textInputProps}
+        />
+    );
 
     return (
         <Box className="accessible-input">
-            <Popover
-                opened={isPopoverOpened}
-                position="bottom"
-                shadow="md"
-                transitionProps={{ transition: "pop" }}
-                width="target"
-                withArrow
-            >
-                <Popover.Target>
-                    <TextInput
-                        aria-autocomplete={ariaAutoComplete}
-                        aria-describedby={isValueBufferValid
-                            // id of validValueTextElement
-                            ? `${name}-valid`
-                            // id of invalidValueTextElement
-                            : `${name}-invalid`}
-                        aria-invalid={!isValueBufferValid}
-                        aria-label={ariaLabel}
-                        aria-required={required}
-                        autoComplete={autoComplete}
-                        color="dark"
-                        data-testid={dataTestId}
-                        error={!isValueBufferValid &&
-                            valueBuffer !== initialInputValue}
-                        icon={leftIcon}
-                        label={label}
-                        max={max}
-                        maxLength={inputKind === "date"
-                            ? 10
-                            : inputKind === "time"
-                            ? 5
-                            : maxLength}
-                        min={min}
-                        minLength={inputKind === "date"
-                            ? 10
-                            : inputKind === "time"
-                            ? 5
-                            : minLength}
-                        name={name}
-                        onBlur={() => {
-                            parentDispatch?.({
-                                action: validValueAction,
-                                payload: valueBuffer,
-                            });
-
-                            onBlur?.();
-                            closePopover();
-                        }}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                            setValueBuffer(event.currentTarget.value);
-                            onChange?.(event);
-                        }}
-                        onFocus={() => {
-                            openPopover();
-                            onFocus?.();
-                        }}
-                        placeholder={placeholder}
-                        ref={ref}
-                        required={required}
-                        size={size}
-                        style={style}
-                        type={inputKind}
-                        value={valueBuffer}
-                        withAsterisk={withAsterisk}
-                    />
-                </Popover.Target>
-
-                {isPopoverOpened && valueBuffer.length && !isValueBufferValid
-                    ? (
-                        <Popover.Dropdown>
-                            <Stack>
-                                {invalidValueTextElement}
-                            </Stack>
-                        </Popover.Dropdown>
-                    )
-                    : null}
-            </Popover>
+            {textInput}
+            {screenreaderTextElement}
         </Box>
     );
 }
 
-export { AccessibleDateTimeInput };
+function createAccessibleDateTimeScreenreaderTextElements(
+    {
+        isInputFocused,
+        isValueValid,
+        name,
+        validationTexts: { valueEmptyText, valueInvalidText },
+        value,
+    }: {
+        isInputFocused: boolean;
+        isValueValid: boolean;
+        name: string;
+        validationTexts: {
+            valueEmptyText: string;
+            valueInvalidText: string;
+            valueValidText: string;
+        };
+        value: string;
+    },
+): {
+    screenreaderTextElement: React.JSX.Element;
+} {
+    const announceInvalid = isInputFocused && !isValueValid && value.length > 0;
+    const invalidTextElement = (
+        <Text
+            aria-live="polite"
+            className="visually-hidden"
+            data-testid={`${name}-dateTime-invalid-text`}
+            id={`${name}-invalid-text`}
+            w="100%"
+        >
+            {valueInvalidText}
+        </Text>
+    );
 
-export type { AccessibleDateTimeInputAttributes };
+    const announceValid = isInputFocused && isValueValid && value.length > 0;
+    const validTextElement = (
+        <Text
+            aria-live="polite"
+            className="visually-hidden"
+            data-testid={`${name}-dateTime-screenreader-text`}
+            id={`${name}-valid-text`}
+            w="100%"
+        >
+            {`${formatDate({ date: value })} is selected for ${
+                splitCamelCase(name)
+            } input.`}
+        </Text>
+    );
+
+    const emptyTextElement = (
+        <Text
+            aria-live="polite"
+            className="visually-hidden"
+            data-testid={`${name}-dateTime-empty-text`}
+            id={`${name}-empty-text`}
+        >
+            {valueEmptyText}
+        </Text>
+    );
+
+    return {
+        screenreaderTextElement: announceInvalid
+            ? invalidTextElement
+            : announceValid
+            ? validTextElement
+            : emptyTextElement,
+    };
+}
+
+export { AccessibleDateTimeInput };
+export type { AccessibleDateTimeInputAttributes, AccessibleDateTimeInputProps };

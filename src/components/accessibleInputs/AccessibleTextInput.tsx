@@ -4,12 +4,10 @@ import React from "react";
 import { TbCheck, TbX } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks";
+import { ThemeObject } from "../../types";
 import { returnThemeColors, splitCamelCase } from "../../utils";
 import { VALIDATION_FUNCTIONS_TABLE, ValidationKey } from "../../validations";
-import {
-    createAccessibleValueValidationTextElements,
-    returnValidationTexts,
-} from "./utils";
+import { returnValidationTexts } from "./utils";
 
 type AccessibleTextInputAttributes<
     ValidValueAction extends string = string,
@@ -126,8 +124,8 @@ function AccessibleTextInput<
         value,
     });
 
-    const { validValueTextElement, invalidValueTextElement } =
-        createAccessibleValueValidationTextElements({
+    const { screenreaderTextElement } =
+        createAccessibleTextInputValidationTextElements({
             isInputFocused,
             isNameExists,
             isValueValid,
@@ -139,10 +137,7 @@ function AccessibleTextInput<
 
     const textInput = (
         <TextInput
-            // aria-describedby={!isValueValid || isNameExists
-            //     ? `${name}-invalid-text`
-            //     : `${name}-valid-text`}
-            aria-describedby={`${name}-invalid-text ${name}-valid-text`}
+            aria-describedby={`${name}-empty-text ${name}-invalid-text ${name}-valid-text`}
             aria-errormessage={`${name}-invalid-text`}
             aria-invalid={!isValueValid || isNameExists}
             aria-label={name}
@@ -183,10 +178,91 @@ function AccessibleTextInput<
     return (
         <Box className="accessible-input">
             {textInput}
-            {validValueTextElement}
-            {invalidValueTextElement}
+            {screenreaderTextElement}
         </Box>
     );
+}
+
+function createAccessibleTextInputValidationTextElements({
+    isInputFocused,
+    isNameExists,
+    isValueValid,
+    name,
+    themeObject,
+    validationTexts: { valueEmptyText, valueInvalidText, valueValidText },
+    value,
+}: {
+    isInputFocused: boolean;
+    isNameExists?: boolean;
+    isValueValid: boolean;
+    name: string;
+    themeObject: ThemeObject;
+    validationTexts: {
+        valueEmptyText: string;
+        valueInvalidText: string;
+        valueValidText: string;
+    };
+    value: string;
+}): {
+    screenreaderTextElement: React.JSX.Element;
+} {
+    const { greenColorShade, redColorShade } = returnThemeColors({
+        themeObject,
+        colorsSwatches: COLORS_SWATCHES,
+    });
+
+    const shouldShowInvalidValueText = isInputFocused &&
+        (!isValueValid || isNameExists) &&
+        value.length > 0;
+    const invalidValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={shouldShowInvalidValueText ? "" : "visually-hidden"}
+            color={redColorShade}
+            id={`${name}-invalid-text`}
+            pt={2}
+            w="100%"
+        >
+            {isNameExists
+                ? `${splitCamelCase(name)} already exists.`
+                : valueInvalidText}
+        </Text>
+    );
+
+    const shouldShowValidValueText = !isNameExists && isInputFocused &&
+        isValueValid &&
+        value.length > 0;
+    const validValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={shouldShowValidValueText ? "" : "visually-hidden"}
+            color={greenColorShade}
+            id={`${name}-valid-text`}
+            pt={2}
+            w="100%"
+        >
+            {valueValidText}
+        </Text>
+    );
+
+    const shouldShowEmptyValueText = isInputFocused && value.length === 0;
+    const emptyValueTextElement = (
+        <Text
+            aria-live="polite"
+            className={"visually-hidden"} // always hidden
+            id={`${name}-empty-text`}
+        >
+            {valueEmptyText}
+        </Text>
+    );
+
+    return {
+        screenreaderTextElement: shouldShowInvalidValueText
+            ? invalidValueTextElement
+            : shouldShowEmptyValueText
+            ? emptyValueTextElement
+            : validValueTextElement,
+    };
 }
 
 export { AccessibleTextInput };
