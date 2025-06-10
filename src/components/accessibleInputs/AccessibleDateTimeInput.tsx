@@ -137,6 +137,7 @@ function AccessibleDateTimeInput<
             aria-describedby={`${name}-empty-text ${name}-invalid-text ${name}-valid-text`}
             aria-errormessage={`${name}-invalid-text`}
             aria-invalid={!isValueValid || isNameExists}
+            aria-label={name}
             data-testid={dataTestId}
             error={!isValueValid || isNameExists}
             icon={leftIcon}

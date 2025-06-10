@@ -15,44 +15,6 @@ import {
   AccessibleButtonAttributes,
 } from "./AccessibleButton";
 
-type CreateAccessibleNavLinkTextElements = {
-  active: boolean;
-  description: string;
-  name: string;
-  themeObject: ThemeObject;
-};
-
-function createAccessibleNavLinkTextElement({
-  active,
-  description,
-  name,
-  themeObject,
-}: CreateAccessibleNavLinkTextElements): {
-  screenreaderTextElement: React.JSX.Element;
-} {
-  const {
-    greenColorShade,
-    textColor,
-  } = returnThemeColors({
-    themeObject,
-    colorsSwatches: COLORS_SWATCHES,
-  });
-
-  const screenreaderTextElement = (
-    <Text
-      aria-live="polite"
-      color={active ? textColor : greenColorShade}
-      data-testid={`${name}-navlink-selected-screenreader-text`}
-      id={`${name}-selected`}
-      w="100%"
-    >
-      {description}
-    </Text>
-  );
-
-  return { screenreaderTextElement };
-}
-
 type CreateAccessibleCheckboxSelectionsTextElements = {
   checked: boolean;
   deselectedDescription?: string;
@@ -288,6 +250,5 @@ export {
   createAccessibleButtonScreenreaderTextElements,
   createAccessibleCheckboxSelectionsTextElements,
   createAccessibleImageTextElement,
-  createAccessibleNavLinkTextElement,
   returnValidationTexts,
 };

@@ -1,32 +1,15 @@
-import { Box, type MantineColor, NavLink, type Variants } from "@mantine/core";
-import type { ReactNode } from "react";
+import { NavLink, NavLinkProps } from "@mantine/core";
 import { TbChevronDownRight } from "react-icons/tb";
 import { COLORS_SWATCHES } from "../../constants";
 import { useGlobalState } from "../../hooks/useGlobalState";
 import { returnThemeColors, splitCamelCase } from "../../utils";
-import { createAccessibleNavLinkTextElement } from "./utils";
 
-type AccessibleNavLinkAttributes = {
-  active?: boolean;
-  children?: ReactNode;
-  childrenOffset?: number | "xs" | "sm" | "md" | "lg" | "xl";
-  color?: MantineColor;
+type AccessibleNavLinkAttributes = NavLinkProps & {
+  children?: React.ReactNode;
   dataTestId?: string;
-  defaultOpened?: boolean;
-  description: string;
-  disableRightSectionRotation?: boolean;
-  disabled?: boolean;
-  icon?: ReactNode;
-  index?: number;
-  label?: ReactNode;
   name: string;
-  noWrap?: boolean;
-  onChange?: (opened: boolean) => void;
-  onClick: () => void;
-  onMouseEnter?: () => void;
-  opened?: boolean;
-  rightSection?: ReactNode;
-  variant?: Variants<"light" | "filled" | "subtle">;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+  onMouseEnter?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 };
 
 type AccessibleNavLinkProps = {
@@ -37,77 +20,40 @@ function AccessibleNavLink({ attributes }: AccessibleNavLinkProps) {
   const {
     globalState: { themeObject },
   } = useGlobalState();
-  const { primaryColor } = themeObject;
-
   const { textColor } = returnThemeColors({
     colorsSwatches: COLORS_SWATCHES,
     themeObject,
   });
 
   const {
-    active = false,
-    children = null,
-    childrenOffset = 0,
+    children,
     color = textColor,
     dataTestId,
-    defaultOpened = false,
-    description,
-    disableRightSectionRotation = false,
-    disabled = false,
     icon = <TbChevronDownRight />,
-    index = 0,
     name,
-    noWrap = false,
-    onChange,
     onClick,
-    onMouseEnter = () => {},
-    opened = false,
-    rightSection = null,
-    variant = "light",
+    onMouseEnter,
+    ...navLinkProps
   } = attributes;
   const label = attributes.label ?? splitCamelCase(name);
 
-  const { screenreaderTextElement } = createAccessibleNavLinkTextElement({
-    active,
-    description,
-    name,
-    themeObject,
-  });
-
   const navLink = (
     <NavLink
-      active={active}
-      childrenOffset={childrenOffset}
       color={color}
       data-testid={dataTestId}
-      defaultOpened={defaultOpened}
-      // description={description}
-      disableRightSectionRotation={disableRightSectionRotation}
-      disabled={disabled}
       icon={icon}
       label={label}
       name={name}
-      noWrap={noWrap}
-      onChange={onChange}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
-      opened={opened}
-      rightSection={rightSection}
       style={{ color: textColor }}
-      variant={variant}
+      {...navLinkProps}
     >
       {children}
     </NavLink>
   );
 
-  return (
-    <Box key={`${name}-${index}`}>
-      {navLink}
-      <Box className="visually-hidden">
-        {screenreaderTextElement}
-      </Box>
-    </Box>
-  );
+  return navLink;
 }
 
 export { AccessibleNavLink };
