@@ -136,14 +136,7 @@ function removeUndefinedAndNull<T>(value: T | undefined | null): value is T {
 }
 
 function capitalizeJoinWithAnd(strings: string[]): string {
-  const result = parseSyncSafe({
-    object: strings,
-    zSchema: z.array(z.string()),
-  });
-  if (result.err || result.val.none) {
-    return "";
-  }
-  const strings_ = result.val.val.filter(removeUndefinedAndNull);
+  const strings_ = strings.filter(removeUndefinedAndNull);
   if (strings_.length === 0) {
     return "";
   }

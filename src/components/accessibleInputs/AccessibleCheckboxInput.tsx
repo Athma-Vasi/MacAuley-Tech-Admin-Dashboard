@@ -3,143 +3,14 @@ import {
     Checkbox,
     CheckboxGroupProps,
     Group,
-    type MantineSize,
     Space,
     Stack,
     Text,
 } from "@mantine/core";
-import type { ChangeEvent, ReactNode, RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 
-import { useGlobalState } from "../../hooks/useGlobalState";
 import { CheckboxRadioSelectData } from "../../types";
-import { splitCamelCase } from "../../utils";
-import { createAccessibleCheckboxSelectionsTextElements } from "./utils";
-
-type AccessibleCheckboxInputSingleAttributes<
-    ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
-> = {
-    checked: boolean;
-    deselectedDescription?: string;
-    disabled?: boolean;
-    invalidValueAction: InvalidValueAction;
-    key?: string;
-    label?: ReactNode;
-    name: string;
-    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-    parentDispatch: React.Dispatch<
-        {
-            action: ValidValueAction;
-            payload: boolean;
-        }
-    >;
-    ref?: RefObject<HTMLInputElement> | null;
-    required?: boolean;
-    selectedDescription?: string;
-    size?: MantineSize;
-    style?: React.CSSProperties;
-    validValueAction: ValidValueAction;
-    value: string;
-};
-
-type AccessibleCheckboxInputSingleProps<
-    ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
-> = {
-    attributes: AccessibleCheckboxInputSingleAttributes<
-        ValidValueAction,
-        InvalidValueAction
-    >;
-    uniqueId?: string;
-};
-
-function AccessibleCheckboxInputSingle<
-    ValidValueAction extends string = string,
-    InvalidValueAction extends string = string,
->({
-    attributes,
-    uniqueId,
-}: AccessibleCheckboxInputSingleProps<ValidValueAction, InvalidValueAction>) {
-    const {
-        checked,
-        deselectedDescription,
-        disabled = false,
-        invalidValueAction,
-        onChange,
-        name,
-        parentDispatch,
-        ref = null,
-        required = false,
-        selectedDescription,
-        size = "sm",
-        style,
-        validValueAction,
-        value,
-    } = attributes;
-
-    const key = attributes.key ?? `${name} - key`;
-    const label = (
-        <Text color={disabled ? "gray" : void 0}>
-            {attributes.label ?? splitCamelCase(name)}
-        </Text>
-    );
-
-    const {
-        globalState: { themeObject },
-    } = useGlobalState();
-
-    const { selectedTextElement, deselectedTextElement } =
-        createAccessibleCheckboxSelectionsTextElements({
-            checked,
-            deselectedDescription,
-            kind: "single",
-            name,
-            selectedDescription,
-            themeObject,
-            value,
-        });
-
-    return (
-        <Box
-            key={`container-${name}-${uniqueId}`}
-            className="accessible-input"
-            w="100%"
-        >
-            <Checkbox
-                aria-describedby={checked
-                    // id of selectedTextElement
-                    ? `${name}-selected`
-                    // id of deselectedTextElement
-                    : `${name}-deselected`}
-                aria-label={name}
-                aria-required={required}
-                checked={checked}
-                description={checked
-                    ? selectedTextElement
-                    : deselectedTextElement}
-                disabled={disabled}
-                key={key}
-                label={label}
-                name={name}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    parentDispatch({
-                        action: validValueAction,
-                        payload: event.currentTarget.checked,
-                    });
-
-                    if (onChange) {
-                        onChange(event);
-                    }
-                }}
-                ref={ref}
-                required={required}
-                size={size}
-                style={style}
-                value={value}
-            />
-        </Box>
-    );
-}
+import { capitalizeJoinWithAnd, splitCamelCase } from "../../utils";
 
 type AccessibleCheckboxInputGroupAttributes<
     ValidValueAction extends string = string,
@@ -197,17 +68,10 @@ function AccessibleCheckboxInputGroup<
     } = attributes;
     const label = attributes.label ?? splitCamelCase(name);
 
-    const {
-        globalState: { themeObject },
-    } = useGlobalState();
-
-    const { selectedTextElement, deselectedTextElement } =
+    const { screenreaderTextElement } =
         createAccessibleCheckboxSelectionsTextElements({
-            checked: value.length > 0,
             name,
-            kind: "group",
             value,
-            themeObject,
         });
 
     const checkboxes = inputData?.map(({ value, label }, idx) => (
@@ -243,53 +107,104 @@ function AccessibleCheckboxInputGroup<
         ],
     );
 
+    const checkboxGroup = (
+        <Checkbox.Group
+            aria-describedby={value.length > 0
+                // id of selectedTextElement
+                ? `${name}-checkbox-group-selected`
+                // id of deselectedTextElement
+                : `${name}-checkbox-group-deselected`}
+            key={key}
+            label={label}
+            onChange={(value: Payload[]) => {
+                parentDispatch({
+                    action: validValueAction,
+                    payload: value,
+                });
+
+                onChange?.(value);
+            }}
+            ref={ref}
+            value={value}
+            {...checkboxGroupProps}
+        >
+            <Group
+                w="100%"
+                position="left"
+                p="md"
+                spacing="xl"
+                align="flex-start"
+            >
+                <Stack>
+                    {leftStack}
+                </Stack>
+                <Space w="xl" />
+                <Stack>
+                    {middleStack}
+                </Stack>
+                <Space w="xl" />
+                <Stack>
+                    {rightStack}
+                </Stack>
+            </Group>
+        </Checkbox.Group>
+    );
+
     return (
         <Box w="100%">
-            <Checkbox.Group
-                aria-describedby={value.length > 0
-                    // id of selectedTextElement
-                    ? `${name}-selected`
-                    // id of deselectedTextElement
-                    : `${name}-deselected`}
-                aria-label={name}
-                description={value.length > 0
-                    ? selectedTextElement
-                    : deselectedTextElement}
-                key={key}
-                label={label}
-                onChange={(value: Payload[]) => {
-                    parentDispatch({
-                        action: validValueAction,
-                        payload: value,
-                    });
-
-                    onChange?.(value);
-                }}
-                ref={ref}
-                value={value}
-                {...checkboxGroupProps}
-            >
-                <Group w="100%" position="left" p="md" spacing="xl">
-                    <Stack>
-                        {leftStack}
-                    </Stack>
-                    <Space w="xl" />
-                    <Stack>
-                        {middleStack}
-                    </Stack>
-                    <Space w="xl" />
-                    <Stack>
-                        {rightStack}
-                    </Stack>
-                </Group>
-            </Checkbox.Group>
+            {checkboxGroup}
+            {screenreaderTextElement}
         </Box>
     );
 }
 
-export { AccessibleCheckboxInputGroup, AccessibleCheckboxInputSingle };
+function createAccessibleCheckboxSelectionsTextElements({
+    name,
+    value,
+}: {
+    name: string;
+    value: string | string[];
+}): {
+    screenreaderTextElement: React.JSX.Element;
+} {
+    const stringifiedValue = Array.isArray(value)
+        ? capitalizeJoinWithAnd(value)
+        : value;
 
+    const selectedText = `${stringifiedValue} ${
+        value.length > 1 ? "are" : "is"
+    } selected.`;
+    const selectedTextElement = (
+        <Text
+            aria-live="polite"
+            className="visually-hidden"
+            data-testid={`${name}-checkbox-selected-text`}
+            id={`${name}-checkbox-group-selected`}
+        >
+            {selectedText}
+        </Text>
+    );
+
+    const deselectedTextElement = (
+        <Text
+            aria-live="polite"
+            className="visually-hidden"
+            data-testid={`${name}-checkbox-deselected-text`}
+            id={`${name}-checkbox-group-deselected`}
+        >
+            {`No ${splitCamelCase(name)} selected.`}
+        </Text>
+    );
+
+    return {
+        screenreaderTextElement: value.length > 0
+            ? selectedTextElement
+            : deselectedTextElement,
+    };
+}
+
+export { AccessibleCheckboxInputGroup };
 export type {
     AccessibleCheckboxInputGroupAttributes,
-    AccessibleCheckboxInputSingleAttributes,
+    AccessibleCheckboxInputGroupProps,
 };

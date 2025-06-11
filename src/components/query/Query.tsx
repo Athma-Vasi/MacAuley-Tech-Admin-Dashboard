@@ -60,6 +60,8 @@ function Query({
         { open: openSortHelpModal, close: closeSortHelpModal },
     ] = useDisclosure(false);
 
+    console.log("queryState", queryState);
+
     const {
         generalSearchCase,
         generalSearchExclusionValue,
@@ -101,8 +103,11 @@ function Query({
         generalSearchExclusionValue,
         generalSearchInclusionValue,
         limitPerPage,
-        projectionFields,
-        queryChains,
+        projectionFields.length,
+        filterComparisonOperator,
+        filterField,
+        filterLogicalOperator,
+        filterValue,
         sortDirection,
         sortField,
     ]);
