@@ -249,6 +249,10 @@ function createDynamicInput(
             <AccessibleTextInput
                 attributes={{
                     ...attributes,
+                    additionalScreenreaderIds: [
+                        `${filterField}-${filterComparisonOperator}-${filterValue}-screenreader-link`,
+                        "filter-screenreader-link-heading",
+                    ],
                     dataTestId: "dynamicValue-input",
                     invalidValueAction: queryAction.setIsError,
                     name,
@@ -284,6 +288,10 @@ function createDynamicInput(
             <AccessibleTextInput
                 attributes={{
                     ...attributes,
+                    additionalScreenreaderIds: [
+                        `${filterField}-${filterComparisonOperator}-${filterValue}-screenreader-link`,
+                        "filter-screenreader-link-heading",
+                    ],
                     dataTestId: "dynamicValue-input",
                     invalidValueAction: queryAction.setIsError,
                     name,
@@ -319,6 +327,10 @@ function createDynamicInput(
             <AccessibleDateTimeInput
                 attributes={{
                     ...attributes,
+                    additionalScreenreaderIds: [
+                        `${filterField}-${filterComparisonOperator}-${filterValue}-screenreader-link`,
+                        "filter-screenreader-link-heading",
+                    ],
                     dataTestId: "dynamicValue-input",
                     invalidValueAction: queryAction.setIsError,
                     name,

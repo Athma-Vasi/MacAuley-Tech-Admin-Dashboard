@@ -16,6 +16,8 @@ type AccessibleCheckboxInputGroupAttributes<
     ValidValueAction extends string = string,
     Payload extends string = string,
 > = CheckboxGroupProps & {
+    // connects query chain links to this input
+    additionalScreenreaderIds?: string[];
     dataTestId?: string;
     /**
      * Set of values that should be disabled. Used by QueryBuilder component to disable values from projection exclusion if they have already been queued for inclusion (by Filter, Sort, or Search).
@@ -54,6 +56,7 @@ function AccessibleCheckboxInputGroup<
     >,
 ) {
     const {
+        additionalScreenreaderIds = [],
         dataTestId,
         disabledValuesSet = new Set(),
         inputData,
@@ -109,11 +112,14 @@ function AccessibleCheckboxInputGroup<
 
     const checkboxGroup = (
         <Checkbox.Group
-            aria-describedby={value.length > 0
-                // id of selectedTextElement
-                ? `${name}-checkbox-group-selected`
-                // id of deselectedTextElement
-                : `${name}-checkbox-group-deselected`}
+            // aria-describedby={value.length > 0
+            //     // id of selectedTextElement
+            //     ? `${name}-checkbox-group-selected`
+            //     // id of deselectedTextElement
+            //     : `${name}-checkbox-group-deselected`}
+            aria-describedby={`${name}-checkbox-group-selected 
+                ${name}-checkbox-group-deselected 
+                ${additionalScreenreaderIds.join(" ")}`}
             key={key}
             label={label}
             onChange={(value: Payload[]) => {

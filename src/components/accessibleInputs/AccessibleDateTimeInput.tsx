@@ -11,6 +11,8 @@ type AccessibleDateTimeInputAttributes<
     ValidValueAction extends string = string,
     InvalidValueAction extends string = string,
 > = TextInputProps & {
+    // connects query chain links to this input
+    additionalScreenreaderIds?: string[];
     dataTestId?: string;
     errorDispatch?: React.Dispatch<{
         action: InvalidValueAction;
@@ -59,6 +61,7 @@ function AccessibleDateTimeInput<
     const [isInputFocused, setIsInputFocused] = React.useState(false);
 
     const {
+        additionalScreenreaderIds = [],
         dataTestId = `${attributes.name}-textInput`,
         errorDispatch,
         hideLabel = false,
@@ -134,7 +137,9 @@ function AccessibleDateTimeInput<
 
     const textInput = (
         <TextInput
-            aria-describedby={`${name}-empty-text ${name}-invalid-text ${name}-valid-text`}
+            aria-describedby={`${name}-empty-text ${name}-invalid-text ${name}-valid-text ${
+                additionalScreenreaderIds.join(" ")
+            }`}
             aria-errormessage={`${name}-invalid-text`}
             aria-invalid={!isValueValid || isNameExists}
             aria-label={name}

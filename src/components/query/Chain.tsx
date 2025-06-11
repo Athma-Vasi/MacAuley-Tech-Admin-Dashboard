@@ -106,6 +106,8 @@ function Chain(
 
                                     const timelineText = (
                                         <Text
+                                            aria-live="polite"
+                                            id={`${field}-${value}-screenreader-link`}
                                             data-testid="query-link-text"
                                             size="md"
                                         >
@@ -136,7 +138,12 @@ function Chain(
 
             const queryLinkHeadingElement = chainLength === 0 ? null : (
                 <Stack>
-                    <Text size="md">
+                    <Text
+                        aria-live="assertive"
+                        id={`${queryChainKind}-screenreader-link-heading`}
+                        data-testid={`query-link-heading-${queryChainKind}`}
+                        size="md"
+                    >
                         {createQueryLinkHeading({
                             collectionName,
                             queryChainKind,
@@ -191,7 +198,11 @@ function Chain(
                 }
                 bulletSize={26}
             >
-                <Text size="md">
+                <Text
+                    aria-live="polite"
+                    id="general-search-exclusion-screenreader-link"
+                    size="md"
+                >
                     {`${splitAndJoinedGeneralSearchExclusionValue} ${
                         generalSearchExclusionValue.split(" ").length > 1
                             ? "are"
@@ -219,7 +230,11 @@ function Chain(
                 }
                 bulletSize={26}
             >
-                <Text size="md">
+                <Text
+                    aria-live="polite"
+                    id="general-search-inclusion-screenreader-link"
+                    size="md"
+                >
                     {`${splitAndJoinedGeneralSearchInclusionValue} ${
                         generalSearchInclusionValue.split(" ").length > 1
                             ? "are"
@@ -237,7 +252,12 @@ function Chain(
             ? null
             : (
                 <Stack>
-                    <Text size="md" data-testid="general-search-link">
+                    <Text
+                        aria-live="polite"
+                        id="general-search-link-heading"
+                        size="md"
+                        data-testid="general-search-link"
+                    >
                         {`Search ${
                             splitCamelCase(
                                 collectionName,
@@ -253,7 +273,11 @@ function Chain(
 
     const projectionExclusionLink = (
         <Timeline.Item bullet={<TbLogicNot size={18} />} bulletSize={26}>
-            <Text size="md">
+            <Text
+                size="md"
+                aria-live="polite"
+                id="projection-exclusion-screenreader-link"
+            >
                 {`${capitalizeJoinWithAnd(projectionFields)} excluded.`}
             </Text>
         </Timeline.Item>
@@ -263,7 +287,12 @@ function Chain(
         ? null
         : (
             <Stack>
-                <Text size="md" data-testid="projection-link">
+                <Text
+                    aria-live="polite"
+                    size="md"
+                    data-testid="projection-link"
+                    id="projection-exclusion-screenreader-heading"
+                >
                     {`Return selected ${
                         splitCamelCase(collectionName)
                     } with field${projectionFields.length === 1 ? "" : "s"}:`}
@@ -280,7 +309,9 @@ function Chain(
             projectionFields.length === 0
         ? (
             <div className="query-chain">
-                <Text>No query chain</Text>
+                <Text aria-live="polite" aria-atomic="true">
+                    No query chain
+                </Text>
             </div>
         )
         : (

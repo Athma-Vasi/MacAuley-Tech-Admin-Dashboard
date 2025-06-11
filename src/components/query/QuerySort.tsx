@@ -99,40 +99,11 @@ function QuerySort({
                     });
                 },
                 parentDispatch: queryDispatch,
-                validValueAction: queryAction
-                    .setSortDirection,
+                validValueAction: queryAction.setSortDirection,
                 value: sortDirection,
             }}
         />
     );
-
-    // const addSortLinkButton = (
-    //     <AccessibleButton
-    //         attributes={{
-    //             dataTestId: "add-sort-link-button",
-    //             disabledScreenreaderText: "Max query links amount reached",
-    //             // disabled: disabled || sortChainLength === MAX_LINKS_AMOUNT,
-    //             enabledScreenreaderText: "Add sort link to chain",
-    //             kind: "add",
-    //             onClick: (
-    //                 _event:
-    //                     | React.MouseEvent<HTMLButtonElement, MouseEvent>
-    //                     | React.PointerEvent<HTMLButtonElement>,
-    //             ) => {
-    //                 queryDispatch({
-    //                     action: queryAction.modifyQueryChains,
-    //                     payload: {
-    //                         index: sortChainLength,
-    //                         logicalOperator: "and",
-    //                         queryChainActions: "insert",
-    //                         queryChainKind: "sort",
-    //                         queryLink: [sortField, "equal to", sortDirection],
-    //                     },
-    //                 });
-    //             },
-    //         }}
-    //     />
-    // );
 
     return (
         <div className="query-sort">

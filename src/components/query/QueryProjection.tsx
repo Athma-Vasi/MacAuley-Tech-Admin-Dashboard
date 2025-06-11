@@ -29,6 +29,11 @@ function QueryProjection({
         : (
             <AccessibleCheckboxInputGroup
                 attributes={{
+                    // connects query chain links to this input
+                    additionalScreenreaderIds: [
+                        "projection-exclusion-screenreader-link",
+                        "projection-exclusion-screenreader-heading",
+                    ],
                     children: <></>,
                     inputData,
                     name: "exclusionFields",
