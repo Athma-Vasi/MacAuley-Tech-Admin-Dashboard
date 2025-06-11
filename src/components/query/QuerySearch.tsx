@@ -26,11 +26,6 @@ function QuerySearch({
         generalSearchInclusionValue,
     } = queryState;
 
-    const [
-        openedSearchHelpModal,
-        { open: openSearchHelpModal, close: closeSearchHelpModal },
-    ] = useDisclosure(false);
-
     const generalSearchInclusionTextInput = (
         <AccessibleTextInput
             attributes={{
@@ -72,34 +67,6 @@ function QuerySearch({
         />
     );
 
-    const searchHelpButton = (
-        <AccessibleButton
-            attributes={{
-                enabledScreenreaderText: "Open search help modal",
-                disabledScreenreaderText: "Search help modal is already open",
-                disabled: openedSearchHelpModal,
-                kind: "help",
-                onClick: (
-                    _event:
-                        | React.MouseEvent<HTMLButtonElement, MouseEvent>
-                        | React.PointerEvent<HTMLButtonElement>,
-                ) => {
-                    openSearchHelpModal();
-                },
-            }}
-        />
-    );
-
-    const searchHelpModal = (
-        <Modal
-            opened={openedSearchHelpModal}
-            onClose={closeSearchHelpModal}
-            title={<Text size="xl">🔍 How it works:</Text>}
-        >
-            {SEARCH_CHAIN_HELP_MODAL_CONTENT}
-        </Modal>
-    );
-
     const generalSearchSection = (
         <div className="query-search">
             <Text size="md">Search</Text>
@@ -107,10 +74,6 @@ function QuerySearch({
             <Group w="100%" position="left">
                 {generalSearchInclusionTextInput}
                 {generalSearchExclusionTextInput}
-            </Group>
-            <Group w="100%" position="center">
-                {searchHelpButton}
-                {searchHelpModal}
             </Group>
         </div>
     );

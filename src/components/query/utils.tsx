@@ -168,8 +168,20 @@ function createQueryString(queryState: QueryState): string {
 }
 
 function createDynamicInput(
-    { filterField, filterValue, queryAction, queryDispatch, queryTemplates }: {
+    {
+        chainLength,
+        filterComparisonOperator,
+        filterField,
+        filterLogicalOperator,
+        filterValue,
+        queryAction,
+        queryDispatch,
+        queryTemplates,
+    }: {
+        chainLength: number;
+        filterComparisonOperator: QueryOperator;
         filterField: string;
+        filterLogicalOperator: LogicalOperator;
         filterValue: string;
         queryAction: QueryAction;
         queryDispatch: React.Dispatch<QueryDispatch>;
@@ -205,6 +217,22 @@ function createDynamicInput(
                     data,
                     dataTestId: "dynamicValue-input",
                     name,
+                    onChange: (event: React.ChangeEvent<HTMLSelectElement>) => {
+                        queryDispatch({
+                            action: queryAction.modifyQueryChains,
+                            payload: {
+                                index: chainLength,
+                                logicalOperator: filterLogicalOperator,
+                                queryChainActions: "insert",
+                                queryChainKind: "filter",
+                                queryLink: [
+                                    filterField,
+                                    filterComparisonOperator,
+                                    event.currentTarget.value,
+                                ],
+                            },
+                        });
+                    },
                     validValueAction: queryAction.setFilterValue,
                     parentDispatch: queryDispatch,
                     value: filterValue,
@@ -224,6 +252,22 @@ function createDynamicInput(
                     dataTestId: "dynamicValue-input",
                     invalidValueAction: queryAction.setIsError,
                     name,
+                    onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+                        queryDispatch({
+                            action: queryAction.modifyQueryChains,
+                            payload: {
+                                index: chainLength,
+                                logicalOperator: filterLogicalOperator,
+                                queryChainActions: "insert",
+                                queryChainKind: "filter",
+                                queryLink: [
+                                    filterField,
+                                    filterComparisonOperator,
+                                    event.currentTarget.value,
+                                ],
+                            },
+                        });
+                    },
                     parentDispatch: queryDispatch,
                     validValueAction: queryAction.setFilterValue,
                     value: filterValue,
@@ -241,8 +285,24 @@ function createDynamicInput(
                 attributes={{
                     ...attributes,
                     dataTestId: "dynamicValue-input",
-                    name,
                     invalidValueAction: queryAction.setIsError,
+                    name,
+                    onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+                        queryDispatch({
+                            action: queryAction.modifyQueryChains,
+                            payload: {
+                                index: chainLength,
+                                logicalOperator: filterLogicalOperator,
+                                queryChainActions: "insert",
+                                queryChainKind: "filter",
+                                queryLink: [
+                                    filterField,
+                                    filterComparisonOperator,
+                                    event.currentTarget.value,
+                                ],
+                            },
+                        });
+                    },
                     parentDispatch: queryDispatch,
                     validValueAction: queryAction.setFilterValue,
                     value: filterValue,
@@ -260,7 +320,24 @@ function createDynamicInput(
                 attributes={{
                     ...attributes,
                     dataTestId: "dynamicValue-input",
+                    invalidValueAction: queryAction.setIsError,
                     name,
+                    onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+                        queryDispatch({
+                            action: queryAction.modifyQueryChains,
+                            payload: {
+                                index: chainLength,
+                                logicalOperator: filterLogicalOperator,
+                                queryChainActions: "insert",
+                                queryChainKind: "filter",
+                                queryLink: [
+                                    filterField,
+                                    filterComparisonOperator,
+                                    event.currentTarget.value,
+                                ],
+                            },
+                        });
+                    },
                     validValueAction: queryAction.setFilterValue,
                     parentDispatch: queryDispatch,
                     value: filterValue as string,

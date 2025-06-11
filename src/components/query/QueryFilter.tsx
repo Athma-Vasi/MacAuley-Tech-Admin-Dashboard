@@ -1,14 +1,12 @@
-import { Group, Modal, Text } from "@mantine/core";
 import type React from "react";
 
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
-import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import {
     AccessibleSelectInput,
 } from "../accessibleInputs/AccessibleSelectInput";
 import { QueryAction, queryAction } from "./actions";
-import { LOGICAL_OPERATORS_DATA, MAX_LINKS_AMOUNT } from "./constants";
+import { LOGICAL_OPERATORS_DATA } from "./constants";
 import { QueryDispatch } from "./schemas";
 import {
     LogicalOperator,
@@ -18,7 +16,6 @@ import {
 } from "./types";
 import {
     createDynamicInput,
-    FILTER_HELP_MODAL_CONTENT,
     returnDefaultFilterValue,
     returnFilterSelectData,
 } from "./utils";
@@ -43,11 +40,6 @@ function QueryFilter(
         projectionFields,
     } = queryState;
 
-    const [
-        openedFilterHelpModal,
-        { open: openFilterHelpModal, close: closeFilterHelpModal },
-    ] = useDisclosure(false);
-
     const chainLength = Object.entries(queryChains.filter).reduce(
         (acc, [_key, value]) => {
             acc += value.length;
@@ -65,6 +57,25 @@ function QueryFilter(
                 data: LOGICAL_OPERATORS_DATA,
                 label: "Logical Operator",
                 name: "filterLogicalOperator",
+                onChange: (
+                    event: React.ChangeEvent<HTMLSelectElement>,
+                ) => {
+                    queryDispatch({
+                        action: queryAction.modifyQueryChains,
+                        payload: {
+                            index: chainLength,
+                            logicalOperator: event.currentTarget
+                                .value as LogicalOperator,
+                            queryChainActions: "insert",
+                            queryChainKind: "filter",
+                            queryLink: [
+                                filterField,
+                                filterComparisonOperator,
+                                filterValue,
+                            ],
+                        },
+                    });
+                },
                 parentDispatch: queryDispatch,
                 validValueAction: queryAction.setFilterLogicalOperator,
                 value: filterLogicalOperator,
@@ -82,6 +93,24 @@ function QueryFilter(
                 disabled: fieldSelectData.length === 0,
                 label: "Field",
                 name: "filterField",
+                onChange: (
+                    event: React.ChangeEvent<HTMLSelectElement>,
+                ) => {
+                    queryDispatch({
+                        action: queryAction.modifyQueryChains,
+                        payload: {
+                            index: chainLength,
+                            logicalOperator: filterLogicalOperator,
+                            queryChainActions: "insert",
+                            queryChainKind: "filter",
+                            queryLink: [
+                                event.currentTarget.value,
+                                filterComparisonOperator,
+                                filterValue,
+                            ],
+                        },
+                    });
+                },
                 parentDispatch: queryDispatch,
                 validValueAction: queryAction.setFilterField,
                 value: filterField,
@@ -96,7 +125,25 @@ function QueryFilter(
                 disabled: filterComparisonOperatorData.length === 0,
                 label: "Comparison Operator",
                 name: "filterComparisonOperator",
-                parentDispatch: queryDispatch as any,
+                onChange: (
+                    event: React.ChangeEvent<HTMLSelectElement>,
+                ) => {
+                    queryDispatch({
+                        action: queryAction.modifyQueryChains,
+                        payload: {
+                            index: chainLength,
+                            logicalOperator: filterLogicalOperator,
+                            queryChainActions: "insert",
+                            queryChainKind: "filter",
+                            queryLink: [
+                                filterField,
+                                event.currentTarget.value,
+                                filterValue,
+                            ],
+                        },
+                    });
+                },
+                parentDispatch: queryDispatch,
                 validValueAction: queryAction.setFilterComparisonOperator,
                 value: filterComparisonOperator,
             }}
@@ -104,10 +151,13 @@ function QueryFilter(
     );
 
     const dynamicInput = createDynamicInput({
+        chainLength,
+        filterComparisonOperator,
+        filterField,
+        filterLogicalOperator,
         filterValue,
         queryAction,
         queryDispatch,
-        filterField,
         queryTemplates,
     });
 
@@ -125,75 +175,42 @@ function QueryFilter(
         });
     }, [filterField]);
 
-    const addFilterLinkButton = (
-        <AccessibleButton
-            attributes={{
-                dataTestId: "add-filter-link-button",
-                disabledScreenreaderText: chainLength === MAX_LINKS_AMOUNT
-                    ? "Max query links amount reached"
-                    : isError
-                    ? "Value cannot be invalid"
-                    : "Value cannot be empty",
-                disabled: isError ||
-                    chainLength === MAX_LINKS_AMOUNT,
-                enabledScreenreaderText: "Add filter link to chain",
-                kind: "add",
-                onClick: (
-                    _event:
-                        | React.MouseEvent<HTMLButtonElement, MouseEvent>
-                        | React.PointerEvent<HTMLButtonElement>,
-                ) => {
-                    queryDispatch({
-                        action: queryAction.modifyQueryChains,
-                        payload: {
-                            index: chainLength,
-                            logicalOperator: filterLogicalOperator,
-                            queryChainActions: "insert",
-                            queryChainKind: "filter",
-                            queryLink: [
-                                filterField,
-                                filterComparisonOperator,
-                                filterValue,
-                            ],
-                        },
-                    });
-                },
-            }}
-        />
-    );
-
-    const filterHelpButton = (
-        <AccessibleButton
-            attributes={{
-                dataTestId: "filter-help-modal-button",
-                disabledScreenreaderText: "Filter help modal is already open",
-                disabled: openedFilterHelpModal,
-                enabledScreenreaderText: "Open filter help modal",
-                kind: "help",
-                onClick: (
-                    _event:
-                        | React.MouseEvent<HTMLButtonElement, MouseEvent>
-                        | React.PointerEvent<HTMLButtonElement>,
-                ) => {
-                    openFilterHelpModal();
-                },
-            }}
-        />
-    );
-
-    const filterHelpModal = (
-        <Modal
-            opened={openedFilterHelpModal}
-            onClose={closeFilterHelpModal}
-            title={
-                <Text data-testid="filter-help-modal-title" size="xl">
-                    🛠 How to Use the Filter Builder
-                </Text>
-            }
-        >
-            {FILTER_HELP_MODAL_CONTENT}
-        </Modal>
-    );
+    // const addFilterLinkButton = (
+    //     <AccessibleButton
+    //         attributes={{
+    //             dataTestId: "add-filter-link-button",
+    //             disabledScreenreaderText: chainLength === MAX_LINKS_AMOUNT
+    //                 ? "Max query links amount reached"
+    //                 : isError
+    //                 ? "Value cannot be invalid"
+    //                 : "Value cannot be empty",
+    //             disabled: isError ||
+    //                 chainLength === MAX_LINKS_AMOUNT,
+    //             enabledScreenreaderText: "Add filter link to chain",
+    //             kind: "add",
+    //             onClick: (
+    //                 _event:
+    //                     | React.MouseEvent<HTMLButtonElement, MouseEvent>
+    //                     | React.PointerEvent<HTMLButtonElement>,
+    //             ) => {
+    //                 queryDispatch({
+    //                     action: queryAction.modifyQueryChains,
+    //                     payload: {
+    //                         index: chainLength,
+    //                         logicalOperator: filterLogicalOperator,
+    //                         queryChainActions: "insert",
+    //                         queryChainKind: "filter",
+    //                         queryLink: [
+    //                             filterField,
+    //                             filterComparisonOperator,
+    //                             filterValue,
+    //                         ],
+    //                     },
+    //                 });
+    //             },
+    //         }}
+    //     />
+    // );
 
     return (
         <div className="query-filter">
@@ -201,11 +218,6 @@ function QueryFilter(
             {fieldSelectInput}
             {filterComparisonOperatorSelectInput}
             {dynamicInput}
-            <Group w="100%" position="center">
-                {filterHelpButton}
-                {addFilterLinkButton}
-                {filterHelpModal}
-            </Group>
         </div>
     );
 }

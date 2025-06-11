@@ -1,8 +1,5 @@
-import { Group, Modal, Text } from "@mantine/core";
 import type React from "react";
 
-import { useDisclosure } from "@mantine/hooks";
-import { AccessibleButton } from "../accessibleInputs/AccessibleButton";
 import { AccessibleSelectInput } from "../accessibleInputs/AccessibleSelectInput";
 import { QueryAction, queryAction } from "./actions";
 import { SORT_DIRECTION_DATA } from "./constants";
@@ -11,7 +8,6 @@ import { type QueryState, type QueryTemplate, SortDirection } from "./types";
 import {
     removeProjectionExclusionFields,
     returnSortableQueryFields,
-    SORT_HELP_MODAL_CONTENT,
 } from "./utils";
 
 type QuerySortProps = {
@@ -25,11 +21,6 @@ function QuerySort({
     queryState,
     queryTemplates,
 }: QuerySortProps) {
-    const [
-        openedSortHelpModal,
-        { open: openSortHelpModal, close: closeSortHelpModal },
-    ] = useDisclosure(false);
-
     const { projectionFields, queryChains, sortDirection, sortField } =
         queryState;
     const logicalOperatorChainsMap = queryChains.sort;
@@ -55,6 +46,24 @@ function QuerySort({
                 data,
                 disabled,
                 name: "sortField",
+                onChange: (
+                    event: React.ChangeEvent<HTMLSelectElement>,
+                ) => {
+                    queryDispatch({
+                        action: queryAction.modifyQueryChains,
+                        payload: {
+                            index: sortChainLength,
+                            logicalOperator: "and",
+                            queryChainActions: "insert",
+                            queryChainKind: "sort",
+                            queryLink: [
+                                event.currentTarget.value,
+                                "equal to",
+                                sortDirection,
+                            ],
+                        },
+                    });
+                },
                 parentDispatch: queryDispatch,
                 validValueAction: queryAction.setSortField,
                 value: sortField,
@@ -71,26 +80,8 @@ function QuerySort({
                 data: SORT_DIRECTION_DATA,
                 disabled,
                 name: "sortDirection",
-                parentDispatch: queryDispatch,
-                validValueAction: queryAction
-                    .setSortDirection,
-                value: sortDirection,
-            }}
-        />
-    );
-
-    const addSortLinkButton = (
-        <AccessibleButton
-            attributes={{
-                dataTestId: "add-sort-link-button",
-                disabledScreenreaderText: "Max query links amount reached",
-                // disabled: disabled || sortChainLength === MAX_LINKS_AMOUNT,
-                enabledScreenreaderText: "Add sort link to chain",
-                kind: "add",
-                onClick: (
-                    _event:
-                        | React.MouseEvent<HTMLButtonElement, MouseEvent>
-                        | React.PointerEvent<HTMLButtonElement>,
+                onChange: (
+                    event: React.ChangeEvent<HTMLSelectElement>,
                 ) => {
                     queryDispatch({
                         action: queryAction.modifyQueryChains,
@@ -99,52 +90,54 @@ function QuerySort({
                             logicalOperator: "and",
                             queryChainActions: "insert",
                             queryChainKind: "sort",
-                            queryLink: [sortField, "equal to", sortDirection],
+                            queryLink: [
+                                sortField,
+                                "equal to",
+                                event.currentTarget.value as SortDirection,
+                            ],
                         },
                     });
                 },
+                parentDispatch: queryDispatch,
+                validValueAction: queryAction
+                    .setSortDirection,
+                value: sortDirection,
             }}
         />
     );
 
-    const sortHelpButton = (
-        <AccessibleButton
-            attributes={{
-                enabledScreenreaderText: "Open sort help modal",
-                disabledScreenreaderText: "Sort help modal is already open",
-                disabled: openedSortHelpModal,
-                kind: "help",
-                onClick: (
-                    _event:
-                        | React.MouseEvent<HTMLButtonElement, MouseEvent>
-                        | React.PointerEvent<HTMLButtonElement>,
-                ) => {
-                    openSortHelpModal();
-                },
-            }}
-        />
-    );
-
-    const sortHelpModal = (
-        <Modal
-            opened={openedSortHelpModal}
-            onClose={closeSortHelpModal}
-            title={<Text size="xl">🔃 How it works:</Text>}
-        >
-            {SORT_HELP_MODAL_CONTENT}
-        </Modal>
-    );
+    // const addSortLinkButton = (
+    //     <AccessibleButton
+    //         attributes={{
+    //             dataTestId: "add-sort-link-button",
+    //             disabledScreenreaderText: "Max query links amount reached",
+    //             // disabled: disabled || sortChainLength === MAX_LINKS_AMOUNT,
+    //             enabledScreenreaderText: "Add sort link to chain",
+    //             kind: "add",
+    //             onClick: (
+    //                 _event:
+    //                     | React.MouseEvent<HTMLButtonElement, MouseEvent>
+    //                     | React.PointerEvent<HTMLButtonElement>,
+    //             ) => {
+    //                 queryDispatch({
+    //                     action: queryAction.modifyQueryChains,
+    //                     payload: {
+    //                         index: sortChainLength,
+    //                         logicalOperator: "and",
+    //                         queryChainActions: "insert",
+    //                         queryChainKind: "sort",
+    //                         queryLink: [sortField, "equal to", sortDirection],
+    //                     },
+    //                 });
+    //             },
+    //         }}
+    //     />
+    // );
 
     return (
         <div className="query-sort">
             {sortFieldSelectInput}
             {sortDirectionSelectInput}
-
-            <Group w="100%" position="center">
-                {sortHelpButton}
-                {addSortLinkButton}
-                {sortHelpModal}
-            </Group>
         </div>
     );
 }
